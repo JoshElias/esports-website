@@ -1,0 +1,207 @@
+<div class="container">
+    <div class="db-builder">
+        <form class="form-horizontal" name="dbForm" novalidate>
+        <div class="db-right">
+            <div class="db-mana-curve clearfix">
+                <ul class="clearfix">
+                    <li>
+                        <div class="db-mana-curve-amt">{{deck.manaCount(0)}}</div>
+                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(0)}}px;"></span></div>
+                        <div class="db-mana-curve-num">0</div>
+                    </li>
+                    <li>
+                        <div class="db-mana-curve-amt">{{deck.manaCount(1)}}</div>
+                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(1)}}px;"></span></div>
+                        <div class="db-mana-curve-num">1</div>
+                    </li>
+                    <li>
+                        <div class="db-mana-curve-amt">{{deck.manaCount(2)}}</div>
+                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(2)}}px;"></span></div>
+                        <div class="db-mana-curve-num">2</div>
+                    </li>
+                    <li>
+                        <div class="db-mana-curve-amt">{{deck.manaCount(3)}}</div>
+                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(3)}}px;"></span></div>
+                        <div class="db-mana-curve-num">3</div>
+                    </li>
+                    <li>
+                        <div class="db-mana-curve-amt">{{deck.manaCount(4)}}</div>
+                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(4)}}px;"></span></div>
+                        <div class="db-mana-curve-num">4</div>
+                    </li>
+                    <li>
+                        <div class="db-mana-curve-amt">{{deck.manaCount(5)}}</div>
+                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(5)}}px;"></span></div>
+                        <div class="db-mana-curve-num">5</div>
+                    </li>
+                    <li>
+                        <div class="db-mana-curve-amt">{{deck.manaCount(6)}}</div>
+                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(6)}}px;"></span></div>
+                        <div class="db-mana-curve-num">6</div>
+                    </li>
+                    <li>
+                        <div class="db-mana-curve-amt">{{deck.manaCount(7)}}</div>
+                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(7)}}px;"></span></div>
+                        <div class="db-mana-curve-num">7<span>+</span></div>
+                    </li>
+                </ul>
+            </div>
+            <div class="db-deck clearfix">
+                <div class="db-deck-header db-deck-{{className.toLowerCase()}}">
+                    <div class="db-arena" ng-click="deck.arena = !deck.arena">
+                        <span ng-show="!deck.arena">Contructed</span>
+                        <span ng-show="deck.arena">Arena</span>
+                    </div>
+                    <div class="db-deck-count">{{deck.getSize()}} / 30</div>
+                </div>
+                <div class="db-deck-cards">
+                    <div class="db-deck-card" ng-class="{multi:card.qty > 1 || card.legendary}" ng-click="deck.removeCard(card)" ng-repeat="card in deck.cards" data-tooltip-img="./photos/cards/{{card.photos.large}}" data-tooltip-pos="left" hs-card>
+                        <div class="db-deck-card-mana">{{card.cost}}</div>
+                        <div class="db-deck-card-qty" ng-show="card.qty > 1">{{card.qty}}</div>
+                        <div class="db-deck-card-legendary" ng-show="card.legendary"><i class="fa fa-star"></i></div>
+                        <div class="db-deck-card-photo"><img src="./photos/cards/{{card.photos.small}}" alt=""></div>
+                        <div class="db-deck-card-name">{{card.name}}</div>
+                    </div>
+                    <div class="db-deck-footer db-deck-{{className.toLowerCase()}}">
+                        <div class="db-deck-footer-wrapper">
+                            <div class="db-deck-dust">{{deck.getDust()}}</div>
+                            <div class="dust-bottle-sm"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="db-left">
+            <div class="db-tabs">
+                <ul class="nav nav-tabs">
+                    <li ng-class="{active:page == 'build'}"><a href="#" ng-click="page = 'build'">Build</a></li>
+                    <li ng-class="{active:page == 'write'}"><a href="#" ng-click="page = 'write'">Write</a></li>
+                    <li ng-class="{active:page == 'preview'}"><a href="#" ng-click="page = 'preview'">Preview</a></li>
+                    <li class="pull-right" ng-class="{active:page == 'save'}"><a href="#" ng-click="page = 'save'">Save</a></li>
+                </ul>
+            </div>
+            <div class="db-build" ng-show="page == 'build'">
+                <div class="db-filters clearfix">
+                    <form>
+                        <div class="db-search">
+                            <input type="text" name="search" class="form-control input-sm" placeholder="Seach..." ng-model="filters.search">
+                        </div>
+                        <div class="db-mechanics">
+                            <div class="dropdown">
+                                <button class="btn btn-default db-mechanics-btn" type="button" data-toggle="dropdown">
+                                    <span>Mechanics ({{filters.mechanics.length}})</span>
+                                    <b class="caret"></b>
+                                </button>
+                                <div class="row list-group dropdown-menu">
+                                    <div class="col-xs-3 list-group-item" ng-class="{active: inMechanics(mechanic)}" ng-repeat="mechanic in mechanics">
+                                        <button class="btn btn-default" ng-class="{active: inMechanics(mechanic)}" ng-click="toggleMechanic(mechanic); pagination.setPage(1); $event.stopPropagation()">
+                                            <span>{{mechanic}}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="db-mana btn-group">
+                            <a href="#" class="btn btn-default input-sm all" ng-class="{active:filters.mana === 'all'}" ng-click="filters.mana = 'all'; pagination.setPage(1)">ALL</a>
+                            <a href="#" class="btn btn-default input-sm" ng-class="{active:filters.mana === 0}" ng-click="filters.mana = 0; pagination.setPage(1)">0</a>
+                            <a href="#" class="btn btn-default input-sm" ng-class="{active:filters.mana === 1}" ng-click="filters.mana = 1; pagination.setPage(1)">1</a>
+                            <a href="#" class="btn btn-default input-sm" ng-class="{active:filters.mana === 2}" ng-click="filters.mana = 2; pagination.setPage(1)">2</a>
+                            <a href="#" class="btn btn-default input-sm" ng-class="{active:filters.mana === 3}" ng-click="filters.mana = 3; pagination.setPage(1)">3</a>
+                            <a href="#" class="btn btn-default input-sm" ng-class="{active:filters.mana === 4}" ng-click="filters.mana = 4; pagination.setPage(1)">4</a>
+                            <a href="#" class="btn btn-default input-sm" ng-class="{active:filters.mana === 5}" ng-click="filters.mana = 5; pagination.setPage(1)">5</a>
+                            <a href="#" class="btn btn-default input-sm" ng-class="{active:filters.mana === 6}" ng-click="filters.mana = 6; pagination.setPage(1)">6</a>
+                            <a href="#" class="btn btn-default input-sm" ng-class="{active:filters.mana === '7+'}" ng-click="filters.mana = '7+'; pagination.setPage(1)">7<span>+</span></a>
+                        </div>
+                    </form>
+                </div><!-- / db-filters -->
+                <div class="db-cards-tabs">
+                    <ul class="nav nav-tabs">
+                        <li ng-class="{active: cards.current === cards.class}"><a href="#" ng-click="cards.current = cards.class; pagination.setPage(1)">{{className}}</a></li>
+                        <li ng-class="{active: cards.current === cards.neutral}"><a href="#" ng-click="cards.current = cards.neutral; pagination.setPage(1)">Neutral</a></li>
+                    </ul>
+                </div><!-- / db-cards-tabs -->
+                <div class="db-cards">
+                    <!-- arrows -->
+                    <button class="btn db-arrow db-arrow-left" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
+                    <button class="btn db-arrow db-arrow-right" ng-disabled="pagination.page == pagination.pages()" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+                    <!-- cards -->
+                    <div class="db-cards-view-wrapper" style="width: 639px;">
+                        <div class="db-cards-view" style="width: {{db.pages.width()}}px;">
+                            <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in filtered = ( cards.current | filter: filters.search | filter: filters.byMechanics() | filter: filters.byMana()) | startFrom:pagination.pageStart() | limitTo:pagination.perpage">
+                                <a href="#" data-tooltip-img="./photos/cards/{{card.photos.large}}" ng-click="deck.addCard(card)" hs-card>
+                                    <img src="./photos/cards/{{card.photos.medium}}" alt="{{card.name}}">
+                                </a>
+                            </div>
+                            <div class="db-cards-no-match" ng-show="!filtered.length">No Matches Found</div>
+                        </div>
+                    </div>
+                </div><!-- / db-cards -->
+            </div><!-- / db-build -->
+            <div class="db-write" ng-show="page == 'write'">
+                <div class="form-group">
+                    <summernote id="content" config="options" ng-model="deck.content"></summernote>
+                </div>
+            </div><!-- / db-write -->
+            <div class="db-preview clearfix" ng-show="page == 'preview'">
+                <div class="alert alert-info"><i class="fa fa-info-circle"></i> Below is a preview of your deck write up.</div>
+                <div class="ts-deck-article" ng-bind-html="deck.getContent()">
+                    
+                </div>
+            </div><!-- / db-preview -->
+            <div class="db-save" ng-show="page == 'save'">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="name" class="control-label col-sm-2">Deck Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="name" name="name" class="form-control" ng-model="deck.name" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="deckType" class="control-label col-sm-2">Deck Type</label>
+                        <div class="col-sm-10">
+                            <select id="deckType" name="deckType" class="form-control" ng-options="type as type for type in deckTypes" ng-model="deck.deckType" required></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description" class="control-label col-sm-2">Description</label>
+                        <div class="col-sm-10">
+                            <textarea id="description" name="description" class="form-control" ng-model="deck.description" required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="premium" class="col-sm-2 control-label">Premium</label>
+                        <div class="col-sm-10">
+                            <select id="premium" name="premium" class="form-control" ng-options="premium.value as premium.name for premium in deckPremium" ng-model="deck.premium.isPremium" required></select>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="deck.premium.isPremium">
+                        <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
+                        <div class="col-sm-10">
+                            <div date-picker data-id="expiryDate" data-name="expiryDate" ng-model="deck.premium.expiryDate" ng-disabled="!deck.premium.isPremium"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10 col-sm-offset-2">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="public" ng-model="deck.public" value="true"> Make this deck public
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="public" ng-model="deck.public" value="false"> Make this deck private
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group m-b-none">
+                        <div class="col-sm-10 col-sm-offset-2">
+                            <button type="submit" class="btn btn-blue" ng-disabled="!deck.validDeck() || dbForm.$invalid" ng-click="saveDeck()">Save Deck</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- / db-save -->
+        </div>
+        </form>
+    </div>
+</div>

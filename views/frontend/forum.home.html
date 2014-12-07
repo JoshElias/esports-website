@@ -1,0 +1,47 @@
+<div class="container m-b-md">
+    <div ng-repeat="category in categories">
+        <div class="forum-category">
+            {{category.title}}
+        </div>
+        <table class="table forum-section" ng-show="category.threads.length">
+            <thead>
+                <tr>
+                    <th class="section">Section</th>
+                    <th class="latest hidden-xs">Latest Post</th>
+                    <th class="posts hidden-xs">Posts</th>
+                    <th class="comments hidden-xs">Comments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="thread in category.threads">
+                    <td class="section">
+                        <a href="./forum/{{thread.slug.url}}">{{thread.title}}</a><br>
+                        <em>{{thread.description}}</em>
+                    </td>
+                    <td class="latest hidden-xs">
+                        <div ng-show="thread.posts.length">
+                            <a href="./forum/{{thread.slug.url}}/{{thread.posts[0].slug.url}}" class="title">{{thread.posts[0].title}}</a>
+                            <div class="latest-info clearfix">
+                                <div class="author">
+                                    <a href="#" class="avatar hidden-xs"><img src="./img/blank.png" alt="{{thread.posts[0].author.username}}" /></a><a href="./users/{{thread.posts[0].author.username}}">{{thread.posts[0].author.username}}</a>
+                                </div>
+                                <div class="ago pull-right">
+                                    <span am-time-ago="thread.posts[0].createdDate"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-show="!thread.posts.length">
+                            There are no posts in this thread yet.
+                        </div>
+                    </td>
+                    <td class="posts hidden-xs">
+                        {{thread.numPosts}}
+                    </td>
+                    <td class="comments hidden-xs">
+                        {{thread.numComments}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

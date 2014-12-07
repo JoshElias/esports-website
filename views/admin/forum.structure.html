@@ -1,0 +1,18 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 padding-none">
+            <div class="admin-content-title wrapper-lg">
+                <a ui-sref="app.admin.forum.structure.threadAdd" class="btn btn-green btn-rounded pull-right">
+                    <i class="fa fa-plus-circle m-r-xs"></i>
+                    Add Thread
+                </a>
+                <a ui-sref="app.admin.forum.structure.categoryAdd" class="btn btn-green btn-rounded pull-right m-r-sm">
+                    <i class="fa fa-plus-circle m-r-xs"></i>
+                    Add Category
+                </a>
+                Forum Structure
+            </div>
+            <div ui-view="categories" class="wrapper-lg animated"></div>
+        </div>
+    </div>
+</div>

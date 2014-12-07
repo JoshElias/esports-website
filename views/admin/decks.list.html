@@ -1,0 +1,57 @@
+<div class="panel panel-success animated" ng-show="success.show">
+    <div class="panel-heading">
+        <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
+        <strong>{{success.msg}}</strong>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <div class="pull-right">
+            <span class="m-r-sm">Showing: <strong>{{pagination.showStart()}}</strong> to <strong>{{pagination.showEnd()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
+            <span class="btn-group">
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
+                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == pagination.pages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+            </span>
+        </div>
+        <div class="pull-left">
+            <form>
+                <span class="pull-left m-r-sm">
+                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="pagination.setPage(1)">
+                </span>
+            </form>
+        </div>
+    </div>
+    <div class="list-group">
+        <div class="list-group-item admin-list-item clearfix" ng-repeat="deck in filtered = (decks | filterAll:search | orderBy:'-createdDate' | startFrom:pagination.pageStart() | limitTo:pagination.perpage)">
+            <span>{{deck.name}}</span>
+            <div class="pull-right btn-toolbar">
+                <a href="./admin/decks/edit/{{deck._id}}" class="btn btn-default">Edit</a>
+                <button class="btn btn-danger" ng-click="deleteDeck(deck)">Delete</button>
+            </div>
+        </div>
+        <div class="list-group-item" ng-show="!decks.length">
+            There are no decks yet.
+        </div>
+        <div class="list-group-item b-t-none" ng-show="decks.length && filtered && !filtered.length">
+            That search returned no results.
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="pull-right">
+            <span class="m-r-sm">Showing: <strong>{{pagination.showStart()}}</strong> to <strong>{{pagination.showEnd()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
+            <span class="btn-group">
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
+                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == pagination.pages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+            </span>
+        </div>
+        <div class="pull-left">
+            <form>
+                <span class="pull-left m-r-sm">
+                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="pagination.setPage(1)">
+                </span>
+            </form>
+        </div>
+    </div>
+</div>

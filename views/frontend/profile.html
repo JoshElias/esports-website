@@ -1,0 +1,51 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 padding-none">
+            <div class="profile-banner wrapper-lg">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <a href="#" class="profile-avatar profile-avatar-lg pull-left">
+                                <img src="./photos/users/{{user._id}}/profile.png" class="img-circle">
+                            </a>
+                            <div class="profile-bio">
+                                <div class="m-l-sm">
+                                    <h3>
+                                        @{{user.username}}
+                                        <small>{{user.firstName}}&nbsp;{{user.lastName}}</small>
+                                    </h3>
+                                    <p class="profile-social" ng-show="user.social && user.social.exists">
+                                        <a target="_blank" ng-show="user.social.twitter && user.social.twitter.length" href="https://www.twitter.com/{{user.social.twitter}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-twitter"></i></a>
+                                        <a target="_blank" ng-show="user.social.facebook && user.social.facebook.length" href="https://www.facebook.com/{{user.social.facebook}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-facebook"></i></a>
+                                        <a target="_blank" ng-show="user.social.twitch && user.social.twitch.length" href="http://www.twitch.tv/{{user.social.twitch}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-twitch"></i></a>
+                                        <a target="_blank" ng-show="user.social.instagram && user.social.instagram.length" href="https://www.instagram.com/{{user.social.instagram}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-instagram"></i></a>
+                                        <a target="_blank" ng-show="user.social.youtube && user.social.youtube.length" href="https://www.youtube.com/{{user.social.youtube}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-youtube"></i></a>
+                                    </p>
+                                    <p>{{user.about}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <a href="#" class="btn btn-sm btn-ts-white btn-rounded pull-right">Message</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-tabs wrapper-xs">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <ul class="nav nav-pills nav-sm">
+                                <li ng-class="{active:$state.includes('app.profile.activity')}"><a ui-sref="app.profile.activity">Activity</a></li>
+                                <li ng-class="{active:$state.includes('app.profile.articles')}"><a ui-sref="app.profile.articles">Articles</a></li>
+                                <li ng-class="{active:$state.includes('app.profile.decks')}"><a ui-sref="app.profile.decks">Decks</a></li>
+                                <li ng-class="{active:$state.includes('app.profile.posts')}"><a ui-sref="app.profile.posts">Forum Posts</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ui-view="profile"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,105 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="filter-class clearfix">
+                <li class="active">
+                    <a href="#">
+                        <span class="filter-class-icon all"></span>
+                        <span class="filter-class-text">ALL</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="filter-class-icon warrior"></span>
+                        <span class="filter-class-text">WARRIOR</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="filter-class-icon mage"></span>
+                        <span class="filter-class-text">MAGE</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="filter-class-icon rogue"></span>
+                        <span class="filter-class-text">ROGUE</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="filter-class-icon druid"></span>
+                        <span class="filter-class-text">DRUID</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="filter-class-icon hunter"></span>
+                        <span class="filter-class-text">HUNTER</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="filter-class-icon shaman"></span>
+                        <span class="filter-class-text">SHAMAN</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="filter-class-icon priest"></span>
+                        <span class="filter-class-text">PRIEST</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="filter-class-icon warlock"></span>
+                        <span class="filter-class-text">WARLOCK</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="filter-class-icon paladin"></span>
+                        <span class="filter-class-text">PALADIN</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row profile-decks row-flex row-flex-wrap" ng-show="decks.length">
+        <!-- deck -->
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 profile-deck" ng-repeat="deck in decks">
+            <div class="premium-flag" ng-show="deck.premium.isPremium"></div>
+            <div class="panel flex-col" ng-class="{premium: deck.premium.isPremium}">
+                <div class="profile-deck-class {{deck.playerClass.toLowerCase()}}"></div>
+                <div class="panel-heading">
+                    <h3><a href="./decks/{{deck.slug}}">{{deck.name}}</a></h3>
+                </div>
+                <div class="panel-body flex-grow">
+                    <p>{{deck.description}}</p>
+                </div>
+                <div class="panel-footer clearfix">
+                    <div class="pull-left m-r-sm">
+                        <span class="text-muted">by <a href="./user/{{deck.author.username}}">@{{deck.author.username}}</a></span>
+                    </div>
+                    <div class="pull-right">
+                        <div class="pull-left m-r-sm">
+                            <span class="fa fa-clock-o text-muted"></span>
+                            <span class="text-muted">{{deck.createdDate | date : 'mediumDate'}}</span>
+                        </div>
+                        <div class="pull-left m-r-sm">
+                            <span class="fa fa-comment-o text-muted"></span>
+                            <span class="text-muted"><a href="./decks/{{deck.slug}}#comments">{{deck.comments.length}} Comment<span ng-hide="deck.comments.length === 1">s</span></a></span>
+                        </div>
+                        <div class="pull-left">
+                            <span class="fa fa-thumbs-o-up text-muted"></span>
+                            <span class="text-muted"><span ng-show="deck.votesCount > 0">+</span><span ng-show="deck.votesCount < 0">-</span>{{deck.votesCount}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- / deck -->
+    </div>
+</div>

@@ -1,0 +1,36 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12 m-t-md">
+            <div class="signup-form row">
+                <div class="col-sm-6">
+                    <h1>Check your email!</h1>
+                    <p>We just sent you an email to verify your account. Copy the verification code and paste it in to this form or click the link from your email to finish signing up.</p>
+                </div>
+                <div class="col-sm-6">
+                    <div class="panel panel-danger error-modal animated" ng-show="showError">
+                        <div class="panel-heading">
+                            <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+                            <strong>Unable to verify account</strong>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="error text-danger">
+                                <li ng-repeat="err in errors">{{err.msg}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <form class="form-horizontal form-modal" role="form" name="verifyForm">
+                    <div class="form-group">
+                        <label for="email" class="control-label sr-only">Email</label>
+                        <input type="email" class="form-control first" id="email" placeholder="Email" ng-model="verify.email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="code" class="control-label sr-only">Authorization Code</label>
+                        <input type="text" class="form-control" id="code" placeholder="Authorization Code" ng-model="verify.code" required>
+                    </div>
+                    <button type="submit" class="btn btn-default btn-block" ng-disabled="verifyForm.$invalid" ng-click="verifyEmail()">Verify Account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,163 @@
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="deck">
+                <div class="deck-right">
+                    <div class="db-mana-curve clearfix">
+                        <ul class="clearfix">
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(0)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(0)}}px;"></span></div>
+                                <div class="db-mana-curve-num">0</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(1)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(1)}}px;"></span></div>
+                                <div class="db-mana-curve-num">1</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(2)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(2)}}px;"></span></div>
+                                <div class="db-mana-curve-num">2</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(3)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(3)}}px;"></span></div>
+                                <div class="db-mana-curve-num">3</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(4)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(4)}}px;"></span></div>
+                                <div class="db-mana-curve-num">4</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(5)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(5)}}px;"></span></div>
+                                <div class="db-mana-curve-num">5</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(6)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(6)}}px;"></span></div>
+                                <div class="db-mana-curve-num">6</div>
+                            </li>
+                            <li>
+                                <div class="db-mana-curve-amt">{{deck.manaCount(7)}}</div>
+                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(7)}}px;"></span></div>
+                                <div class="db-mana-curve-num">7<span>+</span></div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="db-deck clearfix">
+                        <div class="db-deck-header db-deck-{{deck.playerClass.toLowerCase()}}">
+                            <div class="db-arena">
+                                <span ng-show="!deck.arena">Contructed</span>
+                                <span ng-show="deck.arena">Arena</span>
+                            </div>
+                        </div>
+                        <div class="db-deck-cards">
+                            <div class="db-deck-card" ng-class="{multi:item.qty > 1 || item.card.rarity == 'Legendary'}" ng-repeat="item in deck.cards" data-tooltip-img="./photos/cards/{{item.card.photos.large}}" data-tooltip-pos="left" hs-card>
+                                <div class="db-deck-card-mana">{{item.card.cost}}</div>
+                                <div class="db-deck-card-qty" ng-show="item.qty > 1">{{item.qty}}</div>
+                                <div class="db-deck-card-legendary" ng-show="item.card.rarity == 'Legendary'"><i class="fa fa-star"></i></div>
+                                <div class="db-deck-card-photo"><img src="./photos/cards/{{item.card.photos.small}}" alt=""></div>
+                                <div class="db-deck-card-name">{{item.card.name}}</div>
+                            </div>
+                            <div class="db-deck-footer db-deck-{{deck.playerClass.toLowerCase()}}">
+                                <div class="db-deck-footer-wrapper">
+                                    <div class="db-deck-dust">{{deck.getDust()}}</div>
+                                    <div class="dust-bottle-sm"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="deck-left">
+                    
+                    <!-- deck-votes -->
+                    <div class="deck-votes">
+                        <div class="btn-group">
+                            <button class="btn-vote-down" ng-class="{active: deck.voted === -1}" ng-click="voteDown(deck)"><i class="fa fa-thumbs-down"></i></button>
+                            <div class="vote-count" ng-class="{'vote-count-neg':deck.votesCount < 1, 'vote-count-pos': deck.votesCount > 0}">{{deck.votesCount}}</div>
+                            <button class="btn-vote-up" ng-class="{active: deck.voted === 1}" ng-click="voteUp(deck)"><i class="fa fa-thumbs-up"></i></button>
+                        </div>
+                    </div>
+                    <!-- / deck-votes -->
+                    
+                    <!-- deck header -->
+                    <h1>{{deck.name}}</h1>
+                    <p>posted by <a href="./user/{{deck.author.username}}" class="m-r-sm">@{{deck.author.username}}</a><i class="fa fa-clock-o text-muted"></i> {{deck.createdDate | date:'mediumDate'}}</p>
+                    <!-- / deck header -->
+                    
+                    <!-- deck-mulligans -->
+                    <div class="deck-mulligans">
+                        <h3>MULLIGANS</h3>
+                        <ul class="player-class clearfix">
+                            <li ng-repeat="mulligan in deck.mulligans" ng-class="{active:currentMulligan === mulligan}">
+                                <a href="#" ng-click="setMulligan(mulligan)">
+                                    <span class="player-class-icon {{mulligan.klass.toLowerCase()}}" ng-class="{active:isMulliganSet(mulligan)}"></span>
+                                    <span class="player-class-text">{{mulligan.klass.toUpperCase()}}</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="deck-mulligan-details">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <h3>{{currentMulligan.klass.toUpperCase()}} MULLIGAN</h3>
+                                    <p><span ng-repeat="card in getMulliganCards()"><span ng-show="$last"> and </span>{{card.name}}<span ng-show="!$last">, </span></span></p>
+                                    <p>{{getMulliganInstructions()}}</p>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="deck-mulligan-cards">
+                                        <div class="deck-mulligan-card" ng-repeat="card in getMulliganCards()">
+                                            <a href="#" data-tooltip-img="./photos/cards/{{card.photos.large}}" style="left: -{{cardLeft($index)}}px; right: -{{cardRight()}}px; z-index: {{getMulliganCards().length - $index}};" hs-card><img src="./photos/cards/{{card.photos.medium}}" alt=""></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- / deck-mulligans -->
+                    
+                    <!-- deck description -->
+                    <h3>DESCRIPTION</h3>
+                    <p>{{deck.description}}</p>
+                    <!-- / deck description -->
+                    
+                    <!-- deck-against -->
+                    <div class="deck-against">
+                        <h3>STRONG AGAINST</h3>
+                        
+                        <h3>WEAK AGAINST</h3>
+                        
+                        <p>{{deck.against.instructions}}</p>
+                    </div>
+                    <!-- / deck-against -->
+                    
+                    <!-- deck-gameplay -->
+                    <h3>GAMEPLAY DETAILS</h3>
+                    <H5>EARLY GAME</H5>
+                    <p>{{deck.contentEarly}}</p>
+                    <H5>MID GAME</H5>
+                    <p>{{deck.contentMid}}</p>
+                    <H5>LATE GAME</H5>
+                    <p>{{deck.contentLate}}</p>
+                    <!-- / deck-gameplay -->
+                    
+                    <h3>VITAL STATS</h3>
+                    
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4">
+                            <canvas id="doughnut" class="chart chart-doughnut" data="data" labels="labels"></canvas>
+                        </div>
+                        <div class="col-xs-12 col-sm-4">
+                            <canvas id="doughnut" class="chart chart-doughnut" data="data" labels="labels"></canvas>
+                        </div>
+                        <div class="col-xs-12 col-sm-4">
+                            <canvas id="doughnut" class="chart chart-doughnut" data="data" labels="labels"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

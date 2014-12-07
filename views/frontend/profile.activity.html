@@ -1,0 +1,26 @@
+<div class="container">
+    <!-- activities -->
+    <div class="activities" ng-show="activities.length">
+        <!-- activity -->
+        <div class="activity" ng-repeat="activity in activities">
+            <div class="avatar">
+                <a href="#"><img src="./photos/users/{{user._id}}/profile.png" alt="" /></a>
+            </div>
+            <div class="panel">
+                <div class="panel-heading pos-rl">
+                    <span class="arrow left"></span>
+                    <span ng-bind-html="activity.getActivity()"></span>
+                </div>
+                <div class="panel-footer clearfix">
+                    <div class="pull-right">
+                        <span class="fa fa-clock-o text-muted"></span>
+                        <span class="text-muted">{{activity.createdDate | date : 'medium'}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- / activity -->
+    </div>
+    <!-- / activities -->
+    <p class="profile-no-content" ng-show="!activities.length">@{{user.username}} has no site activity yet.</p>
+</div>
