@@ -1125,7 +1125,9 @@ module.exports = {
                     ext = '.' + arr.pop(),
                     large = name + '.large' + ext,
                     medium = name + '.medium' + ext,
-                    path = './photos/cards/';
+                    path = '/opt/tempostorm/photos/cards/';
+                    copyFile();
+                /*
                 // check if dir exists
                 fs.exists(path, function(exists){
                     if (!exists) {
@@ -1137,6 +1139,7 @@ module.exports = {
                         copyFile();
                     }
                 });
+                */
 
                 function copyFile() {
                     // read file
