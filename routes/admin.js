@@ -1150,16 +1150,21 @@ module.exports = {
                         fs.writeFile(path + large, data, function(err){
                             if (err) return next(err);
                             // chmod new file
+                            console.log(1);
                             fs.chmod(path + large, 0755, function(err){
                                 if (err) return next(err);
                                 // delete tmp file
+                            console.log(2);
                                 fs.unlink(req.files.file.path, function(err){
                                     if (err) return next(err);
                                     // resize
+                            console.log(3);
                                     gm(path + large).quality(100).resize(284, 395, "!").write(path + large, function(err){
                                         if (err) return next(err);
+                            console.log(4);
                                         gm(path + large).quality(100).resize(213, 295, "!").write(path + medium, function(err){
                                             if (err) return next(err);
+                            console.log(5);
                                             var output = {
                                                     success: true,
                                                     large: large,
