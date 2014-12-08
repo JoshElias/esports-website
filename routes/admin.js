@@ -1159,7 +1159,7 @@ module.exports = {
                                     if (err) return next(err);
                                     // resize
                             console.log(3);
-                                    //gm(path + large).quality(100).resize(284, 395, "!").write(path + large, function(err){
+                                    gm('./photos/cards/' + large).quality(100).resize(284, 395, "!").write('./photos/cards/' + large, function(err){
                                         //if (err) return next(err);
                             console.log(4);
                                         gm(path + large).quality(100).resize(213, 295, "!").write(path + medium, function(err){
@@ -1173,7 +1173,7 @@ module.exports = {
                                                 };
                                             return res.json(output);
                                         });
-                                    //});
+                                    });
                                 });
                             });
                         });
