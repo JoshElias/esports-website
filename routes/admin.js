@@ -1191,7 +1191,7 @@ module.exports = {
                     name = arr.splice(0, arr.length - 1).join('.'),
                     ext = '.' + arr.pop(),
                     small = name + '.small' + ext,
-                    path = './photos/cards/';
+                    path = '/opt/tempostorm/photos/cards/';
                     copyFile();
 
                 /*
