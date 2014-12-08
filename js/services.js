@@ -220,6 +220,13 @@ angular.module('app.services', [])
 })
 .factory('AdminDeckService', function ($http, $q) {
     return {
+        getAllDecks: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/decks/all', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
         getDecks: function (page, perpage) {
             var d = $q.defer();
             $http.post('/api/admin/decks', { page: page, perpage: perpage }).success(function (data) {

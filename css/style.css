@@ -54,6 +54,10 @@ body { background: #FFF; font-family: 'Source Sans Pro', sans-serif; }
     border-radius: 0px;
 }
 
+.navbar-tempo.bordered {
+    border-bottom: 2px solid #000;
+}
+
 .navbar-tempo .navbar-brand {
     margin-right: 30px;
     width: 206px;

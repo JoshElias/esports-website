@@ -156,6 +156,20 @@ module.exports = {
             });
         };
     },
+    decksAll: function (Schemas) {
+        return function (req, res, next) {
+            function getDecks(callback) {
+                Schemas.Deck.find({}).select('_id name').exec(function (err, decks){
+                    if (err) { return res.json({ success: false }); }
+                    return callback(decks);
+                });
+            }
+            
+            getDecks(function (decks) {
+                return res.json({ success: true, decks: decks });
+            });
+        };
+    },
     decks: function (Schemas) {
         return function (req, res, next) {
             var page = req.body.page,

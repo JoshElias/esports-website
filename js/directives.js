@@ -91,4 +91,16 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/footer.html'
     };
 })
+.directive("scroll", function ($window) {
+    return function(scope, element, attrs) {
+        angular.element($window).bind("scroll", function() {
+             if (this.pageYOffset >= 1) {
+                 scope.scrolled = true;
+             } else {
+                 scope.scrolled = false;
+             }
+            scope.$apply();
+        });
+    };
+})
 ;

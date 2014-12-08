@@ -481,8 +481,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', 'Util', 'AlertService', 'AdminArticleService',
-    function ($scope, $state, $window, Util, AlertService, AdminArticleService) {
+.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', 'Util', 'AlertService', 'AdminArticleService', 'data', 
+    function ($scope, $state, $window, Util, AlertService, AdminArticleService, data) {
         // default article
         var d = new Date();
         d.setMonth(d.getMonth()+1);
@@ -507,6 +507,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         // load article
         $scope.article = angular.copy(defaultArticle);
+        
+        // load decks
+        $scope.decks = data.decks;
         
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }

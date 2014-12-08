@@ -6,9 +6,11 @@ var app = angular.module('app', [
     'angular-bootbox',
     'angularMoment',
     'chart.js',
+    'ui.select',
     'ngAnimate',
     'ngCookies',
     'ngStorage',
+    'ngSanitize',
     'ui.router',
     'ui.load',
     'ui.jq',
@@ -449,7 +451,12 @@ var app = angular.module('app', [
                 views: {
                     articles: {
                         templateUrl: 'views/admin/articles.add.html',
-                        controller: 'AdminArticleAddCtrl'
+                        controller: 'AdminArticleAddCtrl',
+                        resolve: {
+                            data: ['AdminDeckService', function (AdminDeckService) {
+                                return AdminDeckService.getAllDecks();
+                            }]
+                        }
                     }
                 },
                 access: { auth: true, admin: true }

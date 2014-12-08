@@ -14,7 +14,7 @@ var http = require('http'),
     crypto = require('crypto'),
 	path = require('path'),
 	routes = require('./routes'),
-	gm = require('gm').subClass({ imageMagick: true }),
+	gm = require('gm')/*.subClass({ imageMagick: true })*/,
     Schemas = require('./lib/schemas'),
     jwt = require('jsonwebtoken'),
     expressJwt = require('express-jwt'),
@@ -157,6 +157,7 @@ app.post('/api/admin/card/delete', routes.admin.cardDelete(Schemas));
 app.post('/api/admin/card/edit', routes.admin.cardEdit(Schemas));
 
 app.post('/api/admin/decks', routes.admin.decks(Schemas));
+app.post('/api/admin/decks/all', routes.admin.decksAll(Schemas));
 app.post('/api/admin/deck', routes.admin.deck(Schemas));
 app.post('/api/admin/deck/add', routes.admin.deckAdd(Schemas, Util));
 app.post('/api/admin/deck/delete', routes.admin.deckDelete(Schemas));
