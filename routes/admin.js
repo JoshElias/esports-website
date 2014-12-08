@@ -1125,7 +1125,7 @@ module.exports = {
                     ext = '.' + arr.pop(),
                     large = name + '.large' + ext,
                     medium = name + '.medium' + ext,
-                    path = __dirname + '/photos/cards/';
+                    path = __dirname + '/../photos/cards/';
                     console.log(__dirname);
                     copyFile();
                 /*
@@ -1195,7 +1195,8 @@ module.exports = {
                     name = arr.splice(0, arr.length - 1).join('.'),
                     ext = '.' + arr.pop(),
                     small = name + '.small' + ext,
-                    path = './photos/cards/';
+                    path = __dirname + '/../photos/cards/';
+                    console.log(__dirname);
                     copyFile();
 
                 /*
