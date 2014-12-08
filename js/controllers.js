@@ -359,7 +359,7 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < $files.length; i++) {
                 var file = $files[i];
                 $scope.upload = $upload.upload({
-                    url: '/api/upload/card',
+                    url: '/api/admin/upload/card',
                     method: 'POST',
                     file: file
                 }).progress(function(evt) {
@@ -386,7 +386,7 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < $files.length; i++) {
                 var file = $files[i];
                 $scope.upload = $upload.upload({
-                    url: '/api/upload/deck',
+                    url: '/api/admin/upload/deck',
                     method: 'POST',
                     file: file
                 }).progress(function(evt) {
