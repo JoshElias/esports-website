@@ -1104,6 +1104,13 @@ angular.module('app.controllers', ['ngCookies'])
             password: '',
             cpassword: '',
             about: '',
+            social: {
+                twitter: '',
+                facebook: '',
+                twitch: '',
+                instagram: '',
+                youtube: ''
+            },
             subscription: {
                 isSubscribed: false,
                 expiryDate: d
