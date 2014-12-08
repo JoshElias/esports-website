@@ -5,7 +5,7 @@
     </div>
     <div class="panel-body">
         <ul class="error text-danger">
-            <li ng-repeat="error in errors">{{error}}</li>
+            <li ng-repeat="error in errors">{{error.msg}}</li>
         </ul>
     </div>
 </div>
@@ -45,28 +45,36 @@
             </div>
         </div>
         <div class="form-group">
+            <label for="articlePhoto" class="col-sm-2 control-label">Article Image</label>
+            <div class="col-sm-10">
+                <input type="hidden" id="articlePhotoSmall" name="articlePhotoSmall" value="" ng-model="article.photos.small">
+                <input type="hidden" id="articlePhotoMedium" name="articlePhotoMedium" value="" ng-model="article.photos.medium">
+                <input type="hidden" id="articlePhotoLarge" name="articlePhotoLarge" value="" ng-model="article.photos.large">
+                <div class="photo-input">
+                    <div class="upload-thumbnail upload-thumbnail-article">
+                        <div class="upload-drop" ng-show="article.photos.large === ''" ng-file-drop="photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
+                        <img src="{{cardImg}}" alt="" ng-show="article.photos.large !== ''">
+                    </div>
+                    <div class="btn-toolbar">
+                        <button class="btn btn-default" ng-file-select="photoUpload($files)" onclick="this.value=null" accept="image/*">
+                            <span ng-show="article.photos.large === ''">Select image</span>
+                            <span ng-show="article.photos.large !== ''">Change image</span>
+                        </button>
+                        <a href="#" class="btn btn-danger" ng-click="article.photos.large = ''; article.photos.medium = ''; article.photos.small = '';" ng-show="article.photos.large !== ''">Remove image</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
             <label for="deck" class="col-sm-2 control-label">Deck</label>
             <div class="col-sm-10">
-                <ui-select ng-model="article.deck" theme="select2" class="form-control">
-                    <ui-select-match placeholder="Type a deck name...">{{$select.selected.name}}</ui-select-match>
-                    <ui-select-choices repeat="deck in decks | filter: $select.search">
-                        <div ng-bind-html="deck.name | highlight: $select.search"></div>
-                    </ui-select-choices>
-                </ui-select>
+                <select class="form-control" ng-options="deck._id as deck.name for deck in decks" ng-model="article.deck"></select>
             </div>
         </div>
         <div class="form-group">
             <label for="related" class="col-sm-2 control-label">Related Articles</label>
             <div class="col-sm-10">
-                <ui-select multiple ng-model="article.related" theme="bootstrap">
-                    <ui-select-match placeholder="Search and select articles...">{{$item.title}}</ui-select-match>
-                    <ui-select-choices repeat="item in articles | filter: $select.search">
-                        <div ng-bind-html="item.title | highlight: $select.search"></div>
-                        <small>
-                            by: <span ng-bind-html="''+item.author.username | highlight: $select.search"></span>
-                        </small>
-                    </ui-select-choices>
-                </ui-select>
+                <select class="form-control" ng-options="item._id as item.title for item in articles" ng-model="article.related" multiple></select>
             </div>
         </div>
         <div class="form-group">

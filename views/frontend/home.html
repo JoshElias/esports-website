@@ -97,9 +97,9 @@
                             <!-- article -->
                             <div class="home-article" ng-repeat="article in articles">
                                 <div class="panel">
-                                    <div class="panel-heading">
+                                    <div class="panel-heading" ng-if="article.photos && article.photos.medium.length">
                                         <div class="article-img">
-                                            <a href="./articles/{{article.slug.url}}"><img src="./img/article.png" alt="" class="img-responsive"></a>
+                                            <a href="./articles/{{article.slug.url}}"><img src="./photos/articles/{{article.photos.medium}}" alt="{{article.title}}" class="img-responsive"></a>
                                         </div>
                                     </div>
                                     <div class="panel-body">
@@ -113,7 +113,7 @@
                                         <div class="pull-right">
                                             <div class="pull-left m-r-sm">
                                                 <span class="fa fa-clock-o text-muted"></span>
-                                                <span class="text-muted">{{article.createdDate | date : 'medium'}}</span>
+                                                <span class="text-muted">{{article.createdDate | date : 'mediumDate'}}</span>
                                             </div>
                                             <div class="pull-left m-r-sm">
                                                 <span class="fa fa-comment-o text-muted"></span>

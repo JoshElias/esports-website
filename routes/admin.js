@@ -159,7 +159,7 @@ module.exports = {
     decksAll: function (Schemas) {
         return function (req, res, next) {
             function getDecks(callback) {
-                Schemas.Deck.find({}).select('_id name').exec(function (err, decks){
+                Schemas.Deck.find({}).select('_id name').sort('name').exec(function (err, decks){
                     if (err) { return res.json({ success: false }); }
                     return callback(decks);
                 });
@@ -447,11 +447,7 @@ module.exports = {
         return function (req, res, next) {
             function getArticles(callback){
                 Schemas.Article.find({})
-                .select('_id title author')
-                .populate({
-                    path: 'author',
-                    select: 'username -_id'
-                })
+                .select('_id title')
                 .exec(function (err, articles) {
                     if (err) { return res.json({ success: false, articles: [] }); }
                     return callback(articles);
@@ -484,19 +480,17 @@ module.exports = {
     article: function (Schemas) {
         return function (req, res, next) {
             var _id = req.body._id;
-            Schemas.Article.findOne({ _id: _id }).exec(function (err, article) {
+            Schemas.Article.findOne({ _id: _id })
+            .exec(function (err, article) {
                 if (err || !article) {
                     console.log(err || 'No article found');
                     return res.json({
-                        success: false,
-                        errors: {
-                            unknown: {
-                                msg: 'An unknown error occurred'
-                            }
-                        }
+                        success: false
                     });
                 }
+                
                 return res.json({ success: true, article: article });
+                
             });
         };
     },
@@ -504,7 +498,9 @@ module.exports = {
         return function (req, res, next) {
             // add form validation
             
-            // insert new card
+            console.log(req.body.related);
+            
+            // insert new article
             var newArticle = new Schemas.Article({
                 title: req.body.title,
                 slug: {
@@ -515,11 +511,12 @@ module.exports = {
                 content: req.body.content,
                 author: req.user._id,
                 photos: {
-                    banner: '',
-                    featured: ''
+                    large: req.body.photos.large,
+                    medium: req.body.photos.medium,
+                    small: req.body.photos.small
                 },
-                related: [],
-                //deck: '',
+                deck: req.body.deck || undefined,
+                related: req.body.related || undefined,
                 views: 0,
                 votesCount: 1,
                 votes: [{
@@ -576,11 +573,12 @@ module.exports = {
                 article.description = req.body.description;
                 article.content = req.body.content;
                 article.photos = {
-                    banner: '',
-                    featured: ''
+                    large: req.body.photos.large,
+                    medium: req.body.photos.medium,
+                    small: req.body.photos.small
                 };
-                article.related = [];
-                //article.deck = req.body.deck;
+                article.deck = req.body.deck || undefined;
+                article.related = req.body.related || undefined;
                 article.featured = req.body.featured;
                 article.premium = {
                     isPremium: req.body.premium.isPremium,
@@ -1106,6 +1104,74 @@ module.exports = {
             });
         };
     },
+    uploadArticle: function (fs, gm) {
+        return function(req, res, next) {
+            // check if image file
+            var types = ['image/png', 'image/jpeg', 'image/gif'];
+            if (types.indexOf(req.files.file.type) === -1) {
+                fs.unlink(req.files.file.path, function(err){
+                    if (err) return next(err);
+                    var output = {
+                            success: false,
+                            error: 'Invalid photo uploaded.',
+                        };
+                    return res.json(output);
+                });
+            } else {
+                var arr = req.files.file.name.split('.'),
+                    name = arr.splice(0, arr.length - 1).join('.'),
+                    ext = '.' + arr.pop(),
+                    large = name + '.large' + ext,
+                    medium = name + '.medium' + ext,
+                    small = name + '.small' + ext,
+                    path = BASE_DIR + '/photos/articles/';
+                    copyFile();
+
+                function copyFile() {
+                    // read file
+                    fs.readFile(req.files.file.path, function(err, data){
+                        if (err) return next(err);
+                        // write file
+                        fs.writeFile(path + large, data, function(err){
+                            if (err) return next(err);
+                            // chmod new file
+                            fs.chmod(path + large, 0777, function(err){
+                                if (err) return next(err);
+                                // delete tmp file
+                                fs.unlink(req.files.file.path, function(err){
+                                    if (err) return next(err);
+                                    // resize
+                                    gm(path + large).quality(100).gravity('Center').crop(1200, 300, 0, 0).write(path + large, function(err){
+                                        if (err) return next(err);
+                                        gm(path + large).quality(100).resize(800, 200, "!").write(path + medium, function(err){
+                                            if (err) return next(err);
+                                            fs.chmod(path + medium, 0777, function(err){
+                                                if (err) return next(err);
+                                                gm(path + large).quality(100).resize(400, 100, "!").write(path + small, function(err){
+                                                    if (err) return next(err);
+                                                    fs.chmod(path + small, 0777, function(err){
+                                                        if (err) return next(err);
+                                                        var output = {
+                                                                success: true,
+                                                                large: large,
+                                                                medium: medium,
+                                                                small: small,
+                                                                path: './photos/articles/'
+                                                            };
+                                                        return res.json(output);
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }
+            }
+        };
+    },
     uploadCard: function (fs, gm) {
         return function(req, res, next) {
             // check if image file
@@ -1165,7 +1231,7 @@ module.exports = {
                                                         success: true,
                                                         large: large,
                                                         medium: medium,
-                                                        path: path
+                                                        path: './photos/cards/'
                                                     };
                                                 return res.json(output);
                                             });
@@ -1233,7 +1299,7 @@ module.exports = {
                                         var output = {
                                                 success: true,
                                                 small: small,
-                                                path: path
+                                                path: './photos/cards/'
                                             };
                                         return res.json(output);
                                     });

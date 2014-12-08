@@ -809,6 +809,20 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .photo-input .upload-drop { border-radius: 4px; border: 1px dashed #ccc; text-align: center; color: #666; }
 .photo-input .upload-drop.active { border: 1px dashed #66afe9; color: #357ebd; background: #e6f7ff; }
 
+.upload-thumbnail.upload-thumbnail-article {
+    width: 240px;
+    height: 60px;
+}
+.upload-thumbnail.upload-thumbnail-article .upload-drop {
+    width: 240px;
+    height: 60px;
+    line-height: 60px;
+}
+.upload-thumbnail.upload-thumbnail-article img {
+    width: 240px;
+    height: 60px;
+}
+
 .upload-thumbnail.upload-thumbnail-card {
     width: 142px;
     height: 197px;

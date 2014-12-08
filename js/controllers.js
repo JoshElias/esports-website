@@ -247,7 +247,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.cardActive = $scope.cardDeckable = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
-        ];
+        ];F
         
         // card upload
         $scope.cardUpload = function ($files) {
@@ -481,8 +481,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataArticles', 
-    function ($scope, $state, $window, Util, AlertService, AdminArticleService, dataDecks, dataArticles) {
+.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataArticles', 
+    function ($scope, $state, $window, $upload, $compile, bootbox, Util, AlertService, AdminArticleService, dataDecks, dataArticles) {
         // default article
         var d = new Date();
         d.setMonth(d.getMonth()+1);
@@ -495,7 +495,12 @@ angular.module('app.controllers', ['ngCookies'])
             },
             description: '',
             content: '',
-            deck: '',
+            photos: {
+                large: '',
+                medium: '',
+                small: ''
+            },
+            deck: undefined,
             related: [],
             featured: false,
             premium: {
@@ -509,7 +514,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.article = angular.copy(defaultArticle);
         
         // load decks
-        $scope.decks = dataDecks.decks;
+        $scope.decks = [{_id: undefined, name: 'No deck'}].concat(dataDecks.decks);
         
         // load articles
         $scope.articles = dataArticles.articles;
@@ -549,6 +554,36 @@ angular.module('app.controllers', ['ngCookies'])
           ]
         };
         
+        // photo upload
+        $scope.photoUpload = function ($files) {
+            if (!$files.length) return false;
+            var box = bootbox.dialog({
+                message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                closeButton: false,
+                animate: false
+            });
+            $scope.uploading = 0;
+            box.modal('show');
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/admin/upload/article',
+                    method: 'POST',
+                    file: file
+                }).progress(function(evt) {
+                    $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                }).success(function(data, status, headers, config) {
+                    $scope.article.photos = {
+                        large: data.large,
+                        medium: data.medium,
+                        small: data.small
+                    };
+                    $scope.cardImg = '.' + data.path + data.small;
+                    box.modal('hide');
+                });
+            }
+        };
+        
         $scope.addArticle = function () {
             $scope.showError = false;
 
@@ -569,9 +604,9 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $state, $window, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles) {
         // load article
         $scope.article = data.article;
-
+        
         // load decks
-        $scope.decks = dataDecks.decks;
+        $scope.decks = [{_id: undefined, name: 'No deck'}].concat(dataDecks.decks);
         
         // load articles
         $scope.articles = dataArticles.articles;
@@ -585,6 +620,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.article.slug.linked = !$scope.article.slug.linked;
             $scope.setSlug();
         };
+        
+        // photo
+        $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? './photos/articles/' + $scope.article.photos.small : './img/blank.png';
         
         // select options
         $scope.articleFeatured =
