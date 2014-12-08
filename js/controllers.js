@@ -481,13 +481,14 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataArticles', 
-    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, dataDecks, dataArticles) {
+.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataArticles', 'dataAdmins', 
+    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, dataDecks, dataArticles, dataAdmins) {
         // default article
         var d = new Date();
         d.setMonth(d.getMonth()+1);
-            
+        
         var defaultArticle = {
+            author: $scope.app.user.getUserID(),
             title : '',
             slug: {
                 url: '',
@@ -519,6 +520,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         // load articles
         $scope.articles = dataArticles.articles;
+        
+        // load admins
+        $scope.admins = dataAdmins.users;
         
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }
@@ -604,8 +608,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataArticles', 
-    function ($scope, $state, $window, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles) {
+.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataArticles', 'dataAdmins', 
+    function ($scope, $state, $window, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles, dataAdmins) {
         // load article
         $scope.article = data.article;
         
@@ -615,6 +619,9 @@ angular.module('app.controllers', ['ngCookies'])
         // load articles
         $scope.articles = dataArticles.articles;
 
+        // load admins
+        $scope.admins = dataAdmins.users;
+        
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }
             $scope.article.slug.url = Util.slugify($scope.article.title);
@@ -1413,6 +1420,10 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // charts
+        $scope.charts = {
+            colors: ['rgba(151,187,205,1)', 'rgba(151,187,205,1)', 'rgba(151,187,205,1)', 'rgba(151,187,205,1)']
+        };
+        
         $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
         $scope.data = [300, 500, 100];
         
