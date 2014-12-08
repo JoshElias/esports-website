@@ -29,6 +29,8 @@ var http = require('http'),
 
 var JWT_SECRET = '83udfhjdsfh93HJKHel338283ru';
 
+BASE_DIR = __dirname;
+
 /* mongoose */
 mongoose.connect('mongodb://localhost:27017/tempostorm');
 var db = mongoose.connection;
