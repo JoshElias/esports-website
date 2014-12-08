@@ -1126,7 +1126,6 @@ module.exports = {
                     large = name + '.large' + ext,
                     medium = name + '.medium' + ext,
                     path = BASE_DIR + '/photos/cards/';
-                    console.log(BASE_DIR + '/photos/cards/');
                     copyFile();
                 /*
                 // check if dir exists
@@ -1150,28 +1149,26 @@ module.exports = {
                         fs.writeFile(path + large, data, function(err){
                             if (err) return next(err);
                             // chmod new file
-                            console.log(1);
                             fs.chmod(path + large, 0777, function(err){
                                 if (err) return next(err);
                                 // delete tmp file
-                            console.log(2);
                                 fs.unlink(req.files.file.path, function(err){
                                     if (err) return next(err);
                                     // resize
-                            console.log(3);
                                     gm(path + large).quality(100).resize(284, 395, "!").write(path + large, function(err){
                                         if (err) return next(err);
-                            console.log(4);
                                         gm(path + large).quality(100).resize(213, 295, "!").write(path + medium, function(err){
                                             if (err) return next(err);
-                            console.log(5);
-                                            var output = {
-                                                    success: true,
-                                                    large: large,
-                                                    medium: medium,
-                                                    path: path
-                                                };
-                                            return res.json(output);
+                                            fs.chmod(path + medium, 0777, function(err){
+                                                if (err) return next(err);
+                                                var output = {
+                                                        success: true,
+                                                        large: large,
+                                                        medium: medium,
+                                                        path: path
+                                                    };
+                                                return res.json(output);
+                                            });
                                         });
                                     });
                                 });
@@ -1201,7 +1198,6 @@ module.exports = {
                     ext = '.' + arr.pop(),
                     small = name + '.small' + ext,
                     path = BASE_DIR + '/photos/cards/';
-                    console.log(BASE_DIR + '/photos/cards/');
                     copyFile();
 
                 /*
@@ -1226,7 +1222,7 @@ module.exports = {
                         fs.writeFile(path + small, data, function(err){
                             if (err) return next(err);
                             // chmod new file
-                            fs.chmod(path + small, 0755, function(err){
+                            fs.chmod(path + small, 0777, function(err){
                                 if (err) return next(err);
                                 // delete tmp file
                                 fs.unlink(req.files.file.path, function(err){
