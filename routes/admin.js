@@ -509,7 +509,7 @@ module.exports = {
                 },
                 description: req.body.description,
                 content: req.body.content,
-                author: req.user._id,
+                author: req.body.author,
                 photos: {
                     large: req.body.photos.large,
                     medium: req.body.photos.medium,
@@ -572,6 +572,7 @@ module.exports = {
                 };
                 article.description = req.body.description;
                 article.content = req.body.content;
+                article.author = req.body.author;
                 article.photos = {
                     large: req.body.photos.large,
                     medium: req.body.photos.medium,
@@ -617,6 +618,17 @@ module.exports = {
                     });
                 }
                 return res.json({ success: true });
+            });
+        };
+    },
+    usersAdmins: function (Schemas) {
+        return function (req, res, next) {
+            Schemas.User.find({ isAdmin: true }).select('_id username').exec(function (err, users) {
+                if (err) { return res.json({ success: false }); }
+                return res.json({
+                    success: true,
+                    users: users
+                });
             });
         };
     },

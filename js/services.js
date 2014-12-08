@@ -265,6 +265,13 @@ angular.module('app.services', [])
 })
 .factory('AdminUserService', function ($http, $q) {
     return {
+        getAdmins: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/users/admins', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
         getUsers: function (page, perpage) {
             var d = $q.defer();
             $http.post('/api/admin/users', { page: page, perpage: perpage }).success(function (data) {

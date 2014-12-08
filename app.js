@@ -189,6 +189,7 @@ app.post('/api/admin/user', routes.admin.user(Schemas));
 app.post('/api/admin/user/add', routes.admin.userAdd(Schemas));
 app.post('/api/admin/user/delete', routes.admin.userDelete(Schemas));
 app.post('/api/admin/user/edit', routes.admin.userEdit(Schemas));
+app.post('/api/admin/users/admins', routes.admin.usersAdmins(Schemas));
 
 app.post('/api/admin/upload/article', routes.admin.uploadArticle(fs, gm));
 app.post('/api/admin/upload/card', routes.admin.uploadCard(fs, gm));

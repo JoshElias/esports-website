@@ -458,6 +458,9 @@ var app = angular.module('app', [
                             }],
                             dataArticles: ['AdminArticleService', function (AdminArticleService) {
                                 return AdminArticleService.getAllArticles();
+                            }],
+                            dataAdmins: ['AdminUserService', function (AdminUserService) {
+                                return AdminUserService.getAdmins();
                             }]
                         }
                     }
@@ -480,6 +483,9 @@ var app = angular.module('app', [
                             }],
                             dataArticles: ['AdminArticleService', function (AdminArticleService) {
                                 return AdminArticleService.getAllArticles();
+                            }],
+                            dataAdmins: ['AdminUserService', function (AdminUserService) {
+                                return AdminUserService.getAdmins();
                             }]
                         }
                     }
