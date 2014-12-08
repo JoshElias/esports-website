@@ -1115,6 +1115,9 @@ ul.player-class .player-class-icon.active.warlock { background-position: 0px -42
 ul.player-class .player-class-icon.active.hunter { background-position: 0px -240px; }
 ul.player-class .player-class-icon.active.druid { background-position: 0px -180px; }
 
+ul.player-class .player-class-icon.coin-icon { background-position: -60px -600px; }
+ul.player-class .player-class-icon.active.coin-icon { background-position: 0px -600px; }
+
 ul.player-class a.filter-class-text { margin-top: 5px; }
 
 ul.db-against li .player-class-icon { opacity: .5; }
@@ -1202,14 +1205,16 @@ ul.db-against li .player-class-icon.active { margin-top: -1px; margin-bottom: -1
 
 .deck-votes { float: right; }
 
+.deck-comments { margin-top: 20px; }
+
 /* comments */
 .comments { margin-top: 20px; }
 .comments-title { margin-left: 20px; padding-left: 30px; }
 .comments-title h3 { margin: 0px; padding-bottom: 10px; }
 
-.comment { margin-left: 20px; padding-bottom: 10px; border-left: 1px solid #66ccff; }
+.comment { margin-left: 20px; padding-bottom: 10px; border-left: 1px solid #2766ad; }
 .comment .avatar { float: left; margin-left: -20px; }
-.comment .avatar img { width: 39px; height: 39px; background: #F2F2F2; border: 1px solid #0099cc; }
+.comment .avatar img { width: 39px; height: 39px; background: #F2F2F2; border: 1px solid #2766ad; }
 .comment .panel { margin: 0 0 0 30px; border-radius: 0px; border: 1px solid #ddd; }
 .comment .panel-heading { color: #555; background-color: #f5f5f5; border-bottom: 1px solid #ddd; }
 .comment .premium { border-radius: 2px; background: #FFF; color: #222; font-size: 10px; padding: 2px 3px; }
@@ -1220,13 +1225,14 @@ ul.db-against li .player-class-icon.active { margin-top: -1px; margin-bottom: -1
 
 .comment-add { margin-left: 21px; padding-left: 30px; position: relative; }
 .comment-add .avatar { position: absolute; top: 0px; left: -17px; width: 34px; height: 34px; border-radius: 50%; }
-.comment-add .avatar img { width: 34px; height: 34px; background: #F2F2F2; border: 1px solid #0099cc; }
+.comment-add .avatar img { width: 34px; height: 34px; background: #F2F2F2; border: 1px solid #2766ad; }
 .comment-add .panel { border-radius: 0px; border: 1px solid #ddd; }
 .comment-add .panel-heading { color: #555; background-color: #f5f5f5; border-bottom: 1px solid #ddd; }
 .comment-add .panel-body { padding: 0px; }
 .comment-add .form-group { margin-bottom: 0px; }
 .comment-add textarea { height: 150px; border-radius: 0px; border-color: transparent; resize: vertical; }
 
+.no-comments { margin: 0 0 20px 0; }
 
 /* forum home */
 .forum-category { margin-top: 20px; border: 1px solid #0099cc; padding: 15px; font-size: 20px; background: #66ccff; color: #FFF; }

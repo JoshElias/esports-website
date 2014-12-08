@@ -733,26 +733,36 @@ module.exports = {
         return function (req, res, next) {
             var slug = req.body.slug;
             Schemas.Deck.findOne({ slug: slug })
-            .populate({
-                path: 'author',
-                select: 'username -_id'
-            })
-            .populate({
-                path: 'cards.card'
-            })
-            .populate({
-                path: 'mulligans.withCoin.cards',
-                select: 'name photos'
-            })
-            .populate({
-                path: 'mulligans.withoutCoin.cards',
-                select: 'name photos'
-            })
+            .lean()
+            .populate([{
+                    path: 'author',
+                    select: 'username -_id'
+                },{
+                    path: 'cards.card'
+                },{
+                    path: 'mulligans.withCoin.cards',
+                    select: 'name photos'
+                },{
+                    path: 'mulligans.withoutCoin.cards',
+                    select: 'name photos'
+                },{
+                    path: 'comments',
+                    select: '_id author comment createdDate votesCount votes'
+            }])
             .exec(function (err, deck) {
                 if (err || !deck) { console.log(err || 'Unable to load deck: ' + slug); return res.json({ success: false }); }
-                return res.json({
-                    success: true,
-                    deck: deck
+                
+                Schemas.Comment.populate(deck.comments, {
+                    path: 'author',
+                    select: 'username'
+                }, function (err, comments) {
+                    if (err || !comments) { return res.json({ success: false }); }
+                    deck.comments = comments;
+
+                    return res.json({
+                        success: true,
+                        deck: deck
+                    });
                 });
             });
         };
@@ -792,18 +802,18 @@ module.exports = {
             });
         };
     },
-    deckComment: function (Schemas, mongoose) {
+    deckCommentAdd: function (Schemas, mongoose) {
         return function (req, res, next) {
             var deckID = req.body.deckID,
                 userID = req.user._id,
-                commment = req.body.comment,
+                comment = req.body.comment,
                 newCommentID = mongoose.Types.ObjectId();
             
             // new comment
             var newComment = {
                 _id: newCommentID,
                 author: userID,
-                comment: comment,
+                comment: comment.comment,
                 votesCount: 1,
                 votes: [{
                     userID: userID,
@@ -849,12 +859,25 @@ module.exports = {
                 });
             }
             
+            // get new comment
+            function getComment (callback) {
+                Schemas.Comment.populate(newComment, {
+                    path: 'author',
+                    select: 'username'
+                }, function (err, comment) {
+                    if (err || !comment) { return res.json({ success: false }); }
+                        return callback(comment);
+                });
+            }
+            
             // actions
             createComment(function () {
                 addComment(function () {
-                    return res.json({
-                        success: true,
-                        comment: newComment
+                    getComment(function (comment) {
+                        return res.json({
+                            success: true,
+                            comment: comment
+                        });
                     });
                 });
             });

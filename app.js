@@ -142,9 +142,7 @@ app.post('/api/verify', routes.frontend.verify(Schemas));
 
 app.post('/api/deck/add', routes.frontend.deckAdd(Schemas, Util));
 app.post('/api/deck/vote', routes.frontend.deckVote(Schemas));
-app.post('/api/deck/comment', routes.frontend.deckComment(Schemas, mongoose));
-
-app.post('/api/deck/comment', routes.frontend.deckComment(Schemas, mongoose));
+app.post('/api/deck/comment/add', routes.frontend.deckCommentAdd(Schemas, mongoose));
 
 app.post('/api/forum/post/add', routes.frontend.forumPostAdd(Schemas, Util, mongoose));
 app.post('/api/forum/post/comment/add', routes.frontend.forumCommentAdd(Schemas, mongoose));

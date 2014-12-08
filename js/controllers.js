@@ -1382,8 +1382,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'UserService', 'AuthenticationService', 'VoteService', 'data', 
-    function ($scope, $state, $sce, $compile, $window, bootbox, UserService, AuthenticationService, VoteService, data) {
+.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'data', 
+    function ($scope, $state, $sce, $compile, $window, bootbox, UserService, DeckService, AuthenticationService, VoteService, data) {
         if (!data || !data.success) { return $state.transitionTo('app.decks.list'); }
 
         // load deck
@@ -1512,6 +1512,71 @@ angular.module('app.controllers', ['ngCookies'])
                     if (data.success) {
                         deck.voted = direction;
                         deck.votesCount = data.votesCount;
+                    }
+                });
+            }
+        };
+        
+        // comments
+        var defaultComment = {
+            comment: ''
+        };
+        $scope.comment = angular.copy(defaultComment);
+        
+        $scope.commentPost = function () {
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    $scope.commentPost();
+                };
+            } else {
+                DeckService.addComment($scope.deck, $scope.comment).success(function (data) {
+                    if (data.success) {
+                        $scope.deck.comments.push(data.comment);
+                        $scope.comment.comment = '';
+                    }
+                });
+            }
+        };
+                
+        updateCommentVotes();
+        function updateCommentVotes() {
+            $scope.deck.comments.forEach(checkVotes);
+            
+            function checkVotes (comment) {
+                var vote = comment.votes.filter(function (vote) {
+                    return ($scope.app.user.getUserID() === vote.userID);
+                })[0];
+                
+                if (vote) {
+                    comment.voted = vote.direction;
+                }
+            }
+        }
+                
+        $scope.voteComment = function (direction, comment) {
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    $scope.voteComment(direction, deck);
+                };
+            } else {
+                if (comment.author._id === $scope.app.user.getUserID()) {
+                    bootbox.alert("You can't vote for your own content.");
+                    return false;
+                }
+                VoteService.voteComment(direction, comment).then(function (data) {
+                    if (data.success) {
+                        comment.voted = direction;
+                        comment.votesCount = data.votesCount;
                     }
                 });
             }

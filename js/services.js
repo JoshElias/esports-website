@@ -885,6 +885,9 @@ angular.module('app.services', [])
                 d.resolve(data);
             });
             return d.promise;
+        },
+        addComment: function (deck, comment) {
+            return $http.post('/api/deck/comment/add', { deckID: deck._id, comment: comment });
         }
     };
 })
