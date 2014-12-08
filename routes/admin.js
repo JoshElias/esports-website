@@ -443,6 +443,26 @@ module.exports = {
             });
         };
     },
+    articlesAll: function (Schemas) {
+        return function (req, res, next) {
+            function getArticles(callback){
+                Schemas.Article.find({})
+                .select('_id title author')
+                .populate({
+                    path: 'author',
+                    select: 'username -_id'
+                })
+                .exec(function (err, articles) {
+                    if (err) { return res.json({ success: false, articles: [] }); }
+                    return callback(articles);
+                });
+            }
+            
+            getArticles(function (articles) {
+                return res.json({ success: true, articles: articles });
+            });
+        };
+    },
     articles: function (Schemas) {
         return function (req, res, next) {
             Schemas.Article.find({}).exec(function (err, articles){
@@ -1172,6 +1192,9 @@ module.exports = {
                     ext = '.' + arr.pop(),
                     small = name + '.small' + ext,
                     path = './photos/cards/';
+                    copyFile();
+
+                /*
                 // check if dir exists
                 fs.exists(path, function(exists){
                     if (!exists) {
@@ -1183,6 +1206,7 @@ module.exports = {
                         copyFile();
                     }
                 });
+                */
 
                 function copyFile() {
                     // read file

@@ -189,6 +189,13 @@ angular.module('app.services', [])
 })
 .factory('AdminArticleService', function ($http, $q) {
     return {
+        getAllArticles: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/articles/all', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
         getArticles: function () {
             var d = $q.defer();
             $http.post('/api/admin/articles', {}).success(function (data) {

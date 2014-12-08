@@ -453,8 +453,11 @@ var app = angular.module('app', [
                         templateUrl: 'views/admin/articles.add.html',
                         controller: 'AdminArticleAddCtrl',
                         resolve: {
-                            data: ['AdminDeckService', function (AdminDeckService) {
+                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
                                 return AdminDeckService.getAllDecks();
+                            }],
+                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
+                                return AdminArticleService.getAllArticles();
                             }]
                         }
                     }
@@ -471,6 +474,12 @@ var app = angular.module('app', [
                             data: ['$stateParams', 'AdminArticleService', function ($stateParams, AdminArticleService) {
                                 var articleID = $stateParams.articleID;
                                 return AdminArticleService.getArticle(articleID);
+                            }],
+                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
+                                return AdminDeckService.getAllDecks();
+                            }],
+                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
+                                return AdminArticleService.getAllArticles();
                             }]
                         }
                     }

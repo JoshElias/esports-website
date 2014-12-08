@@ -481,8 +481,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', 'Util', 'AlertService', 'AdminArticleService', 'data', 
-    function ($scope, $state, $window, Util, AlertService, AdminArticleService, data) {
+.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataArticles', 
+    function ($scope, $state, $window, Util, AlertService, AdminArticleService, dataDecks, dataArticles) {
         // default article
         var d = new Date();
         d.setMonth(d.getMonth()+1);
@@ -509,7 +509,10 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.article = angular.copy(defaultArticle);
         
         // load decks
-        $scope.decks = data.decks;
+        $scope.decks = dataDecks.decks;
+        
+        // load articles
+        $scope.articles = dataArticles.articles;
         
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }
@@ -562,11 +565,17 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', 'Util', 'AlertService', 'AdminArticleService', 'data',
-    function ($scope, $state, $window, Util, AlertService, AdminArticleService, data) {
+.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataArticles', 
+    function ($scope, $state, $window, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles) {
         // load article
         $scope.article = data.article;
+
+        // load decks
+        $scope.decks = dataDecks.decks;
         
+        // load articles
+        $scope.articles = dataArticles.articles;
+
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }
             $scope.article.slug.url = Util.slugify($scope.article.title);

@@ -164,6 +164,7 @@ app.post('/api/admin/deck/delete', routes.admin.deckDelete(Schemas));
 app.post('/api/admin/deck/edit', routes.admin.deckEdit(Schemas, Util));
 
 app.post('/api/admin/articles', routes.admin.articles(Schemas));
+app.post('/api/admin/articles/all', routes.admin.articlesAll(Schemas));
 app.post('/api/admin/article', routes.admin.article(Schemas));
 app.post('/api/admin/article/add', routes.admin.articleAdd(Schemas));
 app.post('/api/admin/article/delete', routes.admin.articleDelete(Schemas));
