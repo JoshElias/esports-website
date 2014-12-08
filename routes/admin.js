@@ -1151,7 +1151,7 @@ module.exports = {
                             if (err) return next(err);
                             // chmod new file
                             console.log(1);
-                            fs.chmod(path + large, 0755, function(err){
+                            fs.chmod(path + large, 0777, function(err){
                                 if (err) return next(err);
                                 // delete tmp file
                             console.log(2);
