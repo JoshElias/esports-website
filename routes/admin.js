@@ -1125,7 +1125,8 @@ module.exports = {
                     ext = '.' + arr.pop(),
                     large = name + '.large' + ext,
                     medium = name + '.medium' + ext,
-                    path = './photos/cards/';
+                    path = __dirname + '/photos/cards/';
+                    console.log(__dirname);
                     copyFile();
                 /*
                 // check if dir exists
