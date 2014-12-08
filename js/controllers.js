@@ -481,8 +481,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataArticles', 
-    function ($scope, $state, $window, $upload, $compile, bootbox, Util, AlertService, AdminArticleService, dataDecks, dataArticles) {
+.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataArticles', 
+    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, dataDecks, dataArticles) {
         // default article
         var d = new Date();
         d.setMonth(d.getMonth()+1);
@@ -502,6 +502,7 @@ angular.module('app.controllers', ['ngCookies'])
             },
             deck: undefined,
             related: [],
+            classTags: [],
             featured: false,
             premium: {
                 isPremium: false,
@@ -528,6 +529,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.article.slug.linked = !$scope.article.slug.linked;
             $scope.setSlug();
         };
+        
+        // klass tags
+        $scope.klassTags = Hearthstone.classes.splice(1, 9);
         
         // select options
         $scope.articleFeatured =
@@ -600,8 +604,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataArticles', 
-    function ($scope, $state, $window, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles) {
+.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataArticles', 
+    function ($scope, $state, $window, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles) {
         // load article
         $scope.article = data.article;
         
@@ -623,6 +627,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         // photo
         $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? './photos/articles/' + $scope.article.photos.small : './img/blank.png';
+        
+        // klass tags
+        $scope.klassTags = Hearthstone.classes.splice(1, 9);
         
         // select options
         $scope.articleFeatured =
