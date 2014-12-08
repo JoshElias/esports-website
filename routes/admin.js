@@ -1162,7 +1162,7 @@ module.exports = {
                                     gm('./photos/cards/' + large).quality(100).resize(284, 395, "!").write('./photos/cards/' + large, function(err){
                                         //if (err) return next(err);
                             console.log(4);
-                                        gm(path + large).quality(100).resize(213, 295, "!").write(path + medium, function(err){
+                                        gm('./photos/cards/' + large).quality(100).resize(213, 295, "!").write('./photos/cards/' + medium, function(err){
                                             if (err) return next(err);
                             console.log(5);
                                             var output = {
