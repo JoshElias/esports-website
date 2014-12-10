@@ -18,13 +18,13 @@
         <div class="form-group">
             <label for="author" class="col-sm-2 control-label">Author</label>
             <div class="col-sm-10">
-                <select id="author" class="form-control" ng-options="admin._id as admin.username for admin in admins" ng-model="article.author"></select>
+                <select id="author" name="author" class="form-control" ng-options="admin._id as admin.username for admin in admins" ng-model="article.author"></select>
             </div>
         </div>
         <div class="form-group">
             <label for="title" class="col-sm-2 control-label">Title</label>
             <div class="col-sm-10">
-                <input type="text" id="title" name="title" value="" class="form-control" ng-model="article.title" ng-keyup="setSlug()" required>
+                <input type="text" id="title" name="title" class="form-control" ng-model="article.title" ng-keyup="setSlug()" required>
             </div>
         </div>
         <div class="form-group">
@@ -34,7 +34,7 @@
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-default" ng-class="{active: article.slug.linked}" ng-click="toggleSlugLink()"><i class="fa" ng-class="{'fa-link': article.slug.linked, 'fa-unlink': !article.slug.linked}"></i></button>
                     </span>
-                    <input type="text" id="slug" name="slug" value="" class="form-control" ng-model="article.slug.url" required ng-readonly="article.slug.linked">
+                    <input type="text" id="slug" name="slug" class="form-control" ng-model="article.slug.url" required ng-readonly="article.slug.linked">
                 </div>
             </div>
         </div>
@@ -84,9 +84,9 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="related" class="col-sm-2 control-label">Class Tags</label>
+            <label for="classTags" class="col-sm-2 control-label">Class Tags</label>
             <div class="col-sm-10">
-                <select size="9" class="form-control" ng-options="klass as klass for klass in klassTags" ng-model="article.classTags" multiple></select>
+                <select id="classTags" name="classTags" size="9" class="form-control" ng-options="klass as klass for klass in klassTags" ng-model="article.classTags" multiple></select>
             </div>
         </div>
         <div class="form-group">

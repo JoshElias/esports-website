@@ -535,7 +535,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // klass tags
-        $scope.klassTags = Hearthstone.classes.splice(1, 9);
+        $scope.klassTags = ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
         
         // select options
         $scope.articleFeatured =
@@ -636,7 +636,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? './photos/articles/' + $scope.article.photos.small : './img/blank.png';
         
         // klass tags
-        $scope.klassTags = Hearthstone.classes.splice(1, 9);
+        $scope.klassTags = ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
         
         // select options
         $scope.articleFeatured =

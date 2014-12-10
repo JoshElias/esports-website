@@ -498,8 +498,6 @@ module.exports = {
         return function (req, res, next) {
             // add form validation
             
-            console.log(req.body.related);
-            
             // insert new article
             var newArticle = new Schemas.Article({
                 title: req.body.title,
@@ -517,6 +515,7 @@ module.exports = {
                 },
                 deck: req.body.deck || undefined,
                 related: req.body.related || undefined,
+                classTags: req.body.classTags,
                 views: 0,
                 votesCount: 1,
                 votes: [{
@@ -580,6 +579,7 @@ module.exports = {
                 };
                 article.deck = req.body.deck || undefined;
                 article.related = req.body.related || undefined;
+                article.classTags = req.body.classTags || [];
                 article.featured = req.body.featured;
                 article.premium = {
                     isPremium: req.body.premium.isPremium,
