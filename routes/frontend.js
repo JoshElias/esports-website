@@ -678,10 +678,12 @@ module.exports = {
         return function (req, res, next) {
             var klass = req.body.klass,
                 page = req.body.page || 1,
-                perpage = req.body.perpage || 5;
+                perpage = req.body.perpage || 5,
+                where = (klass === 'all') ? {} : { 'classTags': klass };
             
             function getArticles (callback) {
                 Schemas.Article.find({ active: true })
+                .where(where)
                 .populate({
                     path: 'author',
                     select: 'username -_id'
@@ -704,11 +706,25 @@ module.exports = {
         return function (req, res, next) {
             var klass = req.body.klass || 'all',
                 page = req.body.page || 1,
-                perpage = req.body.perpage || 10;
+                perpage = req.body.perpage || 10,
+                where = (klass === 'all') ? {} : { 'playerClass': klass },
+                decks, total;
+            
+            // get total decks
+            function getTotal (callback) {
+                Schemas.Deck.count({ public: true })
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
             
             // get decks
             function getDecks (callback) {
                 Schemas.Deck.find({ public: true })
+                .where(where)
                 .populate({
                     path: 'author',
                     select: 'username -_id'
@@ -716,15 +732,17 @@ module.exports = {
                 .sort({ createdDate: -1 })
                 .skip((perpage * page) - perpage)
                 .limit(perpage)
-                .exec(function (err, decks) {
+                .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
-                    return callback(decks);
+                    decks = results;
+                    return callback();
                 });
             }
             
-            getDecks(function (decks) {
-                console.log(decks.length);
-                return res.json({ success: true, decks: decks });
+            getDecks(function () {
+                getTotal(function () {
+                    return res.json({ success: true, decks: decks, total: total, klass: klass, page: page, perpage: perpage });
+                });
             });
             
         };

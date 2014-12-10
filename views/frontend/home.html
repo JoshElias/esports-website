@@ -26,62 +26,62 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <ul class="filter-class clearfix">
-                            <li class="active">
-                                <a href="#">
+                            <li ng-class="{active:klass === 'all'}">
+                                <a href="#" ng-click="setKlass('all')">
                                     <span class="filter-class-icon all"></span>
                                     <span class="filter-class-text">ALL</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="#">
+                            <li ng-class="{active:klass === 'Warrior'}">
+                                <a href="#" ng-click="setKlass('Warrior')">
                                     <span class="filter-class-icon warrior"></span>
                                     <span class="filter-class-text">WARRIOR</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="#">
+                            <li ng-class="{active:klass === 'Mage'}">
+                                <a href="#" ng-click="setKlass('Mage')">
                                     <span class="filter-class-icon mage"></span>
                                     <span class="filter-class-text">MAGE</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="#">
+                            <li ng-class="{active:klass === 'Rogue'}">
+                                <a href="#" ng-click="setKlass('Rogue')">
                                     <span class="filter-class-icon rogue"></span>
                                     <span class="filter-class-text">ROGUE</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="#">
+                            <li ng-class="{active:klass === 'Druid'}">
+                                <a href="#" ng-click="setKlass('Druid')">
                                     <span class="filter-class-icon druid"></span>
                                     <span class="filter-class-text">DRUID</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="#">
+                            <li ng-class="{active:klass === 'Hunter'}">
+                                <a href="#" ng-click="setKlass('Hunter')">
                                     <span class="filter-class-icon hunter"></span>
                                     <span class="filter-class-text">HUNTER</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="#">
+                            <li ng-class="{active:klass === 'Shaman'}">
+                                <a href="#" ng-click="setKlass('Shaman')">
                                     <span class="filter-class-icon shaman"></span>
                                     <span class="filter-class-text">SHAMAN</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="#">
+                            <li ng-class="{active:klass === 'Priest'}">
+                                <a href="#" ng-click="setKlass('Priest')">
                                     <span class="filter-class-icon priest"></span>
                                     <span class="filter-class-text">PRIEST</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="#">
+                            <li ng-class="{active:klass === 'Warlock'}">
+                                <a href="#" ng-click="setKlass('Warlock')">
                                     <span class="filter-class-icon warlock"></span>
                                     <span class="filter-class-text">WARLOCK</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="#">
+                            <li ng-class="{active:klass === 'Paladin'}">
+                                <a href="#" ng-click="setKlass('Paladin')">
                                     <span class="filter-class-icon paladin"></span>
                                     <span class="filter-class-text">PALADIN</span>
                                 </a>
@@ -128,6 +128,8 @@
                                 </div>
                             </div>
                             <!-- / article -->
+                            <p ng-show="!articles.length && klass === 'all'">There are curently no articles yet.</p>
+                            <p ng-show="!articles.length && klass !== 'all'">There are curently no articles under <strong>{{klass}}</strong> yet.</p>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4 home-decks">
@@ -163,6 +165,8 @@
                                 </div>
                             </div>
                             <!-- / deck -->
+                            <p ng-show="!decks.length && klass === 'all'">There are curently no decks yet.</p>
+                            <p ng-show="!decks.length && klass !== 'all'">There are curently no decks under <strong>{{klass}}</strong> yet.</p>
                         </div>
                     </div>
                 </div>

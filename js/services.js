@@ -873,6 +873,10 @@ angular.module('app.services', [])
 .factory('DeckService', function ($http, $q) {
     return {
         getDecks: function (klass, page, perpage) {
+            klass = klass || 'all';
+            page = page || 1;
+            perpage = perpage || 24;
+            
             var d = $q.defer();
             $http.post('/decks', { klass: klass, page: page, perpage: perpage }).success(function (data) {
                 d.resolve(data);

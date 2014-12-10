@@ -119,10 +119,28 @@ var app = angular.module('app', [
                 }
             })
             .state('app.articles', {
+                abstract: true,
                 url: 'articles',
                 views: {
                     content: {
                         templateUrl: 'views/frontend/articles.html'
+                    }
+                }
+            })
+            .state('app.articles.list', {
+                url: '?page',
+                views: {
+                    articles: {
+                        templateUrl: 'views/frontend/articles.list.html',
+                        controller: 'ArticlesCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'ArticleService', function ($stateParams, ArticleService) {
+                                var klass = 'all',
+                                    page = $stateParams.page || 1,
+                                    perpage = 20;
+                                return ArticleService.getArticles(klass, page, perpage);
+                            }]
+                        }
                     }
                 }
             })
@@ -145,7 +163,7 @@ var app = angular.module('app', [
                             data: ['DeckService', function (DeckService) {
                                 var klass = 'all',
                                     page = 1,
-                                    perpage = 30;
+                                    perpage = 24;
                                 return DeckService.getDecks(klass, page, perpage);
                             }]
                         }

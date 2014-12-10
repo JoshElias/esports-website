@@ -156,10 +156,24 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', 'dataArticles', 'dataDecks', 
-    function ($scope, dataArticles, dataDecks) {
+.controller('HomeCtrl', ['$scope', 'dataArticles', 'dataDecks', 'ArticleService', 'DeckService', 
+    function ($scope, dataArticles, dataDecks, ArticleService, DeckService) {
         $scope.articles = dataArticles.articles;
         $scope.decks = dataDecks.decks;
+        
+        $scope.klass = 'all';
+        
+        $scope.setKlass = function (klass) {
+            $scope.klass = klass;
+            
+            ArticleService.getArticles(klass).then(function (data) {
+                $scope.articles = data.articles;
+            });
+
+            DeckService.getDecks(klass, 1, 10).then(function (data) {
+                $scope.decks = data.decks;
+            });
+        };
     }
 ])
 .controller('ProfileCtrl', ['$scope', 'dataProfile',  
@@ -608,8 +622,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataArticles', 'dataAdmins', 
-    function ($scope, $state, $window, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles, dataAdmins) {
+.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataArticles', 'dataAdmins', 
+    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles, dataAdmins) {
         // load article
         $scope.article = data.article;
         
@@ -664,6 +678,36 @@ angular.module('app.controllers', ['ngCookies'])
             ['format', ['hr']],
             ['misc', ['undo', 'redo', 'codeview']]
           ]
+        };
+        
+        // photo upload
+        $scope.photoUpload = function ($files) {
+            if (!$files.length) return false;
+            var box = bootbox.dialog({
+                message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                closeButton: false,
+                animate: false
+            });
+            $scope.uploading = 0;
+            box.modal('show');
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/admin/upload/article',
+                    method: 'POST',
+                    file: file
+                }).progress(function(evt) {
+                    $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                }).success(function(data, status, headers, config) {
+                    $scope.article.photos = {
+                        large: data.large,
+                        medium: data.medium,
+                        small: data.small
+                    };
+                    $scope.cardImg = '.' + data.path + data.small;
+                    box.modal('hide');
+                });
+            }
         };
         
         $scope.editArticle = function () {
@@ -1358,28 +1402,94 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('DecksCtrl', ['$scope', '$compile', '$window', 'bootbox', 'UserService', 'AuthenticationService', 'VoteService', 'data', 
-    function ($scope, $compile, $window, bootbox, UserService, AuthenticationService, VoteService, data) {
+.controller('ArticlesCtrl', ['$scope', 'ArticleService', 'data', 
+    function ($scope, ArticleService, data) {
+        $scope.articles = data.articles;
+        
+        $scope.klass = 'all';
+        
+        $scope.setKlass = function (klass) {
+            $scope.klass = klass;
+            
+            ArticleService.getArticles(klass, 1, 20).then(function (data) {
+                $scope.articles = data.articles;
+            });
+        };
+    }
+])
+.controller('DecksCtrl', ['$scope', '$state', 'DeckService', 'data', 
+    function ($scope, $state, DeckService, data) {
         // decks
         $scope.decks = data.decks;
+        $scope.total = data.total;
+        $scope.klass = data.klass;
+        $scope.page = data.page;
+        $scope.perpage = data.perpage;
         
-        function updateVotes() {
-            $scope.decks.forEach(checkVotes);
-
-            function checkVotes (deck) {
-                var vote = deck.votes.filter(function (vote) {
-                    return ($scope.app.user.getUserID() === vote.userID);
-                })[0];
-
-                if (vote) {
-                    deck.voted = vote.direction;
+        $scope.setKlass = function (klass) {
+            $scope.klass = klass;
+            $scope.page = 1;
+            getDecks();
+        };
+        
+        function getDecks () {
+            DeckService.getDecks($scope.klass, $scope.page, $scope.perpage).then(function (data) {
+                $scope.decks = data.decks;
+                $scope.total = data.total;
+                
+                $scope.klass = data.klass;
+                $scope.page = data.page;
+            });
+        }
+        
+        // pagination
+        $scope.pagination = {
+            page: function () {
+                return $scope.page;
+            },
+            perpage: function () {
+                return $scope.perpage;
+            },
+            results: function () {
+                return $scope.total;
+            },
+            setPage: function (page) {
+                $scope.page = page;
+                getDecks();
+            },
+            pagesArray: function () {
+                var pages = [],
+                    start = 1,
+                    end = this.totalPages();
+                
+                if (this.totalPages() > 5) {
+                    if (this.page() < 3) {
+                        start = 1;
+                        end = start + 4;
+                    } else if (this.page() > this.totalPages() - 2) {
+                        end = this.totalPages();
+                        start = end - 4;
+                    } else {
+                        start = this.page() - 2;
+                        end = this.page() + 2;
+                    }
+                    
                 }
-            }
-        }
-
-        if ($scope.app.user.isLogged()) {
-            updateVotes();
-        }
+                
+                for (var i = start; i <= end; i++) {
+                    pages.push(i);
+                }
+                
+                return pages;
+            },
+            isPage: function (page) {
+                return (page === this.page());
+            },
+            totalPages: function (page) {
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
+            },
+            
+        };
     }
 ])
 .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'data', 

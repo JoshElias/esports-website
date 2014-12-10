@@ -207,19 +207,20 @@ span.username { color: #428bca; }
     margin-top: 15px;
     padding: 12px 12px;
     border: none;
-    background: #66ccff;
+    background: #2766ad;
     color: #FFF;
     font-size: 20px;
+    outline: none !important;
 }
 
 .form-modal button:hover,
 .form-modal button:focus {
-    background: #0099cc;
+    background: #2766ad;
     color: #FFF;
 }
 
 .form-modal button:disabled {
-    background: #66ccff;
+    background: #2766ad;
     color: #FFF;
     opacity: .5;
 }
@@ -484,20 +485,25 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 .btn-blue {
-    background: #66ccff;
+    background: #2766ad;
     color: #FFF;
     border: none;
 }
 
 .btn-blue:hover,
-.btn-blue:focus,
-.btn-blue.active {
-    background: #0099cc;
+.btn-blue:focus {
+    background: #2766ad;
     color: #FFF;
 }
 
+.btn-blue.active {
+    background: #2766ad;
+    color: #FFF;
+    font-weight: bold;
+}
+
 .btn-blue:disabled {
-    background: #66ccff;
+    background: #2766ad;
     color: #FFF;
     opacity: .5;
 }
@@ -1152,25 +1158,17 @@ ul.db-against li .player-class-icon.active { margin-top: -1px; margin-bottom: -1
 
 .deck-list-bottom { height: 30px; line-height: 30px; padding: 0px 15px; text-align: right; background: #eee; border-top: 1px solid #ddd; }
 
-.btn-vote-down,
-.vote-count,
-.btn-vote-up { float: left; height: 22px; line-height: 20px; font-size: 10px; text-align: center; background: #FFF; }
+.vote-count { border: 1px solid #0d437f; background: #2766ad; color: #FFF; font-size: 14px; font-weight: bold; }
+.vote-count.vote-large { border-top-left-radius: 4px; border-top-right-radius: 4px; width: 61px; height: 40px; line-height: 38px; text-align: center; }
 
 .btn-vote-down,
-.btn-vote-up { width: 22px; cursor: pointer; outline: none; }
+.btn-vote-up { margin-top: -1px; padding: 0; float: left; width: 31px; height: 30px; line-height: 28px; font-size: 14px; text-align: center; background: #FFF; outline: none; }
 
-.vote-count { padding: 0px 7px; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; }
+.btn-vote-down { margin-left: -1px; border: 1px solid #0d437f; color: #e84c3d; border-bottom-right-radius: 4px; }
+.btn-vote-up { border: 1px solid #0d437f; color: #82bf57; border-bottom-left-radius: 4px; }
 
-.btn-vote-down { color: #eb6363 !important; text-shadow: -1px 0 #b50700, 0 1px #b50700, 1px 0 #b50700, 0 -1px #b50700; border: 1px solid #b50700; border-top-left-radius: 4px; border-bottom-left-radius: 4px; }
-.btn-vote-up { color: #8bd260 !important; text-shadow: -1px 0 #4db50e, 0 1px #4db50e, 1px 0 #4db50e, 0 -1px #4db50e; border: 1px solid #4db50e; border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
-
-.btn-vote-down:active,
-.btn-vote-down.active { background: #eb6363 !important; border: 1px solid #b50700 !important; color: #fff !important; text-shadow: -1px 0 #b50700, 0 1px #b50700, 1px 0 #b50700, 0 -1px #b50700; -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125); box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125); }
-.btn-vote-up:active,
-.btn-vote-up.active { background: #8bd260 !important; border: 1px solid #4db50e !important; color: #fff !important; text-shadow: -1px 0 #4db50e, 0 1px #4db50e, 1px 0 #4db50e, 0 -1px #4db50e; -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125); box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125); }
-
-.vote-count-pos { color: #4db50e; }
-.vote-count-neg { color: #b50700; }
+.btn-vote-down.active { color: #FFF; background: #e84c3d; }
+.btn-vote-up.active { color: #FFF; background: #82bf57; }
 
 /* deck */
 .deck { margin: 20px 0; position: relative; }
