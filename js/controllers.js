@@ -1404,16 +1404,76 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('ArticlesCtrl', ['$scope', 'ArticleService', 'data', 
     function ($scope, ArticleService, data) {
+        // articles
         $scope.articles = data.articles;
-        
-        $scope.klass = 'all';
+        $scope.total = data.total;
+        $scope.klass = data.klass;
+        $scope.page = data.page;
+        $scope.perpage = data.perpage;
         
         $scope.setKlass = function (klass) {
             $scope.klass = klass;
-            
-            ArticleService.getArticles(klass, 1, 20).then(function (data) {
+            $scope.page = 1;
+            getDecks();
+        };
+        
+        function getDecks () {
+            ArticleService.getArticles($scope.klass, $scope.page, $scope.perpage).then(function (data) {
                 $scope.articles = data.articles;
+                $scope.total = data.total;
+                
+                $scope.klass = data.klass;
+                $scope.page = data.page;
             });
+        }
+        
+        // pagination
+        $scope.pagination = {
+            page: function () {
+                return $scope.page;
+            },
+            perpage: function () {
+                return $scope.perpage;
+            },
+            results: function () {
+                return $scope.total;
+            },
+            setPage: function (page) {
+                $scope.page = page;
+                getDecks();
+            },
+            pagesArray: function () {
+                var pages = [],
+                    start = 1,
+                    end = this.totalPages();
+                
+                if (this.totalPages() > 5) {
+                    if (this.page() < 3) {
+                        start = 1;
+                        end = start + 4;
+                    } else if (this.page() > this.totalPages() - 2) {
+                        end = this.totalPages();
+                        start = end - 4;
+                    } else {
+                        start = this.page() - 2;
+                        end = this.page() + 2;
+                    }
+                    
+                }
+                
+                for (var i = start; i <= end; i++) {
+                    pages.push(i);
+                }
+                
+                return pages;
+            },
+            isPage: function (page) {
+                return (page === this.page());
+            },
+            totalPages: function (page) {
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
+            },
+            
         };
     }
 ])

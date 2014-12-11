@@ -679,7 +679,19 @@ module.exports = {
             var klass = req.body.klass,
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 5,
-                where = (klass === 'all') ? {} : { 'classTags': klass };
+                where = (klass === 'all') ? {} : { 'classTags': klass },
+                articles, total;
+            
+            // get total articles
+            function getTotal (callback) {
+                Schemas.Article.count({ active: true })
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
             
             function getArticles (callback) {
                 Schemas.Article.find({ active: true })
@@ -691,14 +703,17 @@ module.exports = {
                 .sort('-createdDate')
                 .skip((perpage * page) - perpage)
                 .limit(perpage)
-                .exec(function (err, articles) {
+                .exec(function (err, results) {
                     if (err) { return req.json({ success: false }); }
-                    return callback(articles);
+                    articles = results;
+                    return callback();
                 });
             }
             
-            getArticles(function (articles) {
-                return res.json({ success: true, articles: articles });
+            getArticles(function () {
+                getTotal(function () {
+                    return res.json({ success: true, articles: articles, total: total, klass: klass, page: page, perpage: perpage });
+                });
             });
         };
     },

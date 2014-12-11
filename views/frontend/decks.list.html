@@ -1,3 +1,12 @@
+<!-- section banner -->
+<div class="container-fluid section-banner">
+    <div class="container section-decks">
+        <h1 class="section-title">DECKS</h1>
+    </div>
+</div>
+<!-- / section banner -->
+
+<!-- class filter -->
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -66,10 +75,12 @@
         </div>
     </div>
 </div>
+<!-- / class filter -->
+
 <div class="container">
     
     <!-- page flipping -->
-    <div class="clearfix" ng-show="pagination.totalPages() > 1">
+    <div class="page-flipper page-flipper-top clearfix" ng-show="pagination.totalPages() > 1">
         <div class="pull-right">
             <span class="btn-group">
                 <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)" disabled="disabled"><i class="fa fa-arrow-circle-left"></i></button>
@@ -121,7 +132,7 @@
     <!-- / decks -->
     
     <!-- page flipping -->
-    <div class="clearfix" ng-show="pagination.totalPages() > 1">
+    <div class="page-flipper page-flipper-bottom clearfix" ng-show="pagination.totalPages() > 1">
         <div class="pull-right">
             <span class="btn-group">
                 <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)" disabled="disabled"><i class="fa fa-arrow-circle-left"></i></button>

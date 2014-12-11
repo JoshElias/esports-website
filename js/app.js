@@ -128,16 +128,16 @@ var app = angular.module('app', [
                 }
             })
             .state('app.articles.list', {
-                url: '?page',
+                url: '',
                 views: {
                     articles: {
                         templateUrl: 'views/frontend/articles.list.html',
                         controller: 'ArticlesCtrl',
                         resolve: {
-                            data: ['$stateParams', 'ArticleService', function ($stateParams, ArticleService) {
+                            data: ['ArticleService', function (ArticleService) {
                                 var klass = 'all',
-                                    page = $stateParams.page || 1,
-                                    perpage = 20;
+                                    page = 1,
+                                    perpage = 10;
                                 return ArticleService.getArticles(klass, page, perpage);
                             }]
                         }
