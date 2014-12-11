@@ -720,7 +720,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
-    flex:1 1 auto;
+    /*flex:1 1 auto;*/
 }
 
 .row-flex-wrap {
@@ -729,15 +729,13 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     flex:0;
 }
 
-.row-flex > div[class*='col-'], .container-flex > div[class*='col-'] {
-	 margin:-.2px; /* hack adjust for wrapping */
+.row-flex > div[class*='col-'] {
+	 margin: -2px; /* hack adjust for wrapping */
 }
 
-/*
-.container-flex > div[class*='col-'] div,.row-flex > div[class*='col-'] div {
+.container-flex > div[class*='col-'] > div,.row-flex > div[class*='col-'] > div {
 	width:100%;
 }
-*/
 
 .flex-col {
     display: flex;

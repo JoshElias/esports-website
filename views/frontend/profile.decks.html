@@ -1,10 +1,16 @@
 <div class="container">
-    <div class="row profile-decks row-flex-wrap" ng-show="decks.length">
+    <div class="panel panel-success m-t-sm" ng-if="success.show">
+        <div class="panel-heading">
+            <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
+            <strong>{{success.msg}}</strong>
+        </div>
+    </div>
+    <div class="row profile-decks row-flex row-flex-wrap" ng-show="decks.length">
         <!-- deck -->
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 profile-deck" ng-repeat="deck in decks">
-            <div class="premium-flag" ng-show="deck.premium.isPremium"></div>
             <div class="panel flex-col" ng-class="{premium: deck.premium.isPremium}">
-                <div class="profile-deck-class {{deck.className.toLowercase()}}"></div>
+                <div class="premium-flag" ng-show="deck.premium.isPremium"></div>
+                <div class="profile-deck-class {{deck.playerClass.toLowerCase()}}"></div>
                 <div class="panel-heading">
                     <h3><a href="./decks/{{deck.slug}}">{{deck.name}}</a></h3>
                 </div>
@@ -24,10 +30,14 @@
                         <span class="fa fa-thumbs-o-up text-muted"></span>
                         <span class="text-muted"><span ng-show="deck.votesCount > 0">+</span><span ng-show="deck.votesCount < 0">-</span>{{deck.votesCount}}</span>
                     </div>
+                    <div class="pull-right" ng-if="app.user.getUserID() === deck.author">
+                        <a href="./deck-builder/edit/{{deck.slug}}" class="btn btn-default btn-xs">Edit</a>
+                        <a href="#" class="btn btn-danger btn-xs" ng-click="deckDelete(deck)">Delete</a>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- / deck -->
     </div>
-    <p class="profile-no-content" ng-show="!decks.length">@{{user.username}} hasn't created any decks yet.</p>
+    <p class="profile-no-content" ng-if="!decks.length">@{{user.username}} hasn't created any decks yet.</p>
 </div>
