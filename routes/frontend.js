@@ -538,6 +538,120 @@ module.exports = {
             });
         };
     },
+    deckEdit: function (Schemas) {
+        return function (req, res, next) {
+            var slug = req.body.slug,
+                deck,
+                cards = {};
+            
+            function getDeck(callback) {
+                Schemas.Deck.findOne({ slug: slug })
+                .lean()
+                .populate('cards.card')
+                .populate('mulligans.withCoin.cards')
+                .populate('mulligans.withoutCoin.cards')
+                .exec(function (err, results) {
+                    if (err || !results) { return res.json({ success: false }); }
+                    
+                    function fixCards (item, index, theArray) {
+                        var obj = {
+                            _id: item.card._id,
+                            cost: item.card.cost,
+                            name: item.card.name,
+                            dust: item.card.dust,
+                            photos: {
+                                small: item.card.photos.small,
+                                large: item.card.photos.large
+                            },
+                            legendary: (item.card.rarity === 'Legendary') ? true : false,
+                            qty: item.qty
+                        };
+                        theArray[index] = obj;
+                    }
+                    
+                    function fixMulligans (item, index, theArray) {
+                        var obj = {
+                            _id: item._id,
+                            cost: item.cost,
+                            name: item.name,
+                            dust: item.dust,
+                            photos: {
+                                small: item.photos.small,
+                                large: item.photos.large
+                            },
+                            legendary: (item.rarity === 'Legendary') ? true : false
+                        };
+                        theArray[index] = obj;
+                    }
+                    
+                    // fix cards for deck builder
+                    results.cards.forEach(fixCards);
+                    
+                    // fix mulligan cards for deck builder
+                    results.mulligans.forEach(function (item, index, theArray) {
+                        item.withCoin.cards.forEach(fixMulligans);
+                        item.withoutCoin.cards.forEach(fixMulligans);
+                    });
+                    
+                    deck = {
+                        _id: results._id,
+                        name: results.name,
+                        slug: results.slug,
+                        deckType: results.deckType,
+                        description: results.description,
+                        contentEarly: results.contentEarly,
+                        contentMid: results.contentMid,
+                        contentLate: results.contentLate,
+                        cards: results.cards,
+                        playerClass: results.playerClass,
+                        public: results.public.toString(),
+                        mulligans: results.mulligans,
+                        against: {
+                            strong: results.against.strong,
+                            weak: results.against.weak,
+                            instructions: results.against.instructions
+                        },
+                        featured: results.featured,
+                        premium: {
+                            isPremium: results.premium.isPremium,
+                            expiryDate: results.premium.expiryDate || ''
+                        }
+                    };
+
+                    return callback();
+                });
+            }
+            
+            function getClass(callback) {
+                Schemas.Card.find({ playerClass: deck.playerClass }).where({ deckable: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                    if (err || !results) { console.log(err || 'No cards for class'); }
+                    cards.class = results;
+                    return callback();
+                });
+            }
+        
+            function getNeutral(callback) {
+                Schemas.Card.find({ playerClass: 'Neutral' }).where({ deckable: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                    if (err || !results) { console.log(err || 'No cards for neutral'); }
+                    cards.neutral = results;
+                    return callback();
+                });
+            }
+            
+            getDeck(function () {
+                getClass(function () {
+                    getNeutral(function () {
+                        //console.log(deck);
+                        return res.json({
+                            success: true,
+                            deck: deck,
+                            cards: cards
+                        });
+                    });
+                });
+            });
+        };
+    },
     deckBuilder: function (Schemas, Util) {
         return function (req, res, next) {
             var playerClass = Util.ucfirst(req.body.playerClass),
@@ -652,6 +766,76 @@ module.exports = {
                 }
                 console.log(data);
                 return res.json({ success: true, slug: Util.slugify(req.body.name) });
+            });
+        };
+    },
+    deckUpdate: function (Schemas, Util) {
+        return function (req, res, next) {
+            // TODO: add form checking
+            
+            // setup cards
+            var cards = [];
+            for (var i = 0; i < req.body.cards.length; i++) {
+                cards.push({
+                    card: req.body.cards[i]._id,
+                    qty: req.body.cards[i].qty
+                });
+            }
+            
+            // setup mulligan cards
+            if (req.body.mulligans && req.body.mulligans.length) {
+                req.body.mulligans.forEach(function (mulligan) {
+                    if (mulligan.withCoin.cards.length) {
+                        var mCards = [];
+                        for (var i = 0; i < mulligan.withCoin.cards.length; i++) {
+                            mCards.push(mulligan.withCoin.cards[i]._id);
+                        }
+                        mulligan.withCoin.cards = mCards;
+                    }
+                    if (mulligan.withoutCoin.cards.length) {
+                        var mCards = [];
+                        for (var i = 0; i < mulligan.withoutCoin.cards.length; i++) {
+                            mCards.push(mulligan.withoutCoin.cards[i]._id);
+                        }
+                        mulligan.withoutCoin.cards = mCards;
+                    }
+                });
+            }
+            
+            Schemas.Deck.findOne({ _id: req.body._id, author: req.user._id })
+            .exec(function (err, deck) {
+                if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                
+                deck.name = req.body.name;
+                deck.slug = Util.slugify(req.body.name);
+                deck.deckType = req.body.deckType;
+                deck.description = req.body.description;
+                deck.contentEarly = req.body.contentEarly;
+                deck.contentMid = req.body.contentMid;
+                deck.contentLate = req.body.contentLate;
+                deck.cards = cards;
+                deck.public = req.body.public;
+                deck.mulligans = req.body.mulligans || [];
+                deck.against = {
+                    strong: req.body.against.strong || [],
+                    weak: req.body.against.weak || [],
+                    instructions: req.body.against.instructions || ''
+                };
+                
+                deck.save(function(err, data){
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                });
+                
+            });
+        };
+    },
+    deckDelete: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            Schemas.Deck.findOne({ _id: _id, author: req.user._id }).remove().exec(function (err) {
+                if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                return res.json({ success: true });
             });
         };
     },

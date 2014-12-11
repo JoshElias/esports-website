@@ -217,6 +217,21 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.deckBuilder.edit', {
+                url: '/edit/:slug',
+                views: {
+                    deckBuilder: {
+                        templateUrl: 'views/frontend/deck-builder.edit.html',
+                        controller: 'DeckEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
+                                var slug = $stateParams.slug;
+                                return DeckService.deckEdit(slug);
+                            }]
+                        }
+                    }
+                }
+            })
             .state('app.forum', {
                 abstract: true,
                 url: 'forum',

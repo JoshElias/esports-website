@@ -140,7 +140,10 @@ app.post('/upload', routes.frontend.uploadToImgur(fs, imgur));
 /* frontend - requires login */
 app.post('/api/verify', routes.frontend.verify(Schemas));
 
+app.post('/api/deck', routes.frontend.deckEdit(Schemas));
 app.post('/api/deck/add', routes.frontend.deckAdd(Schemas, Util));
+app.post('/api/deck/update', routes.frontend.deckUpdate(Schemas, Util));
+app.post('/api/deck/delete', routes.frontend.deckDelete(Schemas));
 app.post('/api/deck/vote', routes.frontend.deckVote(Schemas));
 app.post('/api/deck/comment/add', routes.frontend.deckCommentAdd(Schemas, mongoose));
 

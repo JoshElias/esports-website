@@ -207,9 +207,45 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.articles = dataArticles.articles;
     }
 ])
-.controller('ProfileDecksCtrl', ['$scope', 'dataDecks',  
-    function ($scope, dataDecks) {
+.controller('ProfileDecksCtrl', ['$scope', 'bootbox', 'DeckService', 'dataDecks',  
+    function ($scope, bootbox, DeckService, dataDecks) {
         $scope.decks = dataDecks.decks;
+        
+        // delete deck
+        $scope.deckDelete = function deleteDeck(deck) {
+            var box = bootbox.dialog({
+                title: 'Delete deck: ' + deck.name + '?',
+                message: 'Are you sure you want to delete the deck <strong>' + deck.name + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            DeckService.deckDelete(deck._id).success(function (data) {
+                                if (data.success) {
+                                    var index = $scope.decks.indexOf(deck);
+                                    if (index !== -1) {
+                                        $scope.decks.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: 'Deck "' + deck.name + '" deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
     }
 ])
 .controller('ProfilePostsCtrl', ['$scope', 'dataPosts',  
@@ -1400,6 +1436,120 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         }
+    }
+])
+.controller('DeckEditCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'data',
+    function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, data) {
+        // redirect back to class pick if no data
+        if (!data || !data.success) { $state.transitionTo('app.home'); return false; }
+        
+        // set default tab page
+        $scope.step = 1;
+        
+        // summernote options
+        $scope.options = {
+          height: 100,
+          toolbar: [
+            ['style', ['style']],
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['format', ['hr']],
+            ['misc', ['undo', 'redo']]
+          ]
+        };
+
+        // load cards
+        $scope.className = data.deck.playerClass;
+        $scope.cards = data.cards;
+        $scope.cards.current = $scope.cards.class;
+
+        // page flipping
+        $scope.pagination = Pagination.new(6);
+        $scope.pagination.perpage = 10;
+        $scope.pagination.results = function () {
+            return ($scope.filtered) ? $scope.filtered.length : $scope.cards.current.length;
+        };
+        
+        // filters
+        $scope.filters = {
+            search: '',
+            mechanics: [],
+            mana: 'all'
+        };
+        
+        $scope.mechanics = Hearthstone.mechanics;
+        $scope.inMechanics = function (mechanic) {
+            return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
+        }
+        $scope.toggleMechanic = function (mechanic) {
+            var index = $scope.filters.mechanics.indexOf(mechanic);
+            if (index === -1) {
+                $scope.filters.mechanics.push(mechanic);
+            } else {
+                $scope.filters.mechanics.splice(index, 1);
+            }
+        }
+        
+        // filter by mechanics
+        $scope.filters.byMechanics = function () {
+            return function (item) {
+                if (!$scope.filters.mechanics.length) { return true; }
+                var matched = 0;
+                for (var i = 0; i < item['mechanics'].length; i++) {
+                    if ($scope.inMechanics(item['mechanics'][i])) matched++;
+                }
+                return (matched === $scope.filters.mechanics.length);
+            }
+        }
+        
+        // filter by mana
+        $scope.filters.byMana = function () {
+            return function (item) {
+                switch ($scope.filters.mana) {
+                    case 'all':
+                        return true;
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                        return (item['cost'] === $scope.filters.mana);
+                    case '7+':
+                        return (item['cost'] >= 7);
+                }
+            }
+        };
+        
+        // deck
+        $scope.deckTypes = Hearthstone.deckTypes;
+        
+        $scope.deck = DeckBuilder.new(data.deck.playerClass, data.deck);
+        
+        // current mulligan
+        $scope.currentMulligan = $scope.deck.mulligans[0];
+        
+        $scope.setMulligan = function (mulligan) {
+            $scope.currentMulligan = mulligan;
+        };
+        
+        $scope.isMulliganSet = function (mulligan) {
+            return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
+        };
+        
+        // save deck
+        $scope.updateDeck = function () {
+            DeckBuilder.updateDeck($scope.deck).success(function (data) {
+                $state.transitionTo('app.decks.deck', { slug: data.slug });
+            }).error(function (data) {
+                console.log(data);
+            });
+        };
+        
     }
 ])
 .controller('ArticlesCtrl', ['$scope', 'ArticleService', 'data', 

@@ -867,6 +867,24 @@ angular.module('app.services', [])
             public: deck.public
         });
     }
+    
+    deckBuilder.updateDeck = function (deck) {
+        return $http.post('/api/deck/update', {
+            _id: deck._id,
+            name: deck.name,
+            deckType: deck.deckType,
+            description: deck.description,
+            contentEarly: deck.contentEarly,
+            contentMid: deck.contentMid,
+            contentLate: deck.contentLate,
+            cards: deck.cards,
+            playerClass: deck.playerClass,
+            arena: deck.arena,
+            mulligans: deck.mulligans,
+            against: deck.against,
+            public: deck.public
+        });
+    }
 
     return deckBuilder;
 })
@@ -889,6 +907,16 @@ angular.module('app.services', [])
                 d.resolve(data);
             });
             return d.promise;
+        },
+        deckEdit: function (slug) {
+            var d = $q.defer();
+            $http.post('/api/deck', { slug: slug }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        deckDelete: function (_id) {
+            return $http.post('/api/deck/delete', { _id: _id });
         },
         addComment: function (deck, comment) {
             return $http.post('/api/deck/comment/add', { deckID: deck._id, comment: comment });
