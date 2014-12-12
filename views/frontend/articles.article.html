@@ -1,0 +1,120 @@
+<div ng-if="article.photos.large && article.photos.large.length" class="container-fluid article-photo-banner" style="background: url('./photos/articles/{{article.photos.large}}') center center no-repeat; background-size: cover;">
+</div>
+<div class="container">
+    
+    <!-- article page -->
+    <div class="article-page">
+        
+        <!-- article right -->
+        <aside class="article-right">
+            
+            <!-- deck -->
+            <div class="article-deck" ng-if="article.deck._id">
+                <div class="db-deck clearfix">
+                    <div class="db-deck-header db-deck-{{article.deck.playerClass.toLowerCase()}}">
+                        <div class="db-arena">
+                            <span ng-show="!article.deck.arena">Contructed</span>
+                            <span ng-show="article.deck.arena">Arena</span>
+                        </div>
+                    </div>
+                    <div class="db-deck-cards">
+                        <div class="db-deck-card" ng-class="{multi:item.qty > 1 || item.card.rarity == 'Legendary'}" ng-repeat="item in article.deck.cards" data-tooltip-img="./photos/cards/{{item.card.photos.large}}" data-tooltip-pos="left" hs-card>
+                            <div class="db-deck-card-mana">{{item.card.cost}}</div>
+                            <div class="db-deck-card-qty" ng-show="item.qty > 1">{{item.qty}}</div>
+                            <div class="db-deck-card-legendary" ng-show="item.card.rarity == 'Legendary'"><i class="fa fa-star"></i></div>
+                            <div class="db-deck-card-photo"><img src="./photos/cards/{{item.card.photos.small}}" alt=""></div>
+                            <div class="db-deck-card-name">{{item.card.name}}</div>
+                        </div>
+                        <div class="db-deck-footer db-deck-{{article.deck.playerClass.toLowerCase()}}">
+                            <div class="db-deck-footer-wrapper">
+                                <div class="db-deck-dust">{{getDust()}}</div>
+                                <div class="dust-bottle-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="./decks/{{article.deck.slug}}" class="btn btn-block btn-blue m-b-sm">VIEW DECK</a>
+            </div>
+            <!-- / deck -->
+            
+            <!-- article related -->
+            <div class="article-related" ng-if="article.related && article.related.length">
+                <h3>RELATED ARTICLES</h3>
+                <ul>
+                    <li ng-repeat="item in article.related"><a href="./articles/{{item.slug.url}}">{{item.title}}</a></li>
+                </ul>
+            </div>
+            <!-- / article related -->
+            
+        </div>
+        <!-- / article right -->
+        
+        <!-- article left -->
+        <div class="article-left">
+
+            <!-- article header -->
+            <div class="article-header">
+                <h1 class="article-title">{{article.title}}</h1>
+                <p>posted by <a href="./user/{{article.author.username}}" class="m-r-sm">@{{article.author.username}}</a><i class="fa fa-clock-o text-muted"></i> {{article.createdDate | date:'mediumDate'}}</p>
+            </div>
+            <!-- / article header -->
+
+            <!-- article content -->
+            <div class="article-content pos-rl" ng-bind-html="article.content"></div>
+            <!-- / article content -->
+
+            <!-- comments -->
+            <div class="article-comments">
+                <h3>COMMENTS</h3>
+                <div class="comments">
+                    <p class="no-comments" ng-if="!deck.comments || !deck.comments.length">There are currently no comments on this article.</p>
+                    <div class="comment" ng-repeat="comment in article.comments">
+                        <div class="avatar">
+                            <a href="./user/{{comment.author.username}}"><img src="./img/profile.jpg" alt="" /></a>
+                        </div>
+                        <div class="panel">
+                            <div class="panel-heading pos-rl">
+                                <span class="arrow left"></span>
+                                <a href="./user/{{comment.author.username}}">@{{comment.author.username}}</a>
+                                <div class="pull-right">
+                                    <span class="fa fa-clock-o text-muted"></span>
+                                    <span class="text-muted" am-time-ago="comment.createdDate"></span>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                {{comment.comment}}
+                            </div>
+                            <div class="panel-footer clearfix">
+                                <div class="pull-right">
+                                    <div class="btn-group">
+                                        <button class="btn-vote-down" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-thumbs-down"></i></button>
+                                        <div class="vote-count" ng-class="{'vote-count-neg':comment.votesCount < 1, 'vote-count-pos': comment.votesCount > 0}"><span ng-show="comment.votesCount > 0">+</span>{{comment.votesCount}}</div>
+                                        <button class="btn-vote-up" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-thumbs-up"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="comment-add">
+                        <div class="avatar">
+                            <a href="./user/{{app.user.getUsername()}}"><img src="./img/profile.jpg" alt="" /></a>
+                        </div>
+                        <form class="form-horizontal" name="commentForm" novalidate>
+                            <div class="input-group">
+                                <input type="text" class="form-control" ng-model="comment.comment" placeholder="ADD A COMMENT" required>
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-default" ng-disabled="commentForm.$invalid" ng-click="commentPost()">POST</button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- / commments -->
+
+        </div>
+        <!-- / article left -->
+
+    </aside>
+    <!-- / article page -->
+</div>

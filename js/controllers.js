@@ -1627,6 +1627,20 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+.controller('ArticleCtrl', ['$scope', 'data', 
+    function ($scope, data) {
+        $scope.article = data.article;
+        
+        // deck dust
+        $scope.getDust = function () {
+            var dust = 0;
+            for (var i = 0; i < $scope.article.deck.cards.length; i++) {
+                dust += $scope.article.deck.cards[i].qty * $scope.article.deck.cards[i].card.dust;
+            }
+            return dust;
+        };
+    }
+])
 .controller('DecksCtrl', ['$scope', '$state', 'DeckService', 'data', 
     function ($scope, $state, DeckService, data) {
         // decks

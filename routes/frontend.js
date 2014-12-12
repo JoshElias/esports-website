@@ -901,6 +901,45 @@ module.exports = {
             });
         };
     },
+    article: function (Schemas) {
+        return function (req, res, next) {
+            var slug = req.body.slug;
+            
+            function getArticle (callback) {
+                Schemas.Article.findOne({ 'slug.url': slug })
+                .lean()
+                .populate([{
+                        path: 'author',
+                        select: 'username -_id'
+                    },{
+                        path: 'related',
+                        select: 'title slug.url -_id'
+                }])
+                .exec(function (err, article) {
+                    if (err || !article) { return res.json({ success: false }); }
+                    return getDeck(article, callback);
+                });
+            }
+            
+            function getDeck (article, callback) {
+                Schemas.Deck.findOne({ _id: article.deck })
+                .lean()
+                .populate([{
+                        path: 'cards.card'
+                }])
+                .exec(function (err, deck) {
+                    if (!err && deck) {
+                        article.deck = deck;
+                    }
+                    return callback(article);
+                });
+            }
+            
+            getArticle(function (article) {
+                return res.json({ success: true, article: article });
+            });
+        };
+    },
     decks: function (Schemas) {
         return function (req, res, next) {
             var klass = req.body.klass || 'all',

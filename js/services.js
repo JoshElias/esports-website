@@ -71,6 +71,13 @@ angular.module('app.services', [])
                 d.resolve(data);
             });
             return d.promise;
+        },
+        getArticle: function (slug) {
+            var d = $q.defer();
+            $http.post('/article', { slug: slug }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
         }
     };
 })

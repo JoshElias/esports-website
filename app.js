@@ -126,6 +126,7 @@ app.post('/profile/:username/articles', routes.frontend.profileArticles(Schemas)
 app.post('/profile/:username/decks', routes.frontend.profileDecks(Schemas));
 
 app.post('/articles', routes.frontend.articles(Schemas));
+app.post('/article', routes.frontend.article(Schemas));
 
 app.post('/decks', routes.frontend.decks(Schemas));
 app.post('/deck', routes.frontend.deck(Schemas));

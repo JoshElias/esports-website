@@ -144,6 +144,21 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.articles.article', {
+                url: '/:slug',
+                views: {
+                    articles: {
+                        templateUrl: 'views/frontend/articles.article.html',
+                        controller: 'ArticleCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'ArticleService', function ($stateParams, ArticleService) {
+                                var slug = $stateParams.slug;
+                                return ArticleService.getArticle(slug);
+                            }]
+                        }
+                    }
+                }
+            })
             .state('app.decks', {
                 abstract: true,
                 url: 'decks',

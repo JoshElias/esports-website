@@ -390,6 +390,24 @@ h1.section-title { margin: 0; font-family: sneakersmediumitalic; color: #FFF; fo
 .section-articles { height: 148px; background: url('../img/articles-banner.jpg') top right no-repeat; }
 .section-decks { height: 148px; background: url('../img/decks-banner.jpg') top right no-repeat; }
 
+/* article */
+.article-photo-banner { height: 300px; border-bottom: 1px solid #083f7d; }
+.article-page { }
+.article-comments h3,
+.article-related h3 { color: #2766ad; font-family: sneakersmediumitalic; }
+
+aside { width: 300px !important; }
+.article-left {  }
+.article-right { float: right; margin-left: 20px; }
+
+.article-related { margin-bottom: 20px; }
+.article-related ul { margin: 0; padding: 0; }
+.article-related ul li { list-style: none; padding-bottom: 10px; }
+
+
+h1.article-title { margin: 10px 0 0 0; color: #2766ad; font-family: sneakersmediumitalic; }
+.article-comments { margin: 20px 0; }
+
 /* wrappers */
 .wrapper-xs { padding: 5px; }
 .wrapper-sm { padding: 10px; }
