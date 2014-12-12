@@ -397,10 +397,10 @@ h1.section-title { margin: 0; font-family: sneakersmediumitalic; color: #FFF; fo
 .article-related h3 { color: #2766ad; font-family: sneakersmediumitalic; }
 
 aside { width: 300px !important; }
-.article-left {  }
-.article-right { float: right; margin-left: 20px; }
+.article-left { padding-right: 320px; }
+.article-right { float: right; margin-top: 10px; }
 
-.article-related { margin-bottom: 20px; }
+.article-related { margin-top: 10px; margin-bottom: 20px; }
 .article-related ul { margin: 0; padding: 0; }
 .article-related ul li { list-style: none; padding-bottom: 10px; }
 
