@@ -1627,9 +1627,13 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('ArticleCtrl', ['$scope', 'data', 
-    function ($scope, data) {
+.controller('ArticleCtrl', ['$scope', '$sce', 'data', 
+    function ($scope, $sce, data) {
         $scope.article = data.article;
+        
+        $scope.getContent = function () {
+            return $sce.trustAsHtml($scope.article.content);
+        };
         
         // deck dust
         $scope.getDust = function () {
