@@ -1128,7 +1128,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffaf4b', end
 .db-mulligan-instructions { height: 200px !important; resize: none; }
 
 ul.player-class { margin: 0; padding: 0px; }
-ul.player-class li { list-style: none; float: left; text-align: center; width: 80px; margin: 0 0 20px 0; }
+ul.player-class li { list-style: none; display: inline-block; text-align: center; width: 80px; margin: 0 0 20px 0; }
 
 ul.player-class li a { display: block; padding-top: 10px; height: 113px; }
 ul.player-class li.active a { background: url('../img/class-sprites-active.png') center center no-repeat; color: #FFF; }
@@ -1228,7 +1228,7 @@ ul.db-against li .player-class-icon.active { margin-top: -1px; margin-bottom: -1
 
 .deck h5 { font-size: 20px; }
 
-.deck .deck-right { position: absolute; right: 0px; top: 0px; }
+.deck .deck-right { float: right; }
 .deck .deck-left { padding-right: 320px; }
 
 .deck .deck-content { position: relative; }
@@ -1244,7 +1244,7 @@ ul.db-against li .player-class-icon.active { margin-top: -1px; margin-bottom: -1
 .deck-mulligan-details p { color: #FFF; }
 
 .deck-mulligan-cards { position: relative; width: 100%; min-height: 200px; text-align: center; }
-.deck-mulligan-cards a { margin: 0 auto; display: block; position: absolute; left: 0; right: 0; width: 144px; height: 200px; -webkit-transition: left .3s ease-out, right .3s ease-out; transition: left .3s ease-out, right .3s ease-out; }
+.deck-mulligan-cards a { margin: 0 auto; display: block; position: absolute; left: 0; right: 0; width: 144px; height: 200px; }
 .deck-mulligan-cards img { width: 144px; height: 200px; }
 
 .deck-against { margin: 20px 0; padding: 20px; background: #2766ad; }

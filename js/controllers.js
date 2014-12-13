@@ -1879,7 +1879,17 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.isMulliganSet = function (mulligan) {
-            return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
+            return (mulligan.withCoin.cards.length > 0 || mulligan.withCoin.instructions.length > 0 || mulligan.withoutCoin.cards.length > 0 || mulligan.withoutCoin.instructions.length > 0);
+        };
+        
+        $scope.anyMulliganSet = function () {
+            var mulligans = $scope.deck.mulligans;
+            for (var i = 0; i < mulligans.length; i++) {
+                if ($scope.isMulliganSet(mulligans[i]) === true) {
+                    return true;
+                }
+            }
+            return false;
         };
         
         $scope.getMulliganInstructions = function () {
@@ -1898,6 +1908,28 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.cardRight = function () {
             return $scope.getMulliganCards().length * 80 / 2;
+        };
+        
+        // strong / weak
+        $scope.hasStrong = function () {
+            var strong = $scope.deck.against.strong;
+            for (var i = 0; i < strong.length; i++) {
+                if (strong[i].isStrong) {
+                    return true;
+                }
+            }
+            
+            return false;
+        };
+        $scope.hasWeak = function () {
+            var weak = $scope.deck.against.weak;
+            for (var i = 0; i < weak.length; i++) {
+                if (weak[i].isWeak) {
+                    return true;
+                }
+            }
+            
+            return false;
         };
         
         // charts

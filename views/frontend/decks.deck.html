@@ -89,9 +89,9 @@
                     <!-- / deck header -->
                     
                     <!-- deck-mulligans -->
-                    <div class="deck-mulligans">
+                    <div class="deck-mulligans" ng-if="anyMulliganSet()">
                         <h3>MULLIGANS</h3>
-                        <ul class="player-class clearfix">
+                        <ul class="player-class">
                             <li ng-repeat="mulligan in deck.mulligans" ng-class="{active:currentMulligan === mulligan}">
                                 <a href="#" ng-click="setMulligan(mulligan)">
                                     <span class="player-class-icon {{mulligan.klass.toLowerCase()}}" ng-class="{active:isMulliganSet(mulligan)}"></span>
@@ -106,17 +106,16 @@
                             </li>
                         </ul>
                         <div class="deck-mulligan-details">
-                            <div class="row">
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <h3>{{currentMulligan.klass.toUpperCase()}} MULLIGAN</h3>
-                                    <p><span ng-repeat="card in getMulliganCards()"><span ng-show="$last && getMulliganCards() > 1"> and </span>{{card.name}}<span ng-show="!$last">, </span></span></p>
-                                    <p>{{getMulliganInstructions()}}</p>
-                                </div>
-                                <div class="col-xs-12 col-sm-12 col-md-6">
-                                    <div class="deck-mulligan-cards">
-                                        <div class="deck-mulligan-card" ng-repeat="card in getMulliganCards()">
-                                            <a href="#" data-tooltip-img="./photos/cards/{{card.photos.large}}" style="left: -{{cardLeft($index)}}px; right: -{{cardRight()}}px; z-index: {{getMulliganCards().length - $index}};" hs-card><img src="./photos/cards/{{card.photos.medium}}" alt=""></a>
-                                        </div>
+                            <div>
+                                <h3>{{currentMulligan.klass.toUpperCase()}} MULLIGAN</h3>
+                                <p ng-if="getMulliganCards().length"><span ng-repeat="card in getMulliganCards()"><span ng-if="$last && getMulliganCards().length > 1"> and </span>{{card.name}}<span ng-if="!$last">, </span></span></p>
+                                <p ng-if="getMulliganInstructions().length">{{getMulliganInstructions()}}</p>
+                                <p ng-if="!getMulliganCards().length">There is no mulligan set for <Strong>{{currentMulligan.klass}}</Strong> <span ng-if="coin">with</span><span ng-if="!coin">without</span> the coin.</p>
+                            </div>
+                            <div ng-if="getMulliganCards().length">
+                                <div class="deck-mulligan-cards">
+                                    <div class="deck-mulligan-card" ng-repeat="card in getMulliganCards()">
+                                        <a href="#" data-tooltip-img="./photos/cards/{{card.photos.large}}" style="left: -{{cardLeft($index)}}px; right: -{{cardRight()}}px; z-index: {{getMulliganCards().length - $index}};" hs-card><img src="./photos/cards/{{card.photos.medium}}" alt=""></a>
                                     </div>
                                 </div>
                             </div>
@@ -130,33 +129,32 @@
                     <!-- / deck description -->
                     
                     <!-- deck-against -->
-                    <div class="deck-against">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-6">
-                                <h3>STRONG AGAINST</h3>
-                                <ul class="player-class clearfix">
-                                    <li class="active" ng-repeat="strong in deck.against.strong" ng-show="strong.isStrong">
-                                        <a href="#">
-                                            <span class="player-class-icon active {{strong.klass.toLowerCase()}}"></span>
-                                            <span class="player-class-text">{{strong.klass.toUpperCase()}}</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-xs-12 col-sm-6">
-                                <h3>WEAK AGAINST</h3>
-                                <ul class="player-class clearfix">
-                                    <li class="active" ng-repeat="weak in deck.against.weak" ng-show="weak.isWeak">
-                                        <a href="#">
-                                            <span class="player-class-icon active {{weak.klass.toLowerCase()}}"></span>
-                                            <span class="player-class-text">{{weak.klass.toUpperCase()}}</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                    <div class="deck-against" ng-if="hasStrong() || hasWeak() || deck.against.instructions.length">
+                        <div>
+                            <h3>STRONG AGAINST</h3>
+                            <ul class="player-class" ng-if="hasStrong()">
+                                <li class="active" ng-repeat="strong in deck.against.strong" ng-show="strong.isStrong">
+                                    <a href="#">
+                                        <span class="player-class-icon active {{strong.klass.toLowerCase()}}"></span>
+                                        <span class="player-class-text">{{strong.klass.toUpperCase()}}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <p ng-if="!hasStrong()">The deck has no classes flagged for strong against.</p>
                         </div>
-                        
-                        <p>{{deck.against.instructions}}</p>
+                        <div>
+                            <h3>WEAK AGAINST</h3>
+                            <ul class="player-class" ng-if="hasWeak()">
+                                <li class="active" ng-repeat="weak in deck.against.weak" ng-show="weak.isWeak">
+                                    <a href="#">
+                                        <span class="player-class-icon active {{weak.klass.toLowerCase()}}"></span>
+                                        <span class="player-class-text">{{weak.klass.toUpperCase()}}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <p ng-if="!hasWeak()">The deck has no classes flagged for weak against.</p>
+                        </div>
+                        <p ng-if="deck.against.instructions.length">{{deck.against.instructions}}</p>
                     </div>
                     <!-- / deck-against -->
                     
