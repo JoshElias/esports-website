@@ -45,6 +45,10 @@ body { background: #FFF; font-family: 'Source Sans Pro', sans-serif; }
 .app-footer ul li a { color: #9eb7ef; text-decoration: none; }
 .app-footer ul li a:hover { text-decoration: underline; }
 
+.social {  }
+.social a { float: left; margin-right: 10px; display: block; color: #FFF; width: 30px; height: 30px; font-size: 30px; opacity: .7; }
+.social a:hover { opacity: 1; }
+
 /* nav bar */
 .navbar-tempo {
     margin: 0px;
@@ -1338,15 +1342,26 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 
 /* forum post */
 .forum-post { margin-top: 50px; position: relative; padding-right: 320px; }
-.forum-post .author { position: absolute; top: 0px; right: 0px; width: 300px; border: 1px solid #ddd; padding: 40px 10px 10px 10px; background: #FFF; }
+.forum-post .forum-post-right { position: absolute; top: 0px; right: 0px; width: 300px; }
+.forum-post .author { width: 300px; border: 1px solid #ddd; padding: 40px 10px 10px 10px; background: #FFF; }
 .forum-post .author a.avatar { position: absolute; top: -30px; right: 120px; width: 60px; height: 60px; border-radius: 50%; }
 .forum-post .author a.avatar img { width: 60px; height: 60px; border: 1px solid #ddd; border-radius: 50%; background: #FFF; z-index: 2; }
 .forum-post .author .author-info { text-align: center; }
 
 .forum-post-content { position: relative; border: 1px solid #ddd; padding: 30px; background: #FFF; }
-.forum-post-content h1.forum-post-title { margin-top: 0px; }
+.forum-post-content h1.forum-post-title { margin-top: 0px; color: #2766ad; font-family: sneakersmediumitalic; }
 .forum-post-content em { font-style: normal; color: #555; }
 .forum-post-content .forum-post-content-html { margin-top: 20px; position: relative; }
 
+.forum-post-comments { margin-top: 20px; }
+.forum-post-comments h3 { color: #2766ad; font-family: sneakersmediumitalic; }
+
 /* forum post */
 .note-editable { background: #FFF; }
+
+/* ads */
+.ad-square { margin: 20px 0; width: 300px; height: 300px; }
+.ad-square img { width: 300px; height: 300px; }
+
+.ad-banner { margin: 20px auto; width: 600px; height: 146px; }
+.ad-banner img { width: 600px; height: 146px; }

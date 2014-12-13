@@ -1340,21 +1340,24 @@ module.exports = {
     },
     forumPost: function (Schemas) {
         return function (req, res, next) {
-            var threadID,
+            var thread,
                 threadSlug = req.body.thread,
                 post,
                 postSlug = req.body.post;
             
             function getThread (callback) {
-                Schemas.ForumThread.findOne({ 'slug.url': threadSlug }).exec(function (err, thread) {
-                    if (err || !thread) { return res.json({ success: false }); }
-                    threadID = thread._id.toString();
+                Schemas.ForumThread.findOne({ 'slug.url': threadSlug })
+                .lean()
+                .select('_id title slug')
+                .exec(function (err, results) {
+                    if (err || !results) { return res.json({ success: false }); }
+                    thread = results;
                     return callback();
                 });
             }
             
             function getPost (callback) {
-                Schemas.ForumPost.findOneAndUpdate({ 'slug.url': postSlug, thread: threadID }, { $inc: { views: 1 } })
+                Schemas.ForumPost.findOneAndUpdate({ 'slug.url': postSlug, thread: thread._id }, { $inc: { views: 1 } })
                 .populate([
                     {
                         path: 'author',
@@ -1385,7 +1388,7 @@ module.exports = {
             
             getThread(function () {
                 getPost(function () {
-                    return res.json({ success: true, post: post });
+                    return res.json({ success: true, thread: thread, post: post });
                 });
             });
         };

@@ -2172,6 +2172,7 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'data', 
     function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, data) {
         $scope.post = data.post;
+        $scope.thread = data.thread;
         
         var defaultComment = {
             comment: ''
@@ -2199,30 +2200,15 @@ angular.module('app.controllers', ['ngCookies'])
                     if (data.success) {
                         $scope.post.comments.push(data.comment);
                         $scope.comment.comment = '';
+                        updateVotes();
                     }
                 });
             }
         };
         
-        $scope.commentReply = function (comment) {
-            if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
-                    $scope.commentReply();
-                };
-            } else {
-                box = bootbox.dialog({
-                    title: 'Reply',
-                    message: $compile('<div comment-reply-form></div>')($scope)
-                });
-            }
-        };
-        
-        updateVotes();
+        if ($scope.app.user.isLogged()) {
+            updateVotes();
+        }
         function updateVotes() {
             $scope.post.comments.forEach(checkVotes);
             

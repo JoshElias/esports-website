@@ -6,7 +6,7 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <a href="#" class="profile-avatar profile-avatar-lg pull-left">
-                                <img src="./photos/users/{{user._id}}/profile.png" class="img-circle">
+                                <img src="./img/profile.jpg" class="img-circle">
                             </a>
                             <div class="profile-bio">
                                 <div class="m-l-sm">
@@ -39,7 +39,7 @@
                                 <li ng-class="{active:$state.includes('app.profile.activity')}"><a ui-sref="app.profile.activity">Activity</a></li>
                                 <li ng-class="{active:$state.includes('app.profile.articles')}"><a ui-sref="app.profile.articles">Articles</a></li>
                                 <li ng-class="{active:$state.includes('app.profile.decks')}"><a ui-sref="app.profile.decks">Decks</a></li>
-                                <li ng-class="{active:$state.includes('app.profile.posts')}"><a ui-sref="app.profile.posts">Forum Posts</a></li>
+                                <li ng-if="false" ng-class="{active:$state.includes('app.profile.posts')}"><a ui-sref="app.profile.posts">Forum Posts</a></li>
                             </ul>
                         </div>
                     </div>

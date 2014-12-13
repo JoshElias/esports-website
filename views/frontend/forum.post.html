@@ -1,13 +1,18 @@
 <div class="container m-b-md">
     <div class="forum-thread-title clearfix">
-        <a href="./forum/{{post.thread.slug.url}}/add" class="btn btn-blue pull-right">Write a Post</a>
+        <a href="./forum/{{thread.slug.url}}/add" class="btn btn-blue pull-right">Write a Post</a>
         <h1>{{thread.title}}</h1>
     </div>
     <div class="forum-post clearfix">
-        <div class="author">
-            <a href="#" class="avatar"><img src="./img/profile.jpg" alt=""></a>
-            <div class="author-info">
-                <a href="./user/{{post.author.username}}">@{{post.author.username}}</a>
+        <div class="forum-post-right">
+            <div class="author">
+                <a href="#" class="avatar"><img src="./img/profile.jpg" alt=""></a>
+                <div class="author-info">
+                    <a href="./user/{{post.author.username}}">@{{post.author.username}}</a>
+                </div>
+            </div>
+            <div class="ad-square">
+                <a href="http://www.kinguin.net/"><img src="./img/kinguin-square.png" alt="Kinguin"></a>
             </div>
         </div>
         <div class="forum-post-content">
@@ -16,7 +21,7 @@
             <div class="forum-post-content-html clearfix" ng-bind-html="post.getContent()"></div>
         </div>
         <div class="forum-post-comments">
-            <h3>Comments</h3>
+            <h3>COMMENTS</h3>
             <div class="comments">
                 <p class="no-comments" ng-if="!post.comments || !post.comments.length">There are currently no comments on this post.</p>
                 <div class="comment" ng-repeat="comment in post.comments">
