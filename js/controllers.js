@@ -1872,6 +1872,11 @@ angular.module('app.controllers', ['ngCookies'])
         
         // mulligans
         $scope.coin = true;
+        
+        $scope.toggleCoin = function () {
+            $scope.coin = !$scope.coin;
+        }
+        
         $scope.currentMulligan = $scope.deck.mulligans[0] || false;
 
         $scope.setMulligan = function (mulligan) {

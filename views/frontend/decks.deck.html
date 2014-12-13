@@ -99,9 +99,9 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#" ng-click="coin = !coin">
+                                <a href="#" ng-click="toggleCoin()">
                                     <span class="player-class-icon coin-icon" ng-class="{active:coin}"></span>
-                                    <span class="player-class-text"><span ng-show="!coin">No </span>Coin</span>
+                                    <span class="player-class-text"><span ng-if="!coin">No </span>Coin</span>
                                 </a>
                             </li>
                         </ul>
