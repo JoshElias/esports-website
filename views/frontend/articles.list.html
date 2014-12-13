@@ -127,8 +127,8 @@
             </div>
         </div>
         <!-- / article -->
-        <p ng-show="!articles.length && klass === 'all'">There are curently no articles yet.</p>
-        <p ng-show="!articles.length && klass !== 'all'">There are curently no articles under <strong>{{klass}}</strong> yet.</p>
+        <p ng-if="!articles.length && klass === 'all'">There are curently no articles yet.</p>
+        <p ng-if="!articles.length && klass !== 'all'">There are curently no articles under <strong>{{klass}}</strong> yet.</p>
     </div>
     <!-- / articles -->
     
