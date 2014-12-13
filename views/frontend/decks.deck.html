@@ -161,13 +161,19 @@
                     <!-- / deck-against -->
                     
                     <!-- deck-gameplay -->
-                    <h3>GAMEPLAY DETAILS</h3>
-                    <H5>EARLY GAME</H5>
-                    <p class="pos-rl" ng-bind-html="deck.contentEarly"></p>
-                    <H5>MID GAME</H5>
-                    <p class="pos-rl" ng-bind-html="deck.contentMid"></p>
-                    <H5>LATE GAME</H5>
-                    <p class="pos-rl" ng-bind-html="deck.contentLate"></p>
+                    <h3 ng-if="deck.contentEarly.length || deck.contentMid.length || deck.contentLate.length">GAMEPLAY DETAILS</h3>
+                    <div ng-if="deck.contentEarly.length">
+                        <h5>EARLY GAME</h5>
+                        <p class="pos-rl" ng-bind-html="getContent(deck.contentEarly)"></p>
+                    </div>
+                    <div ng-if="deck.contentMid.length">
+                        <h5>MID GAME</h5>
+                        <p class="pos-rl" ng-bind-html="getContent(deck.contentMid)"></p>
+                    </div>
+                    <div ng-if="deck.contentLate.length">
+                        <h5>LATE GAME</h5>
+                        <p class="pos-rl" ng-bind-html="getContent(deck.contentLate)"></p>
+                    </div>
                     <!-- / deck-gameplay -->
                     
                     <!--
@@ -190,7 +196,7 @@
                     <div class="deck-comments">
                         <h3>COMMENTS</h3>
                         <div class="comments">
-                            <p class="no-comments" ng-show="!deck.comments || !deck.comments.length">There are currently no comments on this deck.</p>
+                            <p class="no-comments" ng-if="!deck.comments || !deck.comments.length">There are currently no comments on this deck.</p>
                             <div class="comment" ng-repeat="comment in deck.comments">
                                 <div class="avatar">
                                     <a href="./user/{{comment.author.username}}"><img src="./img/profile.jpg" alt="" /></a>
@@ -200,27 +206,24 @@
                                         <span class="arrow left"></span>
                                         <a href="./user/{{comment.author.username}}">@{{comment.author.username}}</a>
                                         <div class="pull-right">
+                                            <div class="comment-votes m-l-sm pull-right">
+                                                <div class="vote-count vote-small"><span ng-if="comment.votesCount > 0">+</span>{{comment.votesCount}}</div>
+                                                <div class="btn-group">
+                                                    <button class="btn-vote-up vote-small" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-plus"></i></button>
+                                                    <button class="btn-vote-down vote-small" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-minus"></i></button>
+                                                </div>
+                                            </div>
                                             <span class="fa fa-clock-o text-muted"></span>
                                             <span class="text-muted" am-time-ago="comment.createdDate"></span>
                                         </div>
                                     </div>
-                                    <div class="panel-body">
-                                        {{comment.comment}}
-                                    </div>
-                                    <div class="panel-footer clearfix">
-                                        <div class="pull-right">
-                                            <div class="btn-group">
-                                                <button class="btn-vote-down" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-thumbs-down"></i></button>
-                                                <div class="vote-count" ng-class="{'vote-count-neg':comment.votesCount < 1, 'vote-count-pos': comment.votesCount > 0}"><span ng-show="comment.votesCount > 0">+</span>{{comment.votesCount}}</div>
-                                                <button class="btn-vote-up" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-thumbs-up"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div class="panel-body">{{comment.comment}}</div>
                                 </div>
                             </div>
                             <div class="comment-add">
                                 <div class="avatar">
-                                    <a href="./user/{{app.user.getUsername()}}"><img src="./img/profile.jpg" alt="" /></a>
+                                    <a href="./user/{{app.user.getUsername()}}" ng-if="app.user.isLogged()"><img src="./img/profile.jpg" alt="" /></a>
+                                    <a href="#" ng-if="!app.user.isLogged()"><img src="./img/profile.jpg" alt="" /></a>
                                 </div>
                                 <form class="form-horizontal" name="commentForm" novalidate>
                                     <div class="input-group">

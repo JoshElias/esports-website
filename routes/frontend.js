@@ -913,11 +913,24 @@ module.exports = {
                         select: 'username -_id'
                     },{
                         path: 'related',
-                        select: 'title slug.url -_id'
+                        select: 'title slug.url -_id',
+                    },{
+                        path: 'comments',
+                        select: '_id author comment createdDate votesCount votes'
                 }])
                 .exec(function (err, article) {
                     if (err || !article) { return res.json({ success: false }); }
-                    return getDeck(article, callback);
+                    
+                    Schemas.Comment.populate(article.comments, {
+                        path: 'author',
+                        select: 'username'
+                    }, function (err, comments) {
+                        if (err || !comments) { return res.json({ success: false }); }
+                        article.comments = comments;
+                        
+                        return getDeck(article, callback);
+                    });
+                    
                 });
             }
             
@@ -937,6 +950,103 @@ module.exports = {
             
             getArticle(function (article) {
                 return res.json({ success: true, article: article });
+            });
+        };
+    },
+    articleCommentAdd: function (Schemas, mongoose) {
+        return function (req, res, next) {
+            var articleID = req.body.articleID,
+                userID = req.user._id,
+                comment = req.body.comment,
+                newCommentID = mongoose.Types.ObjectId();
+            
+            // new comment
+            var newComment = {
+                _id: newCommentID,
+                author: userID,
+                comment: comment.comment,
+                votesCount: 1,
+                votes: [{
+                    userID: userID,
+                    direction: 1
+                }],
+                replies: [],
+                createdDate: new Date().toISOString()
+            };
+            
+            // create
+            function createComment (callback) {
+                var newCmt = new Schemas.Comment(newComment);
+                newCmt.save(function (err, data) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    return callback();
+                });
+            }
+            
+            // add to article
+            function addComment (callback) {
+                Schemas.Article.update({ _id: articleID }, { $push: { comments: newCommentID } }, function (err) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    return callback();
+                });
+            }
+            
+            // get new comment
+            function getComment (callback) {
+                Schemas.Comment.populate(newComment, {
+                    path: 'author',
+                    select: 'username'
+                }, function (err, comment) {
+                    if (err || !comment) { return res.json({ success: false }); }
+                        return callback(comment);
+                });
+            }
+            
+            // actions
+            createComment(function () {
+                addComment(function () {
+                    getComment(function (comment) {
+                        return res.json({
+                            success: true,
+                            comment: comment
+                        });
+                    });
+                });
+            });
+        };
+    },
+    articleVote: function (Schemas) {
+        return function (req, res, next) {
+            var id = req.body._id,
+                direction = req.body.direction;
+            
+            Schemas.Article.findOne({ _id: id }).select('author votesCount votes').exec(function (err, article) {
+                if (err || !article || article.author.toString() === req.user._id) { return res.json({ success: false }); }
+                var vote = article.votes.filter(function (vote) {
+                    if (vote.userID.toString() === req.user._id) {
+                        return vote;
+                    }
+                })[0];
+                if (vote) {
+                    if (vote.direction !== direction) {
+                        vote.direction = direction;
+                        article.votesCount = (direction === 1) ? article.votesCount + 2 : article.votesCount - 2;
+                    }
+                } else {
+                    article.votes.push({
+                        userID: req.user._id,
+                        direction: direction
+                    });
+                    article.votesCount += direction;
+                }
+                
+                article.save(function (err) {
+                    if (err) { return res.json({ success: false }); }
+                    return res.json({
+                        success: true,
+                        votesCount: article.votesCount
+                    });
+                });
             });
         };
     },

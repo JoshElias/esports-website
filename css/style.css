@@ -404,8 +404,10 @@ aside { width: 300px !important; }
 .article-related ul { margin: 0; padding: 0; }
 .article-related ul li { list-style: none; padding-bottom: 10px; }
 
+.article-header { position: relative; margin-top: 20px; }
+.article-votes { float: right; margin: 0 0 20px 20px; }
 
-h1.article-title { margin: 10px 0 0 0; color: #2766ad; font-family: sneakersmediumitalic; }
+h1.article-title { margin: 0; color: #2766ad; font-family: sneakersmediumitalic; }
 .article-comments { margin: 20px 0; }
 
 /* wrappers */
@@ -1188,12 +1190,26 @@ ul.db-against li .player-class-icon.active { margin-top: -1px; margin-bottom: -1
 
 .vote-count { border: 1px solid #0d437f; background: #2766ad; color: #FFF; font-size: 14px; font-weight: bold; }
 .vote-count.vote-large { border-top-left-radius: 4px; border-top-right-radius: 4px; width: 61px; height: 40px; line-height: 38px; text-align: center; }
+.vote-count.vote-small { float: left; border-top-left-radius: 4px; border-bottom-left-radius: 4px; height: 20px; line-height: 18px; padding: 0 10px; vertical-align: top; }
 
 .btn-vote-down,
-.btn-vote-up { margin-top: -1px; padding: 0; float: left; width: 31px; height: 30px; line-height: 28px; font-size: 14px; text-align: center; background: #FFF; outline: none; }
+.btn-vote-up { padding: 0; float: left; width: 31px; font-size: 14px; text-align: center; background: #FFF; outline: none; }
 
-.btn-vote-down { margin-left: -1px; border: 1px solid #0d437f; color: #e84c3d; border-bottom-right-radius: 4px; }
-.btn-vote-up { border: 1px solid #0d437f; color: #82bf57; border-bottom-left-radius: 4px; }
+.btn-vote-down.vote-large,
+.btn-vote-up.vote-large { margin-top: -1px; height: 30px; line-height: 28px; }
+
+.btn-vote-down.vote-small,
+.btn-vote-up.vote-small { height: 20px; line-height: 18px; vertical-align: top; }
+
+.btn-vote-down { margin-left: -1px; border: 1px solid #0d437f; color: #e84c3d; }
+.btn-vote-down.vote-large { border-bottom-right-radius: 4px; }
+.btn-vote-down.vote-small { border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
+
+.btn-vote-up { border: 1px solid #0d437f; color: #82bf57; }
+.btn-vote-up.vote-large { border-bottom-left-radius: 4px; }
+
+.btn-vote-down.vote-large,
+.btn-vote-up.vote-large { margin-top: -1px; height: 30px; line-height: 28px; }
 
 .btn-vote-down.active { color: #FFF; background: #e84c3d; }
 .btn-vote-up.active { color: #FFF; background: #82bf57; }
@@ -1252,11 +1268,11 @@ ul.db-against li .player-class-icon.active { margin-top: -1px; margin-bottom: -1
 .comment-add { margin-left: 21px; padding-left: 30px; position: relative; }
 .comment-add .avatar { position: absolute; top: 0px; left: -17px; width: 34px; height: 34px; border-radius: 50%; }
 .comment-add .avatar img { width: 34px; height: 34px; background: #F2F2F2; border: 1px solid #2766ad; }
-.comment-add .panel { border-radius: 0px; border: 1px solid #ddd; }
-.comment-add .panel-heading { color: #555; background-color: #f5f5f5; border-bottom: 1px solid #ddd; }
-.comment-add .panel-body { padding: 0px; }
 .comment-add .form-group { margin-bottom: 0px; }
 .comment-add textarea { height: 150px; border-radius: 0px; border-color: transparent; resize: vertical; }
+
+.comment-votes,
+.comment-votes .btn-group { vertical-align: top; }
 
 .no-comments { margin: 0 0 20px 0; }
 

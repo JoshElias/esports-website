@@ -1627,9 +1627,11 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('ArticleCtrl', ['$scope', '$sce', 'data', 
-    function ($scope, $sce, data) {
+.controller('ArticleCtrl', ['$scope', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'UserService', 'ArticleService', 'AuthenticationService', 'VoteService',  
+    function ($scope, $sce, data, $state, $compile, $window, bootbox, UserService, ArticleService, AuthenticationService, VoteService) {
         $scope.article = data.article;
+        
+        console.log(data.article.comments);
         
         $scope.getContent = function () {
             return $sce.trustAsHtml($scope.article.content);
@@ -1643,6 +1645,147 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return dust;
         };
+        
+        // voting
+        $scope.voteDown = function (article) {
+            vote(-1, article);
+        };
+        
+        $scope.voteUp = function (article) {
+            vote(1, article)       
+        };
+        
+        var box,
+            callback;
+        
+        if ($scope.app.user.isLogged()) {
+            updateVotes();
+        }
+            
+        function updateVotes() {
+            checkVotes($scope.article);
+
+            function checkVotes (article) {
+                var vote = article.votes.filter(function (vote) {
+                    return ($scope.app.user.getUserID() === vote.userID);
+                })[0];
+
+                if (vote) {
+                    article.voted = vote.direction;
+                }
+            }
+        }
+
+        function vote(direction, article) {
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    vote(direction, article);
+                };
+            } else {
+                if (article.author._id === $scope.app.user.getUserID()) {
+                    bootbox.alert("You can't vote for your own content.");
+                    return false;
+                }
+                VoteService.voteArticle(direction, article).then(function (data) {
+                    if (data.success) {
+                        article.voted = direction;
+                        article.votesCount = data.votesCount;
+                    }
+                });
+            }
+        };
+        
+        // comments
+        var defaultComment = {
+            comment: ''
+        };
+        $scope.comment = angular.copy(defaultComment);
+        
+        $scope.commentPost = function () {
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    $scope.commentPost();
+                };
+            } else {
+                ArticleService.addComment($scope.article, $scope.comment).success(function (data) {
+                    if (data.success) {
+                        $scope.article.comments.push(data.comment);
+                        $scope.comment.comment = '';
+                    }
+                });
+            }
+        };
+        
+        if ($scope.app.user.isLogged()) {
+            updateCommentVotes();
+        }
+        
+        function updateCommentVotes() {
+            $scope.article.comments.forEach(checkVotes);
+            
+            function checkVotes (comment) {
+                var vote = comment.votes.filter(function (vote) {
+                    return ($scope.app.user.getUserID() === vote.userID);
+                })[0];
+                
+                if (vote) {
+                    comment.voted = vote.direction;
+                }
+            }
+        }
+                
+        $scope.voteComment = function (direction, comment) {
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    $scope.voteComment(direction, deck);
+                };
+            } else {
+                if (comment.author._id === $scope.app.user.getUserID()) {
+                    bootbox.alert("You can't vote for your own content.");
+                    return false;
+                }
+                VoteService.voteComment(direction, comment).then(function (data) {
+                    if (data.success) {
+                        comment.voted = direction;
+                        comment.votesCount = data.votesCount;
+                    }
+                });
+            }
+        };
+        
+        // login for modal
+        $scope.login = function login(email, password) {
+            if (email !== undefined && password !== undefined) {
+                UserService.login(email, password).success(function(data) {
+                    AuthenticationService.setLogged(true);
+                    AuthenticationService.setAdmin(data.isAdmin);
+                    $window.sessionStorage.userID = data.userID;
+                    $window.sessionStorage.username = data.username;
+                    $window.sessionStorage.token = data.token;
+                    box.modal('hide');
+                    updateVotes();
+                    updateCommentVotes();
+                    callback();
+                }).error(function() {
+                    $scope.showError = true;
+                });
+            }
+        }
     }
 ])
 .controller('DecksCtrl', ['$scope', '$state', 'DeckService', 'data', 
@@ -1765,8 +1908,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
         $scope.data = [300, 500, 100];
         
-        $scope.deck.getContent = function () {
-            return $sce.trustAsHtml($scope.deck.content);
+        $scope.getContent = function (content) {
+            return $sce.trustAsHtml(content);
         };
         
         // deck dust

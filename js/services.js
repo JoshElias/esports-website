@@ -78,6 +78,9 @@ angular.module('app.services', [])
                 d.resolve(data);
             });
             return d.promise;
+        },
+        addComment: function (article, comment) {
+            return $http.post('/api/article/comment/add', { articleID: article._id, comment: comment });
         }
     };
 })
@@ -672,7 +675,9 @@ angular.module('app.services', [])
             if (exists) {
                 c.splice(index, 1);
             } else {
-                c.push(card);
+                if (c.length < 6) {
+                    c.push(card);
+                }
             }
         }
         
@@ -932,6 +937,13 @@ angular.module('app.services', [])
 })
 .factory('VoteService', function ($http, $q) {
     return {
+        voteArticle: function (direction, article) {
+            var d = $q.defer();
+            $http.post('/api/article/vote', { _id: article._id, direction: direction }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
         voteDeck: function (direction, deck) {
             var d = $q.defer();
             $http.post('/api/deck/vote', { _id: deck._id, direction: direction }).success(function (data) {
