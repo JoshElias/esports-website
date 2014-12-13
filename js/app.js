@@ -324,6 +324,22 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.terms', {
+                url: 'terms',
+                views: {
+                    content: {
+                        templateUrl: 'views/frontend/terms.html'
+                    }
+                }
+            })
+            .state('app.privacy', {
+                url: 'privacy',
+                views: {
+                    content: {
+                        templateUrl: 'views/frontend/privacy.html'
+                    }
+                }
+            })
             .state('app.login', {
                 url: 'login',
                 views: {

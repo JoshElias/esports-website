@@ -751,6 +751,7 @@ module.exports = {
                                     isSubscribed: req.body.subscription.isSubscribed,
                                     expiryDate: req.body.subscription.expiryDate || new Date().toISOString()
                                 },
+                                verified: true,
                                 isAdmin: req.body.isAdmin,
                                 active: req.body.active,
                                 createdDate: new Date().toISOString()

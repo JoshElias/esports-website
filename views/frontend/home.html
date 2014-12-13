@@ -121,15 +121,15 @@
                                             </div>
                                             <div class="pull-left">
                                                 <span class="fa fa-thumbs-o-up text-muted"></span>
-                                                <span class="text-muted"><span ng-show="article.votesCount > 0">+</span><span ng-show="article.votesCount < 0">-</span>{{article.votesCount}}</span>
+                                                <span class="text-muted"><span ng-if="article.votesCount > 0">+</span><span ng-if="article.votesCount < 0">-</span>{{article.votesCount}}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <!-- / article -->
-                            <p ng-show="!articles.length && klass === 'all'">There are curently no articles yet.</p>
-                            <p ng-show="!articles.length && klass !== 'all'">There are curently no articles under <strong>{{klass}}</strong> yet.</p>
+                            <p ng-if="!articles.length && klass === 'all'">There are curently no articles yet.</p>
+                            <p ng-if="!articles.length && klass !== 'all'">There are curently no articles under <strong>{{klass}}</strong> yet.</p>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4 home-decks">
@@ -141,7 +141,7 @@
                         <div class="home-decks">
                             <!-- deck -->
                             <div class="home-deck" ng-repeat="deck in decks">
-                                <div class="premium-flag" ng-show="deck.premium.isPremium"></div>
+                                <div class="premium-flag" ng-if="deck.premium.isPremium"></div>
                                 <div class="panel" ng-class="{premium: deck.premium.isPremium}">
                                     <div class="home-deck-class {{deck.playerClass.toLowerCase()}}"></div>
                                     <div class="panel-heading">
@@ -158,15 +158,18 @@
                                             </div>
                                             <div class="pull-left">
                                                 <span class="fa fa-thumbs-o-up"></span>
-                                                <span><span ng-show="deck.votesCount > 0">+</span><span ng-show="deck.votesCount < 0">-</span>{{deck.votesCount}}</span>
+                                                <span><span ng-if="deck.votesCount > 0">+</span><span ng-if="deck.votesCount < 0">-</span>{{deck.votesCount}}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <!-- / deck -->
-                            <p ng-show="!decks.length && klass === 'all'">There are curently no decks yet.</p>
-                            <p ng-show="!decks.length && klass !== 'all'">There are curently no decks under <strong>{{klass}}</strong> yet.</p>
+                            <p ng-if="!decks.length && klass === 'all'">There are curently no decks yet.</p>
+                            <p ng-if="!decks.length && klass !== 'all'">There are curently no decks under <strong>{{klass}}</strong> yet.</p>
+                        </div>
+                        <div class="ad-square">
+                            <a href="http://www.kinguin.net/"><img src="./img/kinguin-square.png" alt="Kinguin"></a>
                         </div>
                     </div>
                 </div>
