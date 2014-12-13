@@ -1,9 +1,13 @@
 <div class="container m-b-md">
+    <div class="forum-thread-title clearfix">
+        <a href="./forum/{{post.thread.slug.url}}/add" class="btn btn-blue pull-right">Write a Post</a>
+        <h1>{{thread.title}}</h1>
+    </div>
     <div class="forum-post clearfix">
         <div class="author">
-            <a href="#" class="avatar"><img src="./img/blank.png" alt=""></a>
+            <a href="#" class="avatar"><img src="./img/profile.jpg" alt=""></a>
             <div class="author-info">
-                <a href="#">{{post.author.username}}</a>
+                <a href="./user/{{post.author.username}}">@{{post.author.username}}</a>
             </div>
         </div>
         <div class="forum-post-content">

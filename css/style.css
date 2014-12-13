@@ -951,7 +951,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
   to { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); }
 }
 
-.db-builder { position: relative; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; margin-bottom: 20px; }
+.db-builder { position: relative; margin-bottom: 20px; }
 .db-right { position: absolute; top: 0px; right: 0px; width: 300px; }
 .db-left { margin-top: 20px; padding-right: 381px; }
 
@@ -1278,7 +1278,7 @@ ul.db-against li .player-class-icon.active { margin-top: -1px; margin-bottom: -1
 .no-comments { margin: 0 0 20px 0; }
 
 /* forum home */
-.forum-category { margin-top: 20px; border: 1px solid #0099cc; padding: 15px; font-size: 20px; background: #66ccff; color: #FFF; }
+.forum-category { margin-top: 20px; border: 1px solid #083f7d; padding: 15px; font-size: 20px; background: #2766ad; color: #FFF; }
 
 table.forum-section { border: 1px solid #ccc; }
 table.forum-section { border: 1px solid #ccc; background: #FFF; margin-bottom: 0px; }
@@ -1310,6 +1310,7 @@ table.forum-section tbody tr td.latest .latest-info .ago { color: #555; }
 
 /* forum thread */
 .forum-thread-title { margin-top: 20px; }
+.forum-thread-title h1 { color: #2766ad; font-family: sneakersmediumitalic; }
 .forum-thread-info { margin-top: 10px; margin-bottom: 10px; }
 
 table.forum-thread { border: 1px solid #ccc; background: #FFF; margin-bottom: 0px; }
