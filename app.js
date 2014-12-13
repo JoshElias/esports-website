@@ -72,7 +72,7 @@ passport.deserializeUser(function(id, done) {
 passport.use(new TwitchStrategy({
     clientID: 'kxjhxkwq4t3egwy3ses7xdpaq314ldm',
     clientSecret: '530y82dvigic8mwlpgk5jqidbkpnld8',
-    callbackURL: "http://192.168.1.98:1337/auth/twitch/callback",
+    callbackURL: "http://tempostorm.com/auth/twitch/callback",
     scope: "user_read"
   }, routes.frontend.twitch(Schemas, jwt, JWT_SECRET) ));
 
