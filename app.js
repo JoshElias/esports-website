@@ -1,6 +1,6 @@
 var http = require('http'),
 	https = require('https'),
-	fs = require('fs'),
+	fs = require('graceful-fs'),
 	express = require("express"),
 	httpapp = express(),
 	app = express(),

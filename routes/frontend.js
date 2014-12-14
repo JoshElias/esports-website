@@ -13,7 +13,6 @@ module.exports = {
 
             Schemas.User.findOne({ email: email, active: true, verified: true }, function (err, user) {
                 if (err) {
-                    console.log(err);
                     return res.send(401);
                 }
                 if (!user) {
@@ -239,7 +238,6 @@ module.exports = {
 
                         newUser.save(function(err, data){
                             if (err) {
-                                console.log(err);
                                 return res.json({ success: false,
                                     errors: {
                                         unknown: {
@@ -950,8 +948,6 @@ module.exports = {
         return function (req, res, next) {
             imgur.setClientId('83f887d8dc07872');
 
-            console.log(req.files);
-            
             /*
             imgur.uploadFile()
             .then(function (json) {
@@ -1310,7 +1306,6 @@ module.exports = {
                             }
                         });
                     }
-                    console.log(data);
                     return callback();
                 });
             }
@@ -1410,7 +1405,6 @@ module.exports = {
                 
                 async.each(cats, iterThread, function (err) {
                     if (err) { return res.json({ success: false }); }
-                    console.log(cats);
                     return res.json({ success: true, categories: cats });
                 });
                 
@@ -1557,10 +1551,8 @@ module.exports = {
             function createPost(callback) {
                 newPost.save(function(err, data){
                     if (err) {
-                        console.log(err);
                         return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } });
                     }
-                    console.log(data);
                     return callback();
                 });
             }
@@ -1607,10 +1599,8 @@ module.exports = {
             function createComment(callback) {
                 newComment.save(function (err, data) {
                     if (err) {
-                        console.log(err);
                         return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } });
                     }
-                    console.log(data);
                     return callback();
                 });
             }
