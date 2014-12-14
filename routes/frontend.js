@@ -305,6 +305,7 @@ module.exports = {
                 var newUser = new Schemas.User({
                     email: profile.email,
                     username: profile.username,
+                    password: '',
                     twitchID: profile.id,
                     verified: true,
                     createdDate: new Date().toISOString()
