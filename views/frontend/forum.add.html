@@ -3,6 +3,17 @@
         <h1>{{thread.title}}</h1>
     </div>
     <form method="post" name="form" novalidate>
+    <div class="panel panel-danger error-modal animated" ng-show="showError">
+        <div class="panel-heading">
+            <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+            <strong>Unable to add forum post</strong>
+        </div>
+        <div class="panel-body">
+            <ul class="error text-danger">
+                <li ng-repeat="error in errors">{{error.msg}}</li>
+            </ul>
+        </div>
+    </div>
     <div class="row">
         <div class="form-group m-b-sm clearfix">
             <label for="title" class="control-label col-sm-12">Title</label>

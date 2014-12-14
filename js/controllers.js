@@ -1413,10 +1413,14 @@ angular.module('app.controllers', ['ngCookies'])
                 box.modal('show');
             } else {
                 DeckBuilder.saveDeck($scope.deck).success(function (data) {
-                    $scope.app.settings.deck = null;
-                    $state.transitionTo('app.decks.deck', { slug: data.slug });
-                }).error(function (data) {
-                    console.log(data);
+                    if (data.success) {
+                        $scope.app.settings.deck = null;
+                        $state.transitionTo('app.decks.deck', { slug: data.slug });
+                    } else {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                        $window.scrollTo(0,0);
+                    }
                 });
             }
         };
@@ -1545,7 +1549,13 @@ angular.module('app.controllers', ['ngCookies'])
         // save deck
         $scope.updateDeck = function () {
             DeckBuilder.updateDeck($scope.deck).success(function (data) {
-                $state.transitionTo('app.decks.deck', { slug: data.slug });
+                if (data.success) {
+                    $state.transitionTo('app.decks.deck', { slug: data.slug });
+                } else {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                }
             }).error(function (data) {
                 console.log(data);
             });
@@ -2187,6 +2197,10 @@ angular.module('app.controllers', ['ngCookies'])
                 ForumService.addPost($scope.thread, $scope.post).success(function (data) {
                     if (data.success) {
                         $location.path('/forum/' + $scope.thread.slug.url);
+                    } else {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                        $window.scrollTo(0,0);
                     }
                 });
             }

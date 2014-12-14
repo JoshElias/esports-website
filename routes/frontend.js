@@ -731,153 +731,209 @@ module.exports = {
     },
     deckAdd: function (Schemas, Util) {
         return function (req, res, next) {
-            // TODO: add form checking
+            req.assert('name', 'Deck name is required').notEmpty();
+            req.assert('deckType', 'Deck type is required').notEmpty();
+            req.assert('description', 'Deck description is required').notEmpty();
             
-            /*
-            function checkSlug (callback) {
-                Schemas.Deck.count({ slug: req.body.slug })
-                .exec(function (err, count) {
-                    
-                });
-            }
-            */
-            
-            // setup cards
-            var cards = [];
-            for (var i = 0; i < req.body.cards.length; i++) {
-                cards.push({
-                    card: req.body.cards[i]._id,
-                    qty: req.body.cards[i].qty
-                });
-            }
-            
-            // setup mulligan cards
-            if (req.body.mulligans && req.body.mulligans.length) {
-                req.body.mulligans.forEach(function (mulligan) {
-                    if (mulligan.withCoin.cards.length) {
-                        var mCards = [];
-                        for (var i = 0; i < mulligan.withCoin.cards.length; i++) {
-                            mCards.push(mulligan.withCoin.cards[i]._id);
-                        }
-                        mulligan.withCoin.cards = mCards;
-                    }
-                    if (mulligan.withoutCoin.cards.length) {
-                        var mCards = [];
-                        for (var i = 0; i < mulligan.withoutCoin.cards.length; i++) {
-                            mCards.push(mulligan.withoutCoin.cards[i]._id);
-                        }
-                        mulligan.withoutCoin.cards = mCards;
-                    }
-                });
-            }
-            
-            var newDeck = new Schemas.Deck({
-                    name: req.body.name,
-                    slug: Util.slugify(req.body.name),
-                    deckType: req.body.deckType,
-                    description: req.body.description,
-                    contentEarly: req.body.contentEarly,
-                    contentMid: req.body.contentMid,
-                    contentLate: req.body.contentLate,
-                    author: req.user._id,
-                    cards: cards,
-                    playerClass: req.body.playerClass,
-                    public: req.body.public,
-                    mulligans: req.body.mulligans || [],
-                    against: {
-                        strong: req.body.against.strong || [],
-                        weak: req.body.against.weak || [],
-                        instructions: req.body.against.instructions || ''
-                    },
-                    video: req.body.video,
-                    votes: [{
-                        userID: req.user._id,
-                        direction: 1
-                    }],
-                    featured: false,
-                    allowComments: true,
-                    createdDate: new Date().toISOString(),
-                    premium: {
-                        isPremium: false,
-                        expiryDate: new Date().toISOString()
-                    }
-                });
+            function checkForm (callback) {
+               var errors = req.validationErrors();
 
-            newDeck.save(function(err, data){
-                if (err) {
-                    console.log(err);
-                    return res.json({ success: false,
-                        errors: {
-                            unknown: {
-                                msg: 'An unknown error occurred'
+                if (errors) {
+                    return res.json({ success: false, errors: errors });
+                } else {
+                    return callback();
+                }
+            }
+            
+            function checkSlug (callback) {
+                Schemas.Deck.count({ slug: Util.slugify(req.body.name) })
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    if (count > 0) {
+                        return res.json({ success: false, errors: { name: { msg: 'That deck name already exists. Please choose a different deck name.' } } });
+                    }
+                    return callback();
+                });
+            }
+            
+            function createDeck(callback) {
+                // setup cards
+                var cards = [];
+                for (var i = 0; i < req.body.cards.length; i++) {
+                    cards.push({
+                        card: req.body.cards[i]._id,
+                        qty: req.body.cards[i].qty
+                    });
+                }
+
+                // setup mulligan cards
+                if (req.body.mulligans && req.body.mulligans.length) {
+                    req.body.mulligans.forEach(function (mulligan) {
+                        if (mulligan.withCoin.cards.length) {
+                            var mCards = [];
+                            for (var i = 0; i < mulligan.withCoin.cards.length; i++) {
+                                mCards.push(mulligan.withCoin.cards[i]._id);
                             }
+                            mulligan.withCoin.cards = mCards;
+                        }
+                        if (mulligan.withoutCoin.cards.length) {
+                            var mCards = [];
+                            for (var i = 0; i < mulligan.withoutCoin.cards.length; i++) {
+                                mCards.push(mulligan.withoutCoin.cards[i]._id);
+                            }
+                            mulligan.withoutCoin.cards = mCards;
                         }
                     });
                 }
-                console.log(data);
-                return res.json({ success: true, slug: Util.slugify(req.body.name) });
+
+                var newDeck = new Schemas.Deck({
+                        name: req.body.name,
+                        slug: Util.slugify(req.body.name),
+                        deckType: req.body.deckType,
+                        description: req.body.description,
+                        contentEarly: req.body.contentEarly,
+                        contentMid: req.body.contentMid,
+                        contentLate: req.body.contentLate,
+                        author: req.user._id,
+                        cards: cards,
+                        playerClass: req.body.playerClass,
+                        public: req.body.public,
+                        mulligans: req.body.mulligans || [],
+                        against: {
+                            strong: req.body.against.strong || [],
+                            weak: req.body.against.weak || [],
+                            instructions: req.body.against.instructions || ''
+                        },
+                        video: req.body.video,
+                        votes: [{
+                            userID: req.user._id,
+                            direction: 1
+                        }],
+                        featured: false,
+                        allowComments: true,
+                        createdDate: new Date().toISOString(),
+                        premium: {
+                            isPremium: false,
+                            expiryDate: new Date().toISOString()
+                        }
+                    });
+
+                newDeck.save(function(err, data){
+                    if (err) {
+                        console.log(err);
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                    return callback();
+                });
+            }
+            
+            checkForm(function () {
+                checkSlug(function () {
+                    createDeck(function () {
+                        return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                    });
+                });
             });
         };
     },
     deckUpdate: function (Schemas, Util) {
         return function (req, res, next) {
-            // TODO: add form checking
+            req.assert('name', 'Deck name is required').notEmpty();
+            req.assert('deckType', 'Deck type is required').notEmpty();
+            req.assert('description', 'Deck description is required').notEmpty();
             
-            // setup cards
-            var cards = [];
-            for (var i = 0; i < req.body.cards.length; i++) {
-                cards.push({
-                    card: req.body.cards[i]._id,
-                    qty: req.body.cards[i].qty
-                });
+            function checkForm (callback) {
+               var errors = req.validationErrors();
+
+                if (errors) {
+                    return res.json({ success: false, errors: errors });
+                } else {
+                    return callback();
+                }
             }
             
-            // setup mulligan cards
-            if (req.body.mulligans && req.body.mulligans.length) {
-                req.body.mulligans.forEach(function (mulligan) {
-                    if (mulligan.withCoin.cards.length) {
-                        var mCards = [];
-                        for (var i = 0; i < mulligan.withCoin.cards.length; i++) {
-                            mCards.push(mulligan.withCoin.cards[i]._id);
-                        }
-                        mulligan.withCoin.cards = mCards;
-                    }
-                    if (mulligan.withoutCoin.cards.length) {
-                        var mCards = [];
-                        for (var i = 0; i < mulligan.withoutCoin.cards.length; i++) {
-                            mCards.push(mulligan.withoutCoin.cards[i]._id);
-                        }
-                        mulligan.withoutCoin.cards = mCards;
-                    }
-                });
-            }
-            
-            Schemas.Deck.findOne({ _id: req.body._id, author: req.user._id })
-            .exec(function (err, deck) {
-                if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
-                
-                deck.name = req.body.name;
-                deck.slug = Util.slugify(req.body.name);
-                deck.deckType = req.body.deckType;
-                deck.description = req.body.description;
-                deck.contentEarly = req.body.contentEarly;
-                deck.contentMid = req.body.contentMid;
-                deck.contentLate = req.body.contentLate;
-                deck.cards = cards;
-                deck.public = req.body.public;
-                deck.mulligans = req.body.mulligans || [];
-                deck.against = {
-                    strong: req.body.against.strong || [],
-                    weak: req.body.against.weak || [],
-                    instructions: req.body.against.instructions || ''
-                };
-                deck.video = req.body.video;
-                
-                deck.save(function(err, data){
+            function checkSlug (callback) {
+                Schemas.Deck.count({ _id: { $ne: req.body._id }, slug: Util.slugify(req.body.name) })
+                .exec(function (err, count) {
                     if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
-                    return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                    if (count > 0) {
+                        return res.json({ success: false, errors: { name: { msg: 'That deck name already exists. Please choose a different deck name.' } } });
+                    }
+                    return callback();
                 });
-                
+            }
+            
+            function updateDeck (callback) {
+                // setup cards
+                var cards = [];
+                for (var i = 0; i < req.body.cards.length; i++) {
+                    cards.push({
+                        card: req.body.cards[i]._id,
+                        qty: req.body.cards[i].qty
+                    });
+                }
+
+                // setup mulligan cards
+                if (req.body.mulligans && req.body.mulligans.length) {
+                    req.body.mulligans.forEach(function (mulligan) {
+                        if (mulligan.withCoin.cards.length) {
+                            var mCards = [];
+                            for (var i = 0; i < mulligan.withCoin.cards.length; i++) {
+                                mCards.push(mulligan.withCoin.cards[i]._id);
+                            }
+                            mulligan.withCoin.cards = mCards;
+                        }
+                        if (mulligan.withoutCoin.cards.length) {
+                            var mCards = [];
+                            for (var i = 0; i < mulligan.withoutCoin.cards.length; i++) {
+                                mCards.push(mulligan.withoutCoin.cards[i]._id);
+                            }
+                            mulligan.withoutCoin.cards = mCards;
+                        }
+                    });
+                }
+
+                Schemas.Deck.findOne({ _id: req.body._id, author: req.user._id })
+                .exec(function (err, deck) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+
+                    deck.name = req.body.name;
+                    deck.slug = Util.slugify(req.body.name);
+                    deck.deckType = req.body.deckType;
+                    deck.description = req.body.description;
+                    deck.contentEarly = req.body.contentEarly;
+                    deck.contentMid = req.body.contentMid;
+                    deck.contentLate = req.body.contentLate;
+                    deck.cards = cards;
+                    deck.public = req.body.public;
+                    deck.mulligans = req.body.mulligans || [];
+                    deck.against = {
+                        strong: req.body.against.strong || [],
+                        weak: req.body.against.weak || [],
+                        instructions: req.body.against.instructions || ''
+                    };
+                    deck.video = req.body.video;
+
+                    deck.save(function(err, data){
+                        if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                        return callback();
+                    });
+
+                });
+            }
+            
+            checkForm(function () {
+                checkSlug(function () {
+                    updateDeck(function () {
+                        return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                    });
+                });
             });
         };
     },
@@ -1128,7 +1184,7 @@ module.exports = {
                     path: 'author',
                     select: 'username -_id'
                 })
-                .sort({ createdDate: -1 })
+                .sort({ votesCount: -1, createdDate: -1 })
                 .skip((perpage * page) - perpage)
                 .limit(perpage)
                 .exec(function (err, results) {
@@ -1446,6 +1502,21 @@ module.exports = {
     },
     forumPostAdd: function (Schemas, Util, mongoose) {
         return function (req, res, next) {
+            
+            req.assert('post.title', 'Post title is required').notEmpty();
+            req.assert('post.content', 'Post content is required').notEmpty();
+            
+            // check form
+            function checkForm (callback) {
+                var errors = req.validationErrors();
+
+                if (errors) {
+                    return res.json({ success: false, errors: errors });
+                } else {
+                    return callback();
+                }
+            }
+            
             // vars
             var threadID = req.body.thread._id,
                 _id = mongoose.Types.ObjectId(),
@@ -1470,6 +1541,18 @@ module.exports = {
                     active: true
                 });
             
+            // check slug
+            function checkSlug (callback) {
+                Schemas.ForumPost.count({ 'slug.url': Util.slugify(req.body.post.title) })
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    if (count > 0) {
+                        return res.json({ success: false, errors: { title: { msg: 'A post already exists with that title. Please choose another title.' } } });
+                    }
+                    return callback();
+                });
+            }
+            
             // create post
             function createPost(callback) {
                 newPost.save(function(err, data){
@@ -1490,9 +1573,13 @@ module.exports = {
                 });
             }
             
-            createPost(function () {
-                addToThread(function () {
-                    return res.json({ success: true });
+            checkForm(function () {
+                checkSlug(function () {
+                    createPost(function () {
+                        addToThread(function () {
+                            return res.json({ success: true });
+                        });
+                    });
                 });
             });
         };

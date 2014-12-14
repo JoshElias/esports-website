@@ -249,6 +249,17 @@
             <!-- / step 4 -->
             <!-- step 5 -->
             <div ng-show="step === 5">
+                <div class="panel panel-danger error-modal animated" ng-show="showError">
+                    <div class="panel-heading">
+                        <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+                        <strong>Unable to add deck</strong>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="error text-danger">
+                            <li ng-repeat="error in errors">{{error.msg}}</li>
+                        </ul>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="form-group">
                         <label for="name" class="control-label col-sm-2">Deck Name</label>
