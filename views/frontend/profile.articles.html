@@ -2,10 +2,10 @@
     <!-- article -->
     <div class="profile-article" ng-repeat="article in articles">
         <div class="panel">
-            <div class="panel-heading">
+            <div class="panel-heading" ng-if="article.photos && article.photos.large.length">
                 <div class="container">
                     <div class="article-img">
-                        <a href="./articles/{{article.slug.url}}"><img src="./img/article.png" alt="" class="img-responsive"></a>
+                        <a href="./articles/{{article.slug.url}}"><img src="./photos/articles/{{article.photos.medium}}" alt="" class="img-responsive"></a>
                     </div>
                 </div>
             </div>
