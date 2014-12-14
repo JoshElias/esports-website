@@ -646,7 +646,8 @@ module.exports = {
     },
     users: function (Schemas) {
         return function (req, res, next) {
-            Schemas.User.find({}).exec(function (err, users) {
+            
+            Schemas.User.find({}).limit(50).exec(function (err, users) {
                 if (err) {
                     console.log(err);
                     return res.json({ success: false,
