@@ -22,8 +22,8 @@ var app = angular.module('app', [
     'app.directives'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService',
-        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 
+        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             
@@ -42,6 +42,9 @@ var app = angular.module('app', [
                     $state.transitionTo('app.home');
                 }
                 $window.scrollTo(0,0);
+            });
+            $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+                $window.ga('send', 'pageview', $location.path());
             });
         }
     ]
