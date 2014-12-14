@@ -22,6 +22,7 @@ var http = require('http'),
     Util = require('./lib/util'),
     imgur = require('imgur'),
     async = require('async'),
+    subdomain = require('subdomain'),
     passport = require('passport'),
     TwitchStrategy = require('passport-twitch').Strategy,
     BnetStrategy = require('passport-bnet').Strategy,
@@ -34,6 +35,8 @@ BASE_DIR = __dirname;
 /* mongoose */
 mongoose.connect('mongodb://localhost:27017/tempostorm');
 var db = mongoose.connection;
+
+app.use(subdomain({ base : 'tempostorm.com', removeWWW : true }));
 
 app.use('/', express.static(__dirname + '/'));
 app.use('/img', express.static(__dirname + '/img'));

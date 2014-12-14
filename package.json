@@ -28,6 +28,7 @@
     "passport": "0.2.1",
     "passport-twitch": "1.0.1",
     "passport-bnet": "1.0.1",
-    "mandrill-api": "1.0.41"
+    "mandrill-api": "1.0.41",
+    "subdomain": "0.1.0"
   }
 }
