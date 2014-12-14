@@ -753,6 +753,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 	-webkit-flex-flow: row wrap;
     align-content: flex-start;
     flex:0;
+    flex-wrap: wrap;
 }
 
 .row-flex > div[class*='col-'] {
@@ -764,14 +765,21 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 .flex-col {
-    display: flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: -webkit-flex;
+    display: flex;
     flex: 1 100%;
 	flex-flow: column nowrap;
 }
 
 .flex-grow {
-	display: flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
     -webkit-flex: 2;
     flex: 2;
 }
@@ -924,6 +932,9 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     -webkit-animation-name: glow;
     -webkit-animation-duration: 2s;
     -webkit-animation-iteration-count: infinite;
+    -moz-animation-name: glow;
+    -moz-animation-duration: 2s;
+    -moz-animation-iteration-count: infinite;
     z-index: 2;
     /*border-radius: 10px;*/
 }
@@ -951,6 +962,18 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-class-druid a:hover { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; opacity: 1; }
 
 @-webkit-keyframes glow {
+  from { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(73,223,253,1); -moz-box-shadow: 0 0 18px rgba(73,223,253,1); box-shadow: 0 0 18px rgba(73,223,253,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
+}
+
+@-moz-keyframes glow {
+  from { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(73,223,253,1); -moz-box-shadow: 0 0 18px rgba(73,223,253,1); box-shadow: 0 0 18px rgba(73,223,253,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
+}
+
+@keyframes glow {
   from { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
   50% { -webkit-box-shadow: 0 0 18px rgba(73,223,253,1); -moz-box-shadow: 0 0 18px rgba(73,223,253,1); box-shadow: 0 0 18px rgba(73,223,253,1); }
   to { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
