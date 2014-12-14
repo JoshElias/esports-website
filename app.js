@@ -156,49 +156,51 @@ app.post('/api/forum/post/comment/add', routes.frontend.forumCommentAdd(Schemas,
 
 app.post('/api/comment/vote', routes.frontend.commentVote(Schemas));
 
+app.post('/api/profile/:username/decks', routes.frontend.profileDecksLoggedIn(Schemas));
+
 /* admin */
-app.post('/api/admin/cards', routes.admin.cards(Schemas));
-app.post('/api/admin/card', routes.admin.card(Schemas));
-app.post('/api/admin/card/add', routes.admin.cardAdd(Schemas));
-app.post('/api/admin/card/delete', routes.admin.cardDelete(Schemas));
-app.post('/api/admin/card/edit', routes.admin.cardEdit(Schemas));
+app.post('/api/admin/cards', routes.admin.isAdmin(Schemas), routes.admin.cards(Schemas));
+app.post('/api/admin/card', routes.admin.isAdmin(Schemas), routes.admin.card(Schemas));
+app.post('/api/admin/card/add', routes.admin.isAdmin(Schemas), routes.admin.cardAdd(Schemas));
+app.post('/api/admin/card/delete', routes.admin.isAdmin(Schemas), routes.admin.cardDelete(Schemas));
+app.post('/api/admin/card/edit', routes.admin.isAdmin(Schemas), routes.admin.cardEdit(Schemas));
 
-app.post('/api/admin/decks', routes.admin.decks(Schemas));
-app.post('/api/admin/decks/all', routes.admin.decksAll(Schemas));
-app.post('/api/admin/deck', routes.admin.deck(Schemas));
-app.post('/api/admin/deck/add', routes.admin.deckAdd(Schemas, Util));
-app.post('/api/admin/deck/delete', routes.admin.deckDelete(Schemas));
-app.post('/api/admin/deck/edit', routes.admin.deckEdit(Schemas, Util));
+app.post('/api/admin/decks', routes.admin.isAdmin(Schemas), routes.admin.decks(Schemas));
+app.post('/api/admin/decks/all', routes.admin.isAdmin(Schemas), routes.admin.decksAll(Schemas));
+app.post('/api/admin/deck', routes.admin.isAdmin(Schemas), routes.admin.deck(Schemas));
+app.post('/api/admin/deck/add', routes.admin.isAdmin(Schemas), routes.admin.deckAdd(Schemas, Util));
+app.post('/api/admin/deck/delete', routes.admin.isAdmin(Schemas), routes.admin.deckDelete(Schemas));
+app.post('/api/admin/deck/edit', routes.admin.isAdmin(Schemas), routes.admin.deckEdit(Schemas, Util));
 
-app.post('/api/admin/articles', routes.admin.articles(Schemas));
-app.post('/api/admin/articles/all', routes.admin.articlesAll(Schemas));
-app.post('/api/admin/article', routes.admin.article(Schemas));
-app.post('/api/admin/article/add', routes.admin.articleAdd(Schemas));
-app.post('/api/admin/article/delete', routes.admin.articleDelete(Schemas));
-app.post('/api/admin/article/edit', routes.admin.articleEdit(Schemas));
+app.post('/api/admin/articles', routes.admin.isAdmin(Schemas), routes.admin.articles(Schemas));
+app.post('/api/admin/articles/all', routes.admin.isAdmin(Schemas), routes.admin.articlesAll(Schemas));
+app.post('/api/admin/article', routes.admin.isAdmin(Schemas), routes.admin.article(Schemas));
+app.post('/api/admin/article/add', routes.admin.isAdmin(Schemas), routes.admin.articleAdd(Schemas));
+app.post('/api/admin/article/delete', routes.admin.isAdmin(Schemas), routes.admin.articleDelete(Schemas));
+app.post('/api/admin/article/edit', routes.admin.isAdmin(Schemas), routes.admin.articleEdit(Schemas));
 
-app.post('/api/admin/forum/categories', routes.admin.categories(Schemas));
-app.post('/api/admin/forum/category', routes.admin.category(Schemas));
-app.post('/api/admin/forum/category/add', routes.admin.categoryAdd(Schemas));
-app.post('/api/admin/forum/category/delete', routes.admin.categoryDelete(Schemas));
-app.post('/api/admin/forum/category/edit', routes.admin.categoryEdit(Schemas));
+app.post('/api/admin/forum/categories', routes.admin.isAdmin(Schemas), routes.admin.categories(Schemas));
+app.post('/api/admin/forum/category', routes.admin.isAdmin(Schemas), routes.admin.category(Schemas));
+app.post('/api/admin/forum/category/add', routes.admin.isAdmin(Schemas), routes.admin.categoryAdd(Schemas));
+app.post('/api/admin/forum/category/delete', routes.admin.isAdmin(Schemas), routes.admin.categoryDelete(Schemas));
+app.post('/api/admin/forum/category/edit', routes.admin.isAdmin(Schemas), routes.admin.categoryEdit(Schemas));
 
-app.post('/api/admin/forum/threads', routes.admin.threads(Schemas));
-app.post('/api/admin/forum/thread', routes.admin.thread(Schemas));
-app.post('/api/admin/forum/thread/add', routes.admin.threadAdd(Schemas, mongoose));
-app.post('/api/admin/forum/thread/delete', routes.admin.threadDelete(Schemas));
-app.post('/api/admin/forum/thread/edit', routes.admin.threadEdit(Schemas));
+app.post('/api/admin/forum/threads', routes.admin.isAdmin(Schemas), routes.admin.threads(Schemas));
+app.post('/api/admin/forum/thread', routes.admin.isAdmin(Schemas), routes.admin.thread(Schemas));
+app.post('/api/admin/forum/thread/add', routes.admin.isAdmin(Schemas), routes.admin.threadAdd(Schemas, mongoose));
+app.post('/api/admin/forum/thread/delete', routes.admin.isAdmin(Schemas), routes.admin.threadDelete(Schemas));
+app.post('/api/admin/forum/thread/edit', routes.admin.isAdmin(Schemas), routes.admin.threadEdit(Schemas));
 
-app.post('/api/admin/users', routes.admin.users(Schemas));
-app.post('/api/admin/user', routes.admin.user(Schemas));
-app.post('/api/admin/user/add', routes.admin.userAdd(Schemas));
-app.post('/api/admin/user/delete', routes.admin.userDelete(Schemas));
-app.post('/api/admin/user/edit', routes.admin.userEdit(Schemas));
-app.post('/api/admin/users/admins', routes.admin.usersAdmins(Schemas));
+app.post('/api/admin/users', routes.admin.isAdmin(Schemas), routes.admin.users(Schemas));
+app.post('/api/admin/user', routes.admin.isAdmin(Schemas), routes.admin.user(Schemas));
+app.post('/api/admin/user/add', routes.admin.isAdmin(Schemas), routes.admin.userAdd(Schemas));
+app.post('/api/admin/user/delete', routes.admin.isAdmin(Schemas), routes.admin.userDelete(Schemas));
+app.post('/api/admin/user/edit', routes.admin.isAdmin(Schemas), routes.admin.userEdit(Schemas));
+app.post('/api/admin/users/admins', routes.admin.isAdmin(Schemas), routes.admin.usersAdmins(Schemas));
 
-app.post('/api/admin/upload/article', routes.admin.uploadArticle(fs, gm));
-app.post('/api/admin/upload/card', routes.admin.uploadCard(fs, gm));
-app.post('/api/admin/upload/deck', routes.admin.uploadDeck(fs, gm));
+app.post('/api/admin/upload/article', routes.admin.isAdmin(Schemas), routes.admin.uploadArticle(fs, gm));
+app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), routes.admin.uploadCard(fs, gm));
+app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), routes.admin.uploadDeck(fs, gm));
 
 /* server start */
 var server = http.createServer(app);

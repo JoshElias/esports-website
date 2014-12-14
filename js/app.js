@@ -37,6 +37,10 @@ var app = angular.module('app', [
                     event.preventDefault();
                     $state.transitionTo('app.login');
                 }
+                if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
+                    event.preventDefault();
+                    $state.transitionTo('app.home');
+                }
                 $window.scrollTo(0,0);
             });
         }
@@ -443,9 +447,13 @@ var app = angular.module('app', [
                         templateUrl: 'views/frontend/profile.decks.html',
                         controller: 'ProfileDecksCtrl',
                         resolve: {
-                            dataDecks: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                            dataDecks: ['$stateParams', 'ProfileService', 'AuthenticationService', function ($stateParams, ProfileService, AuthenticationService) {
                                 var username = $stateParams.username;
-                                return ProfileService.getDecks(username);
+                                if (AuthenticationService.isLogged()) {
+                                    return ProfileService.getDecksLoggedIn(username);
+                                } else {
+                                    return ProfileService.getDecks(username);
+                                }
                             }]
                         }
                     }

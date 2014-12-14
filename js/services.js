@@ -119,6 +119,15 @@ angular.module('app.services', [])
                 d.resolve(data);
             });
             return d.promise;
+        },
+        getDecksLoggedIn: function (username, page, perpage) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 20;
+            $http.post('/api/profile/' + username + '/decks', { page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
         }
     };
 })

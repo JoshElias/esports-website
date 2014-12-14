@@ -525,7 +525,46 @@ module.exports = {
             }
             
             function getDecks (user, callback) {
-                Schemas.Deck.find({ author: user._id }).sort('-createdDate').skip((perpage * page) - perpage).limit(perpage).exec(function (err, decks) {
+                Schemas.Deck.find({ author: user._id, public: true })
+                //.where(where)
+                .sort('-createdDate')
+                //.skip((perpage * page) - perpage)
+                //.limit(perpage)
+                .exec(function (err, decks) {
+                    if (err) { return req.json({ success: false }); }
+                    return callback(decks);
+                });
+            }
+            
+            getUser(function (user) {
+                getDecks(user, function (decks) {
+                    return res.json({ success: true, decks: decks });
+                });
+            });
+        };
+    },
+    profileDecksLoggedIn: function (Schemas) {
+        return function (req, res, next) {
+            var username = req.params.username,
+                page = req.body.page || 1,
+                perpage = req.body.perpage || 12;
+            
+            function getUser (callback) {
+                Schemas.User.findOne({ username: username }).select('_id').exec(function (err, user) {
+                    if (err || !user) { return res.json({ success: false }); }
+                    return callback(user);
+                });
+            }
+            
+            function getDecks (user, callback) {
+                var where = (req.user._id === user._id.toString()) ? {} : { 'public': true };
+                
+                Schemas.Deck.find({ author: user._id })
+                .where(where)
+                .sort('-createdDate')
+                //.skip((perpage * page) - perpage)
+                //.limit(perpage)
+                .exec(function (err, decks) {
                     if (err) { return req.json({ success: false }); }
                     return callback(decks);
                 });
@@ -692,6 +731,15 @@ module.exports = {
     deckAdd: function (Schemas, Util) {
         return function (req, res, next) {
             // TODO: add form checking
+            
+            /*
+            function checkSlug (callback) {
+                Schemas.Deck.count({ slug: req.body.slug })
+                .exec(function (err, count) {
+                    
+                });
+            }
+            */
             
             // setup cards
             var cards = [];

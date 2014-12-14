@@ -1,4 +1,16 @@
 module.exports = {
+    isAdmin: function (Schemas) {
+        return function (req, res, next) {
+            var userID = req.user._id;
+            
+            Schemas.User.findOne({ _id: userID })
+            .select('isAdmin')
+            .exec(function (err, user) {
+                if (err || !user.isAdmin) { return res.send(401); }
+                return next();
+            });
+        };
+    },
     cards: function (Schemas) {
         return function (req, res, next) {
             Schemas.Card.find({}).select('_id name cardType rarity race playerClass mechanics').exec(function (err, cards) {
