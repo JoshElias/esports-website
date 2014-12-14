@@ -938,8 +938,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-class-hunter { background: #ABD473 url('../img/hunter-large-b.jpg') center center no-repeat; }
 .db-class-druid { background: #FF7D0A url('../img/druid-large-b.jpg') center center no-repeat; }
 
-.db-class { -webkit-transition: all .25s linear; }
-.db-class a { -webkit-transition: opacity 1s; opacity: 0; background-position: center center; }
+.db-class { -webkit-transition: all .25s linear; -moz-transition: all .25s linear; transition: all .25s linear; }
+.db-class a { -webkit-transition: opacity 1s; -moz-transition: opacity 1s; transition: opacity 1s; opacity: 0; background-position: center center; }
 .db-class-mage a:hover { background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; opacity: 1; }
 .db-class-shaman a:hover { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; opacity: 1; }
 .db-class-warrior a:hover { background: #C79C6E url('../img/warrior-large.jpg') center center no-repeat; opacity: 1; }
@@ -951,9 +951,9 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-class-druid a:hover { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; opacity: 1; }
 
 @-webkit-keyframes glow {
-  from { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); }
-  50% { -webkit-box-shadow: 0 0 18px rgba(73,223,253,1); }
-  to { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); }
+  from { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(73,223,253,1); -moz-box-shadow: 0 0 18px rgba(73,223,253,1); box-shadow: 0 0 18px rgba(73,223,253,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
 }
 
 .db-builder { position: relative; margin-bottom: 20px; }
