@@ -311,7 +311,7 @@ module.exports = {
                 });
 
                 newUser.save(function (err, user) {
-                    if (err) return res.send(401);
+                    if (err) { console.log(err); }
                     return done(err, user);
                 });
             }
