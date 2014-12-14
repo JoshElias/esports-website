@@ -282,20 +282,19 @@ module.exports = {
 
             function findByTwitch (callback) {
                 Schemas.User.findOne({ twitchID: profile.id }).exec(function (err, user) {
-                    if (err || !user) return callback();
+                    if (err || !user) { return callback(); }
                     return done(err, user);
                 });
             }
 
             function findByEmail (callback) {
                 Schemas.User.findOne({ email: profile.email }).exec(function (err, user) {
-                    if (err || !user) return callback();
+                    if (err || !user) { return callback(); }
 
                     user.twitchID = profile.id;
                     user.verified = true;
 
                     user.save(function (err, user) {
-                        if (err) return res.send(401);
                         return done(err, user);
                     });
                 });
@@ -312,7 +311,6 @@ module.exports = {
                 });
 
                 newUser.save(function (err, user) {
-                    if (err) { console.log(err); }
                     return done(err, user);
                 });
             }
