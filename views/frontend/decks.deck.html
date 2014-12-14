@@ -123,6 +123,10 @@
                     </div>
                     <!-- / deck-mulligans -->
                     
+                    <!-- deck video -->
+                    <div class="deck-video" ng-bind-html="getVideo()" ng-if="deck.video && deck.video.length"></div>
+                    <!-- / deck video -->
+                    
                     <!-- deck description -->
                     <h3>DESCRIPTION</h3>
                     <p>{{deck.description}}</p>

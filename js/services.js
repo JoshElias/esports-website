@@ -633,11 +633,17 @@ angular.module('app.services', [])
                 }],
                 instructions: ''
             },
+            video: data.video || '',
             premium: data.premium || {
                 isPremium: false,
                 expiryDate: d
             },
             public: data.public || 'true'
+        };
+        
+        db.validVideo = function () {
+            var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+            return (db.video.length) ? db.video.match(r) : true;
         };
         
         db.isStrong = function (strong) {
@@ -885,6 +891,7 @@ angular.module('app.services', [])
             arena: deck.arena,
             mulligans: deck.mulligans,
             against: deck.against,
+            video: deck.video,
             public: deck.public
         });
     }
@@ -903,6 +910,7 @@ angular.module('app.services', [])
             arena: deck.arena,
             mulligans: deck.mulligans,
             against: deck.against,
+            video: deck.video,
             public: deck.public
         });
     }

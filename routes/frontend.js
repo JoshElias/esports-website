@@ -650,6 +650,7 @@ module.exports = {
                             weak: results.against.weak,
                             instructions: results.against.instructions
                         },
+                        video: results.video,
                         featured: results.featured,
                         premium: {
                             isPremium: results.premium.isPremium,
@@ -788,6 +789,7 @@ module.exports = {
                         weak: req.body.against.weak || [],
                         instructions: req.body.against.instructions || ''
                     },
+                    video: req.body.video,
                     votes: [{
                         userID: req.user._id,
                         direction: 1
@@ -869,6 +871,7 @@ module.exports = {
                     weak: req.body.against.weak || [],
                     instructions: req.body.against.instructions || ''
                 };
+                deck.video = req.body.video;
                 
                 deck.save(function(err, data){
                     if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }

@@ -1254,6 +1254,7 @@ ul.db-against li .player-class-icon.active { margin-top: -1px; margin-bottom: -1
 .deck-votes { float: right; }
 
 .deck-comments { margin-top: 20px; }
+.deck-video { margin: 20px 0; width: 100%; height: 350px; border: none; }
 
 /* comments */
 .comments { margin-top: 20px; }

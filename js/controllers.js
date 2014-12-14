@@ -1386,6 +1386,7 @@ angular.module('app.controllers', ['ngCookies'])
                 arena: $scope.deck.arena,
                 mulligans: $scope.deck.mulligans,
                 against: $scope.deck.against,
+                video: $scope.deck.video,
                 public: $scope.deck.public
             };
         }, true);
@@ -1944,6 +1945,10 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
         $scope.data = [300, 500, 100];
+        
+        $scope.getVideo = function () {
+            return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.deck.video + '" frameborder="0" height="360" width="100%"></iframe>');
+        };
         
         $scope.getContent = function (content) {
             return $sce.trustAsHtml(content);
