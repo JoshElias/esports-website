@@ -37,22 +37,12 @@ BASE_DIR = __dirname;
 /* mongoose */
 mongoose.createConnection('mongodb://codephobia:Thinger01@localhost:27017/tempostorm',
     {
-        server: {
-            'auto_reconnect': true,
-            socketOptions: {
-                keepAlive: 1
-            }
+        auth: {
+            authdb: "admin"
         }
     }
 );
 
-mongoose.connection.on('connected', function () {
-  console.log('Mongoose default connection open to ' + config.db);
-  runApp(); //now mongo / mongoose is set up, boot the app...
-});
-
-
-function runApp () {
 var db = mongoose.connection;
 
 app.use(subdomain({ base : 'tempostorm.com', removeWWW : true }));
@@ -230,4 +220,3 @@ app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), routes.admin.u
 var server = http.createServer(app);
 server.listen(80);
 console.log('Starting server');
-}
