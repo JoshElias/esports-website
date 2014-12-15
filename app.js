@@ -35,14 +35,16 @@ var JWT_SECRET = '83udfhjdsfh93HJKHel338283ru';
 BASE_DIR = __dirname;
 
 /* mongoose */
-mongoose.connect('mongodb://localhost:27017/tempostorm');
+mongoose.connect('mongodb://nodejs:onlyiknowthis@localhost:27017/tempostorm');
 var db = mongoose.connection;
 
 app.use(subdomain({ base : 'tempostorm.com', removeWWW : true }));
 
 app.use('/', express.static(__dirname + '/'));
+app.use('/css', express.static(__dirname + '/css'));
 app.use('/img', express.static(__dirname + '/img'));
 app.use('/js', express.static(__dirname + '/js'));
+app.use('/photos', express.static(__dirname + '/photos'));
 
 app.engine('dust', cons.dust);
 app.set('template_engine', 'dust');
@@ -209,5 +211,5 @@ app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), routes.admin.u
 
 /* server start */
 var server = http.createServer(app);
-server.listen(80);
+server.listen(1337);
 console.log('Starting server');

@@ -1004,8 +1004,6 @@ angular.module('app.controllers', ['ngCookies'])
                     AlertService.setSuccess({ show: true, msg: $scope.deck.name + ' has been added successfully.' });
                     $state.go('app.admin.decks.list');
                 }
-            }).error(function (data) {
-                console.log(data);
             });
         };
         
@@ -1126,8 +1124,6 @@ angular.module('app.controllers', ['ngCookies'])
                     AlertService.setSuccess({ show: true, msg: $scope.deck.name + ' has been updated successfully.' });
                     $state.go('app.admin.decks.list');
                 }
-            }).error(function (data) {
-                console.log(data);
             });
         };
     }
@@ -1238,8 +1234,6 @@ angular.module('app.controllers', ['ngCookies'])
                     AlertService.setSuccess({ show: true, msg: $scope.user.username + ' has been added successfully.' });
                     $state.go('app.admin.users.list');
                 }
-            }).error(function (data) {
-                console.log(data);
             });
         };
     }
@@ -1247,8 +1241,6 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('AdminUserEditCtrl', ['$scope', '$state', '$window', 'AdminUserService', 'AlertService', 'data', 
     function ($scope, $state, $window, AdminUserService, AlertService, data) {
         if (!data || !data.success) { return $state.go('app.admin.users.list'); }
-        
-        console.log(data);
         
         // load user
         $scope.user = data.user;
@@ -1275,8 +1267,6 @@ angular.module('app.controllers', ['ngCookies'])
                     AlertService.setSuccess({ show: true, msg: $scope.user.username + ' has been updated successfully.' });
                     $state.go('app.admin.users.list');
                 }
-            }).error(function (data) {
-                console.log(data);
             });
         };
     }
@@ -1556,8 +1546,6 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.showError = true;
                     $window.scrollTo(0,0);
                 }
-            }).error(function (data) {
-                console.log(data);
             });
         };
         
@@ -1641,8 +1629,6 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('ArticleCtrl', ['$scope', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'UserService', 'ArticleService', 'AuthenticationService', 'VoteService',  
     function ($scope, $sce, data, $state, $compile, $window, bootbox, UserService, ArticleService, AuthenticationService, VoteService) {
         $scope.article = data.article;
-        
-        console.log(data.article.comments);
         
         $scope.getContent = function () {
             return $sce.trustAsHtml($scope.article.content);
@@ -2137,15 +2123,11 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('ForumCategoryCtrl', ['$scope', 'data', 
     function ($scope, data) {
         $scope.categories = data.categories;
-        
-        console.log(data.categories);
     }
 ])
 .controller('ForumThreadCtrl', ['$scope', 'Pagination', 'data', 
     function ($scope, Pagination, data) {
         $scope.thread = data.thread;
-        
-        console.log(data.thread);
         
         // page flipping
         $scope.pagination = Pagination.new(20);
