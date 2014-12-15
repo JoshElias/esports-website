@@ -177,7 +177,7 @@ module.exports = {
             req.assert('email', 'A valid email address is required').notEmpty().isEmail();
             req.assert('username', 'Username is required').notEmpty();
             req.assert('username', 'Username must be between 3 and 20 characters').len(3, 20);
-            req.assert('username', 'Username is not a valid format').isUsername();
+            //req.assert('username', 'Username is not a valid format').isUsername();
             req.assert('password', 'Password is required').notEmpty();
             req.assert('cpassword', 'Please confirm your password').notEmpty();
             req.assert('cpassword', 'Your passwords do not match').equals(password);
