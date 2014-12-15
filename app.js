@@ -211,5 +211,5 @@ app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), routes.admin.u
 
 /* server start */
 var server = http.createServer(app);
-server.listen(1337);
+server.listen(80);
 console.log('Starting server');
