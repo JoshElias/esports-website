@@ -28,7 +28,8 @@ var http = require('http'),
     passport = require('passport'),
     TwitchStrategy = require('passport-twitch').Strategy,
     BnetStrategy = require('passport-bnet').Strategy,
-    Mail = require('./lib/mail');
+    Mail = require('./lib/mail'),
+    config = require('./lib/config');
 
 var JWT_SECRET = '83udfhjdsfh93HJKHel338283ru';
 
@@ -43,7 +44,7 @@ mongoose.connect('mongodb://localhost:27017/tempostorm');
 });*/
 var db = mongoose.connection;
 
-app.use(subdomain({ base : 'tempostorm.com', removeWWW : true }));
+app.use(subdomain({ base : config.base, removeWWW : true }));
 
 app.use('/', express.static(__dirname + '/'));
 app.use('/css', express.static(__dirname + '/css'));
@@ -58,7 +59,20 @@ app.set('view engine', 'dust');
 
 app.use(express.favicon(path.join(__dirname, 'favicon.ico')));
 app.use(express.bodyParser());
-app.use(expressValidator());
+app.use(expressValidator({
+    customValidators: {
+        isUsername: function(value) {
+            var re = /^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/;
+            return value.match(re);
+        },
+        isArray: function(value) {
+            return Array.isArray(value);
+        }, 
+        gte: function(param, num) {
+            return param >= num;
+        }
+    }   
+}));
 app.use('/api', expressJwt({secret: JWT_SECRET}));
 app.use(express.methodOverride());
 app.use(express.cookieParser());
@@ -216,5 +230,5 @@ app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), routes.admin.u
 
 /* server start */
 var server = http.createServer(app);
-server.listen(80);
+server.listen(config.socketPort);
 console.log('Starting server');
