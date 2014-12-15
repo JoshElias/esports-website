@@ -35,7 +35,27 @@ var JWT_SECRET = '83udfhjdsfh93HJKHel338283ru';
 BASE_DIR = __dirname;
 
 /* mongoose */
-mongoose.createConnection('mongodb://nodejs:onlyiknowthis@localhost:27017/tempostorm', { auth: { authdb: "admin" }, auto_reconnect: true } );
+mongoose.createConnection('mongodb://nodejs:onlyiknowthis@localhost:27017/tempostorm',
+    {
+        auth: {
+            authdb: "admin"
+        },
+        server: {
+            'auto_reconnect': true,
+            socketOptions: {
+                keepAlive: 1
+            }
+        }
+    }
+);
+
+mongoose.connection.on('connected', function () {
+  console.log('Mongoose default connection open to ' + config.db);
+  runApp(); //now mongo / mongoose is set up, boot the app...
+});
+
+
+function runApp () {
 var db = mongoose.connection;
 
 app.use(subdomain({ base : 'tempostorm.com', removeWWW : true }));
@@ -213,3 +233,4 @@ app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), routes.admin.u
 var server = http.createServer(app);
 server.listen(80);
 console.log('Starting server');
+}
