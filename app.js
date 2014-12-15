@@ -35,11 +35,12 @@ var JWT_SECRET = '83udfhjdsfh93HJKHel338283ru';
 BASE_DIR = __dirname;
 
 /* mongoose */
-mongoose.connect('mongodb://localhost:27017/tempostorm', {
+mongoose.connect('mongodb://localhost:27017/tempostorm');
+/*mongoose.connect('mongodb://localhost:27017/tempostorm', {
     user: 'codephobia',
     pass: 'Thinger01',
     auth: { authdb: 'admin' }
-});
+});*/
 var db = mongoose.connection;
 
 app.use(subdomain({ base : 'tempostorm.com', removeWWW : true }));
