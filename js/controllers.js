@@ -1876,7 +1876,7 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'data', 
     function ($scope, $state, $sce, $compile, $window, bootbox, UserService, DeckService, AuthenticationService, VoteService, data) {
-        if (!data || !data.success) { return $state.transitionTo('app.decks.list'); }
+        if (!data || !data.success) { return $state.go('app.decks.list'); }
 
         // load deck
         $scope.deck = data.deck;
