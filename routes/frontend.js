@@ -1403,9 +1403,9 @@ module.exports = {
                         options: { limit: 1, sort: '-createdDate' }
                     }, function (err, threads) {
                         cat.threads = threads;
-                        async.each(threads, iterPost, function (err) {
+                        async.each(cat.threads, iterPost, function (err) {
                             if (err) { return res.json({ success: false }); }
-                            async.each(threads, getPosts, function (err) {
+                            async.each(cat.threads, getPosts, function (err) {
                                 if (err) { return res.json({ success: false }); }
                                 return callback();
                             });
