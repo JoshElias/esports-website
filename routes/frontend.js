@@ -731,8 +731,10 @@ module.exports = {
     deckAdd: function (Schemas, Util) {
         return function (req, res, next) {
             req.assert('name', 'Deck name is required').notEmpty();
+            req.assert('name', 'Deck name cannot be more than 60 characters').len(1, 60);
             req.assert('deckType', 'Deck type is required').notEmpty();
             req.assert('description', 'Deck description is required').notEmpty();
+            req.assert('description', 'Deck description cannot be more than 400 characters').len(1, 400);
             
             function checkForm (callback) {
                var errors = req.validationErrors();
@@ -850,8 +852,10 @@ module.exports = {
     deckUpdate: function (Schemas, Util) {
         return function (req, res, next) {
             req.assert('name', 'Deck name is required').notEmpty();
+            req.assert('name', 'Deck name cannot be more than 40 characters').len(1, 40);
             req.assert('deckType', 'Deck type is required').notEmpty();
             req.assert('description', 'Deck description is required').notEmpty();
+            req.assert('description', 'Deck description cannot be more than 400 characters').len(1, 400);
             
             function checkForm (callback) {
                var errors = req.validationErrors();
@@ -1511,7 +1515,9 @@ module.exports = {
         return function (req, res, next) {
             
             req.assert('post.title', 'Post title is required').notEmpty();
+            req.assert('post.title', 'Post title cannot be longer than 100 characters').len(1, 100);
             req.assert('post.content', 'Post content is required').notEmpty();
+            req.assert('post.content', 'Post content cannot be longer than 5000 characters').len(1, 5000);
             
             // check form
             function checkForm (callback) {
