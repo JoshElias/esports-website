@@ -1,4 +1,5 @@
-<div ng-if="article.photos.large && article.photos.large.length" class="container-fluid article-photo-banner" style="background: url('./photos/articles/{{article.photos.large}}') center center no-repeat; background-size: cover;">
+<div ng-if="article.photos.large && article.photos.large.length" class="container-fluid article-photo-banner pos-rl" style="background: url('./photos/articles/{{article.photos.large}}') center center no-repeat; background-size: cover;">
+    <div ng-class="{overcast:article.theme === 'overcast'}" ng-if="article.theme"></div>
 </div>
 <div class="container">
     

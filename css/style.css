@@ -1398,3 +1398,34 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .terms h2,
 .privacy h1,
 .privacy h2{ color: #2766ad; font-family: sneakersmediumitalic; }
+
+/* overcast */
+.overcast { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/clouds-40.png'); background-position: center 0px; -webkit-animation:clouds 15s linear infinite; -moz-animation: clouds 15s linear infinite; animation: clouds 15s linear infinite; z-index: 2; }
+.overcast a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; z-index: 3; }
+        
+    @keyframes clouds {
+        0% {
+            background-position: center 0;
+        }
+        100% {
+            background-position: center -585px;
+        }
+    }
+
+    @-webkit-keyframes clouds {
+        0% {
+            background-position: center 0;
+        }
+        100% {
+            background-position: center -585px;
+        }
+    }
+    
+    @-moz-keyframes clouds {
+        0% {
+            background-position: center 0;
+        }
+        100% {
+            background-position: center -585px;
+        }
+    }
