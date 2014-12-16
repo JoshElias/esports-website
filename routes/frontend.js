@@ -745,6 +745,12 @@ module.exports = {
             }
             
             function checkSlug (callback) {
+                // check slug length
+                if (!Util.slugify(req.body.name).length) {
+                    return res.json({ success: false, errors: { name: { msg: 'An invalid name has been entered' } } });
+                }
+                
+                // check if slug exists
                 Schemas.Deck.count({ slug: Util.slugify(req.body.name) })
                 .exec(function (err, count) {
                     if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
@@ -858,6 +864,12 @@ module.exports = {
             }
             
             function checkSlug (callback) {
+                // check slug length
+                if (!Util.slugify(req.body.name).length) {
+                    return res.json({ success: false, errors: { name: { msg: 'An invalid name has been entered' } } });
+                }
+                
+                // check if slug exists
                 Schemas.Deck.count({ _id: { $ne: req.body._id }, slug: Util.slugify(req.body.name) })
                 .exec(function (err, count) {
                     if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
