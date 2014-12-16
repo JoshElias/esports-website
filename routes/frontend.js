@@ -1402,6 +1402,7 @@ module.exports = {
                         select: 'title slug author createdDate -_id',
                         options: { limit: 1, sort: '-createdDate' }
                     }, function (err, threads) {
+                        cat.threads = threads;
                         async.each(threads, iterPost, function (err) {
                             if (err) { return res.json({ success: false }); }
                             async.each(threads, getPosts, function (err) {
