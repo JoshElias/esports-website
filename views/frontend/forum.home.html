@@ -18,7 +18,7 @@
                         <em>{{thread.description}}</em>
                     </td>
                     <td class="latest hidden-xs">
-                        <div ng-show="thread.posts.length">
+                        <div ng-if="thread.numPosts > 0">
                             <a href="./forum/{{thread.slug.url}}/{{thread.posts[0].slug.url}}" class="title">{{thread.posts[0].title}}</a>
                             <div class="latest-info clearfix">
                                 <div class="author">
@@ -29,7 +29,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div ng-show="!thread.posts.length">
+                        <div ng-if="thread.numPosts === 0">
                             There are no posts in this thread yet.
                         </div>
                     </td>

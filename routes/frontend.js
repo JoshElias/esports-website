@@ -1380,11 +1380,6 @@ module.exports = {
             .exec(function (err, cats) {
                 if (err) { return res.json({ success: false }); }
                 
-                var getComments = function (thread, callback) {
-                    thread.numComments = 0;
-                    return callback();
-                };
-                
                 var getPosts = function (thread, callback) {
                     Schemas.ForumPost.count({ thread: thread._id }).exec(function (err, count) {
                         if (err) { return res.json({ success: false }); }
@@ -1411,10 +1406,7 @@ module.exports = {
                             if (err) { return res.json({ success: false }); }
                             async.each(threads, getPosts, function (err) {
                                 if (err) { return res.json({ success: false }); }
-                                async.each(threads, getComments, function (err) {
-                                    if (err) { return res.json({ success: false }); }
-                                    return callback();
-                                });
+                                return callback();
                             });
                         });
                     });
