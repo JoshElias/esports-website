@@ -64,14 +64,8 @@ app.use(expressValidator({
         isUsername: function(value) {
             var re = /^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/;
             return value.match(re);
-        },
-        isArray: function(value) {
-            return Array.isArray(value);
-        }, 
-        gte: function(param, num) {
-            return param >= num;
         }
-    }   
+    }
 }));
 app.use('/api', expressJwt({secret: JWT_SECRET}));
 app.use(express.methodOverride());
