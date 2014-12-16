@@ -2123,6 +2123,8 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('ForumCategoryCtrl', ['$scope', 'data', 
     function ($scope, data) {
         $scope.categories = data.categories;
+        
+        console.log(data);
     }
 ])
 .controller('ForumThreadCtrl', ['$scope', 'Pagination', 'data', 
