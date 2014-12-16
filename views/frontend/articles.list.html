@@ -97,7 +97,8 @@
         <div class="home-article" ng-repeat="article in articles">
             <div class="panel">
                 <div class="panel-heading" ng-if="article.photos && article.photos.medium.length">
-                    <div class="article-img">
+                    <div class="article-img pos-rl">
+                        <div ng-class="{overcast:article.theme === 'overcast'}" ng-if="article.theme"><a href="./articles/{{article.slug.url}}"></a></div>
                         <a href="./articles/{{article.slug.url}}"><img src="./photos/articles/{{article.photos.medium}}" alt="{{article.title}}" class="img-responsive"></a>
                     </div>
                 </div>
