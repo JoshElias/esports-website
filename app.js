@@ -58,6 +58,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'dust');
 
 app.use(express.favicon(path.join(__dirname, 'favicon.ico')));
+app.use(express.compress());
 app.use(express.bodyParser());
 app.use(expressValidator({
     customValidators: {
