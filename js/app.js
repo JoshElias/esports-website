@@ -11,6 +11,7 @@ var app = angular.module('app', [
     'ngCookies',
     'ngStorage',
     'ngSanitize',
+    'ngProgress',
     'ui.router',
     'ui.load',
     'ui.jq',
@@ -22,13 +23,14 @@ var app = angular.module('app', [
     'app.directives'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 
-        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 
+        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
+                //ngProgress.start();
                 if (toState.access && toState.access.noauth && $window.sessionStorage.token && AuthenticationService.isLogged()) {
                     event.preventDefault();
                     $state.transitionTo('app.home');
@@ -44,6 +46,7 @@ var app = angular.module('app', [
                 $window.scrollTo(0,0);
             });
             $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+                //ngProgress.complete();
                 $window.ga('send', 'pageview', $location.path());
             });
         }
