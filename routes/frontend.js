@@ -1389,6 +1389,7 @@ module.exports = {
                 };
                 
                 var iterPost = function (thread, callback) {
+                    thread.posts = (thread.posts.length) ? [thread.posts[0]] : [];
                     Schemas.ForumPost.populate(thread.posts, {
                         path: 'author',
                         select: 'username -_id'
@@ -1400,12 +1401,11 @@ module.exports = {
                         path: 'posts',
                         match: { active: true },
                         select: 'title slug author createdDate -_id',
-                        options: { limit: 1, sort: '-createdDate' }
+                        options: { sort: '-createdDate' }
                     }, function (err, threads) {
-                        cat.threads = threads;
-                        async.each(cat.threads, iterPost, function (err) {
+                        async.each(threads, iterPost, function (err) {
                             if (err) { return res.json({ success: false }); }
-                            async.each(cat.threads, getPosts, function (err) {
+                            async.each(threads, getPosts, function (err) {
                                 if (err) { return res.json({ success: false }); }
                                 return callback();
                             });
