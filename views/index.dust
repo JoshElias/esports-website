@@ -50,6 +50,7 @@
     <script src="./js/angular/angular-moment.min.js"></script>
     <script src="./js/angular/angular-chart.js"></script>
     <script src="./js/angular/select.min.js"></script>
+    <script src="./js/angular/ngProgress.js"></script>
     <!-- app -->
     <script src="./js/app.js"></script>
     <script src="./js/services.js"></script>
