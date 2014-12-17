@@ -95,7 +95,7 @@
                         <div class="db-deck-card-mana">{{card.cost}}</div>
                         <div class="db-deck-card-qty" ng-show="card.qty > 1">{{card.qty}}</div>
                         <div class="db-deck-card-legendary" ng-show="card.legendary"><i class="fa fa-star"></i></div>
-                        <div class="db-deck-card-photo"><img src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.small}}" alt=""></div>
+                        <div class="db-deck-card-photo"><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.small}}" alt=""></div>
                         <div class="db-deck-card-name">{{card.name}}</div>
                     </div>
                     <div class="db-deck-footer db-deck-{{className.toLowerCase()}}">
@@ -157,7 +157,7 @@
                         <div class="db-cards-view clearfix">
                             <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in filtered = ( cards.current | filter: filters.search | filter: filters.byMechanics() | filter: filters.byMana())">
                                 <a href="#" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.large}}" ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
-                                    <img src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.medium}}" alt="{{card.name}}">
+                                    <img ng-src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.medium}}" alt="{{card.name}}">
                                 </a>
                             </div>
                             <div class="db-cards-no-match" ng-show="!filtered.length">No Matches Found</div>
@@ -180,7 +180,7 @@
                         <h3>Keep against {{mulligan.klass}} (with coin):</h3>
                         <div class="mulligan-cards" ng-show="deck.cards.length">
                             <div class="db-mulligan-card" ng-class="{active:deck.inMulligan(mulligan, true, card)}" ng-repeat="card in deck.cards" ng-click="deck.toggleMulligan(mulligan, true, card)" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.large}}" data-tooltip-pos="right" hs-card>
-                                <div class="db-mulligan-card-photo"><img src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.small}}" alt=""></div>
+                                <div class="db-mulligan-card-photo"><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.small}}" alt=""></div>
                                 <div class="db-mulligan-card-name">{{card.name}}</div>
                             </div>
                         </div>
@@ -194,7 +194,7 @@
                         <h3>Keep against {{mulligan.klass}} (without coin):</h3>
                         <div class="mulligan-cards" ng-show="deck.cards.length">
                             <div class="db-mulligan-card" ng-class="{active:deck.inMulligan(mulligan, false, card)}" ng-repeat="card in deck.cards" ng-click="deck.toggleMulligan(mulligan, false, card)" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.large}}" data-tooltip-pos="right" hs-card>
-                                <div class="db-mulligan-card-photo"><img src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.small}}" alt=""></div>
+                                <div class="db-mulligan-card-photo"><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.small}}" alt=""></div>
                                 <div class="db-mulligan-card-name">{{card.name}}</div>
                             </div>
                         </div>

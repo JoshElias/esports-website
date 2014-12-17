@@ -59,7 +59,7 @@
                                 <div class="db-deck-card-mana">{{item.card.cost}}</div>
                                 <div class="db-deck-card-qty" ng-show="item.qty > 1">{{item.qty}}</div>
                                 <div class="db-deck-card-legendary" ng-show="item.card.rarity == 'Legendary'"><i class="fa fa-star"></i></div>
-                                <div class="db-deck-card-photo"><img src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{item.card.photos.small}}" alt=""></div>
+                                <div class="db-deck-card-photo"><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{item.card.photos.small}}" alt=""></div>
                                 <div class="db-deck-card-name">{{item.card.name}}</div>
                             </div>
                             <div class="db-deck-footer db-deck-{{deck.playerClass.toLowerCase()}}">
@@ -115,7 +115,7 @@
                             <div ng-if="getMulliganCards().length">
                                 <div class="deck-mulligan-cards">
                                     <div class="deck-mulligan-card" ng-repeat="card in getMulliganCards()">
-                                        <a href="#" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.large}}" style="left: -{{cardLeft($index)}}px; right: -{{cardRight()}}px; z-index: {{getMulliganCards().length - $index}};" hs-card><img src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.medium}}" alt=""></a>
+                                        <a href="#" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.large}}" style="left: -{{cardLeft($index)}}px; right: -{{cardRight()}}px; z-index: {{getMulliganCards().length - $index}};" hs-card><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.medium}}" alt=""></a>
                                     </div>
                                 </div>
                             </div>
