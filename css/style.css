@@ -1188,6 +1188,9 @@ ul.player-class a.filter-class-text { margin-top: 5px; }
 ul.db-against li .player-class-icon { opacity: .5; }
 ul.db-against li .player-class-icon.active { margin-top: -1px; margin-bottom: -1px; width: 62px; height: 62px; opacity: 1; background-color: #2766ad; border: 1px solid #2766ad; }
 
+.db-deck-cards,
+.db-cards-view { -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+
 /* deck builder - against */
 .db-against h3 { margin-top: 20px; font-size: 16px; font-weight: bold; }
 .db-against textarea { resize: vertical; }
