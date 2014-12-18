@@ -2269,7 +2269,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 box.modal('show');
                 callback = function () {
-                    $scope.voteComment(direction, deck);
+                    $scope.voteComment(direction, comment);
                 };
             } else {
                 if (comment.author._id === $scope.app.user.getUserID()) {
