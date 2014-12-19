@@ -1,3 +1,5 @@
+require('newrelic');
+
 var cluster = require('cluster'),
     http = require('http'),
 	https = require('https'),
@@ -58,7 +60,7 @@ if (cluster.isMaster) {
     BASE_DIR = __dirname;
 
     /* mongoose */
-    mongoose.connect('mongodb://codephobia:Thinger01@localhost:27017/tempostorm', { auth: { authdb: 'admin' } });
+    mongoose.connect('mongodb://localhost:27017/tempostorm');
 
     app.use(subdomain({ base : config.base, removeWWW : true }));
 
