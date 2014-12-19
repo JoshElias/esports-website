@@ -2,12 +2,17 @@ var cluster = require('cluster'),
     http = require('http'),
 	https = require('https'),
 	fs = require('graceful-fs'),
-	//FileQueue = require('filequeue'),
-    //fs = new FileQueue(100),
+    
     express = require("express"),
-	httpapp = express(),
+	bodyParser = require('body-parser'),
+    methodOverride = require('method-override'),
+    cookieParser = require('cookie-parser'),
+    session = require('express-session'),
+    favicon = require('serve-favicon'),
+    compression = require('compression'),
+    
 	app = express(),
-	MongoStore  = require('connect-mongo')(express),
+	MongoStore  = require('connect-mongo')(session),
 	mongoose = require('mongoose'),
 	uuid = require('node-uuid'),
 	dust = require('./lib/dust'),
@@ -33,6 +38,7 @@ var cluster = require('cluster'),
     config = require('./lib/config');
 
 if (cluster.isMaster) {
+
     var numCPUs = require('os').cpus().length;
     
     // Fork workers.
@@ -44,6 +50,7 @@ if (cluster.isMaster) {
         console.log('worker ' + worker.process.pid + ' died');
         cluster.fork();
     });
+    
 } else {
 
     var JWT_SECRET = '83udfhjdsfh93HJKHel338283ru';
@@ -51,25 +58,22 @@ if (cluster.isMaster) {
     BASE_DIR = __dirname;
 
     /* mongoose */
-    mongoose.connect('mongodb://localhost:27017/tempostorm');
-    var db = mongoose.connection;
+    mongoose.connect('mongodb://codephobia:Thinger01@localhost:27017/tempostorm', { auth: { authdb: 'admin' } });
 
     app.use(subdomain({ base : config.base, removeWWW : true }));
 
     app.use('/', express.static(__dirname + '/'));
-    app.use('/css', express.static(__dirname + '/css'));
-    app.use('/img', express.static(__dirname + '/img'));
-    app.use('/js', express.static(__dirname + '/js'));
-    app.use('/photos', express.static(__dirname + '/photos'));
 
     app.engine('dust', cons.dust);
     app.set('template_engine', 'dust');
     app.set('views', __dirname + '/views');
     app.set('view engine', 'dust');
 
-    app.use(express.favicon(path.join(__dirname, 'favicon.ico')));
-    app.use(express.compress());
-    app.use(express.bodyParser());
+    app.use(favicon(path.join(__dirname, 'favicon.ico')));
+    app.use(compression({
+        threshold: 512
+    }));
+    app.use(bodyParser.json());
     app.use(expressValidator({
         customValidators: {
             isUsername: function(value) {
@@ -79,10 +83,12 @@ if (cluster.isMaster) {
         }
     }));
     app.use('/api', expressJwt({secret: JWT_SECRET}));
-    app.use(express.methodOverride());
-    app.use(express.cookieParser());
+    app.use(methodOverride());
+    app.use(cookieParser());
     app.use(passport.initialize());
-    app.use(express.session({
+    app.use(session({
+        resave: false,
+        saveUninitialized: true,
         cookie: { expires: new Date(Date.now() + (60 * 60 * 24 * 7 * 1000)) },
         secret: 'kjadhKJHJKhsdjhd82387sjJK',
         store: new MongoStore({
@@ -112,15 +118,6 @@ if (cluster.isMaster) {
         clientSecret: 'SBgAxZnwxNFjppBsnesaJbFwtCn6Tjrq',
         callbackURL: "http://localhost:1337/auth/bnet/callback"
       }, routes.frontend.bnet(Schemas) ));
-
-    app.use(app.router);
-
-    app.use(function (req, res, next) {
-        res.status(404);
-
-        res.send({ error: 'Not found' });
-        return;
-    });
 
     /* twitch */
     app.get('/auth/twitch', passport.authenticate('twitch'));
@@ -233,8 +230,17 @@ if (cluster.isMaster) {
     app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), routes.admin.uploadCard(fs, gm));
     app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), routes.admin.uploadDeck(fs, gm));
 
+    // 404
+    app.use(function (req, res, next) {
+        res.status(404);
+
+        res.send({ error: 'Not found' });
+        return;
+    });
+
     /* server start */
     var server = http.createServer(app);
     server.listen(config.socketPort);
     console.log('Starting server');
+
 }
