@@ -1,6 +1,8 @@
 module.exports = {
-    index: function (req, res, next) {
-        res.render('index');
+    index: function (config) {
+        return function (req, res, next) {
+            return res.render(config.tpl);
+        };
     },
     login: function(Schemas, jwt, JWT_SECRET) {
         return function(req, res, next) {
@@ -8,20 +10,20 @@ module.exports = {
                 password = req.body.password || '';
 
             if (email == '' || password == '') {
-                return res.send(401);
+                return res.sendStatus(401);
             }
 
             Schemas.User.findOne({ email: email, active: true, verified: true }, function (err, user) {
                 if (err) {
-                    return res.send(401);
+                    return res.sendStatus(401);
                 }
                 if (!user) {
-                    return res.send(401);
+                    return res.sendStatus(401);
                 }
                 
                 user.comparePassword(password, function(isMatch) {
                     if (!isMatch) {
-                        return res.send(401);
+                        return res.sendStatus(401);
                     }
                     
                     user.loginCount = user.loginCount + 1;
@@ -157,7 +159,7 @@ module.exports = {
         return function (req, res, next) {
             Schemas.User.findOne({ _id: req.user._id }, function (err, user) {
                 if (err || !user) {
-                    return res.send(401);
+                    return res.sendStatus(401);
                 }
                 return res.json({
                     userID: user._id.toString(),
@@ -342,7 +344,7 @@ module.exports = {
                     user.verified = true;
 
                     user.save(function (err, user) {
-                        if (err) return res.send(401);
+                        if (err) return res.sendStatus(401);
                         return done(err, user);
                     });
                 });
@@ -358,7 +360,7 @@ module.exports = {
                 });
 
                 newUser.save(function (err, user) {
-                    if (err) return res.send(401);
+                    if (err) return res.sendStatus(401);
                     return done(err, user);
                 });
             }
@@ -451,7 +453,7 @@ module.exports = {
             var username = req.params.username;
             
             Schemas.User.findOne({ username: username, active: true }).select('username firstName lastName photos social about subscription.isSubscribed').exec(function (err, user) {
-                if (err || !user) { return res.send(404); }
+                if (err || !user) { return res.sendStatus(404); }
                 return res.json({ success: true, user: user });
             });
         };

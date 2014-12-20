@@ -140,8 +140,8 @@ if (cluster.isMaster) {
       });
 
     /* spa */
-    app.get('/', routes.frontend.index);
-    app.get('*', routes.frontend.index);
+    app.get('/', routes.frontend.index(config));
+    app.get('*', routes.frontend.index(config));
 
     /* frontend */
     app.post('/login', routes.frontend.login(Schemas, jwt, JWT_SECRET));

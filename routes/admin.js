@@ -6,7 +6,7 @@ module.exports = {
             Schemas.User.findOne({ _id: userID })
             .select('isAdmin')
             .exec(function (err, user) {
-                if (err || !user.isAdmin) { return res.send(401); }
+                if (err || !user.isAdmin) { return res.sendStatus(401); }
                 return next();
             });
         };
