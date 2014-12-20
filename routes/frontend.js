@@ -1193,6 +1193,7 @@ module.exports = {
             function getDecks (callback) {
                 Schemas.Deck.find({ public: true })
                 .where(where)
+                .select('premium playerClass slug name description author createdDate comments votesCount')
                 .populate({
                     path: 'author',
                     select: 'username -_id'
