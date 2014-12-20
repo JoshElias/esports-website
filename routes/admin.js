@@ -1130,7 +1130,7 @@ module.exports = {
             });
         };
     },
-    uploadArticle: function (fs, gm) {
+    uploadArticle: function (fs, gm, amazon) {
         return function(req, res, next) {
             // check if image file
             var types = ['image/png', 'image/jpeg', 'image/gif'];
@@ -1151,9 +1151,32 @@ module.exports = {
                     medium = name + '.medium' + ext,
                     small = name + '.small' + ext,
                     path = BASE_DIR + '/photos/articles/';
-                    copyFile();
+                    copyFile(function () {
+                        var files = [];
+                        files.push({
+                            path: path + large,
+                            name: large
+                        });
+                        files.push({
+                            path: path + medium,
+                            name: medium
+                        });
+                        files.push({
+                            path: path + small,
+                            name: small
+                        });
+                        amazon.upload(files, 'articles/', function () {
+                            return res.json({
+                                success: true,
+                                large: large,
+                                medium: medium,
+                                small: small,
+                                path: './photos/articles/'
+                            });
+                        });
+                    });
 
-                function copyFile() {
+                function copyFile(callback) {
                     // read file
                     fs.readFile(req.files.file.path, function(err, data){
                         if (err) return next(err);
@@ -1177,14 +1200,7 @@ module.exports = {
                                                     if (err) return next(err);
                                                     fs.chmod(path + small, 0777, function(err){
                                                         if (err) return next(err);
-                                                        var output = {
-                                                                success: true,
-                                                                large: large,
-                                                                medium: medium,
-                                                                small: small,
-                                                                path: './photos/articles/'
-                                                            };
-                                                        return res.json(output);
+                                                        return callback();
                                                     });
                                                 });
                                             });
@@ -1198,7 +1214,7 @@ module.exports = {
             }
         };
     },
-    uploadCard: function (fs, gm) {
+    uploadCard: function (fs, gm, amazon) {
         return function(req, res, next) {
             // check if image file
             var types = ['image/png', 'image/jpeg', 'image/gif'];
@@ -1218,22 +1234,26 @@ module.exports = {
                     large = name + '.large' + ext,
                     medium = name + '.medium' + ext,
                     path = BASE_DIR + '/photos/cards/';
-                    copyFile();
-                /*
-                // check if dir exists
-                fs.exists(path, function(exists){
-                    if (!exists) {
-                        fs.mkdir(path, 0755, function(err){
-                            if (err) return next(err);
-                            copyFile();
+                    copyFile(function () {
+                        var files = [];
+                        files.push({
+                            path: path + medium,
+                            name: medium
                         });
-                    } else {
-                        copyFile();
-                    }
-                });
-                */
-
-                function copyFile() {
+                        files.push({
+                            path: path + large,
+                            name: large
+                        });
+                        amazon.upload(files, 'cards/', function () {
+                            return res.json({
+                                success: true,
+                                large: large,
+                                medium: medium,
+                                path: './photos/cards/'
+                            });
+                        });
+                    });
+                function copyFile(callback) {
                     // read file
                     fs.readFile(req.files.file.path, function(err, data){
                         if (err) return next(err);
@@ -1253,13 +1273,7 @@ module.exports = {
                                             if (err) return next(err);
                                             fs.chmod(path + medium, 0777, function(err){
                                                 if (err) return next(err);
-                                                var output = {
-                                                        success: true,
-                                                        large: large,
-                                                        medium: medium,
-                                                        path: './photos/cards/'
-                                                    };
-                                                return res.json(output);
+                                                return callback();
                                             });
                                         });
                                     });
@@ -1271,18 +1285,17 @@ module.exports = {
             }
         };
     },
-    uploadDeck: function (fs, gm) {
+    uploadDeck: function (fs, gm, amazon) {
         return function(req, res, next) {
             // check if image file
             var types = ['image/png', 'image/jpeg', 'image/gif'];
             if (types.indexOf(req.files.file.type) === -1) {
                 fs.unlink(req.files.file.path, function(err){
                     if (err) return next(err);
-                    var output = {
-                            success: false,
-                            error: 'Invalid photo uploaded.',
-                        };
-                    return res.json(output);
+                    return res.json({
+                        success: false,
+                        error: 'Invalid photo uploaded.',
+                    });
                 });
             } else {
                 var arr = req.files.file.name.split('.'),
@@ -1290,23 +1303,22 @@ module.exports = {
                     ext = '.' + arr.pop(),
                     small = name + '.small' + ext,
                     path = BASE_DIR + '/photos/cards/';
-                    copyFile();
-
-                /*
-                // check if dir exists
-                fs.exists(path, function(exists){
-                    if (!exists) {
-                        fs.mkdir(path, 0755, function(err){
-                            if (err) return next(err);
-                            copyFile();
+                    copyFile(function () {
+                        var files = [];
+                        files.push({
+                            path: path + small,
+                            name: small
                         });
-                    } else {
-                        copyFile();
-                    }
-                });
-                */
+                        amazon.upload(files, 'cards/', function () {
+                            return res.json({
+                                success: true,
+                                small: small,
+                                path: './photos/cards/'
+                            });
+                        });
+                    });
 
-                function copyFile() {
+                function copyFile(callback) {
                     // read file
                     fs.readFile(req.files.file.path, function(err, data){
                         if (err) return next(err);
@@ -1322,12 +1334,7 @@ module.exports = {
                                     // resize
                                     gm(path + small).quality(100).resize(110, 26, "!").write(path + small, function(err){
                                         if (err) return next(err);
-                                        var output = {
-                                                success: true,
-                                                small: small,
-                                                path: './photos/cards/'
-                                            };
-                                        return res.json(output);
+                                        return callback();
                                     });
                                 });
                             });

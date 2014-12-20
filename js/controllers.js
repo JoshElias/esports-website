@@ -297,7 +297,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.cardActive = $scope.cardDeckable = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
-        ];F
+        ];
         
         // card upload
         $scope.cardUpload = function ($files) {

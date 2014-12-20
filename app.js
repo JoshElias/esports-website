@@ -12,6 +12,8 @@ var cluster = require('cluster'),
     session = require('express-session'),
     favicon = require('serve-favicon'),
     compression = require('compression'),
+    multipart = require('connect-multiparty'),
+    multipartMiddleware = multipart(),
     
 	app = express(),
 	MongoStore  = require('connect-mongo')(session),
@@ -37,7 +39,8 @@ var cluster = require('cluster'),
     TwitchStrategy = require('passport-twitch').Strategy,
     BnetStrategy = require('passport-bnet').Strategy,
     Mail = require('./lib/mail'),
-    config = require('./lib/config');
+    config = require('./lib/config'),
+    amazon = require('./lib/amazon');
 
 if (cluster.isMaster) {
 
@@ -228,9 +231,9 @@ if (cluster.isMaster) {
     app.post('/api/admin/user/edit', routes.admin.isAdmin(Schemas), routes.admin.userEdit(Schemas));
     app.post('/api/admin/users/admins', routes.admin.isAdmin(Schemas), routes.admin.usersAdmins(Schemas));
 
-    app.post('/api/admin/upload/article', routes.admin.isAdmin(Schemas), routes.admin.uploadArticle(fs, gm));
-    app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), routes.admin.uploadCard(fs, gm));
-    app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), routes.admin.uploadDeck(fs, gm));
+    app.post('/api/admin/upload/article', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadArticle(fs, gm, amazon));
+    app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadCard(fs, gm, amazon));
+    app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadDeck(fs, gm, amazon));
 
     // 404
     app.use(function (req, res, next) {

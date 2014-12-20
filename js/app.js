@@ -69,7 +69,7 @@ var app = angular.module('app', [
         $locationProvider.html5Mode(true);
         $httpProvider.interceptors.push('TokenInterceptor');
         
-        var production = true,
+        var production = false,
             tpl = (production) ? 'https://s3-us-west-2.amazonaws.com/ts-node/' : '';
         
         $urlRouterProvider.otherwise('/');
