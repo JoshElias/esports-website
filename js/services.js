@@ -131,7 +131,7 @@ angular.module('app.services', [])
         }
     };
 })
-.factory('TokenInterceptor', function ($q, $window, AuthenticationService) {
+.factory('TokenInterceptor', function ($q, $window) {
     return {
         request: function (config) {
             config.headers = config.headers || {};
