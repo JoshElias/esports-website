@@ -646,21 +646,45 @@ module.exports = {
     },
     users: function (Schemas) {
         return function (req, res, next) {
+            var page = req.body.page || 1,
+                perpage = req.body.perpage || 50,
+                search = req.body.search || '',
+                where = (search.length) ? { username: new RegExp(search, "i") } : {},
+                total, users;
             
-            Schemas.User.find({}).limit(50).exec(function (err, users) {
-                if (err) {
-                    console.log(err);
-                    return res.json({ success: false,
-                        errors: {
-                            unknown: {
-                                msg: 'An unknown error occurred'
-                            }
-                        }
+            function getTotal (callback) {
+                Schemas.User.count({})
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            function getUsers (callback) {
+                Schemas.User.find({})
+                .where(where)
+                .sort({ username: 1 })
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    users = results;
+                    return callback();
+                });
+            }
+            
+            getTotal(function () {
+                getUsers(function () {
+                    return res.json({
+                        success: true,
+                        users: users,
+                        total: total,
+                        page: page,
+                        perpage: perpage,
+                        search: search
                     });
-                }
-                return res.json({
-                    success: true,
-                    users: users
                 });
             });
         };

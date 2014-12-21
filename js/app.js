@@ -66,10 +66,11 @@ var app = angular.module('app', [
         
         $bootboxProvider.setDefaults({ locale: "en" });
         
+        
         $locationProvider.html5Mode(true);
         $httpProvider.interceptors.push('TokenInterceptor');
         
-        var production = true,
+        var production = false,
             tpl = (production) ? 'https://ts-node.s3.amazonaws.com/' : '';
         
         $urlRouterProvider.otherwise('/');
@@ -815,8 +816,9 @@ var app = angular.module('app', [
                         resolve: {
                             data: ['AdminUserService', function (AdminUserService) {
                                 var page = 1,
-                                    perpage = 50;
-                                return AdminUserService.getUsers(page, perpage);
+                                    perpage = 50,
+                                    search = '';
+                                return AdminUserService.getUsers(page, perpage, search);
                             }]
                         }
                     }

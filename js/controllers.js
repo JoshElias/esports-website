@@ -1138,12 +1138,79 @@ angular.module('app.controllers', ['ngCookies'])
         
         // load users
         $scope.users = data.users;
-
-        // page flipping
-        $scope.pagination = Pagination.new(50);
-        $scope.pagination.results = function () {
-            return ($scope.filtered) ? $scope.filtered.length : $scope.users.length;
-        };
+        $scope.page = data.page;
+        $scope.perpage = data.perpage;
+        $scope.total = data.total;
+        $scope.search = data.search;
+        
+        console.log(data.users);
+        
+        $scope.getUsers = function () {
+            AdminUserService.getUsers($scope.page, $scope.perpage, $scope.search).then(function (data) {
+                $scope.users = data.users;
+                $scope.page = data.page;
+                $scope.total = data.total;
+            });
+        }
+        
+        $scope.searchUsers = function () {
+            $scope.page = 1;
+            $scope.getUsers();
+        }
+                
+        // pagination
+        $scope.pagination = {
+            page: function () {
+                return $scope.page;
+            },
+            perpage: function () {
+                return $scope.perpage;
+            },
+            results: function () {
+                return $scope.total;
+            },
+            setPage: function (page) {
+                $scope.page = page;
+                $scope.getUsers();
+            },
+            pagesArray: function () {
+                var pages = [],
+                    start = 1,
+                    end = this.totalPages();
+                
+                if (this.totalPages() > 5) {
+                    if (this.page() < 3) {
+                        start = 1;
+                        end = start + 4;
+                    } else if (this.page() > this.totalPages() - 2) {
+                        end = this.totalPages();
+                        start = end - 4;
+                    } else {
+                        start = this.page() - 2;
+                        end = this.page() + 2;
+                    }
+                    
+                }
+                
+                for (var i = start; i <= end; i++) {
+                    pages.push(i);
+                }
+                
+                return pages;
+            },
+            isPage: function (page) {
+                return (page === this.page());
+            },
+            totalPages: function (page) {
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
+            },
+            from: function () {
+                return (this.page() * this.perpage()) - this.perpage() + 1;
+            },
+            to: function () {
+                return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
+            }
+        };  
         
         // delete user
         $scope.deleteUser = function (user) {

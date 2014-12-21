@@ -291,9 +291,12 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
-        getUsers: function (page, perpage) {
+        getUsers: function (page, perpage, search) {
+            var page = page || 1,
+                perpage = perpage || 50,
+                search = search || '';
             var d = $q.defer();
-            $http.post('/api/admin/users', { page: page, perpage: perpage }).success(function (data) {
+            $http.post('/api/admin/users', { page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
