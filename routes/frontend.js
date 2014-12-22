@@ -10,7 +10,6 @@ module.exports = {
                 password = req.body.password || '';
 
             if (email == '' || password == '') {
-            if (email == '' || password == '') {
                 return res.sendStatus(401);
             }
 
