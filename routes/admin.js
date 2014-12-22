@@ -633,9 +633,9 @@ module.exports = {
             });
         };
     },
-    usersAdmins: function (Schemas) {
+    usersProviders: function (Schemas) {
         return function (req, res, next) {
-            Schemas.User.find({ isAdmin: true }).select('_id username').exec(function (err, users) {
+            Schemas.User.find({ isProvider: true }).select('_id username').exec(function (err, users) {
                 if (err) { return res.json({ success: false }); }
                 return res.json({
                     success: true,

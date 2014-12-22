@@ -284,9 +284,9 @@ angular.module('app.services', [])
 })
 .factory('AdminUserService', function ($http, $q) {
     return {
-        getAdmins: function () {
+        getProviders: function () {
             var d = $q.defer();
-            $http.post('/api/admin/users/admins', {}).success(function (data) {
+            $http.post('/api/admin/users/providers', {}).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

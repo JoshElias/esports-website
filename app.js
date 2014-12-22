@@ -229,7 +229,7 @@ if (cluster.isMaster) {
     app.post('/api/admin/user/add', routes.admin.isAdmin(Schemas), routes.admin.userAdd(Schemas));
     app.post('/api/admin/user/delete', routes.admin.isAdmin(Schemas), routes.admin.userDelete(Schemas));
     app.post('/api/admin/user/edit', routes.admin.isAdmin(Schemas), routes.admin.userEdit(Schemas));
-    app.post('/api/admin/users/admins', routes.admin.isAdmin(Schemas), routes.admin.usersAdmins(Schemas));
+    app.post('/api/admin/users/providers', routes.admin.isAdmin(Schemas), routes.admin.usersProviders(Schemas));
 
     app.post('/api/admin/upload/article', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadArticle(fs, gm, amazon));
     app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadCard(fs, gm, amazon));

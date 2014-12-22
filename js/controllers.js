@@ -531,8 +531,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataArticles', 'dataAdmins', 
-    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, dataDecks, dataArticles, dataAdmins) {
+.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataArticles', 'dataProviders', 
+    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, dataDecks, dataArticles, dataProviders) {
         // default article
         var d = new Date();
         d.setMonth(d.getMonth()+1);
@@ -554,6 +554,7 @@ angular.module('app.controllers', ['ngCookies'])
             deck: undefined,
             related: [],
             classTags: [],
+            theme: 'none',
             featured: false,
             premium: {
                 isPremium: false,
@@ -571,8 +572,8 @@ angular.module('app.controllers', ['ngCookies'])
         // load articles
         $scope.articles = dataArticles.articles;
         
-        // load admins
-        $scope.admins = dataAdmins.users;
+        // load providers
+        $scope.providers = dataProviders.users;
         
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }
@@ -593,6 +594,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.articleActive = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
+        ];
+        
+        $scope.articleTheme = [
+            { name: 'None', value: 'none' },
+            { name: 'Overcast', value: 'overcast' }
         ];
         
         // date picker options
@@ -658,8 +664,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataArticles', 'dataAdmins', 
-    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles, dataAdmins) {
+.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataArticles', 'dataProviders', 
+    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles, dataProviders) {
         // load article
         $scope.article = data.article;
         
@@ -669,8 +675,8 @@ angular.module('app.controllers', ['ngCookies'])
         // load articles
         $scope.articles = dataArticles.articles;
 
-        // load admins
-        $scope.admins = dataAdmins.users;
+        // load providers
+        $scope.providers = dataProviders.users;
         
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }
@@ -694,6 +700,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.articleActive = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
+        ];
+        
+        $scope.articleTheme = [
+            { name: 'None', value: 'none' },
+            { name: 'Overcast', value: 'overcast' }
         ];
         
         // make date object
@@ -1272,6 +1283,7 @@ angular.module('app.controllers', ['ngCookies'])
                 isSubscribed: false,
                 expiryDate: d
             },
+            isProvider: false,
             isAdmin: false,
             active: true
         };
@@ -1281,6 +1293,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // select options
         $scope.userSubscription =
+        $scope.userProvider =
         $scope.userAdmin =
         $scope.userActive = [
             { name: 'Yes', value: true },
@@ -1314,6 +1327,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // select options
         $scope.userSubscription =
+        $scope.userProvider =
         $scope.userAdmin =
         $scope.userActive = [
             { name: 'Yes', value: true },
