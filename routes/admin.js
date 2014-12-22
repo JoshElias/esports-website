@@ -541,6 +541,7 @@ module.exports = {
                     isPremium: req.body.premium.isPremium,
                     expiryDate: req.body.premium.expiryDate
                 },
+                theme: req.body.theme,
                 active: req.body.active
             });
             
@@ -597,6 +598,7 @@ module.exports = {
                     isPremium: req.body.premium.isPremium,
                     expiryDate: req.body.premium.expiryDate
                 };
+                article.theme = req.body.theme;
                 article.active = req.body.active;
                                 
                 article.save(function (err) {
