@@ -126,7 +126,7 @@ var app = angular.module('app', [
                                 var klass = 'all',
                                     page = 1,
                                     perpage = 10;
-                                return DeckService.getDecks(klass, page, perpage);
+                                return DeckService.getDecksCommunity(klass, page, perpage);
                             }],
                             dataDecksFeatured: ['DeckService', function (DeckService) {
                                 var klass = 'all',

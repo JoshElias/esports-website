@@ -1225,6 +1225,52 @@ module.exports = {
             
         };
     },
+    decksCommunity: function (Schemas) {
+        return function (req, res, next) {
+            var klass = req.body.klass || 'all',
+                page = req.body.page || 1,
+                perpage = req.body.perpage || 10,
+                where = (klass === 'all') ? {} : { 'playerClass': klass },
+                decks, total;
+            
+            // get total decks
+            function getTotal (callback) {
+                Schemas.Deck.count({ public: true, featured: false })
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            // get decks
+            function getDecks (callback) {
+                Schemas.Deck.find({ public: true, featured: false })
+                .where(where)
+                .select('premium playerClass slug name description author createdDate comments votesCount')
+                .populate({
+                    path: 'author',
+                    select: 'username -_id'
+                })
+                .sort({ votesCount: -1, createdDate: -1 })
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    decks = results;
+                    return callback();
+                });
+            }
+            
+            getDecks(function () {
+                getTotal(function () {
+                    return res.json({ success: true, decks: decks, total: total, klass: klass, page: page, perpage: perpage });
+                });
+            });
+            
+        };
+    },
     decks: function (Schemas) {
         return function (req, res, next) {
             var klass = req.body.klass || 'all',

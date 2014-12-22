@@ -171,7 +171,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.articles = data.articles;
             });
 
-            DeckService.getDecks(klass, 1, 10).then(function (data) {
+            DeckService.getDecksCommunity(klass, 1, 10).then(function (data) {
                 $scope.decks = data.decks;
             });
             

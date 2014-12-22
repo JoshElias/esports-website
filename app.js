@@ -162,6 +162,7 @@ if (cluster.isMaster) {
     app.post('/article', routes.frontend.article(Schemas));
 
     app.post('/decks', routes.frontend.decks(Schemas));
+    app.post('/decks/community', routes.frontend.decksCommunity(Schemas));
     app.post('/decks/featured', routes.frontend.decksFeatured(Schemas));
     app.post('/deck', routes.frontend.deck(Schemas));
     app.post('/deckbuilder', routes.frontend.deckBuilder(Schemas, Util));
