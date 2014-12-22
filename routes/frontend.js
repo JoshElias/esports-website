@@ -10,6 +10,7 @@ module.exports = {
                 password = req.body.password || '';
 
             if (email == '' || password == '') {
+            if (email == '' || password == '') {
                 return res.sendStatus(401);
             }
 
@@ -1082,6 +1083,13 @@ module.exports = {
                 comment = req.body.comment,
                 newCommentID = mongoose.Types.ObjectId();
             
+            req.assert('comment.comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
+            
+            var errors = req.validationErrors();
+            if (errors) {
+                return res.json({ success: false, errors: errors });
+            }
+            
             // new comment
             var newComment = {
                 _id: newCommentID,
@@ -1297,6 +1305,13 @@ module.exports = {
                 userID = req.user._id,
                 comment = req.body.comment,
                 newCommentID = mongoose.Types.ObjectId();
+            
+            req.assert('comment.comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
+            
+            var errors = req.validationErrors();
+            if (errors) {
+                return res.json({ success: false, errors: errors });
+            }
             
             // new comment
             var newComment = {
@@ -1609,6 +1624,13 @@ module.exports = {
                     createdDate: new Date().toISOString()
                 }),
                 dataComment;
+            
+            req.assert('comment.comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
+            
+            var errors = req.validationErrors();
+            if (errors) {
+                return res.json({ success: false, errors: errors });
+            }
             
             // create comment
             function createComment(callback) {
