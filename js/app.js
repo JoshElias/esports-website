@@ -127,6 +127,12 @@ var app = angular.module('app', [
                                     page = 1,
                                     perpage = 10;
                                 return DeckService.getDecks(klass, page, perpage);
+                            }],
+                            dataDecksFeatured: ['DeckService', function (DeckService) {
+                                var klass = 'all',
+                                    page = 1,
+                                    perpage = 10;
+                                return DeckService.getDecksFeatured(klass, page, perpage);
                             }]
                         }
                     }

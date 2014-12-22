@@ -363,6 +363,9 @@ h1.news-title { font-family: sneakersmediumitalic; color: #000; font-size: 60px;
 
 .home-decks { margin-bottom: 20px; }
 .home-decks h1.decks-title { margin: 0; padding: 20px 0px 10px 0px; font-family: sneakersmediumitalic; font-size: 30px; background: #2766ad; color: #FFF; text-indent: 10px; }
+.home-decks h1.decks-title-small { padding: 10px; font-size: 20px; line-height: 20px; }
+
+.home-no-decks { padding: 10px; background: #F2F2F2; }
 
 a.create-a-deck { display: block; height: 119px; background: #487dba url('../img/create-a-deck-bg.png') no-repeat; background-position: right top; border-top: 5px solid #FFF; border-bottom: 5px solid #FFF; }
 

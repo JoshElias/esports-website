@@ -140,6 +140,36 @@
                             <img src="./img/create-a-deck.png" alt="create a deck">
                         </a>
                         <div class="home-decks">
+                            <h1 class="decks-title decks-title-small">FEATURED DECKS</h1>
+                            <!-- deck -->
+                            <div class="home-deck" ng-repeat="deck in decksFeatured">
+                                <div class="premium-flag" ng-if="deck.premium.isPremium"></div>
+                                <div class="panel" ng-class="{premium: deck.premium.isPremium}">
+                                    <div class="home-deck-class {{deck.playerClass.toLowerCase()}}"></div>
+                                    <div class="panel-heading">
+                                        <h3><a href="./decks/{{deck.slug}}">{{deck.name}}</a></h3>
+                                    </div>
+                                    <div class="panel-footer clearfix">
+                                        <div class="pull-left m-r-sm">
+                                            <span>by <a href="./user/{{deck.author.username}}">@{{deck.author.username}}</a></span>
+                                        </div>
+                                        <div class="pull-right">
+                                            <div class="pull-left m-r-sm">
+                                                <span class="fa fa-clock-o"></span>
+                                                <span>{{deck.createdDate | date : 'mediumDate'}}</span>
+                                            </div>
+                                            <div class="pull-left">
+                                                <span class="fa fa-thumbs-o-up"></span>
+                                                <span><span ng-if="deck.votesCount > 0">+</span><span ng-if="deck.votesCount < 0">-</span>{{deck.votesCount}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- / deck -->
+                            <p class="home-no-decks" ng-if="!decksFeatured.length && klass === 'all'">There are curently no featured decks yet.</p>
+                            <p class="home-no-decks" ng-if="!decksFeatured.length && klass !== 'all'">There are curently no featured decks under <strong>{{klass}}</strong> yet.</p>
+                            <h1 class="decks-title decks-title-small">COMMUNITY DECKS</h1>
                             <!-- deck -->
                             <div class="home-deck" ng-repeat="deck in decks">
                                 <div class="premium-flag" ng-if="deck.premium.isPremium"></div>
@@ -166,8 +196,8 @@
                                 </div>
                             </div>
                             <!-- / deck -->
-                            <p ng-if="!decks.length && klass === 'all'">There are curently no decks yet.</p>
-                            <p ng-if="!decks.length && klass !== 'all'">There are curently no decks under <strong>{{klass}}</strong> yet.</p>
+                            <p class="home-no-decks" ng-if="!decks.length && klass === 'all'">There are curently no decks yet.</p>
+                            <p class="home-no-decks" ng-if="!decks.length && klass !== 'all'">There are curently no decks under <strong>{{klass}}</strong> yet.</p>
                         </div>
                         <div class="ad-square">
                             <a href="http://www.kinguin.net/"><img src="https://s3-us-west-2.amazonaws.com/ts-node/img/kinguin-square.png" alt="Kinguin"></a>

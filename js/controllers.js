@@ -156,10 +156,11 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', 'dataArticles', 'dataDecks', 'ArticleService', 'DeckService', 
-    function ($scope, dataArticles, dataDecks, ArticleService, DeckService) {
+.controller('HomeCtrl', ['$scope', 'dataArticles', 'dataDecks', 'dataDecksFeatured', 'ArticleService', 'DeckService', 
+    function ($scope, dataArticles, dataDecks, dataDecksFeatured, ArticleService, DeckService) {
         $scope.articles = dataArticles.articles;
         $scope.decks = dataDecks.decks;
+        $scope.decksFeatured = dataDecksFeatured.decks;
         
         $scope.klass = 'all';
         
@@ -172,6 +173,10 @@ angular.module('app.controllers', ['ngCookies'])
 
             DeckService.getDecks(klass, 1, 10).then(function (data) {
                 $scope.decks = data.decks;
+            });
+            
+            DeckService.getDecksFeatured(klass, 1, 10).then(function (data) {
+                $scope.decksFeatured = data.decks;
             });
         };
     }

@@ -922,6 +922,17 @@ angular.module('app.services', [])
 })
 .factory('DeckService', function ($http, $q) {
     return {
+        getDecksFeatured: function (klass, page, perpage) {
+            klass = klass || 'all';
+            page = page || 1;
+            perpage = perpage || 24;
+            
+            var d = $q.defer();
+            $http.post('/decks/featured', { klass: klass, page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
         getDecks: function (klass, page, perpage) {
             klass = klass || 'all';
             page = page || 1;
