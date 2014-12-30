@@ -103,4 +103,22 @@ angular.module('app.directives', ['ui.load'])
         });
     };
 })
+.directive('ngBackground', function(){
+    return function(scope, element, attrs){
+        var url = attrs.ngBackground;
+        element.css({
+            'background-image': 'url(' + url +')',
+            'background-position': 'center center',
+            'background-size' : 'cover'
+        });
+    };
+})
+.directive('ngTooltip', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            $(element).tooltip();
+        }
+    };
+})
 ;
