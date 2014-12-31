@@ -113,11 +113,13 @@ angular.module('app.directives', ['ui.load'])
         });
     };
 })
-.directive('ngTooltip', function() {
+.directive('ngTooltip', function($timeout) {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
-            $(element).tooltip();
+            $timeout(function () {
+                $(element).tooltip();
+            });
         }
     };
 })

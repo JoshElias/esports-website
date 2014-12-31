@@ -20,7 +20,8 @@ var app = angular.module('app', [
     'app.controllers',
     'app.services',
     'app.filters',
-    'app.directives'
+    'app.directives',
+    'app.animations'
 ])
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 

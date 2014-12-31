@@ -271,17 +271,17 @@ span.username { color: #428bca; }
 
 /* start banner */
 .home-banner { position: relative; margin-bottom: 0px; }
-.home-banner .container { min-height: 700px; }
-.banner-bolt { position: absolute; top: 0px; left: 0px; width: 100%; height: 126px; background: url('../img/header-bolt.png') center center no-repeat; }
+.home-banner .container { height: 700px; }
+.banner-bolt { position: absolute; top: 0px; left: 0px; width: 100%; height: 126px; background: url('../img/header-bolt.png') center center no-repeat; z-index: 4; }
 
 .banner-prev,
-.banner-next { position: absolute; top: 282px; display: block; width: 40px; height: 135px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.5); color: #FFF !important; font-size: 30px; text-align: center; line-height: 135px; transition: all .1s linear; }
+.banner-next { position: absolute; top: 282px; display: block; width: 40px; height: 135px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.5); color: #FFF !important; font-size: 30px; text-align: center; line-height: 135px; transition: all .1s linear; z-index: 4; }
 .banner-prev { left: 0px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-left: none; }
 .banner-next { right: 0px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; border-right: none; }
 .banner-prev:hover,
 .banner-next:hover { width: 60px; background: rgba(39,102,173,.8); font-size: 50px; }
 
-.banner-pages-wrapper { position: absolute; left: 0px; bottom: 22px; width: 100%; height: 24px; text-align: center; }
+.banner-pages-wrapper { position: absolute; left: 0px; bottom: 22px; width: 100%; height: 24px; text-align: center; z-index: 4; }
 .banner-pages { margin: 0; padding: 0; display: inline-block; *display: inline; zoom: 1; height: 24px; border: 1px solid rgba(255,255,255,.5); background: rgba(0,0,0,.6); border-radius: 12px; }
 .banner-pages li { margin: 4px 0px 4px 8px; padding: 0; display: inline-block; *display: inline; zoom: 1; }
 .banner-pages li:last-child { margin: 4px 8px 4px 8px; }
@@ -290,8 +290,10 @@ span.username { color: #428bca; }
 .banner-pages li.active a { background: rgba(39,102,173,.8); }
 .banner-pages li.active a:hover { background: rgba(39,102,173,1); }
 
-
-.home-banner .banner-panel { position: relative; margin: 250px auto 0px auto; width: 600px; height: 200px; background: url('../img/black-60.png'); border-radius: 4px; border: 1px solid rgba(255,255,255,.5); }
+.home-banner .banner-slide-wrapper { position: relative; height: 700px; overflow: hidden; white-space: nowrap; }
+.home-banner .banner-slide { position: absolute; top: 0px; left: 0px; width: 100%; height: 700px; z-index: 2; }
+.home-banner .banner-slide.active { z-index: 3; }
+.home-banner .banner-panel { position: absolute; top: 250px; left: 50%; margin-left: -300px; width: 600px; height: 200px; background: url('../img/black-60.png'); border-radius: 4px; border: 1px solid rgba(255,255,255,.5); }
 .home-banner .banner-panel h1 { margin: 20px; color: #FFF; font-family: sneakersmediumitalic; font-size: 30px; }
 .home-banner .banner-panel p { margin: 20px; color: #FFF; }
 .home-banner .banner-panel .banner-btn-wrapper { position: absolute; left: 0px; bottom: 0px; margin: 0 0 20px 0; width: 600px; height: 40px; text-align: center; }
@@ -300,27 +302,27 @@ span.username { color: #428bca; }
 /* end banner */
 
 /* start filters */
-.home-filter { border-top: 1px solid #8f8e8c; background: #1a1a1a; }
+.home-filter { padding: 20px 0; border-top: 1px solid #8f8e8c; background: #1a1a1a; }
 
-ul.filter-class { margin: 20px 0px; padding: 0px; }
-ul.filter-class li { list-style: none; float: left; text-align: center; width: 10%; }
+.home-filter h1 { float: left; margin: 0 40px 0 0; color: #FFF; font-size: 28px; font-family: sneakersmediumitalic; }
 
-ul.filter-class li a { display: block; padding-top: 10px; width: 108px; height: 113px; }
-ul.filter-class li.active a { background: url('../img/class-sprites-active.png') no-repeat; color: #FFF; }
+.filter-class { margin: 0; padding: 0px; }
+.filter-class li { list-style: none; margin-right: 30px; display: inline-block; *display: inline; zoom: 1; width: 62px; height: 63px; }
+.filter-class li:last-child { margin-right: 0px; }
 
-ul.filter-class .filter-class-icon { margin: 0 auto; display: block; width: 60px; height: 60px; background: url('../img/class-sprites.png') 0px 0px no-repeat; padding: 0; }
-ul.filter-class .filter-class-icon.all { background-position: 0px -540px; }
-ul.filter-class .filter-class-icon.mage { background-position: 0px -60px; }
-ul.filter-class .filter-class-icon.shaman { background-position: 0px -300px; }
-ul.filter-class .filter-class-icon.warrior { background-position: 0px 0px; }
-ul.filter-class .filter-class-icon.rogue { background-position: 0px -120px; }
-ul.filter-class .filter-class-icon.paladin { background-position: 0px -480px; }
-ul.filter-class .filter-class-icon.priest { background-position: 0px -360px; }
-ul.filter-class .filter-class-icon.warlock { background-position: 0px -420px; }
-ul.filter-class .filter-class-icon.hunter { background-position: 0px -240px; }
-ul.filter-class .filter-class-icon.druid { background-position: 0px -180px; }
+.filter-class li a { display: block; width: 62px; height: 63px; overflow: hidden; text-indent: -99999px; background: url('../img/class-icons.png') no-repeat; opacity: .5; }
+.filter-class li.active a { opacity: 1; }
 
-ul.filter-class a.filter-class-text { margin-top: 5px; }
+.filter-class li.warlock a { background-position: 0px 0px; }
+.filter-class li.warrior a { background-position: 0px -63px; }
+.filter-class li.hunter a { background-position: 0px -126px; }
+.filter-class li.rogue a { background-position: 0px -189px; }
+.filter-class li.priest a { background-position: 0px -252px; }
+.filter-class li.paladin a { background-position: 0px -315px; }
+.filter-class li.mage a { background-position: 0px -378px; }
+.filter-class li.druid a { background-position: 0px -441px; }
+.filter-class li.shaman a { background-position: 0px -504px; }
+.filter-class li.all a { background-position: 0px -567px; }
 /* end filters */
 
 /* content start */
@@ -348,6 +350,8 @@ ul.filter-class a.filter-class-text { margin-top: 5px; }
 .home-articles .article.premium:hover { -webkit-animation-name: glow-premium; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow-premium; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
 .home-articles .article:hover .article-img { -webkit-filter: blur(5px); filter: blur(5px); }
 .home-articles .article:hover .article-content-wrapper { top: -1px; }
+
+.no-articles { color: #FFF; }
 /* end articles */
 
 /* start decks */

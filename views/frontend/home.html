@@ -1,26 +1,24 @@
 <!-- banner start -->
 <div class="container-fluid nav-pad padding-none">
-    <div class="home-banner" ng-background="https://s3-us-west-2.amazonaws.com/ts-node/img/gvg.jpg">
+    <div class="home-banner">
         <div class="banner-bolt"></div>
-        <a href="#" class="banner-prev"><i class="fa fa-angle-left"></i></a>
-        <a href="#" class="banner-next"><i class="fa fa-angle-right"></i></a>
+        <a href="#" class="banner-prev" ng-if="banner.slides.length > 1" ng-click="banner.prev()"><i class="fa fa-angle-left"></i></a>
+        <a href="#" class="banner-next" ng-if="banner.slides.length > 1" ng-click="banner.next()"><i class="fa fa-angle-right"></i></a>
         <div class="banner-pages-wrapper">
-            <ul class="banner-pages">
-                <li class="active">
-                    <a href="#"></a>
-                </li><li>
-                    <a href="#"></a>
-                </li><li>
-                    <a href="#"></a>
+            <ul class="banner-pages" ng-if="banner.slides.length > 1">
+                <li ng-class="{ active: banner.current == $index }" ng-repeat="slide in banner.slides">
+                    <a href="#" ng-click="banner.setCurrent($index)" ng-class="{ active: slides.current == $index }" ng-tooltip title="{{slide.title}}"></a>
                 </li>
             </ul>
         </div>
-        <div class="container">
-            <div class="banner-panel">
-                <h1>GOBLINS VS GNOMES IS LIVE!</h1>
-                <p>Check out the new GvG deck guides!</p>
-                <div class="banner-btn-wrapper">
-                    <a href="./decks" class="banner-btn">CHECK IT OUT</a>
+        <div class="banner-slide-wrapper">
+            <div class="banner-slide slide-animation" ng-class="{ active: banner.current == $index }" ng-background="https://s3-us-west-2.amazonaws.com/ts-node/img/{{slide.photo}}" ng-repeat="slide in banner.slides">
+                <div class="banner-panel">
+                    <h1>{{slide.title}}</h1>
+                    <p>{{slide.description}}</p>
+                    <div class="banner-btn-wrapper">
+                        <a href="{{slide.button.link}}" class="banner-btn" ng-if="slide.button">{{slide.button.text}}</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -33,56 +31,37 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
+                <h1>FILTER<br>CONTENT:</h1>
                 <ul class="filter-class">
-                    <li ng-class="{active:klass === 'all'}">
-                        <a href="#" ng-click="setKlass('all')" ng-tooltip title="All Classes">
-                            <span class="filter-class-icon all"></span>
-                        </a>
+                    <li class="all" ng-class="{active:klass === 'all'}">
+                        <a href="#" ng-click="setKlass('all')" ng-tooltip title="All Classes">All Classes</a>
                     </li>
-                    <li ng-class="{active:klass === 'Warrior'}">
-                        <a href="#" ng-click="setKlass('Warrior')" ng-tooltip title="Warrior">
-                            <span class="filter-class-icon warrior"></span>
-                        </a>
+                    <li class="warrior" ng-class="{active:klass === 'Warrior'}">
+                        <a href="#" ng-click="setKlass('Warrior')" ng-tooltip title="Warrior">Warrior</a>
                     </li>
-                    <li ng-class="{active:klass === 'Mage'}">
-                        <a href="#" ng-click="setKlass('Mage')" ng-tooltip title="Mage">
-                            <span class="filter-class-icon mage"></span>
-                        </a>
+                    <li class="mage" ng-class="{active:klass === 'Mage'}">
+                        <a href="#" ng-click="setKlass('Mage')" ng-tooltip title="Mage">Mage</a>
                     </li>
-                    <li ng-class="{active:klass === 'Rogue'}">
-                        <a href="#" ng-click="setKlass('Rogue')" ng-tooltip title="Rogue">
-                            <span class="filter-class-icon rogue"></span>
-                        </a>
+                    <li class="rogue" ng-class="{active:klass === 'Rogue'}">
+                        <a href="#" ng-click="setKlass('Rogue')" ng-tooltip title="Rogue">Rogue</a>
                     </li>
-                    <li ng-class="{active:klass === 'Druid'}">
-                        <a href="#" ng-click="setKlass('Druid')" ng-tooltip title="Druid">
-                            <span class="filter-class-icon druid"></span>
-                        </a>
+                    <li class="druid" ng-class="{active:klass === 'Druid'}">
+                        <a href="#" ng-click="setKlass('Druid')" ng-tooltip title="Druid">Druid</a>
                     </li>
-                    <li ng-class="{active:klass === 'Hunter'}">
-                        <a href="#" ng-click="setKlass('Hunter')" ng-tooltip title="Hunter">
-                            <span class="filter-class-icon hunter"></span>
-                        </a>
+                    <li class="hunter" ng-class="{active:klass === 'Hunter'}">
+                        <a href="#" ng-click="setKlass('Hunter')" ng-tooltip title="Hunter">Hunter</a>
                     </li>
-                    <li ng-class="{active:klass === 'Shaman'}">
-                        <a href="#" ng-click="setKlass('Shaman')" ng-tooltip title="Shaman">
-                            <span class="filter-class-icon shaman"></span>
-                        </a>
+                    <li class="shaman" ng-class="{active:klass === 'Shaman'}">
+                        <a href="#" ng-click="setKlass('Shaman')" ng-tooltip title="Shaman">Shaman</a>
                     </li>
-                    <li ng-class="{active:klass === 'Priest'}">
-                        <a href="#" ng-click="setKlass('Priest')" ng-tooltip title="Priest">
-                            <span class="filter-class-icon priest"></span>
-                        </a>
+                    <li class="priest" ng-class="{active:klass === 'Priest'}">
+                        <a href="#" ng-click="setKlass('Priest')" ng-tooltip title="Priest">Priest</a>
                     </li>
-                    <li ng-class="{active:klass === 'Warlock'}">
-                        <a href="#" ng-click="setKlass('Warlock')" ng-tooltip title="Warlock">
-                            <span class="filter-class-icon warlock"></span>
-                        </a>
+                    <li class="warlock" ng-class="{active:klass === 'Warlock'}">
+                        <a href="#" ng-click="setKlass('Warlock')" ng-tooltip title="Warlock">Warlock</a>
                     </li>
-                    <li ng-class="{active:klass === 'Paladin'}">
-                        <a href="#" ng-click="setKlass('Paladin')" ng-tooltip title="Paladin">
-                            <span class="filter-class-icon paladin"></span>
-                        </a>
+                    <li class="paladin" ng-class="{active:klass === 'Paladin'}">
+                        <a href="#" ng-click="setKlass('Paladin')" ng-tooltip title="Paladin">Paladin</a>
                     </li>
                 </ul>
             </div>
@@ -146,8 +125,8 @@
                         </div>
                     </div>
                     <!-- / article -->
-                    <p ng-if="!articles.length && klass === 'all'">There are curently no articles yet.</p>
-                    <p ng-if="!articles.length && klass !== 'all'">There are curently no articles under <strong>{{klass}}</strong> yet.</p>
+                    <p class="no-articles" ng-if="!articles.length && klass === 'all'">There are curently no articles yet.</p>
+                    <p class="no-articles" ng-if="!articles.length && klass !== 'all'">There are curently no articles under <strong>{{klass}}</strong> yet.</p>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4 home-decks">

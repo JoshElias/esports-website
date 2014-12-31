@@ -158,12 +158,51 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('HomeCtrl', ['$scope', 'dataArticles', 'dataDecks', 'dataDecksFeatured', 'ArticleService', 'DeckService', 
     function ($scope, dataArticles, dataDecks, dataDecksFeatured, ArticleService, DeckService) {
+        // data
         $scope.articles = dataArticles.articles;
         $scope.decks = dataDecks.decks;
         $scope.decksFeatured = dataDecksFeatured.decks;
         
-        $scope.klass = 'all';
+        // banner
+        $scope.banner = {
+            current: 0,
+            direction: 'left',
+            slides: [
+                {
+                    photo: 'gvg.jpg',
+                    title: 'GOBLINS VS GNOMES IS LIVE!',
+                    description: 'Check out the new GvG deck guides!',
+                    button: {
+                        text: 'CHECK IT OUT',
+                        link: './decks'
+                    }
+                },
+                {
+                    photo: 'clouds-40.png',
+                    title: 'SLIDE 2',
+                    description: 'Cruise Control',
+                    button: {
+                        text: 'CHECK IT OUT',
+                        link: './decks'
+                    }
+                }
+            ],
+            setCurrent: function (current) {
+                this.direction = 'right';
+                this.current = current;
+            },
+            next: function () {
+                this.direction = 'right';
+                this.current = (this.current < (this.slides.length - 1)) ? ++this.current : 0;
+            },
+            prev: function () {
+                this.direction = 'left';
+                this.current = (this.current > 0) ? --this.current : this.slides.length - 1;
+            }
+        };
         
+        // content
+        $scope.klass = 'all';
         $scope.setKlass = function (klass) {
             $scope.klass = klass;
             
