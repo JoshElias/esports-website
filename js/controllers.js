@@ -185,6 +185,15 @@ angular.module('app.controllers', ['ngCookies'])
                         text: 'CHECK IT OUT',
                         link: './decks'
                     }
+                },
+                {
+                    photo: 'clouds-40.png',
+                    title: 'SLIDE 3',
+                    description: 'Cruise Control',
+                    button: {
+                        text: 'CHECK IT OUT',
+                        link: './decks'
+                    }
                 }
             ],
             setCurrent: function (current) {
@@ -1403,6 +1412,16 @@ angular.module('app.controllers', ['ngCookies'])
         
         // set default tab page
         $scope.step = 1;
+        $scope.showManaCurve = false;
+        
+        
+        // steps
+        $scope.prevStep = function () {
+            if ($scope.step > 1) $scope.step = $scope.step - 1;
+        }
+        $scope.nextStep = function () {
+            if ($scope.step < 5) $scope.step = $scope.step + 1;
+        }
         
         // summernote options
         $scope.options = {
@@ -1482,6 +1501,22 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         };
+        
+        $scope.getManaCost = function () {
+            switch ($scope.filters.mana) {
+                    case 'all':
+                        return 'All';
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case '7+':
+                        return $scope.filters.mana;
+                }
+        }
         
         // deck
         $scope.deckTypes = Hearthstone.deckTypes;
