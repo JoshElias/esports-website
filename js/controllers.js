@@ -16,7 +16,8 @@ angular.module('app.controllers', ['ngCookies'])
             token: null,
             deck: null,
             show: {
-                deck: null
+                deck: null,
+                decks: null
             }
         },
         user: {
@@ -2079,6 +2080,10 @@ angular.module('app.controllers', ['ngCookies'])
             return (data.search) ? data.search.length : false;
         }
         
+        $scope.toggleAdvFilter = function () {
+            $scope.app.settings.show.decks.advanced = !$scope.app.settings.show.decks.advanced;
+        }
+        
         $scope.loading = false;
 
         $scope.setKlass = function (klass) {
@@ -2090,6 +2095,7 @@ angular.module('app.controllers', ['ngCookies'])
         // filters
         $scope.filters = {
             age: { name: 'All Decks', value: 'all' },
+            order: { name: 'Highest Ranked', value: 'high' },
             
             all: {
                 age: [
@@ -2099,6 +2105,12 @@ angular.module('app.controllers', ['ngCookies'])
                     { name: '30 Days', value: '30' },
                     { name: '60 Days', value: '60' },
                     { name: '90 Days', value: '90' }
+                ],
+                order: [
+                    { name: 'Highest Ranked', value: 'high' },
+                    { name: 'Lowest Ranked', value: 'low' },
+                    { name: 'Newest Decks', value: 'new' },
+                    { name: 'Oldest Decks', value: 'old' }
                 ]
             }
         };

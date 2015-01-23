@@ -79,13 +79,17 @@
                     </div>
                 </div>
                 <div class="pull-left m-r-sm">
-                    <select id="posted" name="posted" class="form-control input-dark" ng-model="filters.posted"></select>
-                </div>
-                <div class="pull-left m-r-sm">
-                    <select id="cost" name="cost" class="form-control input-dark" ng-model="filters.cost"></select>
-                </div>
-                <div class="pull-left">
-                    <select id="votes" name="votes" class="form-control input-dark" ng-model="filters.votes"></select>
+                    <div class="dropdown">
+                        <button class="btn input-dark" type="button" data-toggle="dropdown">
+                            <span>Order: {{filters.order.name}}</span>
+                            <b class="caret"></b>
+                        </button>
+                        <ul class="list-group dropdown-menu dropdown-dark">
+                            <li class="list-group-item" ng-class="{active: age === filters.age}" ng-repeat="filter in filters.all.order">
+                                <a href="#" ng-click="filters.age = filter; pagination.setPage(1);">{{filter.name}}</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
