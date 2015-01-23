@@ -5,6 +5,7 @@ var app = angular.module('app', [
     'summernote',
     'angular-bootbox',
     'angularMoment',
+    'angularPayments',
     'chart.js',
     'ui.select',
     'ngAnimate',
@@ -17,6 +18,7 @@ var app = angular.module('app', [
     'ui.jq',
     'ui.validate',
     'ui.date',
+    'ui.gravatar',
     'app.controllers',
     'app.services',
     'app.filters',
@@ -50,6 +52,13 @@ var app = angular.module('app', [
                 //ngProgress.complete();
                 $window.ga('send', 'pageview', $location.path());
             });
+            $rootScope.$on("$routeChangeError", function(evt, current, previous, rejection){
+                console.log(3);
+                if(rejection == "invalid_user"){
+                    console.log(previous);
+                    //$state.transitionTo();
+                }
+            });
         }
     ]
 )
@@ -66,8 +75,7 @@ var app = angular.module('app', [
         app.value      = $provide.value;
         
         $bootboxProvider.setDefaults({ locale: "en" });
-        
-        
+                
         $locationProvider.html5Mode(true);
         $httpProvider.interceptors.push('TokenInterceptor');
         
@@ -85,7 +93,7 @@ var app = angular.module('app', [
                     }
                 },
                 resolve: {
-                    User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'UserService' , function($window, $cookies, $state, $q, AuthenticationService, UserService) {
+                    User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService' , function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
                         if ($cookies.token) {
                             $window.sessionStorage.token = $cookies.token;
                             delete $cookies.token;
@@ -95,13 +103,20 @@ var app = angular.module('app', [
                             UserService.verify().success(function (data) {
                                 AuthenticationService.setLogged(true);
                                 AuthenticationService.setAdmin(data.isAdmin);
+                                
+                                SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                                SubscriptionService.setTsPlan(data.subscription.plan);
+                                SubscriptionService.setExpiry(data.subscription.expiry);
+                                
                                 $window.sessionStorage.userID = data.userID;
                                 $window.sessionStorage.username = data.username;
+                                $window.sessionStorage.email = data.email;
                                 d.resolve();
                             }).error(function () {
                                 delete $window.sessionStorage.userID;
                                 delete $window.sessionStorage.username;
                                 delete $window.sessionStorage.token;
+                                delete $window.sessionStorage.email;
                                 $state.transitionTo('app.login');
                                 d.resolve();
                             });
@@ -134,6 +149,9 @@ var app = angular.module('app', [
                                     page = 1,
                                     perpage = 10;
                                 return DeckService.getDecksFeatured(klass, page, perpage);
+                            }],
+                            dataBanners: ['BannerService', function (BannerService) {
+                                return BannerService.getBanners();
                             }]
                         }
                     }
@@ -190,17 +208,19 @@ var app = angular.module('app', [
                 }
             })
             .state('app.decks.list', {
-                url: '',
+                url: '?p&s&k',
                 views: {
                     decks: {
                         templateUrl: tpl + 'views/frontend/decks.list.html',
                         controller: 'DecksCtrl',
                         resolve: {
-                            data: ['DeckService', function (DeckService) {
-                                var klass = 'all',
-                                    page = 1,
-                                    perpage = 24;
-                                return DeckService.getDecks(klass, page, perpage);
+                            data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
+                                var klass = $stateParams.k || 'all',
+                                    page = $stateParams.p || 1,
+                                    perpage = 1,
+                                    search = $stateParams.s || '';
+                                
+                                return DeckService.getDecks(klass, page, perpage, search);
                             }]
                         }
                     }
@@ -490,6 +510,38 @@ var app = angular.module('app', [
                         }
                     }
                 }
+            })
+            .state('app.profile.edit', {
+                url: '/edit',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/profile.edit.html',
+                        controller: 'ProfileEditCtrl',
+                        resolve: {
+                            dataProfileEdit: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                                var username = $stateParams.username;
+                                return ProfileService.getUserProfile(username);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true }
+            })
+            .state('app.profile.subscription', {
+                url: '/subscription',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/profile.subscription.html',
+                        controller: 'ProfileSubscriptionCtrl',
+                        resolve: {
+                            dataProfileEdit: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                                var username = $stateParams.username;
+                                return ProfileService.getUserProfile(username);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true }
             })
             .state('app.admin', {
                 abstract: true,
@@ -875,7 +927,18 @@ var app = angular.module('app', [
                     }
                 },
                 access: { auth: true, admin: true }
-            })
-            ;
+            });        
     }]
 );
+
+angular.module('ui.gravatar').config([
+  'gravatarServiceProvider', function(gravatarServiceProvider) {
+    gravatarServiceProvider.defaults = {
+      size: 200,
+      "default": 'https://s3-us-west-2.amazonaws.com/ts-node/img/profile.jpg'  // Mystery man as default for missing avatars
+    };
+
+    // Use https endpoint
+    gravatarServiceProvider.secure = true;
+  }
+]);

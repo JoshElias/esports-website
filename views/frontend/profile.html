@@ -5,8 +5,9 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-6">
+                            
                             <a href="./user/{{user.username}}" class="profile-avatar profile-avatar-lg pull-left">
-                                <img src="./img/profile.jpg" class="img-circle">
+                                <img gravatar-src-once="user.email" class="img-circle">
                             </a>
                             <div class="profile-bio">
                                 <div class="m-l-sm">
@@ -26,7 +27,7 @@
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <a href="#" class="btn btn-sm btn-ts-white btn-rounded pull-right" ng-if="false">Message</a>
+                            <a href="./user/{{user.username}}/edit" class="btn btn-white pull-right" ng-if="user._id === app.user.getUserID()">Edit Profile</a>
                         </div>
                     </div>
                 </div>

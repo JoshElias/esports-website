@@ -792,6 +792,7 @@ module.exports = {
                                 },
                                 verified: true,
                                 isAdmin: req.body.isAdmin,
+                                isProvider: req.body.isProvider,
                                 active: req.body.active,
                                 createdDate: new Date().toISOString()
                             });
@@ -890,27 +891,28 @@ module.exports = {
                             });
                         }
 
-                        user.email = req.body.email;
+                        user.email = req.body.email || '';
                         user.username = req.body.username;
                         if (req.body.changePassword) {
                             user.password = req.body.newPassword;
                         }
-                        user.firstName = req.body.firstName;
-                        user.lastName = req.body.lastName;
-                        user.about = req.body.about;
-                        user.social = {
-                            twitter: req.body.social.twitter,
-                            facebook: req.body.social.facebook,
-                            twitch: req.body.social.twitch,
-                            instagram: req.body.social.instagram,
-                            youtube: req.body.social.youtube
+                        user.firstName = req.body.firstName || '';
+                        user.lastName = req.body.lastName || '';
+                        user.about = req.body.about || '';
+                        user.social = req.body.social || {
+                            twitter: '',
+                            facebook: '',
+                            twitch: '',
+                            instagram: '',
+                            youtube: ''
                         };
                         user.subscription = {
                             isSubscribed: req.body.subscription.isSubscribed,
                             expiryDate: req.body.subscription.expiryDate || new Date().toISOString()
                         };
-                        user.isAdmin = req.body.isAdmin;
+                        user.isAdmin = req.body.isAdmin || false;
                         user.active = req.body.active;
+                        user.isProvider = req.body.isProvider || false;
 
                         user.save(function (err) {
                             if (err) {

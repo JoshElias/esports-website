@@ -28,17 +28,15 @@
                     <li class="dropdown" ng-if="app.user.isLogged()">
                         <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <span class="profile-avatar profile-avatar-sm pull-right">
-                            <img src="./img/profile.jpg" alt="">
+                            <img gravatar-src="app.user.getUserEmail()" alt="">
                           </span>
                           <span class="hidden-sm hidden-md">{{app.user.getUsername()}}</span> <b class="caret"></b>
                         </a>
                         <!-- dropdown -->
-                        <ul class="dropdown-menu animated">
-                          <li><a href="./user/{{app.user.getUsername()}}">Profile</a></li>
-                          <li class="divider" ng-show="app.user.isAdmin()"></li>
-                          <li ng-show="app.user.isAdmin()"><a ui-sref="app.admin.dashboard">Admin</a></li>
-                          <li class="divider"></li>
-                          <li><a href="#" ng-click="app.user.logout()">Logout</a></li>
+                        <ul class="dropdown-menu list-group dropdown-dark">
+                          <li class="list-group-item"><a href="./user/{{app.user.getUsername()}}">Profile</a></li>
+                          <li class="list-group-item" ng-show="app.user.isAdmin()"><a ui-sref="app.admin.dashboard">Admin</a></li>
+                          <li class="list-group-item"><a href="#" ng-click="app.user.logout()">Logout</a></li>
                         </ul>
                         <!-- / dropdown -->
                     </li>

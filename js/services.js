@@ -20,6 +20,50 @@ angular.module('app.services', [])
         }
     }
 })
+.factory('SubscriptionService', function ($http) {
+    var isSubscribed = false,
+        tsPlan = false,
+        expiry = false;
+    
+    return {
+        isSubscribed: function () {
+            var now = new Date().getTime();
+            
+            if (isSubscribed) { return true; }
+            if (expiry) {
+                return (expiry > now);
+            } else {
+                return false;
+            }
+        },
+        getSubscription: function () {
+            return {
+                isSubscribed: isSubscribed,
+                tsPlan: tsPlan,
+                expiry: expiry
+            };
+        },
+        setSubscribed: function (value) {
+            isSubscribed = value;
+        },
+        setTsPlan: function (value) {
+            tsPlan = value;
+        },
+        setExpiry: function (value) {
+            expiry = (value) ? new Date(value).getTime(): value;
+        },        
+        setPlan: function (plan, cctoken) {
+            cctoken = cctoken || false;
+            return $http.post('/api/subscription/setplan', { plan: plan, cctoken: cctoken });
+        },
+        setCard: function (cctoken) {
+            return $http.post('/api/subscription/setcard', { cctoken: cctoken });
+        },
+        cancel: function () {
+            return $http.post('/api/subscription/cancel', {});
+        }
+    };
+})
 .factory('UserService', function($http) {
     return {
         login: function (email, password) {
@@ -86,6 +130,13 @@ angular.module('app.services', [])
 })
 .factory('ProfileService', function ($http, $q) {
     return {
+        getUserProfile: function (username) {
+            var d = $q.defer();
+            $http.post('/api/profile/' + username, {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
         getProfile: function (username) {
             var d = $q.defer();
             $http.post('/profile/' + username, {}).success(function (data) {
@@ -128,6 +179,9 @@ angular.module('app.services', [])
                 d.resolve(data);
             });
             return d.promise;
+        },
+        updateProfile: function (user) {
+            return $http.post('/api/profile/edit', user);
         }
     };
 })
@@ -665,6 +719,26 @@ angular.module('app.services', [])
             weak.isWeak = !weak.isWeak;
         }
         
+        db.getStrong = function (klass) {
+            var strong = db.against.strong;
+            for (var i = 0; i < strong.length; i++) {
+                if (strong[i].klass === klass) {
+                    return strong[i];
+                }
+            }
+            return false;
+        }
+
+        db.getWeak = function (klass) {
+            var weak = db.against.weak;
+            for (var i = 0; i < weak.length; i++) {
+                if (weak[i].klass === klass) {
+                    return weak[i];
+                }
+            }
+            return false;
+        }
+
         db.inMulligan = function (mulligan, withCoin, card) {
             var c = (withCoin) ? mulligan.withCoin.cards : mulligan.withoutCoin.cards;
             // check if card already exists
@@ -697,6 +771,16 @@ angular.module('app.services', [])
                     c.push(card);
                 }
             }
+        }
+        
+        db.getMulligan = function (klass) {
+            var mulligans = db.mulligans;
+            for (var i = 0; i < mulligans.length; i++) {
+                if (mulligans[i].klass === klass) {
+                    return mulligans[i];
+                }
+            }
+            return false;
         }
         
         db.getContent = function () {
@@ -944,13 +1028,14 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
-        getDecks: function (klass, page, perpage) {
+        getDecks: function (klass, page, perpage, search) {
             klass = klass || 'all';
             page = page || 1;
             perpage = perpage || 24;
+            search = search || '';
             
             var d = $q.defer();
-            $http.post('/decks', { klass: klass, page: page, perpage: perpage }).success(function (data) {
+            $http.post('/decks', { klass: klass, page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
@@ -1042,6 +1127,17 @@ angular.module('app.services', [])
             data.append("file", file);
             
             $http.post('/upload', data).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+})
+.factory('BannerService', function ($http, $q) {
+    return {
+        getBanners: function () {
+            var d = $q.defer();
+            $http.post('/banners', {}).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

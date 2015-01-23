@@ -37,6 +37,12 @@ module.exports = {
                         return res.json({
                             userID: user._id.toString(),
                             username: user.username,
+                            email: user.email,
+                            subscription: {
+                                isSubscribed: user.subscription.isSubscribed,
+                                plan: user.subscription.plan,
+                                expiry: (user.subscription.isSubscribed) ? false : user.subscription.expiryDate
+                            },
                             isAdmin: user.isAdmin,
                             token: token
                         });
@@ -164,6 +170,12 @@ module.exports = {
                 return res.json({
                     userID: user._id.toString(),
                     username: user.username,
+                    email: user.email,
+                    subscription: {
+                        isSubscribed: user.subscription.isSubscribed,
+                        plan: user.subscription.plan,
+                        expiry: (user.subscription.isSubscribed) ? false : user.subscription.expiryDate
+                    },
                     isAdmin: user.isAdmin
                 });
             });
@@ -292,6 +304,7 @@ module.exports = {
             }
 
             function findByEmail (callback) {
+                if (!profile.email || !profile.email.length || profile.email === null) { return callback(); }
                 Schemas.User.findOne({ email: profile.email }).exec(function (err, user) {
                     if (err || !user) { return callback(); }
 
@@ -438,6 +451,12 @@ module.exports = {
                                     success: true,
                                     userID: user._id.toString(),
                                     username: user.username,
+                                    email: user.email,
+                                    subscription: {
+                                        isSubscribed: user.subscription.isSubscribed,
+                                        plan: user.subscription.plan,
+                                        expiry: (user.subscription.isSubscribed) ? false : user.subscription.expiryDate
+                                    },
                                     isAdmin: user.isAdmin,
                                     token: token
                                 });
@@ -452,9 +471,83 @@ module.exports = {
         return function (req, res, next) {
             var username = req.params.username;
             
-            Schemas.User.findOne({ username: username, active: true }).select('username firstName lastName photos social about subscription.isSubscribed').exec(function (err, user) {
+            Schemas.User.findOne({ username: username, active: true }).select('username email firstName lastName photos social about subscription.isSubscribed').exec(function (err, user) {
                 if (err || !user) { return res.sendStatus(404); }
                 return res.json({ success: true, user: user });
+            });
+        };
+    },
+    userProfile: function (Schemas) {
+        return function (req, res, next) {
+            var username = req.params.username;
+            
+            Schemas.User.findOne({ username: username, active: true }).exec(function (err, user) {
+                if (err || !user) { return res.sendStatus(404); }
+                if (user._id.toString() !== req.user._id) { return res.sendStatus(404); }
+                return res.json({ success: true, user: user });
+            });
+        };
+    },
+    userProfileEdit: function (Schemas) {
+        return function (req, res, next) {
+            req.assert('firstName', 'First name cannot be longer than 100 chars').len(0, 100);
+            req.assert('lastName', 'Last name cannot be longer than 100 chars').len(0, 100);
+            req.assert('about', 'About cannot be longer than 400 chars').len(0, 400);
+            
+            req.assert('social.twitter', 'Twitter cannot be longer than 100 chars').len(0, 100);
+            req.assert('social.facebook', 'Facebook cannot be longer than 100 chars').len(0, 100);
+            req.assert('social.twitch', 'Twitch cannot be longer than 100 chars').len(0, 100);
+            req.assert('social.instagram', 'Instagram cannot be longer than 100 chars').len(0, 100);
+            req.assert('social.youtube', 'Youtube cannot be longer than 100 chars').len(0, 100);
+            
+            if (req.body.changePassword) {
+                req.assert('newPassword', 'New password is required').notEmpty();
+                req.assert('confirmNewPassword', 'Confirm new password is required').notEmpty();
+                req.assert('confirmNewPassword', 'New passwords must match').matches('newPassword');
+            }
+            
+            function checkForm (callback) {
+               var errors = req.validationErrors();
+
+                if (errors) {
+                    return res.json({ success: false, errors: errors });
+                } else {
+                    return callback();
+                }
+            }
+            
+            function updateProfile (callback) {
+                Schemas.User.findOne({ _id: req.user._id })
+                .exec(function (err, user) {
+                    if (err || !user) { return res.json({ success: false }); }
+                    
+                    user.firstName = req.body.firstName;
+                    user.lastName = req.body.lastName;
+                    user.about = req.body.about;
+                    
+                    user.social = {
+                        twitter: req.body.social.twitter,
+                        facebook: req.body.social.facebook,
+                        twitch: req.body.social.twitch,
+                        instagram: req.body.social.instagram,
+                        youtube: req.body.social.youtube
+                    };
+                    
+                    if (req.body.changePassword) {
+                        user.password = req.body.newPassword;
+                    }
+                    
+                    user.save(function (err) {
+                        if (err) { return res.json({ success: false }); }
+                        return callback();
+                    });
+                });
+            }
+            
+            checkForm(function () {
+                updateProfile(function () {
+                    return res.json({ success: true });
+                });
             });
         };
     },
@@ -499,7 +592,7 @@ module.exports = {
             }
             
             function getArticles (user, callback) {
-                Schemas.Article.find({ author: user._id }).sort('-createdDate').skip((perpage * page) - perpage).limit(perpage).exec(function (err, articles) {
+                Schemas.Article.find({ author: user._id, active: true }).sort('-createdDate').skip((perpage * page) - perpage).limit(perpage).exec(function (err, articles) {
                     if (err) { return req.json({ success: false }); }
                     return callback(articles);
                 });
@@ -1045,7 +1138,7 @@ module.exports = {
                     
                     Schemas.Comment.populate(article.comments, {
                         path: 'author',
-                        select: 'username'
+                        select: 'username email'
                     }, function (err, comments) {
                         if (err || !comments) { return res.json({ success: false }); }
                         article.comments = comments;
@@ -1124,7 +1217,7 @@ module.exports = {
             function getComment (callback) {
                 Schemas.Comment.populate(newComment, {
                     path: 'author',
-                    select: 'username'
+                    select: 'username email'
                 }, function (err, comment) {
                     if (err || !comment) { return res.json({ success: false }); }
                         return callback(comment);
@@ -1189,7 +1282,7 @@ module.exports = {
             
             // get total decks
             function getTotal (callback) {
-                Schemas.Deck.count({ public: true, featured: true })
+                Schemas.Deck.count({ featured: true })
                 .where(where)
                 .exec(function (err, count) {
                     if (err) { return res.json({ success: false }); }
@@ -1200,7 +1293,7 @@ module.exports = {
             
             // get decks
             function getDecks (callback) {
-                Schemas.Deck.find({ public: true, featured: true })
+                Schemas.Deck.find({ featured: true })
                 .where(where)
                 .select('premium playerClass slug name description author createdDate comments votesCount')
                 .populate({
@@ -1276,12 +1369,30 @@ module.exports = {
             var klass = req.body.klass || 'all',
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
-                where = (klass === 'all') ? {} : { 'playerClass': klass },
+                search = req.body.search || '',
+                where = {},
                 decks, total;
+            
+            if (klass !== 'all') {
+                where.playerClass = klass;
+            }
+            
+            if (search) {
+                where.$or = [];
+                where.$or.push({ name: new RegExp(search, "i") });
+                where.$or.push({ description: new RegExp(search, "i") });
+                where.$or.push({ contentEarly: new RegExp(search, "i") });
+                where.$or.push({ contentMid: new RegExp(search, "i") });
+                where.$or.push({ contentLate: new RegExp(search, "i") });
+            }
             
             // get total decks
             function getTotal (callback) {
                 Schemas.Deck.count({ public: true })
+                .populate({
+                    path: 'author',
+                    select: 'username -_id'
+                })
                 .where(where)
                 .exec(function (err, count) {
                     if (err) { return res.json({ success: false }); }
@@ -1293,12 +1404,12 @@ module.exports = {
             // get decks
             function getDecks (callback) {
                 Schemas.Deck.find({ public: true })
-                .where(where)
                 .select('premium playerClass slug name description author createdDate comments votesCount')
                 .populate({
                     path: 'author',
                     select: 'username -_id'
                 })
+                .where(where)
                 .sort({ votesCount: -1, createdDate: -1 })
                 .skip((perpage * page) - perpage)
                 .limit(perpage)
@@ -1311,7 +1422,7 @@ module.exports = {
             
             getDecks(function () {
                 getTotal(function () {
-                    return res.json({ success: true, decks: decks, total: total, klass: klass, page: page, perpage: perpage });
+                    return res.json({ success: true, decks: decks, total: total, klass: klass, page: page, perpage: perpage, search: search });
                 });
             });
             
@@ -1342,7 +1453,7 @@ module.exports = {
                 
                 Schemas.Comment.populate(deck.comments, {
                     path: 'author',
-                    select: 'username'
+                    select: 'username email'
                 }, function (err, comments) {
                     if (err || !comments) { return res.json({ success: false }); }
                     deck.comments = comments;
@@ -1457,7 +1568,7 @@ module.exports = {
             function getComment (callback) {
                 Schemas.Comment.populate(newComment, {
                     path: 'author',
-                    select: 'username'
+                    select: 'username email'
                 }, function (err, comment) {
                     if (err || !comment) { return res.json({ success: false }); }
                         return callback(comment);
@@ -1501,7 +1612,7 @@ module.exports = {
                     thread.posts = (thread.posts.length) ? [thread.posts[0]] : [];
                     Schemas.ForumPost.populate(thread.posts, {
                         path: 'author',
-                        select: 'username -_id'
+                        select: 'username email -_id'
                     }, callback);
                 };
                 
@@ -1547,7 +1658,7 @@ module.exports = {
                 
                 Schemas.ForumPost.populate(thread.posts, {
                     path: 'author',
-                    select: 'username -_id'
+                    select: 'username email -_id'
                 }, function (err, posts) {
                     if (err || !posts) { return res.json({ success: false }); }
                     
@@ -1581,7 +1692,7 @@ module.exports = {
                 .populate([
                     {
                         path: 'author',
-                        select: 'username'
+                        select: 'username email'
                     },
                     {
                         path: 'comments',
@@ -1595,7 +1706,7 @@ module.exports = {
                     
                     Schemas.Comment.populate(post.comments, {
                         path: 'author',
-                        select: 'username'
+                        select: 'username email'
                     }, function (err, comments) {
                         if (err || !comments) { return res.json({ success: false }); }
 
@@ -1744,7 +1855,7 @@ module.exports = {
             function getComment (callback) {
                 Schemas.Comment.populate(newComment, {
                     path: 'author',
-                    select: 'username'
+                    select: 'username email'
                 }, function (err, comment) {
                     if (err || !comment) { return res.json({ success: false }); }
 
@@ -1798,4 +1909,106 @@ module.exports = {
             });
         };
     },
+    subSetPlan: function (Schemas, Subscription) {
+        return function (req, res, next) {
+            var userID = req.user._id,
+                plan = req.body.plan,
+                cctoken = req.body.cctoken || false;
+            
+            function getUser (callback) {
+                Schemas.User.findOne({ _id: userID })
+                .exec(function (err, user) {
+                    if (err || !user) { return res.json({ success: false }); }
+                    return callback(user);
+                });
+            }
+            
+            function setPlan (user, callback) {
+                var sub = new Subscription(user);
+                sub.setPlan(plan, cctoken, function (err) {
+                    if (err) { return res.json({ success: false }); }
+                    return callback();
+                });
+            }
+            
+            getUser(function (user) {
+                setPlan(user, function () {
+                    return res.json({ success: true, plan: plan });
+                });
+            });
+        };
+    },
+    subSetCard: function (Schemas, Subscription) {
+        return function (req, res, next) {
+            var userID = req.user._id,
+                cctoken = req.body.cctoken;
+            
+            function getUser (callback) {
+                Schemas.User.findOne({ _id: userID })
+                .exec(function (err, user) {
+                    if (err || !user) { return res.json({ success: false }); }
+                    return callback(user);
+                });
+            }
+            
+            function setCard (user, callback) {
+                var sub = new Subscription(user);
+                sub.setCard(cctoken, function (err, last4) {
+                    if (err) { return res.json({ success: false }); }
+                    return callback(last4);
+                });
+            }
+            
+            getUser(function (user) {
+                setCard(user, function (last4) {
+                    return res.json({ success: true, subscription: {
+                        last4: last4
+                    } });
+                });
+            });
+        };
+    },
+    subCancel: function (Schemas, Subscription) {
+        return function (req, res, next) {
+            var userID = req.user._id;
+            
+            function getUser (callback) {
+                Schemas.User.findOne({ _id: userID })
+                .exec(function (err, user) {
+                    if (err || !user) { return res.json({ success: false }); }
+                    return callback(user);
+                });
+            }
+            
+            function cancelPlan (user, callback) {
+                var sub = new Subscription(user);
+                sub.cancel(function (err, expiryDate) {
+                    if (err) { return res.json({ success: false }); }
+                    return callback(expiryDate);
+                });
+            }
+            
+            getUser(function (user) {
+                cancelPlan(user, function (expiryDate) {
+                    return res.json({ success: true, subscription: {
+                        expiryDate: expiryDate
+                    } });
+                });
+            });
+        };
+    },
+    getBanners: function (Schemas) {
+        return function (req, res, next) {
+            function getBanners (callback) {
+                Schemas.Banner.find({ active: true }).exec(function (err, banners) {
+                    if (err) { return res.json({ success: false, banners: [] }); }
+                    return callback(banners);
+                });
+            }
+            
+            getBanners(function (banners) {
+                return res.json({ success: true, banners: banners });
+            });
+        };
+    }
 };

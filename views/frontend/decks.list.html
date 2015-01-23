@@ -1,82 +1,105 @@
 <!-- section banner -->
 <div class="container-fluid section-banner">
-    <div class="container section-decks">
-        <h1 class="section-title">DECKS</h1>
+    <div class="container section-decks clearfix">
+        <h1 class="section-title pull-left">DECKS</h1>
+        <div class="section-search pull-right">
+            <form name="search-form">
+            <div class="input-group">
+                <input type="text" class="form-control input-dark" placeholder="search..." ng-model="search">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn input-dark" ng-click="getDecks()"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+            </form>
+        </div>
     </div>
 </div>
 <!-- / section banner -->
 
-<!-- class filter -->
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <ul class="filter-class clearfix">
-                <li ng-class="{active:klass === 'all'}">
-                    <a href="#" ng-click="setKlass('all')">
-                        <span class="filter-class-icon all"></span>
-                        <span class="filter-class-text">ALL</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Warrior'}">
-                    <a href="#" ng-click="setKlass('Warrior')">
-                        <span class="filter-class-icon warrior"></span>
-                        <span class="filter-class-text">WARRIOR</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Mage'}">
-                    <a href="#" ng-click="setKlass('Mage')">
-                        <span class="filter-class-icon mage"></span>
-                        <span class="filter-class-text">MAGE</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Rogue'}">
-                    <a href="#" ng-click="setKlass('Rogue')">
-                        <span class="filter-class-icon rogue"></span>
-                        <span class="filter-class-text">ROGUE</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Druid'}">
-                    <a href="#" ng-click="setKlass('Druid')">
-                        <span class="filter-class-icon druid"></span>
-                        <span class="filter-class-text">DRUID</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Hunter'}">
-                    <a href="#" ng-click="setKlass('Hunter')">
-                        <span class="filter-class-icon hunter"></span>
-                        <span class="filter-class-text">HUNTER</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Shaman'}">
-                    <a href="#" ng-click="setKlass('Shaman')">
-                        <span class="filter-class-icon shaman"></span>
-                        <span class="filter-class-text">SHAMAN</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Priest'}">
-                    <a href="#" ng-click="setKlass('Priest')">
-                        <span class="filter-class-icon priest"></span>
-                        <span class="filter-class-text">PRIEST</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Warlock'}">
-                    <a href="#" ng-click="setKlass('Warlock')">
-                        <span class="filter-class-icon warlock"></span>
-                        <span class="filter-class-text">WARLOCK</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Paladin'}">
-                    <a href="#" ng-click="setKlass('Paladin')">
-                        <span class="filter-class-icon paladin"></span>
-                        <span class="filter-class-text">PALADIN</span>
-                    </a>
-                </li>
-            </ul>
+<!-- filter start -->
+<div class="container-fluid padding-none filter-bar filter-bar-decks">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1>FILTER<br>CONTENT:</h1>
+                <ul class="filter-class">
+                    <li class="all" ng-class="{active:klass === 'all'}">
+                        <a href="#" ng-click="setKlass('all')" ng-tooltip title="All Classes">All Classes</a>
+                    </li>
+                    <li class="druid" ng-class="{active:klass === 'Druid'}">
+                        <a href="#" ng-click="setKlass('Druid')" ng-tooltip title="Druid">Druid</a>
+                    </li>
+                    <li class="hunter" ng-class="{active:klass === 'Hunter'}">
+                        <a href="#" ng-click="setKlass('Hunter')" ng-tooltip title="Hunter">Hunter</a>
+                    </li>
+                    <li class="mage" ng-class="{active:klass === 'Mage'}">
+                        <a href="#" ng-click="setKlass('Mage')" ng-tooltip title="Mage">Mage</a>
+                    </li>
+                    <li class="paladin" ng-class="{active:klass === 'Paladin'}">
+                        <a href="#" ng-click="setKlass('Paladin')" ng-tooltip title="Paladin">Paladin</a>
+                    </li>
+                    <li class="priest" ng-class="{active:klass === 'Priest'}">
+                        <a href="#" ng-click="setKlass('Priest')" ng-tooltip title="Priest">Priest</a>
+                    </li>
+                    <li class="rogue" ng-class="{active:klass === 'Rogue'}">
+                        <a href="#" ng-click="setKlass('Rogue')" ng-tooltip title="Rogue">Rogue</a>
+                    </li>
+                    <li class="shaman" ng-class="{active:klass === 'Shaman'}">
+                        <a href="#" ng-click="setKlass('Shaman')" ng-tooltip title="Shaman">Shaman</a>
+                    </li>
+                    <li class="warlock" ng-class="{active:klass === 'Warlock'}">
+                        <a href="#" ng-click="setKlass('Warlock')" ng-tooltip title="Warlock">Warlock</a>
+                    </li>
+                    <li class="warrior" ng-class="{active:klass === 'Warrior'}">
+                        <a href="#" ng-click="setKlass('Warrior')" ng-tooltip title="Warrior">Warrior</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
-<!-- / class filter -->
+<!-- filter end -->
 
+<!-- filter advanced start -->
+<div class="container-fluid padding-none filter-bar-advanced">
+    <div class="container pos-rl">
+        <div class="filter-bar-advanced-options-wrapper pos-rl" ng-class="{ open: showAdvanced }">
+            <div class="filter-bar-advanced-options clearfix">
+                <div class="pull-left m-r-sm">
+                    <div class="dropdown">
+                        <button class="btn input-dark" type="button" data-toggle="dropdown">
+                            <span>Age: {{filters.age.name}}</span>
+                            <b class="caret"></b>
+                        </button>
+                        <ul class="list-group dropdown-menu dropdown-dark">
+                            <li class="list-group-item" ng-class="{active: age === filters.age}" ng-repeat="filter in filters.all.age">
+                                <a href="#" ng-click="filters.age = filter; pagination.setPage(1);">{{filter.name}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pull-left m-r-sm">
+                    <select id="posted" name="posted" class="form-control input-dark" ng-model="filters.posted"></select>
+                </div>
+                <div class="pull-left m-r-sm">
+                    <select id="cost" name="cost" class="form-control input-dark" ng-model="filters.cost"></select>
+                </div>
+                <div class="pull-left">
+                    <select id="votes" name="votes" class="form-control input-dark" ng-model="filters.votes"></select>
+                </div>
+            </div>
+        </div>
+        <div class="filter-bar-advanced-tab clearfix">
+            <a href="#" class="pull-right clearfix" ng-click="showAdvanced = !showAdvanced">
+                <span class="icon pull-left"><i class="fa fa-bars"></i></span>
+                <span class="text pull-right">ADVANCED<br>FILTERING</span>
+            </a>
+        </div>
+    </div>
+</div>
+<!-- filter advanced end -->
+
+<!-- decks start -->
 <div class="container">
     
     <!-- page flipping -->
@@ -92,44 +115,42 @@
     <!-- / page flipping -->
     
     <!-- decks -->
-    <div class="container container-flex">
-        <div class="row row-flex row-flex-wrap profile-decks" ng-show="decks.length">
+    <div class="container">
+        <div class="row decks-list" ng-show="decks.length">
             <!-- deck -->
-            <div class="col-xs-12 col-sm-12 col-md-4 profile-deck" ng-repeat="deck in decks">
-                <!--<div class="premium-flag" ng-show="deck.premium.isPremium"></div>-->
-                <div class="panel flex-col" ng-class="{premium: deck.premium.isPremium}">
-                    <div class="profile-deck-class {{deck.playerClass.toLowerCase()}}"></div>
-                    <div class="panel-heading">
-                        <h3><a href="./decks/{{deck.slug}}">{{deck.name}}</a></h3>
-                    </div>
-                    <div class="panel-body flex-grow">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="deck in decks">
+            <div class="deck-wrapper">
+                <div class="deck large {{deck.playerClass.toLowerCase()}}" ng-class="{ premium: deck.premium.isPremium }">
+                    <a href="./decks/{{deck.slug}}"></a>
+                    <div class="deck-overlay"></div>
+                    <div class="deck-premium" ng-if="deck.premium.isPremium"></div>
+                    <div class="deck-title">{{deck.name}}</div>
+                    <div class="deck-score"><span><em ng-if="deck.votesCount > 0">+</em>{{deck.votesCount}}</span></div>
+                    <div class="deck-description">
                         <p>{{deck.description}}</p>
                     </div>
-                    <div class="panel-footer clearfix">
+                    <div class="deck-info clearfix">
                         <div class="pull-left m-r-sm">
-                            <span class="text-muted">by <a href="./user/{{deck.author.username}}">@{{deck.author.username}}</a></span>
+                            <span>by <a href="./user/{{deck.author.username}}">@{{deck.author.username}}</a></span>
                         </div>
                         <div class="pull-right">
                             <div class="pull-left m-r-sm">
-                                <span class="fa fa-clock-o text-muted"></span>
-                                <span class="text-muted">{{deck.createdDate | date : 'mediumDate'}}</span>
-                            </div>
-                            <div class="pull-left m-r-sm">
-                                <span class="fa fa-comment-o text-muted"></span>
-                                <span class="text-muted"><a href="./decks/{{deck.slug}}">{{deck.comments.length}} Comment<span ng-hide="deck.comments.length === 1">s</span></a></span>
+                                <span class="fa fa-clock-o"></span>
+                                <span>{{deck.createdDate | date : 'mediumDate'}}</span>
                             </div>
                             <div class="pull-left">
-                                <span class="fa fa-thumbs-o-up text-muted"></span>
-                                <span class="text-muted"><span ng-show="deck.votesCount > 0">+</span><span ng-show="deck.votesCount < 0">-</span>{{deck.votesCount}}</span>
+                                <span class="fa fa-comment-o"></span>
+                                <span><a href="./decks/{{deck.slug}}">{{deck.comments.length}} Comment<span ng-hide="deck.comments.length === 1">s</span></a></span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            </div>
             <!-- / deck -->
         </div>
-        <p ng-if="!decks.length && klass === 'all'">There are curently no decks yet.</p>
-        <p ng-if="!decks.length && klass !== 'all'">There are curently no decks under <strong>{{klass}}</strong> yet.</p>
+        <p ng-show="!decks.length && klass !== 'all' && !loading && !hasSearch()" class="decks-list-no-content">There are curently no decks under <strong>{{klass}}</strong> yet.</p>
+        <p ng-show="!decks.length && !loading && hasSearch()" class="decks-list-no-content">There are no results for your search.</p>
     </div>
     <!-- / decks -->
     
@@ -146,3 +167,4 @@
     <!-- / page flipping -->
     
 </div>
+<!-- decks end -->

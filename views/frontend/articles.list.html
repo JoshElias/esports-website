@@ -1,81 +1,64 @@
 <!-- section banner -->
 <div class="container-fluid section-banner">
-    <div class="container section-articles">
-        <h1 class="section-title">ARTICLES</h1>
+    <div class="container section-articles clearfix">
+        <h1 class="section-title pull-left">ARTICLES</h1>
+        <div class="section-search pull-right">
+            <form name="search-form">
+            <div class="input-group">
+                <input type="text" class="form-control input-dark" placeholder="search..." ng-model="search">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn input-dark" ng-disabled="!search.length"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+            </form>
+        </div>
     </div>
 </div>
 <!-- / section banner -->
 
-<!-- class filter -->
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <ul class="filter-class clearfix">
-                <li ng-class="{active:klass === 'all'}">
-                    <a href="#" ng-click="setKlass('all')">
-                        <span class="filter-class-icon all"></span>
-                        <span class="filter-class-text">ALL</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Warrior'}">
-                    <a href="#" ng-click="setKlass('Warrior')">
-                        <span class="filter-class-icon warrior"></span>
-                        <span class="filter-class-text">WARRIOR</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Mage'}">
-                    <a href="#" ng-click="setKlass('Mage')">
-                        <span class="filter-class-icon mage"></span>
-                        <span class="filter-class-text">MAGE</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Rogue'}">
-                    <a href="#" ng-click="setKlass('Rogue')">
-                        <span class="filter-class-icon rogue"></span>
-                        <span class="filter-class-text">ROGUE</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Druid'}">
-                    <a href="#" ng-click="setKlass('Druid')">
-                        <span class="filter-class-icon druid"></span>
-                        <span class="filter-class-text">DRUID</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Hunter'}">
-                    <a href="#" ng-click="setKlass('Hunter')">
-                        <span class="filter-class-icon hunter"></span>
-                        <span class="filter-class-text">HUNTER</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Shaman'}">
-                    <a href="#" ng-click="setKlass('Shaman')">
-                        <span class="filter-class-icon shaman"></span>
-                        <span class="filter-class-text">SHAMAN</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Priest'}">
-                    <a href="#" ng-click="setKlass('Priest')">
-                        <span class="filter-class-icon priest"></span>
-                        <span class="filter-class-text">PRIEST</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Warlock'}">
-                    <a href="#" ng-click="setKlass('Warlock')">
-                        <span class="filter-class-icon warlock"></span>
-                        <span class="filter-class-text">WARLOCK</span>
-                    </a>
-                </li>
-                <li ng-class="{active:klass === 'Paladin'}">
-                    <a href="#" ng-click="setKlass('Paladin')">
-                        <span class="filter-class-icon paladin"></span>
-                        <span class="filter-class-text">PALADIN</span>
-                    </a>
-                </li>
-            </ul>
+<!-- filter start -->
+<div class="container-fluid padding-none filter-bar filter-bar-articles">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1>FILTER<br>CONTENT:</h1>
+                <ul class="filter-class">
+                    <li class="all" ng-class="{active:klass === 'all'}">
+                        <a href="#" ng-click="setKlass('all')" ng-tooltip title="All Classes">All Classes</a>
+                    </li>
+                    <li class="druid" ng-class="{active:klass === 'Druid'}">
+                        <a href="#" ng-click="setKlass('Druid')" ng-tooltip title="Druid">Druid</a>
+                    </li>
+                    <li class="hunter" ng-class="{active:klass === 'Hunter'}">
+                        <a href="#" ng-click="setKlass('Hunter')" ng-tooltip title="Hunter">Hunter</a>
+                    </li>
+                    <li class="mage" ng-class="{active:klass === 'Mage'}">
+                        <a href="#" ng-click="setKlass('Mage')" ng-tooltip title="Mage">Mage</a>
+                    </li>
+                    <li class="paladin" ng-class="{active:klass === 'Paladin'}">
+                        <a href="#" ng-click="setKlass('Paladin')" ng-tooltip title="Paladin">Paladin</a>
+                    </li>
+                    <li class="priest" ng-class="{active:klass === 'Priest'}">
+                        <a href="#" ng-click="setKlass('Priest')" ng-tooltip title="Priest">Priest</a>
+                    </li>
+                    <li class="rogue" ng-class="{active:klass === 'Rogue'}">
+                        <a href="#" ng-click="setKlass('Rogue')" ng-tooltip title="Rogue">Rogue</a>
+                    </li>
+                    <li class="shaman" ng-class="{active:klass === 'Shaman'}">
+                        <a href="#" ng-click="setKlass('Shaman')" ng-tooltip title="Shaman">Shaman</a>
+                    </li>
+                    <li class="warlock" ng-class="{active:klass === 'Warlock'}">
+                        <a href="#" ng-click="setKlass('Warlock')" ng-tooltip title="Warlock">Warlock</a>
+                    </li>
+                    <li class="warrior" ng-class="{active:klass === 'Warrior'}">
+                        <a href="#" ng-click="setKlass('Warrior')" ng-tooltip title="Warrior">Warrior</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
-<!-- / class filter -->
+<!-- filter end -->
 
 <div class="container">
     
@@ -94,34 +77,34 @@
     <!-- articles -->
     <div class="articles">
         <!-- article -->
-        <div class="home-article" ng-repeat="article in articles">
-            <div class="panel">
-                <div class="panel-heading" ng-if="article.photos && article.photos.medium.length">
-                    <div class="article-img pos-rl">
-                        <div ng-class="{overcast:article.theme === 'overcast'}" ng-if="article.theme"><a href="./articles/{{article.slug.url}}"></a></div>
-                        <a href="./articles/{{article.slug.url}}"><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node/articles/{{article.photos.medium}}" alt="{{article.title}}" class="img-responsive"></a>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <h3><a href="./articles/{{article.slug.url}}">{{article.title}}</a></h3>
-                    <p>{{article.description}}</p>
-                </div>
-                <div class="panel-footer clearfix">
-                    <div class="pull-left m-r-sm">
-                        <span class="text-muted">by <a href="./user/{{article.author.username}}">@{{article.author.username}}</a></span>
-                    </div>
-                    <div class="pull-right">
-                        <div class="pull-left m-r-sm">
-                            <span class="fa fa-clock-o text-muted"></span>
-                            <span class="text-muted">{{article.createdDate | date : 'mediumDate'}}</span>
-                        </div>
-                        <div class="pull-left m-r-sm">
-                            <span class="fa fa-comment-o text-muted"></span>
-                            <a href="./articles/{{article.slug.url}}"><span class="text-muted">{{article.comments.length}} Comment<span ng-hide="article.comments.length === 1">s</span></span></a>
-                        </div>
-                        <div class="pull-left">
-                            <span class="fa fa-thumbs-o-up text-muted"></span>
-                            <span class="text-muted"><span ng-show="article.votesCount > 0">+</span><span ng-show="article.votesCount < 0">-</span>{{article.votesCount}}</span>
+        <div class="article-wrapper" ng-repeat="article in articles">
+            <div class="article" ng-class="{ premium: article.premium.isPremium }">
+                <a href="./articles/{{article.slug.url}}"></a>
+                <div class="article-premium" ng-if="article.premium.isPremium"></div>
+                <div class="article-theme" ng-class="{overcast:article.theme === 'overcast'}" ng-if="article.theme !== 'none'"><a href="./articles/{{article.slug.url}}"></a></div>
+                <div class="article-img" ng-background="https://s3-us-west-2.amazonaws.com/ts-node/articles/{{article.photos.medium}}"></div>
+                <div class="article-content-wrapper">
+                    <div class="article-content flex-col">
+                        <h1>{{article.title}}</h1>
+                        <p class="flex-grow">{{article.description}}</p>
+                        <div class="article-info">
+                            <div class="pull-left m-r-sm">
+                                <span>by <a href="./user/{{article.author.username}}">@{{article.author.username}}</a></span>
+                            </div>
+                            <div class="pull-right">
+                                <div class="pull-left m-r-sm">
+                                    <span class="fa fa-clock-o"></span>
+                                    <span>{{article.createdDate | date : 'mediumDate'}}</span>
+                                </div>
+                                <div class="pull-left m-r-sm">
+                                    <span class="fa fa-comment-o"></span>
+                                    <a href="./articles/{{article.slug.url}}">{{article.comments.length}} Comment<span ng-if="article.comments.length === 1">s</span></a>
+                                </div>
+                                <div class="pull-left">
+                                    <span class="fa fa-thumbs-o-up"></span>
+                                    <span><span ng-if="article.votesCount > 0">+</span>{{article.votesCount}}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

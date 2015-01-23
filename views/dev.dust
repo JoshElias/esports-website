@@ -31,6 +31,10 @@
     <script src="./js/moment/moment.min.js"></script>
     <script src="./js/chart/chart.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TweenMax.min.js"></script>
+    <script src="https://js.stripe.com/v2/"></script>
+    <script>
+        Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
+    </script>
     <!-- angular -->
     <script src="./js/angular/angular-file-upload-shim.min.js"></script>
     <script src="./js/angular/angular.js"></script>
@@ -52,6 +56,9 @@
     <script src="./js/angular/angular-chart.js"></script>
     <script src="./js/angular/select.min.js"></script>
     <script src="./js/angular/ngProgress.js"></script>
+    <script src="./js/angular/md5.min.js"></script>
+    <script src="./js/angular/angular-gravatar.js"></script>
+    <script src="./js/angular/angular-payments.min.js"></script>
     <!-- app -->
     <script src="./js/app.js"></script>
     <script src="./js/services.js"></script>

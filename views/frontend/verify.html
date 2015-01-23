@@ -21,11 +21,11 @@
                     <form class="form-horizontal form-modal" role="form" name="verifyForm">
                     <div class="form-group">
                         <label for="email" class="control-label sr-only">Email</label>
-                        <input type="email" class="form-control first" id="email" placeholder="Email" ng-model="verify.email" required>
+                        <input type="email" class="form-control input-dark first" id="email" placeholder="Email" ng-model="verify.email" required>
                     </div>
                     <div class="form-group">
                         <label for="code" class="control-label sr-only">Authorization Code</label>
-                        <input type="text" class="form-control" id="code" placeholder="Authorization Code" ng-model="verify.code" required>
+                        <input type="text" class="form-control input-dark last" id="code" placeholder="Authorization Code" ng-model="verify.code" required>
                     </div>
                     <button type="submit" class="btn btn-default btn-block" ng-disabled="verifyForm.$invalid" ng-click="verifyEmail()">Verify Account</button>
                     </form>

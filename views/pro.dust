@@ -31,6 +31,10 @@
     <script src="https://s3-us-west-2.amazonaws.com/ts-node/js/moment/moment.min.js"></script>
     <script src="https://s3-us-west-2.amazonaws.com/ts-node/js/chart/chart.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TweenMax.min.js"></script>
+    <script src="https://js.stripe.com/v2/"></script>
+    <script>
+        Stripe.setPublishableKey('pk_live_2BNbCCvFcOfU0awquAaYrHZo');
+    </script>
     <!-- angular -->
     <script src="https://s3-us-west-2.amazonaws.com/ts-node/js/angular/angular-file-upload-shim.min.js"></script>
     <script src="https://s3-us-west-2.amazonaws.com/ts-node/js/angular/angular.js"></script>
@@ -52,6 +56,9 @@
     <script src="https://s3-us-west-2.amazonaws.com/ts-node/js/angular/angular-chart.js"></script>
     <script src="https://s3-us-west-2.amazonaws.com/ts-node/js/angular/select.min.js"></script>
     <script src="https://s3-us-west-2.amazonaws.com/ts-node/js/angular/ngProgress.js"></script>
+    <script src="https://s3-us-west-2.amazonaws.com/ts-node/js/angular/md5.min.js"></script>
+    <script src="https://s3-us-west-2.amazonaws.com/ts-node/js/angular/angular-gravatar.js"></script>
+    <script src="https://s3-us-west-2.amazonaws.com/ts-node/js/angular/angular-payments.min.js"></script>
     <!-- app -->
     <script src="https://s3-us-west-2.amazonaws.com/ts-node/js/app.js"></script>
     <script src="https://s3-us-west-2.amazonaws.com/ts-node/js/services.js"></script>

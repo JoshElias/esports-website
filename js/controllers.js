@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('app.controllers', ['ngCookies'])
-  .controller('AppCtrl', ['$scope', '$localStorage', '$window', '$location', 'AuthenticationService', 'UserService', 
-    function($scope, $localStorage, $window, $location, AuthenticationService, UserService) {
+  .controller('AppCtrl', ['$scope', '$localStorage', '$window', '$location', 'SubscriptionService', 'AuthenticationService', 'UserService', 
+    function($scope, $localStorage, $window, $location, SubscriptionService, AuthenticationService, UserService) {
       var isIE = !!navigator.userAgent.match(/MSIE/i);
       isIE && angular.element($window.document.body).addClass('ie');
       isSmartDevice( $window ) && angular.element($window.document.body).addClass('smart');
@@ -13,14 +13,27 @@ angular.module('app.controllers', ['ngCookies'])
         version: '0.0.1',
         copyright: new Date().getFullYear(),
         settings: {
-            deck: null
+            token: null,
+            deck: null,
+            show: {
+                deck: null
+            }
         },
         user: {
+            getUserEmail: function () {
+                return $window.sessionStorage.email || false;
+            },
             getUserID: function () {
                 return $window.sessionStorage.userID;
             },
             getUsername: function () {
                 return $window.sessionStorage.username;
+            },
+            isSubscribed: function () {
+                return SubscriptionService.isSubscribed();
+            },
+            getSubscription: function () {
+                return SubscriptionService.getSubscription();
             },
             isAdmin: AuthenticationService.isAdmin,
             isLogged: AuthenticationService.isLogged,
@@ -28,9 +41,16 @@ angular.module('app.controllers', ['ngCookies'])
                 if (AuthenticationService.isLogged()) {
                     AuthenticationService.setLogged(false);
                     AuthenticationService.setAdmin(false);
+                    
+                    SubscriptionService.setSubscribed(false);
+                    SubscriptionService.setTsPlan(false);
+                    SubscriptionService.setExpiry(false);
+                    
                     delete $window.sessionStorage.userID;
                     delete $window.sessionStorage.username;
                     delete $window.sessionStorage.token;
+                    delete $window.sessionStorage.email;
+                    $scope.app.settings.token = null;
                 }
                 return $location.path("/login");
             }
@@ -40,6 +60,11 @@ angular.module('app.controllers', ['ngCookies'])
       // save settings to local storage
       if ( angular.isDefined($localStorage.settings) ) {
         $scope.app.settings = $localStorage.settings;
+        
+        // persistent login  
+        if ($scope.app.settings.token && $scope.app.settings.token !== null) {
+            $window.sessionStorage.token = $scope.app.settings.token;
+        }
       } else {
         $localStorage.settings = $scope.app.settings;
       }
@@ -54,8 +79,8 @@ angular.module('app.controllers', ['ngCookies'])
       }
 
   }])
-.controller('UserCtrl', ['$scope', '$location', '$window', '$state', 'UserService', 'AuthenticationService', 'AlertService', 
-    function ($scope, $location, $window, $state, UserService, AuthenticationService, AlertService) {
+.controller('UserCtrl', ['$scope', '$location', '$window', '$state', 'UserService', 'AuthenticationService', 'AlertService', 'SubscriptionService', 
+    function ($scope, $location, $window, $state, UserService, AuthenticationService, AlertService, SubscriptionService) {
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
@@ -68,9 +93,15 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
                     $window.sessionStorage.userID = data.userID;
                     $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.token = data.token;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
                     $location.path("/");
                 }).error(function(status, data) {
                     $scope.showError = true;
@@ -104,8 +135,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('UserVerifyCtrl', ['$scope', '$location', '$window', '$state', '$stateParams', 'UserService', 'AuthenticationService', 
-    function ($scope, $location, $window, $state, $stateParams, UserService, AuthenticationService) {
+.controller('UserVerifyCtrl', ['$scope', '$location', '$window', '$state', '$stateParams', 'UserService', 'AuthenticationService', 'SubscriptionService', 
+    function ($scope, $location, $window, $state, $stateParams, UserService, AuthenticationService, SubscriptionService) {
         $scope.verify = {
             email: $stateParams.email || '',
             code: $stateParams.code || ''
@@ -119,9 +150,15 @@ angular.module('app.controllers', ['ngCookies'])
                 } else {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
                     $window.sessionStorage.userID = data.userID;
                     $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.token = data.token;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
                     $state.transitionTo('app.home', {});
                 }
             });
@@ -156,8 +193,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', 'dataArticles', 'dataDecks', 'dataDecksFeatured', 'ArticleService', 'DeckService', 
-    function ($scope, dataArticles, dataDecks, dataDecksFeatured, ArticleService, DeckService) {
+.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataDecks', 'dataDecksFeatured', 'ArticleService', 'DeckService', 
+    function ($scope, dataBanners, dataArticles, dataDecks, dataDecksFeatured, ArticleService, DeckService) {
         // data
         $scope.articles = dataArticles.articles;
         $scope.decks = dataDecks.decks;
@@ -167,35 +204,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.banner = {
             current: 0,
             direction: 'left',
-            slides: [
-                {
-                    photo: 'gvg.jpg',
-                    title: 'GOBLINS VS GNOMES IS LIVE!',
-                    description: 'Check out the new GvG deck guides!',
-                    button: {
-                        text: 'CHECK IT OUT',
-                        link: './decks'
-                    }
-                },
-                {
-                    photo: 'clouds-40.png',
-                    title: 'SLIDE 2',
-                    description: 'Cruise Control',
-                    button: {
-                        text: 'CHECK IT OUT',
-                        link: './decks'
-                    }
-                },
-                {
-                    photo: 'clouds-40.png',
-                    title: 'SLIDE 3',
-                    description: 'Cruise Control',
-                    button: {
-                        text: 'CHECK IT OUT',
-                        link: './decks'
-                    }
-                }
-            ],
+            slides: dataBanners.banners,
             setCurrent: function (current) {
                 this.direction = 'right';
                 this.current = current;
@@ -242,6 +251,103 @@ angular.module('app.controllers', ['ngCookies'])
                 ($scope.user.social.youtube && $scope.user.social.youtube.length)
             );
         }
+    }
+])
+.controller('ProfileEditCtrl', ['$scope', 'ProfileService', 'dataProfileEdit',  
+    function ($scope, ProfileService, dataProfileEdit) {
+        $scope.profile = dataProfileEdit.user;
+        
+        $scope.editProfile = function () {
+            ProfileService.updateProfile($scope.profile).success(function (data) {
+                if (!data.success) {
+                    console.log(data.errors || data.success);
+                } else {
+                    console.log('success');
+                }
+            });
+        };
+    }
+])
+.controller('ProfileSubscriptionCtrl', ['$scope', 'SubscriptionService', 'dataProfileEdit',  
+    function ($scope, SubscriptionService, dataProfileEdit) {
+        $scope.profile = dataProfileEdit.user;
+        
+        $scope.plan = dataProfileEdit.user.subscription.plan || 'tempostorm_semi';
+        
+        $scope.getExpiryDate = function () {
+            var expiryISO = $scope.profile.subscription.expiryDate;
+            if (!expiryISO) { return false; }
+            
+            var now = new Date().getTime(),
+                expiryTS = new Date(expiryISO).getTime();
+
+            return (expiryTS > now) ? expiryTS : false;
+        };
+        
+        $scope.isSubscribed = function () {
+            return $scope.profile.subscription.isSubscribed;
+        }
+        
+        $scope.subscribe = function (code, result) {
+            if (result.error) {
+                console.log(result);
+            } else {
+                SubscriptionService.setPlan($scope.plan, result.id).success(function (data) {
+                    if (data.success) {
+                        SubscriptionService.setSubscribed(true);
+                        SubscriptionService.setTsPlan(data.plan);
+                        
+                        $scope.profile.subscription.isSubscribed = true;
+                        $scope.profile.subscription.plan = data.plan;
+                        
+                        $scope.number = '';
+                        $scope.cvc = '';
+                        $scope.expiry = '';
+                    }
+                });
+            }
+        };
+        
+        $scope.updateCard = function (code, result) {
+            if (result.error) {
+                console.log(result);
+            } else {
+                SubscriptionService.setCard(result.id).success(function (data) {
+                    if (!data.success) {
+                        console.log('error');
+                    } else {
+                        $scope.profile.subscription.last4 = data.subscription.last4;
+                        $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
+                        $scope.number = '';
+                        $scope.cvc = '';
+                        $scope.expiry = '';
+                    }
+                });
+            }
+        }
+
+        $scope.updatePlan = function () {
+            SubscriptionService.setPlan($scope.plan).success(function (data) {
+                if (data.success) {
+                    SubscriptionService.setTsPlan(data.plan);
+                    $scope.profile.subscription.plan = data.plan;
+                    $scope.plan = data.plan;
+                }
+            });
+        }
+
+        $scope.cancel = function () {
+            SubscriptionService.cancel().success(function (data) {
+                if (data.success) {
+                    SubscriptionService.setSubscribed(false);
+                    SubscriptionService.setExpiry(data.subscription.expiryDate);
+                    
+                    $scope.profile.subscription.isSubscribed = false;
+                    $scope.profile.subscription.expiryDate = data.subscription.expiryDate;
+                }
+            });
+        }
+
     }
 ])
 .controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity',  
@@ -1405,15 +1511,15 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'data',
-    function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, data) {
+.controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
+    function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
         // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.deckBuilder.class'); return false; }
         
         // set default tab page
         $scope.step = 1;
         $scope.showManaCurve = false;
-        
+        $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
         
         // steps
         $scope.prevStep = function () {
@@ -1542,7 +1648,7 @@ angular.module('app.controllers', ['ngCookies'])
         }, true);
         
         // current mulligan
-        $scope.currentMulligan = $scope.deck.mulligans[0];
+        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
         
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
@@ -1581,9 +1687,15 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
                     $window.sessionStorage.userID = data.userID;
                     $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.token = data.token;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
                     box.modal('hide');
                     $scope.saveDeck();
                 }).error(function() {
@@ -1786,8 +1898,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('ArticleCtrl', ['$scope', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'UserService', 'ArticleService', 'AuthenticationService', 'VoteService',  
-    function ($scope, $sce, data, $state, $compile, $window, bootbox, UserService, ArticleService, AuthenticationService, VoteService) {
+.controller('ArticleCtrl', ['$scope', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'UserService', 'ArticleService', 'AuthenticationService', 'VoteService', 'SubscriptionService',  
+    function ($scope, $sce, data, $state, $compile, $window, bootbox, UserService, ArticleService, AuthenticationService, VoteService, SubscriptionService) {
         $scope.article = data.article;
         
         $scope.getContent = function () {
@@ -1931,9 +2043,15 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
                     $window.sessionStorage.userID = data.userID;
                     $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.token = data.token;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
                     box.modal('hide');
                     updateVotes();
                     updateCommentVotes();
@@ -1945,29 +2063,63 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('DecksCtrl', ['$scope', '$state', 'DeckService', 'data', 
-    function ($scope, $state, DeckService, data) {
+.controller('DecksCtrl', ['$scope', '$state', 'Hearthstone', 'DeckService', 'data', 
+    function ($scope, $state, Hearthstone, DeckService, data) {
+        if (!data.success) { return $state.transitionTo('app.decks.list'); }
+        
         // decks
         $scope.decks = data.decks;
         $scope.total = data.total;
         $scope.klass = data.klass;
-        $scope.page = data.page;
+        $scope.page = parseInt(data.page);
         $scope.perpage = data.perpage;
+        $scope.search = data.search;
+
+        $scope.hasSearch = function () {
+            return (data.search) ? data.search.length : false;
+        }
         
+        $scope.loading = false;
+
         $scope.setKlass = function (klass) {
             $scope.klass = klass;
             $scope.page = 1;
-            getDecks();
+            $scope.getDecks();
         };
         
-        function getDecks () {
-            DeckService.getDecks($scope.klass, $scope.page, $scope.perpage).then(function (data) {
-                $scope.decks = data.decks;
-                $scope.total = data.total;
-                
-                $scope.klass = data.klass;
-                $scope.page = data.page;
-            });
+        // filters
+        $scope.filters = {
+            age: { name: 'All Decks', value: 'all' },
+            
+            all: {
+                age: [
+                    { name: 'All Decks', value: 'all' },
+                    { name: '7 Days', value: '7' },
+                    { name: '15 Days', value: '15' },
+                    { name: '30 Days', value: '30' },
+                    { name: '60 Days', value: '60' },
+                    { name: '90 Days', value: '90' }
+                ]
+            }
+        };
+        
+        $scope.getDecks = function () {
+            var params = {};
+            
+            if ($scope.search) {
+                params.s = $scope.search;
+            }
+            
+            if ($scope.page !== 1) {
+                params.p = $scope.page;
+            }
+            
+            if ($scope.klass != 'all') {
+                params.k = $scope.klass;
+            }
+            
+            $scope.loading = true;
+            $state.transitionTo('app.decks.list', params);
         }
         
         // pagination
@@ -1983,7 +2135,7 @@ angular.module('app.controllers', ['ngCookies'])
             },
             setPage: function (page) {
                 $scope.page = page;
-                getDecks();
+                $scope.getDecks();
             },
             pagesArray: function () {
                 var pages = [],
@@ -2014,18 +2166,45 @@ angular.module('app.controllers', ['ngCookies'])
                 return (page === this.page());
             },
             totalPages: function (page) {
-                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 1;
             },
             
         };
+
+        // verify valid page
+        if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
+            $scope.pagination.setPage(1);
+        }        
     }
 ])
-.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'data', 
-    function ($scope, $state, $sce, $compile, $window, bootbox, UserService, DeckService, AuthenticationService, VoteService, data) {
+.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 
+    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, UserService, DeckService, AuthenticationService, VoteService, SubscriptionService, data) {
         if (!data || !data.success) { return $state.go('app.decks.list'); }
 
         // load deck
         $scope.deck = data.deck;
+        
+        // classes
+        $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
+        
+        // show
+        if (!$scope.app.settings.show) {
+            $scope.app.settings.show = {
+                deck: null
+            };
+        }
+        $scope.show = $scope.app.settings.show.deck || {
+            mana: true,
+            description: true,
+            mulligans: true,
+            video: true,
+            matchups: true,
+            gameplay: true,
+            stats: true,
+            comments: true
+        };
+        
+        $scope.$watch('show', function(){ $scope.app.settings.show.deck = $scope.show; }, true);
         
         // mulligans
         $scope.coin = true;
@@ -2034,8 +2213,18 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.coin = !$scope.coin;
         }
         
-        $scope.currentMulligan = $scope.deck.mulligans[0] || false;
-
+        $scope.currentMulligan = false;
+        
+        $scope.getMulligan = function (klass) {
+            var mulligans = $scope.deck.mulligans;
+            for (var i = 0; i < mulligans.length; i++) {
+                if (mulligans[i].klass === klass) {
+                    return mulligans[i];
+                }
+            }
+            return false;
+        }
+        
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
         };
@@ -2054,18 +2243,32 @@ angular.module('app.controllers', ['ngCookies'])
             return false;
         };
         
+        $scope.mulliganHide = function (card) {
+            if (!$scope.anyMulliganSet()) { return false; }
+            if (!$scope.currentMulligan) { return false; }
+            var cards = ($scope.coin) ? $scope.currentMulligan.withCoin.cards : $scope.currentMulligan.withoutCoin.cards;
+            
+            for (var i = 0; i < cards.length; i++) {
+                if (cards[i]._id === card.card._id) { return false; }
+            }
+            
+            return true;
+        }
+        
         $scope.getMulliganInstructions = function () {
+            if (!$scope.currentMulligan) { return false; }
             var m = $scope.currentMulligan;
             return ($scope.coin) ? m.withCoin.instructions : m.withoutCoin.instructions;
         };
         
         $scope.getMulliganCards = function () {
+            if (!$scope.currentMulligan) { return false; }
             var m = $scope.currentMulligan;
             return ($scope.coin) ? m.withCoin.cards : m.withoutCoin.cards;
         };
         
         $scope.cardLeft = function ($index) {
-            return ($scope.getMulliganCards().length - ($index + 1)) * 80;
+            return (80 / ($scope.getMulliganCards().length)) * $index;
         };
         
         $scope.cardRight = function () {
@@ -2267,9 +2470,15 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
                     $window.sessionStorage.userID = data.userID;
                     $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.token = data.token;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
                     box.modal('hide');
                     updateVotes();
                     callback();
@@ -2296,8 +2505,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('ForumAddCtrl', ['$scope', '$location', '$window', '$compile', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'data', 
-    function ($scope, $location, $window, $compile, bootbox, ForumService, UserService, AuthenticationService, data) {
+.controller('ForumAddCtrl', ['$scope', '$location', '$window', '$compile', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data', 
+    function ($scope, $location, $window, $compile, bootbox, ForumService, UserService, AuthenticationService, SubscriptionService, data) {
         // thread
         $scope.thread = data.thread;
         
@@ -2354,9 +2563,15 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
                     $window.sessionStorage.userID = data.userID;
                     $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.token = data.token;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
                     box.modal('hide');
                     callback();
                 }).error(function() {
@@ -2367,8 +2582,8 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'data', 
-    function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, data) {
+.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 
+    function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, SubscriptionService, data) {
         $scope.post = data.post;
         $scope.thread = data.thread;
         
@@ -2451,9 +2666,15 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
                     $window.sessionStorage.userID = data.userID;
                     $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.token = data.token;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
                     box.modal('hide');
                     callback();
                 }).error(function() {

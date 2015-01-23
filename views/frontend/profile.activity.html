@@ -4,7 +4,7 @@
         <!-- activity -->
         <div class="activity" ng-repeat="activity in activities">
             <div class="avatar">
-                <a href="./user/{{user.username}}"><img src="./img/profile.jpg" alt="" /></a>
+                <a href="./user/{{user.username}}"><img gravatar-src-once="user.email" /></a>
             </div>
             <div class="panel">
                 <div class="panel-heading pos-rl">

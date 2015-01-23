@@ -1,52 +1,92 @@
-<div class="container">
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="deck">
-                <div class="deck-right">
-                    <div class="db-mana-curve clearfix">
-                        <ul class="clearfix">
-                            <li>
-                                <div class="db-mana-curve-amt">{{deck.manaCount(0)}}</div>
-                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(0)}}px;"></span></div>
-                                <div class="db-mana-curve-num">0</div>
-                            </li>
-                            <li>
-                                <div class="db-mana-curve-amt">{{deck.manaCount(1)}}</div>
-                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(1)}}px;"></span></div>
-                                <div class="db-mana-curve-num">1</div>
-                            </li>
-                            <li>
-                                <div class="db-mana-curve-amt">{{deck.manaCount(2)}}</div>
-                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(2)}}px;"></span></div>
-                                <div class="db-mana-curve-num">2</div>
-                            </li>
-                            <li>
-                                <div class="db-mana-curve-amt">{{deck.manaCount(3)}}</div>
-                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(3)}}px;"></span></div>
-                                <div class="db-mana-curve-num">3</div>
-                            </li>
-                            <li>
-                                <div class="db-mana-curve-amt">{{deck.manaCount(4)}}</div>
-                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(4)}}px;"></span></div>
-                                <div class="db-mana-curve-num">4</div>
-                            </li>
-                            <li>
-                                <div class="db-mana-curve-amt">{{deck.manaCount(5)}}</div>
-                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(5)}}px;"></span></div>
-                                <div class="db-mana-curve-num">5</div>
-                            </li>
-                            <li>
-                                <div class="db-mana-curve-amt">{{deck.manaCount(6)}}</div>
-                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(6)}}px;"></span></div>
-                                <div class="db-mana-curve-num">6</div>
-                            </li>
-                            <li>
-                                <div class="db-mana-curve-amt">{{deck.manaCount(7)}}</div>
-                                <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(7)}}px;"></span></div>
-                                <div class="db-mana-curve-num">7<span>+</span></div>
-                            </li>
-                        </ul>
+<div class="deck-page">
+
+    <!-- header -->
+    <div class="container-fluid padding-none deck-header">
+        <div class="container wrapper-lg deck-header-inner {{deck.playerClass.toLowerCase()}} clearfix">
+            <div class="pull-left">
+                <h1>{{deck.name}}</h1>
+                <p>posted by <a href="./user/{{deck.author.username}}" class="m-r-sm">@{{deck.author.username}}</a><i class="fa fa-clock-o"></i> {{deck.createdDate | date:'mediumDate'}}</p>
+            </div>
+            <div class="pull-right">
+                <!-- deck-votes -->
+                <div class="deck-votes clearfix">
+                    <div class="vote-count vote-large m-l-sm pull-right"><span><em ng-if="deck.votesCount > 0">+</em>{{deck.votesCount}}</span></div>
+                    <div class="vote-count-btns vote-large pull-left">
+                        <a href="#" class="btn-vote-up vote-large" ng-class="{active: deck.voted === 1}" ng-click="voteUp(deck)"><i class="fa fa-plus-square"></i></a>
+                        <a href="#" class="btn-vote-down vote-large" ng-class="{active: deck.voted === -1}" ng-click="voteDown(deck)"><i class="fa fa-minus-square"></i></a>
                     </div>
+                </div>
+                <!-- / deck-votes -->
+            </div>
+        </div>
+    </div>
+    <!-- / header -->
+
+    <div class="container container-dark">
+        <div class="row">
+            <div class="col-xs-12 m-t-md">
+                
+                <!-- deck right -->
+                <div class="deck-right">
+                    
+                    <!-- mana curve -->
+                    <div class="db-mana-curve clearfix">
+                        <div class="db-mana-curve-title">
+                            <a href="#" ng-click="show.mana = !show.mana">
+                                <div class="pull-right">
+                                    <i class="fa" ng-class="{ 'fa-angle-down': !show.mana, 'fa-angle-up': show.mana }"></i>
+                                </div>
+                                MANA CURVE
+                            </a>
+                        </div>
+                        <div class="db-mana-curve-content clearfix" ng-show="show.mana">
+                            <ul class="clearfix">
+                                <li>
+                                    <div class="db-mana-curve-amt">{{deck.manaCount(0)}}</div>
+                                    <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(0)}}px;"></span></div>
+                                    <div class="db-mana-curve-num">0</div>
+                                </li>
+                                <li>
+                                    <div class="db-mana-curve-amt">{{deck.manaCount(1)}}</div>
+                                    <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(1)}}px;"></span></div>
+                                    <div class="db-mana-curve-num">1</div>
+                                </li>
+                                <li>
+                                    <div class="db-mana-curve-amt">{{deck.manaCount(2)}}</div>
+                                    <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(2)}}px;"></span></div>
+                                    <div class="db-mana-curve-num">2</div>
+                                </li>
+                                <li>
+                                    <div class="db-mana-curve-amt">{{deck.manaCount(3)}}</div>
+                                    <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(3)}}px;"></span></div>
+                                    <div class="db-mana-curve-num">3</div>
+                                </li>
+                                <li>
+                                    <div class="db-mana-curve-amt">{{deck.manaCount(4)}}</div>
+                                    <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(4)}}px;"></span></div>
+                                    <div class="db-mana-curve-num">4</div>
+                                </li>
+                                <li>
+                                    <div class="db-mana-curve-amt">{{deck.manaCount(5)}}</div>
+                                    <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(5)}}px;"></span></div>
+                                    <div class="db-mana-curve-num">5</div>
+                                </li>
+                                <li>
+                                    <div class="db-mana-curve-amt">{{deck.manaCount(6)}}</div>
+                                    <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(6)}}px;"></span></div>
+                                    <div class="db-mana-curve-num">6</div>
+                                </li>
+                                <li>
+                                    <div class="db-mana-curve-amt">{{deck.manaCount(7)}}</div>
+                                    <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(7)}}px;"></span></div>
+                                    <div class="db-mana-curve-num">7<span>+</span></div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- / mana curve -->
+                    
+                    <!-- deck -->
                     <div class="db-deck clearfix">
                         <div class="db-deck-header db-deck-{{deck.playerClass.toLowerCase()}}">
                             <div class="db-arena">
@@ -55,7 +95,7 @@
                             </div>
                         </div>
                         <div class="db-deck-cards">
-                            <div class="db-deck-card" ng-class="{multi:item.qty > 1 || item.card.rarity == 'Legendary'}" ng-repeat="item in deck.cards" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{item.card.photos.large}}" data-tooltip-pos="left" hs-card>
+                            <div class="db-deck-card" ng-class="{multi:item.qty > 1 || item.card.rarity == 'Legendary', 'mulligan-hide': mulliganHide(item)}" ng-repeat="item in deck.cards" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{item.card.photos.large}}" data-tooltip-pos="left" hs-card>
                                 <div class="db-deck-card-mana">{{item.card.cost}}</div>
                                 <div class="db-deck-card-qty" ng-show="item.qty > 1">{{item.qty}}</div>
                                 <div class="db-deck-card-legendary" ng-show="item.card.rarity == 'Legendary'"><i class="fa fa-star"></i></div>
@@ -70,42 +110,70 @@
                             </div>
                         </div>
                     </div>
+                    <!-- / deck -->
+                    
                 </div>
+                <!-- / deck right -->
+                
+                <!-- deck left -->
                 <div class="deck-left">
                     
-                    <!-- deck-votes -->
-                    <div class="deck-votes">
-                        <div class="vote-count vote-large"><span ng-if="deck.votesCount > 0">+</span>{{deck.votesCount}}</div>
-                        <div class="btn-group">
-                            <button class="btn-vote-up vote-large" ng-class="{active: deck.voted === 1}" ng-click="voteUp(deck)"><i class="fa fa-plus"></i></button>
-                            <button class="btn-vote-down vote-large" ng-class="{active: deck.voted === -1}" ng-click="voteDown(deck)"><i class="fa fa-minus"></i></button>
+                    <!-- deck description -->
+                    <div class="deck-section">
+                        <div class="deck-section-title clearfix">
+                            <a href="#" ng-click="show.description = !show.description"><h3 class="pull-left">DESCRIPTION</h3></a>
+                            <div class="m-l-md m-r-md pull-right">
+                                <a href="#" ng-click="show.description = !show.description">
+                                    <i class="fa" ng-class="{ 'fa-angle-down': !show.description, 'fa-angle-up': show.description }"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="deck-section-content" ng-show="show.description">
+                            <p class="m-b-none">{{deck.description}}</p>
                         </div>
                     </div>
-                    <!-- / deck-votes -->
-                    
-                    <!-- deck header -->
-                    <h1>{{deck.name}}</h1>
-                    <p>posted by <a href="./user/{{deck.author.username}}" class="m-r-sm">@{{deck.author.username}}</a><i class="fa fa-clock-o text-muted"></i> {{deck.createdDate | date:'mediumDate'}}</p>
-                    <!-- / deck header -->
+                    <!-- / deck description -->
                     
                     <!-- deck-mulligans -->
-                    <div class="deck-mulligans" ng-if="anyMulliganSet()">
-                        <h3>MULLIGANS</h3>
-                        <ul class="player-class">
-                            <li ng-repeat="mulligan in deck.mulligans" ng-class="{active:currentMulligan === mulligan}">
-                                <a href="#" ng-click="setMulligan(mulligan)">
-                                    <span class="player-class-icon {{mulligan.klass.toLowerCase()}}" ng-class="{active:isMulliganSet(mulligan)}"></span>
-                                    <span class="player-class-text">{{mulligan.klass.toUpperCase()}}</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" ng-click="toggleCoin()">
-                                    <span class="player-class-icon coin-icon" ng-class="{active:coin}"></span>
-                                    <span class="player-class-text"><span ng-if="!coin">No </span>Coin</span>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="deck-mulligan-details">
+                    <div class="deck-section clearfix" ng-if="anyMulliganSet()">
+                        <div class="deck-section-title clearfix">
+                            <a href="#" ng-click="show.mulligans = !show.mulligans"><h3 class="pull-left">MULLIGANS</h3></a>
+                            
+                            <div class="m-r-md pull-right clearfix">
+                                <ul class="deck-mulligan-classes pull-left">
+                                    <li ng-class="{ active: currentMulligan.klass === class }" ng-repeat="class in classes">
+                                        <a href="#" class="{{class.toLowerCase()}}" ng-class="{ active: isMulliganSet(getMulligan(class)) }" ng-click="setMulligan(getMulligan(class))" ng-tooltip title="{{class}}">{{class}}</a>
+                                    </li>
+                                </ul>
+                                
+                                <!--
+                                <ul class="player-class">
+                                    <li ng-repeat="mulligan in deck.mulligans" ng-class="{active:currentMulligan === mulligan}">
+                                        <a href="#" ng-click="setMulligan(mulligan)">
+                                            <span class="player-class-icon {{mulligan.klass.toLowerCase()}}" ng-class="{active:isMulliganSet(mulligan)}"></span>
+                                            <span class="player-class-text">{{mulligan.klass.toUpperCase()}}</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" ng-click="toggleCoin()">
+                                            <span class="player-class-icon coin-icon" ng-class="{active:coin}"></span>
+                                            <span class="player-class-text"><span ng-if="!coin">No </span>Coin</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                -->
+                                
+                                <div class="m-l-md pull-left" ng-show="currentMulligan">
+                                    <a href="#" ng-click="show.mulligans = !show.mulligans">
+                                        <i class="fa" ng-class="{ 'fa-angle-down': !show.mulligans, 'fa-angle-up': show.mulligans }"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="deck-section-content deck-mulligan-details pos-rl" ng-show="show.mulligans && currentMulligan">
+                            <a href="#" class="mulligan-coin pull-left" ng-class="{active:coin}" ng-click="toggleCoin()"></a>
+                            <a href="#" class="mulligan-close" ng-click="setMulligan(false)"><i class="fa fa-times"></i></a>
                             <div>
                                 <h3>{{currentMulligan.klass.toUpperCase()}} MULLIGAN</h3>
                                 <p ng-if="getMulliganCards().length"><span ng-repeat="card in getMulliganCards()"><span ng-if="$last && getMulliganCards().length > 1"> and </span>{{card.name}}<span ng-if="!$last">, </span></span></p>
@@ -115,126 +183,175 @@
                             <div ng-if="getMulliganCards().length">
                                 <div class="deck-mulligan-cards">
                                     <div class="deck-mulligan-card" ng-repeat="card in getMulliganCards()">
-                                        <a href="#" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.large}}" style="left: -{{cardLeft($index)}}px; right: -{{cardRight()}}px; z-index: {{getMulliganCards().length - $index}};" hs-card><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.medium}}" alt=""></a>
+                                        <a href="#" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.large}}" style="left: {{cardLeft($index)}}%; z-index: {{$index}};" hs-card><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.medium}}" alt=""></a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- / deck-mulligans -->
-                    
+
                     <!-- deck video -->
-                    <div class="deck-video" ng-bind-html="getVideo()" ng-if="deck.video && deck.video.length"></div>
+                    <div class="deck-section" ng-if="deck.video && deck.video.length">
+                        <div class="deck-section-title clearfix">
+                            <a href="#" ng-click="show.video = !show.video"><h3 class="pull-left">VIDEO</h3></a>
+                            <div class="m-l-md m-r-md pull-right">
+                                <a href="#" ng-click="show.video = !show.video">
+                                    <i class="fa" ng-class="{ 'fa-angle-down': !show.video, 'fa-angle-up': show.video }"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="deck-section-content unpadded" ng-show="show.video">
+                            <div class="deck-video" ng-bind-html="getVideo()"></div>
+                        </div>
+                    </div>
                     <!-- / deck video -->
-                    
-                    <!-- deck description -->
-                    <h3>DESCRIPTION</h3>
-                    <p>{{deck.description}}</p>
-                    <!-- / deck description -->
-                    
+
                     <!-- deck-against -->
-                    <div class="deck-against" ng-if="hasStrong() || hasWeak() || deck.against.instructions.length">
-                        <div>
-                            <h3>STRONG AGAINST</h3>
-                            <ul class="player-class" ng-if="hasStrong()">
-                                <li class="active" ng-repeat="strong in deck.against.strong" ng-show="strong.isStrong">
-                                    <a href="#">
-                                        <span class="player-class-icon active {{strong.klass.toLowerCase()}}"></span>
-                                        <span class="player-class-text">{{strong.klass.toUpperCase()}}</span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <p ng-if="!hasStrong()">The deck has no classes flagged for strong against.</p>
+                    <div class="deck-section" ng-if="hasStrong() || hasWeak() || deck.against.instructions.length">
+                        <div class="deck-section-title clearfix">
+                            <a href="#" ng-click="show.matchups = !show.matchups"><h3 class="pull-left">MATCH-UPS</h3></a>
+                            <div class="m-l-md m-r-md pull-right">
+                                <a href="#" ng-click="show.matchups = !show.matchups">
+                                    <i class="fa" ng-class="{ 'fa-angle-down': !show.matchups, 'fa-angle-up': show.matchups }"></i>
+                                </a>
+                            </div>
                         </div>
-                        <div>
-                            <h3>WEAK AGAINST</h3>
-                            <ul class="player-class" ng-if="hasWeak()">
-                                <li class="active" ng-repeat="weak in deck.against.weak" ng-show="weak.isWeak">
-                                    <a href="#">
-                                        <span class="player-class-icon active {{weak.klass.toLowerCase()}}"></span>
-                                        <span class="player-class-text">{{weak.klass.toUpperCase()}}</span>
-                                    </a>
-                                </li>
-                            </ul>
-                            <p ng-if="!hasWeak()">The deck has no classes flagged for weak against.</p>
+                        <div class="deck-section-content unpadded" ng-show="show.matchups">
+                            <div class="deck-against">
+                                <div class="deck-against-strong">
+                                    <h3>STRONG AGAINST</h3>
+                                    <ul class="deck-against-icons clearfix" ng-if="hasStrong()">
+                                        <li ng-repeat="strong in deck.against.strong" ng-show="strong.isStrong">
+                                            <span class="class-icon small active {{strong.klass.toLowerCase()}}" ng-tooltip title="{{strong.klass}}"></span>
+                                        </li>
+                                    </ul>
+                                    <p ng-if="!hasStrong()">The deck has no classes flagged for strong against.</p>
+                                </div>
+                                <div class="deck-against-weak">
+                                    <h3>WEAK AGAINST</h3>
+                                    <ul class="deck-against-icons clearfix" ng-if="hasWeak()">
+                                        <li ng-repeat="weak in deck.against.weak" ng-show="weak.isWeak">
+                                            <span class="class-icon small active {{weak.klass.toLowerCase()}}" ng-tooltip title="{{weak.klass}}"></span>
+                                        </li>
+                                    </ul>
+                                    <p ng-if="!hasWeak()">The deck has no classes flagged for weak against.</p>
+                                </div>
+                                <p ng-if="deck.against.instructions.length">{{deck.against.instructions}}</p>
+                            </div>
                         </div>
-                        <p ng-if="deck.against.instructions.length">{{deck.against.instructions}}</p>
                     </div>
                     <!-- / deck-against -->
-                    
+
                     <!-- deck-gameplay -->
-                    <h3 ng-if="deck.contentEarly.length || deck.contentMid.length || deck.contentLate.length">GAMEPLAY DETAILS</h3>
-                    <div ng-if="deck.contentEarly.length">
-                        <h5>EARLY GAME</h5>
-                        <p class="pos-rl" ng-bind-html="getContent(deck.contentEarly)"></p>
-                    </div>
-                    <div ng-if="deck.contentMid.length">
-                        <h5>MID GAME</h5>
-                        <p class="pos-rl" ng-bind-html="getContent(deck.contentMid)"></p>
-                    </div>
-                    <div ng-if="deck.contentLate.length">
-                        <h5>LATE GAME</h5>
-                        <p class="pos-rl" ng-bind-html="getContent(deck.contentLate)"></p>
+                    <div class="deck-section" ng-if="deck.contentEarly.length || deck.contentMid.length || deck.contentLate.length">
+                        <div class="deck-section-title clearfix">
+                            <a href="#" ng-click="show.gameplay = !show.gameplay"><h3 class="pull-left">GAMEPLAY DETAILS</h3></a>
+                            <div class="m-l-md m-r-md pull-right">
+                                <a href="#" ng-click="show.gameplay = !show.gameplay">
+                                    <i class="fa" ng-class="{ 'fa-angle-down': !show.gameplay, 'fa-angle-up': show.gameplay }"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="deck-section-content" ng-show="show.gameplay">
+                            <div ng-if="deck.contentEarly.length">
+                                <h3>EARLY GAME</h3>
+                                <p class="pos-rl" ng-bind-html="getContent(deck.contentEarly)"></p>
+                            </div>
+                            <div ng-if="deck.contentMid.length">
+                                <h3>MID GAME</h3>
+                                <p class="pos-rl" ng-bind-html="getContent(deck.contentMid)"></p>
+                            </div>
+                            <div ng-if="deck.contentLate.length">
+                                <h3>LATE GAME</h3>
+                                <p class="pos-rl" ng-bind-html="getContent(deck.contentLate)"></p>
+                            </div>
+                        </div>
                     </div>
                     <!-- / deck-gameplay -->
                     
+                    <!-- stats -->
                     <!--
-                    <h3>VITAL STATS</h3>
-                    
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-4">
-                            <canvas id="doughnut" class="chart chart-doughnut" data="data" labels="labels" colours="charts.colors"></canvas>
+                    <div class="deck-section">
+                        <div class="deck-section-title clearfix">
+                            <a href="#" ng-click="show.stats = !show.stats"><h3 class="pull-left">VITAL STATS</h3></a>
+                            <div class="m-l-md m-r-md pull-right">
+                                <a href="#" ng-click="show.stats = !show.stats">
+                                    <i class="fa" ng-class="{ 'fa-angle-down': !show.stats, 'fa-angle-up': show.stats }"></i>
+                                </a>
+                            </div>
                         </div>
-                        <div class="col-xs-12 col-sm-4">
-                            <canvas id="doughnut" class="chart chart-doughnut" data="data" labels="labels"></canvas>
-                        </div>
-                        <div class="col-xs-12 col-sm-4">
-                            <canvas id="doughnut" class="chart chart-doughnut" data="data" labels="labels"></canvas>
+                        <div class="deck-section-content" ng-show="show.stats">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-4">
+                                    <canvas id="doughnut" class="chart chart-doughnut" data="data" labels="labels" colours="charts.colors"></canvas>
+                                </div>
+                                <div class="col-xs-12 col-sm-4">
+                                    <canvas id="doughnut" class="chart chart-doughnut" data="data" labels="labels"></canvas>
+                                </div>
+                                <div class="col-xs-12 col-sm-4">
+                                    <canvas id="doughnut" class="chart chart-doughnut" data="data" labels="labels"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     -->
-                    
+                    <!-- / stats -->
+
                     <!-- comments -->
-                    <div class="deck-comments">
-                        <h3>COMMENTS</h3>
-                        <div class="comments">
-                            <p class="no-comments" ng-if="!deck.comments || !deck.comments.length">There are currently no comments on this deck.</p>
-                            <div class="comment" ng-repeat="comment in deck.comments">
-                                <div class="avatar">
-                                    <a href="./user/{{comment.author.username}}"><img src="./img/profile.jpg" alt="" /></a>
-                                </div>
-                                <div class="panel">
-                                    <div class="panel-heading pos-rl">
-                                        <span class="arrow left"></span>
-                                        <a href="./user/{{comment.author.username}}">@{{comment.author.username}}</a>
-                                        <div class="pull-right">
-                                            <div class="comment-votes m-l-sm pull-right">
-                                                <div class="vote-count vote-small"><span ng-if="comment.votesCount > 0">+</span>{{comment.votesCount}}</div>
-                                                <div class="btn-group">
-                                                    <button class="btn-vote-up vote-small" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-plus"></i></button>
-                                                    <button class="btn-vote-down vote-small" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-minus"></i></button>
+                    <div class="deck-section">
+                        <div class="deck-section-title clearfix">
+                            <a href="#" ng-click="show.comments = !show.comments"><h3 class="pull-left">COMMENTS</h3></a>
+                            <div class="m-l-md m-r-md pull-right">
+                                <a href="#" ng-click="show.comments = !show.comments">
+                                    <i class="fa" ng-class="{ 'fa-angle-down': !show.comments, 'fa-angle-up': show.comments }"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="deck-section-content" ng-show="show.comments">
+                            <div class="deck-comments">
+                                <div class="comments">
+                                    <p class="no-comments" ng-if="!deck.comments || !deck.comments.length">There are currently no comments on this deck.</p>
+                                    <div class="comment" ng-repeat="comment in deck.comments">
+                                        <div class="avatar">
+                                            <a href="./user/{{comment.author.username}}"><img gravatar-src-once="comment.author.email" alt="" /></a>
+                                        </div>
+                                        <div class="panel">
+                                            <div class="panel-heading pos-rl">
+                                                <span class="arrow left"></span>
+                                                <a href="./user/{{comment.author.username}}">@{{comment.author.username}}</a>
+                                                <div class="pull-right">
+                                                    <div class="comment-votes m-l-sm pull-right clearfix">
+                                                        <div class="vote-count vote-small m-l-xs pull-right"><span><em ng-if="deck.votesCount > 0">+</em>{{comment.votesCount}}</span></div>
+                                                        <div class="vote-count-btns vote-small pull-left">
+                                                            <a href="#" class="btn-vote-up vote-small" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-plus-square"></i></a>
+                                                            <a href="#" class="btn-vote-down vote-small" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-minus-square"></i></a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="comment-ago">
+                                                        <span class="fa fa-clock-o"></span>
+                                                        <span am-time-ago="comment.createdDate"></span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <span class="fa fa-clock-o text-muted"></span>
-                                            <span class="text-muted" am-time-ago="comment.createdDate"></span>
+                                            <div class="panel-body">{{comment.comment}}</div>
                                         </div>
                                     </div>
-                                    <div class="panel-body">{{comment.comment}}</div>
-                                </div>
-                            </div>
-                            <div class="comment-add">
-                                <div class="avatar">
-                                    <a href="./user/{{app.user.getUsername()}}" ng-if="app.user.isLogged()"><img src="./img/profile.jpg" alt="" /></a>
-                                    <a href="#" ng-if="!app.user.isLogged()"><img src="./img/profile.jpg" alt="" /></a>
-                                </div>
-                                <form class="form-horizontal" name="commentForm" novalidate>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" ng-model="comment.comment" placeholder="ADD A COMMENT" required>
-                                        <span class="input-group-btn">
-                                            <button type="submit" class="btn btn-default" ng-disabled="commentForm.$invalid" ng-click="commentPost()">POST</button>
-                                        </span>
+                                    <div class="comment-add">
+                                        <div class="avatar">
+                                            <a href="./user/{{app.user.getUsername()}}" ng-if="app.user.isLogged()"><img gravatar-src="app.user.getUserEmail()" alt="" /></a>
+                                            <a href="#" ng-if="!app.user.isLogged()"><img src="./img/profile.jpg" alt="" /></a>
+                                        </div>
+                                        <form class="form-horizontal" name="commentForm" novalidate>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control input-dark" ng-model="comment.comment" placeholder="ADD A COMMENT" required>
+                                                <span class="input-group-btn">
+                                                    <button type="submit" class="btn input-dark" ng-disabled="commentForm.$invalid" ng-click="commentPost()">POST</button>
+                                                </span>
+                                            </div>
+                                        </form>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>

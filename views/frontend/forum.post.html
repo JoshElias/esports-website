@@ -6,7 +6,7 @@
     <div class="forum-post clearfix">
         <div class="forum-post-right">
             <div class="author">
-                <a href="#" class="avatar"><img src="./img/profile.jpg" alt=""></a>
+                <a href="#" class="avatar"><img gravatar-src-once="post.author.email" alt=""></a>
                 <div class="author-info">
                     <a href="./user/{{post.author.username}}">@{{post.author.username}}</a>
                 </div>
@@ -26,7 +26,7 @@
                 <p class="no-comments" ng-if="!post.comments || !post.comments.length">There are currently no comments on this post.</p>
                 <div class="comment" ng-repeat="comment in post.comments">
                     <div class="avatar">
-                        <a href="./user/{{comment.author.username}}"><img src="./img/profile.jpg" alt="" /></a>
+                        <a href="./user/{{comment.author.username}}"><img gravatar-src-once="comment.author.email" alt="" /></a>
                     </div>
                     <div class="panel">
                         <div class="panel-heading pos-rl">
@@ -49,7 +49,7 @@
                 </div>
                 <div class="comment-add">
                     <div class="avatar">
-                        <a href="./user/{{app.user.getUsername()}}" ng-if="app.user.isLogged()"><img src="./img/profile.jpg" alt="" /></a>
+                        <a href="./user/{{app.user.getUsername()}}" ng-if="app.user.isLogged()"><img gravatar-src="app.user.getUserEmail()" alt="" /></a>
                         <a href="#" ng-if="!app.user.isLogged()"><img src="./img/profile.jpg" alt="" /></a>
                     </div>
                     <form class="form-horizontal" name="commentForm" novalidate>

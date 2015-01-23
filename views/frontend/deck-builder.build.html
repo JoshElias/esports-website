@@ -53,60 +53,62 @@
         <form class="form-horizontal" name="dbForm" novalidate>
         <div class="db-right">
             <div class="db-mana-curve clearfix">
-                <div class="db-mana-curve-title" ng-class="{ open: showCurve }">
+                <div class="db-mana-curve-title">
                     <a href="#" ng-click="showCurve = !showCurve">
                         <div class="pull-right">
                             <i class="fa" ng-class="{ 'fa-angle-down': !showCurve, 'fa-angle-up': showCurve }"></i>
                         </div>
-                        Mana Curve
+                        MANA CURVE
                     </a>
                 </div>
-                <ul class="clearfix" ng-if="showCurve">
-                    <li>
-                        <div class="db-mana-curve-amt">{{deck.manaCount(0)}}</div>
-                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(0)}}px;"></span></div>
-                        <div class="db-mana-curve-num">0</div>
-                    </li>
-                    <li>
-                        <div class="db-mana-curve-amt">{{deck.manaCount(1)}}</div>
-                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(1)}}px;"></span></div>
-                        <div class="db-mana-curve-num">1</div>
-                    </li>
-                    <li>
-                        <div class="db-mana-curve-amt">{{deck.manaCount(2)}}</div>
-                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(2)}}px;"></span></div>
-                        <div class="db-mana-curve-num">2</div>
-                    </li>
-                    <li>
-                        <div class="db-mana-curve-amt">{{deck.manaCount(3)}}</div>
-                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(3)}}px;"></span></div>
-                        <div class="db-mana-curve-num">3</div>
-                    </li>
-                    <li>
-                        <div class="db-mana-curve-amt">{{deck.manaCount(4)}}</div>
-                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(4)}}px;"></span></div>
-                        <div class="db-mana-curve-num">4</div>
-                    </li>
-                    <li>
-                        <div class="db-mana-curve-amt">{{deck.manaCount(5)}}</div>
-                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(5)}}px;"></span></div>
-                        <div class="db-mana-curve-num">5</div>
-                    </li>
-                    <li>
-                        <div class="db-mana-curve-amt">{{deck.manaCount(6)}}</div>
-                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(6)}}px;"></span></div>
-                        <div class="db-mana-curve-num">6</div>
-                    </li>
-                    <li>
-                        <div class="db-mana-curve-amt">{{deck.manaCount(7)}}</div>
-                        <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(7)}}px;"></span></div>
-                        <div class="db-mana-curve-num">7<span>+</span></div>
-                    </li>
-                </ul>
+                <div class="db-mana-curve-content clearfix" ng-show="showCurve">
+                    <ul class="clearfix">
+                        <li>
+                            <div class="db-mana-curve-amt">{{deck.manaCount(0)}}</div>
+                            <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(0)}}px;"></span></div>
+                            <div class="db-mana-curve-num">0</div>
+                        </li>
+                        <li>
+                            <div class="db-mana-curve-amt">{{deck.manaCount(1)}}</div>
+                            <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(1)}}px;"></span></div>
+                            <div class="db-mana-curve-num">1</div>
+                        </li>
+                        <li>
+                            <div class="db-mana-curve-amt">{{deck.manaCount(2)}}</div>
+                            <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(2)}}px;"></span></div>
+                            <div class="db-mana-curve-num">2</div>
+                        </li>
+                        <li>
+                            <div class="db-mana-curve-amt">{{deck.manaCount(3)}}</div>
+                            <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(3)}}px;"></span></div>
+                            <div class="db-mana-curve-num">3</div>
+                        </li>
+                        <li>
+                            <div class="db-mana-curve-amt">{{deck.manaCount(4)}}</div>
+                            <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(4)}}px;"></span></div>
+                            <div class="db-mana-curve-num">4</div>
+                        </li>
+                        <li>
+                            <div class="db-mana-curve-amt">{{deck.manaCount(5)}}</div>
+                            <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(5)}}px;"></span></div>
+                            <div class="db-mana-curve-num">5</div>
+                        </li>
+                        <li>
+                            <div class="db-mana-curve-amt">{{deck.manaCount(6)}}</div>
+                            <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(6)}}px;"></span></div>
+                            <div class="db-mana-curve-num">6</div>
+                        </li>
+                        <li>
+                            <div class="db-mana-curve-amt">{{deck.manaCount(7)}}</div>
+                            <div class="db-mana-curve-bar"><span style="height: {{deck.manaCurve(7)}}px;"></span></div>
+                            <div class="db-mana-curve-num">7<span>+</span></div>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <div class="db-deck clearfix">
                 <div class="db-deck-header db-deck-{{className.toLowerCase()}}">
-                    <div class="db-arena" ng-click="deck.arena = !deck.arena">
+                    <div class="db-arena has-hover" ng-click="deck.arena = !deck.arena">
                         <span ng-show="!deck.arena">Constructed</span>
                         <span ng-show="deck.arena">Arena</span>
                     </div>
@@ -130,7 +132,7 @@
             </div>
         </div><!-- / db-right -->
         <div class="db-left clearfix">
-            <div class="db-section" ng-show="step === 1">
+            <div class="db-section db-animated" ng-hide="step !== 1">
                 <div class="db-section-title clearfix">
                     <h1 class="pull-left">Card Picker</h1>
                     <div class="pull-left">
@@ -150,7 +152,7 @@
                                         <span>Mechanics ({{filters.mechanics.length}})</span>
                                         <b class="caret"></b>
                                     </button>
-                                    <ul class="list-group dropdown-menu">
+                                    <ul class="list-group dropdown-menu dropdown-dark">
                                         <li class="list-group-item" ng-class="{active: inMechanics(mechanic)}" ng-repeat="mechanic in mechanics">
                                             <a href="#" ng-click="toggleMechanic(mechanic); pagination.setPage(1); $event.preventDefault(); $event.stopPropagation()">{{mechanic}}</a>
                                         </li>
@@ -163,7 +165,7 @@
                                         <span>Mana Cost: {{getManaCost()}}</span>
                                         <b class="caret"></b>
                                     </button>
-                                    <ul class="list-group dropdown-menu">
+                                    <ul class="list-group dropdown-menu dropdown-dark">
                                         <li class="list-group-item" ng-class="{active: filters.mana === 'all'}">
                                             <a href="#" ng-click="filters.mana = 'all'; pagination.setPage(1)">All</a>
                                         </li>
@@ -215,12 +217,12 @@
                 </div><!-- / db-cards -->
             </div><!-- / step 1 -->
             <!-- step 2 -->
-            <div class="db-section db-mulligans" ng-show="step === 2">
+            <div class="db-section db-mulligans db-animated" ng-hide="step !== 2">
                 <div class="db-section-title clearfix">
                     <h1 class="pull-left">Mulligans</h1>
                     <ul class="db-filter-classes pull-right">
-                        <li ng-class="{ active: currentMulligan === mulligan }" ng-repeat="mulligan in deck.mulligans">
-                            <a href="#" class="{{mulligan.klass.toLowerCase()}}" ng-class="{ active: isMulliganSet(mulligan) }" ng-click="setMulligan(mulligan)" ng-tooltip title="{{mulligan.klass}}">{{mulligan.klass}}</a>
+                        <li ng-class="{ active: currentMulligan.klass === class }" ng-repeat="class in classes">
+                            <a href="#" class="{{class.toLowerCase()}}" ng-class="{ active: isMulliganSet(deck.getMulligan(class)) }" ng-click="setMulligan(deck.getMulligan(class))" ng-tooltip title="{{class}}">{{class}}</a>
                         </li>
                     </ul>
                 </div>
@@ -258,7 +260,7 @@
             </div>
             <!-- / step 2 -->
             <!-- step 3 -->
-            <div class="db-descriptions" ng-show="step === 3">
+            <div class="db-descriptions db-animated" ng-hide="step !== 3">
                 <div class="db-section m-b-md">
                     <div class="db-section-title">
                         <h1><label for="contentEarly">Early Game</label></h1>
@@ -280,31 +282,44 @@
             </div>
             <!-- / step 3 -->
             <!-- step 4 -->
-            <div class="db-against" ng-show="step === 4">
-                <h3>Strong Against:</h3>
-                <ul class="player-class db-against clearfix">
-                    <li ng-repeat="strong in deck.against.strong">
-                        <a href="#" ng-click="deck.toggleStrong(strong)">
-                            <span class="player-class-icon {{strong.klass.toLowerCase()}}" ng-class="{active:deck.isStrong(strong)}"></span>
-                            <span class="player-class-text">{{strong.klass.toUpperCase()}}</span>
-                        </a>
-                    </li>
-                </ul>
-                <h3>Weak Against:</h3>
-                <ul class="player-class db-against clearfix">
-                    <li ng-repeat="weak in deck.against.weak">
-                        <a href="#" ng-click="deck.toggleWeak(weak)">
-                            <span class="player-class-icon {{weak.klass.toLowerCase()}}" ng-class="{active:deck.isWeak(weak)}"></span>
-                            <span class="player-class-text">{{weak.klass.toUpperCase()}}</span>
-                        </a>
-                    </li>
-                </ul>
-                <h3>Additional Info:</h3>
-                <textarea class="form-control" ng-model="deck.against.instructions"></textarea>
+            <div class="db-against db-section db-animated" ng-hide="step !== 4">
+                <div class="db-section-title">
+                    <h1>Match-ups</h1>
+                </div>
+                <div class="wrapper-md">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="db-sw-title">
+                                <div class="db-sw-title-vs">VS</div>
+                                <div class="db-sw-title-strong">STRONG</div>
+                                <div class="db-sw-title-weak">WEAK</div>
+                            </div>
+                            <div class="db-sw-classes">
+                                <div class="db-sw-class" ng-repeat="class in classes">
+                                    <div class="db-sw-circle-strong" ng-class="{ 'active': deck.isStrong(deck.getStrong(class)) }"><a href="#" class="small active {{class.toLowerCase()}}" ng-click="deck.toggleStrong(deck.getStrong(class))" ng-class="{ 'class-icon': deck.isStrong(deck.getStrong(class)) }"></a></div>
+                                    <div class="db-sw-circle-class clearfix">
+                                        <a href="#" class="db-sw-arrow" ng-click="deck.toggleStrong(deck.getStrong(class))"><i class="fa fa-angle-left"></i></a>
+                                        <a href="#" class="db-sw-class-icon class-icon small active {{class.toLowerCase()}}" ng-tooltip title="{{class}}"></a>
+                                        <a href="#" class="db-sw-arrow" ng-click="deck.toggleWeak(deck.getWeak(class))"><i class="fa fa-angle-right"></i></a>
+                                    </div>
+                                    <div class="db-sw-circle-weak" ng-class="{ 'active': deck.isWeak(deck.getWeak(class)) }"><a href="#" class="small active {{class.toLowerCase()}}" ng-click="deck.toggleWeak(deck.getWeak(class))" ng-class="{ 'class-icon': deck.isWeak(deck.getWeak(class)) }"></a></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="db-section m-t-lg">
+                                <div class="db-section-title">
+                                    <h1>DESCRIPTION</h1>
+                                </div>
+                                <textarea class="form-control input-dark" ng-model="deck.against.instructions"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- / step 4 -->
             <!-- step 5 -->
-            <div ng-show="step === 5">
+            <div class="db-section db-animated" ng-hide="step !== 5">
                 <div class="panel panel-danger error-modal animated" ng-show="showError">
                     <div class="panel-heading">
                         <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
@@ -316,48 +331,64 @@
                         </ul>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="form-group">
-                        <label for="name" class="control-label col-sm-2">Deck Name</label>
-                        <div class="col-sm-10">
-                            <input type="text" id="name" name="name" class="form-control" ng-model="deck.name" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="deckType" class="control-label col-sm-2">Deck Type</label>
-                        <div class="col-sm-10">
-                            <select id="deckType" name="deckType" class="form-control" ng-options="type as type for type in deckTypes" ng-model="deck.deckType" required></select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="description" class="control-label col-sm-2">Description</label>
-                        <div class="col-sm-10">
-                            <textarea id="description" name="description" class="form-control" ng-model="deck.description" required></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="video" class="control-label col-sm-2">Video<br><small>(YouTube only)</small></label>
-                        <div class="col-sm-10">
-                            <input type="text" id="video" name="video" class="form-control" ng-model="deck.video">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-10 col-sm-offset-2">
-                            <div class="radio">
-                                <label>
-                                    <input type="radio" name="public" ng-model="deck.public" value="true"> Make this deck public
-                                </label>
-                            </div>
-                            <div class="radio">
-                                <label>
-                                    <input type="radio" name="public" ng-model="deck.public" value="false"> Make this deck private
-                                </label>
+                <div class="db-section-title">
+                    <h1>Save your deck</h1>
+                </div>
+                <div class="wrapper-md">
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="name" class="control-label col-sm-2">Deck Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="name" name="name" class="form-control input-dark" ng-model="deck.name" required>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group m-b-none">
-                        <div class="col-sm-10 col-sm-offset-2">
-                            <button type="submit" class="btn btn-blue" ng-disabled="!deck.validDeck() || !deck.validVideo() || dbForm.$invalid" ng-click="saveDeck()">Save Deck</button>
+                        <div class="form-group">
+                            <label for="deckType" class="control-label col-sm-2">Deck Type</label>
+                            <div class="col-sm-10">
+                                <div class="dropdown">
+                                    <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                        <span>{{deck.deckType}}</span>
+                                        <b class="caret"></b>
+                                    </button>
+                                    <ul class="list-group dropdown-menu dropdown-dark">
+                                        <li class="list-group-item" ng-class="{active: deck.deckType === type}" ng-repeat="type in deckTypes">
+                                            <a href="#" ng-click="deck.deckType = type">{{type}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!--<select id="deckType" name="deckType" class="form-control input-dark" ng-options="type as type for type in deckTypes" ng-model="deck.deckType" required></select>-->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="description" class="control-label col-sm-2">Description</label>
+                            <div class="col-sm-10">
+                                <textarea id="description" name="description" class="form-control input-dark" ng-model="deck.description" required></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="video" class="control-label col-sm-2">Video<br><small>(YouTube only)</small></label>
+                            <div class="col-sm-10">
+                                <input type="text" id="video" name="video" class="form-control input-dark" ng-model="deck.video">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-10 col-sm-offset-2">
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="public" ng-model="deck.public" value="true"> Make this deck public
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="public" ng-model="deck.public" value="false"> Make this deck private
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group m-b-none">
+                            <div class="col-sm-10 col-sm-offset-2">
+                                <button type="submit" class="btn btn-blue" ng-disabled="!deck.validDeck() || !deck.validVideo() || dbForm.$invalid" ng-click="saveDeck()">Save Deck</button>
+                            </div>
                         </div>
                     </div>
                 </div>

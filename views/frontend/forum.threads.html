@@ -24,7 +24,7 @@
         <tbody>
             <tr ng-repeat="post in thread.posts">
                 <td class="title"><a href="./forum/{{thread.slug.url}}/{{post.slug.url}}">{{post.title}}</a><em am-time-ago="post.createdDate"></em></td>
-                <td class="author"><a href="#" class="avatar hidden-xs"><img src="./img/profile.jpg" alt="" /></a><a href="./user/{{post.author.username}}">@{{post.author.username}}</a></td>
+                <td class="author"><a href="#" class="avatar hidden-xs"><img gravatar-src-once="post.author.email" alt="" /></a><a href="./user/{{post.author.username}}">@{{post.author.username}}</a></td>
                 <td class="views hidden-xs">{{post.views}}</td>
                 <td class="comments hidden-xs">{{post.comments.length}}</td>
             </tr>

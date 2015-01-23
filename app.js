@@ -40,7 +40,8 @@ var cluster = require('cluster'),
     BnetStrategy = require('passport-bnet').Strategy,
     Mail = require('./lib/mail'),
     config = require('./lib/config'),
-    amazon = require('./lib/amazon');
+    amazon = require('./lib/amazon'),
+    Subscription = require('./lib/sub');
 
 if (cluster.isMaster) {
 
@@ -171,6 +172,8 @@ if (cluster.isMaster) {
     app.post('/forum/thread', routes.frontend.forumThread(Schemas));
     app.post('/forum/post', routes.frontend.forumPost(Schemas));
 
+    app.post('/banners', routes.frontend.getBanners(Schemas));
+
     app.post('/upload', routes.frontend.uploadToImgur(fs, imgur));
 
     /* frontend - requires login */
@@ -191,8 +194,14 @@ if (cluster.isMaster) {
 
     app.post('/api/comment/vote', routes.frontend.commentVote(Schemas));
 
+    app.post('/api/profile/edit', routes.frontend.userProfileEdit(Schemas));
+    app.post('/api/profile/:username', routes.frontend.userProfile(Schemas));
     app.post('/api/profile/:username/decks', routes.frontend.profileDecksLoggedIn(Schemas));
 
+    app.post('/api/subscription/setplan', routes.frontend.subSetPlan(Schemas, Subscription));
+    app.post('/api/subscription/setcard', routes.frontend.subSetCard(Schemas, Subscription));
+    app.post('/api/subscription/cancel', routes.frontend.subCancel(Schemas, Subscription));
+    
     /* admin */
     app.post('/api/admin/cards', routes.admin.isAdmin(Schemas), routes.admin.cards(Schemas));
     app.post('/api/admin/card', routes.admin.isAdmin(Schemas), routes.admin.card(Schemas));

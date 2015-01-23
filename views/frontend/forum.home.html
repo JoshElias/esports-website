@@ -22,7 +22,7 @@
                             <a href="./forum/{{thread.slug.url}}/{{thread.posts[0].slug.url}}" class="title">{{thread.posts[0].title}}</a>
                             <div class="latest-info clearfix">
                                 <div class="author">
-                                    <a href="#" class="avatar hidden-xs"><img src="./img/profile.jpg" alt="{{thread.posts[0].author.username}}" /></a><a href="./user/{{thread.posts[0].author.username}}">@{{thread.posts[0].author.username}}</a>
+                                    <a href="#" class="avatar hidden-xs"><img gravatar-src-once="thread.posts[0].author.email" alt="{{thread.posts[0].author.username}}" /></a><a href="./user/{{thread.posts[0].author.username}}">@{{thread.posts[0].author.username}}</a>
                                 </div>
                                 <div class="ago pull-right">
                                     <span am-time-ago="thread.posts[0].createdDate"></span>
