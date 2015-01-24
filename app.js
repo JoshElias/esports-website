@@ -79,7 +79,7 @@ if (cluster.isMaster) {
     app.use(compression({
         threshold: 512
     }));
-    app.use(bodyParser.json());
+    app.use(bodyParser.json({ limit: '1mb' }));
     app.use(expressValidator({
         customValidators: {
             isUsername: function(value) {

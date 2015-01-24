@@ -167,17 +167,19 @@ var app = angular.module('app', [
                 }
             })
             .state('app.articles.list', {
-                url: '',
+                url: '?p&s&k',
                 views: {
                     articles: {
                         templateUrl: tpl + 'views/frontend/articles.list.html',
                         controller: 'ArticlesCtrl',
                         resolve: {
-                            data: ['ArticleService', function (ArticleService) {
-                                var klass = 'all',
-                                    page = 1,
-                                    perpage = 10;
-                                return ArticleService.getArticles(klass, page, perpage);
+                            data: ['$stateParams', 'ArticleService', function ($stateParams, ArticleService) {
+                                var klass = $stateParams.k || 'all',
+                                    page = $stateParams.p || 1,
+                                    perpage = 10,
+                                    search = $stateParams.s || '';
+                                
+                                return ArticleService.getArticles(klass, page, perpage, search);
                             }]
                         }
                     }
@@ -208,7 +210,7 @@ var app = angular.module('app', [
                 }
             })
             .state('app.decks.list', {
-                url: '?p&s&k',
+                url: '?p&s&k&a&o',
                 views: {
                     decks: {
                         templateUrl: tpl + 'views/frontend/decks.list.html',
@@ -217,10 +219,12 @@ var app = angular.module('app', [
                             data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
                                 var klass = $stateParams.k || 'all',
                                     page = $stateParams.p || 1,
-                                    perpage = 1,
-                                    search = $stateParams.s || '';
+                                    perpage = 24,
+                                    search = $stateParams.s || '',
+                                    age = $stateParams.a || '',
+                                    order = $stateParams.o || '';
                                 
-                                return DeckService.getDecks(klass, page, perpage, search);
+                                return DeckService.getDecks(klass, page, perpage, search, age, order);
                             }]
                         }
                     }

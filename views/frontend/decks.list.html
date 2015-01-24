@@ -63,7 +63,7 @@
 <!-- filter advanced start -->
 <div class="container-fluid padding-none filter-bar-advanced">
     <div class="container pos-rl">
-        <div class="filter-bar-advanced-options-wrapper pos-rl" ng-class="{ open: showAdvanced }">
+        <div class="filter-bar-advanced-options-wrapper pos-rl" ng-class="{ open: showAdvanced() }">
             <div class="filter-bar-advanced-options clearfix">
                 <div class="pull-left m-r-sm">
                     <div class="dropdown">
@@ -72,7 +72,7 @@
                             <b class="caret"></b>
                         </button>
                         <ul class="list-group dropdown-menu dropdown-dark">
-                            <li class="list-group-item" ng-class="{active: age === filters.age}" ng-repeat="filter in filters.all.age">
+                            <li class="list-group-item" ng-class="{active: filter.value === filters.age.value}" ng-repeat="filter in filters.all.age">
                                 <a href="#" ng-click="filters.age = filter; pagination.setPage(1);">{{filter.name}}</a>
                             </li>
                         </ul>
@@ -85,8 +85,8 @@
                             <b class="caret"></b>
                         </button>
                         <ul class="list-group dropdown-menu dropdown-dark">
-                            <li class="list-group-item" ng-class="{active: age === filters.age}" ng-repeat="filter in filters.all.order">
-                                <a href="#" ng-click="filters.age = filter; pagination.setPage(1);">{{filter.name}}</a>
+                            <li class="list-group-item" ng-class="{active: filter.value === filters.order.value}" ng-repeat="filter in filters.all.order">
+                                <a href="#" ng-click="filters.order = filter; pagination.setPage(1);">{{filter.name}}</a>
                             </li>
                         </ul>
                     </div>
@@ -94,7 +94,7 @@
             </div>
         </div>
         <div class="filter-bar-advanced-tab clearfix">
-            <a href="#" class="pull-right clearfix" ng-click="showAdvanced = !showAdvanced">
+            <a href="#" class="pull-right clearfix" ng-click="toggleAdvanced()">
                 <span class="icon pull-left"><i class="fa fa-bars"></i></span>
                 <span class="text pull-right">ADVANCED<br>FILTERING</span>
             </a>

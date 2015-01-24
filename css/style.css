@@ -387,7 +387,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .article:hover .article-img { -webkit-filter: blur(5px); filter: blur(5px); }
 .article:hover .article-content-wrapper { top: -1px; }
 
-.no-articles { color: #FFF; }
+.articles-list-no-content { padding: 20px; color: #FFF; background: rgba(0,0,0,.6); border: 1px solid #000; border-radius: 4px; }
 /* end articles */
 
 /* start decks */
@@ -1377,7 +1377,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .decks-list .deck:hover .deck-description { text-shadow: 0px 0px 5px rgba(0,0,0,.6); opacity: 1; }
 .decks-list .deck:hover .deck-info { opacity: 1; }
 
-.decks-list-no-content { padding: 20px; color: #FFF; }
+.decks-list-no-content { padding: 20px; color: #FFF; background: rgba(0,0,0,.6); border: 1px solid #000; border-radius: 4px; }
 /* end decks list */
 
 /* deck */

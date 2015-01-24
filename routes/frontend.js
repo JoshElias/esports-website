@@ -1079,7 +1079,16 @@ module.exports = {
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 5,
                 where = (klass === 'all') ? {} : { 'classTags': klass },
+                search = req.body.search || '',
                 articles, total;
+            
+            // search
+            if (search) {
+                where.$or = [];
+                where.$or.push({ title: new RegExp(search, "i") });
+                where.$or.push({ description: new RegExp(search, "i") });
+                where.$or.push({ content: new RegExp(search, "i") });
+            }
             
             // get total articles
             function getTotal (callback) {
@@ -1111,7 +1120,7 @@ module.exports = {
             
             getArticles(function () {
                 getTotal(function () {
-                    return res.json({ success: true, articles: articles, total: total, klass: klass, page: page, perpage: perpage });
+                    return res.json({ success: true, articles: articles, total: total, klass: klass, page: page, perpage: perpage, search: search });
                 });
             });
         };
@@ -1370,13 +1379,18 @@ module.exports = {
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
                 search = req.body.search || '',
-                where = {},
-                decks, total;
+                age = req.body.age || 'all',
+                order = req.body.order || 'high',
+                where = {}, sort = {},
+                decks, total,
+                now = new Date().getTime();
             
+            // klass
             if (klass !== 'all') {
                 where.playerClass = klass;
             }
             
+            // search
             if (search) {
                 where.$or = [];
                 where.$or.push({ name: new RegExp(search, "i") });
@@ -1384,6 +1398,45 @@ module.exports = {
                 where.$or.push({ contentEarly: new RegExp(search, "i") });
                 where.$or.push({ contentMid: new RegExp(search, "i") });
                 where.$or.push({ contentLate: new RegExp(search, "i") });
+            }
+            
+            // age
+            switch (age) {
+                case '7':
+                    where.createdDate = { $gte: new Date(now - (60 * 60 * 24 * 7 * 1000)) };
+                    break;
+                case '15':
+                    where.createdDate = { $gte: new Date(now - (60 * 60 * 24 * 15 * 1000)) };
+                    break;
+                case '30':
+                    where.createdDate = { $gte: new Date(now - (60 * 60 * 24 * 30 * 1000)) };
+                    break;
+                case '60':
+                    where.createdDate = { $gte: new Date(now - (60 * 60 * 24 * 60 * 1000)) };
+                    break;
+                case '90':
+                    where.createdDate = { $gte: new Date(now - (60 * 60 * 24 * 90 * 1000)) };
+                    break;
+                case 'all':
+                default:
+                    break;
+            }
+            
+            // sort
+            switch (order) {
+                case 'low':
+                    sort = { votesCount: 1, createdDate: -1 };
+                    break;
+                case 'new':
+                    sort = { createdDate: -1 };
+                    break;
+                case 'old':
+                    sort = { createdDate: 1 };
+                    break;
+                case 'high':
+                default:
+                    sort = { votesCount: -1, createdDate: -1 };
+                    break;
             }
             
             // get total decks
@@ -1410,7 +1463,7 @@ module.exports = {
                     select: 'username -_id'
                 })
                 .where(where)
-                .sort({ votesCount: -1, createdDate: -1 })
+                .sort(sort)
                 .skip((perpage * page) - perpage)
                 .limit(perpage)
                 .exec(function (err, results) {
@@ -1422,7 +1475,7 @@ module.exports = {
             
             getDecks(function () {
                 getTotal(function () {
-                    return res.json({ success: true, decks: decks, total: total, klass: klass, page: page, perpage: perpage, search: search });
+                    return res.json({ success: true, decks: decks, total: total, klass: klass, page: page, perpage: perpage, search: search, age: age, order: order });
                 });
             });
             

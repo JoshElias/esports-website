@@ -107,11 +107,13 @@ angular.module('app.services', [])
 })
 .factory('ArticleService', function ($http, $q) {
     return {
-        getArticles: function (klass, page, perpage) {
+        getArticles: function (klass, page, perpage, search) {
             var d = $q.defer(),
                 page = page || 1,
-                perpage = perpage || 20;
-            $http.post('/articles', { klass: klass, page: page, perpage: perpage }).success(function (data) {
+                perpage = perpage || 20,
+                search = search || '';
+            
+            $http.post('/articles', { klass: klass, page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
@@ -1028,14 +1030,16 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
-        getDecks: function (klass, page, perpage, search) {
+        getDecks: function (klass, page, perpage, search, age, order) {
             klass = klass || 'all';
             page = page || 1;
             perpage = perpage || 24;
             search = search || '';
+            age = age || 'all';
+            order = order || 'high';
             
             var d = $q.defer();
-            $http.post('/decks', { klass: klass, page: page, perpage: perpage, search: search }).success(function (data) {
+            $http.post('/decks', { klass: klass, page: page, perpage: perpage, search: search, age: age, order: order }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

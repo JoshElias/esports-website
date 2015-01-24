@@ -1824,29 +1824,44 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('ArticlesCtrl', ['$scope', 'ArticleService', 'data', 
-    function ($scope, ArticleService, data) {
+.controller('ArticlesCtrl', ['$scope', '$state', 'ArticleService', 'data', 
+    function ($scope, $state, ArticleService, data) {
         // articles
         $scope.articles = data.articles;
         $scope.total = data.total;
         $scope.klass = data.klass;
         $scope.page = data.page;
         $scope.perpage = data.perpage;
+        $scope.search = data.search;
+        $scope.loading = false;
+        
+        $scope.hasSearch = function () {
+            return (data.search) ? data.search.length : false;
+        }
         
         $scope.setKlass = function (klass) {
             $scope.klass = klass;
             $scope.page = 1;
-            getDecks();
+            $scope.getArticles();
         };
         
-        function getDecks () {
-            ArticleService.getArticles($scope.klass, $scope.page, $scope.perpage).then(function (data) {
-                $scope.articles = data.articles;
-                $scope.total = data.total;
-                
-                $scope.klass = data.klass;
-                $scope.page = data.page;
-            });
+        $scope.getArticles = function () {
+            var params = {};
+            
+            if ($scope.search) {
+                params.s = $scope.search;
+            }
+            
+            if ($scope.page !== 1) {
+                params.p = $scope.page;
+            }
+            
+            if ($scope.klass != 'all') {
+                params.k = $scope.klass;
+            }
+            
+            $scope.loading = true;
+            $state.transitionTo('app.articles.list', params);
         }
         
         // pagination
@@ -1862,7 +1877,7 @@ angular.module('app.controllers', ['ngCookies'])
             },
             setPage: function (page) {
                 $scope.page = page;
-                getDecks();
+                $scope.getArticles();
             },
             pagesArray: function () {
                 var pages = [],
@@ -2075,13 +2090,26 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.page = parseInt(data.page);
         $scope.perpage = data.perpage;
         $scope.search = data.search;
+        $scope.age = data.age;
+        $scope.order = data.order;
 
         $scope.hasSearch = function () {
             return (data.search) ? data.search.length : false;
         }
         
-        $scope.toggleAdvFilter = function () {
+        // advanced filters
+        if (!$scope.app.settings.show.decks) {
+            $scope.app.settings.show.decks = {
+                advanced: false
+            };
+        }
+
+        $scope.toggleAdvanced = function () {
             $scope.app.settings.show.decks.advanced = !$scope.app.settings.show.decks.advanced;
+        }
+        
+        $scope.showAdvanced = function () {
+            return $scope.app.settings.show.decks.advanced;
         }
         
         $scope.loading = false;
@@ -2093,10 +2121,17 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // filters
+        $scope.getFilter = function (name, value) {
+            var filter = $scope.filters.all[name];
+            for (var i = 0; i < filter.length; i++) {
+                if (filter[i].value == value) {
+                    return filter[i];
+                }
+            }
+            return filter[0];
+        }
+
         $scope.filters = {
-            age: { name: 'All Decks', value: 'all' },
-            order: { name: 'Highest Ranked', value: 'high' },
-            
             all: {
                 age: [
                     { name: 'All Decks', value: 'all' },
@@ -2114,6 +2149,8 @@ angular.module('app.controllers', ['ngCookies'])
                 ]
             }
         };
+        $scope.filters.age = $scope.getFilter('age', $scope.age);
+        $scope.filters.order = $scope.getFilter('order', $scope.order);
         
         $scope.getDecks = function () {
             var params = {};
@@ -2128,6 +2165,14 @@ angular.module('app.controllers', ['ngCookies'])
             
             if ($scope.klass != 'all') {
                 params.k = $scope.klass;
+            }
+            
+            if ($scope.filters.age.value !== 'all') {
+                params.a = $scope.filters.age.value;
+            }
+            
+            if ($scope.filters.order.value !== 'high') {
+                params.o = $scope.filters.order.value;
             }
             
             $scope.loading = true;
