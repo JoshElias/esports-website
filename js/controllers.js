@@ -17,6 +17,7 @@ angular.module('app.controllers', ['ngCookies'])
             deck: null,
             show: {
                 deck: null,
+                article: null,
                 decks: null
             }
         },
@@ -200,6 +201,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.articles = dataArticles.articles;
         $scope.decks = dataDecks.decks;
         $scope.decksFeatured = dataDecksFeatured.decks;
+        $scope.loading = {
+            articles: false,
+            community: false,
+            featured: false
+        };
         
         // banner
         $scope.banner = {
@@ -224,17 +230,25 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.klass = 'all';
         $scope.setKlass = function (klass) {
             $scope.klass = klass;
+            $scope.loading = {
+                articles: true,
+                community: true,
+                featured: true
+            };
             
             ArticleService.getArticles(klass).then(function (data) {
                 $scope.articles = data.articles;
+                $scope.loading.articles = false;
             });
 
             DeckService.getDecksCommunity(klass, 1, 10).then(function (data) {
                 $scope.decks = data.decks;
+                $scope.loading.community = false;
             });
             
             DeckService.getDecksFeatured(klass, 1, 10).then(function (data) {
                 $scope.decksFeatured = data.decks;
+                $scope.loading.featured = false;
             });
         };
     }
@@ -1523,6 +1537,15 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
         
         // steps
+        $scope.stepDesc = {
+            1: '1',
+            2: '2',
+            3: '3',
+            4: '4',
+            5: '5'            
+        };
+        
+        
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
         }
@@ -1713,6 +1736,16 @@ angular.module('app.controllers', ['ngCookies'])
         
         // set default tab page
         $scope.step = 1;
+        $scope.showManaCurve = false;
+        $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
+        
+        // steps
+        $scope.prevStep = function () {
+            if ($scope.step > 1) $scope.step = $scope.step - 1;
+        }
+        $scope.nextStep = function () {
+            if ($scope.step < 5) $scope.step = $scope.step + 1;
+        }
         
         // summernote options
         $scope.options = {
@@ -1799,7 +1832,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.deck = DeckBuilder.new(data.deck.playerClass, data.deck);
         
         // current mulligan
-        $scope.currentMulligan = $scope.deck.mulligans[0];
+        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
         
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
@@ -1922,6 +1955,14 @@ angular.module('app.controllers', ['ngCookies'])
             return $sce.trustAsHtml($scope.article.content);
         };
         
+        // show
+        $scope.show = $scope.app.settings.show.article || {
+            related: true,
+            comments: true
+        };
+        
+        $scope.$watch('show', function(){ $scope.app.settings.show.article = $scope.show; }, true);
+        
         // deck dust
         $scope.getDust = function () {
             var dust = 0;
@@ -1929,6 +1970,16 @@ angular.module('app.controllers', ['ngCookies'])
                 dust += $scope.article.deck.cards[i].qty * $scope.article.deck.cards[i].card.dust;
             }
             return dust;
+        };
+        
+        // related
+        $scope.relatedActive = function () {
+            var related = $scope.article.related;
+            if (!related || !related.length) { return false; }
+            for (var i = 0; i < related.length; i++) {
+                if (related[i].active) { return true; }
+            }
+            return false;
         };
         
         // voting
@@ -1960,7 +2011,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-
+        
         function vote(direction, article) {
             if (!$scope.app.user.isLogged()) {
                 box = bootbox.dialog({
@@ -2245,11 +2296,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
         
         // show
-        if (!$scope.app.settings.show) {
-            $scope.app.settings.show = {
-                deck: null
-            };
-        }
         $scope.show = $scope.app.settings.show.deck || {
             mana: true,
             description: true,

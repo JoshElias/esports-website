@@ -80,7 +80,7 @@ var app = angular.module('app', [
         $httpProvider.interceptors.push('TokenInterceptor');
         
         var production = false,
-            tpl = (production) ? 'https://ts-node.s3.amazonaws.com/' : '';
+            tpl = (production) ? 'https://ts-node2.s3.amazonaws.com/' : '';
         
         $urlRouterProvider.otherwise('/');
         $stateProvider
@@ -939,7 +939,7 @@ angular.module('ui.gravatar').config([
   'gravatarServiceProvider', function(gravatarServiceProvider) {
     gravatarServiceProvider.defaults = {
       size: 200,
-      "default": 'https://s3-us-west-2.amazonaws.com/ts-node/img/profile.jpg'  // Mystery man as default for missing avatars
+      "default": 'https://s3-us-west-2.amazonaws.com/ts-node2/img/profile.jpg'  // Mystery man as default for missing avatars
     };
 
     // Use https endpoint

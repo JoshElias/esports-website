@@ -1137,7 +1137,7 @@ module.exports = {
                         select: 'username -_id'
                     },{
                         path: 'related',
-                        select: 'title slug.url -_id',
+                        select: 'title slug.url active -_id',
                     },{
                         path: 'comments',
                         select: '_id author comment createdDate votesCount votes'

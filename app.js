@@ -64,7 +64,7 @@ if (cluster.isMaster) {
     BASE_DIR = __dirname;
 
     /* mongoose */
-    mongoose.connect('mongodb://localhost:27017/tempostorm');
+    mongoose.connect(config.db);
 
     app.use(subdomain({ base : config.base, removeWWW : true }));
 

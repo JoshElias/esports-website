@@ -10,7 +10,7 @@
             <div class="pull-right">
                 <!-- deck-votes -->
                 <div class="deck-votes clearfix">
-                    <div class="vote-count vote-large m-l-sm pull-right"><span><em ng-if="deck.votesCount > 0">+</em>{{deck.votesCount}}</span></div>
+                    <div class="vote-count vote-large m-l-sm pull-right"><span><em ng-show="deck.votesCount > 0">+</em>{{deck.votesCount}}</span></div>
                     <div class="vote-count-btns vote-large pull-left">
                         <a href="#" class="btn-vote-up vote-large" ng-class="{active: deck.voted === 1}" ng-click="voteUp(deck)"><i class="fa fa-plus-square"></i></a>
                         <a href="#" class="btn-vote-down vote-large" ng-class="{active: deck.voted === -1}" ng-click="voteDown(deck)"><i class="fa fa-minus-square"></i></a>
@@ -95,11 +95,11 @@
                             </div>
                         </div>
                         <div class="db-deck-cards">
-                            <div class="db-deck-card" ng-class="{multi:item.qty > 1 || item.card.rarity == 'Legendary', 'mulligan-hide': mulliganHide(item)}" ng-repeat="item in deck.cards" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{item.card.photos.large}}" data-tooltip-pos="left" hs-card>
+                            <div class="db-deck-card" ng-class="{multi:item.qty > 1 || item.card.rarity == 'Legendary', 'mulligan-hide': mulliganHide(item)}" ng-repeat="item in deck.cards" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{item.card.photos.large}}" data-tooltip-pos="left" hs-card>
                                 <div class="db-deck-card-mana">{{item.card.cost}}</div>
                                 <div class="db-deck-card-qty" ng-show="item.qty > 1">{{item.qty}}</div>
                                 <div class="db-deck-card-legendary" ng-show="item.card.rarity == 'Legendary'"><i class="fa fa-star"></i></div>
-                                <div class="db-deck-card-photo"><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{item.card.photos.small}}" alt=""></div>
+                                <div class="db-deck-card-photo"><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{item.card.photos.small}}" alt=""></div>
                                 <div class="db-deck-card-name">{{item.card.name}}</div>
                             </div>
                             <div class="db-deck-footer db-deck-{{deck.playerClass.toLowerCase()}}">
@@ -183,7 +183,7 @@
                             <div ng-if="getMulliganCards().length">
                                 <div class="deck-mulligan-cards">
                                     <div class="deck-mulligan-card" ng-repeat="card in getMulliganCards()">
-                                        <a href="#" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.large}}" style="left: {{cardLeft($index)}}%; z-index: {{$index}};" hs-card><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node/cards/{{card.photos.medium}}" alt=""></a>
+                                        <a href="#" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{card.photos.large}}" style="left: {{cardLeft($index)}}%; z-index: {{$index}};" hs-card><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{card.photos.medium}}" alt=""></a>
                                     </div>
                                 </div>
                             </div>
@@ -322,7 +322,7 @@
                                                 <a href="./user/{{comment.author.username}}">@{{comment.author.username}}</a>
                                                 <div class="pull-right">
                                                     <div class="comment-votes m-l-sm pull-right clearfix">
-                                                        <div class="vote-count vote-small m-l-xs pull-right"><span><em ng-if="deck.votesCount > 0">+</em>{{comment.votesCount}}</span></div>
+                                                        <div class="vote-count vote-small m-l-xs pull-right"><span><em ng-show="comment.votesCount > 0">+</em>{{comment.votesCount}}</span></div>
                                                         <div class="vote-count-btns vote-small pull-left">
                                                             <a href="#" class="btn-vote-up vote-small" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-plus-square"></i></a>
                                                             <a href="#" class="btn-vote-down vote-small" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-minus-square"></i></a>
@@ -346,7 +346,7 @@
                                             <div class="input-group">
                                                 <input type="text" class="form-control input-dark" ng-model="comment.comment" placeholder="ADD A COMMENT" required>
                                                 <span class="input-group-btn">
-                                                    <button type="submit" class="btn input-dark" ng-disabled="commentForm.$invalid" ng-click="commentPost()">POST</button>
+                                                    <button type="submit" class="btn btn-default input-dark" ng-disabled="commentForm.$invalid" ng-click="commentPost()">POST</button>
                                                 </span>
                                             </div>
                                         </form>

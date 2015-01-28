@@ -388,13 +388,14 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .article:hover .article-content-wrapper { top: -1px; }
 
 .articles-list-no-content { padding: 20px; color: #FFF; background: rgba(0,0,0,.6); border: 1px solid #000; border-radius: 4px; }
+.no-articles { color: #FFF; }
 /* end articles */
 
 /* start decks */
 .home-decks { margin-bottom: 20px; }
 .home-decks h1.decks-title { margin: 0; padding: 20px 0px 10px 0px; font-family: sneakersmediumitalic; font-size: 30px; background: #2766ad; color: #FFF; text-indent: 10px; }
 .home-decks h1.decks-title-small { padding: 10px; font-size: 20px; line-height: 20px; }
-.home-no-decks { padding: 10px; background: #F2F2F2; }
+.home-no-decks { padding: 10px; background: rgba(0,0,0,.6); color: #FFF; }
 a.create-a-deck { display: block; margin-bottom: 20px; height: 119px; background: #487dba url('../img/create-a-deck-bg.png') no-repeat; background-position: right top; }
 
 .home-decks .deck-wrapper { position: relative; width: 100%; height: 90px; }
@@ -437,12 +438,12 @@ h1.section-title { margin: 0; font-family: sneakersmediumitalic; color: #FFF; fo
 
 /* article */
 .article-photo-banner { height: 300px; border-bottom: 1px solid #083f7d; }
-.article-page {  }
+.article-page { }
 .article-comments h3,
-.article-related h3 { color: #2766ad; font-family: sneakersmediumitalic; }
+.article-related h3 { color: #FFF; font-family: sneakersmediumitalic; }
 
 .article-page .article-left { margin-right: 320px; overflow: hidden; }
-.article-page .article-right { float: right; margin-top: 10px; }
+.article-page .article-right { float: right; width: 300px; margin-top: 10px; }
 
 .article-page .article-related { margin-top: 10px; margin-bottom: 20px; }
 .article-page .article-related ul { margin: 0; padding: 0; }
@@ -454,6 +455,15 @@ h1.section-title { margin: 0; font-family: sneakersmediumitalic; color: #FFF; fo
 .article-page .article-title { margin: 0; color: #2766ad; font-family: sneakersmediumitalic; }
 .article-page .article-page-content { color: #FFF; }
 .article-page .article-comments { margin: 20px 0; }
+
+.article-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
+.article-section-title { font-size: 20px; line-height: 60px; height: 60px; color: #FFF; background: rgba(0,0,0,.3); }
+.article-section-title a { color: #FFF; }
+.article-section-title h3 { margin: 0 0 0 20px; font-size: 20px; font-family: sneakersmediumitalic; line-height: 60px; }
+.article-section-content { padding: 20px; border-top: 1px solid #000; }
+.article-section-content.unpadded { padding: 0px; }
+.article-section-content h3 { color: #FFF; font-size: 20px; font-family: sneakersmediumitalic; }
+.article-section-content p { color: #FFF; }
 
 /* wrappers */
 .wrapper-xs { padding: 5px; }
@@ -525,6 +535,13 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
   border-right-color: #131313;
 }
 
+/* arrow - light */
+.arrow.left.arrow-light {
+  border-right-color: #2766ad;
+}
+.arrow.left.arrow-light:after {
+  border-right-color: #2766ad;
+}
 
 /* lines */
 .line { border-top: 1px solid #F2F2F2; margin-bottom: 10px; }
@@ -1498,11 +1515,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .comment .avatar { float: left; margin-left: -20px; }
 .comment .avatar img { width: 39px; height: 39px; background: #F2F2F2; border: 1px solid #2766ad; }
 .comment .panel { margin: 0 0 0 30px; border-radius: 0px; border: 1px solid #000; background: rgba(0,0,0,.3); }
-.comment .panel-heading { color: #FFF; background: #131313; border-bottom: 1px solid #000; }
+.comment .panel-heading { color: #FFF; background: #131313; border-bottom: 1px solid #000; border-radius: 0px; }
 .comment .panel-heading a { color: #FFF; }
 .comment .comment-ago { margin-right: 60px; }
 .comment .panel-body { color: #FFF; background: #1B1B1B; overflow: hidden; }
-.comment .premium { border-radius: 2px; background: #FFF; color: #222; font-size: 10px; padding: 2px 3px; }
 
 .comment .comment { margin-left: 50px; }
 .comment .comment.first { margin-top: 10px; }
@@ -1518,6 +1534,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .comment-votes .vote-count { background: #2766ad; }
 
 .no-comments { margin: 0 0 20px 0; }
+
+/* comments - light */
+.comment.comment-light .panel { border: 1px solid #2766ad; background: #F2F2F2; }
+.comment.comment-light .panel-heading { color: #FFF; background: #2766ad; border-bottom: 1px solid #2766ad; }
+.comment.comment-light .panel-heading a { color: #FFF; }
+.comment.comment-light .panel-body { color: #222; background: #FEFEFE; }
+
+.comment.comment-light .comment-votes .vote-count { border-color: #2766ad; background: #FFF; color: #2766ad; }
+
 
 /* forum home */
 .forum-category { margin-top: 20px; border: 1px solid #083f7d; padding: 15px; font-size: 20px; background: #2766ad; color: #FFF; }
