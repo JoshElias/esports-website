@@ -63,9 +63,6 @@ if (cluster.isMaster) {
 
     BASE_DIR = __dirname;
 
-    console.log(global.process.env.NODE_ENV);
-    console.log(config.db);
-    
     /* mongoose */
     mongoose.connect(config.db);
 
@@ -101,7 +98,7 @@ if (cluster.isMaster) {
         cookie: { expires: new Date(Date.now() + (60 * 60 * 24 * 7 * 1000)) },
         secret: 'kjadhKJHJKhsdjhd82387sjJK',
         store: new MongoStore({
-            db: 'tempostorm'
+            url: config.db
         })
     }));
 
