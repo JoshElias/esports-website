@@ -5,8 +5,8 @@
   "private": true,
   "author": {
     "name": "TempoStorm",
-    "email": "",
-    "web": ""
+    "email": "reynad@tempostorm.com",
+    "web": "https://tempostorm.com"
   },
   "dependencies": {
     "express": "latest",
@@ -38,7 +38,6 @@
     "passport-twitch": "1.0.1",
     "passport-bnet": "1.0.1",
     "mandrill-api": "1.0.41",
-    "subdomain": "1.2.0",
     "graceful-fs": "3.0.5",
     "filequeue": "0.5.0",
     "stripe": "3.0.3",

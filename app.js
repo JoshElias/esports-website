@@ -34,7 +34,6 @@ var cluster = require('cluster'),
     Util = require('./lib/util'),
     imgur = require('imgur'),
     async = require('async'),
-    subdomain = require('subdomain'),
     passport = require('passport'),
     TwitchStrategy = require('passport-twitch').Strategy,
     BnetStrategy = require('passport-bnet').Strategy,
@@ -65,8 +64,6 @@ if (cluster.isMaster) {
 
     /* mongoose */
     mongoose.connect(config.db);
-
-    app.use(subdomain({ base : config.base, removeWWW : true }));
 
     app.use('/', express.static(__dirname + '/'));
 
