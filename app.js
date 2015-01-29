@@ -63,6 +63,9 @@ if (cluster.isMaster) {
 
     BASE_DIR = __dirname;
 
+    console.log(global.process.env.NODE_ENV);
+    console.log(config.db);
+    
     /* mongoose */
     mongoose.connect(config.db);
 
