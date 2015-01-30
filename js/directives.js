@@ -107,7 +107,7 @@ angular.module('app.directives', ['ui.load'])
     return function(scope, element, attrs){
         var url = attrs.ngBackground;
         element.css({
-            'background-image': 'url(' + url +')',
+            'background-image': 'url(\'' + url +'\')',
             'background-position': 'center center',
             'background-size' : 'cover'
         });
