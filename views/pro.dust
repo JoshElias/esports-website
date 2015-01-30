@@ -6,15 +6,15 @@
     <title>TempoStorm</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/bootstrap/bootstrap.css" type="text/css" />
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/jquery/jquery-ui.min.css" type="text/css" />
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/font-awesome/font-awesome.min.css" type="text/css" />
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/animate.css" type="text/css" />
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/summernote/summernote.css" type="text/css" />
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/angular/angular-chart.css" type="text/css" />
-    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css">
-    <link rel="stylesheet" href="http://fk.github.io/select2-bootstrap-css/css/select2-bootstrap.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css">
+    <link rel="stylesheet" href="https://fk.github.io/select2-bootstrap-css/css/select2-bootstrap.css">
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/angular/select.min.css" type="text/css" />
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/style.css" type="text/css" />
 </head>
