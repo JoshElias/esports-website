@@ -253,6 +253,53 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+.controller('PremiumCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'UserService', 'AuthenticationService', 'SubscriptionService', 
+    function ($scope, $state, $window, $compile, bootbox, UserService, AuthenticationService, SubscriptionService) {
+        var box,
+            callback;
+        
+        // get premium
+        $scope.getPremium = function (plan) {
+            if ($scope.app.user.isLogged()) {
+                if (!$scope.app.user.isSubscribed()) {
+                    $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
+                }
+            } else {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    $scope.getPremium(plan);
+                };
+            }
+        }
+        
+        // login for modal
+        $scope.login = function login(email, password) {
+            if (email !== undefined && password !== undefined) {
+                UserService.login(email, password).success(function(data) {
+                    AuthenticationService.setLogged(true);
+                    AuthenticationService.setAdmin(data.isAdmin);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
+                    $window.sessionStorage.userID = data.userID;
+                    $window.sessionStorage.username = data.username;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+                    box.modal('hide');
+                    callback();
+                }).error(function() {
+                    $scope.showError = true;
+                });
+            }
+        }
+    }
+])
 .controller('ProfileCtrl', ['$scope', 'dataProfile',  
     function ($scope, dataProfile) {
         $scope.user = dataProfile.user;
@@ -1916,7 +1963,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.articles = data.articles;
         $scope.total = data.total;
         $scope.klass = data.klass;
-        $scope.page = data.page;
+        $scope.page = parseInt(data.page);
         $scope.perpage = data.perpage;
         $scope.search = data.search;
         $scope.loading = false;
@@ -1998,6 +2045,11 @@ angular.module('app.controllers', ['ngCookies'])
             },
             
         };
+        
+        // verify valid page
+        if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
+            $scope.pagination.setPage(1);
+        }
     }
 ])
 .controller('ArticleCtrl', ['$scope', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'UserService', 'ArticleService', 'AuthenticationService', 'VoteService', 'SubscriptionService',  
@@ -2366,7 +2418,7 @@ angular.module('app.controllers', ['ngCookies'])
         // verify valid page
         if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
             $scope.pagination.setPage(1);
-        }        
+        }   
     }
 ])
 .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 

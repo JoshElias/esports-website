@@ -33,15 +33,17 @@
                             <span class="arrow left"></span>
                             <a href="./user/{{comment.author.username}}">@{{comment.author.username}}</a>
                             <div class="pull-right">
-                                <div class="comment-votes m-l-sm pull-right">
-                                    <div class="vote-count vote-small"><span ng-if="comment.votesCount > 0">+</span>{{comment.votesCount}}</div>
-                                    <div class="btn-group">
-                                        <button class="btn-vote-up vote-small" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-plus"></i></button>
-                                        <button class="btn-vote-down vote-small" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-minus"></i></button>
+                                <div class="comment-votes m-l-sm pull-right clearfix">
+                                    <div class="vote-count vote-small m-l-xs pull-right"><span><em ng-show="comment.votesCount > 0">+</em>{{comment.votesCount}}</span></div>
+                                    <div class="vote-count-btns vote-small pull-left">
+                                        <a href="#" class="btn-vote-up vote-small" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-plus-square"></i></a>
+                                        <a href="#" class="btn-vote-down vote-small" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-minus-square"></i></a>
                                     </div>
                                 </div>
-                                <span class="fa fa-clock-o text-muted"></span>
-                                <span class="text-muted" am-time-ago="comment.createdDate"></span>
+                                <div class="comment-ago">
+                                    <span class="fa fa-clock-o"></span>
+                                    <span am-time-ago="comment.createdDate"></span>
+                                </div>
                             </div>
                         </div>
                         <div class="panel-body">{{comment.comment}}</div>
@@ -54,9 +56,9 @@
                     </div>
                     <form class="form-horizontal" name="commentForm" novalidate>
                         <div class="input-group">
-                            <input type="text" class="form-control" ng-model="comment.comment" placeholder="ADD A COMMENT" required>
+                            <input type="text" class="form-control input-dark" ng-model="comment.comment" placeholder="ADD A COMMENT" required>
                             <span class="input-group-btn">
-                                <button type="submit" class="btn btn-default" ng-disabled="commentForm.$invalid" ng-click="commentPost()">POST</button>
+                                <button type="submit" class="btn btn-blue" ng-disabled="commentForm.$invalid" ng-click="commentPost()">POST</button>
                             </span>
                         </div>
                     </form>

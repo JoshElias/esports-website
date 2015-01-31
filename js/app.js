@@ -369,6 +369,15 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.premium', {
+                url: 'premium',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/premium.html',
+                        controller: 'PremiumCtrl'
+                    }
+                }
+            })
             .state('app.terms', {
                 url: 'terms',
                 views: {
