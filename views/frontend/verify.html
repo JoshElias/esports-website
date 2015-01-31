@@ -3,8 +3,8 @@
         <div class="col-xs-12 m-t-md">
             <div class="signup-form row">
                 <div class="col-sm-6">
-                    <h1>Check your email!</h1>
-                    <p>We just sent you an email to verify your account. Copy the verification code and paste it in to this form or click the link from your email to finish signing up.</p>
+                    <h1 class="ts-blue">Check your email!</h1>
+                    <p class="white">We just sent you an email to verify your account. Copy the verification code and paste it in to this form or click the link from your email to finish signing up.</p>
                 </div>
                 <div class="col-sm-6">
                     <div class="panel panel-danger error-modal animated" ng-show="showError">
@@ -27,7 +27,7 @@
                         <label for="code" class="control-label sr-only">Authorization Code</label>
                         <input type="text" class="form-control input-dark last" id="code" placeholder="Authorization Code" ng-model="verify.code" required>
                     </div>
-                    <button type="submit" class="btn btn-default btn-block" ng-disabled="verifyForm.$invalid" ng-click="verifyEmail()">Verify Account</button>
+                    <button type="submit" class="btn btn-blue btn-block" ng-disabled="verifyForm.$invalid" ng-click="verifyEmail()">Verify Account</button>
                     </form>
                 </div>
             </div>

@@ -191,7 +191,9 @@ if (cluster.isMaster) {
 
     app.post('/api/comment/vote', routes.frontend.commentVote(Schemas));
 
-    app.post('/api/profile/edit', routes.frontend.userProfileEdit(Schemas));
+    app.post('/api/profile/edit', routes.frontend.userProfileEdit(Schemas, uuid, Mail));
+    app.post('/api/profile/changeEmail', routes.frontend.changeEmail(Schemas, uuid, Mail));
+    app.post('/api/profile/updateEmail', routes.frontend.updateEmail(Schemas, Mail));
     app.post('/api/profile/:username', routes.frontend.userProfile(Schemas));
     app.post('/api/profile/:username/decks', routes.frontend.profileDecksLoggedIn(Schemas));
 

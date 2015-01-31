@@ -184,6 +184,22 @@ angular.module('app.services', [])
         },
         updateProfile: function (user) {
             return $http.post('/api/profile/edit', user);
+        },
+        changeEmail: function (code) {
+            var d = $q.defer(),
+                code = code || false;
+            $http.post('/api/profile/changeEmail', { code: code }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        updateEmail: function (code) {
+            var d = $q.defer(),
+                code = code || false;
+            $http.post('/api/profile/updateEmail', { code: code }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
         }
     };
 })

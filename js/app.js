@@ -531,8 +531,40 @@ var app = angular.module('app', [
                 },
                 access: { auth: true }
             })
+            .state('app.profile.changeEmail', {
+                url: '/email-change-confirm?code',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/blank.html',
+                        controller: 'ProfileEmailChangeCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                                var code = $stateParams.code || false;
+                                return ProfileService.changeEmail(code);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true }
+            })
+            .state('app.profile.updateEmail', {
+                url: '/email-verify?code',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/blank.html',
+                        controller: 'ProfileEmailConfirmCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                                var code = $stateParams.code || false;
+                                return ProfileService.updateEmail(code);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true }
+            })
             .state('app.profile.subscription', {
-                url: '/subscription',
+                url: '/subscription?plan',
                 views: {
                     profile: {
                         templateUrl: tpl + 'views/frontend/profile.subscription.html',

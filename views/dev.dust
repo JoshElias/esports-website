@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="./css/angular/select.min.css" type="text/css" />
     <link rel="stylesheet" href="./css/style.css" type="text/css" />
 </head>
-<body ng-controller="AppCtrl">
+<body ng-controller="AppCtrl" ng-class="{ admin: $state.includes('app.admin') }">
     <div class="app" id="app" ui-view="root"></div>
     <!-- jQuery -->
     <script src="./js/jquery/jquery-2.1.1.min.js"></script>

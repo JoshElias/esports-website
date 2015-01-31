@@ -257,37 +257,81 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, dataProfile) {
         $scope.user = dataProfile.user;
         
-        if ($scope.user.social) {
-            $scope.user.social.exists = (
-                ($scope.user.social.twitter && $scope.user.social.twitter.length) || 
-                ($scope.user.social.facebook && $scope.user.social.facebook.length) || 
-                ($scope.user.social.twitch && $scope.user.social.twitch.length) || 
-                ($scope.user.social.instagram && $scope.user.social.instagram.length) || 
-                ($scope.user.social.youtube && $scope.user.social.youtube.length)
-            );
-        }
+        $scope.socialExists = function () {
+            if (!$scope.user.social) { return false; }
+            return ($scope.user.social.twitter && $scope.user.social.twitter.length) || 
+            ($scope.user.social.facebook && $scope.user.social.facebook.length) || 
+            ($scope.user.social.twitch && $scope.user.social.twitch.length) || 
+            ($scope.user.social.instagram && $scope.user.social.instagram.length) || 
+            ($scope.user.social.youtube && $scope.user.social.youtube.length);
+        };
     }
 ])
-.controller('ProfileEditCtrl', ['$scope', 'ProfileService', 'dataProfileEdit',  
-    function ($scope, ProfileService, dataProfileEdit) {
+.controller('ProfileEditCtrl', ['$scope', '$state', 'ProfileService', 'AlertService', 'dataProfileEdit',  
+    function ($scope, $state, ProfileService, AlertService, dataProfileEdit) {
         $scope.profile = dataProfileEdit.user;
+        
+        // grab alerts
+        if (AlertService.hasAlert()) {
+            $scope.success = AlertService.getSuccess();
+            AlertService.reset();
+        }
         
         $scope.editProfile = function () {
             ProfileService.updateProfile($scope.profile).success(function (data) {
                 if (!data.success) {
-                    console.log(data.errors || data.success);
+                    console.log(data.error);
                 } else {
-                    console.log('success');
+                    var msg = 'Your profile has been updated successfully.';
+                    if ($scope.profile.changeEmail) {
+                        msg += ' Email address changes must be verified by email before they will take effect.';
+                    }
+                    AlertService.setSuccess({ show: true, msg: msg });
+                    $state.go($state.current, { username: $scope.profile.username }, {reload: true});
                 }
             });
         };
     }
 ])
-.controller('ProfileSubscriptionCtrl', ['$scope', 'SubscriptionService', 'dataProfileEdit',  
-    function ($scope, SubscriptionService, dataProfileEdit) {
+.controller('ProfileEmailChangeCtrl', ['$scope', '$state', '$stateParams', 'AlertService', 'data', 
+    function ($scope, $state, $stateParams, AlertService, data) {
+        if (data.success) {
+            AlertService.setSuccess({ show: true, msg: 'An email has been sent to the new address. Please confirm your new email before changes take effect.' });
+        }
+        return $state.transitionTo('app.profile.edit', { username: $stateParams.username });
+    }
+])
+.controller('ProfileEmailConfirmCtrl', ['$scope', '$state', '$stateParams', 'AlertService', 'data', 
+    function ($scope, $state, $stateParams, AlertService, data) {
+        if (data.success) {
+            AlertService.setSuccess({ show: true, msg: 'Your email address has been updated successfully.' });
+        }
+        return $state.transitionTo('app.profile.edit', { username: $stateParams.username });
+    }
+])
+.controller('ProfileSubscriptionCtrl', ['$scope', '$stateParams', 'SubscriptionService', 'dataProfileEdit',  
+    function ($scope, $stateParams, SubscriptionService, dataProfileEdit) {
         $scope.profile = dataProfileEdit.user;
         
-        $scope.plan = dataProfileEdit.user.subscription.plan || 'tempostorm_semi';
+        if ($scope.profile.subscription.isSubscribed) {
+            $scope.plan = dataProfileEdit.user.subscription.plan || 'tempostorm_semi';
+        } else {
+            var plan;
+            switch ($stateParams.plan) {
+                case 'monthly':
+                    plan = 'tempostorm_monthly';
+                    break;
+                case 'quarterly':
+                    plan = 'tempostorm_quarterly';
+                    break;
+                case 'semi':
+                default:
+                    plan = 'tempostorm_semi';
+                    break;
+            }
+            
+            $scope.plan = plan;
+        }
         
         $scope.getExpiryDate = function () {
             var expiryISO = $scope.profile.subscription.expiryDate;
@@ -1538,11 +1582,11 @@ angular.module('app.controllers', ['ngCookies'])
         
         // steps
         $scope.stepDesc = {
-            1: '1',
-            2: '2',
-            3: '3',
-            4: '4',
-            5: '5'            
+            1: 'Select the cards for your deck.',
+            2: 'Select which cards to mulligan for.',
+            3: 'Provide a description for how to play your deck.',
+            4: 'Select how your deck preforms against other classes.',
+            5: 'Provide a synopsis and title for your deck.'            
         };
         
         
@@ -1738,6 +1782,15 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.step = 1;
         $scope.showManaCurve = false;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
+        
+        // steps
+        $scope.stepDesc = {
+            1: 'Select the cards for your deck.',
+            2: 'Select which cards to mulligan for.',
+            3: 'Provide a description for how to play your deck.',
+            4: 'Select how your deck preforms against other classes.',
+            5: 'Provide a synopsis and title for your deck.'            
+        };
         
         // steps
         $scope.prevStep = function () {
@@ -1951,16 +2004,29 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $sce, data, $state, $compile, $window, bootbox, UserService, ArticleService, AuthenticationService, VoteService, SubscriptionService) {
         $scope.article = data.article;
         
+        $scope.isPremium = function () {
+            if (!$scope.article.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date($scope.article.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
         $scope.getContent = function () {
             return $sce.trustAsHtml($scope.article.content);
         };
         
         // show
-        $scope.show = $scope.app.settings.show.article || {
-            related: true,
-            comments: true
-        };
-        
+        if (!$scope.app.settings.show.article) {
+            $scope.app.settings.show['article'] = {
+                related: true,
+                comments: true
+            };
+        }
+        $scope.show = $scope.app.settings.show.article;
         $scope.$watch('show', function(){ $scope.app.settings.show.article = $scope.show; }, true);
         
         // deck dust
@@ -2103,6 +2169,24 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
+        
+        // get premium
+        $scope.getPremium = function (plan) {
+            if ($scope.app.user.isLogged()) {
+                if (!$scope.app.user.isSubscribed()) {
+                    $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
+                }
+            } else {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    $scope.getPremium(plan);
+                };
+            }
+        }
         
         // login for modal
         $scope.login = function login(email, password) {
@@ -2292,21 +2376,34 @@ angular.module('app.controllers', ['ngCookies'])
         // load deck
         $scope.deck = data.deck;
         
+        $scope.isPremium = function () {
+            if (!$scope.deck.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date($scope.deck.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
         // classes
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
         
         // show
-        $scope.show = $scope.app.settings.show.deck || {
-            mana: true,
-            description: true,
-            mulligans: true,
-            video: true,
-            matchups: true,
-            gameplay: true,
-            stats: true,
-            comments: true
-        };
-        
+        if (!$scope.app.settings.show.deck) {
+            $scope.app.settings.show['deck'] = {
+                mana: true,
+                description: true,
+                mulligans: true,
+                video: true,
+                matchups: true,
+                gameplay: true,
+                stats: true,
+                comments: true
+            };
+        }
+        $scope.show = $scope.app.settings.show.deck;
         $scope.$watch('show', function(){ $scope.app.settings.show.deck = $scope.show; }, true);
         
         // mulligans
@@ -2566,6 +2663,24 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
+        
+        // get premium
+        $scope.getPremium = function (plan) {
+            if ($scope.app.user.isLogged()) {
+                if (!$scope.app.user.isSubscribed()) {
+                    $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
+                }
+            } else {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    $scope.getPremium(plan);
+                };
+            }
+        }
         
         // login for modal
         $scope.login = function login(email, password) {

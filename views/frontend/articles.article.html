@@ -69,14 +69,14 @@
 
         <!-- article left -->
         <div class="article-left">
-
+            
             <!-- article header -->
             <div class="article-header clearfix">
 
                 <!-- article-votes -->
                 <div class="article-votes clearfix">
                     <div class="vote-count vote-large m-l-sm pull-right"><span><em ng-show="article.votesCount > 0">+</em>{{article.votesCount}}</span></div>
-                    <div class="vote-count-btns vote-large pull-left">
+                    <div class="vote-count-btns vote-large pull-left" ng-if="!isPremium() || app.user.isSubscribed()">
                         <a href="#" class="btn-vote-up vote-large" ng-class="{active: article.voted === 1}" ng-click="voteUp(article)"><i class="fa fa-plus-square"></i></a>
                         <a href="#" class="btn-vote-down vote-large" ng-class="{active: article.voted === -1}" ng-click="voteDown(article)"><i class="fa fa-minus-square"></i></a>
                     </div>
@@ -88,68 +88,175 @@
             </div>
             <!-- / article header -->
 
-            <!-- article content -->
-            <div class="article-page-content" ng-bind-html="getContent()"></div>
-            <!-- / article content -->
-
-            <!-- comments -->
-            <div class="article-comments">
+            <!-- subscribe -->
+            <div class="article-subscribe" ng-if="isPremium() && !app.user.isSubscribed()">
+                <p>{{article.description}}...</p>
+                
+                <h1 class="article-title">CONTINUE READING THIS ARTICLE...</h1>
+                <h2>Signup for T/S Premium today!</h2>
+                
                 <div class="article-section">
-                    <div class="article-section-title clearfix">
-                        <a href="#" ng-click="show.comments = !show.comments"><h3 class="pull-left">COMMENTS</h3></a>
-                        <div class="m-l-md m-r-md pull-right">
-                            <a href="#" ng-click="show.comments = !show.comments">
-                                <i class="fa" ng-class="{ 'fa-angle-down': !show.comments, 'fa-angle-up': show.comments }"></i>
-                            </a>
+                    <div class="article-section-title">
+                        <h3>WHAT IS T/S PREMIUM?</h3>
+                    </div>
+                    <div class="article-section-content">
+                        <p>T/S Premium is designed to take your Hearthstone game to the next level. The best professionals in the game bringing you exclusive content daily to keep you ahead of the meta.<br><br>
+Premium Membership grants you access to features and content designed to help you become the best player you can be, all while supporting the players and writers. These include exclusive mulligan guides, gameplay videos, commentary, deck/meta analysis, articles, and theory discussion to name a few. We're constantly rolling out new member benefits, and your support makes it happen.</p>
+                    </div>
+                </div>
+
+                <div class="article-section">
+                    <div class="article-section-title">
+                        <h3>WHY SIGN UP FOR T/S PREMIUM?</h3>
+                    </div>
+                    <div class="article-section-content">
+                        <ul class="premium-features">
+                            <li><i class="fa fa-check"></i> Access exclusive content as it is released.</li>
+                            <li><i class="fa fa-check"></i> Comprehensive deck guides by the pros (with in-depth mulligan explanation, gameplay videos, and analysis)</li>
+                            <li><i class="fa fa-check"></i> Exclusive member-only articles.</li>
+                            <li><i class="fa fa-check"></i> Support the contributors, developers, and players.</li>
+                            <li><i class="fa fa-check"></i> Access and help expedite all upcoming member features such as profile customization.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 premium-plan">
+                        <div class="article-section">
+                            <div class="article-section-title">
+                                <h3 class="text-center">MONTHLY</h3>
+                            </div>
+                            <div class="article-section-content">
+                                <div class="premium-icon premium-monthly"></div>
+                                <div class="premium-price">
+                                    <em>$7.99</em>
+                                    <small>per month</small>
+                                </div>
+                                <ul class="premium-features">
+                                    <li><i class="fa fa-check"></i> Premium Articles</li>
+                                    <li><i class="fa fa-check"></i> Premium Decks</li>
+                                    <li><i class="fa fa-check"></i> Premium Videos</li>
+                                    <li><i class="fa fa-check"></i> Early access to new content</li>
+                                </ul>
+                                <a href="#" class="btn btn-blue btn-block" ng-click="getPremium('monthly')">SIGN UP</a>
+                            </div>
                         </div>
                     </div>
-                    <div class="article-section-content" ng-show="show.comments">
-                        <div class="comments">
-                            <p class="no-comments" ng-if="!article.comments || !article.comments.length">There are currently no comments on this article.</p>
-                            <div class="comment" ng-repeat="comment in article.comments">
-                                <div class="avatar">
-                                    <a href="./user/{{comment.author.username}}"><img gravatar-src-once="comment.author.email" alt="" /></a>
-                                </div>
-                                <div class="panel">
-                                    <div class="panel-heading pos-rl">
-                                        <span class="arrow left"></span>
-                                        <a href="./user/{{comment.author.username}}">@{{comment.author.username}}</a>
-                                        <div class="pull-right">
-                                            <div class="comment-votes m-l-sm pull-right clearfix">
-                                                <div class="vote-count vote-small m-l-xs pull-right"><span><em ng-show="comment.votesCount > 0">+</em>{{comment.votesCount}}</span></div>
-                                                <div class="vote-count-btns vote-small pull-left">
-                                                    <a href="#" class="btn-vote-up vote-small" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-plus-square"></i></a>
-                                                    <a href="#" class="btn-vote-down vote-small" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-minus-square"></i></a>
-                                                </div>
-                                            </div>
-                                            <div class="comment-ago">
-                                                <span class="fa fa-clock-o"></span>
-                                                <span am-time-ago="comment.createdDate"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="panel-body">{{comment.comment}}</div>
-                                </div>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 premium-plan">
+                        <div class="article-section">
+                            <div class="article-section-title">
+                                <h3 class="text-center">THREE MONTHS</h3>
                             </div>
-                            <div class="comment-add">
-                                <div class="avatar">
-                                    <a href="./user/{{app.user.getUsername()}}" ng-if="app.user.isLogged()"><img gravatar-src="app.user.getUserEmail()" alt="" /></a>
-                                    <a href="#" ng-if="!app.user.isLogged()"><img src="./img/profile.jpg" alt="" /></a>
+                            <div class="article-section-content">
+                                <div class="premium-icon premium-quarterly"></div>
+                                <div class="premium-price">
+                                    <em>$6.99</em>
+                                    <small>per month</small>
                                 </div>
-                                <form class="form-horizontal" name="commentForm" novalidate>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control input-dark" ng-model="comment.comment" placeholder="ADD A COMMENT" required>
-                                        <span class="input-group-btn">
-                                            <button type="submit" class="btn btn-default input-dark" ng-disabled="commentForm.$invalid" ng-click="commentPost()">POST</button>
-                                        </span>
-                                    </div>
-                                </form>
+                                <ul class="premium-features">
+                                    <li><i class="fa fa-check"></i> Premium Articles</li>
+                                    <li><i class="fa fa-check"></i> Premium Decks</li>
+                                    <li><i class="fa fa-check"></i> Premium Videos</li>
+                                    <li><i class="fa fa-check"></i> Early access to new content</li>
+                                </ul>
+                                <a href="#" class="btn btn-purple btn-block" ng-click="getPremium('quarterly')">SIGN UP</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 premium-plan">
+                        <div class="article-section">
+                            <div class="article-section-title">
+                                <h3 class="text-center">SIX MONTHS</h3>
+                            </div>
+                            <div class="article-section-content">
+                                <div class="premium-icon premium-semi"></div>
+                                <div class="premium-price">
+                                    <em>$5.99</em>
+                                    <small>per month</small>
+                                </div>
+                                <ul class="premium-features">
+                                    <li><i class="fa fa-check"></i> Premium Articles</li>
+                                    <li><i class="fa fa-check"></i> Premium Decks</li>
+                                    <li><i class="fa fa-check"></i> Premium Videos</li>
+                                    <li><i class="fa fa-check"></i> Early access to new content</li>
+                                </ul>
+                                <a href="#" class="btn btn-orange btn-block" ng-click="getPremium('semi')">SIGN UP</a>
                             </div>
                         </div>
                     </div>
                 </div>
+                
             </div>
-            <!-- / commments -->
+            <!-- / subscribe -->
+            
+            <!-- article -->
+            <div ng-if="!isPremium() || app.user.isSubscribed()">
+            
+                <!-- article content -->
+                <div class="article-page-content clearfix" ng-bind-html="getContent()"></div>
+                <!-- / article content -->
+
+                <!-- comments -->
+                <div class="article-comments">
+                    <div class="article-section">
+                        <div class="article-section-title clearfix">
+                            <a href="#" ng-click="show.comments = !show.comments"><h3 class="pull-left">COMMENTS</h3></a>
+                            <div class="m-l-md m-r-md pull-right">
+                                <a href="#" ng-click="show.comments = !show.comments">
+                                    <i class="fa" ng-class="{ 'fa-angle-down': !show.comments, 'fa-angle-up': show.comments }"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="article-section-content" ng-show="show.comments">
+                            <div class="comments">
+                                <p class="no-comments" ng-if="!article.comments || !article.comments.length">There are currently no comments on this article.</p>
+                                <div class="comment" ng-repeat="comment in article.comments">
+                                    <div class="avatar">
+                                        <a href="./user/{{comment.author.username}}"><img gravatar-src-once="comment.author.email" alt="" /></a>
+                                    </div>
+                                    <div class="panel">
+                                        <div class="panel-heading pos-rl">
+                                            <span class="arrow left"></span>
+                                            <a href="./user/{{comment.author.username}}">@{{comment.author.username}}</a>
+                                            <div class="pull-right">
+                                                <div class="comment-votes m-l-sm pull-right clearfix">
+                                                    <div class="vote-count vote-small m-l-xs pull-right"><span><em ng-show="comment.votesCount > 0">+</em>{{comment.votesCount}}</span></div>
+                                                    <div class="vote-count-btns vote-small pull-left">
+                                                        <a href="#" class="btn-vote-up vote-small" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-plus-square"></i></a>
+                                                        <a href="#" class="btn-vote-down vote-small" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-minus-square"></i></a>
+                                                    </div>
+                                                </div>
+                                                <div class="comment-ago">
+                                                    <span class="fa fa-clock-o"></span>
+                                                    <span am-time-ago="comment.createdDate"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">{{comment.comment}}</div>
+                                    </div>
+                                </div>
+                                <div class="comment-add">
+                                    <div class="avatar">
+                                        <a href="./user/{{app.user.getUsername()}}" ng-if="app.user.isLogged()"><img gravatar-src="app.user.getUserEmail()" alt="" /></a>
+                                        <a href="#" ng-if="!app.user.isLogged()"><img src="./img/profile.jpg" alt="" /></a>
+                                    </div>
+                                    <form class="form-horizontal" name="commentForm" novalidate>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control input-dark" ng-model="comment.comment" placeholder="ADD A COMMENT" required>
+                                            <span class="input-group-btn">
+                                                <button type="submit" class="btn btn-default input-dark" ng-disabled="commentForm.$invalid" ng-click="commentPost()">POST</button>
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- / commments -->
+            
+            </div>
+            <!-- / article -->
 
         </div>
         <!-- / article left -->

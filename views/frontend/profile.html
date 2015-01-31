@@ -15,7 +15,7 @@
                                         @{{user.username}}
                                         <small>{{user.firstName}}&nbsp;{{user.lastName}}</small>
                                     </h3>
-                                    <p class="profile-social" ng-show="user.social && user.social.exists">
+                                    <p class="profile-social" ng-show="user.social && socialExists()">
                                         <a target="_blank" ng-show="user.social.twitter && user.social.twitter.length" href="https://www.twitter.com/{{user.social.twitter}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-twitter"></i></a>
                                         <a target="_blank" ng-show="user.social.facebook && user.social.facebook.length" href="https://www.facebook.com/{{user.social.facebook}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-facebook"></i></a>
                                         <a target="_blank" ng-show="user.social.twitch && user.social.twitch.length" href="http://www.twitch.tv/{{user.social.twitch}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-twitch"></i></a>

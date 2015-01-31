@@ -488,8 +488,10 @@ module.exports = {
             });
         };
     },
-    userProfileEdit: function (Schemas) {
+    userProfileEdit: function (Schemas, uuid, Mail) {
         return function (req, res, next) {
+            var code = uuid.v4();
+            
             req.assert('firstName', 'First name cannot be longer than 100 chars').len(0, 100);
             req.assert('lastName', 'Last name cannot be longer than 100 chars').len(0, 100);
             req.assert('about', 'About cannot be longer than 400 chars').len(0, 400);
@@ -499,6 +501,10 @@ module.exports = {
             req.assert('social.twitch', 'Twitch cannot be longer than 100 chars').len(0, 100);
             req.assert('social.instagram', 'Instagram cannot be longer than 100 chars').len(0, 100);
             req.assert('social.youtube', 'Youtube cannot be longer than 100 chars').len(0, 100);
+            
+            if (req.body.changeEmail) {
+                req.assert('newEmail', 'Valid email is required').notEmpty().isEmail();
+            }
             
             if (req.body.changePassword) {
                 req.assert('newPassword', 'New password is required').notEmpty();
@@ -514,6 +520,14 @@ module.exports = {
                 } else {
                     return callback();
                 }
+            }
+            
+            function checkNewEmail (callback) {
+                Schemas.User.findOne({ email: req.body.newEmail })
+                .exec(function (err, user) {
+                    if (err || user) { return res.json({ success: false }); }
+                });
+                return callback();
             }
             
             function updateProfile (callback) {
@@ -533,20 +547,145 @@ module.exports = {
                         youtube: req.body.social.youtube
                     };
                     
+                    if (req.body.changeEmail) {
+                        user.newEmail = req.body.newEmail;
+                        user.newEmailCode = code;
+                    }
+                    
                     if (req.body.changePassword) {
                         user.password = req.body.newPassword;
                     }
                     
-                    user.save(function (err) {
+                    user.save(function (err, user) {
                         if (err) { return res.json({ success: false }); }
-                        return callback();
+                        return callback(user);
                     });
                 });
             }
             
+            function changeEmail (user, callback) {
+                var mail = new Mail();
+                if (user.email) {
+                    mail.changeEmail({
+                        email: user.email,
+                        newEmail: req.body.newEmail,
+                        code: code,
+                        username: user.username
+                    }, callback);
+                } else {
+                    mail.verifyEmail({
+                        email: req.body.newEmail,
+                        code: code,
+                        username: user.username
+                    }, callback);
+                }
+            }
+            
             checkForm(function () {
-                updateProfile(function () {
-                    return res.json({ success: true });
+                checkNewEmail(function () {
+                    updateProfile(function (user) {
+                        changeEmail(user, function () {
+                            return res.json({ success: true });
+                        });
+                    });
+                });
+            });
+        };
+    },
+    changeEmail: function (Schemas, uuid, Mail) {
+        return function (req, res, next) {
+            var userID = req.user._id,
+                code = req.body.code,
+                newCode = uuid.v4();
+            
+            function getUser (callback) {
+                Schemas.User.findOne({ _id: userID })
+                .exec(function (err, user) {
+                    if (err || !user) { return res.json({ success: false }); }
+                    return callback(user);
+                });
+            }
+            
+            function confirmCode (user, callback) {
+                if (user.newEmailCode !== code) { return res.json({ success: false }); }
+                return callback(user);
+            }
+            
+            function getNewCode (user, callback) {
+                user.newEmailCode = newCode;
+                user.save(function (err) {
+                    if (err) { return res.json({ success: false }); }
+                    return callback(user);
+                });
+            }
+            
+            function sendEmail (user, callback) {
+                var mail = new Mail();
+                mail.verifyEmail({
+                    email: user.newEmail,
+                    username: user.username,
+                    code: newCode
+                }, function () {
+                    return callback(user);
+                });
+            }
+            
+            getUser(function (user) {
+                confirmCode(user, function (user) {
+                    getNewCode(user, function (user) {
+                        sendEmail(user, function (user) {
+                            return res.json({ success: true });
+                        });
+                    });
+                });
+            });
+        };
+    },
+    updateEmail: function (Schemas, Mail) {
+        return function (req, res, next) {
+            var userID = req.user._id,
+                code = req.body.code;
+            
+            function getUser (callback) {
+                Schemas.User.findOne({ _id: userID })
+                .exec(function (err, user) {
+                    if (err || !user) { return res.json({ success: false }); }
+                    return callback(user);
+                });
+            }
+            
+            function confirmCode (user, callback) {
+                if (user.newEmailCode !== code) { return res.json({ success: false }); }
+                return callback(user);
+            }
+            
+            function updateEmail (user, callback) {
+                user.email = user.newEmail;
+                user.newEmail = '';
+                user.newEmailCode = '';
+                user.save(function (err, user) {
+                    if (err) { return res.json({ success: false }); }
+                    return callback(user);
+                });
+            }
+            
+            function sendEmail (user, callback) {
+                var mail = new Mail();
+                mail.confirmedEmail({
+                    email: user.email,
+                    username: user.username
+                }, function () {
+                    return callback(user);
+                });
+            }
+            
+            getUser(function (user) {
+                confirmCode(user, function (user) {
+                    updateEmail(user, function (user) {
+                        sendEmail(user, function (user) {
+                            return res.json({ success: true });
+                        });
+                    });
                 });
             });
         };

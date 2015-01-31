@@ -1,4 +1,10 @@
 <div class="container">
+    <div class="panel panel-success animated m-t-md" ng-show="success.show">
+        <div class="panel-heading">
+            <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
+            <strong>{{success.msg}}</strong>
+        </div>
+    </div>
     <div class="panel panel-default m-t-md">
         <div class="panel-heading">
             Edit Profile
@@ -9,6 +15,42 @@
                 <label for="email" class="col-sm-2 control-label">Email</label>
                 <div class="col-sm-10">
                     <input type="text" id="email" name="email" class="form-control" ng-model="profile.email" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-10 col-sm-offset-2">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="changeEmail" name="changeEmail" ng-model="profile.changeEmail"> Change Email
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-show="profile.changeEmail">
+                <label for="newEmail" class="col-sm-2 control-label">New Email</label>
+                <div class="col-sm-10">
+                    <input type="text" id="newEmail" name="newEmail" class="form-control" ng-model="profile.newEmail"  ng-required="profile.changeEmail">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-10 col-sm-offset-2">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="password" name="password" ng-model="profile.changePassword"> Change Password
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-show="profile.changePassword">
+                <label for="password" class="col-sm-2 control-label">New Password</label>
+                <div class="col-sm-10">
+                    <input type="password" id="password" name="password" class="form-control" ng-model="profile.newPassword"  ng-required="profile.changePassword">
+                </div>
+            </div>
+            <div class="form-group" ng-show="profile.changePassword">
+                <label for="cpassword" class="col-sm-2 control-label">Confirm New Password</label>
+                <div class="col-sm-10">
+                    <input type="password" id="cpassword" name="cpassword" class="form-control" ng-model="profile.confirmNewPassword"  ng-required="profile.changePassword">
                 </div>
             </div>
             <div class="form-group">
@@ -73,34 +115,11 @@
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-sm-10 col-sm-offset-2">
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" id="password" name="password" ng-model="profile.changePassword"> Change Password
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group" ng-show="profile.changePassword">
-                <label for="password" class="col-sm-2 control-label">New Password</label>
-                <div class="col-sm-10">
-                    <input type="password" id="password" name="password" class="form-control" ng-model="profile.newPassword"  ng-required="profile.changePassword">
-                </div>
-            </div>
-            <div class="form-group" ng-show="profile.changePassword">
-                <label for="cpassword" class="col-sm-2 control-label">Confirm New Password</label>
-                <div class="col-sm-10">
-                    <input type="password" id="cpassword" name="cpassword" class="form-control" ng-model="profile.confirmNewPassword"  ng-required="profile.changePassword">
-                </div>
-            </div>
-            <div class="form-group">
                 <label class="col-sm-2 control-label">Premium</label>
                 <div class="col-sm-10">
                     <div class="m-t-sm" ng-show="!app.user.isSubscribed()">
                         <div class="badge badge-grey">INACTIVE</div>
                         <a href="./user/{{user.username}}/subscription" class="btn btn-blue btn-xs">GET PREMIUM</a>
-                        <p class="m-t-sm">You don't have a premium account. Learn more about premium accounts <a href="#">here</a>.</p>
-                        
                     </div>
                     <div class="m-t-sm" ng-show="app.user.isSubscribed()">
                         <div class="badge badge-green">ACTIVE</div>

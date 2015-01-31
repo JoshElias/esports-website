@@ -1,6 +1,6 @@
 <div class="container">
     <!-- not subscribed -->
-    <div class="panel panel-default m-t-md" ng-show="!isSubscribed() && !getExpiryDate()">
+    <div class="panel panel-default m-t-md" ng-show="!isSubscribed() && !getExpiryDate() && user.email && user.email.length">
         <div class="panel-heading">
             Subscription
         </div>
@@ -197,4 +197,15 @@
         </div>
     </div>
     <!-- / canceled -->
+    
+    <!-- no email -->
+    <div class="panel panel-default m-t-md" ng-show="!isSubscribed() && !user.email && !user.email.length">
+        <div class="panel-heading">
+            Subscription
+        </div>
+        <div class="panel-body">
+            <p>You must add an email to your account before signing up for Tempostorm Premium.</p>
+        </div>
+    </div>
+    <!-- / no email -->
 </div>
