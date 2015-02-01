@@ -375,7 +375,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .article > a { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; z-index: 4; }
 .article.premium { border: 1px solid #f0c55c; }
 .article-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 3; }
-.article-img { width: inherit; height: inherit; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
+.article-img { width: inherit; height: inherit; -webkit-backface-visibility: hidden; -moz-backface-visibility: hidden; -ms-backface-visibility: hidden; backface-visibility: hidden; -webkit-perspective: 1000; -moz-perspective: 1000; -ms-perspective: 1000; perspective: 1000; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
 .article-content-wrapper { position: absolute; left: 0px; top: 140px; width: 100%; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
 .article-content { position: relative; width: 100%; height: 200px; background: url('../img/black-60.png'); border-top: 1px solid #000; }
 .article-content h1 { margin: 0; height: 60px; line-height: 60px; padding: 0 20px; color: #FFF; font-size: 20px; font-family: sneakersmediumitalic; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;  text-shadow: 0px 0px 5px rgba(0,0,0,.6); }
@@ -1458,7 +1458,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .deck-header p,
 .deck-header p a { color: #FFF; }
 
-.deck-votes { margin-top: 15px; }
+.deck-votes { margin: 15px 0; }
 
 .deck-header-inner { height: 148px; background: url('../img/deckpagebanner.png') no-repeat; }
 .deck-header-inner.mage { background-position: right 0px; }
@@ -1478,7 +1478,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .deck-page .deck-content iframe { width: 100% !important; }
 
 .deck-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
-.deck-section-title { font-size: 20px; line-height: 60px; height: 60px; color: #FFF; background: rgba(0,0,0,.3); }
+.deck-section-title { font-size: 20px; line-height: 60px; min-height: 60px; color: #FFF; background: rgba(0,0,0,.3); }
 .deck-section-title a { color: #FFF; }
 .deck-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: sneakersmediumitalic; line-height: 60px; }
 .deck-section-content { padding: 20px; border-top: 1px solid #000; }
@@ -1488,8 +1488,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 
 .deck-mulligan-details > div { padding-left: 80px; }
 
-.deck-mulligan-classes { margin: 14px 0 0 0; padding: 0; }
-.deck-mulligan-classes li { float: left; width: 31px; height: 32px; margin-right: 10px; }
+.deck-mulligan-classes { margin: 14px 0 0 10px; padding: 0; }
+.deck-mulligan-classes li { float: left; width: 31px; height: 32px; margin: 0 10px 14px 0; }
 .deck-mulligan-classes li:last-child { margin-right: 0; }
 .deck-mulligan-classes li a { display: block; width: 31px; height: 32px; background: url('../img/class-icons.png') no-repeat; overflow: hidden; text-indent: -99999px; opacity: .5; }
 
@@ -1575,7 +1575,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .comment .avatar img { width: 39px; height: 39px; background: #F2F2F2; border: 1px solid #2766ad; }
 .comment .panel { margin: 0 0 0 30px; border-radius: 0px; border: 1px solid #000; background: rgba(0,0,0,.3); }
 .comment .panel-heading { color: #FFF; background: #131313; border-bottom: 1px solid #000; border-radius: 0px; }
-.comment .panel-heading a { color: #FFF; }
+.comment .panel-heading a { color: #FFF; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .comment .comment-ago { margin-right: 60px; }
 .comment .panel-body { color: #FFF; background: #1B1B1B; overflow: hidden; }
 
@@ -1675,7 +1675,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .forum-post-content em { font-style: normal; color: #555; }
 .forum-post-content .forum-post-content-html { margin-top: 20px; position: relative; }
 
-.forum-post-comments { margin-top: 20px; }
+.forum-post-comments { margin: 20px 10px 0 0; }
 .forum-post-comments h3 { color: #2766ad; font-family: sneakersmediumitalic; }
 
 /* forum post */
@@ -1788,3 +1788,59 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 /* subscription */
 .badge-grey { padding: 5px 10px; background: #F2F2F2; color: #222; }
 .badge-green { padding: 5px 10px; background: #27c24c; }
+
+/* mobile */
+@media (min-width: 768px) and (max-width: 1199px) {
+    /* filters */
+    .filter-bar h1 { font-size: 20px; line-height: 32px; }
+    .filter-bar h1 br { display: none; }
+    .filter-class li { margin-right: 10px; width: 31px; height: 32px; }
+    .filter-class li a { width: 31px; height: 32px; }
+    .filter-class li.warlock a { background-position: -124px 0px; }
+    .filter-class li.warrior a { background-position: -124px -32px; }
+    .filter-class li.hunter a { background-position: -124px -64px; }
+    .filter-class li.rogue a { background-position: -124px -96px; }
+    .filter-class li.priest a { background-position: -124px -128px; }
+    .filter-class li.paladin a { background-position: -124px -160px; }
+    .filter-class li.mage a { background-position: -124px -192px; }
+    .filter-class li.druid a { background-position: -124px -224px; }
+    .filter-class li.shaman a { background-position: -124px -256px; }
+    .filter-class li.all a { background-position: -124px -288px; }
+    
+    /* article */
+    .article-page .article-left { margin-right: 0px; }
+    .article-page .article-right { display: none; }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+    /* forums */
+    .forum-post { padding-right: 0px; }
+    
+    /* decks */
+    .deck-page .deck-right { float: none; margin: 0 auto; }
+    .deck-page .deck-left { margin-right: 0px; }
+}
+
+@media (max-width: 767px) {
+    /* filters */
+    .filter-bar { display: none; }
+    .filter-class li { display: none; }
+    .filter-class li.active { display: block; }
+    
+    /* forum */
+    .forum-post { padding-right: 0px; }
+
+    /* article */
+    .article-page .article-left { margin-right: 0px; }
+    .article-page .article-right { display: none; }
+    
+    /* deck builder */
+    .db-steps li { display: none; }
+    .db-steps li.steps-arrow,
+    .db-steps li.active { display: block; }
+    
+    /* decks */
+    .deck-page .deck-right { float: none; margin: 0 auto; }
+    .deck-page .deck-left { margin-right: 0px; }
+    .deck-header-inner { background: #2766ad !important; }
+}

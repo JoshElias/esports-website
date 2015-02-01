@@ -240,31 +240,12 @@
                         <div class="deck-section clearfix" ng-if="anyMulliganSet()">
                             <div class="deck-section-title clearfix">
                                 <a href="#" ng-click="show.mulligans = !show.mulligans"><h3 class="pull-left">MULLIGANS</h3></a>
-
                                 <div class="m-r-md pull-right clearfix">
-                                    <ul class="deck-mulligan-classes pull-left">
+                                    <ul class="deck-mulligan-classes pull-left clearfix">
                                         <li ng-class="{ active: currentMulligan.klass === class }" ng-repeat="class in classes">
                                             <a href="#" class="{{class.toLowerCase()}}" ng-class="{ active: isMulliganSet(getMulligan(class)) }" ng-click="setMulligan(getMulligan(class))" ng-tooltip title="{{class}}">{{class}}</a>
                                         </li>
                                     </ul>
-
-                                    <!--
-                                    <ul class="player-class">
-                                        <li ng-repeat="mulligan in deck.mulligans" ng-class="{active:currentMulligan === mulligan}">
-                                            <a href="#" ng-click="setMulligan(mulligan)">
-                                                <span class="player-class-icon {{mulligan.klass.toLowerCase()}}" ng-class="{active:isMulliganSet(mulligan)}"></span>
-                                                <span class="player-class-text">{{mulligan.klass.toUpperCase()}}</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" ng-click="toggleCoin()">
-                                                <span class="player-class-icon coin-icon" ng-class="{active:coin}"></span>
-                                                <span class="player-class-text"><span ng-if="!coin">No </span>Coin</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    -->
-
                                     <div class="m-l-md pull-left" ng-show="currentMulligan">
                                         <a href="#" ng-click="show.mulligans = !show.mulligans">
                                             <i class="fa" ng-class="{ 'fa-angle-down': !show.mulligans, 'fa-angle-up': show.mulligans }"></i>
@@ -282,7 +263,7 @@
                                     <p ng-if="getMulliganInstructions().length">{{getMulliganInstructions()}}</p>
                                     <p ng-if="!getMulliganCards().length">There is no mulligan set for <Strong>{{currentMulligan.klass}}</Strong> <span ng-if="coin">with</span><span ng-if="!coin">without</span> the coin.</p>
                                 </div>
-                                <div ng-if="getMulliganCards().length">
+                                <div ng-if="getMulliganCards().length" class="hidden-xs">
                                     <div class="deck-mulligan-cards">
                                         <div class="deck-mulligan-card" ng-repeat="card in getMulliganCards()">
                                             <a href="#" data-tooltip-img="https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{card.photos.large}}" style="left: {{cardLeft($index)}}%; z-index: {{$index}};" hs-card><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{card.photos.medium}}" alt=""></a>
@@ -419,7 +400,7 @@
                                                 <a href="./user/{{comment.author.username}}"><img gravatar-src-once="comment.author.email" alt="" /></a>
                                             </div>
                                             <div class="panel">
-                                                <div class="panel-heading pos-rl">
+                                                <div class="panel-heading pos-rl clearfix">
                                                     <span class="arrow left"></span>
                                                     <a href="./user/{{comment.author.username}}">@{{comment.author.username}}</a>
                                                     <div class="pull-right">
@@ -430,7 +411,7 @@
                                                                 <a href="#" class="btn-vote-down vote-small" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-minus-square"></i></a>
                                                             </div>
                                                         </div>
-                                                        <div class="comment-ago">
+                                                        <div class="comment-ago hidden-xs">
                                                             <span class="fa fa-clock-o"></span>
                                                             <span am-time-ago="comment.createdDate"></span>
                                                         </div>

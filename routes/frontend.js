@@ -523,11 +523,12 @@ module.exports = {
             }
             
             function checkNewEmail (callback) {
+                if (!req.body.changeEmail) { return callback(); }
                 Schemas.User.findOne({ email: req.body.newEmail })
                 .exec(function (err, user) {
                     if (err || user) { return res.json({ success: false }); }
+                    return callback();
                 });
-                return callback();
             }
             
             function updateProfile (callback) {
@@ -564,6 +565,7 @@ module.exports = {
             }
             
             function changeEmail (user, callback) {
+                if (!req.body.changeEmail) { return callback(); }
                 var mail = new Mail();
                 if (user.email) {
                     mail.changeEmail({
@@ -2192,7 +2194,9 @@ module.exports = {
     getBanners: function (Schemas) {
         return function (req, res, next) {
             function getBanners (callback) {
-                Schemas.Banner.find({ active: true }).exec(function (err, banners) {
+                Schemas.Banner.find({ active: true })
+                .sort({ orderNum: 1 })
+                .exec(function (err, banners) {
                     if (err) { return res.json({ success: false, banners: [] }); }
                     return callback(banners);
                 });

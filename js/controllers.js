@@ -1051,7 +1051,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.articles = data.articles;
     
         // page flipping
-        $scope.pagination = Pagination.new();
+        $scope.pagination = Pagination.new(100);
         $scope.pagination.results = function () {
             return ($scope.filtered) ? $scope.filtered.length : $scope.articles.length;
         };

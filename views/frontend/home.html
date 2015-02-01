@@ -1,5 +1,5 @@
 <!-- banner start -->
-<div class="container-fluid nav-pad padding-none" ng-if="banner.slides.length">
+<div class="container-fluid nav-pad padding-none hidden-xs" ng-if="banner.slides.length">
     <div class="home-banner">
         <div class="banner-bolt"></div>
         <a href="#" class="banner-prev" ng-if="banner.slides.length > 1" ng-click="banner.prev()"><i class="fa fa-angle-left"></i></a>
@@ -30,9 +30,9 @@
 <div class="container-fluid padding-none filter-bar filter-bar-home">
     <div class="container">
         <div class="row">
-            <div class="col-sm-12">
-                <h1>FILTER<br>CONTENT:</h1>
-                <ul class="filter-class">
+            <div class="col-sm-12 clearfix">
+                <h1 class="pull-left">FILTER <br>CONTENT:</h1>
+                <ul class="filter-class pull-right">
                     <li class="all" ng-class="{active:klass === 'all'}">
                         <a href="#" ng-click="setKlass('all')" ng-tooltip title="All Classes">All Classes</a>
                     </li>

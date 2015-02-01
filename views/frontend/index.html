@@ -17,7 +17,7 @@
                     <li ng-class="{active:$state.includes('app.home')}"><a ui-sref="app.home">Home</a></li>
                     <li ng-class="{active:$state.includes('app.articles')}"><a ui-sref="app.articles.list">Articles</a></li>
                     <li ng-class="{active:$state.includes('app.decks')}"><a ui-sref="app.decks.list">Decks</a></li>
-                    <li ng-class="{active:$state.includes('app.deckBuilder')}"><a ui-sref="app.deckBuilder.class">Deck Builder</a></li>
+                    <li ng-class="{active:$state.includes('app.deckBuilder')}" class="hidden-xs"><a ui-sref="app.deckBuilder.class">Deck Builder</a></li>
                     <li ng-class="{active:$state.includes('app.forum')}"><a ui-sref="app.forum.home">Forum</a></li>
                     <li ng-if="false" ng-class="{active:$state.includes('app.team')}"><a ui-sref="app.team">The Team</a></li>
                 </ul>
@@ -27,16 +27,16 @@
                     <!-- notifications here -->
                     <li class="dropdown" ng-if="app.user.isLogged()">
                         <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <span class="profile-avatar profile-avatar-sm pull-right">
+                          <span class="profile-avatar profile-avatar-sm pull-right hidden-xs">
                             <img gravatar-src="app.user.getUserEmail()" alt="">
                           </span>
                           <span class="hidden-sm hidden-md">{{app.user.getUsername()}}</span> <b class="caret"></b>
                         </a>
                         <!-- dropdown -->
-                        <ul class="dropdown-menu list-group dropdown-dark">
-                          <li class="list-group-item"><a href="./user/{{app.user.getUsername()}}">Profile</a></li>
-                          <li class="list-group-item" ng-show="app.user.isAdmin()"><a ui-sref="app.admin.dashboard">Admin</a></li>
-                          <li class="list-group-item"><a href="#" ng-click="app.user.logout()">Logout</a></li>
+                        <ul class="dropdown-menu">
+                          <li ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{app.user.getUsername()}}">Profile</a></li>
+                          <li ng-class="{active: $state.includes('app.admin')}" ng-show="app.user.isAdmin()"><a ui-sref="app.admin.dashboard">Admin</a></li>
+                          <li><a href="#" ng-click="app.user.logout()">Logout</a></li>
                         </ul>
                         <!-- / dropdown -->
                     </li>
