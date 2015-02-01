@@ -509,7 +509,7 @@ module.exports = {
             if (req.body.changePassword) {
                 req.assert('newPassword', 'New password is required').notEmpty();
                 req.assert('confirmNewPassword', 'Confirm new password is required').notEmpty();
-                req.assert('confirmNewPassword', 'New passwords must match').matches('newPassword');
+                req.assert('confirmNewPassword', 'New passwords must match').equals('newPassword');
             }
             
             function checkForm (callback) {
