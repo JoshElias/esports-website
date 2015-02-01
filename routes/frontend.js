@@ -541,11 +541,11 @@ module.exports = {
                     user.about = req.body.about;
                     
                     user.social = {
-                        twitter: req.body.social.twitter,
-                        facebook: req.body.social.facebook,
-                        twitch: req.body.social.twitch,
-                        instagram: req.body.social.instagram,
-                        youtube: req.body.social.youtube
+                        twitter: (req.body.social) ? req.body.social.twitter : '',
+                        facebook: (req.body.social) ? req.body.social.facebook : '',
+                        twitch: (req.body.social) ? req.body.social.twitch : '',
+                        instagram: (req.body.social) ? req.body.social.instagram : '',
+                        youtube: (req.body.social) ? req.body.social.youtube : ''
                     };
                     
                     if (req.body.changeEmail) {
