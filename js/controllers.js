@@ -63,6 +63,24 @@ angular.module('app.controllers', ['ngCookies'])
       if ( angular.isDefined($localStorage.settings) ) {
         $scope.app.settings = $localStorage.settings;
         
+        // show
+        if (!$scope.app.settings.show) {
+            $scope.app.settings.show = {
+                deck: null,
+                article: null,
+                decks: null
+            }
+        }
+        if (!$scope.app.settings.show.deck) {
+            $scope.app.settings.show.deck = null;
+        }
+        if (!$scope.app.settings.show.article) {
+            $scope.app.settings.show.article = null;
+        }
+        if (!$scope.app.settings.show.decks) {
+            $scope.app.settings.show.decks = null;
+        }
+          
         // persistent login  
         if ($scope.app.settings.token && $scope.app.settings.token !== null) {
             $window.sessionStorage.token = $scope.app.settings.token;

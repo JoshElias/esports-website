@@ -1489,7 +1489,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .deck-mulligan-details > div { padding-left: 80px; }
 
 .deck-mulligan-classes { margin: 14px 0 0 10px; padding: 0; }
-.deck-mulligan-classes li { float: left; width: 31px; height: 32px; margin: 0 10px 14px 0; }
+.deck-mulligan-classes li { float: left; width: 31px; height: 32px; margin: 0 10px 14px 0; list-style: none; }
 .deck-mulligan-classes li:last-child { margin-right: 0; }
 .deck-mulligan-classes li a { display: block; width: 31px; height: 32px; background: url('../img/class-icons.png') no-repeat; overflow: hidden; text-indent: -99999px; opacity: .5; }
 
