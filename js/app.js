@@ -167,7 +167,7 @@ var app = angular.module('app', [
                 }
             })
             .state('app.articles.list', {
-                url: '?p&s&k',
+                url: '?s&p&k',
                 views: {
                     articles: {
                         templateUrl: tpl + 'views/frontend/articles.list.html',

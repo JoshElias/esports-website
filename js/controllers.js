@@ -1977,6 +1977,8 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('ArticlesCtrl', ['$scope', '$state', 'ArticleService', 'data', 
     function ($scope, $state, ArticleService, data) {
+        //if (!data.success) { return $state.transitionTo('app.articles.list'); }
+        
         // articles
         $scope.articles = data.articles;
         $scope.total = data.total;
@@ -1985,7 +1987,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.perpage = data.perpage;
         $scope.search = data.search;
         $scope.loading = false;
-        
+                
         $scope.hasSearch = function () {
             return (data.search) ? data.search.length : false;
         }
@@ -1995,7 +1997,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.page = 1;
             $scope.getArticles();
         };
-        
+
         $scope.getArticles = function () {
             var params = {};
             
@@ -2059,7 +2061,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return (page === this.page());
             },
             totalPages: function (page) {
-                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 1;
             },
             
         };

@@ -84,9 +84,9 @@
                 <div class="article-theme" ng-class="{overcast:article.theme === 'overcast'}" ng-if="article.theme !== 'none'"><a href="./articles/{{article.slug.url}}"></a></div>
                 <div class="article-img" ng-background="https://s3-us-west-2.amazonaws.com/ts-node2/articles/{{article.photos.medium}}"></div>
                 <div class="article-content-wrapper">
-                    <div class="article-content flex-col">
+                    <div class="article-content">
                         <h1>{{article.title}}</h1>
-                        <p class="flex-grow">{{article.description}}</p>
+                        <p>{{article.description}}</p>
                         <div class="article-info">
                             <div class="pull-left m-r-sm">
                                 <span>by <a href="./user/{{article.author.username}}">@{{article.author.username}}</a></span>
@@ -111,7 +111,7 @@
             </div>
         </div>
         <!-- / article -->
-        <p ng-show="!articles.length && klass !== 'all' && !loading && !hasSearch()" class="articles-list-no-content">There are curently no articles under <strong>{{klass}}</strong> yet.</p>
+        <p ng-show="!articles.length && !loading && klass !== 'all' && !hasSearch()" class="articles-list-no-content">There are curently no articles under <strong>{{klass}}</strong> yet.</p>
         <p ng-show="!articles.length && !loading && hasSearch()" class="articles-list-no-content">There are no results for your search.</p>
     </div>
     <!-- / articles -->
