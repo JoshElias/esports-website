@@ -1473,8 +1473,16 @@ module.exports = {
             var klass = req.body.klass || 'all',
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
-                where = (klass === 'all') ? {} : { 'playerClass': klass },
-                decks, total;
+                where = {},
+                decks, total,
+                now = new Date().getTime(),
+                weekAgo = new Date(now - (60*60*24*7*1000));
+            
+            if (klass !== 'all') {
+                where.playerClass = klass;
+            }
+            
+            where.createdDate = { $gte: weekAgo };
             
             // get total decks
             function getTotal (callback) {

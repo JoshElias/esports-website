@@ -415,7 +415,7 @@ a.create-a-deck { display: block; margin-bottom: 20px; height: 119px; background
 .home-decks .deck > a { position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; z-index: 14; }
 .home-decks .deck-overlay { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: #000; opacity: .8; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
 .home-decks .deck-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 13; }
-.home-decks .deck-title { position: absolute; top: 34px; left: 30px; color: #FFF; /*font-family: sneakersmediumitalic;*/ font-weight: bold; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
+.home-decks .deck-title { position: absolute; top: 34px; left: 30px; color: #FFF; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 250px; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
 .home-decks .deck-score { position: absolute; top: 25px; right: 30px; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #FFF; color: #FFF; text-align: center; line-height: 36px; font-family: sneakersmediumitalic; font-size: 11px; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; z-index: 14; }
 .home-decks .deck-score em { font-style: normal; }
 .home-decks .deck-score span { margin-left: -5px; }
@@ -425,7 +425,7 @@ a.create-a-deck { display: block; margin-bottom: 20px; height: 119px; background
 .home-decks .deck:hover { top: -5%; left: -5%; width: 110%; height: 110%; z-index: 12; border: 1px solid #000; -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
 .home-decks .deck.premium:hover { border: 1px solid #f0c55c; -webkit-animation-name: glow-premium; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow-premium; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
 .home-decks .deck:hover .deck-overlay { opacity: .4; }
-.home-decks .deck:hover .deck-title { top: 10px; left: 10px; text-shadow: 0px 0px 5px rgba(0,0,0,.6); }
+.home-decks .deck:hover .deck-title { top: 10px; left: 10px; text-shadow: 0px 0px 5px rgba(0,0,0,.6); width: initial; margin-right: 120px; overflow: auto; white-space: normal; text-overflow: inherit; }
 .home-decks .deck:hover .deck-score { top: 10px; right: 10px; background: rgba(0,0,0,.6); }
 .home-decks .deck.premium:hover .deck-score { right: 60px; }
 .home-decks .deck:hover .deck-info { opacity: 1; }
