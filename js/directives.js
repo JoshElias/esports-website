@@ -123,4 +123,15 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 })
+.directive('tsArticle', function ($timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            $timeout(function () {
+                element.find('img').addClass('img-responsive');
+                element.find('table').addClass('table-responsive').css('table-layout', 'auto');
+            });
+        }
+    };
+})
 ;

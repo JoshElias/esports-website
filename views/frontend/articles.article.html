@@ -191,7 +191,7 @@ Premium Membership grants you access to features and content designed to help yo
             <div ng-if="!isPremium() || app.user.isSubscribed()">
             
                 <!-- article content -->
-                <div class="article-page-content clearfix" ng-bind-html="getContent()"></div>
+                <div class="article-page-content clearfix" ng-bind-html="getContent()" ts-article></div>
                 <!-- / article content -->
 
                 <!-- comments -->
