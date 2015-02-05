@@ -44,6 +44,7 @@ module.exports = {
                                 expiry: (user.subscription.isSubscribed) ? false : user.subscription.expiryDate
                             },
                             isAdmin: user.isAdmin,
+                            isProvider: user.isProvider,
                             token: token
                         });
                     });
@@ -176,7 +177,8 @@ module.exports = {
                         plan: user.subscription.plan,
                         expiry: (user.subscription.isSubscribed) ? false : user.subscription.expiryDate
                     },
-                    isAdmin: user.isAdmin
+                    isAdmin: user.isAdmin,
+                    isProvider: user.isProvider
                 });
             });
         }
@@ -966,6 +968,9 @@ module.exports = {
     },
     deckAdd: function (Schemas, Util) {
         return function (req, res, next) {
+            var userID = req.user._id,
+                author;
+            
             req.assert('name', 'Deck name is required').notEmpty();
             req.assert('name', 'Deck name cannot be more than 60 characters').len(1, 60);
             req.assert('deckType', 'Deck type is required').notEmpty();
@@ -980,6 +985,15 @@ module.exports = {
                 } else {
                     return callback();
                 }
+            }
+            
+            function getUser (callback) {
+                Schemas.User.findOne({ _id: userID })
+                .exec(function (err, user) {
+                    if (err) { return res.json({ success: false }); }
+                    author = user;
+                    return callback();
+                });
             }
             
             function checkSlug (callback) {
@@ -1028,8 +1042,18 @@ module.exports = {
                         }
                     });
                 }
-
-                var newDeck = new Schemas.Deck({
+                
+                
+                
+                var premium = (author.isAdmin || author.isProvider) ? {
+                        isPremium: req.body.premium.isPremium || false,
+                        expiryDate: req.body.premium.expiryDate || new Date().toISOString()
+                    } : {
+                        isPremium: false,
+                        expiryDate: new Date().toISOString()
+                    },
+                    featured = (author.isAdmin || author.isProvider) ? req.body.featured : false,
+                    newDeck = new Schemas.Deck({
                         name: req.body.name,
                         slug: Util.slugify(req.body.name),
                         deckType: req.body.deckType,
@@ -1052,13 +1076,10 @@ module.exports = {
                             userID: req.user._id,
                             direction: 1
                         }],
-                        featured: false,
+                        featured: featured,
                         allowComments: true,
                         createdDate: new Date().toISOString(),
-                        premium: {
-                            isPremium: false,
-                            expiryDate: new Date().toISOString()
-                        }
+                        premium: premium
                     });
 
                 newDeck.save(function(err, data){
@@ -1078,15 +1099,21 @@ module.exports = {
             
             checkForm(function () {
                 checkSlug(function () {
-                    createDeck(function () {
-                        return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                    getUser(function () {
+                        createDeck(function () {
+                            return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                        });
                     });
                 });
+                
             });
         };
     },
     deckUpdate: function (Schemas, Util) {
         return function (req, res, next) {
+            var userID = req.user._id,
+                author;
+            
             req.assert('name', 'Deck name is required').notEmpty();
             req.assert('name', 'Deck name cannot be more than 40 characters').len(1, 40);
             req.assert('deckType', 'Deck type is required').notEmpty();
@@ -1101,6 +1128,15 @@ module.exports = {
                 } else {
                     return callback();
                 }
+            }
+            
+            function getUser (callback) {
+                Schemas.User.findOne({ _id: userID })
+                .exec(function (err, user) {
+                    if (err) { return res.json({ success: false }); }
+                    author = user;
+                    return callback();
+                });
             }
             
             function checkSlug (callback) {
@@ -1149,7 +1185,16 @@ module.exports = {
                         }
                     });
                 }
-
+                
+                var premium = (author.isAdmin || author.isProvider) ? {
+                        isPremium: req.body.premium.isPremium || false,
+                        expiryDate: req.body.premium.expiryDate || new Date().toISOString()
+                    } : {
+                        isPremium: false,
+                        expiryDate: new Date().toISOString()
+                    },
+                    featured = (author.isAdmin || author.isProvider) ? req.body.featured : false;
+                
                 Schemas.Deck.findOne({ _id: req.body._id, author: req.user._id })
                 .exec(function (err, deck) {
                     if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
@@ -1170,7 +1215,9 @@ module.exports = {
                         instructions: req.body.against.instructions || ''
                     };
                     deck.video = req.body.video;
-
+                    deck.premium = premium;
+                    deck.featured = featured;
+                    
                     deck.save(function(err, data){
                         if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
                         return callback();
@@ -1181,8 +1228,10 @@ module.exports = {
             
             checkForm(function () {
                 checkSlug(function () {
-                    updateDeck(function () {
-                        return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                    getUser(function () {
+                        updateDeck(function () {
+                            return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                        });
                     });
                 });
             });

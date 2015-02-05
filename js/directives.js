@@ -64,7 +64,8 @@ angular.module('app.directives', ['ui.load'])
             var id = $attrs.id || 'datePicker',
                 name = $attrs.name || 'datePicker',
                 $button = $element.find('button'),
-                $input = $element.find('input').attr('id', id).attr('name', name);
+                classes = $attrs.class || '',
+                $input = $element.find('input').attr('id', id).attr('name', name).addClass(classes);
             $button.on('click',function(){
                 if ($input.is(':focus')) {
                     $input.trigger('blur');
@@ -128,7 +129,7 @@ angular.module('app.directives', ['ui.load'])
         restrict: 'A',
         link: function(scope, element, attrs) {
             $timeout(function () {
-                element.find('img').addClass('img-responsive');
+                element.find('img').addClass('img-responsive').css('height', 'auto');
                 element.find('table').addClass('table-responsive').css('table-layout', 'auto');
             });
         }

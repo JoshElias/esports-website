@@ -87,7 +87,7 @@
             <!-- / article header -->
 
             <!-- subscribe -->
-            <div class="article-subscribe" ng-if="isPremium() && !app.user.isSubscribed()">
+            <div class="article-subscribe" ng-if="isPremium() && !app.user.isSubscribed() && !app.user.isAdmin() && !app.user.isProvider()">
                 <p>{{article.description}}...</p>
                 
                 <h1 class="article-title">CONTINUE READING THIS ARTICLE...</h1>
@@ -188,7 +188,7 @@ Premium Membership grants you access to features and content designed to help yo
             <!-- / subscribe -->
             
             <!-- article -->
-            <div ng-if="!isPremium() || app.user.isSubscribed()">
+            <div ng-if="!isPremium() || app.user.isSubscribed() || app.user.isAdmin() || app.user.isProvider()">
             
                 <!-- article content -->
                 <div class="article-page-content clearfix" ng-bind-html="getContent()" ts-article></div>

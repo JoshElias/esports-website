@@ -103,6 +103,7 @@ var app = angular.module('app', [
                             UserService.verify().success(function (data) {
                                 AuthenticationService.setLogged(true);
                                 AuthenticationService.setAdmin(data.isAdmin);
+                                AuthenticationService.setProvider(data.isProvider);
                                 
                                 SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                                 SubscriptionService.setTsPlan(data.subscription.plan);

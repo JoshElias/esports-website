@@ -135,7 +135,7 @@
                     <!-- / deck description -->
 
                     <!-- subscribe -->
-                    <div class="deck-subscribe" ng-if="isPremium() && !app.user.isSubscribed()">
+                    <div class="deck-subscribe" ng-if="isPremium() && !app.user.isSubscribed() && !app.user.isAdmin() && !app.user.isProvider()">
                         <h1 class="deck-title">CONTINUE READING THIS DECK...</h1>
                         <h2>Signup for T/S Premium today!</h2>
 
@@ -234,7 +234,7 @@
                     <!-- / subscribe -->
                     
                     <!-- deck -->
-                    <div ng-if="!isPremium() || app.user.isSubscribed()">
+                    <div ng-if="!isPremium() || app.user.isSubscribed() || app.user.isAdmin() || app.user.isProvider()">
                     
                         <!-- deck-mulligans -->
                         <div class="deck-section clearfix" ng-if="anyMulliganSet()">

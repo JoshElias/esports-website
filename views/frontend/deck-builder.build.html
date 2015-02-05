@@ -371,6 +371,48 @@
                                 <input type="text" id="video" name="video" class="form-control input-dark" ng-model="deck.video">
                             </div>
                         </div>
+                        <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                            <div class="form-group">
+                                <label for="premium" class="col-sm-2 control-label">Premium</label>
+                                <div class="col-sm-10">
+                                    <div class="dropdown">
+                                        <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                            <span>{{isPremium()}}</span>
+                                            <b class="caret"></b>
+                                        </button>
+                                        <ul class="list-group dropdown-menu dropdown-dark">
+                                            <li class="list-group-item" ng-class="{active: deck.premium.isPremium === type.value}" ng-repeat="type in premiumTypes">
+                                                <a href="#" ng-click="deck.premium.isPremium = type.value">{{type.text}}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="deck.premium.isPremium">
+                                <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
+                                <div class="col-sm-10">
+                                    <div date-picker data-id="expiryDate" data-name="expiryDate" data-class="input-dark" ng-model="deck.premium.expiryDate" ng-disabled="!deck.premium.isPremium"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                            <div class="form-group">
+                                <label for="premium" class="col-sm-2 control-label">Featured</label>
+                                <div class="col-sm-10">
+                                    <div class="dropdown">
+                                        <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                            <span>{{isFeatured()}}</span>
+                                            <b class="caret"></b>
+                                        </button>
+                                        <ul class="list-group dropdown-menu dropdown-dark">
+                                            <li class="list-group-item" ng-class="{active: deck.featured === type.value}" ng-repeat="type in featuredTypes">
+                                                <a href="#" ng-click="deck.featured = type.value">{{type.text}}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <div class="col-sm-10 col-sm-offset-2">
                                 <div class="radio">

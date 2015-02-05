@@ -38,11 +38,13 @@ angular.module('app.controllers', ['ngCookies'])
                 return SubscriptionService.getSubscription();
             },
             isAdmin: AuthenticationService.isAdmin,
+            isProvider: AuthenticationService.isProvider,
             isLogged: AuthenticationService.isLogged,
             logout: function () {
                 if (AuthenticationService.isLogged()) {
                     AuthenticationService.setLogged(false);
                     AuthenticationService.setAdmin(false);
+                    AuthenticationService.setProvider(false);
                     
                     SubscriptionService.setSubscribed(false);
                     SubscriptionService.setTsPlan(false);
@@ -113,6 +115,7 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
                     
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);
@@ -170,6 +173,7 @@ angular.module('app.controllers', ['ngCookies'])
                 } else {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
                     
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);
@@ -300,6 +304,7 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
                     
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);
@@ -1791,6 +1796,36 @@ angular.module('app.controllers', ['ngCookies'])
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
         
+        // premium
+        $scope.premiumTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isPremium = function () {
+            var premium = $scope.deck.premium.isPremium;
+            for (var i = 0; i < $scope.premiumTypes.length; i++) {
+                if ($scope.premiumTypes[i].value === premium) {
+                    return $scope.premiumTypes[i].text;
+                }
+            }
+        }
+        
+        // featured
+        $scope.featuredTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isFeatured = function () {
+            var featured = $scope.deck.featured;
+            for (var i = 0; i < $scope.featuredTypes.length; i++) {
+                if ($scope.featuredTypes[i].value === featured) {
+                    return $scope.featuredTypes[i].text;
+                }
+            }
+        }
+        
         // save deck
         var box;
         $scope.saveDeck = function () {
@@ -1820,6 +1855,7 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
                     
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);
@@ -1959,6 +1995,36 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.isMulliganSet = function (mulligan) {
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
+        
+        // premium
+        $scope.premiumTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isPremium = function () {
+            var premium = $scope.deck.premium.isPremium;
+            for (var i = 0; i < $scope.premiumTypes.length; i++) {
+                if ($scope.premiumTypes[i].value === premium) {
+                    return $scope.premiumTypes[i].text;
+                }
+            }
+        }
+        
+        // featured
+        $scope.featuredTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isFeatured = function () {
+            var featured = $scope.deck.featured;
+            for (var i = 0; i < $scope.featuredTypes.length; i++) {
+                if ($scope.featuredTypes[i].value === featured) {
+                    return $scope.featuredTypes[i].text;
+                }
+            }
+        }
         
         // save deck
         $scope.updateDeck = function () {
@@ -2266,6 +2332,7 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
                     
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);
@@ -2760,6 +2827,7 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
                     
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);
@@ -2853,6 +2921,7 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
                     
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);
@@ -2956,6 +3025,7 @@ angular.module('app.controllers', ['ngCookies'])
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
                     
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);

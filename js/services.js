@@ -3,7 +3,8 @@
 angular.module('app.services', [])
 .factory('AuthenticationService', function() {
     var loggedIn = false,
-        admin = false;
+        admin = false,
+        provider = false;
 
     return {
         isLogged: function () {
@@ -17,6 +18,12 @@ angular.module('app.services', [])
         },
         setAdmin: function (value) {
             admin = value;
+        },
+        isProvider: function () {
+            return provider;
+        },
+        setProvider: function (value) {
+            provider = value;
         }
     }
 })
@@ -713,6 +720,7 @@ angular.module('app.services', [])
                 isPremium: false,
                 expiryDate: d
             },
+            featured: data.featured || false,
             public: data.public || 'true'
         };
         
@@ -997,6 +1005,8 @@ angular.module('app.services', [])
             mulligans: deck.mulligans,
             against: deck.against,
             video: deck.video,
+            premium: deck.premium,
+            featured: deck.featured,
             public: deck.public
         });
     }
@@ -1016,6 +1026,8 @@ angular.module('app.services', [])
             mulligans: deck.mulligans,
             against: deck.against,
             video: deck.video,
+            premium: deck.premium,
+            featured: deck.featured,
             public: deck.public
         });
     }
