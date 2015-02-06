@@ -900,6 +900,7 @@ angular.module('app.controllers', ['ngCookies'])
             ['fontsize', ['fontsize']],
             ['color', ['color']],
             ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
             ['insert', ['link', 'picture', 'video']],
             ['format', ['hr']],
             ['misc', ['undo', 'redo', 'codeview']]
@@ -1009,6 +1010,7 @@ angular.module('app.controllers', ['ngCookies'])
             ['fontsize', ['fontsize']],
             ['color', ['color']],
             ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
             ['insert', ['link', 'picture', 'video']],
             ['format', ['hr']],
             ['misc', ['undo', 'redo', 'codeview']]
