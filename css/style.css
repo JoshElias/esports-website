@@ -1520,7 +1520,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 
 .deck-against {  }
 .deck-against h3,
-.deck-against p { margin-bottom: 0; padding: 20px; color: #FFF; }
+.deck-against p { margin-bottom: 0; padding: 20px; color: #FFF; white-space: pre-wrap; }
 
 .deck-against h3 { padding: 10px 20px; font-size: 16px; background: rgba(0,0,0,.3); }
 
