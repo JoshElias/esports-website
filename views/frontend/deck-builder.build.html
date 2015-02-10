@@ -49,8 +49,9 @@
     </div>
 </div>
 <div class="container">
-    <div class="db-builder">
-        <form class="form-horizontal" name="dbForm" novalidate>
+    <form class="form-horizontal" name="dbForm" novalidate>
+    <div class="db-builder clearfix">
+        <!-- db-right -->
         <div class="db-right">
             <div class="db-mana-curve clearfix">
                 <div class="db-mana-curve-title">
@@ -106,7 +107,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="db-deck clearfix">
+            <div class="db-deck">
                 <div class="db-deck-header db-deck-{{className.toLowerCase()}}">
                     <div class="db-arena has-hover" ng-click="deck.arena = !deck.arena">
                         <span ng-show="!deck.arena">Constructed</span>
@@ -130,9 +131,11 @@
                     </div>
                 </div>
             </div>
-        </div><!-- / db-right -->
-        <div class="db-left clearfix">
-            <div class="db-section db-animated" ng-hide="step !== 1">
+        </div>
+        <!-- / db-right -->
+        
+        <div class="db-left">
+            <div class="db-section" ng-hide="step !== 1">
                 <div class="db-section-title clearfix">
                     <h1 class="pull-left">Card Picker</h1>
                     <div class="pull-left">
@@ -142,61 +145,59 @@
                         </ul>
                     </div>
                     <div class="db-filters pull-right clearfix">
-                        <form>
-                            <div class="db-search">
-                                <input type="text" name="search" class="input-sm input-dark" placeholder="Search..." ng-model="filters.search">
+                        <div class="db-search">
+                            <input type="text" name="search" class="input-sm input-dark" placeholder="Search..." ng-model="filters.search">
+                        </div>
+                        <div class="db-mechanics">
+                            <div class="dropdown">
+                                <button class="btn db-mechanics-btn input-dark" type="button" data-toggle="dropdown">
+                                    <span>Mechanics ({{filters.mechanics.length}})</span>
+                                    <b class="caret"></b>
+                                </button>
+                                <ul class="list-group dropdown-menu dropdown-dark">
+                                    <li class="list-group-item" ng-class="{active: inMechanics(mechanic)}" ng-repeat="mechanic in mechanics">
+                                        <a href="#" ng-click="toggleMechanic(mechanic); pagination.setPage(1); $event.preventDefault(); $event.stopPropagation()">{{mechanic}}</a>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="db-mechanics">
-                                <div class="dropdown">
-                                    <button class="btn db-mechanics-btn input-dark" type="button" data-toggle="dropdown">
-                                        <span>Mechanics ({{filters.mechanics.length}})</span>
-                                        <b class="caret"></b>
-                                    </button>
-                                    <ul class="list-group dropdown-menu dropdown-dark">
-                                        <li class="list-group-item" ng-class="{active: inMechanics(mechanic)}" ng-repeat="mechanic in mechanics">
-                                            <a href="#" ng-click="toggleMechanic(mechanic); pagination.setPage(1); $event.preventDefault(); $event.stopPropagation()">{{mechanic}}</a>
-                                        </li>
-                                    </ul>
-                                </div>
+                        </div>
+                        <div class="db-mana">
+                            <div class="dropdown">
+                                <button class="btn db-mana-btn input-dark" type="button" data-toggle="dropdown">
+                                    <span>Mana Cost: {{getManaCost()}}</span>
+                                    <b class="caret"></b>
+                                </button>
+                                <ul class="list-group dropdown-menu dropdown-dark">
+                                    <li class="list-group-item" ng-class="{active: filters.mana === 'all'}">
+                                        <a href="#" ng-click="filters.mana = 'all'; pagination.setPage(1)">All</a>
+                                    </li>
+                                    <li class="list-group-item" ng-class="{active: filters.mana === 0}">
+                                        <a href="#" ng-click="filters.mana = 0; pagination.setPage(1)">0</a>
+                                    </li>
+                                    <li class="list-group-item" ng-class="{active: filters.mana === 1}">
+                                        <a href="#" ng-click="filters.mana = 1; pagination.setPage(1)">1</a>
+                                    </li>
+                                    <li class="list-group-item" ng-class="{active: filters.mana === 2}">
+                                        <a href="#" ng-click="filters.mana = 2; pagination.setPage(1)">2</a>
+                                    </li>
+                                    <li class="list-group-item" ng-class="{active: filters.mana === 3}">
+                                        <a href="#" ng-click="filters.mana = 3; pagination.setPage(1)">3</a>
+                                    </li>
+                                    <li class="list-group-item" ng-class="{active: filters.mana === 4}">
+                                        <a href="#" ng-click="filters.mana = 4; pagination.setPage(1)">4</a>
+                                    </li>
+                                    <li class="list-group-item" ng-class="{active: filters.mana === 5}">
+                                        <a href="#" ng-click="filters.mana = 5; pagination.setPage(1)">5</a>
+                                    </li>
+                                    <li class="list-group-item" ng-class="{active: filters.mana === 6}">
+                                        <a href="#" ng-click="filters.mana = 6; pagination.setPage(1)">6</a>
+                                    </li>
+                                    <li class="list-group-item" ng-class="{active: filters.mana === '7+'}">
+                                        <a href="#" ng-click="filters.mana = '7+'; pagination.setPage(1)">7+</a>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="db-mana">
-                                <div class="dropdown">
-                                    <button class="btn db-mana-btn input-dark" type="button" data-toggle="dropdown">
-                                        <span>Mana Cost: {{getManaCost()}}</span>
-                                        <b class="caret"></b>
-                                    </button>
-                                    <ul class="list-group dropdown-menu dropdown-dark">
-                                        <li class="list-group-item" ng-class="{active: filters.mana === 'all'}">
-                                            <a href="#" ng-click="filters.mana = 'all'; pagination.setPage(1)">All</a>
-                                        </li>
-                                        <li class="list-group-item" ng-class="{active: filters.mana === 0}">
-                                            <a href="#" ng-click="filters.mana = 0; pagination.setPage(1)">0</a>
-                                        </li>
-                                        <li class="list-group-item" ng-class="{active: filters.mana === 1}">
-                                            <a href="#" ng-click="filters.mana = 1; pagination.setPage(1)">1</a>
-                                        </li>
-                                        <li class="list-group-item" ng-class="{active: filters.mana === 2}">
-                                            <a href="#" ng-click="filters.mana = 2; pagination.setPage(1)">2</a>
-                                        </li>
-                                        <li class="list-group-item" ng-class="{active: filters.mana === 3}">
-                                            <a href="#" ng-click="filters.mana = 3; pagination.setPage(1)">3</a>
-                                        </li>
-                                        <li class="list-group-item" ng-class="{active: filters.mana === 4}">
-                                            <a href="#" ng-click="filters.mana = 4; pagination.setPage(1)">4</a>
-                                        </li>
-                                        <li class="list-group-item" ng-class="{active: filters.mana === 5}">
-                                            <a href="#" ng-click="filters.mana = 5; pagination.setPage(1)">5</a>
-                                        </li>
-                                        <li class="list-group-item" ng-class="{active: filters.mana === 6}">
-                                            <a href="#" ng-click="filters.mana = 6; pagination.setPage(1)">6</a>
-                                        </li>
-                                        <li class="list-group-item" ng-class="{active: filters.mana === '7+'}">
-                                            <a href="#" ng-click="filters.mana = '7+'; pagination.setPage(1)">7+</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
                     </div><!-- / db-filters -->
                 </div>
                 <div class="db-cards">
@@ -217,7 +218,7 @@
                 </div><!-- / db-cards -->
             </div><!-- / step 1 -->
             <!-- step 2 -->
-            <div class="db-section db-mulligans db-animated" ng-hide="step !== 2">
+            <div class="db-section db-mulligans" ng-hide="step !== 2">
                 <div class="db-section-title clearfix">
                     <h1 class="pull-left">Mulligans</h1>
                     <ul class="db-filter-classes pull-right">
@@ -260,7 +261,7 @@
             </div>
             <!-- / step 2 -->
             <!-- step 3 -->
-            <div class="db-descriptions db-animated" ng-hide="step !== 3">
+            <div class="db-descriptions" ng-hide="step !== 3">
                 <div class="db-section m-b-md">
                     <div class="db-section-title">
                         <h1><label for="contentEarly">Early Game</label></h1>
@@ -282,7 +283,7 @@
             </div>
             <!-- / step 3 -->
             <!-- step 4 -->
-            <div class="db-against db-section db-animated" ng-hide="step !== 4">
+            <div class="db-against db-section" ng-hide="step !== 4">
                 <div class="db-section-title">
                     <h1>Match-ups</h1>
                 </div>
@@ -319,7 +320,7 @@
             </div>
             <!-- / step 4 -->
             <!-- step 5 -->
-            <div class="db-section db-animated" ng-hide="step !== 5">
+            <div class="db-section" ng-hide="step !== 5">
                 <div class="panel panel-danger error-modal animated" ng-show="showError">
                     <div class="panel-heading">
                         <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
@@ -437,6 +438,6 @@
             </div>
             <!-- / step 5 -->
         </div>
-        </form>
     </div>
+    </form>
 </div>
