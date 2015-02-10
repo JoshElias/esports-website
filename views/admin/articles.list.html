@@ -30,7 +30,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="pull-right btn-toolbar">
-                        <a href="./admin/articles/edit/{{article._id}}" class="btn btn-default">Edit</a>
+                        <a ui-sref="app.admin.hearthstone.articles.edit({ articleID: article._id })" class="btn btn-default">Edit</a>
                         <button class="btn btn-danger" ng-click="deleteArticle(article)">Delete</button>
                     </div>
                 </div>

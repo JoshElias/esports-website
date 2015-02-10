@@ -608,17 +608,27 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.articles', {
+            .state('app.admin.hearthstone', {
+                abstract: true,
+                url: '/hs',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/hearthstone.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.articles', {
                 abstract: true,
                 url: '/articles',
                 views: {
-                    admin: {
+                    hearthstone: {
                         templateUrl: tpl + 'views/admin/articles.html'
                     }
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.articles.list', {
+            .state('app.admin.hearthstone.articles.list', {
                 url: '',
                 views: {
                     articles: {
@@ -633,7 +643,7 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.articles.add', {
+            .state('app.admin.hearthstone.articles.add', {
                 url: '/add',
                 views: {
                     articles: {
@@ -654,7 +664,7 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.articles.edit', {
+            .state('app.admin.hearthstone.articles.edit', {
                 url: '/edit/:articleID',
                 views: {
                     articles: {
@@ -679,17 +689,17 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.decks', {
+            .state('app.admin.hearthstone.decks', {
                 abstract: true,
                 url: '/decks',
                 views: {
-                    admin: {
+                    hearthstone: {
                         templateUrl: tpl + 'views/admin/decks.html'
                     }
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.decks.list', {
+            .state('app.admin.hearthstone.decks.list', {
                 url: '',
                 views: {
                     decks: {
@@ -698,15 +708,16 @@ var app = angular.module('app', [
                         resolve: {
                             data: ['AdminDeckService', function (AdminDeckService) {
                                 var page = 1,
-                                    perpage = 50;
-                                return AdminDeckService.getDecks(page, perpage);
+                                    perpage = 50,
+                                    search = '';
+                                return AdminDeckService.getDecks(page, perpage, search);
                             }]
                         }
                     }
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.decks.add', {
+            .state('app.admin.hearthstone.decks.add', {
                 url: '/add',
                 views: {
                     decks: {
@@ -715,7 +726,7 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.decks.addBuild', {
+            .state('app.admin.hearthstone.decks.addBuild', {
                 url: '/add/:playerClass',
                 views: {
                     decks: {
@@ -731,7 +742,7 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.decks.edit', {
+            .state('app.admin.hearthstone.decks.edit', {
                 url: '/edit/:deckID',
                 views: {
                     decks: {
@@ -747,17 +758,17 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.cards', {
+            .state('app.admin.hearthstone.cards', {
                 abstract: true,
                 url: '/cards',
                 views: {
-                    admin: {
+                    hearthstone: {
                         templateUrl: tpl + 'views/admin/cards.html'
                     }
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.cards.list', {
+            .state('app.admin.hearthstone.cards.list', {
                 url: '',
                 views: {
                     cards: {
@@ -772,7 +783,7 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.cards.add', {
+            .state('app.admin.hearthstone.cards.add', {
                 url: '/add',
                 views: {
                     cards: {
@@ -782,7 +793,7 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.cards.edit', {
+            .state('app.admin.hearthstone.cards.edit', {
                 url: '/edit/:cardID',
                 views: {
                     cards: {

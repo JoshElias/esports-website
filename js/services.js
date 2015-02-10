@@ -332,9 +332,13 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
-        getDecks: function (page, perpage) {
-            var d = $q.defer();
-            $http.post('/api/admin/decks', { page: page, perpage: perpage }).success(function (data) {
+        getDecks: function (page, perpage, search) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 50,
+                search = search || '';
+            
+            $http.post('/api/admin/decks', { page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

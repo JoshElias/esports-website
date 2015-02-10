@@ -7,34 +7,29 @@
                 <span>Dashboard</span>
             </a>
         </li>
-        <li ng-class="{active:$state.includes('app.admin.articles')}">
-            <a ui-sref="app.admin.articles.list">
-                <i class="fa fa-file-text-o m-r-sm"></i>
-                <span>Articles</span>
-            </a>
-        </li>
-        <li ng-class="{active:$state.includes('app.admin.decks') || $state.includes('app.admin.cards')}" class="nav-drop">
+        <!-- hearthstone -->
+        <li ng-class="{active:$state.includes('app.admin.hearthstone')}" class="nav-drop">
             <a href="#" class="nav-drop-btn">
                 <span class="pull-right text-muted">
                     <i class="fa fa-fw fa-angle-right"></i>
                     <i class="fa fa-fw fa-angle-down"></i>
                 </span>
-                <i class="fa fa-bolt m-r-sm"></i>
-                <span>Decks</span>
+                <i class="fa fa-star m-r-sm"></i>
+                <span>Hearthstone</span>
             </a>
             <ul class="nav nav-sub">
-                <li ng-if="false" ng-class="{active:$state.includes('app.admin.decks')}">
-                    <a ui-sref="app.admin.decks.list">
-                        Decks
-                    </a>
+                <li ng-class="{active:$state.includes('app.admin.hearthstone.articles')}">
+                    <a ui-sref="app.admin.hearthstone.articles.list">Articles</a>
                 </li>
-                <li ng-class="{active:$state.includes('app.admin.cards')}">
-                    <a ui-sref="app.admin.cards.list">
-                        Cards
-                    </a>
+                <li ng-class="{active:$state.includes('app.admin.hearthstone.decks')}">
+                    <a ui-sref="app.admin.hearthstone.decks.list">Decks</a>
+                </li>
+                <li ng-class="{active:$state.includes('app.admin.hearthstone.cards')}">
+                    <a ui-sref="app.admin.hearthstone.cards.list">Cards</a>
                 </li>
             </ul>
         </li>
+        <!-- / hearthstone -->
         <li ng-class="{active:$state.includes('app.admin.forum')}" class="nav-drop">
             <a href="#" class="nav-drop-btn">
                 <span class="pull-right text-muted">
@@ -79,5 +74,5 @@
 </div>
 <!-- / side nav -->
 
-<div class="admin-content animated" ui-view="admin">
+<div class="admin-content" ui-view="admin">
 </div>

@@ -23,7 +23,7 @@
 }
 
 body { background: #323232 url('../img/tsbg.png'); font-family: 'Source Sans Pro', sans-serif; }
-body.admin { background: #FFF; }
+body.admin {  }
 
 .app { padding: 0; margin: 0; display: flexbox; display: flex; min-height: 100vh; flex-direction: column; }
 
@@ -777,7 +777,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     height: 100%;
     min-height: 100%;
     margin-left: 200px;
-    background: #FFF;
 }
 
 .admin-content-title {
@@ -787,6 +786,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     background-color: #f6f8f8;
     border-bottom: 1px solid #ddd;
 }
+
+.admin-dark {  }
 
 /* profile */
 .profile-banner { background: #2766ad; }
@@ -1103,12 +1104,12 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 /* end glows */
 
-.db-builder { position: relative; margin-bottom: 20px; }
-.db-right { position: absolute; top: 0px; right: 0px; width: 300px; }
-.db-left { position: relative; margin-top: 20px; margin-right: 381px; }
+.db-builder { position: relative; margin: 20px 0; }
+.db-right { float: right; width: 300px; }
+.db-left { margin-right: 381px; overflow: hidden; }
 
 .db-section { border: 1px solid #000; background: rgba(0,0,0,.3); }
-.db-section-title { padding: 0 20px; height: 60px; line-height: 60px; border-bottom: 1px solid #000; background: rgba(0,0,0,.3); }
+.db-section-title { padding: 0 20px; min-height: 60px; line-height: 60px; border-bottom: 1px solid #000; background: rgba(0,0,0,.3); }
 .db-section-title h1 { margin: 0 20px 0 0; padding: 0; height: 60px; line-height: 60px; color: #FFF; font-family: sneakersmediumitalic; font-size: 20px; }
 
 .db-section-title .db-filter-classes { margin: 14px 0; }
@@ -1116,7 +1117,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-section label { color: #FFF; }
 
 .db-filter-classes { margin: 0; padding: 0; }
-.db-filter-classes li { float: left; width: 31px; height: 32px; margin-right: 10px; }
+.db-filter-classes li { float: left; width: 31px; height: 32px; margin-right: 10px; list-style: none; }
 .db-filter-classes li:last-child { margin-right: 0; }
 .db-filter-classes li a { display: block; width: 31px; height: 32px; background: url('../img/class-icons.png') no-repeat; overflow: hidden; text-indent: -99999px; opacity: .5; }
 
@@ -1150,7 +1151,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .input-dark-block { width: 100%; text-align: left; }
 .input-dark-block b { float: right; margin: 9px 0 0 0; }
-
 
 .dropdown-menu.dropdown-dark { margin: 0; padding: 0; border: none; background: rgba(0,0,0,.8); color: #FFF; }
 .dropdown-menu.dropdown-dark > li { margin: 0; padding: 0; background: transparent; border-color: #000; }
