@@ -137,7 +137,7 @@
         <div class="db-left">
             <div class="db-section" ng-hide="step !== 1">
                 <div class="db-section-title clearfix">
-                    <h1 class="pull-left">Card Picker</h1>
+                    <h1 class="pull-left">CARD PICKER</h1>
                     <div class="pull-left">
                         <ul class="db-filter-classes clearfix">
                             <li ng-class="{active: cards.current === cards.class}"><a href="#" class="active {{className.toLowerCase()}}" ng-click="cards.current = cards.class; pagination.setPage(1)" ng-tooltip title="{{className}}">{{className}}</a></li>
@@ -220,7 +220,7 @@
             <!-- step 2 -->
             <div class="db-section db-mulligans" ng-hide="step !== 2">
                 <div class="db-section-title clearfix">
-                    <h1 class="pull-left">Mulligans</h1>
+                    <h1 class="pull-left">MULLIGANS</h1>
                     <ul class="db-filter-classes pull-right">
                         <li ng-class="{ active: currentMulligan.klass === class }" ng-repeat="class in classes">
                             <a href="#" class="{{class.toLowerCase()}}" ng-class="{ active: isMulliganSet(deck.getMulligan(class)) }" ng-click="setMulligan(deck.getMulligan(class))" ng-tooltip title="{{class}}">{{class}}</a>
@@ -264,19 +264,19 @@
             <div class="db-descriptions" ng-hide="step !== 3">
                 <div class="db-section m-b-md">
                     <div class="db-section-title">
-                        <h1><label for="contentEarly">Early Game</label></h1>
+                        <h1><label for="contentEarly">EARLY GAME</label></h1>
                     </div>
                     <summernote id="contentEarly" config="options" ng-model="deck.contentEarly"></summernote>
                 </div>
                 <div class="db-section m-b-md">
                     <div class="db-section-title">
-                        <h1><label for="contentMid">Mid Game</label></h1>
+                        <h1><label for="contentMid">MID GAME</label></h1>
                     </div>
                     <summernote id="contentMid" config="options" ng-model="deck.contentMid"></summernote>
                 </div>
                 <div class="db-section">
                     <div class="db-section-title">
-                        <h1><label for="contentLate">Late Game</label></h1>
+                        <h1><label for="contentLate">LATE GAME</label></h1>
                     </div>
                     <summernote id="contentLate" config="options" ng-model="deck.contentLate"></summernote>
                 </div>
@@ -285,7 +285,7 @@
             <!-- step 4 -->
             <div class="db-against db-section" ng-hide="step !== 4">
                 <div class="db-section-title">
-                    <h1>Match-ups</h1>
+                    <h1>MATCH-UPS</h1>
                 </div>
                 <div class="wrapper-md">
                     <div class="row">
@@ -333,7 +333,7 @@
                     </div>
                 </div>
                 <div class="db-section-title">
-                    <h1>Save your deck</h1>
+                    <h1>SAVE YOUR DECK</h1>
                 </div>
                 <div class="wrapper-md">
                     <div class="row">

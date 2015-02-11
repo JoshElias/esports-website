@@ -895,8 +895,11 @@ angular.module('app.controllers', ['ngCookies'])
         // summernote options
         $scope.options = {
           height: 300,
+          fontNames: ['Open Sans Regular', 'Open Sans Bold'],
+          defaultFontName: 'Open Sans Regular',
           toolbar: [
             ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['fontname', ['fontname']],
             ['fontsize', ['fontsize']],
             ['color', ['color']],
             ['para', ['ul', 'ol', 'paragraph']],
@@ -1005,8 +1008,11 @@ angular.module('app.controllers', ['ngCookies'])
         // summernote options
         $scope.options = {
           height: 300,
+          fontNames: ['Open Sans Regular', 'Open Sans Bold'],
+          defaultFontName: 'Open Sans Regular',
           toolbar: [
             ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['fontname', ['fontname']],
             ['fontsize', ['fontsize']],
             ['color', ['color']],
             ['para', ['ul', 'ol', 'paragraph']],
