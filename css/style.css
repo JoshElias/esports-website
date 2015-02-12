@@ -169,6 +169,8 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .container-dark { background: rgba(0,0,0,.3); border-left: 1px solid #000; border-right: 1px solid #000; }
 .container-light { background: #FFF; }
 
+.row-dark { background: rgba(0,0,0,.6); border: 1px solid #000; }
+
 /* ui view transitions */
 [ui-view].animated { position: relative; }
 
@@ -1797,6 +1799,14 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 /* subscription */
 .badge-grey { padding: 5px 10px; background: #F2F2F2; color: #222; }
 .badge-green { padding: 5px 10px; background: #27c24c; }
+
+/* sponsor page */
+.sponsor-page { margin-top: 50px; }
+.sponsor-page p { color: #FFF; }
+.sponsor-logo-twitch { margin: 0 auto; width: 275px; height: 80px; background: url('../img/twitch.png') no-repeat; }
+.sponsor-logo-namecheap { margin: 0 auto; width: 275px; height: 80px; background: url('../img/namecheap.png') no-repeat; }
+.sponsor-page a { margin: 0 auto; display: block; width: 20px; color: #FFF; opacity: .6; font-size: 20px; }
+.sponsor-page a:hover { opacity: 1; }
 
 /* mobile */
 @media (min-width: 768px) and (max-width: 1199px) {

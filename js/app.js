@@ -370,6 +370,14 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.sponsors', {
+                url: 'sponsors',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/sponsors.html'
+                    }
+                }
+            })
             .state('app.premium', {
                 url: 'premium',
                 views: {
