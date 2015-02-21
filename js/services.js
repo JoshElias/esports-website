@@ -27,7 +27,7 @@ angular.module('app.services', [])
         }
     }
 })
-.factory('SubscriptionService', function ($http) {
+.factory('SubscriptionService', ['$http', function ($http) {
     var isSubscribed = false,
         tsPlan = false,
         expiry = false;
@@ -70,8 +70,8 @@ angular.module('app.services', [])
             return $http.post('/api/subscription/cancel', {});
         }
     };
-})
-.factory('UserService', function($http) {
+}])
+.factory('UserService', ['$http', function($http) {
     return {
         login: function (email, password) {
             return $http.post('/login', {email: email, password: password});
@@ -111,8 +111,8 @@ angular.module('app.services', [])
             profileImg = '';
         }
     }
-})
-.factory('ArticleService', function ($http, $q) {
+}])
+.factory('ArticleService', ['$http', '$q', function ($http, $q) {
     return {
         getArticles: function (klass, page, perpage, search) {
             var d = $q.defer(),
@@ -136,8 +136,8 @@ angular.module('app.services', [])
             return $http.post('/api/article/comment/add', { articleID: article._id, comment: comment });
         }
     };
-})
-.factory('ProfileService', function ($http, $q) {
+}])
+.factory('ProfileService', ['$http', '$q', function ($http, $q) {
     return {
         getUserProfile: function (username) {
             var d = $q.defer();
@@ -209,8 +209,8 @@ angular.module('app.services', [])
             return d.promise;
         }
     };
-})
-.factory('TokenInterceptor', function ($q, $window) {
+}])
+.factory('TokenInterceptor', ['$q', '$window', function ($q, $window) {
     return {
         request: function (config) {
             config.headers = config.headers || {};
@@ -224,8 +224,8 @@ angular.module('app.services', [])
             return response || $q.when(response);
         }
     };
-})
-.factory('AdminCardService', function ($http, $q) {
+}])
+.factory('AdminCardService', ['$http', '$q', function ($http, $q) {
     return {
         getCards: function () {
             var d = $q.defer();
@@ -255,7 +255,7 @@ angular.module('app.services', [])
             return $http.post('/api/admin/card/edit', card);
         }
     };
-})
+}])
 .factory('AlertService', function () {
     var success = {},
         error = {},
@@ -285,7 +285,7 @@ angular.module('app.services', [])
         }
     }
 })
-.factory('AdminArticleService', function ($http, $q) {
+.factory('AdminArticleService', ['$http', '$q', function ($http, $q) {
     return {
         getAllArticles: function () {
             var d = $q.defer();
@@ -322,8 +322,8 @@ angular.module('app.services', [])
             return d.promise;
         }
     }
-})
-.factory('AdminDeckService', function ($http, $q) {
+}])
+.factory('AdminDeckService', ['$http', '$q', function ($http, $q) {
     return {
         getAllDecks: function () {
             var d = $q.defer();
@@ -364,8 +364,8 @@ angular.module('app.services', [])
             return d.promise;
         }
     }
-})
-.factory('AdminUserService', function ($http, $q) {
+}])
+.factory('AdminUserService', ['$http', '$q', function ($http, $q) {
     return {
         getProviders: function () {
             var d = $q.defer();
@@ -405,8 +405,8 @@ angular.module('app.services', [])
             return d.promise;
         }
     };
-})
-.factory('AdminForumService', function ($http, $q) {
+}])
+.factory('AdminForumService', ['$http', '$q', function ($http, $q) {
     return {
         getCategories: function () {
             var d = $q.defer();
@@ -463,7 +463,7 @@ angular.module('app.services', [])
             return d.promise;
         }
     };
-})
+}])
 .service('Pagination', function () {
     
     var pagination = {};
@@ -548,7 +548,7 @@ angular.module('app.services', [])
     
     return hs;
 })
-.factory('DeckBuilder', function ($sce, $http, $q) {
+.factory('DeckBuilder', ['$sce', '$http', '$q', function ($sce, $http, $q) {
 
     var deckBuilder = {};
 
@@ -1037,8 +1037,8 @@ angular.module('app.services', [])
     }
 
     return deckBuilder;
-})
-.factory('DeckService', function ($http, $q) {
+}])
+.factory('DeckService', ['$http', '$q', function ($http, $q) {
     return {
         getDecksCommunity: function (klass, page, perpage) {
             klass = klass || 'all';
@@ -1097,8 +1097,8 @@ angular.module('app.services', [])
             return $http.post('/api/deck/comment/add', { deckID: deck._id, comment: comment });
         }
     };
-})
-.factory('VoteService', function ($http, $q) {
+}])
+.factory('VoteService', ['$http', '$q', function ($http, $q) {
     return {
         voteArticle: function (direction, article) {
             var d = $q.defer();
@@ -1122,8 +1122,8 @@ angular.module('app.services', [])
             return d.promise;
         }
     };
-})
-.factory('ForumService', function ($http, $q) {
+}])
+.factory('ForumService', ['$http', '$q', function ($http, $q) {
     return {
         getCategories: function () {
             var d = $q.defer();
@@ -1153,8 +1153,8 @@ angular.module('app.services', [])
             return $http.post('/api/forum/post/comment/add', { post: post, comment: comment });
         }
     };
-})
-.factory('ImgurService', function ($http, $q) {
+}])
+.factory('ImgurService', ['$http', '$q', function ($http, $q) {
     return {
         upload: function (file) {
             var d = $q.defer(),
@@ -1168,8 +1168,8 @@ angular.module('app.services', [])
             return d.promise;
         }
     };
-})
-.factory('BannerService', function ($http, $q) {
+}])
+.factory('BannerService', ['$http', '$q', function ($http, $q) {
     return {
         getBanners: function () {
             var d = $q.defer();
@@ -1179,5 +1179,5 @@ angular.module('app.services', [])
             return d.promise;
         }
     };
-})
+}])
 ;

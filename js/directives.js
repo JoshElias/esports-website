@@ -76,7 +76,7 @@ angular.module('app.directives', ['ui.load'])
         }    
     };
 })
-.directive('ngRightClick', function($parse) {
+.directive('ngRightClick', ['$parse', function($parse) {
     return function(scope, element, attrs) {
         var fn = $parse(attrs.ngRightClick);
         element.bind('contextmenu', function(event) {
@@ -86,13 +86,13 @@ angular.module('app.directives', ['ui.load'])
             });
         });
     };
-})
+}])
 .directive('footer', function () {
     return {
         templateUrl: 'views/frontend/footer.html'
     };
 })
-.directive("scroll", function ($window) {
+.directive("scroll", ['$window', function ($window) {
     return function(scope, element, attrs) {
         angular.element($window).bind("scroll", function() {
              if (this.pageYOffset >= 1) {
@@ -103,7 +103,7 @@ angular.module('app.directives', ['ui.load'])
             scope.$apply();
         });
     };
-})
+}])
 .directive('ngBackground', function(){
     return function(scope, element, attrs){
         var url = attrs.ngBackground;
@@ -114,7 +114,7 @@ angular.module('app.directives', ['ui.load'])
         });
     };
 })
-.directive('ngTooltip', function($timeout) {
+.directive('ngTooltip', ['$timeout', function($timeout) {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
@@ -123,8 +123,8 @@ angular.module('app.directives', ['ui.load'])
             });
         }
     };
-})
-.directive('tsArticle', function ($timeout) {
+}])
+.directive('tsArticle', ['$timeout', function ($timeout) {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
@@ -134,5 +134,5 @@ angular.module('app.directives', ['ui.load'])
             });
         }
     };
-})
+}])
 ;

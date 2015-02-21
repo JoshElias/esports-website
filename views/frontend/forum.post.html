@@ -53,7 +53,7 @@
                 <div class="comment-add">
                     <div class="avatar">
                         <a href="./user/{{app.user.getUsername()}}" ng-if="app.user.isLogged()"><img gravatar-src="app.user.getUserEmail()" alt="" /></a>
-                        <a href="#" ng-if="!app.user.isLogged()"><img src="./img/profile.jpg" alt="" /></a>
+                        <a href="#" ng-if="!app.user.isLogged()"><img ng-src="{{app.cdn}}/dist/img/profile.jpg" alt="" /></a>
                     </div>
                     <form class="form-horizontal" name="commentForm" novalidate>
                         <div class="input-group">

@@ -1,71 +1,28 @@
 <!DOCTYPE html>
-<html lang="en" data-ng-app="app">
+<html lang="en" data-ng-app="app" ng-controller="AppCtrl">
 <head>
     <meta charset="utf-8" />
     <base href="/" />
     <title>TempoStorm</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/bootstrap/bootstrap.css" type="text/css" />
-    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/jquery/jquery-ui.min.css" type="text/css" />
-    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/font-awesome/font-awesome.min.css" type="text/css" />
-    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/animate.css" type="text/css" />
-    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/summernote/summernote.css" type="text/css" />
-    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/angular/angular-chart.css" type="text/css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css">
-    <link rel="stylesheet" href="https://fk.github.io/select2-bootstrap-css/css/select2-bootstrap.css">
-    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/angular/select.min.css" type="text/css" />
-    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/css/style.css?02102015" type="text/css" />
+    <link rel="stylesheet" href="{{app.cdn}}/dist/vendor.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{app.cdn}}/dist/style.min.css" type="text/css" />
 </head>
-<body ng-controller="AppCtrl" ng-class="{ admin: $state.includes('app.admin') }">
+<body ng-class="{ admin: $state.includes('app.admin') }">
     <div class="app" id="app" ui-view="root"></div>
-    <!-- jQuery -->
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/jquery/jquery-2.1.1.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/jquery/jquery-ui.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/bootstrap/bootstrap.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/summernote/summernote.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/jquery/bootbox.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/jquery/wtooltip.js"></script>
-    <!-- raw js -->
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/moment/moment.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/chart/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TweenMax.min.js"></script>
+    <!-- vendor -->
+    <script src="{{app.cdn}}/dist/vendor.min.js"></script>
+    <!-- angular -->
+    <script src="{{app.cdn}}/dist/angular.js"></script>
+    <!-- app -->
+    <script src="{{app.cdn}}/dist/app.min.js"></script>
+    <!-- stripe -->
     <script src="https://js.stripe.com/v2/"></script>
     <script>
         Stripe.setPublishableKey('pk_live_2BNbCCvFcOfU0awquAaYrHZo');
     </script>
-    <!-- angular -->
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-file-upload-shim.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-file-upload.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-cookies.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-sanitize.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-animate.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-ui-router.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-translate.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/ngStorage.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/ui-load.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/ui-jq.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/ui-validate.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/ui-bootstrap-tpls.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/ui-date.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-summernote.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-bootbox.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-moment.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-chart.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/select.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/ngProgress.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/md5.min.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-gravatar.js"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/angular/angular-payments.min.js"></script>
-    <!-- app -->
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/app.js?02102015"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/services.js?02102015"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/controllers.js?02102015"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/filters.js?02102015"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/directives.js?02102015"></script>
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/js/animations.js?02102015"></script>
+    <!-- google analytics -->
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

@@ -6,8 +6,6 @@ var app = angular.module('app', [
     'angular-bootbox',
     'angularMoment',
     'angularPayments',
-    'chart.js',
-    'ui.select',
     'ngAnimate',
     'ngCookies',
     'ngStorage',
@@ -80,7 +78,7 @@ var app = angular.module('app', [
         $httpProvider.interceptors.push('TokenInterceptor');
         
         var production = false,
-            tpl = (production) ? 'https://s3-us-west-2.amazonaws.com/ts-node2/' : '';
+            tpl = (production) ? 'https://s3-us-west-2.amazonaws.com/ts-node2' : '';
         
         $urlRouterProvider.otherwise('/');
         $stateProvider

@@ -1,5 +1,1055 @@
 'use strict';
 
+angular.module('app.animations', ['ngAnimate'])
+.animation('.slide-animation', function () {
+        return {
+            addClass: function (element, className, done) {
+                var scope = element.scope();
+
+                if (className == 'active') {
+                    element.addClass('active');
+                    
+                    var startPoint = element.parent().width();
+                    if(scope.banner.direction !== 'right') {
+                        startPoint = -startPoint;
+                    }
+                    
+                    element.css({ left: startPoint });
+                    element.find('.banner-panel').css({ left: startPoint });
+                    
+                    TweenMax.to(element, 1, { left: 0, ease: Power2.easeInOut }, done);
+                    TweenMax.to(element.find('.banner-panel'), 1.2, { left: '50%', ease: Back.easeOut });
+                }
+                else {
+                    done();
+                }
+            },
+            beforeRemoveClass: function (element, className, done) {
+                var scope = element.scope();
+
+                if (className == 'active') {
+                    var endPoint = element.parent().width();
+                    if(scope.banner.direction === 'right') {
+                        endPoint = -endPoint;
+                    }
+                    
+                    TweenMax.to(element, 1, { left: endPoint, ease: Power2.easeInOut }, done);
+                    TweenMax.to(element.find('.banner-panel'), 1.2, { left: endPoint, ease: Back.easeOut });
+                }
+                else {
+                    done();
+                }
+            }
+        };
+    });;'use strict';
+
+var app = angular.module('app', [
+    'angularFileUpload',
+    'summernote',
+    'angular-bootbox',
+    'angularMoment',
+    'angularPayments',
+    'ngAnimate',
+    'ngCookies',
+    'ngStorage',
+    'ngSanitize',
+    'ngProgress',
+    'ui.router',
+    'ui.load',
+    'ui.jq',
+    'ui.validate',
+    'ui.date',
+    'ui.gravatar',
+    'app.controllers',
+    'app.services',
+    'app.filters',
+    'app.directives',
+    'app.animations'
+])
+.run(
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 
+        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress) {
+            $rootScope.$state = $state;
+            $rootScope.$stateParams = $stateParams;
+            
+            // handle state changes
+            $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
+                //ngProgress.start();
+                if (toState.access && toState.access.noauth && $window.sessionStorage.token && AuthenticationService.isLogged()) {
+                    event.preventDefault();
+                    $state.transitionTo('app.home');
+                }
+                if (toState.access && toState.access.auth && !$window.sessionStorage.token && !AuthenticationService.isLogged()) {
+                    event.preventDefault();
+                    $state.transitionTo('app.login');
+                }
+                if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
+                    event.preventDefault();
+                    $state.transitionTo('app.home');
+                }
+                $window.scrollTo(0,0);
+            });
+            $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+                //ngProgress.complete();
+                $window.ga('send', 'pageview', $location.path());
+            });
+            $rootScope.$on("$routeChangeError", function(evt, current, previous, rejection){
+                console.log(3);
+                if(rejection == "invalid_user"){
+                    console.log(previous);
+                    //$state.transitionTo();
+                }
+            });
+        }
+    ]
+)
+.config(
+    ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', 
+    function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider) {
+        
+        app.controller = $controllerProvider.register;
+        app.directive  = $compileProvider.directive;
+        app.filter     = $filterProvider.register;
+        app.factory    = $provide.factory;
+        app.service    = $provide.service;
+        app.constant   = $provide.constant;
+        app.value      = $provide.value;
+        
+        $bootboxProvider.setDefaults({ locale: "en" });
+                
+        $locationProvider.html5Mode(true);
+        $httpProvider.interceptors.push('TokenInterceptor');
+        
+        var production = false,
+            tpl = (production) ? 'https://s3-us-west-2.amazonaws.com/ts-node2' : '';
+        
+        $urlRouterProvider.otherwise('/');
+        $stateProvider
+            .state('app', {
+                abstract: true,
+                url: '/',
+                views: {
+                    root: {
+                        templateUrl: tpl + 'views/frontend/index.html'
+                    }
+                },
+                resolve: {
+                    User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService' , function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
+                        if ($cookies.token) {
+                            $window.sessionStorage.token = $cookies.token;
+                            delete $cookies.token;
+                        }
+                        if ($window.sessionStorage.token && !AuthenticationService.isLogged()) {
+                            var d = $q.defer();
+                            UserService.verify().success(function (data) {
+                                AuthenticationService.setLogged(true);
+                                AuthenticationService.setAdmin(data.isAdmin);
+                                AuthenticationService.setProvider(data.isProvider);
+                                
+                                SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                                SubscriptionService.setTsPlan(data.subscription.plan);
+                                SubscriptionService.setExpiry(data.subscription.expiry);
+                                
+                                $window.sessionStorage.userID = data.userID;
+                                $window.sessionStorage.username = data.username;
+                                $window.sessionStorage.email = data.email;
+                                d.resolve();
+                            }).error(function () {
+                                delete $window.sessionStorage.userID;
+                                delete $window.sessionStorage.username;
+                                delete $window.sessionStorage.token;
+                                delete $window.sessionStorage.email;
+                                $state.transitionTo('app.login');
+                                d.resolve();
+                            });
+                            return d.promise;
+                        }
+                    }]
+                }
+            })
+            .state('app.home', {
+                url: '',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/home.html',
+                        controller: 'HomeCtrl',
+                        resolve: {
+                            dataArticles: ['ArticleService', function (ArticleService) {
+                                var klass = 'all',
+                                    page = 1,
+                                    perpage = 8;
+                                return ArticleService.getArticles(klass, page, perpage);
+                            }],
+                            dataDecks: ['DeckService', function (DeckService) {
+                                var klass = 'all',
+                                    page = 1,
+                                    perpage = 10;
+                                return DeckService.getDecksCommunity(klass, page, perpage);
+                            }],
+                            dataDecksFeatured: ['DeckService', function (DeckService) {
+                                var klass = 'all',
+                                    page = 1,
+                                    perpage = 10;
+                                return DeckService.getDecksFeatured(klass, page, perpage);
+                            }],
+                            dataBanners: ['BannerService', function (BannerService) {
+                                return BannerService.getBanners();
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.articles', {
+                abstract: true,
+                url: 'articles',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/articles.html'
+                    }
+                }
+            })
+            .state('app.articles.list', {
+                url: '?s&p&k',
+                views: {
+                    articles: {
+                        templateUrl: tpl + 'views/frontend/articles.list.html',
+                        controller: 'ArticlesCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'ArticleService', function ($stateParams, ArticleService) {
+                                var klass = $stateParams.k || 'all',
+                                    page = $stateParams.p || 1,
+                                    perpage = 10,
+                                    search = $stateParams.s || '';
+                                
+                                return ArticleService.getArticles(klass, page, perpage, search);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.articles.article', {
+                url: '/:slug',
+                views: {
+                    articles: {
+                        templateUrl: tpl + 'views/frontend/articles.article.html',
+                        controller: 'ArticleCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'ArticleService', function ($stateParams, ArticleService) {
+                                var slug = $stateParams.slug;
+                                return ArticleService.getArticle(slug);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.decks', {
+                abstract: true,
+                url: 'decks',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/decks.html'
+                    }
+                }
+            })
+            .state('app.decks.list', {
+                url: '?p&s&k&a&o',
+                views: {
+                    decks: {
+                        templateUrl: tpl + 'views/frontend/decks.list.html',
+                        controller: 'DecksCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
+                                var klass = $stateParams.k || 'all',
+                                    page = $stateParams.p || 1,
+                                    perpage = 24,
+                                    search = $stateParams.s || '',
+                                    age = $stateParams.a || '',
+                                    order = $stateParams.o || '';
+                                
+                                return DeckService.getDecks(klass, page, perpage, search, age, order);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.decks.deck', {
+                url: '/:slug',
+                views: {
+                    decks: {
+                        templateUrl: tpl + 'views/frontend/decks.deck.html',
+                        controller: 'DeckCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
+                                var slug = $stateParams.slug;
+                                return DeckService.getDeck(slug);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.deckBuilder', {
+                abstract: true,
+                url: 'deck-builder',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/deck-builder.html'
+                    }
+                }
+            })
+            .state('app.deckBuilder.class', {
+                url: '',
+                views: {
+                    deckBuilder: {
+                        templateUrl: tpl + 'views/frontend/deck-builder.class.html'
+                    }
+                }
+            })
+            .state('app.deckBuilder.build', {
+                url: '/:playerClass',
+                views: {
+                    deckBuilder: {
+                        templateUrl: tpl + 'views/frontend/deck-builder.build.html',
+                        controller: 'DeckBuilderCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
+                                var playerClass = $stateParams.playerClass;
+                                return DeckBuilder.loadCards(playerClass);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.deckBuilder.edit', {
+                url: '/edit/:slug',
+                views: {
+                    deckBuilder: {
+                        templateUrl: tpl + 'views/frontend/deck-builder.edit.html',
+                        controller: 'DeckEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
+                                var slug = $stateParams.slug;
+                                return DeckService.deckEdit(slug);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.forum', {
+                abstract: true,
+                url: 'forum',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/forum.html'
+                    }
+                }
+            })
+            .state('app.forum.home', {
+                url: '',
+                views: {
+                    forum: {
+                        templateUrl: tpl + 'views/frontend/forum.home.html',
+                        controller: 'ForumCategoryCtrl',
+                        resolve: {
+                            data: ['ForumService', function (ForumService) {
+                                return ForumService.getCategories();
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.forum.threads', {
+                url: '/:thread',
+                views: {
+                    forum: {
+                        templateUrl: tpl + 'views/frontend/forum.threads.html',
+                        controller: 'ForumThreadCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
+                                var thread = $stateParams.thread;
+                                return ForumService.getThread(thread);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.forum.add', {
+                url: '/:thread/add',
+                views: {
+                    forum: {
+                        templateUrl: tpl + 'views/frontend/forum.add.html',
+                        controller: 'ForumAddCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
+                                var thread = $stateParams.thread;
+                                return ForumService.getThread(thread);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.forum.post', {
+                url: '/:thread/:post',
+                views: {
+                    forum: {
+                        templateUrl: tpl + 'views/frontend/forum.post.html',
+                        controller: 'ForumPostCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
+                                var thread = $stateParams.thread,
+                                    post = $stateParams.post;
+                                return ForumService.getPost(thread, post);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.team', {
+                url: 'the-team',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/team.html'
+                    }
+                }
+            })
+            .state('app.sponsors', {
+                url: 'sponsors',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/sponsors.html'
+                    }
+                }
+            })
+            .state('app.premium', {
+                url: 'premium',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/premium.html',
+                        controller: 'PremiumCtrl'
+                    }
+                }
+            })
+            .state('app.terms', {
+                url: 'terms',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/terms.html'
+                    }
+                }
+            })
+            .state('app.privacy', {
+                url: 'privacy',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/privacy.html'
+                    }
+                }
+            })
+            .state('app.login', {
+                url: 'login',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/login.html',
+                        controller: 'UserCtrl',
+                    }
+                },
+                access: { noauth: true }
+            })
+            .state('app.signup', {
+                url: 'signup',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/signup.html',
+                        controller: 'UserCtrl',
+                    }
+                },
+                access: { noauth: true }
+            })
+            .state('app.verify', {
+                url: 'verify?email&code',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/verify.html',
+                        controller: 'UserVerifyCtrl',
+                    }
+                },
+                access: { noauth: true }
+            })
+            .state('app.forgotPassword', {
+                url: 'forgot-password',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/forgot-password.html',
+                        controller: 'UserCtrl'
+                    }
+                },
+                access: { noauth: true }
+            })
+            .state('app.resetPassword', {
+                url: 'forgot-password/reset?email&code',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/reset-password.html',
+                        controller: 'UserResetPasswordCtrl'
+                    }
+                },
+                access: { noauth: true }
+            })
+            .state('app.profile', {
+                abstract: true,
+                url: 'user/:username',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/profile.html',
+                        controller: 'ProfileCtrl',
+                        resolve: {
+                            dataProfile: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                                var username = $stateParams.username;
+                                return ProfileService.getProfile(username);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.profile.activity', {
+                url: '',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/profile.activity.html',
+                        controller: 'ProfileActivityCtrl',
+                        resolve: {
+                            dataActivity: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                                var username = $stateParams.username;
+                                return ProfileService.getActivity(username);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.profile.articles', {
+                url: '/articles',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/profile.articles.html',
+                        controller: 'ProfileArticlesCtrl',
+                        resolve: {
+                            dataArticles: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                                var username = $stateParams.username;
+                                return ProfileService.getArticles(username);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.profile.decks', {
+                url: '/decks',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/profile.decks.html',
+                        controller: 'ProfileDecksCtrl',
+                        resolve: {
+                            dataDecks: ['$stateParams', 'ProfileService', 'AuthenticationService', function ($stateParams, ProfileService, AuthenticationService) {
+                                var username = $stateParams.username;
+                                if (AuthenticationService.isLogged()) {
+                                    return ProfileService.getDecksLoggedIn(username);
+                                } else {
+                                    return ProfileService.getDecks(username);
+                                }
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.profile.posts', {
+                url: '/posts',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/profile.posts.html',
+                        controller: 'ProfilePostsCtrl',
+                        resolve: {
+                            dataPosts: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                                var username = $stateParams.username;
+                                return ProfileService.getProfile(username);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.profile.edit', {
+                url: '/edit',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/profile.edit.html',
+                        controller: 'ProfileEditCtrl',
+                        resolve: {
+                            dataProfileEdit: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                                var username = $stateParams.username;
+                                return ProfileService.getUserProfile(username);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true }
+            })
+            .state('app.profile.changeEmail', {
+                url: '/email-change-confirm?code',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/blank.html',
+                        controller: 'ProfileEmailChangeCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                                var code = $stateParams.code || false;
+                                return ProfileService.changeEmail(code);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true }
+            })
+            .state('app.profile.updateEmail', {
+                url: '/email-verify?code',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/blank.html',
+                        controller: 'ProfileEmailConfirmCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                                var code = $stateParams.code || false;
+                                return ProfileService.updateEmail(code);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true }
+            })
+            .state('app.profile.subscription', {
+                url: '/subscription?plan',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/profile.subscription.html',
+                        controller: 'ProfileSubscriptionCtrl',
+                        resolve: {
+                            dataProfileEdit: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+                                var username = $stateParams.username;
+                                return ProfileService.getUserProfile(username);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true }
+            })
+            .state('app.admin', {
+                abstract: true,
+                url: 'admin',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/admin/index.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.dashboard', {
+                url: '',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/dashboard.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone', {
+                abstract: true,
+                url: '/hs',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/hearthstone.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.articles', {
+                abstract: true,
+                url: '/articles',
+                views: {
+                    hearthstone: {
+                        templateUrl: tpl + 'views/admin/articles.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.articles.list', {
+                url: '',
+                views: {
+                    articles: {
+                        templateUrl: tpl + 'views/admin/articles.list.html',
+                        controller: 'AdminArticleListCtrl',
+                        resolve: {
+                            data: ['AdminArticleService', function (AdminArticleService) {
+                                return AdminArticleService.getArticles();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.articles.add', {
+                url: '/add',
+                views: {
+                    articles: {
+                        templateUrl: tpl + 'views/admin/articles.add.html',
+                        controller: 'AdminArticleAddCtrl',
+                        resolve: {
+                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
+                                return AdminDeckService.getAllDecks();
+                            }],
+                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
+                                return AdminArticleService.getAllArticles();
+                            }],
+                            dataProviders: ['AdminUserService', function (AdminUserService) {
+                                return AdminUserService.getProviders();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.articles.edit', {
+                url: '/edit/:articleID',
+                views: {
+                    articles: {
+                        templateUrl: tpl + 'views/admin/articles.edit.html',
+                        controller: 'AdminArticleEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminArticleService', function ($stateParams, AdminArticleService) {
+                                var articleID = $stateParams.articleID;
+                                return AdminArticleService.getArticle(articleID);
+                            }],
+                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
+                                return AdminDeckService.getAllDecks();
+                            }],
+                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
+                                return AdminArticleService.getAllArticles();
+                            }],
+                            dataProviders: ['AdminUserService', function (AdminUserService) {
+                                return AdminUserService.getProviders();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.decks', {
+                abstract: true,
+                url: '/decks',
+                views: {
+                    hearthstone: {
+                        templateUrl: tpl + 'views/admin/decks.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.decks.list', {
+                url: '',
+                views: {
+                    decks: {
+                        templateUrl: tpl + 'views/admin/decks.list.html',
+                        controller: 'AdminDeckListCtrl',
+                        resolve: {
+                            data: ['AdminDeckService', function (AdminDeckService) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminDeckService.getDecks(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.decks.add', {
+                url: '/add',
+                views: {
+                    decks: {
+                        templateUrl: tpl + 'views/admin/decks.add.class.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.decks.addBuild', {
+                url: '/add/:playerClass',
+                views: {
+                    decks: {
+                        templateUrl: tpl + 'views/admin/decks.add.build.html',
+                        controller: 'AdminDeckAddCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
+                                var playerClass = $stateParams.playerClass;
+                                return DeckBuilder.loadCards(playerClass);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.decks.edit', {
+                url: '/edit/:deckID',
+                views: {
+                    decks: {
+                        templateUrl: tpl + 'views/admin/decks.edit.html',
+                        controller: 'AdminDeckEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminDeckService', function ($stateParams, AdminDeckService) {
+                                var deckID = $stateParams.deckID;
+                                return AdminDeckService.getDeck(deckID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.cards', {
+                abstract: true,
+                url: '/cards',
+                views: {
+                    hearthstone: {
+                        templateUrl: tpl + 'views/admin/cards.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.cards.list', {
+                url: '',
+                views: {
+                    cards: {
+                        templateUrl: tpl + 'views/admin/cards.list.html',
+                        controller: 'AdminCardListCtrl',
+                        resolve: {
+                            data: ['AdminCardService', function (AdminCardService) {
+                                return AdminCardService.getCards();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.cards.add', {
+                url: '/add',
+                views: {
+                    cards: {
+                        templateUrl: tpl + 'views/admin/cards.add.html',
+                        controller: 'AdminCardAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone.cards.edit', {
+                url: '/edit/:cardID',
+                views: {
+                    cards: {
+                        templateUrl: tpl + 'views/admin/cards.edit.html',
+                        controller: 'AdminCardEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminCardService', function ($stateParams, AdminCardService) {
+                                var cardID = $stateParams.cardID;
+                                return AdminCardService.getCard(cardID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.forum', {
+                abstract: true,
+                url: '/forum',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/forum.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.forum.structure', {
+                abstract: true,
+                url: '/structure',
+                views: {
+                    forum: {
+                        templateUrl: tpl + 'views/admin/forum.structure.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.forum.structure.list', {
+                url: '',
+                views: {
+                    categories: {
+                        templateUrl: tpl + 'views/admin/forum.structure.list.html',
+                        controller: 'AdminForumStructureListCtrl',
+                        resolve: {
+                            data: ['AdminForumService', function (AdminForumService) {
+                                return AdminForumService.getCategories();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.forum.structure.categoryAdd', {
+                url: '/category/add',
+                views: {
+                    categories: {
+                        templateUrl: tpl + 'views/admin/forum.categories.add.html',
+                        controller: 'AdminForumCategoryAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.forum.structure.categoryEdit', {
+                url: '/category/edit/:categoryID',
+                views: {
+                    categories: {
+                        templateUrl: tpl + 'views/admin/forum.categories.edit.html',
+                        controller: 'AdminForumCategoryEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminForumService', function ($stateParams, AdminForumService) {
+                                var categoryID = $stateParams.categoryID;
+                                return AdminForumService.getCategory(categoryID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.forum.structure.threadAdd', {
+                url: '/thread/add',
+                views: {
+                    categories: {
+                        templateUrl: tpl + 'views/admin/forum.threads.add.html',
+                        controller: 'AdminForumThreadAddCtrl',
+                        resolve: {
+                            data: ['AdminForumService', function (AdminForumService) {
+                                return AdminForumService.getCategories();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.forum.structure.threadEdit', {
+                url: '/thread/edit/:threadID',
+                views: {
+                    categories: {
+                        templateUrl: tpl + 'views/admin/forum.threads.edit.html',
+                        controller: 'AdminForumThreadEditCtrl',
+                        resolve: {
+                            dataCategories: ['AdminForumService', function (AdminForumService) {
+                                return AdminForumService.getCategories();
+                            }],
+                            dataThread: ['$stateParams', 'AdminForumService', function ($stateParams, AdminForumService) {
+                                var threadID = $stateParams.threadID;
+                                return AdminForumService.getThread(threadID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.forum.management', {
+                url: '/management',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/forum.management.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.users', {
+                abstract: true,
+                url: '/users',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/users.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.users.list', {
+                url: '',
+                views: {
+                    users: {
+                        templateUrl: tpl + 'views/admin/users.list.html',
+                        controller: 'AdminUserListCtrl',
+                        resolve: {
+                            data: ['AdminUserService', function (AdminUserService) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminUserService.getUsers(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.users.add', {
+                url: '/add',
+                views: {
+                    users: {
+                        templateUrl: tpl + 'views/admin/users.add.html',
+                        controller: 'AdminUserAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.users.edit', {
+                url: '/edit/:userID',
+                views: {
+                    users: {
+                        templateUrl: tpl + 'views/admin/users.edit.html',
+                        controller: 'AdminUserEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminUserService', function ($stateParams, AdminUserService) {
+                                var userID = $stateParams.userID;
+                                return AdminUserService.getUser(userID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.subscriptions', {
+                url: '/subscriptions',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/subscriptions.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.streams', {
+                url: '/streams',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/streams.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            });        
+    }]
+);
+
+angular.module('ui.gravatar').config([
+  'gravatarServiceProvider', function(gravatarServiceProvider) {
+    gravatarServiceProvider.defaults = {
+      size: 200,
+      "default": 'https://s3-us-west-2.amazonaws.com/ts-node2/img/profile.jpg'  // Mystery man as default for missing avatars
+    };
+
+    // Use https endpoint
+    gravatarServiceProvider.secure = true;
+  }
+]);
+;'use strict';
+
 angular.module('app.controllers', ['ngCookies'])
   .controller('AppCtrl', ['$scope', '$localStorage', '$window', '$location', 'SubscriptionService', 'AuthenticationService', 'UserService', 
     function($scope, $localStorage, $window, $location, SubscriptionService, AuthenticationService, UserService) {
@@ -3486,4 +4536,1361 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+;;'use strict';
+
+angular.module('app.directives', ['ui.load'])
+.directive('uiModule', ['MODULE_CONFIG','uiLoad', '$compile', function(MODULE_CONFIG, uiLoad, $compile) {
+    return {
+        restrict: 'A',
+        compile: function (el, attrs) {
+            var contents = el.contents().clone();
+            return function(scope, el, attrs){
+                el.contents().remove();
+                uiLoad.load(MODULE_CONFIG[attrs.uiModule])
+                .then(function(){
+                    $compile(contents)(scope, function(clonedElement, scope) {
+                        el.append(clonedElement);
+                    });
+                });
+            }
+        }
+    };
+}])
+.directive('uiAdminNav', [function () {
+    return {
+        restrict: 'AE',
+        link: function (scope, el, attr) {
+            el.on('click', 'a', function (event) {
+                var _this = $(this);
+                _this.parent().siblings('.active').toggleClass('active');
+                _this.next().is('ul') && _this.parent().toggleClass('active');
+            });
+        }
+    };
+}])
+.directive('hsCard', function () {
+    return {
+        restrict: 'A',
+        link: function (scope, el, attr) {
+            var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -344 : 60;
+            el.wTooltip({
+                delay: 0,
+                offsetX: xPos,
+                offsetY: -40,
+                content: '<img src="'+attr['tooltipImg']+'" alt="">',
+                style: false,
+                className: 'hs-card-tooltip'
+            });
+        }
+    };
+})
+.directive('loginForm', function () {
+    return {
+        templateUrl: 'views/frontend/login.form.html'
+    };
+})
+.directive('datePicker', function($compile){
+    return {
+        replace: true,
+        templateUrl: 'views/admin/date-picker.html',
+        scope: {
+            ngModel: '=',
+            ngDisabled: '=',
+            dateOptions: '='
+        },
+        link: function($scope, $element, $attrs, $controller){
+            var id = $attrs.id || 'datePicker',
+                name = $attrs.name || 'datePicker',
+                $button = $element.find('button'),
+                classes = $attrs.class || '',
+                $input = $element.find('input').attr('id', id).attr('name', name).addClass(classes);
+            $button.on('click',function(){
+                if ($input.is(':focus')) {
+                    $input.trigger('blur');
+                } else {
+                    $input.trigger('focus');
+                }
+            });
+        }    
+    };
+})
+.directive('ngRightClick', ['$parse', function($parse) {
+    return function(scope, element, attrs) {
+        var fn = $parse(attrs.ngRightClick);
+        element.bind('contextmenu', function(event) {
+            scope.$apply(function() {
+                event.preventDefault();
+                fn(scope, {$event:event});
+            });
+        });
+    };
+}])
+.directive('footer', function () {
+    return {
+        templateUrl: 'views/frontend/footer.html'
+    };
+})
+.directive("scroll", ['$window', function ($window) {
+    return function(scope, element, attrs) {
+        angular.element($window).bind("scroll", function() {
+             if (this.pageYOffset >= 1) {
+                 scope.scrolled = true;
+             } else {
+                 scope.scrolled = false;
+             }
+            scope.$apply();
+        });
+    };
+}])
+.directive('ngBackground', function(){
+    return function(scope, element, attrs){
+        var url = attrs.ngBackground;
+        element.css({
+            'background-image': 'url(\'' + url +'\')',
+            'background-position': 'center center',
+            'background-size' : 'cover'
+        });
+    };
+})
+.directive('ngTooltip', ['$timeout', function($timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            $timeout(function () {
+                $(element).tooltip();
+            });
+        }
+    };
+}])
+.directive('tsArticle', ['$timeout', function ($timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            $timeout(function () {
+                element.find('img').addClass('img-responsive').css('height', 'auto');
+                element.find('table').addClass('table-responsive').css('table-layout', 'auto');
+            });
+        }
+    };
+}])
+;;'use strict';
+
+angular.module('app.filters', [])
+.filter('startFrom', function () {
+    return function (input, start) {
+        start = +start;
+        return input.slice(start);
+    }
+})
+.filter('filterAll', ['$filter', function ($filter) {
+    var filter = $filter('filter');
+    return function (input, search) {
+        
+        Array.prototype.diff = function(arr2) {
+            var ret = [];
+            for(i in this) {
+                if(arr2.indexOf( this[i] ) > -1){
+                    ret.push( this[i] );
+                }
+            }
+            return ret;
+        };
+        
+        search = search || '';
+        search = search.split('+');
+        
+        var results = [];
+        for (var i = 0; i < search.length; i++) {
+            if (i === 0) {
+                results = results.concat(filter(input, search[i]));
+            } else {
+                results = results.diff(filter(input, search[i]));
+            }
+        }
+        
+        return results;
+    };
+}])
+;;'use strict';
+
+angular.module('app.services', [])
+.factory('AuthenticationService', function() {
+    var loggedIn = false,
+        admin = false,
+        provider = false;
+
+    return {
+        isLogged: function () {
+            return loggedIn;
+        },
+        setLogged: function (value) {
+            loggedIn = value;
+        },
+        isAdmin: function () {
+            return admin;
+        },
+        setAdmin: function (value) {
+            admin = value;
+        },
+        isProvider: function () {
+            return provider;
+        },
+        setProvider: function (value) {
+            provider = value;
+        }
+    }
+})
+.factory('SubscriptionService', ['$http', function ($http) {
+    var isSubscribed = false,
+        tsPlan = false,
+        expiry = false;
+    
+    return {
+        isSubscribed: function () {
+            var now = new Date().getTime();
+            
+            if (isSubscribed) { return true; }
+            if (expiry) {
+                return (expiry > now);
+            } else {
+                return false;
+            }
+        },
+        getSubscription: function () {
+            return {
+                isSubscribed: isSubscribed,
+                tsPlan: tsPlan,
+                expiry: expiry
+            };
+        },
+        setSubscribed: function (value) {
+            isSubscribed = value;
+        },
+        setTsPlan: function (value) {
+            tsPlan = value;
+        },
+        setExpiry: function (value) {
+            expiry = (value) ? new Date(value).getTime(): value;
+        },        
+        setPlan: function (plan, cctoken) {
+            cctoken = cctoken || false;
+            return $http.post('/api/subscription/setplan', { plan: plan, cctoken: cctoken });
+        },
+        setCard: function (cctoken) {
+            return $http.post('/api/subscription/setcard', { cctoken: cctoken });
+        },
+        cancel: function () {
+            return $http.post('/api/subscription/cancel', {});
+        }
+    };
+}])
+.factory('UserService', ['$http', function($http) {
+    return {
+        login: function (email, password) {
+            return $http.post('/login', {email: email, password: password});
+        },
+        
+        signup: function (email, username, password, cpassword) {
+            return $http.post('/signup', {
+                email: email,
+                username: username,
+                password: password,
+                cpassword: cpassword
+            });
+        },
+        
+        forgotPassword: function (email) {
+            return $http.post('/forgot-password', { email: email });
+        },
+        
+        resetPassword: function (email, code, password, cpassword) {
+            return $http.post('/forgot-password/reset', { email: email, code: code, password: password, cpassword: cpassword });
+        },
+        
+        verifyEmail: function (email, code) {
+            return $http.post('/verify', { email: email, code: code });
+        },
+        
+        verify: function () {
+            return $http.post('/api/verify', {});
+        },
+        
+        twitch: function () {
+            return $http.post('/auth/twitch', {});
+        },
+        
+        logout: function () {
+            username = '';
+            profileImg = '';
+        }
+    }
+}])
+.factory('ArticleService', ['$http', '$q', function ($http, $q) {
+    return {
+        getArticles: function (klass, page, perpage, search) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 20,
+                search = search || '';
+            
+            $http.post('/articles', { klass: klass, page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getArticle: function (slug) {
+            var d = $q.defer();
+            $http.post('/article', { slug: slug }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addComment: function (article, comment) {
+            return $http.post('/api/article/comment/add', { articleID: article._id, comment: comment });
+        }
+    };
+}])
+.factory('ProfileService', ['$http', '$q', function ($http, $q) {
+    return {
+        getUserProfile: function (username) {
+            var d = $q.defer();
+            $http.post('/api/profile/' + username, {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getProfile: function (username) {
+            var d = $q.defer();
+            $http.post('/profile/' + username, {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getActivity: function (username, page, perpage) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 20;
+            $http.post('/profile/' + username + '/activity', { page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getArticles: function (username, page, perpage) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 20;
+            $http.post('/profile/' + username + '/articles', { page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getDecks: function (username, page, perpage) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 20;
+            $http.post('/profile/' + username + '/decks', { page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getDecksLoggedIn: function (username, page, perpage) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 20;
+            $http.post('/api/profile/' + username + '/decks', { page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        updateProfile: function (user) {
+            return $http.post('/api/profile/edit', user);
+        },
+        changeEmail: function (code) {
+            var d = $q.defer(),
+                code = code || false;
+            $http.post('/api/profile/changeEmail', { code: code }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        updateEmail: function (code) {
+            var d = $q.defer(),
+                code = code || false;
+            $http.post('/api/profile/updateEmail', { code: code }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
+.factory('TokenInterceptor', ['$q', '$window', function ($q, $window) {
+    return {
+        request: function (config) {
+            config.headers = config.headers || {};
+            if ($window.sessionStorage.token) {
+                config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
+            }
+            return config;
+        },
+ 
+        response: function (response) {
+            return response || $q.when(response);
+        }
+    };
+}])
+.factory('AdminCardService', ['$http', '$q', function ($http, $q) {
+    return {
+        getCards: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/cards', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getCard: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/card', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addCard: function (card) {
+            return $http.post('/api/admin/card/add', card);
+        },
+        deleteCard: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/card/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        editCard: function (card) {
+            return $http.post('/api/admin/card/edit', card);
+        }
+    };
+}])
+.factory('AlertService', function () {
+    var success = {},
+        error = {},
+        alert = false;
+    return {
+        getSuccess: function () {
+            return success;
+        },
+        setSuccess: function (value) {
+            success = value;
+            alert = true;
+        },
+        getError: function () {
+            return error;
+        },
+        setError: function (value) {
+            error = value;
+            alert = true;
+        },
+        reset: function () {
+            success = {};
+            error = {};
+            alert = false;
+        },
+        hasAlert: function () {
+            return alert;
+        }
+    }
+})
+.factory('AdminArticleService', ['$http', '$q', function ($http, $q) {
+    return {
+        getAllArticles: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/articles/all', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getArticles: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/articles', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getArticle: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/article', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addArticle: function (article) {
+            return $http.post('/api/admin/article/add', article);
+        },
+        editArticle: function (article) {
+            return $http.post('/api/admin/article/edit', article);
+        },
+        deleteArticle: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/article/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    }
+}])
+.factory('AdminDeckService', ['$http', '$q', function ($http, $q) {
+    return {
+        getAllDecks: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/decks/all', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getDecks: function (page, perpage, search) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 50,
+                search = search || '';
+            
+            $http.post('/api/admin/decks', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getDeck: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/deck', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addDeck: function (deck) {
+            return $http.post('/api/admin/deck/add', deck);
+        },
+        editDeck: function (deck) {
+            return $http.post('/api/admin/deck/edit', deck);
+        },
+        deleteDeck: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/deck/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    }
+}])
+.factory('AdminUserService', ['$http', '$q', function ($http, $q) {
+    return {
+        getProviders: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/users/providers', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getUsers: function (page, perpage, search) {
+            var page = page || 1,
+                perpage = perpage || 50,
+                search = search || '';
+            var d = $q.defer();
+            $http.post('/api/admin/users', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getUser: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/user', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addUser: function (user) {
+            return $http.post('/api/admin/user/add', user);
+        },
+        editUser: function (user) {
+            return $http.post('/api/admin/user/edit', user);
+        },
+        deleteUser: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/user/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
+.factory('AdminForumService', ['$http', '$q', function ($http, $q) {
+    return {
+        getCategories: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/forum/categories', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getCategory: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/forum/category', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addCategory: function (category) {
+            return $http.post('/api/admin/forum/category/add', category);
+        },
+        editCategory: function (category) {
+            return $http.post('/api/admin/forum/category/edit', category);
+        },
+        deleteCategory: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/forum/category/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getThreads: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/forum/threads', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getThread: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/forum/thread', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addThread: function (thread) {
+            return $http.post('/api/admin/forum/thread/add', thread);
+        },
+        editThread: function (thread) {
+            return $http.post('/api/admin/forum/thread/edit', thread);
+        },
+        deleteThread: function (_id, category) {
+            var d = $q.defer();
+            $http.post('/api/admin/forum/thread/delete', { _id: _id, category: category }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
+.service('Pagination', function () {
+    
+    var pagination = {};
+    
+    pagination.new = function (perpage) {
+        
+        perpage = perpage || 50;
+        
+        var paginate = {
+            page: 1,
+            perpage: perpage
+        };
+
+        paginate.results = function () {
+            return 0;
+        };
+        
+        paginate.pages = function () {
+            return Math.ceil(paginate.results() / paginate.perpage);
+        };
+
+        paginate.pagesArray = function () {
+            var arr = [],
+                pages = paginate.pages();
+            for (var i = 1; i <= pages; i++) {
+                arr.push(i);
+            }
+            return arr;
+        };
+
+        paginate.pageStart = function () {
+            return ((paginate.page * paginate.perpage) - paginate.perpage);
+        };
+
+        paginate.showStart = function () {
+            return (paginate.results()) ? paginate.pageStart() + 1 : 0;
+        };
+
+        paginate.showEnd = function () {
+            var end = paginate.page * paginate.perpage;
+            return (end > paginate.results()) ? paginate.results() : end;
+        };
+
+        paginate.isPage = function (page) {
+            return (paginate.page === page);
+        };
+
+        paginate.setPage = function (page) {
+            paginate.page = page;
+        };
+        
+        return paginate;
+    }
+    
+    return pagination;
+})
+.factory('Util', function () {
+    return {
+        toSelect: function (arr) {
+            arr = arr || [];
+            var out = [];
+            for (var i = 0; i < arr.length; i++) {
+                out.push({ name: arr[i], value: arr[i] });
+            }
+            return out;
+        },
+        slugify: function (str) {
+            return (str) ? str.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') : '';
+        }
+    }
+})
+.factory('Hearthstone', function () {
+    var hs = {};
+    
+    hs.types = ['Minion', 'Spell', 'Weapon'];
+    hs.rarities = ['Basic', 'Common', 'Rare', 'Epic', 'Legendary'];
+    hs.races = ['', 'Beast', 'Demon', 'Dragon', 'Murloc', 'Pirate', 'Totem', 'Mech'];
+    hs.classes = ['Neutral', 'Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
+    hs.mechanics = ['Battlecry', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Divine Shield', 'Enrage', 'Freeze', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];
+    hs.deckTypes = ['None', 'Aggro', 'Control', 'Midrange', 'Combo', 'Theory Craft'];
+    hs.expansions = ['Basic', 'Naxxramas', 'Goblins Vs. Gnomes'];
+    
+    return hs;
+})
+.factory('DeckBuilder', ['$sce', '$http', '$q', function ($sce, $http, $q) {
+
+    var deckBuilder = {};
+
+    deckBuilder.new = function (playerClass, data) {
+        data = data || {};
+        
+        var d = new Date();
+        d.setMonth(d.getMonth() + 1);
+        
+        var db = {
+            _id: data._id || null,
+            name: data.name || '',
+            description: data.description || '',
+            deckType: data.deckType || 'None',
+            contentEarly: data.contentEarly || '',
+            contentMid: data.contentMid || '',
+            contentLate: data.contentLate || '',
+            cards: data.cards || [],
+            playerClass: playerClass,
+            arena: data.arena || false,
+            mulligans: data.mulligans || [{
+                    klass: 'Mage',
+                    withCoin: {
+                        cards: [],
+                        instructions: ''
+                    },
+                    withoutCoin: {
+                        cards: [],
+                        instructions: ''
+                    }
+                },{
+                    klass: 'Shaman',
+                    withCoin: {
+                        cards: [],
+                        instructions: ''
+                    },
+                    withoutCoin: {
+                        cards: [],
+                        instructions: ''
+                    }
+                },{
+                    klass: 'Warrior',
+                    withCoin: {
+                        cards: [],
+                        instructions: ''
+                    },
+                    withoutCoin: {
+                        cards: [],
+                        instructions: ''
+                    }
+                },{
+                    klass: 'Rogue',
+                    withCoin: {
+                        cards: [],
+                        instructions: ''
+                    },
+                    withoutCoin: {
+                        cards: [],
+                        instructions: ''
+                    }
+                },{
+                    klass: 'Paladin',
+                    withCoin: {
+                        cards: [],
+                        instructions: ''
+                    },
+                    withoutCoin: {
+                        cards: [],
+                        instructions: ''
+                    }
+                },{
+                    klass: 'Priest',
+                    withCoin: {
+                        cards: [],
+                        instructions: ''
+                    },
+                    withoutCoin: {
+                        cards: [],
+                        instructions: ''
+                    }
+                },{
+                    klass: 'Warlock',
+                    withCoin: {
+                        cards: [],
+                        instructions: ''
+                    },
+                    withoutCoin: {
+                        cards: [],
+                        instructions: ''
+                    }
+                },{
+                    klass: 'Hunter',
+                    withCoin: {
+                        cards: [],
+                        instructions: ''
+                    },
+                    withoutCoin: {
+                        cards: [],
+                        instructions: ''
+                    }
+                },{
+                    klass: 'Druid',
+                    withCoin: {
+                        cards: [],
+                        instructions: ''
+                    },
+                    withoutCoin: {
+                        cards: [],
+                        instructions: ''
+                    }
+            }],
+            against: data.against || {
+                strong: [{
+                        klass: 'Mage',
+                        isStrong: false
+                    },{
+                        klass: 'Shaman',
+                        isStrong: false
+                    },{
+                        klass: 'Warrior',
+                        isStrong: false
+                    },{
+                        klass: 'Rogue',
+                        isStrong: false
+                    },{
+                        klass: 'Paladin',
+                        isStrong: false
+                    },{
+                        klass: 'Priest',
+                        isStrong: false
+                    },{
+                        klass: 'Warlock',
+                        isStrong: false
+                    },{
+                        klass: 'Hunter',
+                        isStrong: false
+                    },{
+                        klass: 'Druid',
+                        isStrong: false
+                }],
+                weak: [{
+                        klass: 'Mage',
+                        isWeak: false
+                    },{
+                        klass: 'Shaman',
+                        isWeak: false
+                    },{
+                        klass: 'Warrior',
+                        isWeak: false
+                    },{
+                        klass: 'Rogue',
+                        isWeak: false
+                    },{
+                        klass: 'Paladin',
+                        isWeak: false
+                    },{
+                        klass: 'Priest',
+                        isWeak: false
+                    },{
+                        klass: 'Warlock',
+                        isWeak: false
+                    },{
+                        klass: 'Hunter',
+                        isWeak: false
+                    },{
+                        klass: 'Druid',
+                        isWeak: false
+                }],
+                instructions: ''
+            },
+            video: data.video || '',
+            premium: data.premium || {
+                isPremium: false,
+                expiryDate: d
+            },
+            featured: data.featured || false,
+            public: data.public || 'true'
+        };
+        
+        db.validVideo = function () {
+            var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+            return (db.video.length) ? db.video.match(r) : true;
+        };
+        
+        db.isStrong = function (strong) {
+            return strong.isStrong;
+        }
+
+        db.isWeak = function (weak) {
+            return weak.isWeak;
+        }
+        
+        db.toggleStrong = function (strong) {
+            strong.isStrong = !strong.isStrong;
+        }
+        
+        db.toggleWeak = function (weak) {
+            weak.isWeak = !weak.isWeak;
+        }
+        
+        db.getStrong = function (klass) {
+            var strong = db.against.strong;
+            for (var i = 0; i < strong.length; i++) {
+                if (strong[i].klass === klass) {
+                    return strong[i];
+                }
+            }
+            return false;
+        }
+
+        db.getWeak = function (klass) {
+            var weak = db.against.weak;
+            for (var i = 0; i < weak.length; i++) {
+                if (weak[i].klass === klass) {
+                    return weak[i];
+                }
+            }
+            return false;
+        }
+
+        db.inMulligan = function (mulligan, withCoin, card) {
+            var c = (withCoin) ? mulligan.withCoin.cards : mulligan.withoutCoin.cards;
+            // check if card already exists
+            for (var i = 0; i < c.length; i++) {
+                if (c[i]._id === card._id) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        db.toggleMulligan = function (mulligan, withCoin, card) {
+            var c = (withCoin) ? mulligan.withCoin.cards : mulligan.withoutCoin.cards,
+                exists = false,
+                index = -1;
+            
+            // check if card already exists
+            for (var i = 0; i < c.length; i++) {
+                if (c[i]._id === card._id) {
+                    exists = true;
+                    index = i;
+                    break;
+                }
+            }
+            
+            if (exists) {
+                c.splice(index, 1);
+            } else {
+                if (c.length < 6) {
+                    c.push(card);
+                }
+            }
+        }
+        
+        db.getMulligan = function (klass) {
+            var mulligans = db.mulligans;
+            for (var i = 0; i < mulligans.length; i++) {
+                if (mulligans[i].klass === klass) {
+                    return mulligans[i];
+                }
+            }
+            return false;
+        }
+        
+        db.getContent = function () {
+            return $sce.trustAsHtml(db.content);
+        }
+
+        db.isAddable = function (card) {
+            var exists = false,
+                index = -1,
+                isLegendary = (card.rarity === 'Legendary') ? true : false;
+
+            // check if card already exists
+            for (var i = 0; i < db.cards.length; i++) {
+                if (db.cards[i]._id === card._id) {
+                    exists = true;
+                    index = i;
+                    break;
+                }
+            }
+
+            if (exists) {
+                return (!isLegendary && (db.cards[index].qty === 1 || db.arena));
+            } else {
+                return true;
+            }
+        }
+
+        // add card
+        db.addCard = function (card) {
+            var exists = false,
+                index = -1,
+                isLegendary = (card.rarity === 'Legendary') ? true : false;
+
+            // check if card already exists
+            for (var i = 0; i < db.cards.length; i++) {
+                if (db.cards[i]._id === card._id) {
+                    exists = true;
+                    index = i;
+                    break;
+                }
+            }
+
+            // add card
+            if (exists) {
+                // increase qty by one
+                if (!isLegendary && (db.cards[index].qty === 1 || db.arena)) {
+                    db.cards[index].qty = db.cards[index].qty + 1;
+                }
+            } else {
+                // add new card
+                db.cards.push({
+                    _id: card._id,
+                    cost: card.cost,
+                    name: card.name,
+                    dust: card.dust,
+                    photos: {
+                        small: card.photos.small,
+                        large: card.photos.large
+                    },
+                    legendary: isLegendary,
+                    qty: 1
+                });
+                // sort deck
+                db.sortDeck();
+            }
+        };
+
+        db.sortDeck = function () {
+            function dynamicSort(property) { 
+                return function (a, b) {
+                    if (a[property] < b[property]) return -1;
+                    if (a[property] > b[property]) return 1;
+                    return 0;
+                }
+            }
+
+            function dynamicSortMultiple() {
+                var props = arguments;
+                return function (a, b) {
+                    var i = 0,
+                        result = 0;
+
+                    while(result === 0 && i < props.length) {
+                        result = dynamicSort(props[i])(a, b);
+                        i++;
+                    }
+                    return result;
+                }
+            }
+
+            db.cards.sort(dynamicSortMultiple('cost', 'name'));
+        };
+
+        db.removeCardFromDeck = function (card) {
+            for (var i = 0; i < db.cards.length; i++) {
+                if (card._id == db.cards[i]._id) {
+                    if (db.cards[i].qty > 1) {
+                        db.cards[i].qty = db.cards[i].qty - 1;
+                    } else {
+                        var index = db.cards.indexOf(db.cards[i]);
+                        db.cards.splice(index, 1);
+                    }
+                }
+            }
+        };
+        
+        db.removeCard = function (card) {
+            if (card.qty > 1) {
+                card.qty = card.qty - 1;
+            } else {
+                var index = db.cards.indexOf(card);
+                db.cards.splice(index, 1);
+            }
+        };
+
+        db.manaCurve = function (mana) {
+            var big = 0,
+                cnt;
+            // figure out largest mana count
+            for (var i = 0; i <= 7; i++) {
+                cnt = db.manaCount(i);
+                if (cnt > big) big = cnt;
+            }
+
+            if (big === 0) return 0;
+
+            return Math.ceil(db.manaCount(mana) / big * 98);
+        };
+
+        db.manaCount = function (mana) {
+            var cnt = 0;
+            for (var i = 0; i < db.cards.length; i++) {
+                if (db.cards[i].cost === mana || (mana === 7 && db.cards[i].cost >= 7)) {
+                    cnt += db.cards[i].qty;
+                }
+            }
+            return cnt;
+        };
+
+        db.getSize = function () {
+            var size = 0;
+            for (var i = 0; i <= 7; i++) {
+                size += db.manaCount(i);
+            }
+            return size;
+        };
+
+        db.getDust = function () {
+            var dust = 0;
+            for (var i = 0; i < db.cards.length; i++) {
+                dust += db.cards[i].qty * db.cards[i].dust;
+            }
+            return dust;
+        };
+
+        db.validDeck = function () {
+            // 30 cards in deck
+            if (db.getSize() !== 30) {
+                return false;
+            }
+
+            // make sure not more than 2 of same cards in non-arena deck
+            if (!db.arena) {
+                for (var i = 0; i < db.cards.length; i++) {
+                    if (db.cards[i].qty > 2) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        };
+
+        return db;
+    }
+
+    deckBuilder.loadCards = function (playerClass) {
+        var d = $q.defer();
+        $http.post('/deckbuilder', { playerClass: playerClass }).success(function (data) {
+            d.resolve(data);
+        });
+        return d.promise;
+    }
+
+    deckBuilder.saveDeck = function (deck) {
+        return $http.post('/api/deck/add', {
+            name: deck.name,
+            deckType: deck.deckType,
+            description: deck.description,
+            contentEarly: deck.contentEarly,
+            contentMid: deck.contentMid,
+            contentLate: deck.contentLate,
+            cards: deck.cards,
+            playerClass: deck.playerClass,
+            arena: deck.arena,
+            mulligans: deck.mulligans,
+            against: deck.against,
+            video: deck.video,
+            premium: deck.premium,
+            featured: deck.featured,
+            public: deck.public
+        });
+    }
+    
+    deckBuilder.updateDeck = function (deck) {
+        return $http.post('/api/deck/update', {
+            _id: deck._id,
+            name: deck.name,
+            deckType: deck.deckType,
+            description: deck.description,
+            contentEarly: deck.contentEarly,
+            contentMid: deck.contentMid,
+            contentLate: deck.contentLate,
+            cards: deck.cards,
+            playerClass: deck.playerClass,
+            arena: deck.arena,
+            mulligans: deck.mulligans,
+            against: deck.against,
+            video: deck.video,
+            premium: deck.premium,
+            featured: deck.featured,
+            public: deck.public
+        });
+    }
+
+    return deckBuilder;
+}])
+.factory('DeckService', ['$http', '$q', function ($http, $q) {
+    return {
+        getDecksCommunity: function (klass, page, perpage) {
+            klass = klass || 'all';
+            page = page || 1;
+            perpage = perpage || 24;
+            
+            var d = $q.defer();
+            $http.post('/decks/community', { klass: klass, page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getDecksFeatured: function (klass, page, perpage) {
+            klass = klass || 'all';
+            page = page || 1;
+            perpage = perpage || 24;
+            
+            var d = $q.defer();
+            $http.post('/decks/featured', { klass: klass, page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getDecks: function (klass, page, perpage, search, age, order) {
+            klass = klass || 'all';
+            page = page || 1;
+            perpage = perpage || 24;
+            search = search || '';
+            age = age || 'all';
+            order = order || 'high';
+            
+            var d = $q.defer();
+            $http.post('/decks', { klass: klass, page: page, perpage: perpage, search: search, age: age, order: order }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getDeck: function (slug) {
+            var d = $q.defer();
+            $http.post('/deck', { slug: slug }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        deckEdit: function (slug) {
+            var d = $q.defer();
+            $http.post('/api/deck', { slug: slug }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        deckDelete: function (_id) {
+            return $http.post('/api/deck/delete', { _id: _id });
+        },
+        addComment: function (deck, comment) {
+            return $http.post('/api/deck/comment/add', { deckID: deck._id, comment: comment });
+        }
+    };
+}])
+.factory('VoteService', ['$http', '$q', function ($http, $q) {
+    return {
+        voteArticle: function (direction, article) {
+            var d = $q.defer();
+            $http.post('/api/article/vote', { _id: article._id, direction: direction }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        voteDeck: function (direction, deck) {
+            var d = $q.defer();
+            $http.post('/api/deck/vote', { _id: deck._id, direction: direction }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        voteComment: function (direction, comment) {
+            var d = $q.defer();
+            $http.post('/api/comment/vote', { _id: comment._id, direction: direction }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
+.factory('ForumService', ['$http', '$q', function ($http, $q) {
+    return {
+        getCategories: function () {
+            var d = $q.defer();
+            $http.post('/forum', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getThread: function (thread) {
+            var d = $q.defer();
+            $http.post('/forum/thread', { thread: thread }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getPost: function (thread, post) {
+            var d = $q.defer();
+            $http.post('/forum/post', { thread: thread, post: post }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addPost: function (thread, post) {
+            return $http.post('/api/forum/post/add', { thread: thread, post: post });
+        },
+        addComment: function (post, comment) {
+            return $http.post('/api/forum/post/comment/add', { post: post, comment: comment });
+        }
+    };
+}])
+.factory('ImgurService', ['$http', '$q', function ($http, $q) {
+    return {
+        upload: function (file) {
+            var d = $q.defer(),
+                data = new FormData();
+            
+            data.append("file", file);
+            
+            $http.post('/upload', data).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
+.factory('BannerService', ['$http', '$q', function ($http, $q) {
+    return {
+        getBanners: function () {
+            var d = $q.defer();
+            $http.post('/banners', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
 ;

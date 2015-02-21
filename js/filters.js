@@ -7,7 +7,7 @@ angular.module('app.filters', [])
         return input.slice(start);
     }
 })
-.filter('filterAll', function ($filter) {
+.filter('filterAll', ['$filter', function ($filter) {
     var filter = $filter('filter');
     return function (input, search) {
         
@@ -35,5 +35,5 @@ angular.module('app.filters', [])
         
         return results;
     };
-})
+}])
 ;
