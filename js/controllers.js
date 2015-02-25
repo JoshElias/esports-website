@@ -682,8 +682,8 @@ angular.module('app.controllers', ['ngCookies'])
             { name: 'No', value: false }
         ];
         
-        $scope.cardImg = ($scope.card.photos.large.length) ? $scope.app.cdn + '/photos/cards/' + $scope.card.photos.large : $scope.app.cdn + '/dist/img/blank.png';
-        $scope.deckImg = ($scope.card.photos.small.length) ? $scope.app.cdn + '/photos/cards/' + $scope.card.photos.small : $scope.app.cdn + '/dist/img/blank.png';
+        $scope.cardImg = ($scope.card.photos.large.length) ? $scope.app.cdn + '/cards/' + $scope.card.photos.large : $scope.app.cdn + '/dist/img/blank.png';
+        $scope.deckImg = ($scope.card.photos.small.length) ? $scope.app.cdn + '/cards/' + $scope.card.photos.small : $scope.app.cdn + '/dist/img/blank.png';
         
         // card upload
         $scope.cardUpload = function ($files) {
@@ -982,7 +982,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // photo
-        $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? $scope.app.cdn + '/photos/articles/' + $scope.article.photos.small : $scope.app.cdn + '/dist/img/blank.png';
+        $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? $scope.app.cdn + '/articles/' + $scope.article.photos.small : $scope.app.cdn + '/dist/img/blank.png';
         
         // klass tags
         $scope.klassTags = ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
