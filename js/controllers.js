@@ -570,7 +570,7 @@ angular.module('app.controllers', ['ngCookies'])
             active: true
         };
         
-        $scope.cardImg = $scope.deckImg = $scope.app.cdn + '/dist/img/blank.png';
+        $scope.cardImg = $scope.deckImg = $scope.app.cdn + '/img/blank.png';
         
         // load card
         $scope.card = angular.copy(defaultCard);
@@ -682,8 +682,8 @@ angular.module('app.controllers', ['ngCookies'])
             { name: 'No', value: false }
         ];
         
-        $scope.cardImg = ($scope.card.photos.large.length) ? $scope.app.cdn + '/cards/' + $scope.card.photos.large : $scope.app.cdn + '/dist/img/blank.png';
-        $scope.deckImg = ($scope.card.photos.small.length) ? $scope.app.cdn + '/cards/' + $scope.card.photos.small : $scope.app.cdn + '/dist/img/blank.png';
+        $scope.cardImg = ($scope.card.photos.large.length) ? $scope.app.cdn + '/cards/' + $scope.card.photos.large : $scope.app.cdn + '/img/blank.png';
+        $scope.deckImg = ($scope.card.photos.small.length) ? $scope.app.cdn + '/cards/' + $scope.card.photos.small : $scope.app.cdn + '/img/blank.png';
         
         // card upload
         $scope.cardUpload = function ($files) {
@@ -982,7 +982,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // photo
-        $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? $scope.app.cdn + '/articles/' + $scope.article.photos.small : $scope.app.cdn + '/dist/img/blank.png';
+        $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? $scope.app.cdn + '/articles/' + $scope.article.photos.small : $scope.app.cdn + '/img/blank.png';
         
         // klass tags
         $scope.klassTags = ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
