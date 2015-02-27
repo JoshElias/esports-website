@@ -259,7 +259,7 @@ angular.module('app.controllers', ['ngCookies'])
                 featured: true
             };
             
-            ArticleService.getArticles(klass).then(function (data) {
+            ArticleService.getArticles(klass, 1, 9).then(function (data) {
                 $scope.articles = data.articles;
                 $scope.loading.articles = false;
             });

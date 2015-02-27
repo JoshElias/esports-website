@@ -134,7 +134,7 @@ var app = angular.module('app', [
                             dataArticles: ['ArticleService', function (ArticleService) {
                                 var klass = 'all',
                                     page = 1,
-                                    perpage = 8;
+                                    perpage = 9;
                                 return ArticleService.getArticles(klass, page, perpage);
                             }],
                             dataDecks: ['DeckService', function (DeckService) {

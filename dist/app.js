@@ -177,7 +177,7 @@ var app = angular.module('app', [
                             dataArticles: ['ArticleService', function (ArticleService) {
                                 var klass = 'all',
                                     page = 1,
-                                    perpage = 8;
+                                    perpage = 9;
                                 return ArticleService.getArticles(klass, page, perpage);
                             }],
                             dataDecks: ['DeckService', function (DeckService) {
@@ -1309,7 +1309,7 @@ angular.module('app.controllers', ['ngCookies'])
                 featured: true
             };
             
-            ArticleService.getArticles(klass).then(function (data) {
+            ArticleService.getArticles(klass, 1, 9).then(function (data) {
                 $scope.articles = data.articles;
                 $scope.loading.articles = false;
             });
