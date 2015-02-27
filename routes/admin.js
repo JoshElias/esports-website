@@ -465,7 +465,7 @@ module.exports = {
             var userID = req.user._id;
             
             req.assert('name', 'Deck name is required').notEmpty();
-            req.assert('name', 'Deck name cannot be more than 40 characters').len(1, 40);
+            req.assert('name', 'Deck name cannot be more than 60 characters').len(1, 60);
             req.assert('deckType', 'Deck type is required').notEmpty();
             req.assert('description', 'Deck description is required').notEmpty();
             req.assert('description', 'Deck description cannot be more than 400 characters').len(1, 400);
