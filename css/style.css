@@ -52,7 +52,7 @@ body.admin {  }
 .social a { float: left; margin-right: 10px; display: block; color: #FFF; width: 30px; height: 30px; font-size: 30px; opacity: .7; }
 .social a:hover { opacity: 1; }
 
-.footer-sponsors { height: 56px; background: url('../img/sponsorbanner.png') center center repeat-x; }
+.footer-sponsors { height: 70px; background: url('../img/sponsorbanner.png') center center repeat-x; }
 
 /* scrollbars */
 ::-webkit-scrollbar {  
@@ -1803,9 +1803,10 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .badge-green { padding: 5px 10px; background: #27c24c; }
 
 /* sponsor page */
-.sponsor-page { margin-top: 50px; }
+.sponsor-page { padding-top: 50px; padding-bottom: 50px; }
 .sponsor-page p { color: #FFF; }
 .sponsor-logo-twitch { margin: 0 auto; width: 275px; height: 80px; background: url('../img/twitch.png') no-repeat; }
+.sponsor-logo-g2a { margin: 0 auto; width: 275px; height: 80px; background: url('../img/g2a.png') no-repeat; }
 .sponsor-logo-namecheap { margin: 0 auto; width: 275px; height: 80px; background: url('../img/namecheap.png') no-repeat; }
 .sponsor-page a { margin: 0 auto; display: block; width: 20px; color: #FFF; opacity: .6; font-size: 20px; }
 .sponsor-page a:hover { opacity: 1; }
