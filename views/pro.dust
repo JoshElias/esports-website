@@ -7,7 +7,7 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/dist/vendor.min.css" type="text/css" />
-    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/dist/style.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/dist/style.min.css?03112015" type="text/css" />
 </head>
 <body ng-class="{ admin: $state.includes('app.admin') }">
     <div class="app" id="app" ui-view="root"></div>
