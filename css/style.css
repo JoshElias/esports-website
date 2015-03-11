@@ -1856,11 +1856,11 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .team-member.active { max-height: 1000px; }
 .team-member.active .team-member-content { max-height: 1000px; }
 
-.team-banner { height: 210px; border-bottom: 1px solid #000; }
+.team-banner { border-bottom: 1px solid #000; }
 .team-banner-hs { background: url('../img/team/hs-back.jpg') center center; background-size: cover; }
 .team-banner-hots { background: url('../img/team/hots-back.jpg') center center; background-size: cover; }
 
-.team-banner img { margin: 30px auto; width: 553px; height: 150px; }
+.team-banner img { margin: 30px auto; width: 553px; height: auto; }
 
 /* mobile */
 @media (min-width: 768px) {
@@ -1923,4 +1923,11 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
     .deck-page .deck-right { float: none; margin: 0 auto; }
     .deck-page .deck-left { margin-right: 0px; }
     .deck-header-inner { background: #2766ad !important; }
+    
+    /* team page */
+    .team-member { margin-left: 25px; }
+    .team-member-content { padding-left: 35px; }
+    .team-member-content h1 { font-size: 18px; }
+    .team-member-photo { left: -25px; width: 50px; height: 50px; }
+    .team-member-photo img { width: 38px; height: 38px; }
 }
