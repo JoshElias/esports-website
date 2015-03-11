@@ -1,0 +1,161 @@
+<div class="panel panel-danger error-modal animated" ng-show="showError">
+    <div class="panel-heading">
+        <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+        <strong>Unable to add hero</strong>
+    </div>
+    <div class="panel-body">
+        <ul class="error text-danger">
+            <li ng-repeat="error in errors">{{error.msg}}</li>
+        </ul>
+    </div>
+</div>
+<div class="panel panel-default br-none">
+    <form name="form" role="form" class="form-horizontal">
+    <div class="panel-heading">
+        Add a Hero
+    </div>
+    <div class="panel-body">
+        <div class="row form-group">
+            <label for="title" class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-10">
+                <input type="text" id="name" name="name" class="form-control" ng-model="hero.name" required>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="description" class="col-sm-2 control-label">Description</label>
+            <div class="col-sm-10">
+                <textarea id="description" name="description" class="form-control" ng-model="hero.description" required></textarea>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="role" class="col-sm-2 control-label">Role</label>
+            <div class="col-sm-10">
+                <select id="role" name="role" class="form-control" ng-options="role as role for role in roles" ng-model="hero.role" required></select>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="heroType" class="col-sm-2 control-label">Type</label>
+            <div class="col-sm-10">
+                <select id="heroType" name="heroType" class="form-control" ng-options="heroType as heroType for heroType in heroTypes" ng-model="hero.heroType" required></select>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="universe" class="col-sm-2 control-label">Universe</label>
+            <div class="col-sm-10">
+                <select id="universe" name="universe" class="form-control" ng-options="universe as universe for universe in universes" ng-model="hero.universe" required></select>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="gold" class="col-sm-2 control-label">Gold Cost</label>
+            <div class="col-sm-10">
+                <input type="number" id="gold" name="gold" class="form-control" ng-model="hero.price.gold" required>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <a href="#" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="abilityAddWnd()">
+                    <i class="fa fa-plus-circle m-r-xs"></i>Add
+                </a>
+                <strong class="lh-lg">Abilities</strong>
+            </div>
+            <ul class="list-group" ng-show="hero.abilities.length">
+                <li class="list-group-item lh-lg clearfix" ng-repeat="ability in hero.abilities | orderBy: ability.orderNum">
+                    {{ability.name}}
+                    <div class="pull-right">
+                        <a href="#" class="btn btn-sm btn-default" ng-click="abilityEditWnd(ability)">Edit</a>
+                        <a href="#" class="btn btn-sm btn-danger" ng-click="deleteAbility(ability)">Delete</a>
+                    </div>
+                </li>
+            </ul>
+            <div class="panel-body" ng-show="!hero.abilities.length">
+                <p class="m-b-none">There are no abilities added for this hero yet.</p>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <a href="#" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="addTalent()">
+                    <i class="fa fa-plus-circle m-r-xs"></i>Add
+                </a>
+                <strong class="lh-lg">Talents</strong>
+            </div>
+            <ul class="list-group" ng-show="hero.talents.length">
+                <li class="list-group-item lh-lg clearfix" ng-repeat="talent in hero.talents | orderBy: talent.orderNum">
+                    {{talent.name}}
+                    <div class="pull-right">
+                        <a href="#" class="btn btn-sm btn-default" ng-click="editTalent(talent)">Edit</a>
+                        <a href="#" class="btn btn-sm btn-danger" ng-click="deleteTalent(talent)">Delete</a>
+                    </div>
+                </li>
+            </ul>
+            <div class="panel-body" ng-show="!hero.talents.length">
+                <p class="m-b-none">There are no talents added for this hero yet.</p>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <div class="btn-group pull-right clearfix">
+                    <a href="#" class="btn btn-sm btn-blue pull-left" ng-click="prevLevel()" ng-disabled="getLevel() === 1"><i class="fa fa-angle-left"></i></a>
+                    <a href="#" class="btn btn-sm btn-blue pull-left" ng-click="nextLevel()" ng-disabled="getLevel() === 30"><i class="fa fa-angle-right"></i></a>
+                </div>
+                <strong class="lh-lg">Stats - Level {{statLevel}}</strong>
+            </div>
+            <div class="panel-body">
+                <div class="row form-group">
+                    <label for="statsHealth" class="col-sm-2 control-label">Health</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="statsHealth" name="statsHealth" class="form-control" ng-model="currentStats().health" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="statsHealth" class="col-sm-2 control-label">Health Regen</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="statsHealth" name="statsHealth" class="form-control" ng-model="currentStats().healthRegen" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="statsHealth" class="col-sm-2 control-label">Mana</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="statsHealth" name="statsHealth" class="form-control" ng-model="currentStats().mana" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="statsHealth" class="col-sm-2 control-label">Mana Regen</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="statsHealth" name="statsHealth" class="form-control" ng-model="currentStats().manaRegen" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="statsHealth" class="col-sm-2 control-label">Attack Speed</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="statsHealth" name="statsHealth" class="form-control" ng-model="currentStats().attackSpeed" required>
+                    </div>
+                </div>
+                <div class="row form-group m-b-none">
+                    <label for="statsHealth" class="col-sm-2 control-label">Damage</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="statsHealth" name="statsHealth" class="form-control" ng-model="currentStats().damage" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="className" class="col-sm-2 control-label">CSS Class</label>
+            <div class="col-sm-10">
+                <input type="text" id="className" name="className" class="form-control" ng-model="hero.className" required>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label for="active" class="col-sm-2 control-label">Active</label>
+            <div class="col-sm-10">
+                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in heroActive" ng-model="hero.active" required></select>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="col-sm-10 col-sm-offset-2">
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="addHero()">Add Hero</button>
+        </div>
+    </div>
+    </form>
+    </div>
+</div>

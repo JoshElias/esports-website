@@ -1,0 +1,9 @@
+<form name="abilityForm">
+    <div class="row form-group">
+        <label for="title" class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-10">
+            <input type="text" id="name" name="name" class="form-control" ng-model="currentAbility.name" required>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-blue btn-lg" ng-disabled="abilityForm.$invalid" ng-click="addAbility()">Add Ability</button>
+</form>

@@ -16,11 +16,26 @@
                 <ul class="nav navbar-nav">
                     <li ng-class="{active:$state.includes('app.home')}"><a ui-sref="app.home">Home</a></li>
                     <li ng-class="{active:$state.includes('app.articles')}"><a ui-sref="app.articles.list">Articles</a></li>
-                    <li ng-class="{active:$state.includes('app.decks')}"><a ui-sref="app.decks.list">Decks</a></li>
-                    <li ng-class="{active:$state.includes('app.deckBuilder')}" class="hidden-xs"><a ui-sref="app.deckBuilder.class">Deck Builder</a></li>
+                    <li ng-class="{active:$state.includes('app.decks') || $state.includes('app.deckBuilder')}">
+                        <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Hearthstone <b class="caret"></b></a>
+                        <!-- dropdown -->
+                        <ul class="dropdown-menu">
+                          <li ng-class="{active:$state.includes('app.decks')}"><a ui-sref="app.decks.list">Decks</a></li>
+                          <li ng-class="{active:$state.includes('app.deckBuilder')}" class="hidden-xs"><a ui-sref="app.deckBuilder.class">Deck Builder</a></li>
+                        </ul>
+                        <!-- / dropdown -->
+                    </li>
+                    <li ng-class="{active:$state.includes('app.team')}">
+                        <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Team <b class="caret"></b></a>
+                        <!-- dropdown -->
+                        <ul class="dropdown-menu">
+                          <li ng-class="{active:$state.includes('app.team.hearthstone')}"><a ui-sref="app.team.hearthstone">Hearthstone</a></li>
+                          <li ng-class="{active:$state.includes('app.team.heroes')}"><a ui-sref="app.team.heroes">Heroes of the Storm</a></li>
+                        </ul>
+                        <!-- / dropdown -->
+                    </li>
                     <li ng-class="{active:$state.includes('app.forum')}"><a ui-sref="app.forum.home">Forum</a></li>
                     <li ng-class="{active:$state.includes('app.sponsors')}"><a ui-sref="app.sponsors">Sponsors</a></li>
-                    <li ng-if="false" ng-class="{active:$state.includes('app.team')}"><a ui-sref="app.team">The Team</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li ng-class="{active:$state.includes('app.login')}" ng-hide="app.user.isLogged()"><a ui-sref="app.login">Login</a></li>

@@ -135,4 +135,14 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
+.directive('abilityAddForm', function () {
+    return {
+        templateUrl: 'views/admin/hots.heroes.ability.add.html'
+    };
+})
+.directive('abilityEditForm', function () {
+    return {
+        templateUrl: 'views/admin/hots.heroes.ability.edit.html'
+    };
+})
 ;

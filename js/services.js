@@ -365,6 +365,41 @@ angular.module('app.services', [])
         }
     }
 }])
+.factory('AdminHeroService', ['$http', '$q', function ($http, $q) {
+    return {
+        getHeroes: function (page, perpage, search) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 50,
+                search = search || '';
+            
+            $http.post('/api/admin/heroes', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getHero: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/hero', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addHero: function (hero) {
+            return $http.post('/api/admin/hero/add', hero);
+        },
+        editHero: function (hero) {
+            return $http.post('/api/admin/hero/edit', hero);
+        },
+        deleteHero: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/hero/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    }
+}])
 .factory('AdminUserService', ['$http', '$q', function ($http, $q) {
     return {
         getProviders: function () {
@@ -547,6 +582,35 @@ angular.module('app.services', [])
     hs.expansions = ['Basic', 'Naxxramas', 'Goblins Vs. Gnomes'];
     
     return hs;
+})
+.factory('HOTS', function () {
+    var hots = {};
+    
+    hots.roles = ["Warrior", "Assassin", "Support", "Specialist"];
+    hots.types = ["Melee", "Ranged"];
+    hots.universes = ["Warcraft", "Starcraft", "Diablo", "Blizzard"];
+    
+    hots.genStats = function () {
+        var stats = [],
+            obj;
+        
+        for (var i = 0; i < 30; i++) {
+            obj = {
+                level: i + 1,
+                health: '',
+                healthRegen: '',
+                mana: '',
+                manaRegen: '',
+                attackSpeed: '',
+                damage: ''
+            };
+            stats.push(obj);
+        }
+        
+        return stats;
+    };
+    
+    return hots;
 })
 .factory('DeckBuilder', ['$sce', '$http', '$q', function ($sce, $http, $q) {
 

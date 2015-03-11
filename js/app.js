@@ -41,8 +41,8 @@ var app = angular.module('app', [
                     $state.transitionTo('app.login');
                 }
                 if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
-                    event.preventDefault();
-                    $state.transitionTo('app.home');
+                    //event.preventDefault();
+                    //$state.transitionTo('app.home');
                 }
                 $window.scrollTo(0,0);
             });
@@ -361,10 +361,27 @@ var app = angular.module('app', [
                 }
             })
             .state('app.team', {
-                url: 'the-team',
+                abstract: true,
+                url: 'team',
                 views: {
                     content: {
                         templateUrl: tpl + 'views/frontend/team.html'
+                    }
+                }
+            })
+            .state('app.team.hearthstone', {
+                url: '/hearthstone',
+                views: {
+                    team: {
+                        templateUrl: tpl + 'views/frontend/team.hearthstone.html'
+                    }
+                }
+            })
+            .state('app.team.heroes', {
+                url: '/hots',
+                views: {
+                    team: {
+                        templateUrl: tpl + 'views/frontend/team.hots.html'
                     }
                 }
             })
@@ -811,6 +828,63 @@ var app = angular.module('app', [
                                 return AdminCardService.getCard(cardID);
                             }]
                         }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots', {
+                abstract: true,
+                url: '/hots',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/hots.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.heroes', {
+                abstract: true,
+                url: '/heroes',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/admin/hots.heroes.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.heroes.list', {
+                url: '',
+                views: {
+                    heroes: {
+                        templateUrl: tpl + 'views/admin/hots.heroes.list.html',
+                        controller: 'AdminHeroListCtrl',
+                        resolve: {
+                            data: ['AdminHeroService', function (AdminHeroService) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminHeroService.getHeroes(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.heroes.add', {
+                url: '/add',
+                views: {
+                    heroes: {
+                        templateUrl: tpl + 'views/admin/hots.heroes.add.html',
+                        controller: 'AdminHeroAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.heroes.edit', {
+                url: '/edit/:heroID',
+                views: {
+                    heroes: {
+                        templateUrl: tpl + 'views/admin/hots.heroes.edit.html'
                     }
                 },
                 access: { auth: true, admin: true }

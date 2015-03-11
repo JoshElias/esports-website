@@ -215,6 +215,12 @@ if (cluster.isMaster) {
     app.post('/api/admin/deck/delete', routes.admin.isAdmin(Schemas), routes.admin.deckDelete(Schemas));
     app.post('/api/admin/deck/edit', routes.admin.isAdmin(Schemas), routes.admin.deckEdit(Schemas, Util));
 
+    app.post('/api/admin/heroes', routes.admin.isAdmin(Schemas), routes.admin.heroes(Schemas));
+    //app.post('/api/admin/hero', routes.admin.isAdmin(Schemas), routes.admin.hero(Schemas));
+    //app.post('/api/admin/hero/add', routes.admin.isAdmin(Schemas), routes.admin.heroAdd(Schemas, Util));
+    app.post('/api/admin/hero/delete', routes.admin.isAdmin(Schemas), routes.admin.heroDelete(Schemas));
+    //app.post('/api/admin/hero/edit', routes.admin.isAdmin(Schemas), routes.admin.heroEdit(Schemas, Util));
+
     app.post('/api/admin/articles', routes.admin.isAdmin(Schemas), routes.admin.articles(Schemas));
     app.post('/api/admin/articles/all', routes.admin.isAdmin(Schemas), routes.admin.articlesAll(Schemas));
     app.post('/api/admin/article', routes.admin.isAdmin(Schemas), routes.admin.article(Schemas));

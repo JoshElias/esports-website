@@ -790,6 +790,68 @@ module.exports = {
             });
         };
     },
+    heroes: function (Schemas) {
+        return function (req, res, next) {
+            var page = req.body.page,
+                perpage = req.body.perpage,
+                start = (page * perpage) - perpage,
+                search = req.body.search || '',
+                where = (search.length) ? { name: new RegExp(search, "i") } : {},
+                heroes, total;
+            
+            function getTotal (callback) {
+                Schemas.Hero.count({})
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            function getHeroes (callback) {
+                Schemas.Hero.find({})
+                .where(where)
+                .sort({ name: 1 })
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    heroes = results;
+                    return callback();
+                });
+            }
+            
+            getTotal(function () {
+                getHeroes(function () {
+                    return res.json({
+                        success: true,
+                        heroes: heroes,
+                        total: total,
+                        page: page,
+                        perpage: perpage,
+                        search: search
+                    });
+                });
+            });
+        };
+    },
+    heroDelete: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            
+            function deleteHero (callback) {
+                Schemas.Hero.findOne({ _id: _id }).remove().exec(function (err) {
+                    if (err) { return res.json({ success: false }); }
+                    return callback();
+                });
+            }
+            
+            deleteHero(function () {
+                return res.json({ success: true });
+            });
+        };
+    },
     usersProviders: function (Schemas) {
         return function (req, res, next) {
             Schemas.User.find({ isProvider: true }).select('_id username').exec(function (err, users) {

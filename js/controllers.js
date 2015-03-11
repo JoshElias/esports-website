@@ -1621,6 +1621,125 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+.controller('AdminHeroListCtrl', ['$scope', 'AdminHeroService', 'AlertService', 'Pagination', 'data', 
+    function ($scope, AdminDeckService, AlertService, Pagination, data) {
+        // grab alerts
+        if (AlertService.hasAlert()) {
+            $scope.success = AlertService.getSuccess();
+            AlertService.reset();
+        }
+        
+        // load heroes
+        $scope.heroes = data.heroes;
+        $scope.page = data.page;
+        $scope.perpage = data.perpage;
+        $scope.total = data.total;
+        $scope.search = data.search;
+        
+        $scope.getHeroes = function () {
+            AdminHeroService.getHeroes($scope.page, $scope.perpage, $scope.search).then(function (data) {
+                $scope.heroes = data.heroes;
+                $scope.page = data.page;
+                $scope.total = data.total;
+            });
+        }
+        
+        $scope.searchHeroes = function () {
+            $scope.page = 1;
+            $scope.getHeroes();
+        }
+        
+        // pagination
+        $scope.pagination = {
+            page: function () {
+                return $scope.page;
+            },
+            perpage: function () {
+                return $scope.perpage;
+            },
+            results: function () {
+                return $scope.total;
+            },
+            setPage: function (page) {
+                $scope.page = page;
+                $scope.getHeroes();
+            },
+            pagesArray: function () {
+                var pages = [],
+                    start = 1,
+                    end = this.totalPages();
+                
+                if (this.totalPages() > 5) {
+                    if (this.page() < 3) {
+                        start = 1;
+                        end = start + 4;
+                    } else if (this.page() > this.totalPages() - 2) {
+                        end = this.totalPages();
+                        start = end - 4;
+                    } else {
+                        start = this.page() - 2;
+                        end = this.page() + 2;
+                    }
+                    
+                }
+                
+                for (var i = start; i <= end; i++) {
+                    pages.push(i);
+                }
+                
+                return pages;
+            },
+            isPage: function (page) {
+                return (page === this.page());
+            },
+            totalPages: function (page) {
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
+            },
+            from: function () {
+                return (this.page() * this.perpage()) - this.perpage() + 1;
+            },
+            to: function () {
+                return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
+            }
+        };
+        
+        // delete hero
+        $scope.deleteHero = function deleteHero(hero) {
+            var box = bootbox.dialog({
+                title: 'Delete hero: ' + hero.name + '?',
+                message: 'Are you sure you want to delete the hero <strong>' + hero.name + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            AdminHeroService.deleteHero(hero._id).then(function (data) {
+                                if (data.success) {
+                                    var index = $scope.heroes.indexOf(hero);
+                                    if (index !== -1) {
+                                        $scope.heroes.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: hero.name + ' deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
+    }
+])
 .controller('AdminUserListCtrl', ['$scope', 'bootbox', 'Pagination', 'AlertService', 'AdminUserService', 'data', 
     function ($scope, bootbox, Pagination, AlertService, AdminUserService, data) {
         // grab alerts
@@ -3484,6 +3603,164 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.login = function () {
             window.location.replace('/auth/bnet');
         };
+    }
+])
+/* admin hots */
+.controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'AdminHeroService', 
+    function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, AdminHeroService) {
+        // default hero
+        var defaultHero = {
+                name : '',
+                description: '',
+                role: HOTS.roles[0],
+                heroType: HOTS.types[0],
+                universe: HOTS.universes[0],
+                abilities: [{name: 'test', orderNum: 1}],
+                talents: [],
+                stats: HOTS.genStats(),
+                price: {
+                    gold: '',
+                },
+                className: '',
+                active: true
+            },
+            defaultAbility = {
+                _id: null,
+                name: '',
+                abilityType: '',
+                mana: '',
+                cooldown: '',
+                description: '',
+                damage: '',
+                healing: '',
+                className: '',
+                orderNum: 1
+            },
+            defaultTalent = {
+                _id: null,
+                name: '',
+                tier: '',
+                description: '',
+                className: '',
+                orderNum: 1
+            };
+        
+        // load hero
+        $scope.hero = angular.copy(defaultHero);
+        
+        // roles
+        $scope.roles = HOTS.roles;
+        
+        // types
+        $scope.heroTypes = HOTS.types;
+        
+        // universe
+        $scope.universes = HOTS.universes;
+        
+        // select options
+        $scope.heroActive = [
+            { name: 'Yes', value: true },
+            { name: 'No', value: false }
+        ];
+        
+        // abilities
+        var box;
+        $scope.abilityAddWnd = function () {
+            $scope.currentAbility = angular.copy(defaultAbility);
+            box = bootbox.dialog({
+                title: 'Add Ability',
+                message: $compile('<div ability-add-form></div>')($scope)
+            });
+        };
+
+        $scope.abilityEditWnd = function (ability) {
+            $scope.currentAbility = ability;
+            box = bootbox.dialog({
+                title: 'Edit Ability',
+                message: $compile('<div ability-edit-form></div>')($scope)
+            });
+        };
+
+        $scope.addAbility = function () {
+            $scope.hero.abilities.push($scope.currentAbility);
+            box.modal('hide');
+            $scope.currentAbility = false;
+        };
+        
+        $scope.editAbility = function (ability) {
+            box.modal('hide');
+            $scope.currentAbility = false;
+        };
+        
+        $scope.deleteAbility = function (ability) {
+            var index = $scope.hero.abilities.indexOf(ability);
+            $scope.hero.abilities.splice(index, 1);
+        };
+        
+        // talents
+        $scope.addTalent = function () {
+            
+        };
+        
+        $scope.editTalent = function (talent) {
+            
+        };
+        
+        $scope.deleteTalent = function (talent) {
+            var index = $scope.hero.talents.indexOf(talent);
+            $scope.hero.talents.splice(index, 1);
+        };
+        
+        // stats
+        $scope.statLevel = 1;
+        
+        $scope.nextLevel = function () {
+            var next = $scope.statLevel + 1;
+            if (next <= 30) {
+                $scope.statLevel = next;
+            }
+        };
+        
+        $scope.prevLevel = function () {
+            var prev = $scope.statLevel - 1;
+            if (prev >= 1) {
+                $scope.statLevel = prev;
+            }
+        };
+        
+        $scope.getLevel = function () {
+            return $scope.statLevel;
+        };
+        
+        $scope.currentStats = function () {
+            for (var i = 0; i < $scope.hero.stats.length; i++) {
+                if ($scope.hero.stats[i].level === $scope.getLevel()) {
+                    return $scope.hero.stats[i];
+                }
+            }
+            
+            return false;
+        };
+        
+        $scope.addHero = function () {
+            $scope.showError = false;
+
+            AdminHeroService.addArticle($scope.hero).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    AlertService.setSuccess({ show: true, msg: $scope.hero.name + ' has been added successfully.' });
+                    $state.go('app.admin.hots.heroes.list');
+                }
+            });
+        };
+    }
+])
+.controller('TeamCtrl', ['$scope',
+    function ($scope) {
+        
     }
 ])
 ;

@@ -84,8 +84,8 @@ var app = angular.module('app', [
                     $state.transitionTo('app.login');
                 }
                 if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
-                    event.preventDefault();
-                    $state.transitionTo('app.home');
+                    //event.preventDefault();
+                    //$state.transitionTo('app.home');
                 }
                 $window.scrollTo(0,0);
             });
@@ -404,10 +404,27 @@ var app = angular.module('app', [
                 }
             })
             .state('app.team', {
-                url: 'the-team',
+                abstract: true,
+                url: 'team',
                 views: {
                     content: {
                         templateUrl: tpl + 'views/frontend/team.html'
+                    }
+                }
+            })
+            .state('app.team.hearthstone', {
+                url: '/hearthstone',
+                views: {
+                    team: {
+                        templateUrl: tpl + 'views/frontend/team.hearthstone.html'
+                    }
+                }
+            })
+            .state('app.team.heroes', {
+                url: '/hots',
+                views: {
+                    team: {
+                        templateUrl: tpl + 'views/frontend/team.hots.html'
                     }
                 }
             })
@@ -854,6 +871,63 @@ var app = angular.module('app', [
                                 return AdminCardService.getCard(cardID);
                             }]
                         }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots', {
+                abstract: true,
+                url: '/hots',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/hots.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.heroes', {
+                abstract: true,
+                url: '/heroes',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/admin/hots.heroes.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.heroes.list', {
+                url: '',
+                views: {
+                    heroes: {
+                        templateUrl: tpl + 'views/admin/hots.heroes.list.html',
+                        controller: 'AdminHeroListCtrl',
+                        resolve: {
+                            data: ['AdminHeroService', function (AdminHeroService) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminHeroService.getHeroes(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.heroes.add', {
+                url: '/add',
+                views: {
+                    heroes: {
+                        templateUrl: tpl + 'views/admin/hots.heroes.add.html',
+                        controller: 'AdminHeroAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.heroes.edit', {
+                url: '/edit/:heroID',
+                views: {
+                    heroes: {
+                        templateUrl: tpl + 'views/admin/hots.heroes.edit.html'
                     }
                 },
                 access: { auth: true, admin: true }
@@ -2669,6 +2743,125 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             });
         };
+    }
+])
+.controller('AdminHeroListCtrl', ['$scope', 'AdminHeroService', 'AlertService', 'Pagination', 'data', 
+    function ($scope, AdminDeckService, AlertService, Pagination, data) {
+        // grab alerts
+        if (AlertService.hasAlert()) {
+            $scope.success = AlertService.getSuccess();
+            AlertService.reset();
+        }
+        
+        // load heroes
+        $scope.heroes = data.heroes;
+        $scope.page = data.page;
+        $scope.perpage = data.perpage;
+        $scope.total = data.total;
+        $scope.search = data.search;
+        
+        $scope.getHeroes = function () {
+            AdminHeroService.getHeroes($scope.page, $scope.perpage, $scope.search).then(function (data) {
+                $scope.heroes = data.heroes;
+                $scope.page = data.page;
+                $scope.total = data.total;
+            });
+        }
+        
+        $scope.searchHeroes = function () {
+            $scope.page = 1;
+            $scope.getHeroes();
+        }
+        
+        // pagination
+        $scope.pagination = {
+            page: function () {
+                return $scope.page;
+            },
+            perpage: function () {
+                return $scope.perpage;
+            },
+            results: function () {
+                return $scope.total;
+            },
+            setPage: function (page) {
+                $scope.page = page;
+                $scope.getHeroes();
+            },
+            pagesArray: function () {
+                var pages = [],
+                    start = 1,
+                    end = this.totalPages();
+                
+                if (this.totalPages() > 5) {
+                    if (this.page() < 3) {
+                        start = 1;
+                        end = start + 4;
+                    } else if (this.page() > this.totalPages() - 2) {
+                        end = this.totalPages();
+                        start = end - 4;
+                    } else {
+                        start = this.page() - 2;
+                        end = this.page() + 2;
+                    }
+                    
+                }
+                
+                for (var i = start; i <= end; i++) {
+                    pages.push(i);
+                }
+                
+                return pages;
+            },
+            isPage: function (page) {
+                return (page === this.page());
+            },
+            totalPages: function (page) {
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
+            },
+            from: function () {
+                return (this.page() * this.perpage()) - this.perpage() + 1;
+            },
+            to: function () {
+                return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
+            }
+        };
+        
+        // delete hero
+        $scope.deleteHero = function deleteHero(hero) {
+            var box = bootbox.dialog({
+                title: 'Delete hero: ' + hero.name + '?',
+                message: 'Are you sure you want to delete the hero <strong>' + hero.name + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            AdminHeroService.deleteHero(hero._id).then(function (data) {
+                                if (data.success) {
+                                    var index = $scope.heroes.indexOf(hero);
+                                    if (index !== -1) {
+                                        $scope.heroes.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: hero.name + ' deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
     }
 ])
 .controller('AdminUserListCtrl', ['$scope', 'bootbox', 'Pagination', 'AlertService', 'AdminUserService', 'data', 
@@ -4536,6 +4729,164 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+/* admin hots */
+.controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'AdminHeroService', 
+    function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, AdminHeroService) {
+        // default hero
+        var defaultHero = {
+                name : '',
+                description: '',
+                role: HOTS.roles[0],
+                heroType: HOTS.types[0],
+                universe: HOTS.universes[0],
+                abilities: [{name: 'test', orderNum: 1}],
+                talents: [],
+                stats: HOTS.genStats(),
+                price: {
+                    gold: '',
+                },
+                className: '',
+                active: true
+            },
+            defaultAbility = {
+                _id: null,
+                name: '',
+                abilityType: '',
+                mana: '',
+                cooldown: '',
+                description: '',
+                damage: '',
+                healing: '',
+                className: '',
+                orderNum: 1
+            },
+            defaultTalent = {
+                _id: null,
+                name: '',
+                tier: '',
+                description: '',
+                className: '',
+                orderNum: 1
+            };
+        
+        // load hero
+        $scope.hero = angular.copy(defaultHero);
+        
+        // roles
+        $scope.roles = HOTS.roles;
+        
+        // types
+        $scope.heroTypes = HOTS.types;
+        
+        // universe
+        $scope.universes = HOTS.universes;
+        
+        // select options
+        $scope.heroActive = [
+            { name: 'Yes', value: true },
+            { name: 'No', value: false }
+        ];
+        
+        // abilities
+        var box;
+        $scope.abilityAddWnd = function () {
+            $scope.currentAbility = angular.copy(defaultAbility);
+            box = bootbox.dialog({
+                title: 'Add Ability',
+                message: $compile('<div ability-add-form></div>')($scope)
+            });
+        };
+
+        $scope.abilityEditWnd = function (ability) {
+            $scope.currentAbility = ability;
+            box = bootbox.dialog({
+                title: 'Edit Ability',
+                message: $compile('<div ability-edit-form></div>')($scope)
+            });
+        };
+
+        $scope.addAbility = function () {
+            $scope.hero.abilities.push($scope.currentAbility);
+            box.modal('hide');
+            $scope.currentAbility = false;
+        };
+        
+        $scope.editAbility = function (ability) {
+            box.modal('hide');
+            $scope.currentAbility = false;
+        };
+        
+        $scope.deleteAbility = function (ability) {
+            var index = $scope.hero.abilities.indexOf(ability);
+            $scope.hero.abilities.splice(index, 1);
+        };
+        
+        // talents
+        $scope.addTalent = function () {
+            
+        };
+        
+        $scope.editTalent = function (talent) {
+            
+        };
+        
+        $scope.deleteTalent = function (talent) {
+            var index = $scope.hero.talents.indexOf(talent);
+            $scope.hero.talents.splice(index, 1);
+        };
+        
+        // stats
+        $scope.statLevel = 1;
+        
+        $scope.nextLevel = function () {
+            var next = $scope.statLevel + 1;
+            if (next <= 30) {
+                $scope.statLevel = next;
+            }
+        };
+        
+        $scope.prevLevel = function () {
+            var prev = $scope.statLevel - 1;
+            if (prev >= 1) {
+                $scope.statLevel = prev;
+            }
+        };
+        
+        $scope.getLevel = function () {
+            return $scope.statLevel;
+        };
+        
+        $scope.currentStats = function () {
+            for (var i = 0; i < $scope.hero.stats.length; i++) {
+                if ($scope.hero.stats[i].level === $scope.getLevel()) {
+                    return $scope.hero.stats[i];
+                }
+            }
+            
+            return false;
+        };
+        
+        $scope.addHero = function () {
+            $scope.showError = false;
+
+            AdminHeroService.addArticle($scope.hero).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    AlertService.setSuccess({ show: true, msg: $scope.hero.name + ' has been added successfully.' });
+                    $state.go('app.admin.hots.heroes.list');
+                }
+            });
+        };
+    }
+])
+.controller('TeamCtrl', ['$scope',
+    function ($scope) {
+        
+    }
+])
 ;;'use strict';
 
 angular.module('app.directives', ['ui.load'])
@@ -4673,6 +5024,16 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
+.directive('abilityAddForm', function () {
+    return {
+        templateUrl: 'views/admin/hots.heroes.ability.add.html'
+    };
+})
+.directive('abilityEditForm', function () {
+    return {
+        templateUrl: 'views/admin/hots.heroes.ability.edit.html'
+    };
+})
 ;;'use strict';
 
 angular.module('app.filters', [])
@@ -5078,6 +5439,41 @@ angular.module('app.services', [])
         }
     }
 }])
+.factory('AdminHeroService', ['$http', '$q', function ($http, $q) {
+    return {
+        getHeroes: function (page, perpage, search) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 50,
+                search = search || '';
+            
+            $http.post('/api/admin/heroes', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getHero: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/hero', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addHero: function (hero) {
+            return $http.post('/api/admin/hero/add', hero);
+        },
+        editHero: function (hero) {
+            return $http.post('/api/admin/hero/edit', hero);
+        },
+        deleteHero: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/hero/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    }
+}])
 .factory('AdminUserService', ['$http', '$q', function ($http, $q) {
     return {
         getProviders: function () {
@@ -5260,6 +5656,35 @@ angular.module('app.services', [])
     hs.expansions = ['Basic', 'Naxxramas', 'Goblins Vs. Gnomes'];
     
     return hs;
+})
+.factory('HOTS', function () {
+    var hots = {};
+    
+    hots.roles = ["Warrior", "Assassin", "Support", "Specialist"];
+    hots.types = ["Melee", "Ranged"];
+    hots.universes = ["Warcraft", "Starcraft", "Diablo", "Blizzard"];
+    
+    hots.genStats = function () {
+        var stats = [],
+            obj;
+        
+        for (var i = 0; i < 30; i++) {
+            obj = {
+                level: i + 1,
+                health: '',
+                healthRegen: '',
+                mana: '',
+                manaRegen: '',
+                attackSpeed: '',
+                damage: ''
+            };
+            stats.push(obj);
+        }
+        
+        return stats;
+    };
+    
+    return hots;
 })
 .factory('DeckBuilder', ['$sce', '$http', '$q', function ($sce, $http, $q) {
 

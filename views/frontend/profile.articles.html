@@ -35,6 +35,6 @@
             </div>
         </div>
         <!-- / article -->
-        <p class="profile-no-content">@{{user.username}} hasn't written any articles yet.</p>
+        <p class="profile-no-content" ng-if="!articles.length">@{{user.username}} hasn't written any articles yet.</p>
     </div>
 </div>

@@ -119,6 +119,16 @@ body.admin {  }
     background: #2766ad;
 }
 
+.navbar-nav .dropdown-menu li,
+.navbar-nav .dropdown-menu li a { color: #2766ad !important; }
+.navbar-nav .dropdown-menu li a:focus { color: #2766ad !important; }
+.navbar-nav .dropdown-menu li.active a { background: #2766ad; color: #FFF !important; }
+
+.navbar-default .navbar-nav .open .dropdown-menu>.active>a,
+.navbar-default .navbar-nav .open .dropdown-menu>.active>a:hover { background: #2766ad; color: #FFF !important; }
+.navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover { background: #2766ad; border-color: #083f7d; }
+.navbar-default .navbar-toggle:focus .icon-bar, .navbar-default .navbar-toggle:hover .icon-bar { background-color: #FFF; }
+
 /* notifications */
 .notifications .badge {
     margin: -10px 0 0 -5px;
@@ -508,6 +518,12 @@ ul.premium-features li i { margin-right: 5px; color: #85c440; }
 
 /* headers */
 h1, h2, h3, h4, h5 { margin-top: 0; }
+
+/* line heights */
+.lh-sm { line-height: 10px; }
+.lh-md { line-height: 20px; }
+.lh-lg { line-height: 30px; }
+.lh-xl { line-height: 40px; }
 
 /* margins */
 .m-t-xs { margin-top: 5px; }
@@ -1811,7 +1827,49 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .sponsor-page a { margin: 0 auto; display: block; width: 20px; color: #FFF; opacity: .6; font-size: 20px; }
 .sponsor-page a:hover { opacity: 1; }
 
+/* team pages */
+.team-member { margin-left: 100px; min-height: 200px; max-height: 200px; position: relative; background: #181919; -webkit-transition: all .5s ease-in-out; -moz-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
+.team-member-content { padding: 20px 90px 20px 132px; max-height: 160px; overflow: hidden; -webkit-transition: all .3s ease-in-out; -moz-transition: all .5s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
+.team-member-content h1 { color: #FFF; font-family: 'Open Sans Bold'; font-size: 26px; }
+.team-member-content h3 { color: #F2F2F2; font-size: 18px; }
+.team-member-content p { color: #D2D2D2; }
+
+.team-member-photo { position: absolute; top: 0px; left: -92px; display: block; width: 200px; height: 200px; border-radius: 50%; border: 6px solid #181919; -webkit-transition: all .3s ease-in-out; -moz-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
+.team-member-photo img { width: 188px; height: 188px; }
+
+.team-member-buttons { margin-top: 20px; }
+.btn-team { float: left; margin-right: 10px; width: 50px; color: #FFF !important; font-size: 20px; opacity: .8; }
+.btn-team:hover { opacity: 1; }
+.btn-team-facebook { background: #3b5998; }
+.btn-team-twitter { background: #4099FF; }
+.btn-team-twitch { background: #6441a5; }
+.btn-team-youtube { background: #e52d27; }
+
+.team-member-toggle { display: table-cell; position: absolute; top: 0px; right: 0px; width: 60px; height: 100%; background: #222; vertical-align: middle; color: #FFF !important; font-size: 30px; -webkit-transition: all .3s ease-in-out; -moz-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
+.team-member-toggle i { margin: -15px 0 0 -10px; position: absolute; top: 50%; left: 50%; }
+.team-member-toggle:hover { background: #2766ad; }
+
+.team-member-photo:hover { border: 6px solid #2766ad; -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+
+.team-member.active .team-member-photo { border: 6px solid #2766ad; -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+
+.team-member.active { max-height: 1000px; }
+.team-member.active .team-member-content { max-height: 1000px; }
+
+.team-banner { height: 210px; border-bottom: 1px solid #000; }
+.team-banner-hs { background: url('../img/team/hs-back.jpg') center center; background-size: cover; }
+.team-banner-hots { background: url('../img/team/hots-back.jpg') center center; background-size: cover; }
+
+.team-banner img { margin: 30px auto; width: 553px; height: 150px; }
+
 /* mobile */
+@media (min-width: 768px) {
+    /* nav */
+    .navbar-tempo .dropdown-menu li,
+    .navbar-tempo .dropdown-menu li a { color: #2766ad; height: 40px; line-height: 36px; }
+    .navbar-tempo .dropdown-menu li a:focus { color: #2766ad; }
+    .navbar-tempo .dropdown-menu li.active a { background: #2766ad; color: #FFF !important; }
+}
 @media (min-width: 768px) and (max-width: 1199px) {
     /* filters */
     .filter-bar h1 { font-size: 20px; line-height: 32px; }
@@ -1834,7 +1892,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
     .article-page .article-right { display: none; }
 }
 
-@media (min-width: 768px) and (max-width: 979px) {
+@media (min-width: 768px) and (max-width: 979px) {    
     /* forums */
     .forum-post { padding-right: 0px; }
     
