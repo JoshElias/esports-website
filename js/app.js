@@ -6,6 +6,7 @@ var app = angular.module('app', [
     'angular-bootbox',
     'angularMoment',
     'angularPayments',
+    'dndLists',
     'ngAnimate',
     'ngCookies',
     'ngStorage',
@@ -884,7 +885,199 @@ var app = angular.module('app', [
                 url: '/edit/:heroID',
                 views: {
                     heroes: {
-                        templateUrl: tpl + 'views/admin/hots.heroes.edit.html'
+                        templateUrl: tpl + 'views/admin/hots.heroes.edit.html',
+                        controller: 'AdminHeroEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminHeroService', function ($stateParams, AdminHeroService) {
+                                var heroID = $stateParams.heroID;
+                                return AdminHeroService.getHero(heroID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.maps', {
+                abstract: true,
+                url: '/maps',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/admin/hots.maps.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.maps.list', {
+                url: '',
+                views: {
+                    maps: {
+                        templateUrl: tpl + 'views/admin/hots.maps.list.html',
+                        controller: 'AdminMapsListCtrl',
+                        resolve: {
+                            data: ['AdminMapService', function (AdminMapService) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminMapService.getMaps(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.maps.add', {
+                url: '/add',
+                views: {
+                    maps: {
+                        templateUrl: tpl + 'views/admin/hots.maps.add.html',
+                        controller: 'AdminMapAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.maps.edit', {
+                url: '/edit/:mapID',
+                views: {
+                    maps: {
+                        templateUrl: tpl + 'views/admin/hots.maps.edit.html',
+                        controller: 'AdminMapEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminMapService', function ($stateParams, AdminMapService) {
+                                var mapID = $stateParams.mapID;
+                                return AdminMapService.getMap(mapID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.guides', {
+                abstract: true,
+                url: '/guides',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/admin/hots.guides.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.guides.list', {
+                url: '',
+                views: {
+                    guides: {
+                        templateUrl: tpl + 'views/admin/hots.guides.list.html',
+                        controller: 'AdminHOTSGuideListCtrl',
+                        resolve: {
+                            data: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminHOTSGuideService.getGuides(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.guides.add', {
+                abstract: true,
+                url: '/add',
+                views: {
+                    guides: {
+                        templateUrl: tpl + 'views/admin/hots.guides.add.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.guides.add.step1', {
+                url: '',
+                views: {
+                    add: {
+                        templateUrl: tpl + 'views/admin/hots.guides.add.step1.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.guides.add.hero', {
+                url: '/hero',
+                views: {
+                    add: {
+                        templateUrl: tpl + 'views/admin/hots.guides.add.hero.html',
+                        controller: 'AdminHOTSGuideAddCtrl',
+                        resolve: {
+                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
+                                return AdminHeroService.getAllHeroes();
+                            }],
+                            dataMaps: ['AdminMapService', function (AdminMapService) {
+                                return AdminMapService.getAllMaps();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.guides.add.map', {
+                url: '/map',
+                views: {
+                    add: {
+                        templateUrl: tpl + 'views/admin/hots.guides.add.map.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.guides.edit', {
+                abstract: true,
+                url: '/edit',
+                views: {
+                    guides: {
+                        templateUrl: tpl + 'views/admin/hots.guides.edit.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.guides.edit.step1', {
+                url: '/:guideID',
+                views: {
+                    edit: {
+                        templateUrl: tpl + 'views/admin/hots.guides.edit.step1.html',
+                        controller: 'AdminHOTSGuideEditStep1Ctrl',
+                        resolve: {
+                            dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
+                                var guideID = $stateParams.guideID;
+                                return AdminHOTSGuideService.getGuide(guideID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.guides.edit.hero', {
+                url: '/:guideID/hero',
+                views: {
+                    edit: {
+                        templateUrl: tpl + 'views/admin/hots.guides.edit.hero.html',
+                        controller: 'AdminHOTSGuideEditCtrl',
+                        resolve: {
+                            dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
+                                var guideID = $stateParams.guideID;
+                                return AdminHOTSGuideService.getGuide(guideID);
+                            }],
+                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
+                                return AdminHeroService.getAllHeroes();
+                            }],
+                            dataMaps: ['AdminMapService', function (AdminMapService) {
+                                return AdminMapService.getAllMaps();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hots.guides.edit.map', {
+                url: '/:guideID/map',
+                views: {
+                    edit: {
+                        templateUrl: tpl + 'views/admin/hots.guides.edit.map.html'
                     }
                 },
                 access: { auth: true, admin: true }

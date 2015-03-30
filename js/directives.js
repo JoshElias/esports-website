@@ -145,4 +145,34 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/admin/hots.heroes.ability.edit.html'
     };
 })
+.directive('talentAddForm', function () {
+    return {
+        templateUrl: 'views/admin/hots.heroes.talent.add.html'
+    };
+})
+.directive('talentEditForm', function () {
+    return {
+        templateUrl: 'views/admin/hots.heroes.talent.edit.html'
+    };
+})
+.directive('talentModal', function () {
+    return {
+        templateUrl: 'views/frontend/hots.talent.modal.html'
+    };
+})
+.directive('hotsTalent', ['$compile', function ($compile) {
+    return {
+        restrict: 'A',
+        link: function (scope, el, attr) {
+            el.wTooltip({
+                delay: 500,
+                offsetX: 100,
+                offsetY: -40,
+                content: $compile('<div talent-modal></div>')(scope),
+                style: false,
+                className: 'hots-talent-tooltip'
+            });
+        }
+    };
+}])
 ;

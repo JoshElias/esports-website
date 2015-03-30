@@ -58,12 +58,18 @@
                 </a>
                 <strong class="lh-lg">Abilities</strong>
             </div>
-            <ul class="list-group" ng-show="hero.abilities.length">
-                <li class="list-group-item lh-lg clearfix" ng-repeat="ability in hero.abilities | orderBy: ability.orderNum">
+            <ul class="list-group" dnd-list="hero.abilities" dnd-allowed-types="['ability']" ng-show="hero.abilities.length">
+                <li class="list-group-item lh-lg clearfix"
+                    ng-repeat="ability in hero.abilities | orderBy: ability.orderNum"
+                    dnd-draggable="ability"
+                    dnd-moved="updateDND(hero.abilities, $index)"
+                    dnd-disable-if="hero.abilities.length < 2"
+                    dnd-type="'ability'"
+                >
                     {{ability.name}}
                     <div class="pull-right">
-                        <a href="#" class="btn btn-sm btn-default" ng-click="abilityEditWnd(ability)">Edit</a>
-                        <a href="#" class="btn btn-sm btn-danger" ng-click="deleteAbility(ability)">Delete</a>
+                        <button class="btn btn-sm btn-default" ng-click="abilityEditWnd(ability)">Edit</button>
+                        <button class="btn btn-sm btn-danger" ng-click="deleteAbility(ability)">Delete</button>
                     </div>
                 </li>
             </ul>
@@ -73,17 +79,23 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading clearfix">
-                <a href="#" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="addTalent()">
+                <a href="#" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="talentAddWnd()">
                     <i class="fa fa-plus-circle m-r-xs"></i>Add
                 </a>
                 <strong class="lh-lg">Talents</strong>
             </div>
-            <ul class="list-group" ng-show="hero.talents.length">
-                <li class="list-group-item lh-lg clearfix" ng-repeat="talent in hero.talents | orderBy: talent.orderNum">
-                    {{talent.name}}
+            <ul class="list-group" dnd-list="hero.talents" dnd-allowed-types="['talent']" ng-show="hero.talents.length">
+                <li class="list-group-item lh-lg clearfix"
+                    ng-repeat="talent in hero.talents | orderBy: talent.orderNum"
+                    dnd-draggable="talent"
+                    dnd-moved="updateDND(hero.talents, $index)"
+                    dnd-disable-if="hero.talents.length < 2"
+                    dnd-type="'talent'"
+                >
+                    Level {{talent.tier}} - {{talent.name}}
                     <div class="pull-right">
-                        <a href="#" class="btn btn-sm btn-default" ng-click="editTalent(talent)">Edit</a>
-                        <a href="#" class="btn btn-sm btn-danger" ng-click="deleteTalent(talent)">Delete</a>
+                        <button class="btn btn-sm btn-default" ng-click="talentEditWnd(talent)">Edit</button>
+                        <button class="btn btn-sm btn-danger" ng-click="deleteTalent(talent)">Delete</button>
                     </div>
                 </li>
             </ul>
@@ -128,6 +140,12 @@
                     <label for="statsHealth" class="col-sm-2 control-label">Attack Speed</label>
                     <div class="col-sm-10">
                         <input type="text" id="statsHealth" name="statsHealth" class="form-control" ng-model="currentStats().attackSpeed" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label for="statsRange" class="col-sm-2 control-label">Range</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="statsRange" name="statsRange" class="form-control" ng-model="currentStats().range" required>
                     </div>
                 </div>
                 <div class="row form-group m-b-none">

@@ -836,6 +836,44 @@ module.exports = {
             });
         };
     },
+    allHeroes: function (Schemas) {
+        return function (req, res, next) {
+            var heroes;
+            
+            function getHeroes (callback) {
+                Schemas.Hero.find({})
+                .sort({ orderNum: 1 })
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    heroes = results;
+                    return callback();
+                });
+            }
+            
+            getHeroes(function () {
+                return res.json({
+                    success: true,
+                    heroes: heroes
+                });
+            });
+        };
+    },
+    hero: function (Schemas) {
+        return function (req, res, next) {
+            var heroID = req.body._id;
+            
+            function getHero(callback) {
+                Schemas.Hero.findOne({ _id: heroID }).exec(function (err, hero) {
+                    if (err || !hero) { return res.json({ success: false }); }
+                    callback(hero);
+                });
+            }
+            
+            getHero(function (hero) {
+                return res.json({ success: true, hero: hero });
+            });
+        };
+    },
     heroDelete: function (Schemas) {
         return function (req, res, next) {
             var _id = req.body._id;
@@ -849,6 +887,462 @@ module.exports = {
             
             deleteHero(function () {
                 return res.json({ success: true });
+            });
+        };
+    },
+    heroAdd: function (Schemas) {
+        return function (req, res, next) {
+            var hero = req.body,
+                orderNum = 1;
+            
+            function getOrderNum (callback) {
+                Schemas.Hero.findOne({})
+                .sort({ orderNum: -1 })
+                .exec(function (err, result) {
+                    if (err || !result) {
+                        orderNum = 1;
+                    } else {
+                        orderNum = result.orderNum + 1;
+                    }
+                    return callback();
+                });
+            }
+            
+            function createHero(callback) {
+                var newHero = new Schemas.Hero({
+                        name: hero.name,
+                        description: hero.description,
+                        role: hero.role,
+                        heroType: hero.heroType,
+                        universe: hero.universe,
+                        price: {
+                            gold: hero.price.gold
+                        },
+                        abilities: hero.abilities,
+                        talents: hero.talents,
+                        stats: hero.stats,
+                        orderNum: orderNum,
+                        className: hero.className,
+                        active: hero.active
+                    });
+
+                newHero.save(function(err, data){
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    return callback();
+                });
+            }
+            
+            getOrderNum(function () {
+                createHero(function () {
+                    return res.json({ success: true });
+                });
+            });
+        };
+    },
+    heroEdit: function (Schemas) {
+        return function (req, res, next) {
+            var hero = req.body;
+            
+            function updateHero(callback) {
+                Schemas.Hero.findOne({ _id: hero._id }).exec(function (err, result) {
+                    if (err || !result) { return res.json({ success: false }); }
+                    
+                    result.name = hero.name;
+                    result.description = hero.description;
+                    result.role = hero.role;
+                    result.heroType = hero.heroType;
+                    result.universe = hero.universe;
+                    result.price = {
+                        gold: hero.price.gold
+                    };
+                    result.abilities = hero.abilities;
+                    result.talents = hero.talents;
+                    result.stats = hero.stats;
+                    result.className = hero.className;
+                    result.active = hero.active;
+                    
+                    result.save(function(err, data){
+                        if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                        return callback();
+                    });
+                });
+            }
+            
+            updateHero(function () {
+                return res.json({ success: true });
+            });
+        };
+    },
+    maps: function (Schemas) {
+        return function (req, res, next) {
+            var page = req.body.page,
+                perpage = req.body.perpage,
+                start = (page * perpage) - perpage,
+                search = req.body.search || '',
+                where = (search.length) ? { name: new RegExp(search, "i") } : {},
+                maps, total;
+            
+            function getTotal (callback) {
+                Schemas.Map.count({})
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            function getMaps (callback) {
+                Schemas.Map.find({})
+                .where(where)
+                .sort({ name: 1 })
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    maps = results;
+                    return callback();
+                });
+            }
+            
+            getTotal(function () {
+                getMaps(function () {
+                    return res.json({
+                        success: true,
+                        maps: maps,
+                        total: total,
+                        page: page,
+                        perpage: perpage,
+                        search: search
+                    });
+                });
+            });
+        };
+    },
+    allMaps: function (Schemas) {
+        return function (req, res, next) {
+            var maps;
+            
+            function getMaps (callback) {
+                Schemas.Map.find({})
+                .sort({ orderNum: 1 })
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    maps = results;
+                    return callback();
+                });
+            }
+            
+            getMaps(function () {
+                return res.json({
+                    success: true,
+                    maps: maps
+                });
+            });
+        };
+    },
+    map: function (Schemas) {
+        return function (req, res, next) {
+            var mapID = req.body._id;
+            
+            function getMap(callback) {
+                Schemas.Map.findOne({ _id: mapID }).exec(function (err, map) {
+                    if (err || !map) { return res.json({ success: false }); }
+                    callback(map);
+                });
+            }
+            
+            getMap(function (map) {
+                return res.json({ success: true, map: map });
+            });
+        };
+    },
+    mapDelete: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            
+            function deleteMap (callback) {
+                Schemas.Map.findOne({ _id: _id }).remove().exec(function (err) {
+                    if (err) { return res.json({ success: false }); }
+                    return callback();
+                });
+            }
+            
+            deleteMap(function () {
+                return res.json({ success: true });
+            });
+        };
+    },
+    mapAdd: function (Schemas) {
+        return function (req, res, next) {
+            var map = req.body,
+                orderNum = 1;
+            
+            function getOrderNum (callback) {
+                Schemas.Map.findOne({})
+                .sort({ orderNum: -1 })
+                .exec(function (err, result) {
+                    if (err || !result) {
+                        orderNum = 1;
+                    } else {
+                        orderNum = result.orderNum + 1;
+                    }
+                    return callback();
+                });
+            }
+            
+            function createMap(callback) {
+                var newMap = new Schemas.Map({
+                        name: map.name,
+                        description: map.description,
+                        orderNum: orderNum,
+                        className: map.className,
+                        active: map.active
+                    });
+
+                newMap.save(function(err, data){
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    return callback();
+                });
+            }
+            
+            getOrderNum(function () {
+                createMap(function () {
+                    return res.json({ success: true });
+                });
+            });
+        };
+    },
+    mapEdit: function (Schemas) {
+        return function (req, res, next) {
+            var map = req.body;
+            
+            function updateMap(callback) {
+                Schemas.Map.findOne({ _id: map._id }).exec(function (err, result) {
+                    if (err || !result) { return res.json({ success: false }); }
+                    
+                    result.name = map.name;
+                    result.description = map.description;
+                    result.className = map.className;
+                    result.active = map.active;
+                    
+                    result.save(function(err, data){
+                        if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                        return callback();
+                    });
+                });
+            }
+            
+            updateMap(function () {
+                return res.json({ success: true });
+            });
+        };
+    },
+    guides: function (Schemas) {
+        return function (req, res, next) {
+            var page = req.body.page,
+                perpage = req.body.perpage,
+                start = (page * perpage) - perpage,
+                search = req.body.search || '',
+                where = (search.length) ? { name: new RegExp(search, "i") } : {},
+                guides, total;
+            
+            function getTotal (callback) {
+                Schemas.Guide.count({})
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            function getGuides (callback) {
+                Schemas.Guide.find({})
+                .where(where)
+                .sort({ name: 1 })
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    guides = results;
+                    return callback();
+                });
+            }
+            
+            getTotal(function () {
+                getGuides(function () {
+                    return res.json({
+                        success: true,
+                        guides: guides,
+                        total: total,
+                        page: page,
+                        perpage: perpage,
+                        search: search
+                    });
+                });
+            });
+        };
+    },
+    guide: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id,
+                guide;
+            
+            function getGuide(callback) {
+                Schemas.Guide.findOne({ _id: _id })
+                .lean()
+                .populate('heroes.hero')
+                .exec(function (err, results) {
+                    if (err || !results) { return res.json({ success: false }); }
+                    guide = results;
+                    return callback();
+                });
+            }
+            
+            getGuide(function () {
+                return res.json({
+                    success: true,
+                    guide: guide
+                });
+            });
+        };
+    },
+    guideAdd: function (Schemas, Util) {
+        return function (req, res, next) {
+            var userID = req.user._id;
+            
+            req.assert('name', 'Deck name is required').notEmpty();
+            req.assert('name', 'Deck name cannot be more than 60 characters').len(1, 60);
+            req.assert('description', 'Deck description is required').notEmpty();
+            req.assert('description', 'Deck description cannot be more than 400 characters').len(1, 400);
+            
+            function checkForm (callback) {
+               var errors = req.validationErrors();
+
+                if (errors) {
+                    return res.json({ success: false, errors: errors });
+                } else {
+                    return callback();
+                }
+            }
+            
+            function checkSlug (callback) {
+                // check slug length
+                if (!Util.slugify(req.body.name).length) {
+                    return res.json({ success: false, errors: { name: { msg: 'An invalid name has been entered' } } });
+                }
+                
+                // check if slug exists
+                Schemas.Guide.count({ slug: Util.slugify(req.body.name) })
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    if (count > 0) {
+                        return res.json({ success: false, errors: { name: { msg: 'That guide name already exists. Please choose a different guide name.' } } });
+                    }
+                    return callback();
+                });
+            }
+            
+            function createGuide(callback) {
+                var heroes = [];
+                
+                for (var i = 0; i < req.body.heroes.length; i++) {
+                    var obj = {
+                        hero: req.body.heroes[i].hero._id,
+                        talents: req.body.heroes[i].talents
+                    };
+                    heroes.push(obj);
+                }
+                
+                var newGuide = new Schemas.Guide({
+                        name: req.body.name,
+                        slug: Util.slugify(req.body.name),
+                        guideType: req.body.guideType,
+                        description: req.body.description,
+                        content: req.body.content,
+                        author: req.user._id,
+                        heroes: heroes,
+                        maps: req.body.maps,
+                        synergy: req.body.synergy,
+                        against: {
+                            strong: req.body.against.strong || [],
+                            weak: req.body.against.weak || []
+                        },
+                        public: req.body.public,
+                        video: req.body.video,
+                        views: 0,
+                        votesCount: 1,
+                        votes: [{
+                            userID: req.user._id,
+                            direction: 1
+                        }],
+                        featured: req.body.featured,
+                        comments: [],
+                        createdDate: new Date().toISOString(),
+                        premium: {
+                            isPremium: req.body.premium.isPremium || false,
+                            expiryDate: req.body.premium.expiryDate || new Date().toISOString()
+                        }
+                    });
+
+                newGuide.save(function(err, data){
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    return callback();
+                });
+            }
+            
+            checkForm(function () {
+                checkSlug(function () {
+                    createGuide(function () {
+                        return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                    });
+                });
+                
+            });
+        };
+    },
+    guideEdit: function (Schemas, Util) {
+        return function (req, res, next) {
+            
+        };
+    },
+    guideDelete: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id,
+                guide;
+            
+            function getGuide (callback) {
+                Schemas.Guide.findOne({ _id: _id }).exec(function (err, results) {
+                    if (err || !results) { return res.json({ success: false }); }
+                    guide = results;
+                    return callback();
+                });
+            }
+            
+            function deleteComments (callback) {
+                if (!guide.comments.length) { return callback(); }
+                Schemas.Comment.find({ _id: { $in: guide.comments } })
+                .remove()
+                .exec(function (err) {
+                    if (err) { return res.json({ success: false }); }
+                    return callback();
+                });
+            }
+            
+            function deleteGuide (callback) {
+                Schemas.Guide.findOne({ _id: _id }).remove().exec(function (err) {
+                    if (err) { return res.json({ success: false }); }
+                    return callback();
+                });
+            }
+            
+            getGuide(function () {
+                deleteComments(function () {
+                    deleteGuide(function () {
+                        return res.json({ success: true });
+                    });
+                });
             });
         };
     },

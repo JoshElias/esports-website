@@ -216,10 +216,24 @@ if (cluster.isMaster) {
     app.post('/api/admin/deck/edit', routes.admin.isAdmin(Schemas), routes.admin.deckEdit(Schemas, Util));
 
     app.post('/api/admin/heroes', routes.admin.isAdmin(Schemas), routes.admin.heroes(Schemas));
-    //app.post('/api/admin/hero', routes.admin.isAdmin(Schemas), routes.admin.hero(Schemas));
-    //app.post('/api/admin/hero/add', routes.admin.isAdmin(Schemas), routes.admin.heroAdd(Schemas, Util));
+    app.post('/api/admin/heroes/all', routes.admin.isAdmin(Schemas), routes.admin.allHeroes(Schemas));
+    app.post('/api/admin/hero', routes.admin.isAdmin(Schemas), routes.admin.hero(Schemas));
+    app.post('/api/admin/hero/add', routes.admin.isAdmin(Schemas), routes.admin.heroAdd(Schemas));
     app.post('/api/admin/hero/delete', routes.admin.isAdmin(Schemas), routes.admin.heroDelete(Schemas));
-    //app.post('/api/admin/hero/edit', routes.admin.isAdmin(Schemas), routes.admin.heroEdit(Schemas, Util));
+    app.post('/api/admin/hero/edit', routes.admin.isAdmin(Schemas), routes.admin.heroEdit(Schemas));
+
+    app.post('/api/admin/maps', routes.admin.isAdmin(Schemas), routes.admin.maps(Schemas));
+    app.post('/api/admin/maps/all', routes.admin.isAdmin(Schemas), routes.admin.allMaps(Schemas));
+    app.post('/api/admin/map', routes.admin.isAdmin(Schemas), routes.admin.map(Schemas));
+    app.post('/api/admin/map/add', routes.admin.isAdmin(Schemas), routes.admin.mapAdd(Schemas));
+    app.post('/api/admin/map/delete', routes.admin.isAdmin(Schemas), routes.admin.mapDelete(Schemas));
+    app.post('/api/admin/map/edit', routes.admin.isAdmin(Schemas), routes.admin.mapEdit(Schemas));
+
+    app.post('/api/admin/guides', routes.admin.isAdmin(Schemas), routes.admin.guides(Schemas));
+    app.post('/api/admin/guide', routes.admin.isAdmin(Schemas), routes.admin.guide(Schemas));
+    app.post('/api/admin/guide/add', routes.admin.isAdmin(Schemas), routes.admin.guideAdd(Schemas, Util));
+    app.post('/api/admin/guide/delete', routes.admin.isAdmin(Schemas), routes.admin.guideDelete(Schemas));
+    app.post('/api/admin/guide/edit', routes.admin.isAdmin(Schemas), routes.admin.guideEdit(Schemas, Util));
 
     app.post('/api/admin/articles', routes.admin.isAdmin(Schemas), routes.admin.articles(Schemas));
     app.post('/api/admin/articles/all', routes.admin.isAdmin(Schemas), routes.admin.articlesAll(Schemas));
