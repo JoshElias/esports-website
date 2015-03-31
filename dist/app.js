@@ -2086,12 +2086,13 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.cards = data.cards;
         
         // filters
+        $scope.expansions = [{ name: 'All Expansions', value: ''}].concat(Util.toSelect(Hearthstone.expansions));
         $scope.classes = [{ name: 'All Classes', value: ''}].concat(Util.toSelect(Hearthstone.classes));
         $scope.types = [{ name: 'All Types', value: ''}].concat(Util.toSelect(Hearthstone.types));
         $scope.rarities = [{ name: 'All Rarities', value: ''}].concat(Util.toSelect(Hearthstone.rarities));
         
         // default filters
-        $scope.filterClass = $scope.filterType = $scope.filterRarity = '';
+        $scope.filterExpansion = $scope.filterClass = $scope.filterType = $scope.filterRarity = '';
         
         // page flipping
         $scope.pagination = Pagination.new();

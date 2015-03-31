@@ -20,6 +20,9 @@
                     <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="pagination.setPage(1)">
                 </span>
                 <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
+                    <select id="filterExpansion" name="filterExpansion" ng-options="expansion.value as expansion.name for expansion in expansions" ng-model="filterExpansion" class="form-control input-sm" ng-change="pagination.setPage(1)"></select>
+                </span>
+                <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
                     <select id="filterClass" name="filterClass" ng-options="class.value as class.name for class in classes" ng-model="filterClass" class="form-control input-sm" ng-change="pagination.setPage(1)"></select>
                 </span>
                 <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
@@ -32,7 +35,7 @@
         </div>
     </div>
     <div class="list-group">
-        <div class="list-group-item card-list-item clearfix" ng-repeat="card in filtered = (cards | filterAll:search | filter:{ playerClass: filterClass, cardType: filterType, rarity: filterRarity }) | orderBy:'name' | startFrom:pagination.pageStart() | limitTo:pagination.perpage">
+        <div class="list-group-item card-list-item clearfix" ng-repeat="card in filtered = (cards | filterAll:search | filter:{ expansion: filterExpansion, playerClass: filterClass, cardType: filterType, rarity: filterRarity }) | orderBy:'name' | startFrom:pagination.pageStart() | limitTo:pagination.perpage">
             <div class="rarity {{card.rarity | lowercase}} pull-left"></div>
             <span>{{card.name}}</span>
             <div class="pull-right btn-toolbar">

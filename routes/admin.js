@@ -13,7 +13,7 @@ module.exports = {
     },
     cards: function (Schemas) {
         return function (req, res, next) {
-            Schemas.Card.find({}).select('_id name cardType rarity race playerClass mechanics').exec(function (err, cards) {
+            Schemas.Card.find({}).select('_id name cardType rarity race playerClass expansion mechanics').exec(function (err, cards) {
                 if (err) {
                     console.log(err);
                     return res.json({
