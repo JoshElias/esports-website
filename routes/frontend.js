@@ -900,7 +900,7 @@ module.exports = {
             }
             
             function getClass(callback) {
-                Schemas.Card.find({ playerClass: deck.playerClass }).where({ deckable: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                Schemas.Card.find({ playerClass: deck.playerClass }).where({ deckable: true, active: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
                     if (err || !results) { console.log(err || 'No cards for class'); }
                     cards.class = results;
                     return callback();
@@ -908,7 +908,7 @@ module.exports = {
             }
         
             function getNeutral(callback) {
-                Schemas.Card.find({ playerClass: 'Neutral' }).where({ deckable: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                Schemas.Card.find({ playerClass: 'Neutral' }).where({ deckable: true, active: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
                     if (err || !results) { console.log(err || 'No cards for neutral'); }
                     cards.neutral = results;
                     return callback();
@@ -940,7 +940,7 @@ module.exports = {
             }
             
             function getClass(callback) {
-                Schemas.Card.find({ playerClass: playerClass }).where({ deckable: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                Schemas.Card.find({ playerClass: playerClass }).where({ deckable: true, active: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
                     if (err || !results) { console.log(err || 'No cards for class'); }
                     cards.class = results;
                     callback();
@@ -948,7 +948,7 @@ module.exports = {
             }
         
             function getNeutral(callback) {
-                Schemas.Card.find({ playerClass: 'Neutral' }).where({ deckable: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                Schemas.Card.find({ playerClass: 'Neutral' }).where({ deckable: true, active: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
                     if (err || !results) { console.log(err || 'No cards for neutral'); }
                     cards.neutral = results;
                     callback();
