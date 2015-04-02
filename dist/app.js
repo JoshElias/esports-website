@@ -5762,7 +5762,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.maps = dataMaps.maps;
         
         // steps
-        $scope.step = 2;
+        $scope.step = 3;
         $scope.prevStep = function () {
             if ($scope.step == 2) { return $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide._id }); }
             if ($scope.step > 1) $scope.step = $scope.step - 1;
@@ -5810,6 +5810,10 @@ angular.module('app.controllers', ['ngCookies'])
         // talents
         $scope.getTalents = function (hero) {
             return $scope.guide.sortTalents(hero);
+        }
+        
+        $scope.hasTalent = function (hero, talent) {
+            return $scope.guide.hasTalent(hero, talent);
         }
         
         // summernote options
@@ -7409,10 +7413,7 @@ angular.module('app.services', [])
         };
         
         gb.hasTalent = function (hero, talent) {
-            if (hero.talents['tier'+talent.tier] === talent._id) {
-                return true;
-            }
-            return false;
+            return (hero.talents['tier'+talent.tier] == talent._id);
         };
         
         gb.toggleSynergy = function (hero) {

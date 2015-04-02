@@ -1311,10 +1311,7 @@ angular.module('app.services', [])
         };
         
         gb.hasTalent = function (hero, talent) {
-            if (hero.talents['tier'+talent.tier] === talent._id) {
-                return true;
-            }
-            return false;
+            return (hero.talents['tier'+talent.tier] == talent._id);
         };
         
         gb.toggleSynergy = function (hero) {
