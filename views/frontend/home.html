@@ -14,7 +14,7 @@
         <div class="banner-slide-wrapper">
             <div class="banner-slide slide-animation" ng-class="{ active: banner.current == $index }" ng-background="https://s3-us-west-2.amazonaws.com/ts-node2/img/{{slide.photo}}" ng-repeat="slide in banner.slides">
                 <video loop autoplay ng-if="slide.hasVideo">
-                    <source src="https://s3-us-west-2.amazonaws.com/ts-node2/img/img/brm.mp4" type="video/mp4" />
+                    <source src="https://s3-us-west-2.amazonaws.com/ts-node2/img/brm.mp4" type="video/mp4" />
                 </video>
                 <div class="banner-panel" ng-class="{ 'has-button': slide.button.hasButton }">
                     <h1>{{slide.title}}</h1>
