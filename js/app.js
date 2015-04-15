@@ -386,6 +386,14 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.team.csgo', {
+                url: '/csgo',
+                views: {
+                    team: {
+                        templateUrl: tpl + 'views/frontend/team.csgo.html'
+                    }
+                }
+            })
             .state('app.sponsors', {
                 url: 'sponsors',
                 views: {
@@ -1003,7 +1011,7 @@ var app = angular.module('app', [
                 views: {
                     add: {
                         templateUrl: tpl + 'views/admin/hots.guides.add.hero.html',
-                        controller: 'AdminHOTSGuideAddCtrl',
+                        controller: 'AdminHOTSGuideAddHeroCtrl',
                         resolve: {
                             dataHeroes: ['AdminHeroService', function (AdminHeroService) {
                                 return AdminHeroService.getAllHeroes();
@@ -1020,7 +1028,16 @@ var app = angular.module('app', [
                 url: '/map',
                 views: {
                     add: {
-                        templateUrl: tpl + 'views/admin/hots.guides.add.map.html'
+                        templateUrl: tpl + 'views/admin/hots.guides.add.map.html',
+                        controller: 'AdminHOTSGuideAddMapCtrl',
+                        resolve: {
+                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
+                                return AdminHeroService.getAllHeroes();
+                            }],
+                            dataMaps: ['AdminMapService', function (AdminMapService) {
+                                return AdminMapService.getAllMaps();
+                            }]
+                        }
                     }
                 },
                 access: { auth: true, admin: true }
@@ -1056,7 +1073,7 @@ var app = angular.module('app', [
                 views: {
                     edit: {
                         templateUrl: tpl + 'views/admin/hots.guides.edit.hero.html',
-                        controller: 'AdminHOTSGuideEditCtrl',
+                        controller: 'AdminHOTSGuideEditHeroCtrl',
                         resolve: {
                             dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
                                 var guideID = $stateParams.guideID;
@@ -1077,7 +1094,20 @@ var app = angular.module('app', [
                 url: '/:guideID/map',
                 views: {
                     edit: {
-                        templateUrl: tpl + 'views/admin/hots.guides.edit.map.html'
+                        templateUrl: tpl + 'views/admin/hots.guides.edit.map.html',
+                        controller: 'AdminHOTSGuideEditMapCtrl',
+                        resolve: {
+                            dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
+                                var guideID = $stateParams.guideID;
+                                return AdminHOTSGuideService.getGuide(guideID);
+                            }],
+                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
+                                return AdminHeroService.getAllHeroes();
+                            }],
+                            dataMaps: ['AdminMapService', function (AdminMapService) {
+                                return AdminMapService.getAllMaps();
+                            }]
+                        }
                     }
                 },
                 access: { auth: true, admin: true }

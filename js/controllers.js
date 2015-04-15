@@ -4298,10 +4298,10 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('AdminHOTSGuideAddCtrl', ['$scope', '$state', 'AlertService', 'AdminHOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
+.controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', 'AlertService', 'AdminHOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
     function ($scope, $state, AlertService, AdminHOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
         // create guide
-        $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide !== null) ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
+        $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
         $scope.$watch('guide', function(){
             $scope.app.settings.guide = $scope.guide;
         }, true);
@@ -4428,13 +4428,121 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+.controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'AdminHOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, AlertService, AdminHOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+        // create guide
+        $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
+        $scope.$watch('guide', function(){
+            $scope.app.settings.guide = $scope.guide;
+        }, true);
+
+        // heroes
+        $scope.heroes = dataHeroes.heroes;
+        
+        // maps
+        $scope.maps = dataMaps.maps;
+        
+        // steps
+        $scope.step = 2;
+        $scope.prevStep = function () {
+            if ($scope.step == 2) { return $state.go('app.admin.hots.guides.add.step1', {}); }
+            if ($scope.step > 1) $scope.step = $scope.step - 1;
+        }
+        $scope.nextStep = function () {
+            if ($scope.step < 5) $scope.step = $scope.step + 1;
+        }
+        
+        $scope.stepOne = function () {
+            $state.go('app.admin.hots.guides.add.step1', {});
+        };
+        
+        // draw map rows
+        var mapRows = [4,3];
+        $scope.mapRows = [];
+        var index = 0;
+        for (var row = 0; row < mapRows.length; row++) {
+            var maps = [];
+            for (var i = 0; i < mapRows[row]; i++) {
+                if (dataMaps.maps[index]) {
+                    maps.push(dataMaps.maps[index]);
+                }
+                index++;
+            }
+            $scope.mapRows.push(maps);
+        }
+        
+        // summernote options
+        $scope.options = {
+          height: 100,
+          toolbar: [
+            ['style', ['style']],
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['format', ['hr']],
+            ['misc', ['undo', 'redo']]
+          ]
+        };
+
+        // premium
+        $scope.premiumTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isPremium = function () {
+            var premium = $scope.guide.premium.isPremium;
+            for (var i = 0; i < $scope.premiumTypes.length; i++) {
+                if ($scope.premiumTypes[i].value === premium) {
+                    return $scope.premiumTypes[i].text;
+                }
+            }
+        }
+        
+        // featured
+        $scope.featuredTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isFeatured = function () {
+            var featured = $scope.guide.featured;
+            for (var i = 0; i < $scope.featuredTypes.length; i++) {
+                if ($scope.featuredTypes[i].value === featured) {
+                    return $scope.featuredTypes[i].text;
+                }
+            }
+        }
+        
+        // save guide
+        $scope.saveGuide = function () {
+            if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
+                return false;
+            }
+            
+            AdminHOTSGuideService.addGuide($scope.guide).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    $scope.app.settings.guide = null;
+                    AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been added successfully.' });
+                    $state.go('app.admin.hots.guides.list');
+                }
+            });
+        };
+    }
+])
 .controller('AdminHOTSGuideEditStep1Ctrl', ['$scope', 'dataGuide', 
     function ($scope, dataGuide) {
         $scope.guide = dataGuide.guide;
     }
 ])
-.controller('AdminHOTSGuideEditCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'dataGuide', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, AlertService, GuideBuilder, dataGuide, dataHeroes, dataMaps) {
+.controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'AdminHOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, AlertService, GuideBuilder, AdminHOTSGuideService, dataGuide, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = GuideBuilder.new('hero', dataGuide.guide);
         
@@ -4445,7 +4553,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.maps = dataMaps.maps;
         
         // steps
-        $scope.step = 3;
+        $scope.step = 2;
         $scope.prevStep = function () {
             if ($scope.step == 2) { return $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide._id }); }
             if ($scope.step > 1) $scope.step = $scope.step - 1;
@@ -4545,7 +4653,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // save guide
-        $scope.updateGuide = function () {
+        $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
                 return false;
             }

@@ -55,13 +55,14 @@
     </ul>
 </div>
 <div class="container" ng-show="step === 2">
+    <div class="guide-text hero-select"></div>
     <div class="hero-selection">
         <div class="hero-row hero-{{row.length}}" ng-repeat="row in heroRows">
             <div>
                 <div class="hero" ng-repeat="hero in row">
                     <span class="icon-wrap">
                         <span class="icon" ng-class="{ active: guide.hasHero(hero) }">
-                            <a href="#" class="icon-{{hero.className}}" ng-if="hero.active" ng-click="guide.toggleHero(hero)"></a>
+                            <a href="#" class="icon-{{hero.className}}" ng-if="hero.active" ng-click="guide.toggleHero(hero)" hots-hero></a>
                             <span class="icon-ts" ng-if="!hero.active"></span>
                         </span>
                     </span>
@@ -71,17 +72,18 @@
     </div>
 </div>
 <div class="container" ng-show="step === 3">
+    <div class="guide-text talent-select"></div>
     <p ng-show="!guide.heroes.length" class="white wrapper-md">You must select at least 1 hero before you can choose talents.</p>
     <div class="row">
         <div class="col-xs-4" ng-repeat="hero in guide.heroes">
             <div class="gb-talents">
-                <div class="gb-talents-title">{{hero.hero.name}}</div>
+                <div class="gb-talents-title talents-title {{hero.hero.className}}">{{hero.hero.name}}</div>
                 <ul class="gb-talents-tiers">
                     <li class="clearfix" ng-repeat="tier in guide.tiers()">
                         <span>{{tier}}</span>
                         <ul class="gb-talents-icons clearfix">
                             <li ng-repeat="talent in guide.talentsByTier(hero.hero, tier) | orderBy: talent.orderNum">
-                                <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}" ng-class="{ 'tier-selected': guide.hasAnyTalent(hero, talent), 'active': guide.hasTalent(hero, talent) }" ng-click="guide.toggleTalent(hero, talent)">{{talent.name}}</a>
+                                <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}" ng-class="{ 'tier-selected': guide.hasAnyTalent(hero, talent), 'active': guide.hasTalent(hero, talent) }" ng-click="guide.toggleTalent(hero, talent)" hots-talent>{{talent.name}}</a>
                             </li>
                         </ul>
                     </li>
@@ -91,6 +93,7 @@
     </div>
 </div>
 <div class="container" ng-show="step === 4">
+    <div class="guide-text hero-information"></div>
     <div class="row">
         <div class="col-xs-4">
             <div class="gb-synergy">
@@ -98,7 +101,7 @@
                 <span>Who do they play well with?</span>
             </div>
             <ul class="hero-list">
-                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasSynergy(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleSynergy(hero)">{{hero.name}}</a></li>
+                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasSynergy(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleSynergy(hero)" hots-hero>{{hero.name}}</a></li>
             </ul>
         </div>
         <div class="col-xs-4">
@@ -107,7 +110,7 @@
                 <span>Who are they strong against?</span>
             </div>
             <ul class="hero-list">
-                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasStrong(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleStrong(hero)">{{hero.name}}</a></li>
+                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasStrong(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleStrong(hero)" hots-hero>{{hero.name}}</a></li>
             </ul>
         </div>
         <div class="col-xs-4">
@@ -116,19 +119,20 @@
                 <span>Who are they weak against?</span>
             </div>
             <ul class="hero-list">
-                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasWeak(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleWeak(hero)">{{hero.name}}</a></li>
+                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasWeak(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleWeak(hero)" hots-hero>{{hero.name}}</a></li>
             </ul>
         </div>
     </div>
 </div>
 <div class="container" ng-show="step === 5">
+    <div class="guide-text map-select"></div>
     <div class="map-selection">
         <div class="map-row map-row-{{row.length}}" ng-repeat="row in mapRows">
             <div>
                 <div class="map" ng-repeat="map in row">
                     <span class="icon-wrap">
                         <span class="icon" ng-class="{ active: guide.hasMap(map) }">
-                            <a href="#" class="icon-{{map.className}}" ng-click="guide.toggleMap(map)"></a>
+                            <a href="#" class="icon-{{map.className}}" ng-click="guide.toggleMap(map)" hots-map></a>
                         </span>
                     </span>
                 </div>
@@ -137,6 +141,7 @@
     </div>
 </div>
 <div class="container" ng-show="step === 6">
+    <div class="guide-text hero-discussion"></div>
     <div class="db-section m-b-md" ng-repeat="content in guide.content track by $index | orderBy: content.orderNum">
         <div class="gb-content-title">
             <a href="#" class="gb-content-delete" ng-show="guide.content.length" ng-click="guide.deleteContent(content)"><i class="fa fa-times"></i></a>
@@ -152,6 +157,7 @@
     </a>
 </div>
 <div class="container" ng-show="step === 7">
+    <div class="guide-text save-guide-now"></div>
     <div class="panel panel-danger error-modal" ng-show="!guide.hasAnyHero() || !guide.allTalentsDone()">
         <div class="panel-heading">
             <strong>UNABLE TO SAVE GUIDE</strong>

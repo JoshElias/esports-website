@@ -36,7 +36,7 @@ angular.module('app.directives', ['ui.load'])
         link: function (scope, el, attr) {
             var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -344 : 60;
             el.wTooltip({
-                delay: 0,
+                delay: 500,
                 offsetX: xPos,
                 offsetY: -40,
                 content: '<img src="'+attr['tooltipImg']+'" alt="">',
@@ -160,6 +160,16 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/hots.talent.modal.html'
     };
 })
+.directive('heroModal', function () {
+    return {
+        templateUrl: 'views/frontend/hots.hero.modal.html'
+    };
+})
+.directive('mapModal', function () {
+    return {
+        templateUrl: 'views/frontend/hots.map.modal.html'
+    };
+})
 .directive('hotsTalent', ['$compile', function ($compile) {
     return {
         restrict: 'A',
@@ -167,10 +177,40 @@ angular.module('app.directives', ['ui.load'])
             el.wTooltip({
                 delay: 500,
                 offsetX: 100,
-                offsetY: -40,
+                offsetY: 40,
                 content: $compile('<div talent-modal></div>')(scope),
                 style: false,
                 className: 'hots-talent-tooltip'
+            });
+        }
+    };
+}])
+.directive('hotsHero', ['$compile', function ($compile) {
+    return {
+        restrict: 'A',
+        link: function (scope, el, attr) {
+            el.wTooltip({
+                delay: 500,
+                offsetX: 100,
+                offsetY: 40,
+                content: $compile('<div hero-modal></div>')(scope),
+                style: false,
+                className: 'hots-hero-tooltip'
+            });
+        }
+    };
+}])
+.directive('hotsMap', ['$compile', function ($compile) {
+    return {
+        restrict: 'A',
+        link: function (scope, el, attr) {
+            el.wTooltip({
+                delay: 500,
+                offsetX: 100,
+                offsetY: 40,
+                content: $compile('<div map-modal></div>')(scope),
+                style: false,
+                className: 'hots-map-tooltip'
             });
         }
     };

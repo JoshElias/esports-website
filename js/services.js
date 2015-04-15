@@ -1218,7 +1218,7 @@ angular.module('app.services', [])
                 expiryDate: d
             },
             featured: data.featured || false,
-            public: data.public || 'true'
+            public: (data.public) ? data.public.toString() : 'true'
         };
         
         gb.validVideo = function () {
@@ -1378,6 +1378,18 @@ angular.module('app.services', [])
                 }
             }
             return false;
+        };
+        
+        gb.hasAnyChapter = function () {
+            return gb.content.length;
+        };
+        
+        gb.hasAnyMap = function () {
+            return gb.maps.length;
+        };
+        
+        gb.setMap = function (map) {
+            gb.maps = [map._id];
         };
         
         gb.toggleMap = function (map) {
