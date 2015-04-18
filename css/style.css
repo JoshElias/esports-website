@@ -32,7 +32,7 @@
     font-style: normal;
 }
 
-body { background: #323232 url('../img/tsbg.png'); font-family: 'Open Sans Regular'; }
+body { background: #323232 url('../img/tsbg.png'); font-family: 'Open Sans Regular'; overflow-x: hidden; }
 body.admin {  }
 body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center top; }
 
@@ -4718,22 +4718,89 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 .talents-icon.zeratul.large.rewind { background-position: -30px -2244px; }
 
 /* hots modal */
-.hots-modal { padding: 10px; background: rgba(0,0,0,.4); }
-.hots-modal-inner { position: relative; width: 430px; min-height: 82px; background: rgba(0,0,0,.8); }
-.hots-modal h1 { padding: 10px 10px 0px 61px; color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
-.hots-modal p { margin: 0; padding: 0 10px 10px 61px; color: #FFF; }
+.hots-modal { position: relative; padding: 2px; background: #90d7ed; /* Old browsers */
+    background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); /* IE6-9 */
+    /*box-shadow: 0px 0px 10px #d3eefa;*/
+    -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite;
+}
 
-.hots-modal .hots-talent-icon { position: absolute; top: -10px; left: -61px; }
-.hots-modal .hero-icon { position: absolute; top: -10px; left: -50px; }
+.hots-modal-inner { padding: 40px; width: 500px; background: #141316 url('../img/hots/modal/modalbg.jpg') no-repeat right top; }
+.hots-modal-inner.heroes-modal { min-height: 270px; }
+.hots-modal-top-glow { position: absolute; top: -84px; left: 0px; width: 324px; height: 84px; background: url('../img/hots/modal/top-glow.png') no-repeat; z-index: 1001; }
+.hots-modal-bot-glow { position: absolute; bottom: -84px; left: 0px; width: 324px; height: 84px; background: url('../img/hots/modal/bottom-glow.png') no-repeat; z-index: 1001; }
 
-.map-icon { position: absolute; top: -10px; left: -56px; width: 92px; height: 92px; }
-.map-icon.icon-blackheartsbay { background: url('../img/hots/maps/blackheart_small.png') no-repeat center center; }
-.map-icon.icon-cursedhollow { background: url('../img/hots/maps/cursed_small.png') no-repeat center center; }
-.map-icon.icon-dragonshrine { background: url('../img/hots/maps/dragon_small.png') no-repeat center center; }
-.map-icon.icon-gardenofterror { background: url('../img/hots/maps/terror_small.png') no-repeat center center; }
-.map-icon.icon-hauntedmines { background: url('../img/hots/maps/mine_small.png') no-repeat center center; }
-.map-icon.icon-skytemple { background: url('../img/hots/maps/sky_small.png') no-repeat center center; }
-.map-icon.icon-tomb-of-the-spider-queen { background: url('../img/hots/maps/spider_small.png') no-repeat center center; }
+.hots-modal h1 { position: relative; padding: 0; color: #4992cf; font-size: 22px; font-family: 'Open Sans Bold'; text-transform: uppercase; text-shadow: 1px 1px 1px #000; z-index: 1003; }
+.hots-modal p { position: relative; padding: 0; color: #bcbbbb; font-size: 12px; text-shadow: 1px 1px 1px #000; z-index: 1003; }
+
+/* hots modal - heroes */
+.hots-modal .hots-modal-hero { width: 300px; }
+.hots-modal .hots-modal-hero p.title { color: #d3eefa; letter-spacing: 2px; text-transform: uppercase; }
+.hots-modal .hots-modal-hero p.description { margin-bottom: 68px; }
+
+.hots-modal .hero { position: absolute; top: -65px; right: -160px; width: 557px; height: 364px; z-index: 1002; }
+.hots-modal .hero.abathur { background: url('../img/hots/modal/heroes/abathur.png') no-repeat center right; }
+.hots-modal .hero.anub-arak { background: url('../img/hots/modal/heroes/anub-arak.png') no-repeat center right; }
+.hots-modal .hero.arthas { background: url('../img/hots/modal/heroes/arthas.png') no-repeat center right; }
+.hots-modal .hero.azmodan { background: url('../img/hots/modal/heroes/azmodan.png') no-repeat center right; }
+.hots-modal .hero.brightwing { background: url('../img/hots/modal/heroes/brightwing.png') no-repeat center right; }
+.hots-modal .hero.chen { background: url('../img/hots/modal/heroes/chen.png') no-repeat center right; }
+.hots-modal .hero.diablo { background: url('../img/hots/modal/heroes/diablo.png') no-repeat center right; }
+.hots-modal .hero.etc { background: url('../img/hots/modal/heroes/etc.png') no-repeat center right; }
+.hots-modal .hero.falstad { background: url('../img/hots/modal/heroes/falstad.png') no-repeat center right; }
+.hots-modal .hero.gazlowe { background: url('../img/hots/modal/heroes/gazlowe.png') no-repeat center right; }
+.hots-modal .hero.illidan { background: url('../img/hots/modal/heroes/illidan.png') no-repeat center right; }
+.hots-modal .hero.jaina { background: url('../img/hots/modal/heroes/jaina.png') no-repeat center right; }
+.hots-modal .hero.kerrigan { background: url('../img/hots/modal/heroes/kerrigan.png') no-repeat center right; }
+.hots-modal .hero.lili { background: url('../img/hots/modal/heroes/lili.png') no-repeat center right; }
+.hots-modal .hero.thelostvikings { background: url('../img/hots/modal/heroes/the-lost-vikings.png') no-repeat center right; }
+.hots-modal .hero.malfurion { background: url('../img/hots/modal/heroes/malfurion.png') no-repeat center right; }
+.hots-modal .hero.muradin { background: url('../img/hots/modal/heroes/muradin.png') no-repeat center right; }
+.hots-modal .hero.murky { background: url('../img/hots/modal/heroes/murky.png') no-repeat center right; }
+.hots-modal .hero.nazeebo { background: url('../img/hots/modal/heroes/nazeebo.png') no-repeat center right; }
+.hots-modal .hero.nova { background: url('../img/hots/modal/heroes/nova.png') no-repeat center right; }
+.hots-modal .hero.raynor { background: url('../img/hots/modal/heroes/raynor.png') no-repeat center right; }
+.hots-modal .hero.rehgar { background: url('../img/hots/modal/heroes/rehgar.png') no-repeat center right; }
+.hots-modal .hero.sgthammer { background: url('../img/hots/modal/heroes/sgthammer.png') no-repeat center right; }
+.hots-modal .hero.sonya { background: url('../img/hots/modal/heroes/sonya.png') no-repeat center right; }
+.hots-modal .hero.stitches { background: url('../img/hots/modal/heroes/stitches.png') no-repeat center right; }
+.hots-modal .hero.tassadar { background: url('../img/hots/modal/heroes/tassadar.png') no-repeat center right; }
+.hots-modal .hero.thrall { background: url('../img/hots/modal/heroes/thrall.png') no-repeat center right; }
+.hots-modal .hero.tychus { background: url('../img/hots/modal/heroes/tychus.png') no-repeat center right; }
+.hots-modal .hero.tyrael { background: url('../img/hots/modal/heroes/tyrael.png') no-repeat center right; }
+.hots-modal .hero.tyrande { background: url('../img/hots/modal/heroes/tyrande.png') no-repeat center right; }
+.hots-modal .hero.uther { background: url('../img/hots/modal/heroes/uther.png') no-repeat center right; }
+.hots-modal .hero.valla { background: url('../img/hots/modal/heroes/valla.png') no-repeat center right; }
+.hots-modal .hero.zagara { background: url('../img/hots/modal/heroes/zagara.png') no-repeat center right; }
+.hots-modal .hero.zeratul { background: url('../img/hots/modal/heroes/zeratul.png') no-repeat center right; }
+.hots-modal .hero.sylvanas { background: url('../img/hots/modal/heroes/sylvanas.png') no-repeat center right; }
+
+.hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
+.hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
+.hots-modal .universe.diablo { background: url('../img/hots/modal/universe/diablo.png') no-repeat; }
+.hots-modal .universe.starcraft { background: url('../img/hots/modal/universe/sc.png') no-repeat; }
+.hots-modal .universe.warcraft { background: url('../img/hots/modal/universe/wow.png') no-repeat; }
+
+/* hots modal - maps */
+.hots-modal .map-container { float: left; width: 195px; height: 195px; padding: 4px; background: #90d7ed; background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); }
+.hots-modal .map { width: 187px; height: 187px; border: 1px solid #10131c; }
+.hots-modal .map.blackheartsbay { background: url('../img/hots/maps/modal/black.jpg') no-repeat center center; }
+.hots-modal .map.cursedhollow { background: url('../img/hots/maps/modal/curse.jpg') no-repeat center center; }
+.hots-modal .map.dragonshrine { background: url('../img/hots/maps/modal/dragon.jpg') no-repeat center center; }
+.hots-modal .map.gardenofterror { background: url('../img/hots/maps/modal/gt.jpg') no-repeat center center; }
+.hots-modal .map.hauntedmines { background: url('../img/hots/maps/modal/mine.jpg') no-repeat center center; }
+.hots-modal .map.skytemple { background: url('../img/hots/maps/modal/temp.jpg') no-repeat center center; }
+.hots-modal .map.tomb-of-the-spider-queen { background: url('../img/hots/maps/modal/spider.jpg') no-repeat center center; }
+.hots-modal .map-text { float: right; width: 185px; }
+
+/* hots modal - talents */
+.hots-modal .hots-talent-icon { position: absolute; top: 20px; left: -51px; }
+.hots-modal .talent-text { margin-left: 51px; }
 
 /* mobile */
 @media (min-width: 768px) {

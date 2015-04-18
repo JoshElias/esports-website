@@ -90,7 +90,6 @@ module.exports = {
                         }
                     });
                 }
-                console.log(data);
                 return res.json({ success: true });
             });
         };
@@ -332,7 +331,6 @@ module.exports = {
             getDeck(function () {
                 getClass(function () {
                     getNeutral(function () {
-                        //console.log(deck);
                         return res.json({
                             success: true,
                             deck: deck,
@@ -711,7 +709,6 @@ module.exports = {
                         }
                     });
                 }
-                console.log(data);
                 return res.json({ success: true });
             });
         };
@@ -1526,7 +1523,6 @@ module.exports = {
                 function checkEmail(cb) {
                     Schemas.User.count({ email: req.body.email }, function(err, count){
                         if (err) {
-                            console.log('1');
                             error = true;
                             errorMsgs.unknown = { 
                                 msg: 'An unknown error occurred'
@@ -1546,14 +1542,12 @@ module.exports = {
                 function checkUsername(cb) {
                     Schemas.User.count({ username: req.body.username }, function(err, count){
                         if (err) {
-                            console.log('2');
                             error = true;
                             errorMsgs.unknown = { 
                                 msg: 'An unknown error occurred'
                             };
                         }
                         if (count > 0) {
-                            console.log('Username already in use');
                             error = true;
                             errorMsgs.username = { 
                                 msg: 'Username already in use'
@@ -1603,7 +1597,6 @@ module.exports = {
                                     }
                                 });
                             }
-                            console.log(data);
                             return res.json({ success: true });
                         });
                     }
@@ -1767,7 +1760,6 @@ module.exports = {
                     console.log(err);
                     return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } });
                 }
-                console.log(data);
                 return res.json({ success: true });
             });
         };
@@ -1847,7 +1839,6 @@ module.exports = {
                         console.log(err);
                         return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } });
                     }
-                    console.log(data);
                     return callback();
                 });
             }

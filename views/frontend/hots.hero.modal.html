@@ -1,14 +1,13 @@
 <div class="hots-modal">
-    <div class="hots-modal-inner">
-        <div class="hero-icon">
-            <span class="icon-wrap">
-                <span class="icon">
-                    <a href="#" class="icon-{{hero.className}}"></a>
-                </span>
-            </span>
+    <div class="hots-modal-top-glow"></div>
+    <div class="hots-modal-bot-glow"></div>
+    <div class="hots-modal-inner heroes-modal">
+        <div class="hero {{hero.className}}"></div>
+        <div class="hots-modal-hero">
+            <h1 class="m-b-none">{{hero.name}}</h1>
+            <p class="title m-b-md">{{hero.heroType}} {{hero.role}}</p>
+            <p class="description">{{hero.description}}</p>
+            <div class="universe {{hero.universe.toLowerCase()}}"></div>
         </div>
-        <h1 class="m-b-none">{{hero.name}}</h1>
-        <p class="m-b-sm">{{hero.heroType}} {{hero.role}}</p>
-        <p>{{hero.description}}</p>
     </div>
 </div>

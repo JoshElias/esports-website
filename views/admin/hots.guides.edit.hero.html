@@ -62,7 +62,7 @@
                 <div class="hero" ng-repeat="hero in row">
                     <span class="icon-wrap">
                         <span class="icon" ng-class="{ active: guide.hasHero(hero) }">
-                            <a href="#" class="icon-{{hero.className}}" ng-if="hero.active" ng-click="guide.toggleHero(hero)" hots-hero></a>
+                            <a href="#" class="icon-{{hero.className}}" ng-if="hero.active" ng-click="guide.toggleHero(hero)" hots-hero tooltip-pos="{{tooltipPos(row, $index)}}"></a>
                             <span class="icon-ts" ng-if="!hero.active"></span>
                         </span>
                     </span>
@@ -83,7 +83,7 @@
                         <span>{{tier}}</span>
                         <ul class="gb-talents-icons clearfix">
                             <li ng-repeat="talent in guide.talentsByTier(hero.hero, tier) | orderBy: talent.orderNum">
-                                <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}{{hasAnyTalent(hero, talent)}}{{hasTalent(hero, talent)}}" ng-click="guide.toggleTalent(hero, talent)" hots-talent>{{talent.name}}</a>
+                                <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}{{hasAnyTalent(hero, talent)}}{{hasTalent(hero, talent)}}" ng-click="guide.toggleTalent(hero, talent)" hots-talent  tooltip-pos="{{tooltipPosTalent($parent.$parent.$index)}}">{{talent.name}}</a>
                             </li>
                         </ul>
                     </li>
@@ -119,7 +119,7 @@
                 <span>Who are they weak against?</span>
             </div>
             <ul class="hero-list">
-                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasWeak(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleWeak(hero)" hots-hero>{{hero.name}}</a></li>
+                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasWeak(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleWeak(hero)" hots-hero tooltip-pos="left">{{hero.name}}</a></li>
             </ul>
         </div>
     </div>
@@ -132,7 +132,7 @@
                 <div class="map" ng-repeat="map in row">
                     <span class="icon-wrap">
                         <span class="icon" ng-class="{ active: guide.hasMap(map) }">
-                            <a href="#" class="icon-{{map.className}}" ng-click="guide.toggleMap(map)" hots-map></a>
+                            <a href="#" class="icon-{{map.className}}" ng-click="guide.toggleMap(map)" hots-map tooltip-pos="{{tooltipPos(row, $index)}}"></a>
                         </span>
                     </span>
                 </div>

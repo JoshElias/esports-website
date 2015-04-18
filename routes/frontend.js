@@ -918,7 +918,6 @@ module.exports = {
             getDeck(function () {
                 getClass(function () {
                     getNeutral(function () {
-                        //console.log(deck);
                         return res.json({
                             success: true,
                             deck: deck,
@@ -1700,7 +1699,7 @@ module.exports = {
                     select: '_id author comment createdDate votesCount votes'
             }])
             .exec(function (err, deck) {
-                if (err || !deck) { console.log(err || 'Unable to load deck: ' + slug); return res.json({ success: false }); }
+                if (err || !deck) { return res.json({ success: false }); }
                 
                 Schemas.Comment.populate(deck.comments, {
                     path: 'author',

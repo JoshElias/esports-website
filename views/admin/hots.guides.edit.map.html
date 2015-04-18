@@ -50,7 +50,7 @@
                 <div class="map" ng-repeat="map in row">
                     <span class="icon-wrap">
                         <span class="icon" ng-class="{ active: guide.hasMap(map) }">
-                            <a href="#" class="icon-{{map.className}}" ng-click="guide.setMap(map)" hots-map></a>
+                            <a href="#" class="icon-{{map.className}}" ng-click="guide.setMap(map)" hots-map tooltip-pos="{{tooltipPos(row, $index)}}"></a>
                         </span>
                     </span>
                 </div>
@@ -85,7 +85,7 @@
                 <span>Who are they weak against?</span>
             </div>
             <ul class="hero-list">
-                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasWeak(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleWeak(hero)" hots-hero>{{hero.name}}</a></li>
+                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasWeak(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleWeak(hero)" hots-hero tooltip-pos="left">{{hero.name}}</a></li>
             </ul>
         </div>
     </div>

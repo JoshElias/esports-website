@@ -174,10 +174,11 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         link: function (scope, el, attr) {
+            var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -560 : 111;
             el.wTooltip({
                 delay: 500,
-                offsetX: 100,
-                offsetY: 40,
+                offsetX: xPos,
+                offsetY: -70,
                 content: $compile('<div talent-modal></div>')(scope),
                 style: false,
                 className: 'hots-talent-tooltip'
@@ -189,10 +190,11 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         link: function (scope, el, attr) {
+            var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -690 : 60;
             el.wTooltip({
                 delay: 500,
-                offsetX: 100,
-                offsetY: 40,
+                offsetX: xPos,
+                offsetY: -130,
                 content: $compile('<div hero-modal></div>')(scope),
                 style: false,
                 className: 'hots-hero-tooltip'
@@ -204,10 +206,11 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         link: function (scope, el, attr) {
+            var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -560 : 60;
             el.wTooltip({
                 delay: 500,
-                offsetX: 100,
-                offsetY: 40,
+                offsetX: xPos,
+                offsetY: -130,
                 content: $compile('<div map-modal></div>')(scope),
                 style: false,
                 className: 'hots-map-tooltip'

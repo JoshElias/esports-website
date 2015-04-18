@@ -85,8 +85,8 @@ var app = angular.module('app', [
                     $state.transitionTo('app.login');
                 }
                 if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
-                    //event.preventDefault();
-                    //$state.transitionTo('app.home');
+                    event.preventDefault();
+                    $state.transitionTo('app.home');
                 }
                 $window.scrollTo(0,0);
             });
@@ -5691,6 +5691,14 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.heroRows.push(heroes);
         }
         
+        $scope.tooltipPos = function (row, $index) {
+            return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
+        };
+        
+        $scope.tooltipPosTalent = function ($index) {
+            return ($index === 2) ? 'left' : 'right';
+        };        
+        
         // draw map rows
         var mapRows = [4,3];
         $scope.mapRows = [];
@@ -5818,6 +5826,10 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.mapRows.push(maps);
         }
+
+        $scope.tooltipPos = function (row, $index) {
+            return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
+        };
         
         // summernote options
         $scope.options = {
@@ -5945,7 +5957,15 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.mapRows.push(maps);
         }
+
+        $scope.tooltipPos = function (row, $index) {
+            return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
+        };
         
+        $scope.tooltipPosTalent = function ($index) {
+            return ($index === 2) ? 'left' : 'right';
+        };        
+
         // talents
         $scope.getTalents = function (hero) {
             return $scope.guide.sortTalents(hero);
@@ -6062,6 +6082,10 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.mapRows.push(maps);
         }
+
+        $scope.tooltipPos = function (row, $index) {
+            return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
+        };
         
         // summernote options
         $scope.options = {
@@ -6308,10 +6332,11 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         link: function (scope, el, attr) {
+            var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -560 : 111;
             el.wTooltip({
                 delay: 500,
-                offsetX: 100,
-                offsetY: 40,
+                offsetX: xPos,
+                offsetY: -70,
                 content: $compile('<div talent-modal></div>')(scope),
                 style: false,
                 className: 'hots-talent-tooltip'
@@ -6323,10 +6348,11 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         link: function (scope, el, attr) {
+            var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -690 : 60;
             el.wTooltip({
                 delay: 500,
-                offsetX: 100,
-                offsetY: 40,
+                offsetX: xPos,
+                offsetY: -130,
                 content: $compile('<div hero-modal></div>')(scope),
                 style: false,
                 className: 'hots-hero-tooltip'
@@ -6338,10 +6364,11 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         link: function (scope, el, attr) {
+            var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -560 : 60;
             el.wTooltip({
                 delay: 500,
-                offsetX: 100,
-                offsetY: 40,
+                offsetX: xPos,
+                offsetY: -130,
                 content: $compile('<div map-modal></div>')(scope),
                 style: false,
                 className: 'hots-map-tooltip'

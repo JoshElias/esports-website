@@ -4344,6 +4344,14 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.heroRows.push(heroes);
         }
         
+        $scope.tooltipPos = function (row, $index) {
+            return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
+        };
+        
+        $scope.tooltipPosTalent = function ($index) {
+            return ($index === 2) ? 'left' : 'right';
+        };        
+        
         // draw map rows
         var mapRows = [4,3];
         $scope.mapRows = [];
@@ -4471,6 +4479,10 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.mapRows.push(maps);
         }
+
+        $scope.tooltipPos = function (row, $index) {
+            return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
+        };
         
         // summernote options
         $scope.options = {
@@ -4598,7 +4610,15 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.mapRows.push(maps);
         }
+
+        $scope.tooltipPos = function (row, $index) {
+            return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
+        };
         
+        $scope.tooltipPosTalent = function ($index) {
+            return ($index === 2) ? 'left' : 'right';
+        };        
+
         // talents
         $scope.getTalents = function (hero) {
             return $scope.guide.sortTalents(hero);
@@ -4715,6 +4735,10 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.mapRows.push(maps);
         }
+
+        $scope.tooltipPos = function (row, $index) {
+            return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
+        };
         
         // summernote options
         $scope.options = {
