@@ -85,8 +85,8 @@ var app = angular.module('app', [
                     $state.transitionTo('app.login');
                 }
                 if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
-                    event.preventDefault();
-                    $state.transitionTo('app.home');
+                    //event.preventDefault();
+                    //$state.transitionTo('app.home');
                 }
                 $window.scrollTo(0,0);
             });
@@ -4960,6 +4960,7 @@ angular.module('app.controllers', ['ngCookies'])
         var defaultHero = {
                 name : '',
                 description: '',
+                title: '',
                 role: HOTS.roles[0],
                 heroType: HOTS.types[0],
                 universe: HOTS.universes[0],
@@ -5951,7 +5952,11 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.hasTalent = function (hero, talent) {
-            return $scope.guide.hasTalent(hero, talent);
+            return ($scope.guide.hasTalent(hero, talent)) ? ' active' : '';
+        }
+        
+        $scope.hasAnyTalent = function (hero, talent) {
+            return ($scope.guide.hasAnyTalent(hero, talent)) ? ' tier-selected' : '';
         }
         
         // summernote options
@@ -6002,6 +6007,110 @@ angular.module('app.controllers', ['ngCookies'])
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
+                return false;
+            }
+            
+            AdminHOTSGuideService.editGuide($scope.guide).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been updated successfully.' });
+                    $state.go('app.admin.hots.guides.list');
+                }
+            });
+        };
+    }
+])
+.controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'AdminHOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, AlertService, GuideBuilder, AdminHOTSGuideService, dataGuide, dataHeroes, dataMaps) {
+        // create guide
+        $scope.guide = GuideBuilder.new('map', dataGuide.guide);
+        
+        // heroes
+        $scope.heroes = dataHeroes.heroes;
+        
+        // maps
+        $scope.maps = dataMaps.maps;
+        
+        // steps
+        $scope.step = 2;
+        $scope.prevStep = function () {
+            if ($scope.step == 2) { return $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide._id }); }
+            if ($scope.step > 1) $scope.step = $scope.step - 1;
+        }
+        $scope.nextStep = function () {
+            if ($scope.step < 5) $scope.step = $scope.step + 1;
+        }
+        
+        $scope.stepOne = function () {
+            $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide._id });
+        };
+        
+        // draw map rows
+        var mapRows = [4,3];
+        $scope.mapRows = [];
+        var index = 0;
+        for (var row = 0; row < mapRows.length; row++) {
+            var maps = [];
+            for (var i = 0; i < mapRows[row]; i++) {
+                if (dataMaps.maps[index]) {
+                    maps.push(dataMaps.maps[index]);
+                }
+                index++;
+            }
+            $scope.mapRows.push(maps);
+        }
+        
+        // summernote options
+        $scope.options = {
+          height: 100,
+          toolbar: [
+            ['style', ['style']],
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['format', ['hr']],
+            ['misc', ['undo', 'redo']]
+          ]
+        };
+
+        // premium
+        $scope.premiumTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isPremium = function () {
+            var premium = $scope.guide.premium.isPremium;
+            for (var i = 0; i < $scope.premiumTypes.length; i++) {
+                if ($scope.premiumTypes[i].value === premium) {
+                    return $scope.premiumTypes[i].text;
+                }
+            }
+        }
+        
+        // featured
+        $scope.featuredTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isFeatured = function () {
+            var featured = $scope.guide.featured;
+            for (var i = 0; i < $scope.featuredTypes.length; i++) {
+                if ($scope.featuredTypes[i].value === featured) {
+                    return $scope.featuredTypes[i].text;
+                }
+            }
+        }
+        
+        // save guide
+        $scope.saveGuide = function () {
+            if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                 return false;
             }
             
@@ -7482,7 +7591,7 @@ angular.module('app.services', [])
         var gb = {
             _id: data._id || null,
             name: data.name || '',
-            guideType: data.guideType || guideType,
+            guideType: guideType,
             description: data.description || '',
             content: data.content || [],
             heroes: data.heroes || [],
@@ -7500,6 +7609,11 @@ angular.module('app.services', [])
             featured: data.featured || false,
             public: (data.public) ? data.public.toString() : 'true'
         };
+        
+        // constrain maps to 1 if map guide
+        if (guideType === 'map' && gb.maps.length > 1) {
+            gb.maps = [gb.maps[0]];
+        }
         
         gb.validVideo = function () {
             var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;

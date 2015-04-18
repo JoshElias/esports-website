@@ -83,7 +83,7 @@
                         <span>{{tier}}</span>
                         <ul class="gb-talents-icons clearfix">
                             <li ng-repeat="talent in guide.talentsByTier(hero.hero, tier) | orderBy: talent.orderNum">
-                                <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}" ng-class="{ 'tier-selected': guide.hasAnyTalent(hero, talent), 'active': guide.hasTalent(hero, talent) }" ng-click="guide.toggleTalent(hero, talent)" hots-talent>{{talent.name}}</a>
+                                <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}{{hasAnyTalent(hero, talent)}}{{hasTalent(hero, talent)}}" ng-click="guide.toggleTalent(hero, talent)" hots-talent>{{talent.name}}</a>
                             </li>
                         </ul>
                     </li>

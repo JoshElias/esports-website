@@ -7,16 +7,16 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/dist/vendor.min.css" type="text/css" />
-    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/dist/style.min.css?04152015" type="text/css" />
+    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/dist/style.min.css?04172015" type="text/css" />
 </head>
-<body ng-class="{ admin: $state.includes('app.admin') }">
+<body ng-class="{ admin: $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
     <div class="app" id="app" ui-view="root"></div>
     <!-- vendor -->
     <script src="https://s3-us-west-2.amazonaws.com/ts-node2/dist/vendor.min.js"></script>
     <!-- angular -->
     <script src="https://s3-us-west-2.amazonaws.com/ts-node2/dist/angular.js"></script>
     <!-- app -->
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/dist/app.min.js?04152015"></script>
+    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/dist/app.min.js?04172015"></script>
     <!-- stripe -->
     <script src="https://js.stripe.com/v2/"></script>
     <script>

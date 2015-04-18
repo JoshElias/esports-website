@@ -1202,7 +1202,7 @@ angular.module('app.services', [])
         var gb = {
             _id: data._id || null,
             name: data.name || '',
-            guideType: data.guideType || guideType,
+            guideType: guideType,
             description: data.description || '',
             content: data.content || [],
             heroes: data.heroes || [],
@@ -1220,6 +1220,11 @@ angular.module('app.services', [])
             featured: data.featured || false,
             public: (data.public) ? data.public.toString() : 'true'
         };
+        
+        // constrain maps to 1 if map guide
+        if (guideType === 'map' && gb.maps.length > 1) {
+            gb.maps = [gb.maps[0]];
+        }
         
         gb.validVideo = function () {
             var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;

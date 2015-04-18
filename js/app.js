@@ -42,8 +42,8 @@ var app = angular.module('app', [
                     $state.transitionTo('app.login');
                 }
                 if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
-                    event.preventDefault();
-                    $state.transitionTo('app.home');
+                    //event.preventDefault();
+                    //$state.transitionTo('app.home');
                 }
                 $window.scrollTo(0,0);
             });

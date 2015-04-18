@@ -912,6 +912,7 @@ module.exports = {
                 var newHero = new Schemas.Hero({
                         name: hero.name,
                         description: hero.description,
+                        title: hero.title,
                         role: hero.role,
                         heroType: hero.heroType,
                         universe: hero.universe,
@@ -949,6 +950,7 @@ module.exports = {
                     
                     result.name = hero.name;
                     result.description = hero.description;
+                    result.title = hero.title;
                     result.role = hero.role;
                     result.heroType = hero.heroType;
                     result.universe = hero.universe;
@@ -1262,7 +1264,7 @@ module.exports = {
                         description: req.body.description,
                         content: req.body.content,
                         author: req.user._id,
-                        heroes: heroes,
+                        heroes: (req.body.guideType === 'hero') ? heroes : [],
                         maps: req.body.maps,
                         synergy: req.body.synergy,
                         against: {
@@ -1357,7 +1359,7 @@ module.exports = {
                     guide.guideType = req.body.guideType;
                     guide.description = req.body.description;
                     guide.content = req.body.content;
-                    guide.heroes = heroes;
+                    guide.heroes = (req.body.guideType === 'hero') ? heroes : [];
                     guide.maps = req.body.maps;
                     guide.synergy = req.body.synergy;
                     guide.against = {
