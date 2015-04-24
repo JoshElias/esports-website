@@ -1,4 +1,5 @@
 module.exports = {
+    hots: require('./frontend/hots'),
     index: function (config) {
         return function (req, res, next) {
             return res.render(config.tpl);
@@ -1264,12 +1265,22 @@ module.exports = {
     },
     articles: function (Schemas) {
         return function (req, res, next) {
-            var klass = req.body.klass,
+            var articleType = req.body.articleType || 'all',
+                filter = req.body.filter || 'all',
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 5,
-                where = (klass === 'all') ? {} : { 'classTags': klass },
+                where = {},
                 search = req.body.search || '',
                 articles, total;
+            
+            // filtering articles
+            if (articleType !== 'all') {
+                where.articleType = articleType;
+            } else {
+                if (filter !== 'all') {
+                    where.classTags = filter;
+                }
+            }
             
             // search
             if (search) {
@@ -1309,7 +1320,7 @@ module.exports = {
             
             getArticles(function () {
                 getTotal(function () {
-                    return res.json({ success: true, articles: articles, total: total, klass: klass, page: page, perpage: perpage, search: search });
+                    return res.json({ success: true, articles: articles, total: total, articleType: articleType, filter: filter, page: page, perpage: perpage, search: search });
                 });
             });
         };

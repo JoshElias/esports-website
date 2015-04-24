@@ -3355,16 +3355,16 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 /* Tier 2 */
 .talents-icon.murky.bigger-slime { background-position: 0px -120px; }
 .talents-icon.murky.tufferfish { background-position: 0px -150px; }
-.talents-icon.murky.living-the-dream { background-position: 0px -390px; }
-.talents-icon.murky.envenom { background-position: 0px -180px; }
+.talents-icon.murky.living-the-dream { background-position: 0px -180px; }
+.talents-icon.murky.envenom { background-position: 0px -210px; }
 /* Tier 3 */
 .talents-icon.murky.slime-advantage { background-position: 0px -120px; }
 .talents-icon.murky.hindering-slime { background-position: 0px -120px; }
 .talents-icon.murky.compressed-air { background-position: 0px -150px; }
-.talents-icon.murky.clairvoyance { background-position: 0px -210px; }
+.talents-icon.murky.clairvoyance { background-position: 0px -240px; }
 /* Tier 4 */
-.talents-icon.murky.march-of-the-murlocs { background-position: 0px -240px; }
-.talents-icon.murky.octo-grab { background-position: 0px -270px; }
+.talents-icon.murky.march-of-the-murlocs { background-position: 0px -270px; }
+.talents-icon.murky.octo-grab { background-position: 0px -300px; }
 /* Tier 5 */
 .talents-icon.murky.continuous-slime { background-position: 0px -120px; }
 .talents-icon.murky.wrath-of-cod { background-position: 0px -150px; }
@@ -3374,12 +3374,12 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 .talents-icon.murky.slimy-end { background-position: 0px -120px; }
 .talents-icon.murky.slimy-pufferfish { background-position: 0px -150px; }
 .talents-icon.murky.rejuvenating-bubble { background-position: 0px -30px; }
-.talents-icon.murky.blood-for-blood { background-position: 0px -300px; }
+.talents-icon.murky.blood-for-blood { background-position: 0px -330px; }
 /* Tier 7 */
-.talents-icon.murky.never-ending-murlocs { background-position: 0px -240px; }
-.talents-icon.murky.and-a-shark-too { background-position: 0px -270px; }
-.talents-icon.murky.rewind { background-position: 0px -330px; }
-.talents-icon.murky.bolt-of-the-storm { background-position: 0px -360px; }
+.talents-icon.murky.never-ending-murlocs { background-position: 0px -270px; }
+.talents-icon.murky.and-a-shark-too { background-position: 0px -300px; }
+.talents-icon.murky.rewind { background-position: 0px -360px; }
+.talents-icon.murky.bolt-of-the-storm { background-position: 0px -390px; }
 
 /* talents - murky - large */
 /* Tier 1 */
@@ -3390,16 +3390,16 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 /* Tier 2 */
 .talents-icon.murky.large.bigger-slime { background-position: -30px -408px; }
 .talents-icon.murky.large.tufferfish { background-position: -30px -510px; }
-.talents-icon.murky.large.living-the-dream { background-position: -30px -1326px; }
-.talents-icon.murky.large.envenom { background-position: -30px -612px; }
+.talents-icon.murky.large.living-the-dream { background-position: -30px -612px; }
+.talents-icon.murky.large.envenom { background-position: -30px -714px; }
 /* Tier 3 */
 .talents-icon.murky.large.slime-advantage { background-position: -30px -408px; }
 .talents-icon.murky.large.hindering-slime { background-position: -30px -408px; }
 .talents-icon.murky.large.compressed-air { background-position: -30px -510px; }
-.talents-icon.murky.large.clairvoyance { background-position: -30px -714px; }
+.talents-icon.murky.large.clairvoyance { background-position: -30px -816px; }
 /* Tier 4 */
-.talents-icon.murky.large.march-of-the-murlocs { background-position: -30px -816px; }
-.talents-icon.murky.large.octo-grab { background-position: -30px -918px; }
+.talents-icon.murky.large.march-of-the-murlocs { background-position: -30px -918px; }
+.talents-icon.murky.large.octo-grab { background-position: -30px -1020px; }
 /* Tier 5 */
 .talents-icon.murky.large.continuous-slime { background-position: -30px -408px; }
 .talents-icon.murky.large.wrath-of-cod { background-position: -30px -510px; }
@@ -3409,12 +3409,12 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 .talents-icon.murky.large.slimy-end { background-position: -30px -408px; }
 .talents-icon.murky.large.slimy-pufferfish { background-position: -30px -510px; }
 .talents-icon.murky.large.rejuvenating-bubble { background-position: -30px -102px; }
-.talents-icon.murky.large.blood-for-blood { background-position: -30px -1020px; }
+.talents-icon.murky.large.blood-for-blood { background-position: -30px -1122px; }
 /* Tier 7 */
-.talents-icon.murky.large.never-ending-murlocs { background-position: -30px -816px; }
-.talents-icon.murky.large.and-a-shark-too { background-position: -30px -918px; }
-.talents-icon.murky.large.rewind { background-position: -30px -1122px; }
-.talents-icon.murky.large.bolt-of-the-storm { background-position: -30px -1224px; }
+.talents-icon.murky.large.never-ending-murlocs { background-position: -30px -918px; }
+.talents-icon.murky.large.and-a-shark-too { background-position: -30px -1020px; }
+.talents-icon.murky.large.rewind { background-position: -30px -1224px; }
+.talents-icon.murky.large.bolt-of-the-storm { background-position: -30px -1326px; }
 
 /* talents - nazeebo - small */
 /* Tier 1 */
@@ -4046,7 +4046,7 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 .talents-icon.tassadar.large.khalas-embrace { background-position: -30px -204px; }
 .talents-icon.tassadar.large.static-charge { background-position: -30px -102px; }
 .talents-icon.tassadar.large.deep-shift { background-position: -30px -612px; }
-.talents-icon.tassadar.large.calldown-mule { background-position: -30px -210px; }
+.talents-icon.tassadar.large.calldown-mule { background-position: -30px -714px; }
 /* Tier 4 */
 .talents-icon.tassadar.large.archon { background-position: -30px -816px; }
 .talents-icon.tassadar.large.force-wall { background-position: -30px -918px; }
@@ -4355,7 +4355,7 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 .talents-icon.tyrande.pierce { background-position: 0px -60px; }
 .talents-icon.tyrande.protective-shield { background-position: 0px -120px; }
 .talents-icon.tyrande.focused-attack { background-position: 0px 0px; }
-.talents-icon.tyrande.searing-arrow { background-position: 0px -150px; }
+.talents-icon.tyrande.searing-arrows { background-position: 0px -150px; }
 .talents-icon.tyrande.healing-ward { background-position: 0px -180px; }
 /* Tier 3 */
 .talents-icon.tyrande.quickening-blessing { background-position: 0px -30px; }
@@ -4386,37 +4386,37 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 /* Tier 1 */
 .talents-icon.tyrande.large.rangers-mark { background-position: -30px 0px; }
 .talents-icon.tyrande.large.celestial-attunement { background-position: -30px -102px; }
-.talents-icon.tyrande.large.empower { background-position: -30px -306px; }
-.talents-icon.tyrande.large.seasoned-marksman { background-position: -30px -408px; }
+.talents-icon.tyrande.large.empower { background-position: -30px -204px; }
+.talents-icon.tyrande.large.seasoned-marksman { background-position: -30px -306px; }
 /* Tier 2 */
-.talents-icon.tyrande.large.pierce { background-position: -30px -306px; }
-.talents-icon.tyrande.large.protective-shield { background-position: -30px -510px; }
+.talents-icon.tyrande.large.pierce { background-position: -30px -204px; }
+.talents-icon.tyrande.large.protective-shield { background-position: -30px -408px; }
 .talents-icon.tyrande.large.focused-attack { background-position: -30px 0px; }
-.talents-icon.tyrande.large.searing-arrow { background-position: -30px -612px; }
-.talents-icon.tyrande.large.healing-ward { background-position: -30px -714px; }
+.talents-icon.tyrande.large.searing-arrows { background-position: -30px -510px; }
+.talents-icon.tyrande.large.healing-ward { background-position: -30px -612px; }
 /* Tier 3 */
 .talents-icon.tyrande.large.quickening-blessing { background-position: -30px -102px; }
-.talents-icon.tyrande.large.lunar-blaze { background-position: -30px -816px; }
-.talents-icon.tyrande.large.battle-momentum { background-position: -30px -918px; }
-.talents-icon.tyrande.large.calldown-mule { background-position: -30px -1020px; }
+.talents-icon.tyrande.large.lunar-blaze { background-position: -30px -714px; }
+.talents-icon.tyrande.large.battle-momentum { background-position: -30px -816px; }
+.talents-icon.tyrande.large.calldown-mule { background-position: -30px -918px; }
 /* Tier 4 */
-.talents-icon.tyrande.large.starfall { background-position: -30px -1122px; }
-.talents-icon.tyrande.large.shadowstalk { background-position: -30px -1224px; }
+.talents-icon.tyrande.large.starfall { background-position: -30px -1020px; }
+.talents-icon.tyrande.large.shadowstalk { background-position: -30px -1122px; }
 /* Tier 5 */
 .talents-icon.tyrande.large.overflowing-light { background-position: -30px -102px; }
 .talents-icon.tyrande.large.shrink-ray { background-position: -30px -1224px; }
 .talents-icon.tyrande.large.sprint { background-position: -30px -1326px; }
 .talents-icon.tyrande.large.huntress-fury { background-position: -30px 0px; }
 /* Tier 6 */
-.talents-icon.tyrande.large.ranger { background-position: -30px -306px; }
-.talents-icon.tyrande.large.shooting-star { background-position: -30px -816px; }
+.talents-icon.tyrande.large.ranger { background-position: -30px -204px; }
+.talents-icon.tyrande.large.shooting-star { background-position: -30px -714px; }
 .talents-icon.tyrande.large.mark-of-mending { background-position: -30px 0px; }
-.talents-icon.tyrande.large.trueshot-aura { background-position: -30px -1530px; }
+.talents-icon.tyrande.large.trueshot-aura { background-position: -30px -1428px; }
 /* Tier 7 */
-.talents-icon.tyrande.large.celestial-wrath { background-position: -30px -1122px; }
-.talents-icon.tyrande.large.hunters-prey { background-position: -30px -1224px; }
-.talents-icon.tyrande.large.nexus-frenzy { background-position: -30px -1632px; }
-.talents-icon.tyrande.large.storm-shield { background-position: -30px -1734px; }
+.talents-icon.tyrande.large.celestial-wrath { background-position: -30px -1020px; }
+.talents-icon.tyrande.large.hunters-prey { background-position: -30px -1122px; }
+.talents-icon.tyrande.large.nexus-frenzy { background-position: -30px -1530px; }
+.talents-icon.tyrande.large.storm-shield { background-position: -30px -1632px; }
 .talents-icon.tyrande.large.rewind { background-position: -30px -1734px; }
 
 /* talents - uther - small */
@@ -4434,7 +4434,7 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 .talents-icon.uther.wave-of-light { background-position: 0px -120px; }
 .talents-icon.uther.burden-of-guilt { background-position: 0px -60px; }
 .talents-icon.uther.holy-fire { background-position: 0px -240px; }
-.talents-icon.uther.clense { background-position: 0px -270px; }
+.talents-icon.uther.cleanse { background-position: 0px -270px; }
 .talents-icon.uther.clairvoyance { background-position: 0px -300px; }
 /* Tier 4 */
 .talents-icon.uther.divine-shield { background-position: 0px -330px; }
@@ -4459,34 +4459,34 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 /* Tier 1 */
 .talents-icon.uther.large.conjurers-pursuit { background-position: -30px 0px; }
 .talents-icon.uther.large.reach { background-position: -30px -102px; }
-.talents-icon.uther.large.fist-of-justice { background-position: -30px -306px; }
-.talents-icon.uther.large.block { background-position: -30px -408px; }
+.talents-icon.uther.large.fist-of-justice { background-position: -30px -204px; }
+.talents-icon.uther.large.block { background-position: -30px -306px; }
 /* Tier 2 */
-.talents-icon.uther.large.boundless-conviction { background-position: -30px -510px; }
-.talents-icon.uther.large.hammer-of-the-lightbringer { background-position: -30px -612px; }
-.talents-icon.uther.large.amplified-healing { background-position: -30px -714px; }
-.talents-icon.uther.large.protective-shield { background-position: -30px -816px; }
+.talents-icon.uther.large.boundless-conviction { background-position: -30px -408px; }
+.talents-icon.uther.large.hammer-of-the-lightbringer { background-position: -30px -510px; }
+.talents-icon.uther.large.amplified-healing { background-position: -30px -612px; }
+.talents-icon.uther.large.protective-shield { background-position: -30px -714px; }
 /* Tier 3 */
-.talents-icon.uther.large.wave-of-light { background-position: -30px -510px; }
-.talents-icon.uther.large.burden-of-guilt { background-position: -30px -306px; }
-.talents-icon.uther.large.holy-fire { background-position: -30px -918px; }
-.talents-icon.uther.large.clense { background-position: -30px -1020px; }
-.talents-icon.uther.large.clairvoyance { background-position: -30px -1122px; }
+.talents-icon.uther.large.wave-of-light { background-position: -30px -408px; }
+.talents-icon.uther.large.burden-of-guilt { background-position: -30px -204px; }
+.talents-icon.uther.large.holy-fire { background-position: -30px -816px; }
+.talents-icon.uther.large.cleanse { background-position: -30px -918px; }
+.talents-icon.uther.large.clairvoyance { background-position: -30px -1020px; }
 /* Tier 4 */
-.talents-icon.uther.large.divine-shield { background-position: -30px -1224px; }
+.talents-icon.uther.large.divine-shield { background-position: -30px -1122px; }
 .talents-icon.uther.large.divine-storm { background-position: -30px -1224px; }
 /* Tier 5 */
 .talents-icon.uther.large.blessed-champion { background-position: -30px -102px; }
 .talents-icon.uther.large.spell-shield { background-position: -30px -1326px; }
 .talents-icon.uther.large.holy-shock { background-position: -30px -102px; }
-.talents-icon.uther.large.shrink-ray { background-position: -30px -1530px; }
+.talents-icon.uther.large.shrink-ray { background-position: -30px -1428px; }
 /* Tier 6 */
-.talents-icon.uther.large.gathering-radiance { background-position: -30px -510px; }
-.talents-icon.uther.large.hardened-focus { background-position: -30px -1632px; }
-.talents-icon.uther.large.imposing-presence { background-position: -30px -1734px; }
+.talents-icon.uther.large.gathering-radiance { background-position: -30px -408px; }
+.talents-icon.uther.large.hardened-focus { background-position: -30px -1530px; }
+.talents-icon.uther.large.imposing-presence { background-position: -30px -1632px; }
 .talents-icon.uther.large.benediction { background-position: -30px -1734px; }
 /* Tier 7 */
-.talents-icon.uther.large.bulwark-of-light { background-position: -30px -1224px; }
+.talents-icon.uther.large.bulwark-of-light { background-position: -30px -1122px; }
 .talents-icon.uther.large.divine-hurricane { background-position: -30px -1224px; }
 .talents-icon.uther.large.redemption { background-position: -30px -1836px; }
 .talents-icon.uther.large.storm-shield { background-position: -30px -1938px; }
@@ -4504,28 +4504,28 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 .talents-icon.valla.puncturing-arrow { background-position: 0px 0px; }
 .talents-icon.valla.arsenal { background-position: 0px -30px; }
 /* Tier 3 */
-.talents-icon.valla.battle-momentum { background-position: 0px -120px; }
-.talents-icon.valla.caltrops { background-position: 0px -60px; }
+.talents-icon.valla.caltrops { background-position: 0px -120px; }
+.talents-icon.valla.hot-pursuit { background-position: 0px -60px; }
 .talents-icon.valla.repeating-arrow { background-position: 0px -120px; }
-.talents-icon.valla.searing-attacks { background-position: 0px -150px; }
+.talents-icon.valla.searing-attacks { background-position: 0px -180px; }
 /* Tier 4 */
-.talents-icon.valla.strafe { background-position: 0px -180px; }
-.talents-icon.valla.rain-of-vengeance { background-position: 0px -210px; }
+.talents-icon.valla.strafe { background-position: 0px -210px; }
+.talents-icon.valla.rain-of-vengeance { background-position: 0px -240px; }
 /* Tier 5 */
-.talents-icon.valla.giant-killer { background-position: 0px -240px; }
+.talents-icon.valla.giant-killer { background-position: 0px -270px; }
 .talents-icon.valla.frost-shot { background-position: 0px -30px; }
 .talents-icon.valla.tempered-by-discipline { background-position: 0px -60px; }
-.talents-icon.valla.spell-shield { background-position: 0px -270px; }
+.talents-icon.valla.spell-shield { background-position: 0px -300px; }
 /* Tier 6 */
-.talents-icon.valla.executioner { background-position: 0px -300px; }
+.talents-icon.valla.executioner { background-position: 0px -330px; }
 .talents-icon.valla.tumble { background-position: 0px -120px; }
-.talents-icon.valla.blood-for-blood { background-position: 0px -330px; }
-.talents-icon.valla.stoneskin { background-position: 0px -360px; }
+.talents-icon.valla.blood-for-blood { background-position: 0px -360px; }
+.talents-icon.valla.stoneskin { background-position: 0px -390px; }
 /* Tier 7 */
-.talents-icon.valla.vengeance { background-position: 0px -180px; }
-.talents-icon.valla.storm-of-vengeance { background-position: 0px -210px; }
-.talents-icon.valla.nexus-frenzy { background-position: 0px -390px; }
-.talents-icon.valla.bolt-of-the-storm { background-position: 0px -420px; }
+.talents-icon.valla.vengeance { background-position: 0px -210px; }
+.talents-icon.valla.storm-of-vengeance { background-position: 0px -240px; }
+.talents-icon.valla.nexus-frenzy { background-position: 0px -420px; }
+.talents-icon.valla.bolt-of-the-storm { background-position: 0px -450px; }
 
 /* talents - valla - large */
 /* Tier 1 */
@@ -4540,28 +4540,28 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 .talents-icon.valla.large.puncturing-arrow { background-position: -30px 0px; }
 .talents-icon.valla.large.arsenal { background-position: -30px -102px; }
 /* Tier 3 */
-.talents-icon.valla.large.battle-momentum { background-position: -30px -408px; }
-.talents-icon.valla.large.caltrops { background-position: -30px -204px; }
+.talents-icon.valla.large.caltrops { background-position: -30px -408px; }
+.talents-icon.valla.large.hot-pursuit { background-position: -30px -204px; }
 .talents-icon.valla.large.repeating-arrow { background-position: -30px -408px; }
-.talents-icon.valla.large.searing-attacks { background-position: -30px -510px; }
+.talents-icon.valla.large.searing-attacks { background-position: -30px -612px; }
 /* Tier 4 */
-.talents-icon.valla.large.strafe { background-position: -30px -612px; }
-.talents-icon.valla.large.rain-of-vengeance { background-position: -30px -714px; }
+.talents-icon.valla.large.strafe { background-position: -30px -714px; }
+.talents-icon.valla.large.rain-of-vengeance { background-position: -30px -816px; }
 /* Tier 5 */
-.talents-icon.valla.large.giant-killer { background-position: -30px -816px; }
+.talents-icon.valla.large.giant-killer { background-position: -30px -918px; }
 .talents-icon.valla.large.frost-shot { background-position: -30px -102px; }
 .talents-icon.valla.large.tempered-by-discipline { background-position: -30px -204px; }
-.talents-icon.valla.large.spell-shield { background-position: -30px -918px; }
+.talents-icon.valla.large.spell-shield { background-position: -30px -1020px; }
 /* Tier 6 */
-.talents-icon.valla.large.executioner { background-position: -30px -1020px; }
+.talents-icon.valla.large.executioner { background-position: -30px -1122px; }
 .talents-icon.valla.large.tumble { background-position: -30px -408px; }
-.talents-icon.valla.large.blood-for-blood { background-position: -30px -1122px; }
-.talents-icon.valla.large.stoneskin { background-position: -30px -1224px; }
+.talents-icon.valla.large.blood-for-blood { background-position: -30px -1224px; }
+.talents-icon.valla.large.stoneskin { background-position: -30px -1326px; }
 /* Tier 7 */
-.talents-icon.valla.large.vengeance { background-position: -30px -612px; }
-.talents-icon.valla.large.storm-of-vengeance { background-position: -30px -714px; }
-.talents-icon.valla.large.nexus-frenzy { background-position: -30px -1224px; }
-.talents-icon.valla.large.bolt-of-the-storm { background-position: -30px -1326px; }
+.talents-icon.valla.large.vengeance { background-position: -30px -714px; }
+.talents-icon.valla.large.storm-of-vengeance { background-position: -30px -816px; }
+.talents-icon.valla.large.nexus-frenzy { background-position: -30px -1428px; }
+.talents-icon.valla.large.bolt-of-the-storm { background-position: -30px -1530px; }
 
 /* talents - zagara - small */
 /* Tier 1 */
@@ -4736,7 +4736,7 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 .hots-modal-bot-glow { position: absolute; bottom: -84px; left: 0px; width: 324px; height: 84px; background: url('../img/hots/modal/bottom-glow.png') no-repeat; z-index: 1001; }
 
 .hots-modal h1 { position: relative; padding: 0; color: #4992cf; font-size: 22px; font-family: 'Open Sans Bold'; text-transform: uppercase; text-shadow: 1px 1px 1px #000; z-index: 1003; }
-.hots-modal p { position: relative; padding: 0; color: #bcbbbb; font-size: 12px; text-shadow: 1px 1px 1px #000; z-index: 1003; }
+.hots-modal p { position: relative; padding: 0; /*color: #bcbbbb;*/ color: #F2F2F2; font-size: 12px; text-shadow: 1px 1px 5px #000; z-index: 1003; }
 
 /* hots modal - heroes */
 .hots-modal .hots-modal-hero { width: 300px; }
@@ -4801,6 +4801,95 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 /* hots modal - talents */
 .hots-modal .hots-talent-icon { position: absolute; top: 20px; left: -51px; }
 .hots-modal .talent-text { margin-left: 51px; }
+
+/* hots - guides */
+.home-guides { margin-bottom: 20px; }
+.home-guides h1.guides-title { margin: 0; padding: 20px 0px 10px 0px; font-family: 'Open Sans Bold'; font-size: 30px; background: #2766ad; color: #FFF; text-indent: 10px; }
+.home-guides h1.guides-title-small { padding: 10px; font-size: 20px; line-height: 20px; }
+.home-no-guides { padding: 10px; background: rgba(0,0,0,.6); color: #FFF; }
+a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; background: #487dba url('../img/create-a-deck-bg.png') no-repeat; background-position: right top; }
+
+.home-guides .guide-wrapper { position: relative; width: 100%; height: 90px; }
+.home-guides .guide { position: absolute; top: 0px; left: 0px; width: inherit; height: 90px; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; z-index: 10; }
+
+.home-guides .guide > a { position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; z-index: 14; }
+.home-guides .guide-overlay { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: #000; opacity: .8; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
+.home-guides .guide-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 13; }
+.home-guides .guide-title { position: absolute; top: 34px; left: 30px; color: #FFF; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 250px; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
+.home-guides .guide-score { position: absolute; top: 25px; right: 30px; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #FFF; color: #FFF; text-align: center; line-height: 36px; font-family: 'Open Sans Bold'; font-size: 11px; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; z-index: 14; }
+.home-guides .guide-score em { font-style: normal; }
+.home-guides .guide-score span { margin-left: -5px; }
+.home-guides .guide-info { position: absolute; left: 0px; right: 0px; bottom: 0px; padding: 10px; background: url('../img/black-60.png'); border-top: 1px solid #000; opacity: 0; transition: all 0.3s ease-in-out; color: #FFF; font-size: 11px; }
+.home-guides .guide-info a { color: #FFF !important; }
+
+.home-guides .guide:hover { top: -5%; left: -5%; width: 110%; height: 110%; z-index: 12; border: 1px solid #000; -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+.home-guides .guide.premium:hover { border: 1px solid #f0c55c; -webkit-animation-name: glow-premium; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow-premium; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+.home-guides .guide:hover .guide-overlay { opacity: .4; }
+.home-guides .guide:hover .guide-title { top: 10px; left: 10px; text-shadow: 0px 0px 5px rgba(0,0,0,.6); width: initial; margin-right: 120px; overflow: auto; white-space: normal; text-overflow: inherit; }
+.home-guides .guide:hover .guide-score { top: 10px; right: 10px; background: rgba(0,0,0,.6); }
+.home-guides .guide.premium:hover .guide-score { right: 60px; }
+.home-guides .guide:hover .guide-info { opacity: 1; }
+
+/* guide images */
+.guide-images { position: relative; width: 100%; height: 100%; }
+.guide-images .guide-image { position: absolute; top: 0px; bottom: 0px; }
+
+.guide-images .guide-image.guide-images-1 { width: 100%; }
+.guide-images .guide-image.guide-image-1 { left: 0px; }
+
+.guide-images .guide-image.guide-images-2 { width: 50%; }
+.guide-images .guide-image.guide-images-2.guide-image-2 { left: 50%; }
+
+.guide-images .guide-image.guide-images-3 { width: 33.33%; }
+.guide-images .guide-image.guide-images-3.guide-image-2 { left: 33.33%; }
+.guide-images .guide-image.guide-images-3.guide-image-3 { left: 66.66%; }
+
+.guide-images .guide-image.guide-images-4 { width: 25%; }
+.guide-images .guide-image.guide-images-4.guide-image-2 { left: 25%; }
+.guide-images .guide-image.guide-images-4.guide-image-3 { left: 50%; }
+.guide-images .guide-image.guide-images-4.guide-image-4 { left: 75%; }
+
+.guide-images .guide-image.guide-images-5 { width: 20%; }
+.guide-images .guide-image.guide-images-5.guide-image-2 { left: 20%; }
+.guide-images .guide-image.guide-images-5.guide-image-3 { left: 40%; }
+.guide-images .guide-image.guide-images-5.guide-image-4 { left: 60%; }
+.guide-images .guide-image.guide-images-5.guide-image-5 { left: 80%; }
+
+.guide-images .guide-image.guide-image-1.jaina { background: url('../img/hots/heroes/guide-images/1/jaina.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-2.jaina { background: url('../img/hots/heroes/guide-images/2/jaina2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-3.jaina { background: url('../img/hots/heroes/guide-images/3/jaina3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-4.jaina { background: url('../img/hots/heroes/guide-images/4/jaina4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-5.jaina { background: url('../img/hots/heroes/guide-images/5/jaina5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.guide-image-1.kerrigan { background: url('../img/hots/heroes/guide-images/1/kerrigan.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-2.kerrigan { background: url('../img/hots/heroes/guide-images/2/kerrigan2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-3.kerrigan { background: url('../img/hots/heroes/guide-images/3/kerrigan3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-4.kerrigan { background: url('../img/hots/heroes/guide-images/4/kerrigan4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-5.kerrigan { background: url('../img/hots/heroes/guide-images/5/kerrigan5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.guide-image-1.lili { background: url('../img/hots/heroes/guide-images/1/lili.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-2.lili { background: url('../img/hots/heroes/guide-images/2/lili2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-3.lili { background: url('../img/hots/heroes/guide-images/3/lili3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-4.lili { background: url('../img/hots/heroes/guide-images/4/lili4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-5.lili { background: url('../img/hots/heroes/guide-images/5/lili5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.guide-image-1.malfurion { background: url('../img/hots/heroes/guide-images/1/malfurion.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-2.malfurion { background: url('../img/hots/heroes/guide-images/2/malfurion2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-3.malfurion { background: url('../img/hots/heroes/guide-images/3/malfurion3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-4.malfurion { background: url('../img/hots/heroes/guide-images/4/malfurion4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-5.malfurion { background: url('../img/hots/heroes/guide-images/5/malfurion5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.guide-image-1.muradin { background: url('../img/hots/heroes/guide-images/1/muradin.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-2.muradin { background: url('../img/hots/heroes/guide-images/2/muradin2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-3.muradin { background: url('../img/hots/heroes/guide-images/3/muradin3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-4.muradin { background: url('../img/hots/heroes/guide-images/4/muradin4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-5.muradin { background: url('../img/hots/heroes/guide-images/5/muradin5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.guide-image-1.sylvanas { background: url('../img/hots/heroes/guide-images/1/sylvanas.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-2.sylvanas { background: url('../img/hots/heroes/guide-images/2/sylvanas2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-3.sylvanas { background: url('../img/hots/heroes/guide-images/3/sylvanas3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-4.sylvanas { background: url('../img/hots/heroes/guide-images/4/sylvanas4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-image-5.sylvanas { background: url('../img/hots/heroes/guide-images/5/sylvanas5.jpg') no-repeat center top; background-size: cover; }
 
 /* mobile */
 @media (min-width: 768px) {
