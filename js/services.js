@@ -114,13 +114,15 @@ angular.module('app.services', [])
 }])
 .factory('ArticleService', ['$http', '$q', function ($http, $q) {
     return {
-        getArticles: function (klass, page, perpage, search) {
+        getArticles: function (articleType, filter, page, perpage, search) {
             var d = $q.defer(),
+                articleType = articleType || 'all',
+                filter = filter || 'all',
                 page = page || 1,
                 perpage = perpage || 20,
                 search = search || '';
             
-            $http.post('/articles', { klass: klass, page: page, perpage: perpage, search: search }).success(function (data) {
+            $http.post('/articles', { articleType: articleType, filter: filter, page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
@@ -287,6 +289,13 @@ angular.module('app.services', [])
 })
 .factory('AdminArticleService', ['$http', '$q', function ($http, $q) {
     return {
+        articleTypes: function () {
+            return [
+                { name: 'Tempo Storm', value: 'ts' },
+                { name: 'Hearthstone', value: 'hs' },
+                { name: 'Heroes of the Storm', value: 'hots' }
+            ];
+        },
         getAllArticles: function () {
             var d = $q.defer();
             $http.post('/api/admin/articles/all', {}).success(function (data) {
@@ -451,6 +460,13 @@ angular.module('app.services', [])
 }])
 .factory('AdminHOTSGuideService', ['$http', '$q', function ($http, $q) {
     return {
+        getAllGuides: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/guides/all', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
         getGuides: function (page, perpage, search) {
             var d = $q.defer(),
                 page = page || 1,
@@ -1503,6 +1519,66 @@ angular.module('app.services', [])
         },
         addComment: function (deck, comment) {
             return $http.post('/api/deck/comment/add', { deckID: deck._id, comment: comment });
+        }
+    };
+}])
+.factory('HOTSGuideService', ['$http', '$q', function ($http, $q) {
+    return {
+        getGuidesCommunity: function (hero, page, perpage) {
+            hero = hero || 'all';
+            page = page || 1;
+            perpage = perpage || 24;
+            
+            var d = $q.defer();
+            $http.post('/hots/guides/community', { hero: hero, page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getGuidesFeatured: function (hero, page, perpage) {
+            hero = hero || 'all';
+            page = page || 1;
+            perpage = perpage || 24;
+            
+            var d = $q.defer();
+            $http.post('/hots/guides/featured', { hero: hero, page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getGuides: function (hero, page, perpage, search, age, order) {
+            hero = hero || 'all';
+            page = page || 1;
+            perpage = perpage || 24;
+            search = search || '';
+            age = age || 'all';
+            order = order || 'high';
+            
+            var d = $q.defer();
+            $http.post('/hots/guides', { hero: hero, page: page, perpage: perpage, search: search, age: age, order: order }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getGuide: function (slug) {
+            var d = $q.defer();
+            $http.post('/hots/guide', { slug: slug }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        guideEdit: function (slug) {
+            var d = $q.defer();
+            $http.post('/api/hots/guide', { slug: slug }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        guideDelete: function (_id) {
+            return $http.post('/api/hots/guide/delete', { _id: _id });
+        },
+        addComment: function (deck, comment) {
+            return $http.post('/api/hots/guide/comment/add', { deckID: deck._id, comment: comment });
         }
     };
 }])

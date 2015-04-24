@@ -42,8 +42,8 @@ var app = angular.module('app', [
                     $state.transitionTo('app.login');
                 }
                 if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
-                    event.preventDefault();
-                    $state.transitionTo('app.home');
+                    //event.preventDefault();
+                    //$state.transitionTo('app.home');
                 }
                 $window.scrollTo(0,0);
             });
@@ -136,7 +136,7 @@ var app = angular.module('app', [
                                 var klass = 'all',
                                     page = 1,
                                     perpage = 9;
-                                return ArticleService.getArticles(klass, page, perpage);
+                                return ArticleService.getArticles('hs', klass, page, perpage);
                             }],
                             dataDecks: ['DeckService', function (DeckService) {
                                 var klass = 'all',
@@ -167,19 +167,20 @@ var app = angular.module('app', [
                 }
             })
             .state('app.articles.list', {
-                url: '?s&p&k',
+                url: '?s&p&t&f',
                 views: {
                     articles: {
                         templateUrl: tpl + 'views/frontend/articles.list.html',
                         controller: 'ArticlesCtrl',
                         resolve: {
                             data: ['$stateParams', 'ArticleService', function ($stateParams, ArticleService) {
-                                var klass = $stateParams.k || 'all',
+                                var articleType = $stateParams.t || 'all',
+                                    filter = $stateParams.f || 'all',
                                     page = $stateParams.p || 1,
                                     perpage = 10,
                                     search = $stateParams.s || '';
                                 
-                                return ArticleService.getArticles(klass, page, perpage, search);
+                                return ArticleService.getArticles(articleType, filter, page, perpage, search);
                             }]
                         }
                     }
@@ -287,6 +288,86 @@ var app = angular.module('app', [
                             data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
                                 var slug = $stateParams.slug;
                                 return DeckService.deckEdit(slug);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.hots', {
+                abstract: true,
+                url: 'heroes-of-the-storm',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/hots.html'
+                    }
+                }
+            })
+            .state('app.hots.home', {
+                url: '',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/frontend/hots.home.html',
+                        controller: 'HOTSHomeCtrl',
+                        resolve: {
+                            dataArticles: ['ArticleService', function (ArticleService) {
+                                var hero = 'all',
+                                    page = 1,
+                                    perpage = 9;
+                                return ArticleService.getArticles('hots', hero, page, perpage);
+                            }],
+                            dataGuidesCommunity: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getGuidesCommunity();
+                            }],
+                            dataGuidesFeatured: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getGuidesFeatured();
+                            }],
+                            dataBanners: ['BannerService', function (BannerService) {
+                                return BannerService.getBanners('hots');
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.hots.guides', {
+                abstract: true,
+                url: '/guides',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/hots.guides.html'
+                    }
+                }
+            })
+            .state('app.hots.guides.list', {
+                url: '?p&s&h&a&o',
+                views: {
+                    decks: {
+                        templateUrl: tpl + 'views/frontend/hots.guides.list.html',
+                        controller: 'DecksCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                var hero = $stateParams.h || 'all',
+                                    page = $stateParams.p || 1,
+                                    perpage = 24,
+                                    search = $stateParams.s || '',
+                                    age = $stateParams.a || '',
+                                    order = $stateParams.o || '';
+                                
+                                return HOTSGuideService.getGuides(hero, page, perpage, search, age, order);
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.hots.guides.guide', {
+                url: '/:slug',
+                views: {
+                    decks: {
+                        templateUrl: tpl + 'views/frontend/hots.guides.guide.html',
+                        controller: 'HOTSGuideCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                var slug = $stateParams.slug;
+                                return HOTSGuideService.getGuide(slug);
                             }]
                         }
                     }
@@ -640,27 +721,17 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.hearthstone', {
-                abstract: true,
-                url: '/hs',
-                views: {
-                    admin: {
-                        templateUrl: tpl + 'views/admin/hearthstone.html'
-                    }
-                },
-                access: { auth: true, admin: true }
-            })
-            .state('app.admin.hearthstone.articles', {
+            .state('app.admin.articles', {
                 abstract: true,
                 url: '/articles',
                 views: {
-                    hearthstone: {
+                    admin: {
                         templateUrl: tpl + 'views/admin/articles.html'
                     }
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.hearthstone.articles.list', {
+            .state('app.admin.articles.list', {
                 url: '',
                 views: {
                     articles: {
@@ -675,7 +746,7 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.hearthstone.articles.add', {
+            .state('app.admin.articles.add', {
                 url: '/add',
                 views: {
                     articles: {
@@ -685,18 +756,24 @@ var app = angular.module('app', [
                             dataDecks: ['AdminDeckService', function (AdminDeckService) {
                                 return AdminDeckService.getAllDecks();
                             }],
+                            dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
+                                return AdminHOTSGuideService.getAllGuides();
+                            }],
                             dataArticles: ['AdminArticleService', function (AdminArticleService) {
                                 return AdminArticleService.getAllArticles();
                             }],
                             dataProviders: ['AdminUserService', function (AdminUserService) {
                                 return AdminUserService.getProviders();
+                            }],
+                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
+                                return AdminHeroService.getAllHeroes();
                             }]
                         }
                     }
                 },
                 access: { auth: true, admin: true }
             })
-            .state('app.admin.hearthstone.articles.edit', {
+            .state('app.admin.articles.edit', {
                 url: '/edit/:articleID',
                 views: {
                     articles: {
@@ -710,13 +787,29 @@ var app = angular.module('app', [
                             dataDecks: ['AdminDeckService', function (AdminDeckService) {
                                 return AdminDeckService.getAllDecks();
                             }],
+                            dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
+                                return AdminHOTSGuideService.getAllGuides();
+                            }],
                             dataArticles: ['AdminArticleService', function (AdminArticleService) {
                                 return AdminArticleService.getAllArticles();
                             }],
                             dataProviders: ['AdminUserService', function (AdminUserService) {
                                 return AdminUserService.getProviders();
+                            }],
+                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
+                                return AdminHeroService.getAllHeroes();
                             }]
                         }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.hearthstone', {
+                abstract: true,
+                url: '/hs',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/hearthstone.html'
                     }
                 },
                 access: { auth: true, admin: true }

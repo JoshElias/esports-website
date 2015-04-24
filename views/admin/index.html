@@ -7,6 +7,12 @@
                 <span>Dashboard</span>
             </a>
         </li>
+        <li ng-class="{active:$state.includes('app.admin.articles')}">
+            <a ui-sref="app.admin.articles.list">
+                <i class="fa fa-newspaper-o m-r-sm"></i>
+                <span>Articles</span>
+            </a>
+        </li>
         <!-- hearthstone -->
         <li ng-class="{active:$state.includes('app.admin.hearthstone')}" class="nav-drop">
             <a href="#" class="nav-drop-btn">
@@ -18,9 +24,6 @@
                 <span>Hearthstone</span>
             </a>
             <ul class="nav nav-sub">
-                <li ng-class="{active:$state.includes('app.admin.hearthstone.articles')}">
-                    <a ui-sref="app.admin.hearthstone.articles.list">Articles</a>
-                </li>
                 <li ng-class="{active:$state.includes('app.admin.hearthstone.decks')}">
                     <a ui-sref="app.admin.hearthstone.decks.list">Decks</a>
                 </li>

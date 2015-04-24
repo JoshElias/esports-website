@@ -259,7 +259,7 @@ angular.module('app.controllers', ['ngCookies'])
                 featured: true
             };
             
-            ArticleService.getArticles(klass, 1, 9).then(function (data) {
+            ArticleService.getArticles('hs', klass, 1, 9).then(function (data) {
                 $scope.articles = data.articles;
                 $scope.loading.articles = false;
             });
@@ -821,8 +821,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataArticles', 'dataProviders', 
-    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, dataDecks, dataArticles, dataProviders) {
+.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes', 
+    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
         // default article
         var d = new Date();
         d.setMonth(d.getMonth()+1);
@@ -842,6 +842,7 @@ angular.module('app.controllers', ['ngCookies'])
                 small: ''
             },
             deck: undefined,
+            guide: undefined,
             related: [],
             classTags: [],
             theme: 'none',
@@ -850,6 +851,7 @@ angular.module('app.controllers', ['ngCookies'])
                 isPremium: false,
                 expiryDate: d
             },
+            articleType: AdminArticleService.articleTypes()[0].value,
             active: true
         };
         
@@ -858,6 +860,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         // load decks
         $scope.decks = [{_id: undefined, name: 'No deck'}].concat(dataDecks.decks);
+
+        // load guides
+        $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);
         
         // load articles
         $scope.articles = dataArticles.articles;
@@ -875,8 +880,22 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.setSlug();
         };
         
-        // klass tags
-        $scope.klassTags = ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
+        // tags
+        $scope.getTags = function () {
+            switch ($scope.article.articleType) {
+                case 'hs':
+                    return ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
+                case 'hots':
+                    var out = [];
+                    for (var i = 0; i < dataHeroes.heroes.length; i++) {
+                        out.push(dataHeroes.heroes[i].name);
+                    }
+                    return out;
+            }
+        };
+        
+        // article types
+        $scope.articleTypes = AdminArticleService.articleTypes();
         
         // select options
         $scope.articleFeatured =
@@ -952,19 +971,22 @@ angular.module('app.controllers', ['ngCookies'])
                     $window.scrollTo(0,0);
                 } else {
                     AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been added successfully.' });
-                    $state.go('app.admin.hearthstone.articles.list');
+                    $state.go('app.admin.articles.list');
                 }
             });
         };
     }
 ])
-.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataArticles', 'dataProviders', 
-    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles, dataProviders) {
+.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes', 
+    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
         // load article
         $scope.article = data.article;
         
         // load decks
         $scope.decks = [{_id: undefined, name: 'No deck'}].concat(dataDecks.decks);
+
+        // load guides
+        $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);        
         
         // load articles
         $scope.articles = dataArticles.articles;
@@ -985,8 +1007,22 @@ angular.module('app.controllers', ['ngCookies'])
         // photo
         $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? $scope.app.cdn + '/articles/' + $scope.article.photos.small : $scope.app.cdn + '/img/blank.png';
         
-        // klass tags
-        $scope.klassTags = ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
+        // tags
+        $scope.getTags = function () {
+            switch ($scope.article.articleType) {
+                case 'hs':
+                    return ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
+                case 'hots':
+                    var out = [];
+                    for (var i = 0; i < dataHeroes.heroes.length; i++) {
+                        out.push(dataHeroes.heroes[i].name);
+                    }
+                    return out;
+            }
+        };
+        
+        // article types
+        $scope.articleTypes = AdminArticleService.articleTypes();
         
         // select options
         $scope.articleFeatured =
@@ -1065,7 +1101,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $window.scrollTo(0,0);
                 } else {
                     AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been updated successfully.' });
-                    $state.go('app.admin.hearthstone.articles.list');
+                    $state.go('app.admin.articles.list');
                 }
             });
         };
@@ -2241,7 +2277,8 @@ angular.module('app.controllers', ['ngCookies'])
         // articles
         $scope.articles = data.articles;
         $scope.total = data.total;
-        $scope.klass = data.klass;
+        $scope.articleType = data.articleType;
+        $scope.filter = data.filter;
         $scope.page = parseInt(data.page);
         $scope.perpage = data.perpage;
         $scope.search = data.search;
@@ -2252,7 +2289,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.setKlass = function (klass) {
-            $scope.klass = klass;
+            $scope.filter = klass;
             $scope.page = 1;
             $scope.getArticles();
         };
@@ -2268,8 +2305,12 @@ angular.module('app.controllers', ['ngCookies'])
                 params.p = $scope.page;
             }
             
-            if ($scope.klass != 'all') {
-                params.k = $scope.klass;
+            if ($scope.articleType != 'all') {
+                params.t = $scope.articleType;
+            }
+
+            if ($scope.filter != 'all') {
+                params.f = $scope.filter;
             }
             
             $scope.loading = true;
@@ -4800,6 +4841,64 @@ angular.module('app.controllers', ['ngCookies'])
                     AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been updated successfully.' });
                     $state.go('app.admin.hots.guides.list');
                 }
+            });
+        };
+    }
+])
+.controller('HOTSHomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 
+    function ($scope, dataBanners, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService) {
+        // data
+        $scope.articles = dataArticles.articles;
+        $scope.guidesCommunity = dataGuidesCommunity.guides;
+        $scope.guidesFeatured = dataGuidesFeatured.guides;
+        $scope.loading = {
+            articles: false,
+            community: false,
+            featured: false
+        };
+        
+        // banner
+        $scope.banner = {
+            current: 0,
+            direction: 'left',
+            slides: dataBanners.banners,
+            setCurrent: function (current) {
+                this.direction = 'right';
+                this.current = current;
+            },
+            next: function () {
+                this.direction = 'right';
+                this.current = (this.current < (this.slides.length - 1)) ? ++this.current : 0;
+            },
+            prev: function () {
+                this.direction = 'left';
+                this.current = (this.current > 0) ? --this.current : this.slides.length - 1;
+            }
+        };
+        
+        // content
+        $scope.hero = 'all';
+        $scope.setHero = function (hero) {
+            $scope.hero = hero;
+            $scope.loading = {
+                articles: true,
+                community: true,
+                featured: true
+            };
+            
+            ArticleService.getArticles('hots', hero, 1, 9).then(function (data) {
+                $scope.articles = data.articles;
+                $scope.loading.articles = false;
+            });
+
+            HOTSGuideService.getGuidesCommunity(hero, 1, 10).then(function (data) {
+                $scope.guidesCommunity = data.guides;
+                $scope.loading.community = false;
+            });
+            
+            HOTSGuideService.getGuidesFeatured(hero, 1, 10).then(function (data) {
+                $scope.guidesFeatured = data.guides;
+                $scope.loading.featured = false;
             });
         };
     }

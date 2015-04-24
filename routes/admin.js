@@ -626,7 +626,10 @@ module.exports = {
     },
     articles: function (Schemas) {
         return function (req, res, next) {
-            Schemas.Article.find({}).exec(function (err, articles){
+            Schemas.Article.find({})
+            .select('_id title')
+            .sort({ createdDate: -1 })
+            .exec(function (err, articles){
                 if (err) {
                     console.log(err);
                     return res.json({
@@ -679,6 +682,7 @@ module.exports = {
                     small: req.body.photos.small
                 },
                 deck: req.body.deck || undefined,
+                guide: req.body.guide || undefined,
                 related: req.body.related || undefined,
                 classTags: req.body.classTags,
                 views: 0,
@@ -695,6 +699,7 @@ module.exports = {
                     expiryDate: req.body.premium.expiryDate
                 },
                 theme: req.body.theme,
+                articleType: req.body.articleType,
                 active: req.body.active
             });
             
@@ -743,6 +748,7 @@ module.exports = {
                     small: req.body.photos.small
                 };
                 article.deck = req.body.deck || undefined;
+                article.guide = req.body.guide || undefined;
                 article.related = req.body.related || undefined;
                 article.classTags = req.body.classTags || [];
                 article.featured = req.body.featured;
@@ -751,6 +757,7 @@ module.exports = {
                     expiryDate: req.body.premium.expiryDate
                 };
                 article.theme = req.body.theme;
+                article.articleType = req.body.articleType;
                 article.active = req.body.active;
                                 
                 article.save(function (err) {
@@ -1134,6 +1141,29 @@ module.exports = {
             
             updateMap(function () {
                 return res.json({ success: true });
+            });
+        };
+    },
+    allGuides: function (Schemas) {
+        return function (req, res, next) {
+            var guides;
+            
+            function getGuides (callback) {
+                Schemas.Guide.find({})
+                .select('_id name')
+                .sort({ name: 1 })
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    guides = results;
+                    return callback();
+                });
+            }
+            
+            getGuides(function () {
+                return res.json({
+                    success: true,
+                    guides: guides
+                });
             });
         };
     },
