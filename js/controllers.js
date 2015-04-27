@@ -4572,7 +4572,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // save guide
         $scope.saveGuide = function () {
-            if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
+            if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                 return false;
             }
             
