@@ -4903,6 +4903,11 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+.controller('HOTSGuidesListCtrl', ['$scope', 'data', 
+    function ($scope, data) {
+        $scope.guides = data.guides;
+    }
+])
 .controller('TeamCtrl', ['$scope',
     function ($scope) {
         

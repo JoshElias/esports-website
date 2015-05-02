@@ -1,0 +1,172 @@
+<!-- section banner -->
+<div class="container-fluid section-banner">
+    <div class="container section-decks clearfix">
+        <h1 class="section-title pull-left">GUIDES</h1>
+        <div class="section-search pull-right">
+            <form name="search-form">
+            <div class="input-group">
+                <input type="text" class="form-control input-dark" placeholder="search..." ng-model="search">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn input-dark" ng-click="getGuides()"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- / section banner -->
+
+<!-- filter start -->
+<div class="container-fluid padding-none filter-bar filter-bar-decks">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 clearfix">
+                <h1 class="pull-left">FILTER <br>CONTENT:</h1>
+                <ul class="filter-class pull-right">
+                    <li class="all" ng-class="{active:klass === 'all'}">
+                        <a href="#" ng-click="setKlass('all')" ng-tooltip title="All Classes">All Classes</a>
+                    </li>
+                    <li class="druid" ng-class="{active:klass === 'Druid'}">
+                        <a href="#" ng-click="setKlass('Druid')" ng-tooltip title="Druid">Druid</a>
+                    </li>
+                    <li class="hunter" ng-class="{active:klass === 'Hunter'}">
+                        <a href="#" ng-click="setKlass('Hunter')" ng-tooltip title="Hunter">Hunter</a>
+                    </li>
+                    <li class="mage" ng-class="{active:klass === 'Mage'}">
+                        <a href="#" ng-click="setKlass('Mage')" ng-tooltip title="Mage">Mage</a>
+                    </li>
+                    <li class="paladin" ng-class="{active:klass === 'Paladin'}">
+                        <a href="#" ng-click="setKlass('Paladin')" ng-tooltip title="Paladin">Paladin</a>
+                    </li>
+                    <li class="priest" ng-class="{active:klass === 'Priest'}">
+                        <a href="#" ng-click="setKlass('Priest')" ng-tooltip title="Priest">Priest</a>
+                    </li>
+                    <li class="rogue" ng-class="{active:klass === 'Rogue'}">
+                        <a href="#" ng-click="setKlass('Rogue')" ng-tooltip title="Rogue">Rogue</a>
+                    </li>
+                    <li class="shaman" ng-class="{active:klass === 'Shaman'}">
+                        <a href="#" ng-click="setKlass('Shaman')" ng-tooltip title="Shaman">Shaman</a>
+                    </li>
+                    <li class="warlock" ng-class="{active:klass === 'Warlock'}">
+                        <a href="#" ng-click="setKlass('Warlock')" ng-tooltip title="Warlock">Warlock</a>
+                    </li>
+                    <li class="warrior" ng-class="{active:klass === 'Warrior'}">
+                        <a href="#" ng-click="setKlass('Warrior')" ng-tooltip title="Warrior">Warrior</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- filter end -->
+
+<!-- filter advanced start -->
+<div class="container-fluid padding-none filter-bar-advanced">
+    <div class="container pos-rl">
+        <div class="filter-bar-advanced-options-wrapper pos-rl" ng-class="{ open: showAdvanced() }">
+            <div class="filter-bar-advanced-options clearfix">
+                <div class="pull-left m-r-sm">
+                    <div class="dropdown">
+                        <button class="btn input-dark" type="button" data-toggle="dropdown">
+                            <span>Age: {{filters.age.name}}</span>
+                            <b class="caret"></b>
+                        </button>
+                        <ul class="list-group dropdown-menu dropdown-dark">
+                            <li class="list-group-item" ng-class="{active: filter.value === filters.age.value}" ng-repeat="filter in filters.all.age">
+                                <a href="#" ng-click="filters.age = filter; pagination.setPage(1);">{{filter.name}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pull-left m-r-sm">
+                    <div class="dropdown">
+                        <button class="btn input-dark" type="button" data-toggle="dropdown">
+                            <span>Order: {{filters.order.name}}</span>
+                            <b class="caret"></b>
+                        </button>
+                        <ul class="list-group dropdown-menu dropdown-dark">
+                            <li class="list-group-item" ng-class="{active: filter.value === filters.order.value}" ng-repeat="filter in filters.all.order">
+                                <a href="#" ng-click="filters.order = filter; pagination.setPage(1);">{{filter.name}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="filter-bar-advanced-tab clearfix">
+            <a href="#" class="pull-right clearfix" ng-click="toggleAdvanced()">
+                <span class="icon pull-left"><i class="fa fa-bars"></i></span>
+                <span class="text pull-right">ADVANCED<br>FILTERING</span>
+            </a>
+        </div>
+    </div>
+</div>
+<!-- filter advanced end -->
+
+<!-- decks start -->
+<div class="container">
+    
+    <!-- page flipping -->
+    <div class="page-flipper page-flipper-top clearfix" ng-show="pagination.totalPages() > 1">
+        <div class="pull-right">
+            <span class="btn-group">
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)" disabled="disabled"><i class="fa fa-arrow-circle-left"></i></button>
+                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() + 1 > pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)" disabled="disabled"><i class="fa fa-arrow-circle-right"></i></button>
+            </span>
+        </div>
+    </div>
+    <!-- / page flipping -->
+    
+    <!-- guides -->
+    <div class="row guides-list" ng-show="decks.length">
+        <!-- guide -->
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="guide in guides">
+        <div class="guide-wrapper">
+            <div class="guide large" ng-class="{ premium: guide.premium.isPremium }">
+                <a href="./heroes-of-the-storm/guides/{{guide.slug}}"></a>
+                <div class="guide-overlay"></div>
+                <div class="guide-premium" ng-if="guide.premium.isPremium"></div>
+                <div class="guide-title">{{guide.name}}</div>
+                <div class="guide-score"><span><em ng-if="guide.votesCount > 0">+</em>{{guide.votesCount}}</span></div>
+                <div class="guide-description">
+                    <p>{{guide.description}}</p>
+                </div>
+                <div class="guide-info clearfix">
+                    <div class="pull-left m-r-sm">
+                        <span>by <a href="./user/{{guide.author.username}}">@{{guide.author.username}}</a></span>
+                    </div>
+                    <div class="pull-right">
+                        <div class="pull-left m-r-sm">
+                            <span class="fa fa-clock-o"></span>
+                            <span>{{guide.createdDate | date : 'mediumDate'}}</span>
+                        </div>
+                        <div class="pull-left">
+                            <span class="fa fa-comment-o"></span>
+                            <span><a href="./heroes-of-the-storm/guides/{{guide.slug}}">{{guide.comments.length}} Comment<span ng-hide="guide.comments.length === 1">s</span></a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- / guide -->
+    </div>
+    <p ng-show="!guides.length && hero !== 'all' && !loading && !hasSearch()" class="guides-list-no-content">There are curently no guides under <strong>{{hero}}</strong> yet.</p>
+    <p ng-show="!guides.length && !loading && hasSearch()" class="guides-list-no-content">There are no results for your search.</p>
+    <!-- / guides -->
+    
+    <!-- page flipping -->
+    <div class="page-flipper page-flipper-bottom clearfix" ng-show="pagination.totalPages() > 1">
+        <div class="pull-right">
+            <span class="btn-group">
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)" disabled="disabled"><i class="fa fa-arrow-circle-left"></i></button>
+                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() + 1 > pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)" disabled="disabled"><i class="fa fa-arrow-circle-right"></i></button>
+            </span>
+        </div>
+    </div>
+    <!-- / page flipping -->
+    
+</div>
+<!-- decks end -->

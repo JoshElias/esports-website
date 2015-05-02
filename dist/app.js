@@ -375,7 +375,7 @@ var app = angular.module('app', [
                 abstract: true,
                 url: '/guides',
                 views: {
-                    content: {
+                    hots: {
                         templateUrl: tpl + 'views/frontend/hots.guides.html'
                     }
                 }
@@ -383,9 +383,9 @@ var app = angular.module('app', [
             .state('app.hots.guides.list', {
                 url: '?p&s&h&a&o',
                 views: {
-                    decks: {
+                    guides: {
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
-                        controller: 'DecksCtrl',
+                        controller: 'HOTSGuidesListCtrl',
                         resolve: {
                             data: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
                                 var hero = $stateParams.h || 'all',
@@ -404,7 +404,7 @@ var app = angular.module('app', [
             .state('app.hots.guides.guide', {
                 url: '/:slug',
                 views: {
-                    decks: {
+                    guides: {
                         templateUrl: tpl + 'views/frontend/hots.guides.guide.html',
                         controller: 'HOTSGuideCtrl',
                         resolve: {
@@ -6341,6 +6341,11 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.loading.featured = false;
             });
         };
+    }
+])
+.controller('HOTSGuidesListCtrl', ['$scope', 'data', 
+    function ($scope, data) {
+        $scope.guides = data.guides;
     }
 ])
 .controller('TeamCtrl', ['$scope',
