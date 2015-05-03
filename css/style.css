@@ -4891,6 +4891,35 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-images .guide-image.guide-image-4.sylvanas { background: url('../img/hots/heroes/guide-images/4/sylvanas4.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-image-5.sylvanas { background: url('../img/hots/heroes/guide-images/5/sylvanas5.jpg') no-repeat center top; background-size: cover; }
 
+/* hots guide list */
+.guides-list { padding: 20px 0 0 0; }
+.guides-list .guide-wrapper { margin: 0 0 20px 0; position: relative; width: 100%; height: 200px; }
+.guides-list .guide { position: absolute; top: 0px; left: 0px; width: inherit; height: inherit; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; z-index: 10; }
+
+.guides-list .guide > a { position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; z-index: 14; }
+.guides-list .guide-overlay { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: #000; opacity: .8; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
+.guides-list .guide-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 13; }
+.guides-list .guide-title { position: absolute; top: 34px; left: 30px; margin: 0 110px 0 0; color: #FFF; /*font-family: 'Open Sans Bold';*/ font-weight: bold; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
+.guides-list .guide-score { position: absolute; top: 25px; right: 30px; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #FFF; color: #FFF; text-align: center; line-height: 36px; font-family: 'Open Sans Bold'; font-size: 11px; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; z-index: 14; }
+.guides-list .guide-score em { font-style: normal; }
+.guides-list .guide-score span { margin-left: -5px; }
+.guides-list .guide-description { position: absolute; top: 50px; left: 0px; max-height: 150px; overflow: hidden; color: #FFF; opacity: 0; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
+.guides-list .guide-description p { padding: 10px; }
+.guides-list .guide-info { position: absolute; left: 0px; right: 0px; bottom: 0px; padding: 10px; background: url('../img/black-60.png'); border-top: 1px solid #000; opacity: 1; transition: all 0.3s ease-in-out; color: #FFF; font-size: 11px; }
+.guides-list .guide-info a { color: #FFF !important; }
+.guides-list .guide-owner { position: absolute; bottom: 6px; right: 10px; z-index: 15; }
+
+.guides-list .guide:hover { top: -10%; left: -5%; width: 110%; height: 120%; z-index: 12; border: 1px solid #000; -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+.guides-list .guide.premium:hover { border: 1px solid #f0c55c; -webkit-animation-name: glow-premium; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow-premium; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+.guides-list .guide:hover .deck-overlay { opacity: .4; }
+.guides-list .guide:hover .deck-title { top: 10px; left: 10px; text-shadow: 0px 0px 5px rgba(0,0,0,.6); }
+.guides-list .guide:hover .deck-score { top: 10px; right: 10px; background: rgba(0,0,0,.6); }
+.guides-list .guide.premium:hover .deck-score { right: 60px; }
+.guides-list .guide:hover .deck-description { text-shadow: 0px 0px 5px rgba(0,0,0,.6); opacity: 1; }
+.guides-list .guide:hover .deck-info { opacity: 1; }
+
+.guides-list-no-content { padding: 20px; color: #FFF; background: rgba(0,0,0,.6); border: 1px solid #000; border-radius: 4px; }
+
 /* mobile */
 @media (min-width: 768px) {
     /* nav */
