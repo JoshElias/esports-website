@@ -1588,4 +1588,11 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('ContactService', ['$http', '$q', function ($http, $q) {
+    return {
+        sendContact: function (contact) {
+            return $http.post('/api/contact/send', { contact: contact });
+        }
+    };
+}])
 ;

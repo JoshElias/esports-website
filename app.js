@@ -200,6 +200,8 @@ if (cluster.isMaster) {
     app.post('/api/subscription/setplan', routes.frontend.subSetPlan(Schemas, Subscription));
     app.post('/api/subscription/setcard', routes.frontend.subSetCard(Schemas, Subscription));
     app.post('/api/subscription/cancel', routes.frontend.subCancel(Schemas, Subscription));
+   
+    app.post('/api/contact/send', routes.frontend.sendContact(Mail));
     
     /* admin */
     app.post('/api/admin/cards', routes.admin.isAdmin(Schemas), routes.admin.cards(Schemas));

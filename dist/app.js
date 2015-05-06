@@ -1330,6 +1330,15 @@ var app = angular.module('app', [
                     }
                 },
                 access: { auth: true, admin: true }
+            })
+            .state('app.contact', {
+                url: 'contact',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/contact.html',
+                        controller: 'ContactCtrl'
+                    }
+                }
             });        
     }]
 );
@@ -6156,6 +6165,16 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
+
+
+/*
+.controller('ContactCtrl', ['$scope',
+    function ($scope) {
+
+    }
+])*/
+
+
 ;;'use strict';
 
 angular.module('app.directives', ['ui.load'])
@@ -8001,6 +8020,13 @@ angular.module('app.services', [])
                 d.resolve(data);
             });
             return d.promise;
+        }
+    };
+}])
+.factory('ContactService', ['$http', '$q', function ($http, $q) {
+    return {
+        sendContact: function (contact) {
+            return $http.post('/api/contact/send', { contact: contact });
         }
     };
 }])

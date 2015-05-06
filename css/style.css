@@ -1722,7 +1722,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 
 /* terms / privacy */
 .terms,
-.privacy { margin: 70px auto; }
+.privacy { margin: 20px auto; }
 .terms h1,
 .terms h2,
 .privacy h1,
@@ -4801,6 +4801,13 @@ p.white { background: rgba(0,0,0,.6); color: #FFF; margin: 0; border-radius: 4px
 /* hots modal - talents */
 .hots-modal .hots-talent-icon { position: absolute; top: 20px; left: -51px; }
 .hots-modal .talent-text { margin-left: 51px; }
+
+
+/* contact */
+.contact-wrapper { background: url(../img/black-60.png); background-size: 100%; padding: 20px; border-radius: 4px; border: 1px solid #000; }
+.contact-wrapper p { color: #FFF; margin: 0; }
+.contact-banner { background: #2766ad; min-height: 54px; border-bottom: #083f7d; }
+
 
 /* mobile */
 @media (min-width: 768px) {

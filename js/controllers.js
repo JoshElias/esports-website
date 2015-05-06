@@ -4809,4 +4809,14 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
+
+
+/*
+.controller('ContactCtrl', ['$scope',
+    function ($scope) {
+
+    }
+])*/
+
+
 ;

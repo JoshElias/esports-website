@@ -2262,5 +2262,11 @@ module.exports = {
                 return res.json({ success: true, banners: banners });
             });
         };
+    },
+    sendContact: function (Mail) {
+        return function(req, res, next) {
+            //TODO: ADD FUNCTIONALITY
+            return res.json({ success: true });
+        }
     }
 };
