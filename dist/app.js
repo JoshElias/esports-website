@@ -6165,16 +6165,11 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-
-
-/*
 .controller('ContactCtrl', ['$scope',
     function ($scope) {
 
     }
-])*/
-
-
+])
 ;;'use strict';
 
 angular.module('app.directives', ['ui.load'])
