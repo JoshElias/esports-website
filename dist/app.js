@@ -49,6 +49,7 @@ var app = angular.module('app', [
     'angular-bootbox',
     'angularMoment',
     'angularPayments',
+    //'angular-iscroll',
     'dndLists',
     'ngAnimate',
     'ngCookies',
@@ -396,6 +397,9 @@ var app = angular.module('app', [
                                     order = $stateParams.o || '';
                                 
                                 return HOTSGuideService.getGuides(hero, page, perpage, search, age, order);
+                            }],
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
                             }]
                         }
                     }
@@ -6343,9 +6347,161 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuidesListCtrl', ['$scope', 'data', 
-    function ($scope, data) {
+.controller('HOTSGuidesListCtrl', ['$scope', '$state', 'data', 'dataHeroes', 
+    function ($scope, $state, data, dataHeroes) {
+        if (!data.success) { return $state.transitionTo('app.hots.guides.list'); }
+        
+        // guides
         $scope.guides = data.guides;
+        $scope.total = data.total;
+        $scope.hero = data.hero;
+        $scope.page = parseInt(data.page);
+        $scope.perpage = data.perpage;
+        $scope.search = data.search;
+        $scope.age = data.age;
+        $scope.order = data.order;
+
+        $scope.hasSearch = function () {
+            return (data.search) ? data.search.length : false;
+        }
+        
+        // advanced filters
+        if (!$scope.app.settings.show.guides) {
+            $scope.app.settings.show.guides = {
+                advanced: false
+            };
+        }
+
+        $scope.toggleAdvanced = function () {
+            $scope.app.settings.show.guides.advanced = !$scope.app.settings.show.guides.advanced;
+        }
+        
+        $scope.showAdvanced = function () {
+            return $scope.app.settings.show.guides.advanced;
+        }
+        
+        $scope.loading = false;
+
+        $scope.setHero = function (hero) {
+            $scope.hero = klass;
+            $scope.page = 1;
+            $scope.getGuides();
+        };
+        
+        // filters
+        $scope.getFilter = function (name, value) {
+            var filter = $scope.filters.all[name];
+            for (var i = 0; i < filter.length; i++) {
+                if (filter[i].value == value) {
+                    return filter[i];
+                }
+            }
+            return filter[0];
+        }
+
+        $scope.filters = {
+            all: {
+                age: [
+                    { name: 'All Guides', value: 'all' },
+                    { name: '7 Days', value: '7' },
+                    { name: '15 Days', value: '15' },
+                    { name: '30 Days', value: '30' },
+                    { name: '60 Days', value: '60' },
+                    { name: '90 Days', value: '90' }
+                ],
+                order: [
+                    { name: 'Highest Ranked', value: 'high' },
+                    { name: 'Lowest Ranked', value: 'low' },
+                    { name: 'Newest Decks', value: 'new' },
+                    { name: 'Oldest Decks', value: 'old' }
+                ],
+                heroes: [{ name: 'All Heroes', value: 'all' }].concat(dataHeroes.heroes)
+            }
+        };
+        $scope.filters.age = $scope.getFilter('age', $scope.age);
+        $scope.filters.order = $scope.getFilter('order', $scope.order);
+        $scope.filters.hero = $scope.getFilter('heroes', $scope.hero);
+        
+        $scope.getGuides = function () {
+            var params = {};
+            
+            if ($scope.search) {
+                params.s = $scope.search;
+            }
+            
+            if ($scope.page !== 1) {
+                params.p = $scope.page;
+            }
+            
+            if ($scope.hero != 'all') {
+                params.h = $scope.hero;
+            }
+            
+            if ($scope.filters.age.value !== 'all') {
+                params.a = $scope.filters.age.value;
+            }
+            
+            if ($scope.filters.order.value !== 'high') {
+                params.o = $scope.filters.order.value;
+            }
+            
+            $scope.loading = true;
+            $state.transitionTo('app.hots.guides.list', params);
+        }
+        
+        // pagination
+        $scope.pagination = {
+            page: function () {
+                return $scope.page;
+            },
+            perpage: function () {
+                return $scope.perpage;
+            },
+            results: function () {
+                return $scope.total;
+            },
+            setPage: function (page) {
+                $scope.page = page;
+                $scope.getGuides();
+            },
+            pagesArray: function () {
+                var pages = [],
+                    start = 1,
+                    end = this.totalPages();
+                
+                if (this.totalPages() > 5) {
+                    if (this.page() < 3) {
+                        start = 1;
+                        end = start + 4;
+                    } else if (this.page() > this.totalPages() - 2) {
+                        end = this.totalPages();
+                        start = end - 4;
+                    } else {
+                        start = this.page() - 2;
+                        end = this.page() + 2;
+                    }
+                    
+                }
+                
+                for (var i = start; i <= end; i++) {
+                    pages.push(i);
+                }
+                
+                return pages;
+            },
+            isPage: function (page) {
+                return (page === this.page());
+            },
+            totalPages: function (page) {
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 1;
+            },
+            
+        };
+
+        // verify valid page
+        if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
+            $scope.pagination.setPage(1);
+        }
     }
 ])
 .controller('TeamCtrl', ['$scope',
@@ -8192,6 +8348,24 @@ angular.module('app.services', [])
         },
         addComment: function (deck, comment) {
             return $http.post('/api/hots/guide/comment/add', { deckID: deck._id, comment: comment });
+        }
+    };
+}])
+.factory('HeroService', ['$http', '$q', function ($http, $q) {
+    return {
+        getHeroes: function () {
+            var d = $q.defer();
+            $http.post('/hots/heroes', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getHero: function (_id) {
+            var d = $q.defer();
+            $http.post('/hots/hero', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
         }
     };
 }])

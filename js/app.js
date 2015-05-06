@@ -6,6 +6,7 @@ var app = angular.module('app', [
     'angular-bootbox',
     'angularMoment',
     'angularPayments',
+    //'angular-iscroll',
     'dndLists',
     'ngAnimate',
     'ngCookies',
@@ -353,6 +354,9 @@ var app = angular.module('app', [
                                     order = $stateParams.o || '';
                                 
                                 return HOTSGuideService.getGuides(hero, page, perpage, search, age, order);
+                            }],
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
                             }]
                         }
                     }
