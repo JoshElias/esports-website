@@ -350,6 +350,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .filter-bar-home { border-top: 1px solid #8f8e8c; }
 .filter-bar { padding: 20px 0; background: #1a1a1a; }
 .filter-bar h1 { float: left; margin: 0 40px 0 0; color: #FFF; font-size: 28px; font-family: 'Open Sans Bold'; }
+.filter-bar.small h1 { font-size: 20px; line-height: 32px; }
 
 .filter-bar-advanced { margin: 0 0 70px 0; background: #2766ad; }
 .filter-bar-advanced-options-wrapper { height: 0px; overflow: hidden; /*-webkit-transition: all 0.5s cubic-bezier(1.000, 0.055, 0.440, 1.650); transition: all 0.5s cubic-bezier(1.000, 0.055, 0.440, 1.650);*/ }
@@ -382,6 +383,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .filter-class li.all a { background-position: 0px -567px; }
 
 .filter-bar-decks,
+.filter-bar-guides,
 .filter-bar-articles { border-bottom: 5px solid #2766ad; }
 /* end filters */
 
@@ -4855,41 +4857,49 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-images .guide-image.guide-images-5.guide-image-4 { left: 60%; }
 .guide-images .guide-image.guide-images-5.guide-image-5 { left: 80%; }
 
-.guide-images .guide-image.guide-image-1.jaina { background: url('../img/hots/heroes/guide-images/1/jaina.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-2.jaina { background: url('../img/hots/heroes/guide-images/2/jaina2.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-3.jaina { background: url('../img/hots/heroes/guide-images/3/jaina3.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-4.jaina { background: url('../img/hots/heroes/guide-images/4/jaina4.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-5.jaina { background: url('../img/hots/heroes/guide-images/5/jaina5.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.jaina { background: url('../img/hots/heroes/guide-images/1/jaina.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-2.jaina { background: url('../img/hots/heroes/guide-images/2/jaina2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-3.jaina { background: url('../img/hots/heroes/guide-images/3/jaina3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-4.jaina { background: url('../img/hots/heroes/guide-images/4/jaina4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-5.jaina { background: url('../img/hots/heroes/guide-images/5/jaina5.jpg') no-repeat center top; background-size: cover; }
 
-.guide-images .guide-image.guide-image-1.kerrigan { background: url('../img/hots/heroes/guide-images/1/kerrigan.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-2.kerrigan { background: url('../img/hots/heroes/guide-images/2/kerrigan2.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-3.kerrigan { background: url('../img/hots/heroes/guide-images/3/kerrigan3.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-4.kerrigan { background: url('../img/hots/heroes/guide-images/4/kerrigan4.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-5.kerrigan { background: url('../img/hots/heroes/guide-images/5/kerrigan5.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.kerrigan { background: url('../img/hots/heroes/guide-images/1/kerrigan.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-2.kerrigan { background: url('../img/hots/heroes/guide-images/2/kerrigan2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-3.kerrigan { background: url('../img/hots/heroes/guide-images/3/kerrigan3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-4.kerrigan { background: url('../img/hots/heroes/guide-images/4/kerrigan4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-5.kerrigan { background: url('../img/hots/heroes/guide-images/5/kerrigan5.jpg') no-repeat center top; background-size: cover; }
 
-.guide-images .guide-image.guide-image-1.lili { background: url('../img/hots/heroes/guide-images/1/lili.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-2.lili { background: url('../img/hots/heroes/guide-images/2/lili2.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-3.lili { background: url('../img/hots/heroes/guide-images/3/lili3.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-4.lili { background: url('../img/hots/heroes/guide-images/4/lili4.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-5.lili { background: url('../img/hots/heroes/guide-images/5/lili5.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.lili { background: url('../img/hots/heroes/guide-images/1/lili.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-2.lili { background: url('../img/hots/heroes/guide-images/2/lili2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-3.lili { background: url('../img/hots/heroes/guide-images/3/lili3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-4.lili { background: url('../img/hots/heroes/guide-images/4/lili4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-5.lili { background: url('../img/hots/heroes/guide-images/5/lili5.jpg') no-repeat center top; background-size: cover; }
 
-.guide-images .guide-image.guide-image-1.malfurion { background: url('../img/hots/heroes/guide-images/1/malfurion.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-2.malfurion { background: url('../img/hots/heroes/guide-images/2/malfurion2.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-3.malfurion { background: url('../img/hots/heroes/guide-images/3/malfurion3.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-4.malfurion { background: url('../img/hots/heroes/guide-images/4/malfurion4.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-5.malfurion { background: url('../img/hots/heroes/guide-images/5/malfurion5.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.malfurion { background: url('../img/hots/heroes/guide-images/1/malfurion.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-2.malfurion { background: url('../img/hots/heroes/guide-images/2/malfurion2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-3.malfurion { background: url('../img/hots/heroes/guide-images/3/malfurion3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-4.malfurion { background: url('../img/hots/heroes/guide-images/4/malfurion4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-5.malfurion { background: url('../img/hots/heroes/guide-images/5/malfurion5.jpg') no-repeat center top; background-size: cover; }
 
-.guide-images .guide-image.guide-image-1.muradin { background: url('../img/hots/heroes/guide-images/1/muradin.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-2.muradin { background: url('../img/hots/heroes/guide-images/2/muradin2.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-3.muradin { background: url('../img/hots/heroes/guide-images/3/muradin3.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-4.muradin { background: url('../img/hots/heroes/guide-images/4/muradin4.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-5.muradin { background: url('../img/hots/heroes/guide-images/5/muradin5.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.muradin { background: url('../img/hots/heroes/guide-images/1/muradin.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-2.muradin { background: url('../img/hots/heroes/guide-images/2/muradin2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-3.muradin { background: url('../img/hots/heroes/guide-images/3/muradin3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-4.muradin { background: url('../img/hots/heroes/guide-images/4/muradin4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-5.muradin { background: url('../img/hots/heroes/guide-images/5/muradin5.jpg') no-repeat center top; background-size: cover; }
 
-.guide-images .guide-image.guide-image-1.sylvanas { background: url('../img/hots/heroes/guide-images/1/sylvanas.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-2.sylvanas { background: url('../img/hots/heroes/guide-images/2/sylvanas2.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-3.sylvanas { background: url('../img/hots/heroes/guide-images/3/sylvanas3.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-4.sylvanas { background: url('../img/hots/heroes/guide-images/4/sylvanas4.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.guide-image-5.sylvanas { background: url('../img/hots/heroes/guide-images/5/sylvanas5.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.sylvanas { background: url('../img/hots/heroes/guide-images/1/sylvanas.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-2.sylvanas { background: url('../img/hots/heroes/guide-images/2/sylvanas2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-3.sylvanas { background: url('../img/hots/heroes/guide-images/3/sylvanas3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-4.sylvanas { background: url('../img/hots/heroes/guide-images/4/sylvanas4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-5.sylvanas { background: url('../img/hots/heroes/guide-images/5/sylvanas5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.guide-images-1.blackheartsbay { background: url('../img/hots/maps/guides/bhb.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.cursedhollow { background: url('../img/hots/maps/guides/curse.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.dragonshrine { background: url('../img/hots/maps/guides/ds.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.gardenofterror { background: url('../img/hots/maps/guides/garden.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.hauntedmines { background: url('../img/hots/maps/guides/hm.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.skytemple { background: url('../img/hots/maps/guides/st.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.tomb-of-the-spider-queen { background: url('../img/hots/maps/guides/sq.jpg') no-repeat center top; background-size: cover; }
 
 /* hots guide list */
 .guides-list { padding: 20px 0 0 0; }
@@ -4911,12 +4921,12 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 
 .guides-list .guide:hover { top: -10%; left: -5%; width: 110%; height: 120%; z-index: 12; border: 1px solid #000; -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
 .guides-list .guide.premium:hover { border: 1px solid #f0c55c; -webkit-animation-name: glow-premium; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow-premium; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
-.guides-list .guide:hover .deck-overlay { opacity: .4; }
-.guides-list .guide:hover .deck-title { top: 10px; left: 10px; text-shadow: 0px 0px 5px rgba(0,0,0,.6); }
-.guides-list .guide:hover .deck-score { top: 10px; right: 10px; background: rgba(0,0,0,.6); }
-.guides-list .guide.premium:hover .deck-score { right: 60px; }
-.guides-list .guide:hover .deck-description { text-shadow: 0px 0px 5px rgba(0,0,0,.6); opacity: 1; }
-.guides-list .guide:hover .deck-info { opacity: 1; }
+.guides-list .guide:hover .guide-overlay { opacity: .4; }
+.guides-list .guide:hover .guide-title { top: 10px; left: 10px; text-shadow: 0px 0px 5px rgba(0,0,0,.6); }
+.guides-list .guide:hover .guide-score { top: 10px; right: 10px; background: rgba(0,0,0,.6); }
+.guides-list .guide.premium:hover .guide-score { right: 60px; }
+.guides-list .guide:hover .guide-description { text-shadow: 0px 0px 5px rgba(0,0,0,.6); opacity: 1; }
+.guides-list .guide:hover .guide-info { opacity: 1; }
 
 .guides-list-no-content { padding: 20px; color: #FFF; background: rgba(0,0,0,.6); border: 1px solid #000; border-radius: 4px; }
 

@@ -171,6 +171,9 @@ if (cluster.isMaster) {
     app.post('/hots/guide', routes.frontend.hots.guide(Schemas));
     app.post('/hots/guidebuilder', routes.frontend.hots.guideBuilder(Schemas, Util));
 
+    app.post('/hots/heroes', routes.frontend.hots.heroes(Schemas));
+    app.post('/hots/hero', routes.frontend.hots.hero(Schemas));
+
     app.post('/forum', routes.frontend.forum(Schemas, async));
     app.post('/forum/thread', routes.frontend.forumThread(Schemas));
     app.post('/forum/post', routes.frontend.forumPost(Schemas));

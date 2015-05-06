@@ -1582,6 +1582,24 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('HeroService', ['$http', '$q', function ($http, $q) {
+    return {
+        getHeroes: function () {
+            var d = $q.defer();
+            $http.post('/hots/heroes', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getHero: function (_id) {
+            var d = $q.defer();
+            $http.post('/hots/hero', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
 .factory('VoteService', ['$http', '$q', function ($http, $q) {
     return {
         voteArticle: function (direction, article) {

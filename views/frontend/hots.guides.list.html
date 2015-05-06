@@ -17,41 +17,24 @@
 <!-- / section banner -->
 
 <!-- filter start -->
-<div class="container-fluid padding-none filter-bar filter-bar-decks">
+<div class="container-fluid padding-none filter-bar small filter-bar-guides">
     <div class="container">
         <div class="row">
             <div class="col-sm-12 clearfix">
-                <h1 class="pull-left">FILTER <br>CONTENT:</h1>
-                <ul class="filter-class pull-right">
-                    <li class="all" ng-class="{active:klass === 'all'}">
-                        <a href="#" ng-click="setKlass('all')" ng-tooltip title="All Classes">All Classes</a>
-                    </li>
-                    <li class="druid" ng-class="{active:klass === 'Druid'}">
-                        <a href="#" ng-click="setKlass('Druid')" ng-tooltip title="Druid">Druid</a>
-                    </li>
-                    <li class="hunter" ng-class="{active:klass === 'Hunter'}">
-                        <a href="#" ng-click="setKlass('Hunter')" ng-tooltip title="Hunter">Hunter</a>
-                    </li>
-                    <li class="mage" ng-class="{active:klass === 'Mage'}">
-                        <a href="#" ng-click="setKlass('Mage')" ng-tooltip title="Mage">Mage</a>
-                    </li>
-                    <li class="paladin" ng-class="{active:klass === 'Paladin'}">
-                        <a href="#" ng-click="setKlass('Paladin')" ng-tooltip title="Paladin">Paladin</a>
-                    </li>
-                    <li class="priest" ng-class="{active:klass === 'Priest'}">
-                        <a href="#" ng-click="setKlass('Priest')" ng-tooltip title="Priest">Priest</a>
-                    </li>
-                    <li class="rogue" ng-class="{active:klass === 'Rogue'}">
-                        <a href="#" ng-click="setKlass('Rogue')" ng-tooltip title="Rogue">Rogue</a>
-                    </li>
-                    <li class="shaman" ng-class="{active:klass === 'Shaman'}">
-                        <a href="#" ng-click="setKlass('Shaman')" ng-tooltip title="Shaman">Shaman</a>
-                    </li>
-                    <li class="warlock" ng-class="{active:klass === 'Warlock'}">
-                        <a href="#" ng-click="setKlass('Warlock')" ng-tooltip title="Warlock">Warlock</a>
-                    </li>
-                    <li class="warrior" ng-class="{active:klass === 'Warrior'}">
-                        <a href="#" ng-click="setKlass('Warrior')" ng-tooltip title="Warrior">Warrior</a>
+                <h1 class="pull-left">FILTER CONTENT:</h1>
+                <ul class="filter-guides pull-left clearfix">
+                    <li class="pull-left">
+                        <div class="dropdown">
+                            <button class="btn input-dark" type="button" data-toggle="dropdown">
+                                <span>Hero: {{filters.hero.name}}</span>
+                                <b class="caret"></b>
+                            </button>
+                            <ul class="list-group dropdown-menu dropdown-dark" iscroll>
+                                <li class="list-group-item" ng-class="{active: filter._id === filters.hero._id}" ng-repeat="filter in filters.all.heroes">
+                                    <a href="#" ng-click="filters.hero = filter; pagination.setPage(1);">{{filter.name}}</a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -103,7 +86,7 @@
 </div>
 <!-- filter advanced end -->
 
-<!-- decks start -->
+<!-- guides start -->
 <div class="container">
     
     <!-- page flipping -->
@@ -125,6 +108,12 @@
             <div class="guide-wrapper">
                 <div class="guide large" ng-class="{ premium: guide.premium.isPremium }">
                     <a href="./heroes-of-the-storm/guides/{{guide.slug}}"></a>
+                    <div class="guide-images" ng-if="guide.guideType == 'hero'">
+                        <div class="guide-image guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
+                    </div>
+                    <div class="guide-images" ng-if="guide.guideType == 'map'">
+                        <div class="guide-image guide-images-1 guide-image-1 {{guide.maps[0].className}}"></div>
+                    </div>
                     <div class="guide-overlay"></div>
                     <div class="guide-premium" ng-if="guide.premium.isPremium"></div>
                     <div class="guide-title">{{guide.name}}</div>
@@ -169,4 +158,4 @@
     <!-- / page flipping -->
     
 </div>
-<!-- decks end -->
+<!-- guides end -->
