@@ -29,7 +29,7 @@
         <div class="forum-post-comments">
             <h3>COMMENTS</h3>
             <div class="comments">
-                <p class="no-comments white darkbox m-b-sm" ng-if="!post.comments || !post.comments.length">There are currently no comments on this post.</p>
+                <p class="no-comments white darkbox m-b-sm wrapper-sm" ng-if="!post.comments || !post.comments.length">There are currently no comments on this post.</p>
                 <div class="comment" ng-repeat="comment in post.comments">
                     <div class="avatar">
                         <a href="./user/{{comment.author.username}}"><img gravatar-src-once="comment.author.email" alt="" /></a>

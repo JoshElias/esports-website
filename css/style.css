@@ -1965,7 +1965,7 @@ ul[dnd-list] .dndPlaceholder {
 .hero-selection .hero .icon-wrap .icon:hover { background-color: rgba(88, 43, 128, 1); }
 .hero-selection .hero .icon-wrap .icon.active { background-color: #2766ad; }
 
-p.white { color: #FFF; margin: 0; }
+p.white { color: #FFF; }
 .darkbox { background: rgba(0,0,0,.6); border-radius: 4px; border: 1px solid #000; }
 
 /* maps */
