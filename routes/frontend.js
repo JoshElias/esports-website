@@ -1319,7 +1319,7 @@ module.exports = {
             var slug = req.body.slug;
             
             function getArticle (callback) {
-                Schemas.Article.findOne({ 'slug.url': slug })
+                Schemas.Article.findOneAndUpdate({ 'slug.url': slug }, { $inc: { views: 1 } })
                 .lean()
                 .populate([{
                         path: 'author',
@@ -1681,7 +1681,7 @@ module.exports = {
     deck: function (Schemas) {
         return function (req, res, next) {
             var slug = req.body.slug;
-            Schemas.Deck.findOne({ slug: slug })
+            Schemas.Deck.findOneAndUpdate({ slug: slug }, { $inc: { views: 1 } })
             .lean()
             .populate([{
                     path: 'author',
