@@ -664,103 +664,46 @@ module.exports = {
     },
     articleAdd: function (Schemas) {
         return function (req, res, next) {
+            var articleID;
             // add form validation
             
             // insert new article
-            var newArticle = new Schemas.Article({
-                title: req.body.title,
-                slug: {
-                    url: req.body.slug.url,
-                    linked: req.body.slug.linked
-                },
-                description: req.body.description,
-                content: req.body.content,
-                author: req.body.author,
-                photos: {
-                    large: req.body.photos.large,
-                    medium: req.body.photos.medium,
-                    small: req.body.photos.small
-                },
-                deck: req.body.deck || undefined,
-                guide: req.body.guide || undefined,
-                related: req.body.related || undefined,
-                classTags: req.body.classTags,
-                views: 0,
-                votesCount: 1,
-                votes: [{
-                    userID: req.user._id,
-                    direction: 1
-                }],
-                featured: req.body.featured,
-                comments: [],
-                createdDate: new Date().toISOString(),
-                premium: {
-                    isPremium: req.body.premium.isPremium,
-                    expiryDate: req.body.premium.expiryDate
-                },
-                theme: req.body.theme,
-                articleType: req.body.articleType,
-                active: req.body.active
-            });
-            
-            newArticle.save(function(err, data){
-                if (err) {
-                    console.log(err);
-                    return res.json({ success: false,
-                        errors: {
-                            unknown: {
-                                msg: 'An unknown error occurred'
-                            }
-                        }
-                    });
-                }
-                return res.json({ success: true });
-            });
-        };
-    },
-    articleEdit: function (Schemas) {
-        return function (req, res, next) {
-            var _id = req.body._id;
-            
-            Schemas.Article.findOne({ _id: _id }).exec(function (err, article) {
-                if (err) {
-                    console.log(err);
-                    return res.json({ success: false,
-                        errors: {
-                            unknown: {
-                                msg: 'An unknown error occurred'
-                            }
-                        }
-                    });
-                }
-                
-                article.title = req.body.title;
-                article.slug = {
-                    url: req.body.slug.url,
-                    linked: req.body.slug.linked
-                };
-                article.description = req.body.description;
-                article.content = req.body.content;
-                article.author = req.body.author;
-                article.photos = {
-                    large: req.body.photos.large,
-                    medium: req.body.photos.medium,
-                    small: req.body.photos.small
-                };
-                article.deck = req.body.deck || undefined;
-                article.guide = req.body.guide || undefined;
-                article.related = req.body.related || undefined;
-                article.classTags = req.body.classTags || [];
-                article.featured = req.body.featured;
-                article.premium = {
-                    isPremium: req.body.premium.isPremium,
-                    expiryDate: req.body.premium.expiryDate
-                };
-                article.theme = req.body.theme;
-                article.articleType = req.body.articleType;
-                article.active = req.body.active;
-                                
-                article.save(function (err) {
+            function insertArticle(callback) {
+                var newArticle = new Schemas.Article({
+                    title: req.body.title,
+                    slug: {
+                        url: req.body.slug.url,
+                        linked: req.body.slug.linked
+                    },
+                    description: req.body.description,
+                    content: req.body.content,
+                    author: req.body.author,
+                    photos: {
+                        large: req.body.photos.large,
+                        medium: req.body.photos.medium,
+                        small: req.body.photos.small
+                    },
+                    deck: req.body.deck || undefined,
+                    related: req.body.related || undefined,
+                    classTags: req.body.classTags,
+                    views: 0,
+                    votesCount: 1,
+                    votes: [{
+                        userID: req.user._id,
+                        direction: 1
+                    }],
+                    featured: req.body.featured,
+                    comments: [],
+                    createdDate: new Date().toISOString(),
+                    premium: {
+                        isPremium: req.body.premium.isPremium,
+                        expiryDate: req.body.premium.expiryDate
+                    },
+                    theme: req.body.theme,
+                    active: req.body.active
+                });
+
+                newArticle.save(function(err, data){
                     if (err) {
                         console.log(err);
                         return res.json({ success: false,
@@ -771,9 +714,109 @@ module.exports = {
                             }
                         });
                     }
-                    return res.json({ success: true });
+                    articleID = data._id;
+                    return callback();
+                });
+            }
+            
+            function addActivity(callback) {
+                var activity = new Schemas.Activity({
+                    author: req.body.author,
+                    activityType: "createArticle",
+                    article: articleID,
+                    active: req.body.active,
+                    createdDate: new Date().toISOString()
+                });
+                activity.save(function(err, data) {
+                    if (err) {
+                        return res.json({ 
+                            success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
+                        });
+                    }
+                });
+                return callback();
+            }
+            
+            //actions
+            insertArticle(function() {
+                addActivity(function() {
+                    res.json({ success: true });
                 });
             });
+        };
+    },
+    articleEdit: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            
+            function updateActivity (callback) {
+                Schemas.Activity.update({article: _id, activityType: 'createArticle'}, {author: req.body.author, active: req.body.active}).exec(function (err, data) {
+                    Schemas.Activity.update({article: _id, activityType: 'articleComment'}, {active: req.body.active}).exec(function (err, data) {
+                        return callback();
+                    });
+                });
+            }
+            
+            function editArticle (callback) {
+                Schemas.Article.findOne({ _id: _id }).exec(function (err, article) {
+                    if (err) {
+                        console.log(err);
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                    
+                    oldActivityid = article._id;
+                    
+                    article.title = req.body.title;
+                    article.slug = {
+                        url: req.body.slug.url,
+                        linked: req.body.slug.linked
+                    };
+                    article.description = req.body.description;
+                    article.content = req.body.content;
+                    article.author = req.body.author;
+                    article.photos = {
+                        large: req.body.photos.large,
+                        medium: req.body.photos.medium,
+                        small: req.body.photos.small
+                    };
+                    article.deck = req.body.deck || undefined;
+                    article.related = req.body.related || undefined;
+                    article.classTags = req.body.classTags || [];
+                    article.featured = req.body.featured;
+                    article.premium = {
+                        isPremium: req.body.premium.isPremium,
+                        expiryDate: req.body.premium.expiryDate
+                    };
+                    article.theme = req.body.theme;
+                    article.active = req.body.active;
+
+                    article.save(function (err) {
+                        if (err) {
+                            return res.json({ success: false,
+                                errors: {
+                                    unknown: {
+                                        msg: 'An unknown error occurred'
+                                    }
+                                }
+                            });
+                        }                    
+                        return callback();
+                    });
+                });
+            }
+            
+            editArticle(function() {
+                updateActivity(function () {
+                    res.json({ success: true });
+                });
+            });
+            
         };
     },
     articleDelete: function (Schemas) {

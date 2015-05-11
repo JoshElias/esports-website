@@ -1388,6 +1388,15 @@ var app = angular.module('app', [
                     }
                 },
                 access: { auth: true, admin: true }
+            })
+            .state('app.contact', {
+                url: 'contact',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/contact.html',
+                        controller: 'ContactCtrl'
+                    }
+                }
             });        
     }]
 );

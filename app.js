@@ -152,7 +152,7 @@ if (cluster.isMaster) {
     app.post('/forgot-password/reset', routes.frontend.resetPassword(Schemas, Mail));
 
     app.post('/profile/:username', routes.frontend.profile(Schemas));
-    app.post('/profile/:username/activity', routes.frontend.profileActivity(Schemas));
+    app.post('/profile/:username/activity', routes.frontend.profileActivity(Schemas, async));
     app.post('/profile/:username/articles', routes.frontend.profileArticles(Schemas));
     app.post('/profile/:username/decks', routes.frontend.profileDecks(Schemas));
 
@@ -191,7 +191,7 @@ if (cluster.isMaster) {
     app.post('/api/article/comment/add', routes.frontend.articleCommentAdd(Schemas, mongoose));
 
     app.post('/api/deck', routes.frontend.deckEdit(Schemas));
-    app.post('/api/deck/add', routes.frontend.deckAdd(Schemas, Util));
+    app.post('/api/deck/add', routes.frontend.deckAdd(Schemas, Util, mongoose));
     app.post('/api/deck/update', routes.frontend.deckUpdate(Schemas, Util));
     app.post('/api/deck/delete', routes.frontend.deckDelete(Schemas));
     app.post('/api/deck/vote', routes.frontend.deckVote(Schemas));
@@ -218,6 +218,8 @@ if (cluster.isMaster) {
     app.post('/api/subscription/setplan', routes.frontend.subSetPlan(Schemas, Subscription));
     app.post('/api/subscription/setcard', routes.frontend.subSetCard(Schemas, Subscription));
     app.post('/api/subscription/cancel', routes.frontend.subCancel(Schemas, Subscription));
+   
+    app.post('/api/contact/send', routes.frontend.sendContact(Mail));
     
     /* admin */
     app.post('/api/admin/cards', routes.admin.isAdmin(Schemas), routes.admin.cards(Schemas));

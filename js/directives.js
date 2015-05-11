@@ -218,4 +218,39 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
+.directive('activitySignup', function () {
+    return {
+        templateUrl: 'views/frontend/activity/activity.signup.html'
+    };
+})
+.directive('activityArticle', function () {
+    return {
+        templateUrl: 'views/frontend/activity/activity.article.html'
+    };
+})
+.directive('activityArticleComment', function () {
+    return {
+        templateUrl: 'views/frontend/activity/activity.article.comment.html'
+    };
+})
+.directive('activityDeck', function () {
+    return {
+        templateUrl: 'views/frontend/activity/activity.deck.html'
+    };
+})
+.directive('activityDeckComment', function () {
+    return {
+        templateUrl: 'views/frontend/activity/activity.deck.comment.html'
+    };
+})
+.directive('activityForumPost', function () {
+    return {
+        templateUrl: 'views/frontend/activity/activity.forumPost.html'
+    };
+})
+.directive('activityForumComment', function () {
+    return {
+        templateUrl: 'views/frontend/activity/activity.forumComment.html'
+    };
+})
 ;
