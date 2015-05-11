@@ -6,7 +6,6 @@ var app = angular.module('app', [
     'angular-bootbox',
     'angularMoment',
     'angularPayments',
-    //'angular-iscroll',
     'dndLists',
     'ngAnimate',
     'ngCookies',
@@ -339,24 +338,29 @@ var app = angular.module('app', [
                 }
             })
             .state('app.hots.guides.list', {
-                url: '?p&s&h&a&o',
+                url: '?p&s&t&h&m&a&o',
                 views: {
                     guides: {
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
                             data: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
-                                var hero = $stateParams.h || 'all',
+                                var guideType = $stateParams.t || 'all',
+                                    hero = $stateParams.h || 'all',
+                                    map = $stateParams.m || 'all',
                                     page = $stateParams.p || 1,
                                     perpage = 24,
                                     search = $stateParams.s || '',
                                     age = $stateParams.a || '',
                                     order = $stateParams.o || '';
                                 
-                                return HOTSGuideService.getGuides(hero, page, perpage, search, age, order);
+                                return HOTSGuideService.getGuides(guideType, hero, map, page, perpage, search, age, order);
                             }],
                             dataHeroes: ['HeroService', function (HeroService) {
                                 return HeroService.getHeroes();
+                            }],
+                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getMaps();
                             }]
                         }
                     }

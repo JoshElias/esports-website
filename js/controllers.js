@@ -4658,7 +4658,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.tooltipPosTalent = function ($index) {
             return ($index === 2) ? 'left' : 'right';
-        };        
+        };
 
         // talents
         $scope.getTalents = function (hero) {
@@ -4903,19 +4903,21 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuidesListCtrl', ['$scope', '$state', 'data', 'dataHeroes', 
-    function ($scope, $state, data, dataHeroes) {
+.controller('HOTSGuidesListCtrl', ['$scope', '$state', 'data', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, data, dataHeroes, dataMaps) {
         if (!data.success) { return $state.transitionTo('app.hots.guides.list'); }
         
         // guides
         $scope.guides = data.guides;
         $scope.total = data.total;
-        $scope.hero = data.hero;
         $scope.page = parseInt(data.page);
         $scope.perpage = data.perpage;
         $scope.search = data.search;
         $scope.age = data.age;
         $scope.order = data.order;
+        $scope.hero = data.hero;
+        $scope.guideType = data.guideType;
+        $scope.map = data.map;
 
         $scope.hasSearch = function () {
             return (data.search) ? data.search.length : false;
@@ -4938,12 +4940,6 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.loading = false;
 
-        $scope.setHero = function (hero) {
-            $scope.hero = klass;
-            $scope.page = 1;
-            $scope.getGuides();
-        };
-        
         // filters
         $scope.getFilter = function (name, value) {
             var filter = $scope.filters.all[name];
@@ -4953,6 +4949,14 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
             return filter[0];
+        }
+        
+        function dataToFilter (heroes) {
+            var out = [];
+            for (var i = 0; i < heroes.length; i++) {
+                out.push({ name: heroes[i].name, value: heroes[i].className });
+            }
+            return out;
         }
 
         $scope.filters = {
@@ -4971,12 +4975,20 @@ angular.module('app.controllers', ['ngCookies'])
                     { name: 'Newest Decks', value: 'new' },
                     { name: 'Oldest Decks', value: 'old' }
                 ],
-                heroes: [{ name: 'All Heroes', value: 'all' }].concat(dataHeroes.heroes)
+                heroes: [{ name: 'All Heroes', value: 'all' }].concat(dataToFilter(dataHeroes.heroes)),
+                guideType: [
+                    { name: 'All Guides', value: 'all' },
+                    { name: 'Hero', value: 'hero' },
+                    { name: 'Map', value: 'map' }
+                ],
+                maps: [{ name: 'All Maps', value: 'all' }].concat(dataToFilter(dataMaps.maps)),
             }
         };
         $scope.filters.age = $scope.getFilter('age', $scope.age);
         $scope.filters.order = $scope.getFilter('order', $scope.order);
         $scope.filters.hero = $scope.getFilter('heroes', $scope.hero);
+        $scope.filters.guideType = $scope.getFilter('guideType', $scope.guideType);
+        $scope.filters.map = $scope.getFilter('maps', $scope.map);
         
         $scope.getGuides = function () {
             var params = {};
@@ -4989,8 +5001,16 @@ angular.module('app.controllers', ['ngCookies'])
                 params.p = $scope.page;
             }
             
-            if ($scope.hero != 'all') {
-                params.h = $scope.hero;
+            if ($scope.filters.guideType != 'all') {
+                params.t = $scope.filters.guideType.value;
+            }
+
+            if ($scope.filters.hero != 'all') {
+                params.h = $scope.filters.hero.value;
+            }
+            
+            if ($scope.filters.map != 'all') {
+                params.m = $scope.filters.map.value;
             }
             
             if ($scope.filters.age.value !== 'all') {
@@ -5058,6 +5078,33 @@ angular.module('app.controllers', ['ngCookies'])
         if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
             $scope.pagination.setPage(1);
         }
+    }
+])
+.controller('HOTSGuideCtrl', ['$scope', '$state', 'data', 
+    function ($scope, $state, data) {
+        $scope.guide = data.guide;
+        $scope.currentHero = $scope.guide.heroes[0];
+        
+        console.log($scope.currentHero.talents);
+        
+        $scope.setCurrentHero = function (hero) {
+            $scope.currentHero = hero;
+        };
+        
+        $scope.getCurrentHero = function () {
+            return $scope.currentHero;
+        };
+        
+        $scope.getTalents = function () {
+            var out = [],
+                hero = $scope.getCurrentHero();
+            
+            for (var i = 0; i < hero.hero.talents.length; i++) {
+                
+            }
+            
+            return out;
+        };
     }
 ])
 .controller('TeamCtrl', ['$scope',
