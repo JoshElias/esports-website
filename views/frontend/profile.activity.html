@@ -9,7 +9,14 @@
             <div class="panel">
                 <div class="panel-heading pos-rl">
                     <span class="arrow left"></span>
-                    <span ng-bind-html="activity.getActivity()"></span>
+                    <span>{{user.username}}</span>
+                    <span activity-article ng-if="activity.activityType == 'createArticle'"></span>
+                    <span activity-signup ng-if="activity.activityType == 'signup'"></span>
+                    <span activity-article-comment ng-if="activity.activityType == 'articleComment'"></span>
+                    <span activity-deck ng-if="activity.activityType == 'createDeck'"></span>
+                    <span activity-deck-comment ng-if="activity.activityType == 'deckComment'"></span>
+                    <span activity-forum-post ng-if="activity.activityType == 'forumPost'"></span>
+                    <span activity-forum-comment ng-if="activity.activityType == 'forumComment'"></span>
                 </div>
                 <div class="panel-footer clearfix">
                     <div class="pull-right">

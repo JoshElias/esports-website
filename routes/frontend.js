@@ -186,9 +186,10 @@ module.exports = {
     signup: function(Schemas, uuid, Mail) {
         return function (req, res, next) {
             var email = req.body.email,
-                username = req.body.username,
-                password = req.body.password,
-                activationCode = uuid.v4();
+            username = req.body.username,
+            password = req.body.password,
+            userID,
+            activationCode = uuid.v4();
             
             req.assert('email', 'A valid email address is required').notEmpty().isEmail();
             req.assert('username', 'Username is required').notEmpty();
@@ -264,9 +265,26 @@ module.exports = {
                                     }
                                 });
                             }
+                            userID = data._id;
                             return callback();
                         });
                     }
+                }
+                
+                function addActivity(callback) {
+                   var activity = new Schemas.Activity({
+                        author: userID,
+                        activityType: "signup",
+                        createdDate: new Date().toISOString()
+                    });
+                    activity.save(function(err, data){
+                        if (err) {
+                            return res.json({ 
+                                success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
+                            });
+                        }
+                        return callback();
+                    });
                 }
                 
                 function sendEmail(callback) {
@@ -282,11 +300,14 @@ module.exports = {
                     });
                 }
                 
+                
                 checkEmail(function (){
                     checkUsername(function (){
                         completeNewUser(function () {
-                            sendEmail(function () {
-                                return res.json({ success: true });
+                            addActivity(function () {
+                                sendEmail(function () {
+                                    return res.json({ success: true });
+                                }); 
                             });
                         });
                     });
@@ -694,7 +715,7 @@ module.exports = {
             });
         };
     },
-    profileActivity: function (Schemas) {
+    profileActivity: function (Schemas, async) {
         return function (req, res, next) {
             var username = req.params.username,
                 page = req.body.page || 1,
@@ -708,9 +729,43 @@ module.exports = {
             }
             
             function getActivity (user, callback) {
-                Schemas.Activity.find({ author: user._id }).sort('-createdDate').skip((perpage * page) - perpage).limit(perpage).exec(function (err, activities) {
+                
+                var iterAct = function (activity, callback) {
+                    if (activity.forumPost) {
+                        Schemas.ForumThread.populate(activity.forumPost, {
+                            path: 'thread',
+                            select: 'slug.url'
+                        }, callback);
+                    } else {
+                        return callback();
+                    }
+                };
+                
+                Schemas.Activity.find({ author: user._id, active: true })
+                .sort('-createdDate')
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .populate([
+                    {
+                        path: 'article',
+                        select: '_id title slug active'
+                    },
+                    {
+                        path: 'deck',
+                        select: '_id name slug public',
+                        match: { public: true }
+                    },
+                    {
+                        path: 'forumPost',
+                        select: '_id title slug thread'
+                    }
+                ])
+                .exec(function (err, activities) {
                     if (err) { return req.json({ success: false }); }
-                    return callback(activities);
+                    async.each(activities, iterAct, function (err) {
+                        if (err) { return res.json({ success: false }); }
+                        return callback(activities);
+                    });
                 });
             }
             
@@ -894,7 +949,6 @@ module.exports = {
                             expiryDate: results.premium.expiryDate || ''
                         }
                     };
-
                     return callback();
                 });
             }
@@ -965,9 +1019,10 @@ module.exports = {
             });
         };
     },
-    deckAdd: function (Schemas, Util) {
+    deckAdd: function (Schemas, Util, mongoose) {
         return function (req, res, next) {
             var userID = req.user._id,
+                newDeckID = mongoose.Types.ObjectId(),
                 author;
             
             req.assert('name', 'Deck name is required').notEmpty();
@@ -1053,6 +1108,7 @@ module.exports = {
                     },
                     featured = (author.isAdmin || author.isProvider) ? req.body.featured : false,
                     newDeck = new Schemas.Deck({
+                        _id: newDeckID,
                         name: req.body.name,
                         slug: Util.slugify(req.body.name),
                         deckType: req.body.deckType,
@@ -1096,11 +1152,32 @@ module.exports = {
                 });
             }
             
+            
+             function addActivity(callback) {
+                var activity = new Schemas.Activity({
+                    author: userID,
+                    activityType: "createDeck",
+                    deck: newDeckID,
+                    createdDate: new Date().toISOString()
+                });
+                activity.save(function(err, data) {
+                    if (err) {
+                        return res.json({ 
+                            success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
+                        });
+                    }
+                });
+                return callback();
+            }
+            
+            
             checkForm(function () {
                 checkSlug(function () {
                     getUser(function () {
-                        createDeck(function () {
-                            return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                        addActivity(function () {
+                            createDeck(function () {
+                                return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                            });
                         });
                     });
                 });
@@ -1114,7 +1191,7 @@ module.exports = {
                 author;
             
             req.assert('name', 'Deck name is required').notEmpty();
-            req.assert('name', 'Deck name cannot be more than 40 characters').len(1, 40);
+            req.assert('name', 'Deck name cannot be more than 60 characters').len(1, 60);
             req.assert('deckType', 'Deck type is required').notEmpty();
             req.assert('description', 'Deck description is required').notEmpty();
             req.assert('description', 'Deck description cannot be more than 400 characters').len(1, 400);
@@ -1225,11 +1302,20 @@ module.exports = {
                 });
             }
             
+            function updateActivities(callback) {
+                console.log(req.body._id);
+                    Schemas.Activity.update({deck: req.body._id, activityType: 'deckComment'}, {active: req.body.public}).exec(function (err, data) {
+                        return callback();
+                });
+            }
+            
             checkForm(function () {
                 checkSlug(function () {
                     getUser(function () {
-                        updateDeck(function () {
-                            return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                        updateActivities(function () {
+                            updateDeck(function () {
+                                return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                            });
                         });
                     });
                 });
@@ -1324,10 +1410,12 @@ module.exports = {
                 .populate([{
                         path: 'author',
                         select: 'username -_id'
-                    },{
+                    },
+                    {
                         path: 'related',
                         select: 'title slug.url active -_id',
-                    },{
+                    },
+                    {
                         path: 'comments',
                         select: '_id author comment createdDate votesCount votes'
                 }])
@@ -1372,7 +1460,6 @@ module.exports = {
                 userID = req.user._id,
                 comment = req.body.comment,
                 newCommentID = mongoose.Types.ObjectId();
-            
             req.assert('comment.comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
             
             var errors = req.validationErrors();
@@ -1422,13 +1509,32 @@ module.exports = {
                 });
             }
             
+            function addActivity(callback) {
+                var activity = new Schemas.Activity({
+                    author: userID,
+                    activityType: "articleComment",
+                    article: articleID,
+                    createdDate: new Date().toISOString()
+                });
+                activity.save(function(err, data) {
+                    if (err) {
+                        return res.json({ 
+                            success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
+                        });
+                    }
+                });
+                return callback();
+            }
+            
             // actions
             createComment(function () {
                 addComment(function () {
-                    getComment(function (comment) {
-                        return res.json({
-                            success: true,
-                            comment: comment
+                    addActivity(function() {
+                        getComment(function (comment) {
+                            return res.json({
+                                success: true,
+                                comment: comment
+                            });
                         });
                     });
                 });
@@ -1825,13 +1931,32 @@ module.exports = {
                 });
             }
             
+            function addActivity(callback) {
+                var activity = new Schemas.Activity({
+                    author: userID,
+                    activityType: "deckComment",
+                    deck: deckID,
+                    createdDate: new Date().toISOString()
+                });
+                activity.save(function(err, data) {
+                    if (err) {
+                        return res.json({ 
+                            success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
+                        });
+                    }
+                });
+                return callback();
+            }
+            
             // actions
             createComment(function () {
                 addComment(function () {
-                    getComment(function (comment) {
-                        return res.json({
-                            success: true,
-                            comment: comment
+                    addActivity(function () {
+                        getComment(function (comment) {
+                            return res.json({
+                                success: true,
+                                comment: comment
+                            });
                         });
                     });
                 });
@@ -2047,11 +2172,30 @@ module.exports = {
                 });
             }
             
+            function addActivity(callback) {
+                var activity = new Schemas.Activity({
+                    author: req.user._id,
+                    activityType: "forumPost",
+                    forumPost: newPost,
+                    createdDate: new Date().toISOString()
+                });
+                activity.save(function(err, data) {
+                    if (err) {
+                        return res.json({ 
+                            success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
+                        });
+                    }
+                });
+                return callback();
+            }
+            
             checkForm(function () {
                 checkSlug(function () {
                     createPost(function () {
-                        addToThread(function () {
-                            return res.json({ success: true });
+                        addActivity(function () {
+                            addToThread(function () {
+                                return res.json({ success: true });
+                            });
                         });
                     });
                 });
@@ -2115,10 +2259,33 @@ module.exports = {
                 });
             }
             
+            
+            
+            function addActivity(callback) {
+                var activity = new Schemas.Activity({
+                    author: req.user._id,
+                    activityType: "forumComment",
+                    forumPost: postID,
+                    createdDate: new Date().toISOString()
+                });
+                activity.save(function(err, data) {
+                    if (err) {
+                        return res.json({ 
+                            success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
+                        });
+                    }
+                });
+                return callback();
+            }
+            
+            
+            
             createComment(function () {
                 addToPost(function () {
-                    getComment(function () {
-                        res.json({ success: true, comment: dataComment });
+                    addActivity(function () {
+                        getComment(function () {
+                            res.json({ success: true, comment: dataComment });
+                        });
                     });
                 });
             });
