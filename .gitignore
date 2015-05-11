@@ -28,3 +28,6 @@ node_modules
 
 # Photos directory
 photos
+
+# Windows thumb image files
+Thumbs.db
