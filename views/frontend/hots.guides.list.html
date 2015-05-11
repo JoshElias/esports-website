@@ -23,17 +23,48 @@
             <div class="col-sm-12 clearfix">
                 <h1 class="pull-left">FILTER CONTENT:</h1>
                 <ul class="filter-guides pull-left clearfix">
-                    <li class="pull-left">
+                    <li class="pull-left m-r-md">
+                        <div class="dropdown">
+                            <button class="btn input-dark" type="button" data-toggle="dropdown">
+                                <span>Guides: {{filters.guideType.name}}</span>
+                                <b class="caret"></b>
+                            </button>
+                            <ul class="list-group dropdown-menu dropdown-dark">
+                                <li class="list-group-item" ng-class="{active: filter.value === filters.guideType.value}" ng-repeat="filter in filters.all.guideType">
+                                    <a href="#" ng-click="filters.guideType = filter; pagination.setPage(1);">{{filter.name}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="pull-left m-r-md">
                         <div class="dropdown">
                             <button class="btn input-dark" type="button" data-toggle="dropdown">
                                 <span>Hero: {{filters.hero.name}}</span>
                                 <b class="caret"></b>
                             </button>
-                            <ul class="list-group dropdown-menu dropdown-dark" iscroll>
-                                <li class="list-group-item" ng-class="{active: filter._id === filters.hero._id}" ng-repeat="filter in filters.all.heroes">
-                                    <a href="#" ng-click="filters.hero = filter; pagination.setPage(1);">{{filter.name}}</a>
+                            <div class="scroller-wrapper dropdown-menu is-dark">
+                                <div class="scroller">
+                                    <ul class="list-group dropdown-dark">
+                                        <li class="list-group-item" ng-class="{active: filter.value === filters.hero.value}" ng-repeat="filter in filters.all.heroes">
+                                            <a href="#" ng-click="filters.hero = filter; pagination.setPage(1);">{{filter.name}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="pull-left">
+                        <div class="dropdown">
+                            <button class="btn input-dark" type="button" data-toggle="dropdown">
+                                <span>Map: {{filters.map.name}}</span>
+                                <b class="caret"></b>
+                            </button>
+                            <ul class="list-group dropdown-menu dropdown-dark">
+                                <li class="list-group-item" ng-class="{active: filter.value === filters.map.value}" ng-repeat="filter in filters.all.maps">
+                                    <a href="#" ng-click="filters.map = filter; pagination.setPage(1);">{{filter.name}}</a>
                                 </li>
                             </ul>
+                            </div>
                         </div>
                     </li>
                 </ul>
@@ -141,7 +172,7 @@
         </div>
         <!-- / guide -->
     </div>
-    <p ng-show="!guides.length && hero !== 'all' && !loading && !hasSearch()" class="guides-list-no-content">There are curently no guides under <strong>{{hero}}</strong> yet.</p>
+    <p ng-show="!guides.length && hero !== 'all' && !loading && !hasSearch()" class="guides-list-no-content">There are curently no guides under <strong>{{filters.hero.name}}</strong> yet.</p>
     <p ng-show="!guides.length && !loading && hasSearch()" class="guides-list-no-content">There are no results for your search.</p>
     <!-- / guides -->
     

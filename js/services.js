@@ -1546,8 +1546,10 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
-        getGuides: function (hero, page, perpage, search, age, order) {
+        getGuides: function (guideType, hero, map, page, perpage, search, age, order) {
+            guideType = guideType || 'all';
             hero = hero || 'all';
+            map = map || 'all';
             page = page || 1;
             perpage = perpage || 24;
             search = search || '';
@@ -1555,7 +1557,7 @@ angular.module('app.services', [])
             order = order || 'high';
             
             var d = $q.defer();
-            $http.post('/hots/guides', { hero: hero, page: page, perpage: perpage, search: search, age: age, order: order }).success(function (data) {
+            $http.post('/hots/guides', { guideType: guideType, hero: hero, map: map, page: page, perpage: perpage, search: search, age: age, order: order }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
@@ -1563,6 +1565,13 @@ angular.module('app.services', [])
         getGuide: function (slug) {
             var d = $q.defer();
             $http.post('/hots/guide', { slug: slug }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getMaps: function () {
+            var d = $q.defer();
+            $http.post('/hots/maps', {}).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
