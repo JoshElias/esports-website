@@ -25,10 +25,11 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 
-        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', 
+        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
+            $rootScope.metaservice = MetaService;
             
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
@@ -50,6 +51,12 @@ var app = angular.module('app', [
             $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
                 //ngProgress.complete();
                 $window.ga('send', 'pageview', $location.path());
+                
+                console.log(toState);
+                
+                if (toState.seo) {
+                    $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords);
+                }
             });
             $rootScope.$on("$routeChangeError", function(evt, current, previous, rejection){
                 console.log(3);
@@ -155,7 +162,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Home', description: 'TempoStorm home page.', keywords: '' }
             })
             .state('app.articles', {
                 abstract: true,
@@ -184,7 +192,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Articles', description: 'TempoStorm articles to bring you the latest news.', keywords: '' }
             })
             .state('app.articles.article', {
                 url: '/:slug',
@@ -229,7 +238,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Decks', description: 'Hearthstone decks created by the community and TempoStorm content providers.', keywords: '' }
             })
             .state('app.decks.deck', {
                 url: '/:slug',
@@ -261,7 +271,8 @@ var app = angular.module('app', [
                     deckBuilder: {
                         templateUrl: tpl + 'views/frontend/deck-builder.class.html'
                     }
-                }
+                },
+                seo: { title: 'Deck Builder', description: 'Deck building tool for Hearthstone.', keywords: '' }
             })
             .state('app.deckBuilder.build', {
                 url: '/:playerClass',
@@ -276,7 +287,7 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
             })
             .state('app.deckBuilder.edit', {
                 url: '/edit/:slug',
@@ -291,7 +302,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Deck Edit', description: 'Editing tool for hearthstone decks.', keywords: '' }
             })
             .state('app.hots', {
                 abstract: true,
@@ -364,7 +376,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Guides', description: 'Guides for Heroes of the Storm.', keywords: '' }
             })
             .state('app.hots.guides.guide', {
                 url: '/:slug',
@@ -402,7 +415,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Forum', description: '', keywords: '' }
             })
             .state('app.forum.threads', {
                 url: '/:thread',
@@ -465,7 +479,8 @@ var app = angular.module('app', [
                     team: {
                         templateUrl: tpl + 'views/frontend/team.hearthstone.html'
                     }
-                }
+                },
+                seo: { title: 'Hearthstone', description: 'Tempo Storm Hearthstone team.', keywords: '' }
             })
             .state('app.team.heroes', {
                 url: '/hots',
@@ -473,7 +488,8 @@ var app = angular.module('app', [
                     team: {
                         templateUrl: tpl + 'views/frontend/team.hots.html'
                     }
-                }
+                },
+                seo: { title: 'Heroes of the Storm', description: 'Tempo Storm Heroes of the Storm team.', keywords: '' }
             })
             .state('app.team.csgo', {
                 url: '/csgo',
@@ -481,7 +497,8 @@ var app = angular.module('app', [
                     team: {
                         templateUrl: tpl + 'views/frontend/team.csgo.html'
                     }
-                }
+                },
+                seo: { title: 'CS:GO', description: 'Tempo Storm Counter Strike: Global Offensive team.', keywords: '' }
             })
             .state('app.sponsors', {
                 url: 'sponsors',
@@ -489,7 +506,8 @@ var app = angular.module('app', [
                     content: {
                         templateUrl: tpl + 'views/frontend/sponsors.html'
                     }
-                }
+                },
+                seo: { title: 'Sponsors', description: 'Tempo Storm sponsor page.', keywords: '' }
             })
             .state('app.premium', {
                 url: 'premium',
@@ -498,7 +516,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/premium.html',
                         controller: 'PremiumCtrl'
                     }
-                }
+                },
+                seo: { title: 'Get Premium', description: 'Get Premium with Tempo Storm', keywords: '' }
             })
             .state('app.terms', {
                 url: 'terms',
@@ -506,7 +525,8 @@ var app = angular.module('app', [
                     content: {
                         templateUrl: tpl + 'views/frontend/terms.html'
                     }
-                }
+                },
+                seo: { title: 'Terms and Conditions', description: 'Tempo Storm Terms and Conditions', keywords: '' }
             })
             .state('app.privacy', {
                 url: 'privacy',
@@ -514,7 +534,8 @@ var app = angular.module('app', [
                     content: {
                         templateUrl: tpl + 'views/frontend/privacy.html'
                     }
-                }
+                },
+                seo: { title: 'Privacy Policy', description: 'Tempo Storm Privacy Policy', keywords: '' }
             })
             .state('app.login', {
                 url: 'login',
@@ -524,7 +545,8 @@ var app = angular.module('app', [
                         controller: 'UserCtrl',
                     }
                 },
-                access: { noauth: true }
+                access: { noauth: true },
+                seo: { title: 'Login', description: 'Tempo Storm login screen.', keywords: '' }
             })
             .state('app.signup', {
                 url: 'signup',
@@ -534,7 +556,8 @@ var app = angular.module('app', [
                         controller: 'UserCtrl',
                     }
                 },
-                access: { noauth: true }
+                access: { noauth: true },
+                seo: { title: 'Sign up', description: 'Sign up for Tempo Storm.', keywords: '' }
             })
             .state('app.verify', {
                 url: 'verify?email&code',
@@ -544,7 +567,8 @@ var app = angular.module('app', [
                         controller: 'UserVerifyCtrl',
                     }
                 },
-                access: { noauth: true }
+                access: { noauth: true },
+                seo: { title: 'Verify your Email', description: '', keywords: '' }
             })
             .state('app.forgotPassword', {
                 url: 'forgot-password',
@@ -554,7 +578,8 @@ var app = angular.module('app', [
                         controller: 'UserCtrl'
                     }
                 },
-                access: { noauth: true }
+                access: { noauth: true },
+                seo: { title: 'Forgot your Password?', description: 'Recover your Password.', keywords: '' }
             })
             .state('app.resetPassword', {
                 url: 'forgot-password/reset?email&code',
@@ -564,7 +589,8 @@ var app = angular.module('app', [
                         controller: 'UserResetPasswordCtrl'
                     }
                 },
-                access: { noauth: true }
+                access: { noauth: true },
+                seo: { title: 'Reset your Password', description: '', keywords: '' }
             })
             .state('app.profile', {
                 abstract: true,
@@ -660,7 +686,7 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true }
+                access: { auth: true },
             })
             .state('app.profile.changeEmail', {
                 url: '/email-change-confirm?code',
@@ -676,7 +702,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true }
+                access: { auth: true },
+                seo: { title: 'Change my Email', description: '', keywords: '' }
             })
             .state('app.profile.updateEmail', {
                 url: '/email-verify?code',
@@ -708,7 +735,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true }
+                access: { auth: true },
+                seo: { title: 'My Subscription', description: '', keywords: '' }
             })
             .state('app.admin', {
                 abstract: true,
@@ -727,7 +755,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/dashboard.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Dashboard', description: '', keywords: '' }
             })
             .state('app.admin.articles', {
                 abstract: true,
@@ -889,7 +918,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin Deck Edit', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone.cards', {
                 abstract: true,
@@ -914,7 +944,7 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
             })
             .state('app.admin.hearthstone.cards.add', {
                 url: '/add',
@@ -1396,7 +1426,9 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/contact.html',
                         controller: 'ContactCtrl'
                     }
-                }
+                },
+                seo: { title: 'Contact Us', description: 'Contact Page', keywords: '' }
+
             });        
     }]
 );

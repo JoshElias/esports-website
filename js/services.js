@@ -1,6 +1,21 @@
 'use strict';
 
 angular.module('app.services', [])
+.service('MetaService', function() {
+   var title = '';
+   var metaDescription = '';
+   var metaKeywords = '';
+   return {
+      set: function(newTitle, newMetaDescription, newKeywords) {
+          metaKeywords = newKeywords;
+          metaDescription = newMetaDescription;
+          title = newTitle + ' - TempoStorm'; 
+      },
+      metaTitle: function(){ return title; },
+      metaDescription: function() { return metaDescription; },
+      metaKeywords: function() { return metaKeywords; }
+   }
+})
 .factory('AuthenticationService', function() {
     var loggedIn = false,
         admin = false,
@@ -329,6 +344,9 @@ angular.module('app.services', [])
                 d.resolve(data);
             });
             return d.promise;
+        },
+        getNames: function(article) {
+            return $http.post('/api/admin/article/names', article);
         }
     }
 }])
