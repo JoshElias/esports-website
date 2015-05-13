@@ -52,8 +52,12 @@ var app = angular.module('app', [
                 //ngProgress.complete();
                 $window.ga('send', 'pageview', $location.path());
                 
-                console.log(toState);
+                // adsense refresh
+                if ($window.googletag && $window.googletag.pubads) {
+                    $window.googletag.pubads().refresh();
+                }
                 
+                // seo
                 if (toState.seo) {
                     $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords);
                 }

@@ -95,8 +95,12 @@ var app = angular.module('app', [
                 //ngProgress.complete();
                 $window.ga('send', 'pageview', $location.path());
                 
-                console.log(toState);
+                // adsense refresh
+                if ($window.googletag && $window.googletag.pubads) {
+                    $window.googletag.pubads().refresh();
+                }
                 
+                // seo
                 if (toState.seo) {
                     $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords);
                 }
@@ -6910,6 +6914,16 @@ angular.module('app.directives', ['ui.load'])
 .directive('activityForumComment', function () {
     return {
         templateUrl: 'views/frontend/activity/activity.forumComment.html'
+    };
+})
+.directive('googleAdSense', function () {
+    return {
+        restrict: 'A',
+        replace: true,       
+        templateUrl: "views/frontend/googleAds.html",
+        controller: function () {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        }
     };
 })
 ;;'use strict';
