@@ -5080,12 +5080,25 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuideCtrl', ['$scope', '$state', 'data', 
-    function ($scope, $state, data) {
+.controller('HOTSGuideCtrl', ['$scope', '$state', '$sce', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 
+    function ($scope, $state, $sce, bootbox, VoteService, HOTSGuideService, data, dataHeroes) {
         $scope.guide = data.guide;
         $scope.currentHero = $scope.guide.heroes[0];
+        $scope.heroes = dataHeroes.heroes;
         
-        console.log($scope.currentHero.talents);
+        // show
+        if (!$scope.app.settings.show.guide) {
+            $scope.app.settings.show['guide'] = {
+                talents: true,
+                description: true,
+                video: true,
+                matchups: true,
+                content: [],
+                comments: true
+            };
+        }
+        $scope.show = $scope.app.settings.show.guide;
+        $scope.$watch('show', function(){ $scope.app.settings.show.guide = $scope.show; }, true);
         
         $scope.setCurrentHero = function (hero) {
             $scope.currentHero = hero;
@@ -5095,16 +5108,212 @@ angular.module('app.controllers', ['ngCookies'])
             return $scope.currentHero;
         };
         
-        $scope.getTalents = function () {
-            var out = [],
-                hero = $scope.getCurrentHero();
+        $scope.getTiers = function () {
+            return [1, 4, 7, 10, 13, 16, 20];
+        };
+        
+        $scope.getTalents = function (hero, tier) {
+            var out = [];
             
             for (var i = 0; i < hero.hero.talents.length; i++) {
-                
+                if (hero.hero.talents[i].tier === tier) {
+                    out.push(hero.hero.talents[i]);
+                }
             }
             
             return out;
         };
+        
+        $scope.selectedTalent = function (hero, tier, talent) {
+            return (hero.talents['tier' + tier] == talent._id);
+        };
+        
+        $scope.getTalent = function (hero, tier) {
+            for (var i = 0; i < hero.hero.talents.length; i++) {
+                if (hero.talents['tier' + tier] == hero.hero.talents[i]._id) {
+                    return hero.hero.talents[i];
+                }
+            }
+            return false;
+        };
+        
+        // matchups
+        $scope.hasSynergy = function (hero) {
+        
+        };
+        $scope.hasStrong = function (hero) {
+        
+        };
+        $scope.hasWeak = function (hero) {
+        
+        };
+        
+        $scope.getVideo = function () {
+            return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.guide.video + '" frameborder="0" height="360" width="100%"></iframe>');
+        };
+        
+        $scope.getContent = function (content) {
+            return $sce.trustAsHtml(content);
+        };
+
+        // voting
+        $scope.voteDown = function (guide) {
+            vote(-1, guide);
+        };
+        
+        $scope.voteUp = function (guide) {
+            vote(1, guide)       
+        };
+        
+        var box,
+            callback;
+        
+        updateVotes();
+        function updateVotes() {
+            checkVotes($scope.guide);
+            
+            function checkVotes (guide) {
+                var vote = guide.votes.filter(function (vote) {
+                    return ($scope.app.user.getUserID() === vote.userID);
+                })[0];
+                
+                if (vote) {
+                    guide.voted = vote.direction;
+                }
+            }
+        }
+                
+        function vote(direction, guide) {
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    vote(direction, guide);
+                };
+            } else {
+                if (guide.author._id === $scope.app.user.getUserID()) {
+                    bootbox.alert("You can't vote for your own content.");
+                    return false;
+                }
+                VoteService.voteGuide(direction, guide).then(function (data) {
+                    if (data.success) {
+                        guide.voted = direction;
+                        guide.votesCount = data.votesCount;
+                    }
+                });
+            }
+        };
+        
+        // comments
+        var defaultComment = {
+            comment: ''
+        };
+        $scope.comment = angular.copy(defaultComment);
+        
+        $scope.commentPost = function () {
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    $scope.commentPost();
+                };
+            } else {
+                HOTSGuideService.addComment($scope.guide, $scope.comment).success(function (data) {
+                    if (data.success) {
+                        $scope.guide.comments.push(data.comment);
+                        $scope.comment.comment = '';
+                    }
+                });
+            }
+        };
+        
+        updateCommentVotes();
+        function updateCommentVotes() {
+            $scope.guide.comments.forEach(checkVotes);
+            
+            function checkVotes (comment) {
+                var vote = comment.votes.filter(function (vote) {
+                    return ($scope.app.user.getUserID() === vote.userID);
+                })[0];
+                
+                if (vote) {
+                    comment.voted = vote.direction;
+                }
+            }
+        }
+                
+        $scope.voteComment = function (direction, comment) {
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    $scope.voteComment(direction, deck);
+                };
+            } else {
+                if (comment.author._id === $scope.app.user.getUserID()) {
+                    bootbox.alert("You can't vote for your own content.");
+                    return false;
+                }
+                VoteService.voteComment(direction, comment).then(function (data) {
+                    if (data.success) {
+                        comment.voted = direction;
+                        comment.votesCount = data.votesCount;
+                    }
+                });
+            }
+        };
+        
+        // get premium
+        $scope.getPremium = function (plan) {
+            if ($scope.app.user.isLogged()) {
+                if (!$scope.app.user.isSubscribed()) {
+                    $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
+                }
+            } else {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    $scope.getPremium(plan);
+                };
+            }
+        }
+        
+        // login for modal
+        $scope.login = function login(email, password) {
+            if (email !== undefined && password !== undefined) {
+                UserService.login(email, password).success(function(data) {
+                    AuthenticationService.setLogged(true);
+                    AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
+                    $window.sessionStorage.userID = data.userID;
+                    $window.sessionStorage.username = data.username;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+                    box.modal('hide');
+                    updateVotes();
+                    callback();
+                }).error(function() {
+                    $scope.showError = true;
+                });
+            }
+        }
     }
 ])
 .controller('TeamCtrl', ['$scope',

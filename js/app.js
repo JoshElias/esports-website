@@ -376,6 +376,9 @@ var app = angular.module('app', [
                             data: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
                                 var slug = $stateParams.slug;
                                 return HOTSGuideService.getGuide(slug);
+                            }],
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
                             }]
                         }
                     }

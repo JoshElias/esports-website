@@ -38,11 +38,13 @@
                     
                     <!-- guide heroes -->
                     <div class="guide-heroes clearfix m-b-md">
-                        <div class="guide-hero guide-heroes-{{guide.heroes.length}}" ng-class="{ active: hero == getCurrentHero() }" ng-repeat="hero in guide.heroes">
-                            <a href="#" ng-click="setCurrentHero(hero)">
-                                <div class="guide-hero-title">{{hero.hero.name}}</div>
-                                <div class="guide-hero-image {{hero.hero.className}}"></div>
-                            </a>
+                        <div class="guide-hero-wrapper guide-heroes-{{guide.heroes.length}}" ng-repeat="hero in guide.heroes">
+                            <div class="guide-hero" ng-class="{ active: hero == getCurrentHero() }">
+                                <a href="#" ng-click="setCurrentHero(hero)">
+                                    <div class="guide-hero-title">{{hero.hero.name}}</div>
+                                    <div class="guide-hero-image {{hero.hero.className}}"></div>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <!-- / guide heroes -->
@@ -59,17 +61,21 @@
                         </div>
                         <div class="guide-section-content" ng-show="show.talents">
                             <!-- hero talents -->
-                            <div class="guide-talents">
-                                <div class="guide-talent" ng-repeat="tier in getCurrentHero().talents">
-                                    <div class="guide-talent-level">LEVEL {{tier.level}}</div>
-                                    <div class="guide-talent-icon"></div>
+                            <div class="guide-talents clearfix" ng-repeat="hero in [getCurrentHero()]">
+                                <div class="guide-talent-wrapper" ng-repeat="talent in hero.hero.talents" ng-if="selectedTalent(hero, talent.tier, talent)">
+                                    <div class="guide-talent">
+                                        <div class="guide-talent-level">LEVEL {{talent.tier}}</div>
+                                        <div class="guide-talent-icon talents-icon large active {{hero.hero.className}} {{talent.className}}" hots-talent></div>
+                                        <div class="guide-talent-dots">
+                                            <div class="guide-talent-dot" ng-class="{ active: selectedTalent(hero, talent.tier, dot) }" ng-repeat="dot in getTalents(hero, talent.tier)"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <!-- / hero talents -->
                         </div>
                     </div>
                     <!-- / guide talents -->
-                    
                     
                     <!-- guide description -->
                     <div class="guide-section">
@@ -105,9 +111,9 @@
                             </div>
                         </div>
                         <!-- / guide video -->
-
-                        <!-- guide-against -->
-                        <div class="guide-section" ng-if="hasStrong() || hasWeak() || guide.against.instructions.length">
+                        
+                        <!-- guide matchups -->
+                        <div class="guide-section">
                             <div class="guide-section-title clearfix">
                                 <a href="#" ng-click="show.matchups = !show.matchups"><h3 class="pull-left">MATCH-UPS</h3></a>
                                 <div class="m-l-md m-r-md pull-right">
@@ -117,54 +123,51 @@
                                 </div>
                             </div>
                             <div class="guide-section-content unpadded" ng-show="show.matchups">
-                                <div class="guide-against">
-                                    <div class="guide-against-strong">
-                                        <h3>STRONG AGAINST</h3>
-                                        <ul class="guide-against-icons clearfix" ng-if="hasStrong()">
-                                            <li ng-repeat="strong in guide.against.strong" ng-show="strong.isStrong">
-                                                <span class="class-icon small active {{strong.klass.toLowerCase()}}" ng-tooltip title="{{strong.klass}}"></span>
-                                            </li>
+                                <div class="guide-matchups row">
+                                    <div class="col-xs-4">
+                                        <div class="guide-synergy">
+                                            <h1>SYNERGY</h1>
+                                            <span>Who do they play well with?</span>
+                                        </div>
+                                        <ul class="hero-list">
+                                            <li ng-repeat="hero in heroes" ng-class="{ active: hasSynergy(hero) }"><a href="#" class="{{hero.className}}" hots-hero>{{hero.name}}</a></li>
                                         </ul>
-                                        <p ng-if="!hasStrong()">The guide has no classes flagged for strong against.</p>
                                     </div>
-                                    <div class="guide-against-weak">
-                                        <h3>WEAK AGAINST</h3>
-                                        <ul class="guide-against-icons clearfix" ng-if="hasWeak()">
-                                            <li ng-repeat="weak in guide.against.weak" ng-show="weak.isWeak">
-                                                <span class="class-icon small active {{weak.klass.toLowerCase()}}" ng-tooltip title="{{weak.klass}}"></span>
-                                            </li>
+                                    <div class="col-xs-4">
+                                        <div class="guide-strong">
+                                            <h1>STRONG AGAINST</h1>
+                                            <span>Who are they strong against?</span>
+                                        </div>
+                                        <ul class="hero-list">
+                                            <li ng-repeat="hero in heroes" ng-class="{ active: hasStrong(hero) }"><a href="#" class="{{hero.className}}" hots-hero>{{hero.name}}</a></li>
                                         </ul>
-                                        <p ng-if="!hasWeak()">The guide has no classes flagged for weak against.</p>
                                     </div>
-                                    <p ng-if="guide.against.instructions.length">{{guide.against.instructions}}</p>
+                                    <div class="col-xs-4">
+                                        <div class="guide-weak">
+                                            <h1>WEAK AGAINST</h1>
+                                            <span>Who are they weak against?</span>
+                                        </div>
+                                        <ul class="hero-list">
+                                            <li ng-repeat="hero in heroes" ng-class="{ active: hasWeak(hero) }"><a href="#" class="{{hero.className}}" hots-hero>{{hero.name}}</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- / guide-against -->
+                        <!-- / guide matchups -->
 
                         <!-- guide-gameplay -->
-                        <div class="guide-section" ng-if="guide.contentEarly.length || guide.contentMid.length || guide.contentLate.length">
+                        <div class="guide-section" ng-repeat="content in guide.content">
                             <div class="guide-section-title clearfix">
-                                <a href="#" ng-click="show.gameplay = !show.gameplay"><h3 class="pull-left">GAMEPLAY DETAILS</h3></a>
+                                <a href="#" ng-click="show.content[$index] = !show.content[$index]"><h3 class="pull-left">{{content.title}}</h3></a>
                                 <div class="m-l-md m-r-md pull-right">
-                                    <a href="#" ng-click="show.gameplay = !show.gameplay">
-                                        <i class="fa" ng-class="{ 'fa-angle-down': !show.gameplay, 'fa-angle-up': show.gameplay }"></i>
+                                    <a href="#" ng-click="show.content[$index] = !show.content[$index]">
+                                        <i class="fa" ng-class="{ 'fa-angle-down': !show.content[$index], 'fa-angle-up': show.content[$index] }"></i>
                                     </a>
                                 </div>
                             </div>
-                            <div class="guide-section-content" ng-show="show.gameplay">
-                                <div ng-if="guide.contentEarly.length">
-                                    <h3>EARLY GAME</h3>
-                                    <p class="pos-rl" ng-bind-html="getContent(guide.contentEarly)"></p>
-                                </div>
-                                <div ng-if="guide.contentMid.length">
-                                    <h3>MID GAME</h3>
-                                    <p class="pos-rl" ng-bind-html="getContent(guide.contentMid)"></p>
-                                </div>
-                                <div ng-if="guide.contentLate.length">
-                                    <h3>LATE GAME</h3>
-                                    <p class="pos-rl" ng-bind-html="getContent(guide.contentLate)"></p>
-                                </div>
+                            <div class="guide-section-content" ng-show="show.content[$index]">
+                                <p class="m-b-none">{{getContent(content.body)}}</p>
                             </div>
                         </div>
                         <!-- / guide-gameplay -->

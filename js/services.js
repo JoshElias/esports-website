@@ -1586,8 +1586,8 @@ angular.module('app.services', [])
         guideDelete: function (_id) {
             return $http.post('/api/hots/guide/delete', { _id: _id });
         },
-        addComment: function (deck, comment) {
-            return $http.post('/api/hots/guide/comment/add', { deckID: deck._id, comment: comment });
+        addComment: function (guide, comment) {
+            return $http.post('/api/hots/guide/comment/add', { guideID: guide._id, comment: comment });
         }
     };
 }])
@@ -1621,6 +1621,13 @@ angular.module('app.services', [])
         voteDeck: function (direction, deck) {
             var d = $q.defer();
             $http.post('/api/deck/vote', { _id: deck._id, direction: direction }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        voteGuide: function (direction, guide) {
+            var d = $q.defer();
+            $http.post('/api/hots/guide/vote', { _id: guide._id, direction: direction }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

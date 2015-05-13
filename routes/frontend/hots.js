@@ -291,7 +291,7 @@ module.exports = {
                     select: 'name description role heroType universe className talents title'
                 },{
                     path: 'author',
-                    select: 'username -_id'
+                    select: 'username'
                 },{
                     path: 'comments',
                     select: '_id author comment createdDate votesCount votes'
@@ -341,12 +341,143 @@ module.exports = {
     },
     guideVote: function (Schemas) {
         return function (req, res, next) {
+            var id = req.body._id,
+                direction = req.body.direction;
             
+            Schemas.Guide.findOne({ _id: id }).select('author votesCount votes').exec(function (err, guide) {
+                if (err || !guide || guide.author.toString() === req.user._id) { return res.json({ success: false }); }
+                var vote = guide.votes.filter(function (vote) {
+                    if (vote.userID.toString() === req.user._id) {
+                        return vote;
+                    }
+                })[0];
+                if (vote) {
+                    if (vote.direction !== direction) {
+                        vote.direction = direction;
+                        guide.votesCount = (direction === 1) ? guide.votesCount + 2 : guide.votesCount - 2;
+                    }
+                } else {
+                    guide.votes.push({
+                        userID: req.user._id,
+                        direction: direction
+                    });
+                    guide.votesCount += direction;
+                }
+                
+                guide.save(function (err) {
+                    if (err) { return res.json({ success: false }); }
+                    return res.json({
+                        success: true,
+                        votesCount: guide.votesCount
+                    });
+                });
+            });
         };
     },
     guideCommentAdd: function (Schemas, mongoose) {
         return function (req, res, next) {
+            var guideID = req.body.guideID,
+                userID = req.user._id,
+                comment = req.body.comment,
+                newCommentID = mongoose.Types.ObjectId();
             
+            req.assert('comment.comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
+            
+            var errors = req.validationErrors();
+            if (errors) {
+                return res.json({ success: false, errors: errors });
+            }
+            
+            // new comment
+            var newComment = {
+                _id: newCommentID,
+                author: userID,
+                comment: comment.comment,
+                votesCount: 1,
+                votes: [{
+                    userID: userID,
+                    direction: 1
+                }],
+                replies: [],
+                createdDate: new Date().toISOString()
+            };
+            
+            // create
+            function createComment (callback) {
+                var newCmt = new Schemas.Comment(newComment);
+                newCmt.save(function (err, data) {
+                    if (err) {
+                        console.log(err);
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                    return callback();
+                });
+            }
+            
+            // add to guide
+            function addComment (callback) {
+                Schemas.Guide.update({ _id: guideID }, { $push: { comments: newCommentID } }, function (err) {
+                    if (err) {
+                        console.log(err);
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                    return callback();
+                });
+            }
+            
+            // get new comment
+            function getComment (callback) {
+                Schemas.Comment.populate(newComment, {
+                    path: 'author',
+                    select: 'username email'
+                }, function (err, comment) {
+                    if (err || !comment) { return res.json({ success: false }); }
+                        return callback(comment);
+                });
+            }
+            
+            function addActivity(callback) {
+                var activity = new Schemas.Activity({
+                    author: userID,
+                    activityType: "guideComment",
+                    guide: guideID,
+                    createdDate: new Date().toISOString()
+                });
+                activity.save(function(err, data) {
+                    if (err) {
+                        return res.json({ 
+                            success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
+                        });
+                    }
+                    return callback();
+                });
+            }
+            
+            // actions
+            createComment(function () {
+                addComment(function () {
+                    addActivity(function () {
+                        getComment(function (comment) {
+                            return res.json({
+                                success: true,
+                                comment: comment
+                            });
+                        });
+                    });
+                });
+            });
         };
     },
     heroes: function (Schemas) {
