@@ -335,14 +335,15 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, dataProfile, MetaService) {
         $scope.user = dataProfile.user;
         
-        $scope.metaservice = MetaService;
-        $scope.metaservice.set(function() {
+        function isMyProfile() {
             if($scope.app.user.getUsername() == $scope.user.username) {
                 return 'My Profile';
-            } else { 
-                return '@' + $scope.user.username + ' - Profile'
+            } else {
+                return '@' + $scope.user.username + ' - Profile';
             }
-        });
+        }
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set(isMyProfile());
         
         $scope.socialExists = function () {
             if (!$scope.user.social) { return false; }
@@ -2422,7 +2423,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.metaservice = MetaService;
-        $scope.metaservice.set($scope.article.title, $scope.article.description);
+        $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
         
         $scope.getContent = function () {
             return $sce.trustAsHtml($scope.article.content);
@@ -3134,7 +3135,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.thread = data.thread;
         
         $scope.metaservice = MetaService;
-        $scope.metaservice.set($scope.thread.title);
+        $scope.metaservice.set($scope.thread.title + ' - Forum');
         
         // page flipping
         $scope.pagination = Pagination.new(20);
