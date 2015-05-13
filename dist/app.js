@@ -68,10 +68,11 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 
-        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', 
+        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
+            $rootScope.metaservice = MetaService;
             
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
@@ -93,6 +94,16 @@ var app = angular.module('app', [
             $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
                 //ngProgress.complete();
                 $window.ga('send', 'pageview', $location.path());
+                
+                // adsense refresh
+                if ($window.googletag && $window.googletag.pubads) {
+                    $window.googletag.pubads().refresh();
+                }
+                
+                // seo
+                if (toState.seo) {
+                    $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords);
+                }
             });
             $rootScope.$on("$routeChangeError", function(evt, current, previous, rejection){
                 console.log(3);
@@ -198,7 +209,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Home', description: 'TempoStorm home page.', keywords: '' }
             })
             .state('app.articles', {
                 abstract: true,
@@ -227,7 +239,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Articles', description: 'TempoStorm articles to bring you the latest news.', keywords: '' }
             })
             .state('app.articles.article', {
                 url: '/:slug',
@@ -272,7 +285,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Decks', description: 'Hearthstone decks created by the community and TempoStorm content providers.', keywords: '' }
             })
             .state('app.decks.deck', {
                 url: '/:slug',
@@ -304,7 +318,8 @@ var app = angular.module('app', [
                     deckBuilder: {
                         templateUrl: tpl + 'views/frontend/deck-builder.class.html'
                     }
-                }
+                },
+                seo: { title: 'Deck Builder', description: 'Deck building tool for Hearthstone.', keywords: '' }
             })
             .state('app.deckBuilder.build', {
                 url: '/:playerClass',
@@ -319,7 +334,7 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
             })
             .state('app.deckBuilder.edit', {
                 url: '/edit/:slug',
@@ -334,7 +349,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Deck Edit', description: 'Editing tool for hearthstone decks.', keywords: '' }
             })
             .state('app.hots', {
                 abstract: true,
@@ -407,7 +423,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Guides', description: 'Guides for Heroes of the Storm.', keywords: '' }
             })
             .state('app.hots.guides.guide', {
                 url: '/:slug',
@@ -448,7 +465,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Forum', description: '', keywords: '' }
             })
             .state('app.forum.threads', {
                 url: '/:thread',
@@ -511,7 +529,8 @@ var app = angular.module('app', [
                     team: {
                         templateUrl: tpl + 'views/frontend/team.hearthstone.html'
                     }
-                }
+                },
+                seo: { title: 'Hearthstone', description: 'Tempo Storm Hearthstone team.', keywords: '' }
             })
             .state('app.team.heroes', {
                 url: '/hots',
@@ -519,7 +538,8 @@ var app = angular.module('app', [
                     team: {
                         templateUrl: tpl + 'views/frontend/team.hots.html'
                     }
-                }
+                },
+                seo: { title: 'Heroes of the Storm', description: 'Tempo Storm Heroes of the Storm team.', keywords: '' }
             })
             .state('app.team.csgo', {
                 url: '/csgo',
@@ -527,7 +547,8 @@ var app = angular.module('app', [
                     team: {
                         templateUrl: tpl + 'views/frontend/team.csgo.html'
                     }
-                }
+                },
+                seo: { title: 'CS:GO', description: 'Tempo Storm Counter Strike: Global Offensive team.', keywords: '' }
             })
             .state('app.sponsors', {
                 url: 'sponsors',
@@ -535,7 +556,8 @@ var app = angular.module('app', [
                     content: {
                         templateUrl: tpl + 'views/frontend/sponsors.html'
                     }
-                }
+                },
+                seo: { title: 'Sponsors', description: 'Tempo Storm sponsor page.', keywords: '' }
             })
             .state('app.premium', {
                 url: 'premium',
@@ -544,7 +566,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/premium.html',
                         controller: 'PremiumCtrl'
                     }
-                }
+                },
+                seo: { title: 'Get Premium', description: 'Get Premium with Tempo Storm', keywords: '' }
             })
             .state('app.terms', {
                 url: 'terms',
@@ -552,7 +575,8 @@ var app = angular.module('app', [
                     content: {
                         templateUrl: tpl + 'views/frontend/terms.html'
                     }
-                }
+                },
+                seo: { title: 'Terms and Conditions', description: 'Tempo Storm Terms and Conditions', keywords: '' }
             })
             .state('app.privacy', {
                 url: 'privacy',
@@ -560,7 +584,8 @@ var app = angular.module('app', [
                     content: {
                         templateUrl: tpl + 'views/frontend/privacy.html'
                     }
-                }
+                },
+                seo: { title: 'Privacy Policy', description: 'Tempo Storm Privacy Policy', keywords: '' }
             })
             .state('app.login', {
                 url: 'login',
@@ -570,7 +595,8 @@ var app = angular.module('app', [
                         controller: 'UserCtrl',
                     }
                 },
-                access: { noauth: true }
+                access: { noauth: true },
+                seo: { title: 'Login', description: 'Tempo Storm login screen.', keywords: '' }
             })
             .state('app.signup', {
                 url: 'signup',
@@ -580,7 +606,8 @@ var app = angular.module('app', [
                         controller: 'UserCtrl',
                     }
                 },
-                access: { noauth: true }
+                access: { noauth: true },
+                seo: { title: 'Sign up', description: 'Sign up for Tempo Storm.', keywords: '' }
             })
             .state('app.verify', {
                 url: 'verify?email&code',
@@ -590,7 +617,8 @@ var app = angular.module('app', [
                         controller: 'UserVerifyCtrl',
                     }
                 },
-                access: { noauth: true }
+                access: { noauth: true },
+                seo: { title: 'Verify your Email', description: '', keywords: '' }
             })
             .state('app.forgotPassword', {
                 url: 'forgot-password',
@@ -600,7 +628,8 @@ var app = angular.module('app', [
                         controller: 'UserCtrl'
                     }
                 },
-                access: { noauth: true }
+                access: { noauth: true },
+                seo: { title: 'Forgot your Password?', description: 'Recover your Password.', keywords: '' }
             })
             .state('app.resetPassword', {
                 url: 'forgot-password/reset?email&code',
@@ -610,7 +639,8 @@ var app = angular.module('app', [
                         controller: 'UserResetPasswordCtrl'
                     }
                 },
-                access: { noauth: true }
+                access: { noauth: true },
+                seo: { title: 'Reset your Password', description: '', keywords: '' }
             })
             .state('app.profile', {
                 abstract: true,
@@ -706,7 +736,7 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true }
+                access: { auth: true },
             })
             .state('app.profile.changeEmail', {
                 url: '/email-change-confirm?code',
@@ -722,7 +752,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true }
+                access: { auth: true },
+                seo: { title: 'Change my Email', description: '', keywords: '' }
             })
             .state('app.profile.updateEmail', {
                 url: '/email-verify?code',
@@ -754,7 +785,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true }
+                access: { auth: true },
+                seo: { title: 'My Subscription', description: '', keywords: '' }
             })
             .state('app.admin', {
                 abstract: true,
@@ -773,7 +805,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/dashboard.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Dashboard', description: '', keywords: '' }
             })
             .state('app.admin.articles', {
                 abstract: true,
@@ -935,7 +968,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin Deck Edit', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone.cards', {
                 abstract: true,
@@ -960,7 +994,7 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
             })
             .state('app.admin.hearthstone.cards.add', {
                 url: '/add',
@@ -1442,7 +1476,9 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/contact.html',
                         controller: 'ContactCtrl'
                     }
-                }
+                },
+                seo: { title: 'Contact Us', description: 'Contact Page', keywords: '' }
+
             });        
     }]
 );
@@ -1473,6 +1509,13 @@ angular.module('app.controllers', ['ngCookies'])
         version: '0.0.1',
         copyright: new Date().getFullYear(),
         cdn: 'https://s3-us-west-2.amazonaws.com/ts-node2',
+        getTitle: function () {
+            return $scope.app.seo.title;
+        },
+        seo: {
+            title: 'TempoStorm',
+            description: ''
+        },
         settings: {
             token: null,
             deck: null,
@@ -1521,7 +1564,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
       };
-
+        
       // save settings to local storage
       if ( angular.isDefined($localStorage.settings) ) {
         $scope.app.settings = $localStorage.settings;
@@ -1784,9 +1827,19 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileCtrl', ['$scope', 'dataProfile',  
-    function ($scope, dataProfile) {
+.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 
+    function ($scope, dataProfile, MetaService) {
         $scope.user = dataProfile.user;
+        
+        function isMyProfile() {
+            if($scope.app.user.getUsername() == $scope.user.username) {
+                return 'My Profile';
+            } else {
+                return '@' + $scope.user.username + ' - Profile';
+            }
+        }
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set(isMyProfile());
         
         $scope.socialExists = function () {
             if (!$scope.user.social) { return false; }
@@ -2437,7 +2490,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes', 
+.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes',  
     function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
         // load article
         $scope.article = data.article;
@@ -2562,6 +2615,24 @@ angular.module('app.controllers', ['ngCookies'])
                 } else {
                     AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been updated successfully.' });
                     $state.go('app.admin.articles.list');
+                }
+            });
+        };
+        
+        $scope.getNames = function () {
+            AdminArticleService.getNames($scope.article).success(function (data) {
+                if (!data.success) { console.log(data); }
+                else {
+                    var content = '';
+                    for (var i = 0; i < data.names.length; i++) {
+                        content = content + data.names[i] + '<br>';
+                    }
+                    
+                    var box = bootbox.dialog({
+                        message: content,
+                        animate: false
+                    });
+                    box.modal('show');
                 }
             });
         };
@@ -3329,7 +3400,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
+.controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data', 
     function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
         // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.deckBuilder.class'); return false; }
@@ -3730,8 +3801,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('ArticlesCtrl', ['$scope', '$state', 'ArticleService', 'data', 
-    function ($scope, $state, ArticleService, data) {
+.controller('ArticlesCtrl', ['$scope', '$state', 'ArticleService', 'data', 'MetaService',
+    function ($scope, $state, ArticleService, data, MetaService) {
         //if (!data.success) { return $state.transitionTo('app.articles.list'); }
         
         // articles
@@ -3743,7 +3814,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.perpage = data.perpage;
         $scope.search = data.search;
         $scope.loading = false;
-                
+        
         $scope.hasSearch = function () {
             return (data.search) ? data.search.length : false;
         }
@@ -3832,8 +3903,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ArticleCtrl', ['$scope', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'UserService', 'ArticleService', 'AuthenticationService', 'VoteService', 'SubscriptionService',  
-    function ($scope, $sce, data, $state, $compile, $window, bootbox, UserService, ArticleService, AuthenticationService, VoteService, SubscriptionService) {
+.controller('ArticleCtrl', ['$scope', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'UserService', 'ArticleService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'MetaService', 
+    function ($scope, $sce, data, $state, $compile, $window, bootbox, UserService, ArticleService, AuthenticationService, VoteService, SubscriptionService, MetaService) {
         $scope.article = data.article;
         
         $scope.isPremium = function () {
@@ -3846,6 +3917,9 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
+        
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
         
         $scope.getContent = function () {
             return $sce.trustAsHtml($scope.article.content);
@@ -4202,8 +4276,8 @@ angular.module('app.controllers', ['ngCookies'])
         }   
     }
 ])
-.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 
-    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, UserService, DeckService, AuthenticationService, VoteService, SubscriptionService, data) {
+.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
+    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, UserService, DeckService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
         if (!data || !data.success) { return $state.go('app.decks.list'); }
 
         // load deck
@@ -4219,6 +4293,11 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
+        
+        
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set($scope.deck.name + ' - Decks', $scope.deck.description);
+        
         
         // classes
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
@@ -4544,11 +4623,15 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('ForumCategoryCtrl', ['$scope', 'data', 
     function ($scope, data) {
         $scope.categories = data.categories;
+    
     }
 ])
-.controller('ForumThreadCtrl', ['$scope', 'Pagination', 'data', 
-    function ($scope, Pagination, data) {
+.controller('ForumThreadCtrl', ['$scope', 'Pagination', 'data', 'MetaService',
+    function ($scope, Pagination, data, MetaService) {
         $scope.thread = data.thread;
+        
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set($scope.thread.title + ' - Forum');
         
         // page flipping
         $scope.pagination = Pagination.new(20);
@@ -4635,10 +4718,14 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 
-    function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, SubscriptionService, data) {
+.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
+    function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
         $scope.post = data.post;
         $scope.thread = data.thread;
+        
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set($scope.post.title + ' - ' + $scope.thread.title);
+        
         
         var defaultComment = {
             comment: ''
@@ -7041,6 +7128,16 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/activity/activity.forumComment.html'
     };
 })
+.directive('googleAdSense', function () {
+    return {
+        restrict: 'A',
+        replace: true,       
+        templateUrl: "views/frontend/googleAds.html",
+        controller: function () {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        }
+    };
+})
 ;;'use strict';
 
 angular.module('app.filters', [])
@@ -7082,6 +7179,21 @@ angular.module('app.filters', [])
 ;;'use strict';
 
 angular.module('app.services', [])
+.service('MetaService', function() {
+   var title = '';
+   var metaDescription = '';
+   var metaKeywords = '';
+   return {
+      set: function(newTitle, newMetaDescription, newKeywords) {
+          metaKeywords = newKeywords;
+          metaDescription = newMetaDescription;
+          title = newTitle + ' - TempoStorm'; 
+      },
+      metaTitle: function(){ return title; },
+      metaDescription: function() { return metaDescription; },
+      metaKeywords: function() { return metaKeywords; }
+   }
+})
 .factory('AuthenticationService', function() {
     var loggedIn = false,
         admin = false,
@@ -7410,6 +7522,9 @@ angular.module('app.services', [])
                 d.resolve(data);
             });
             return d.promise;
+        },
+        getNames: function(article) {
+            return $http.post('/api/admin/article/names', article);
         }
     }
 }])

@@ -817,6 +817,8 @@ module.exports = {
                 });
             });
             
+            
+            
         };
     },
     articleDelete: function (Schemas) {
@@ -835,6 +837,44 @@ module.exports = {
                 }
                 return res.json({ success: true });
             });
+        };
+    },
+    articleGetNames: function (Schemas, async) {
+        return function (req, res, next) {
+            var _id = req.body._id,
+                names = [];
+            
+            
+            var iterComment = function (comment, callback) {
+                Schemas.Comment.populate(comment, {
+                    path: 'author',
+                    select: 'username email'
+                }, callback);
+            };
+            
+            Schemas.Article.findOne({_id:_id})
+            .select('comments')
+            .populate([
+                {
+                    path: 'comments',
+                    select: 'author'
+                }
+            ])
+            .lean()
+            .exec(function (err, data) {
+                if (err) { return res.json({ success: false }); }
+                
+                async.each(data.comments, iterComment, function (err) {
+                    if (err) { return res.json({ success: false }); }
+                    
+                    for (var i = 0; i < data.comments.length; i++) {
+                        names.push('@' + data.comments[i].author.username + ' - ' + data.comments[i].author.email);
+                    }
+                    
+                    return res.json({ success: true, names: names });
+                });
+            });
+            
         };
     },
     heroes: function (Schemas) {

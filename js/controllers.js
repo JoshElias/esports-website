@@ -13,6 +13,13 @@ angular.module('app.controllers', ['ngCookies'])
         version: '0.0.1',
         copyright: new Date().getFullYear(),
         cdn: 'https://s3-us-west-2.amazonaws.com/ts-node2',
+        getTitle: function () {
+            return $scope.app.seo.title;
+        },
+        seo: {
+            title: 'TempoStorm',
+            description: ''
+        },
         settings: {
             token: null,
             deck: null,
@@ -61,7 +68,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
       };
-
+        
       // save settings to local storage
       if ( angular.isDefined($localStorage.settings) ) {
         $scope.app.settings = $localStorage.settings;
@@ -324,9 +331,19 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileCtrl', ['$scope', 'dataProfile',  
-    function ($scope, dataProfile) {
+.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 
+    function ($scope, dataProfile, MetaService) {
         $scope.user = dataProfile.user;
+        
+        function isMyProfile() {
+            if($scope.app.user.getUsername() == $scope.user.username) {
+                return 'My Profile';
+            } else {
+                return '@' + $scope.user.username + ' - Profile';
+            }
+        }
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set(isMyProfile());
         
         $scope.socialExists = function () {
             if (!$scope.user.social) { return false; }
@@ -977,7 +994,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes', 
+.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes',  
     function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
         // load article
         $scope.article = data.article;
@@ -1102,6 +1119,24 @@ angular.module('app.controllers', ['ngCookies'])
                 } else {
                     AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been updated successfully.' });
                     $state.go('app.admin.articles.list');
+                }
+            });
+        };
+        
+        $scope.getNames = function () {
+            AdminArticleService.getNames($scope.article).success(function (data) {
+                if (!data.success) { console.log(data); }
+                else {
+                    var content = '';
+                    for (var i = 0; i < data.names.length; i++) {
+                        content = content + data.names[i] + '<br>';
+                    }
+                    
+                    var box = bootbox.dialog({
+                        message: content,
+                        animate: false
+                    });
+                    box.modal('show');
                 }
             });
         };
@@ -1869,7 +1904,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
+.controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data', 
     function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
         // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.deckBuilder.class'); return false; }
@@ -2270,8 +2305,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('ArticlesCtrl', ['$scope', '$state', 'ArticleService', 'data', 
-    function ($scope, $state, ArticleService, data) {
+.controller('ArticlesCtrl', ['$scope', '$state', 'ArticleService', 'data', 'MetaService',
+    function ($scope, $state, ArticleService, data, MetaService) {
         //if (!data.success) { return $state.transitionTo('app.articles.list'); }
         
         // articles
@@ -2283,7 +2318,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.perpage = data.perpage;
         $scope.search = data.search;
         $scope.loading = false;
-                
+        
         $scope.hasSearch = function () {
             return (data.search) ? data.search.length : false;
         }
@@ -2372,8 +2407,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ArticleCtrl', ['$scope', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'UserService', 'ArticleService', 'AuthenticationService', 'VoteService', 'SubscriptionService',  
-    function ($scope, $sce, data, $state, $compile, $window, bootbox, UserService, ArticleService, AuthenticationService, VoteService, SubscriptionService) {
+.controller('ArticleCtrl', ['$scope', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'UserService', 'ArticleService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'MetaService', 
+    function ($scope, $sce, data, $state, $compile, $window, bootbox, UserService, ArticleService, AuthenticationService, VoteService, SubscriptionService, MetaService) {
         $scope.article = data.article;
         
         $scope.isPremium = function () {
@@ -2386,6 +2421,9 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
+        
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
         
         $scope.getContent = function () {
             return $sce.trustAsHtml($scope.article.content);
@@ -2742,8 +2780,8 @@ angular.module('app.controllers', ['ngCookies'])
         }   
     }
 ])
-.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 
-    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, UserService, DeckService, AuthenticationService, VoteService, SubscriptionService, data) {
+.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
+    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, UserService, DeckService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
         if (!data || !data.success) { return $state.go('app.decks.list'); }
 
         // load deck
@@ -2759,6 +2797,11 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
+        
+        
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set($scope.deck.name + ' - Decks', $scope.deck.description);
+        
         
         // classes
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
@@ -3084,11 +3127,15 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('ForumCategoryCtrl', ['$scope', 'data', 
     function ($scope, data) {
         $scope.categories = data.categories;
+    
     }
 ])
-.controller('ForumThreadCtrl', ['$scope', 'Pagination', 'data', 
-    function ($scope, Pagination, data) {
+.controller('ForumThreadCtrl', ['$scope', 'Pagination', 'data', 'MetaService',
+    function ($scope, Pagination, data, MetaService) {
         $scope.thread = data.thread;
+        
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set($scope.thread.title + ' - Forum');
         
         // page flipping
         $scope.pagination = Pagination.new(20);
@@ -3175,10 +3222,14 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 
-    function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, SubscriptionService, data) {
+.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
+    function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
         $scope.post = data.post;
         $scope.thread = data.thread;
+        
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set($scope.post.title + ' - ' + $scope.thread.title);
+        
         
         var defaultComment = {
             comment: ''

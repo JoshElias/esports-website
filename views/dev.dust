@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <base href="/" />
-    <title>TempoStorm</title>
-    <meta name="description" content="" />
+    <title ng-bind="metaservice.metaTitle()">TempoStorm</title>
+    <meta name="description" content="{{ metaservice.metaDescription() }}" />
+    <meta name="keywords" content="{{ metaservice.metaKeywords() }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="stylesheet" href="./dist/vendor.min.css" type="text/css" />
     <link rel="stylesheet" href="./dist/style.min.css" type="text/css" />
@@ -31,5 +32,7 @@
 
       ga('create', 'UA-57639561-1', 'auto');
     </script>
+    <!-- google adSense -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </body>
 </html>
