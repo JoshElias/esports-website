@@ -250,7 +250,17 @@ angular.module('app.directives', ['ui.load'])
 })
 .directive('activityForumComment', function () {
     return {
-        templateUrl: 'views/frontend/activity/activity.forumComment.html'
+        templateUrl: 'views/frontend/activity/activity.forumPost.comment.html'
+    };
+})
+.directive('activityGuide', function () {
+    return {
+        templateUrl: 'views/frontend/activity/activity.guide.html'
+    };
+})
+.directive('activityGuideComment', function () {
+    return {
+        templateUrl: 'views/frontend/activity/activity.guide.comment.html'
     };
 })
 .directive('googleAdSense', function () {

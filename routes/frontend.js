@@ -759,6 +759,11 @@ module.exports = {
                     {
                         path: 'forumPost',
                         select: '_id title slug thread'
+                    },
+                    {
+                        path: 'guide',
+                        select: '_id name slug public',
+                        match: { public: true }
                     }
                 ])
                 .exec(function (err, activities) {

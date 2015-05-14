@@ -16,7 +16,9 @@
                     <span activity-deck ng-if="activity.activityType == 'createDeck'"></span>
                     <span activity-deck-comment ng-if="activity.activityType == 'deckComment'"></span>
                     <span activity-forum-post ng-if="activity.activityType == 'forumPost'"></span>
-                    <span activity-forum-comment ng-if="activity.activityType == 'forumComment'"></span>
+                    <span activity-forum-post-comment ng-if="activity.activityType == 'forumComment'"></span>
+                    <span activity-guide ng-if="activity.activityType == 'createGuide'"></span>
+                    <span activity-guide-comment ng-if="activity.activityType == 'guideComment'"></span>
                 </div>
                 <div class="panel-footer clearfix">
                     <div class="pull-right">

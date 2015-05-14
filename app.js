@@ -254,7 +254,7 @@ if (cluster.isMaster) {
     app.post('/api/admin/guides', routes.admin.isAdmin(Schemas), routes.admin.guides(Schemas));
     app.post('/api/admin/guides/all', routes.admin.isAdmin(Schemas), routes.admin.allGuides(Schemas));
     app.post('/api/admin/guide', routes.admin.isAdmin(Schemas), routes.admin.guide(Schemas));
-    app.post('/api/admin/guide/add', routes.admin.isAdmin(Schemas), routes.admin.guideAdd(Schemas, Util));
+    app.post('/api/admin/guide/add', routes.admin.isAdmin(Schemas), routes.admin.guideAdd(Schemas, Util, mongoose));
     app.post('/api/admin/guide/delete', routes.admin.isAdmin(Schemas), routes.admin.guideDelete(Schemas));
     app.post('/api/admin/guide/edit', routes.admin.isAdmin(Schemas), routes.admin.guideEdit(Schemas, Util));
 
