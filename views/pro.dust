@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <base href="/" />
     <title>TempoStorm</title>
+    <meta name="fragment" content="!">
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/dist/vendor.min.css" type="text/css" />
