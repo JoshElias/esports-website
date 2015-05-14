@@ -155,6 +155,7 @@ if (cluster.isMaster) {
     app.post('/profile/:username/activity', routes.frontend.profileActivity(Schemas, async));
     app.post('/profile/:username/articles', routes.frontend.profileArticles(Schemas));
     app.post('/profile/:username/decks', routes.frontend.profileDecks(Schemas));
+    app.post('/profile/:username/guides', routes.frontend.profileGuides(Schemas));
 
     app.post('/articles', routes.frontend.articles(Schemas));
     app.post('/article', routes.frontend.article(Schemas));
@@ -214,6 +215,7 @@ if (cluster.isMaster) {
     app.post('/api/profile/updateEmail', routes.frontend.updateEmail(Schemas, Mail));
     app.post('/api/profile/:username', routes.frontend.userProfile(Schemas));
     app.post('/api/profile/:username/decks', routes.frontend.profileDecksLoggedIn(Schemas));
+    app.post('/api/profile/:username/guides', routes.frontend.profileGuidesLoggedIn(Schemas));
 
     app.post('/api/subscription/setplan', routes.frontend.subSetPlan(Schemas, Subscription));
     app.post('/api/subscription/setcard', routes.frontend.subSetCard(Schemas, Subscription));
@@ -252,7 +254,7 @@ if (cluster.isMaster) {
     app.post('/api/admin/guides', routes.admin.isAdmin(Schemas), routes.admin.guides(Schemas));
     app.post('/api/admin/guides/all', routes.admin.isAdmin(Schemas), routes.admin.allGuides(Schemas));
     app.post('/api/admin/guide', routes.admin.isAdmin(Schemas), routes.admin.guide(Schemas));
-    app.post('/api/admin/guide/add', routes.admin.isAdmin(Schemas), routes.admin.guideAdd(Schemas, Util));
+    app.post('/api/admin/guide/add', routes.admin.isAdmin(Schemas), routes.admin.guideAdd(Schemas, Util, mongoose));
     app.post('/api/admin/guide/delete', routes.admin.isAdmin(Schemas), routes.admin.guideDelete(Schemas));
     app.post('/api/admin/guide/edit', routes.admin.isAdmin(Schemas), routes.admin.guideEdit(Schemas, Util));
 

@@ -206,6 +206,24 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
+        getGuides: function (username, page, perpage) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 20;
+            $http.post('/profile/' + username + '/guides', { page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getGuidesLoggedIn: function (username, page, perpage) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 20;
+            $http.post('/api/profile/' + username + '/guides', { page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
         updateProfile: function (user) {
             return $http.post('/api/profile/edit', user);
         },

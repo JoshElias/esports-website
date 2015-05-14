@@ -733,8 +733,8 @@ module.exports = {
                             success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
                         });
                     }
+                    return callback();
                 });
-                return callback();
             }
             
             //actions
@@ -1320,7 +1320,7 @@ module.exports = {
             });
         };
     },
-    guideAdd: function (Schemas, Util) {
+    guideAdd: function (Schemas, Util, mongoose) {
         return function (req, res, next) {
             var userID = req.user._id;
             
@@ -1404,10 +1404,30 @@ module.exports = {
                 });
             }
             
+            function addActivity(callback) {
+                var activity = new Schemas.Activity({
+                    author: userID,
+                    activityType: "createGuide",
+                    guide: mongoose.Types.ObjectId(),
+                    active: req.body.public,
+                    createdDate: new Date().toISOString()
+                });
+                activity.save(function(err, data) {
+                    if (err) {
+                        return res.json({ 
+                            success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
+                        });
+                    }
+                    return callback();
+                });
+            }
+            
             checkForm(function () {
                 checkSlug(function () {
                     createGuide(function () {
-                        return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                        addActivity(function () {
+                            return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                        });
                     });
                 });
                 
@@ -1492,10 +1512,19 @@ module.exports = {
                 });
             }
             
+            function updateActivities(callback) {
+                console.log(req.body._id);
+                    Schemas.Activity.update({guide: req.body._id, activityType: 'guideComment'}, {active: req.body.public}).exec(function (err, data) {
+                        return callback();
+                });
+            }
+            
             checkForm(function () {
                 checkSlug(function () {
                     updateGuide(function () {
-                        return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                        updateActivities(function () {
+                            return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                        });
                     });
                 });
             });

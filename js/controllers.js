@@ -549,6 +549,46 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
+.controller('ProfileGuidesCtrl', ['$scope', 'bootbox', 'HOTSGuideService', 'dataGuides',  
+    function ($scope, bootbox, HOTSGuideService, dataGuides) {
+        $scope.guides = dataGuides.guides;
+        // delete guide
+        $scope.guideDelete = function deleteGuide(guide) {
+            var box = bootbox.dialog({
+                title: 'Delete guide: ' + guide.name + '?',
+                message: 'Are you sure you want to delete the guide <strong>' + guide.name + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            HOTSGuideService.guideDelete(guide._id).success(function (data) {
+                                if (data.success) {
+                                    var index = $scope.guides.indexOf(guide);
+                                    if (index !== -1) {
+                                        $scope.guides.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: 'guide "' + guide.name + '" deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
+    }
+])
 .controller('ProfilePostsCtrl', ['$scope', 'dataPosts',  
     function ($scope, dataPosts) {
         $scope.posts = dataPosts.activity;
