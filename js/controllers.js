@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('app.controllers', ['ngCookies'])
-  .controller('AppCtrl', ['$scope', '$localStorage', '$window', '$location', 'SubscriptionService', 'AuthenticationService', 'UserService', 
-    function($scope, $localStorage, $window, $location, SubscriptionService, AuthenticationService, UserService) {
+  .controller('AppCtrl', ['$scope', '$localStorage', '$cookies', '$window', '$location', 'SubscriptionService', 'AuthenticationService', 'UserService', 
+    function($scope, $localStorage, $cookies, $window, $location, SubscriptionService, AuthenticationService, UserService) {
       var isIE = !!navigator.userAgent.match(/MSIE/i);
       isIE && angular.element($window.document.body).addClass('ie');
       isSmartDevice( $window ) && angular.element($window.document.body).addClass('smart');
@@ -13,13 +13,6 @@ angular.module('app.controllers', ['ngCookies'])
         version: '0.0.1',
         copyright: new Date().getFullYear(),
         cdn: 'https://s3-us-west-2.amazonaws.com/ts-node2',
-        getTitle: function () {
-            return $scope.app.seo.title;
-        },
-        seo: {
-            title: 'TempoStorm',
-            description: ''
-        },
         settings: {
             token: null,
             deck: null,
@@ -63,6 +56,7 @@ angular.module('app.controllers', ['ngCookies'])
                     delete $window.sessionStorage.token;
                     delete $window.sessionStorage.email;
                     $scope.app.settings.token = null;
+                    delete $cookies.token;
                 }
                 return $location.path("/login");
             }
@@ -99,6 +93,7 @@ angular.module('app.controllers', ['ngCookies'])
         $localStorage.settings = $scope.app.settings;
       }
       $scope.$watch('app.settings', function(){ $localStorage.settings = $scope.app.settings; }, true);
+      $scope.$watch('app.settings.token', function(){ $cookies.token = $scope.app.settings.token; }, true);
 
       function isSmartDevice( $window )
       {
@@ -5131,11 +5126,12 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuideCtrl', ['$scope', '$state', '$sce', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 
-    function ($scope, $state, $sce, bootbox, VoteService, HOTSGuideService, data, dataHeroes) {
+.controller('HOTSGuideCtrl', ['$scope', '$state', '$sce', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $sce, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps) {
         $scope.guide = data.guide;
         $scope.currentHero = $scope.guide.heroes[0];
         $scope.heroes = dataHeroes.heroes;
+        $scope.maps = dataMaps.maps;
         
         // show
         if (!$scope.app.settings.show.guide) {
@@ -5144,6 +5140,7 @@ angular.module('app.controllers', ['ngCookies'])
                 description: true,
                 video: true,
                 matchups: true,
+                maps: true,
                 content: [],
                 comments: true
             };
@@ -5190,13 +5187,18 @@ angular.module('app.controllers', ['ngCookies'])
         
         // matchups
         $scope.hasSynergy = function (hero) {
-        
+            return ($scope.guide.synergy.indexOf(hero._id) !== -1);
         };
         $scope.hasStrong = function (hero) {
-        
+            return ($scope.guide.against.strong.indexOf(hero._id) !== -1);
         };
         $scope.hasWeak = function (hero) {
+            return ($scope.guide.against.weak.indexOf(hero._id) !== -1);
+        };
         
+        // maps
+        $scope.hasMap = function (map) {
+            return ($scope.guide.maps.indexOf(map._id) !== -1);
         };
         
         $scope.getVideo = function () {

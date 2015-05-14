@@ -290,6 +290,9 @@ module.exports = {
                     path: 'heroes.hero',
                     select: 'name description role heroType universe className talents title'
                 },{
+                    path: 'maps',
+                    select: 'name description className'
+                },{
                     path: 'author',
                     select: 'username'
                 },{
