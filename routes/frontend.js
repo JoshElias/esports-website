@@ -870,6 +870,74 @@ module.exports = {
             });
         };
     },
+    profileGuides: function (Schemas) {
+        return function (req, res, next) {
+            console.log("profileGuides");
+            var username = req.params.username,
+                page = req.body.page || 1,
+                perpage = req.body.perpage || 12;
+            
+            function getUser (callback) {
+                Schemas.User.findOne({ username: username }).select('_id').exec(function (err, user) {
+                    if (err || !user) { return res.json({ success: false }); }
+                    return callback(user);
+                });
+            }
+            
+            function getGuides (user, callback) {
+                Schemas.Guide.find({ author: user._id, public: true })
+                //.where(where)
+                .sort('-createdDate')
+                //.skip((perpage * page) - perpage)
+                //.limit(perpage)
+                .exec(function (err, guides) {
+                    if (err) { return req.json({ success: false }); }
+                    return callback(guides);
+                });
+            }
+            
+            getUser(function (user) {
+                getGuides(user, function (guides) {
+                    return res.json({ success: true, guides: guides });
+                });
+            });
+        };
+    },
+    profileGuidesLoggedIn: function (Schemas) {
+        return function (req, res, next) {
+            console.log("profileGuidesLoggedIn");
+            var username = req.params.username,
+                page = req.body.page || 1,
+                perpage = req.body.perpage || 12;
+            
+            function getUser (callback) {
+                Schemas.User.findOne({ username: username }).select('_id').exec(function (err, user) {
+                    if (err || !user) { return res.json({ success: false }); }
+                    return callback(user);
+                });
+            }
+            
+            function getGuides (user, callback) {
+                var where = (req.user._id === user._id.toString()) ? {} : { 'public': true };
+                
+                Schemas.Guide.find({ author: user._id })
+                .where(where)
+                .sort('-createdDate')
+                //.skip((perpage * page) - perpage)
+                //.limit(perpage)
+                .exec(function (err, guide) {
+                    if (err) { return req.json({ success: false }); }
+                    return callback(guide);
+                });
+            }
+            
+            getUser(function (user) {
+                getGuides(user, function (guides) {
+                    return res.json({ success: true, guides: guides });
+                });
+            });
+        };
+    },
     deckEdit: function (Schemas) {
         return function (req, res, next) {
             var slug = req.body.slug,

@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="panel panel-success m-t-sm" ng-if="success.show">
+        <div class="panel-heading">
+            <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
+            <strong>{{success.msg}}</strong>
+        </div>
+    </div>
+    <div class="row guides-list profile-guides" ng-show="guides.length">
+        <!-- guide -->
+    <div class="row decks-list profile-guides" ng-show="guides.length">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="guide in guides">
+        <div class="guide-wrapper">
+            <div class="guide large {{guide.playerClass.toLowerCase()}}" ng-class="{ premium: guide.premium.isPremium }">
+                <a href="./guides/{{guide.slug}}"></a>
+                <div class="guide-overlay"></div>
+                <div class="guide-premium" ng-if="guide.premium.isPremium"></div>
+                <div class="guide-title">{{guide.name}}</div>
+                <div class="guide-score"><span><em ng-if="guide.votesCount > 0">+</em>{{guide.votesCount}}</span></div>
+                <div class="guide-description">
+                    <p>{{guide.description}}</p>
+                </div>
+                <div class="guide-info clearfix">
+                    <div class="guide-owner" ng-if="app.user.getUserID() === guide.author">
+                        <a href="./guide-builder/edit/{{guide.slug}}" class="btn btn-blue btn-xs">Edit</a>
+                        <a href="#" class="btn btn-danger btn-xs" ng-click="guideDelete(guide)">Delete</a>
+                    </div>
+                    <div class="pull-left m-r-sm">
+                        <span class="fa fa-clock-o"></span>
+                        <span>{{guide.createdDate | date : 'mediumDate'}}</span>
+                    </div>
+                    <div class="pull-left m-r-sm">
+                        <span class="fa fa-comment-o"></span>
+                        <span><a href="./guides/{{guide.slug}}">{{guide.comments.length}} Comment<span ng-hide="guide.comments.length === 1">s</span></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- / guide -->
+    </div>
+    <p class="profile-no-content" ng-if="!guides.length">@{{user.username}} hasn't created any guides yet.</p>
+</div>

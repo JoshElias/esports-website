@@ -68,7 +68,7 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', 
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService',
         function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
@@ -146,7 +146,7 @@ var app = angular.module('app', [
                     }
                 },
                 resolve: {
-                    User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService' , function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
+                    User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService', function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
                         if ($cookies.token) {
                             $window.sessionStorage.token = $cookies.token;
                             delete $cookies.token;
@@ -695,12 +695,35 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.decks.html',
                         controller: 'ProfileDecksCtrl',
                         resolve: {
-                            dataDecks: ['$stateParams', 'ProfileService', 'AuthenticationService', function ($stateParams, ProfileService, AuthenticationService) {
+                            dataDecks: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
                                 var username = $stateParams.username;
                                 if (AuthenticationService.isLogged()) {
-                                    return ProfileService.getDecksLoggedIn(username);
+                                    console.log("Authentication successful");
+                                    return ProfileService.getGuidesLoggedIn(username);
                                 } else {
-                                    return ProfileService.getDecks(username);
+                                    console.log("Authentication unsuccessful");
+                                    return ProfileService.getGuides(username);
+                                }
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.profile.guides', {
+                url: '/guides',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/profile.guides.html',
+                        controller: 'ProfileGuidesCtrl',
+                        resolve: {
+                            dataGuides: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
+                                var username = $stateParams.username;
+                                if (AuthenticationService.isLogged()) {
+                                    console.log("Authentication successful");
+                                    return ProfileService.getGuidesLoggedIn(username);
+                                } else {
+                                    console.log("Authentication unsuccessful");
+                                    return ProfileService.getGuides(username);
                                 }
                             }]
                         }
@@ -793,7 +816,12 @@ var app = angular.module('app', [
                 url: 'admin',
                 views: {
                     content: {
-                        templateUrl: tpl + 'views/admin/index.html'
+                        templateUrl: tpl + 'views/admin/index.html',
+                        resolve: {
+                            admin: ['User', function (User) {
+                                return true;
+                            }]
+                        }
                     }
                 },
                 access: { auth: true, admin: true }
@@ -2032,6 +2060,46 @@ angular.module('app.controllers', ['ngCookies'])
                                     $scope.success = {
                                         show: true,
                                         msg: 'Deck "' + deck.name + '" deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
+    }
+])
+.controller('ProfileGuidesCtrl', ['$scope', 'bootbox', 'HOTSGuideService', 'dataGuides',  
+    function ($scope, bootbox, HOTSGuideService, dataGuides) {
+        $scope.guides = dataGuides.guides;
+        // delete guide
+        $scope.guideDelete = function deleteGuide(guide) {
+            var box = bootbox.dialog({
+                title: 'Delete guide: ' + guide.name + '?',
+                message: 'Are you sure you want to delete the guide <strong>' + guide.name + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            HOTSGuideService.guideDelete(guide._id).success(function (data) {
+                                if (data.success) {
+                                    var index = $scope.guides.indexOf(guide);
+                                    if (index !== -1) {
+                                        $scope.guides.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: 'guide "' + guide.name + '" deleted successfully.'
                                     };
                                 }
                             });
@@ -7380,6 +7448,24 @@ angular.module('app.services', [])
                 page = page || 1,
                 perpage = perpage || 20;
             $http.post('/api/profile/' + username + '/decks', { page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getGuides: function (username, page, perpage) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 20;
+            $http.post('/profile/' + username + '/guides', { page: page, perpage: perpage }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getGuidesLoggedIn: function (username, page, perpage) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 20;
+            $http.post('/api/profile/' + username + '/guides', { page: page, perpage: perpage }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

@@ -25,7 +25,7 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', 
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService',
         function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
@@ -103,7 +103,7 @@ var app = angular.module('app', [
                     }
                 },
                 resolve: {
-                    User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService' , function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
+                    User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService', function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
                         if ($cookies.token) {
                             $window.sessionStorage.token = $cookies.token;
                             delete $cookies.token;
@@ -652,12 +652,35 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.decks.html',
                         controller: 'ProfileDecksCtrl',
                         resolve: {
-                            dataDecks: ['$stateParams', 'ProfileService', 'AuthenticationService', function ($stateParams, ProfileService, AuthenticationService) {
+                            dataDecks: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
                                 var username = $stateParams.username;
                                 if (AuthenticationService.isLogged()) {
-                                    return ProfileService.getDecksLoggedIn(username);
+                                    console.log("Authentication successful");
+                                    return ProfileService.getGuidesLoggedIn(username);
                                 } else {
-                                    return ProfileService.getDecks(username);
+                                    console.log("Authentication unsuccessful");
+                                    return ProfileService.getGuides(username);
+                                }
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.profile.guides', {
+                url: '/guides',
+                views: {
+                    profile: {
+                        templateUrl: tpl + 'views/frontend/profile.guides.html',
+                        controller: 'ProfileGuidesCtrl',
+                        resolve: {
+                            dataGuides: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
+                                var username = $stateParams.username;
+                                if (AuthenticationService.isLogged()) {
+                                    console.log("Authentication successful");
+                                    return ProfileService.getGuidesLoggedIn(username);
+                                } else {
+                                    console.log("Authentication unsuccessful");
+                                    return ProfileService.getGuides(username);
                                 }
                             }]
                         }
@@ -750,7 +773,12 @@ var app = angular.module('app', [
                 url: 'admin',
                 views: {
                     content: {
-                        templateUrl: tpl + 'views/admin/index.html'
+                        templateUrl: tpl + 'views/admin/index.html',
+                        resolve: {
+                            admin: ['User', function (User) {
+                                return true;
+                            }]
+                        }
                     }
                 },
                 access: { auth: true, admin: true }
