@@ -834,7 +834,7 @@ var app = angular.module('app', [
                     }
                 },
                 access: { auth: true, admin: true },
-                seo: { title: 'Dashboard', description: '', keywords: '' }
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.articles', {
                 abstract: true,
