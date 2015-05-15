@@ -1725,9 +1725,10 @@ angular.module('app.services', [])
 }])
 .factory('BannerService', ['$http', '$q', function ($http, $q) {
     return {
-        getBanners: function () {
-            var d = $q.defer();
-            $http.post('/banners', {}).success(function (data) {
+        getBanners: function (bannerType) {
+            var d = $q.defer(),
+                bannerType = bannerType;
+            $http.post('/banners', {bannerType: bannerType}).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

@@ -1508,7 +1508,6 @@ module.exports = {
                         if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
                         return callback();
                     });
-
                 });
             }
             

@@ -893,6 +893,14 @@ module.exports = {
                 Schemas.Guide.find({ author: user._id, public: true })
                 //.where(where)
                 .sort('-createdDate')
+                .select('premium heroes guideType maps slug name description author createdDate comments votesCount')
+                .populate([{
+                        path: 'heroes.hero',
+                        select: 'className'
+                    }, {
+                        path: 'maps',
+                        select: 'className'
+                }])
                 //.skip((perpage * page) - perpage)
                 //.limit(perpage)
                 .exec(function (err, guides) {
@@ -910,7 +918,6 @@ module.exports = {
     },
     profileGuidesLoggedIn: function (Schemas) {
         return function (req, res, next) {
-            console.log("profileGuidesLoggedIn");
             var username = req.params.username,
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 12;
@@ -930,6 +937,14 @@ module.exports = {
                 .sort('-createdDate')
                 //.skip((perpage * page) - perpage)
                 //.limit(perpage)
+                .select('premium heroes guideType maps slug name description author createdDate comments votesCount')
+                .populate([{
+                        path: 'heroes.hero',
+                        select: 'className'
+                    }, {
+                        path: 'maps',
+                        select: 'className'
+                }])
                 .exec(function (err, guide) {
                     if (err) { return req.json({ success: false }); }
                     return callback(guide);
@@ -1512,7 +1527,6 @@ module.exports = {
                     }, function (err, comments) {
                         if (err || !comments) { return res.json({ success: false }); }
                         article.comments = comments;
-                        
                         return getDeck(article, callback);
                     });
                     
@@ -2493,7 +2507,7 @@ module.exports = {
                 cancelPlan(user, function (expiryDate) {
                     return res.json({ success: true, subscription: {
                         expiryDate: expiryDate
-                    } });
+                    }});
                 });
             });
         };
@@ -2502,6 +2516,7 @@ module.exports = {
         return function (req, res, next) {
             function getBanners (callback) {
                 Schemas.Banner.find({ active: true })
+                .where({bannerType: req.body.bannerType})
                 .sort({ orderNum: 1 })
                 .exec(function (err, banners) {
                     if (err) { return res.json({ success: false, banners: [] }); }

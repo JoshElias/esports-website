@@ -321,7 +321,7 @@ module.exports = {
     },
     guideEdit: function (Schemas) {
         return function (req, res, next) {
-            
+
         };
     },
     guideAdd: function (Schemas, Util) {
@@ -332,11 +332,16 @@ module.exports = {
     guideUpdate: function (Schemas, Util) {
         return function (req, res, next) {
             
+            
         };
     },
     guideDelete: function (Schemas) {
         return function (req, res, next) {
-            
+            var _id = req.body._id;
+            Schemas.Guide.findOne({ _id: _id, author: req.user._id }).remove().exec(function (err) {
+                if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                return res.json({ success: true });
+            });
         };
     },
     guideVote: function (Schemas) {

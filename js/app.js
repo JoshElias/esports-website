@@ -162,7 +162,7 @@ var app = angular.module('app', [
                                 return DeckService.getDecksFeatured(klass, page, perpage);
                             }],
                             dataBanners: ['BannerService', function (BannerService) {
-                                return BannerService.getBanners();
+                                return BannerService.getBanners('hs');
                             }]
                         }
                     }
@@ -655,11 +655,9 @@ var app = angular.module('app', [
                             dataDecks: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
                                 var username = $stateParams.username;
                                 if (AuthenticationService.isLogged()) {
-                                    console.log("Authentication successful");
-                                    return ProfileService.getGuidesLoggedIn(username);
+                                    return ProfileService.getDecksLoggedIn(username);
                                 } else {
-                                    console.log("Authentication unsuccessful");
-                                    return ProfileService.getGuides(username);
+                                    return ProfileService.getDecks(username);
                                 }
                             }]
                         }
@@ -676,10 +674,8 @@ var app = angular.module('app', [
                             dataGuides: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
                                 var username = $stateParams.username;
                                 if (AuthenticationService.isLogged()) {
-                                    console.log("Authentication successful");
                                     return ProfileService.getGuidesLoggedIn(username);
                                 } else {
-                                    console.log("Authentication unsuccessful");
                                     return ProfileService.getGuides(username);
                                 }
                             }]

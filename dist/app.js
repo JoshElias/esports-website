@@ -205,7 +205,7 @@ var app = angular.module('app', [
                                 return DeckService.getDecksFeatured(klass, page, perpage);
                             }],
                             dataBanners: ['BannerService', function (BannerService) {
-                                return BannerService.getBanners();
+                                return BannerService.getBanners('hs');
                             }]
                         }
                     }
@@ -698,11 +698,9 @@ var app = angular.module('app', [
                             dataDecks: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
                                 var username = $stateParams.username;
                                 if (AuthenticationService.isLogged()) {
-                                    console.log("Authentication successful");
-                                    return ProfileService.getGuidesLoggedIn(username);
+                                    return ProfileService.getDecksLoggedIn(username);
                                 } else {
-                                    console.log("Authentication unsuccessful");
-                                    return ProfileService.getGuides(username);
+                                    return ProfileService.getDecks(username);
                                 }
                             }]
                         }
@@ -719,10 +717,8 @@ var app = angular.module('app', [
                             dataGuides: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
                                 var username = $stateParams.username;
                                 if (AuthenticationService.isLogged()) {
-                                    console.log("Authentication successful");
                                     return ProfileService.getGuidesLoggedIn(username);
                                 } else {
-                                    console.log("Authentication unsuccessful");
                                     return ProfileService.getGuides(username);
                                 }
                             }]
@@ -8981,9 +8977,10 @@ angular.module('app.services', [])
 }])
 .factory('BannerService', ['$http', '$q', function ($http, $q) {
     return {
-        getBanners: function () {
-            var d = $q.defer();
-            $http.post('/banners', {}).success(function (data) {
+        getBanners: function (bannerType) {
+            var d = $q.defer(),
+                bannerType = bannerType;
+            $http.post('/banners', {bannerType: bannerType}).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

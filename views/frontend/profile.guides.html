@@ -12,6 +12,12 @@
         <div class="guide-wrapper">
             <div class="guide large {{guide.playerClass.toLowerCase()}}" ng-class="{ premium: guide.premium.isPremium }">
                 <a href="./heroes-of-the-storm/guides/{{guide.slug}}"></a>
+                <div class="guide-images" ng-if="guide.guideType == 'hero'">
+                <div class="guide-image guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
+                </div>
+                <div class="guide-images" ng-if="guide.guideType == 'map'">
+                    <div class="guide-image guide-images-1 guide-image-1 {{guide.maps[0].className}}"></div>
+                </div>
                 <div class="guide-overlay"></div>
                 <div class="guide-premium" ng-if="guide.premium.isPremium"></div>
                 <div class="guide-title">{{guide.name}}</div>
@@ -21,7 +27,7 @@
                 </div>
                 <div class="guide-info clearfix">
                     <div class="guide-owner" ng-if="app.user.getUserID() === guide.author">
-                        <a href="./guide-builder/edit/{{guide.slug}}" class="btn btn-blue btn-xs">Edit</a>
+                        <a href="./heroes-of-the-storm/guide-builder/edit/{{guide.slug}}" class="btn btn-blue btn-xs">Edit</a>
                         <a href="#" class="btn btn-danger btn-xs" ng-click="guideDelete(guide)">Delete</a>
                     </div>
                     <div class="pull-left m-r-sm">
