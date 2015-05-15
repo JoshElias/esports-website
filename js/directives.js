@@ -253,14 +253,4 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/activity/activity.forumComment.html'
     };
 })
-.directive('googleAdSense', function () {
-    return {
-        restrict: 'A',
-        replace: true,       
-        templateUrl: "views/frontend/googleAds.html",
-        controller: function () {
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        }
-    };
-})
 ;
