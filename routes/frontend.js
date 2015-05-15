@@ -1303,7 +1303,6 @@ module.exports = {
             }
             
             function updateActivities(callback) {
-                console.log(req.body._id);
                     Schemas.Activity.update({deck: req.body._id, activityType: 'deckComment'}, {active: req.body.public}).exec(function (err, data) {
                         return callback();
                 });
