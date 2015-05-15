@@ -5151,41 +5151,41 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-hero-image { height: 60px; border-top: 1px solid #000; }
 .guide-hero.active .guide-hero-image { border-top: 1px solid #2766ad; }
 
-.guide-hero-image.abathur { background: url('../img/hots/heroes/60x/abathur60.png') no-repeat right top; }
-.guide-hero-image.anub-arak { background: url('../img/hots/heroes/60x/anub-arak60.png') no-repeat right top; }
-.guide-hero-image.arthas { background: url('../img/hots/heroes/60x/arthas60.png') no-repeat right top; }
-.guide-hero-image.azmodan { background: url('../img/hots/heroes/60x/azmodan60.png') no-repeat right top; }
-.guide-hero-image.brightwing { background: url('../img/hots/heroes/60x/brightwing60.png') no-repeat right top; }
-.guide-hero-image.chen { background: url('../img/hots/heroes/60x/chen60.png') no-repeat right top; }
-.guide-hero-image.diablo { background: url('../img/hots/heroes/60x/diablo60.png') no-repeat right top; }
-.guide-hero-image.etc { background: url('../img/hots/heroes/60x/etc60.png') no-repeat right top; }
-.guide-hero-image.falstad { background: url('../img/hots/heroes/60x/falstad60.png') no-repeat right top; }
-.guide-hero-image.gazlowe { background: url('../img/hots/heroes/60x/gazlowe60.png') no-repeat right top; }
-.guide-hero-image.illidan { background: url('../img/hots/heroes/60x/illidan60.png') no-repeat right top; }
-.guide-hero-image.jaina { background: url('../img/hots/heroes/60x/jaina60.png') no-repeat right top; }
-.guide-hero-image.kerrigan { background: url('../img/hots/heroes/60x/kerrigan60.png') no-repeat right top; }
-.guide-hero-image.lili { background: url('../img/hots/heroes/60x/lili60.png') no-repeat right top; }
-.guide-hero-image.thelostvikings { background: url('../img/hots/heroes/60x/thelostvikings60.png') no-repeat right top; }
-.guide-hero-image.malfurion { background: url('../img/hots/heroes/60x/malfurion60.png') no-repeat right top; }
-.guide-hero-image.muradin { background: url('../img/hots/heroes/60x/muradin60.png') no-repeat right top; }
-.guide-hero-image.murky { background: url('../img/hots/heroes/60x/murky60.png') no-repeat right top; }
-.guide-hero-image.nazeebo { background: url('../img/hots/heroes/60x/nazeebo60.png') no-repeat right top; }
-.guide-hero-image.nova { background: url('../img/hots/heroes/60x/nova60.png') no-repeat right top; }
-.guide-hero-image.raynor { background: url('../img/hots/heroes/60x/raynor60.png') no-repeat right top; }
-.guide-hero-image.rehgar { background: url('../img/hots/heroes/60x/rehgar60.png') no-repeat right top; }
-.guide-hero-image.sgthammer { background: url('../img/hots/heroes/60x/sgthammer60.png') no-repeat right top; }
-.guide-hero-image.sonya { background: url('../img/hots/heroes/60x/sonya60.png') no-repeat right top; }
-.guide-hero-image.stitches { background: url('../img/hots/heroes/60x/stitches60.png') no-repeat right top; }
-.guide-hero-image.tassadar { background: url('../img/hots/heroes/60x/tassadar60.png') no-repeat right top; }
-.guide-hero-image.thrall { background: url('../img/hots/heroes/60x/thrall60.png') no-repeat right top; }
-.guide-hero-image.tychus { background: url('../img/hots/heroes/60x/tychus60.png') no-repeat right top; }
-.guide-hero-image.tyrael { background: url('../img/hots/heroes/60x/tyrael60.png') no-repeat right top; }
-.guide-hero-image.tyrande { background: url('../img/hots/heroes/60x/tyrande60.png') no-repeat right top; }
-.guide-hero-image.uther { background: url('../img/hots/heroes/60x/uther60.png') no-repeat right top; }
-.guide-hero-image.valla { background: url('../img/hots/heroes/60x/valla60.png') no-repeat right top; }
-.guide-hero-image.zagara { background: url('../img/hots/heroes/60x/zagara60.png') no-repeat right top; }
-.guide-hero-image.zeratul { background: url('../img/hots/heroes/60x/zeratul60.png') no-repeat right top; }
-.guide-hero-image.sylvanas { background: url('../img/hots/heroes/60x/sylvanas60.png') no-repeat right top; }
+.guide-hero-image.abathur { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/abathur60.png') no-repeat right top; }
+.guide-hero-image.anub-arak { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/anub-arak60.png') no-repeat right top; }
+.guide-hero-image.arthas { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/arthas60.png') no-repeat right top; }
+.guide-hero-image.azmodan { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/azmodan60.png') no-repeat right top; }
+.guide-hero-image.brightwing { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/brightwing60.png') no-repeat right top; }
+.guide-hero-image.chen { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/chen60.png') no-repeat right top; }
+.guide-hero-image.diablo { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/diablo60.png') no-repeat right top; }
+.guide-hero-image.etc { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/etc60.png') no-repeat right top; }
+.guide-hero-image.falstad { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/falstad60.png') no-repeat right top; }
+.guide-hero-image.gazlowe { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/gazlowe60.png') no-repeat right top; }
+.guide-hero-image.illidan { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/illidan60.png') no-repeat right top; }
+.guide-hero-image.jaina { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/jaina60.png') no-repeat right top; }
+.guide-hero-image.kerrigan { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/kerrigan60.png') no-repeat right top; }
+.guide-hero-image.lili { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/lili60.png') no-repeat right top; }
+.guide-hero-image.thelostvikings { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/thelostvikings60.png') no-repeat right top; }
+.guide-hero-image.malfurion { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/malfurion60.png') no-repeat right top; }
+.guide-hero-image.muradin { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/muradin60.png') no-repeat right top; }
+.guide-hero-image.murky { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/murky60.png') no-repeat right top; }
+.guide-hero-image.nazeebo { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/nazeebo60.png') no-repeat right top; }
+.guide-hero-image.nova { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/nova60.png') no-repeat right top; }
+.guide-hero-image.raynor { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/raynor60.png') no-repeat right top; }
+.guide-hero-image.rehgar { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/rehgar60.png') no-repeat right top; }
+.guide-hero-image.sgthammer { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/sgthammer60.png') no-repeat right top; }
+.guide-hero-image.sonya { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/sonya60.png') no-repeat right top; }
+.guide-hero-image.stitches { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/stitches60.png') no-repeat right top; }
+.guide-hero-image.tassadar { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/tassadar60.png') no-repeat right top; }
+.guide-hero-image.thrall { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/thrall60.png') no-repeat right top; }
+.guide-hero-image.tychus { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/tychus60.png') no-repeat right top; }
+.guide-hero-image.tyrael { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/tyrael60.png') no-repeat right top; }
+.guide-hero-image.tyrande { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/tyrande60.png') no-repeat right top; }
+.guide-hero-image.uther { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/uther60.png') no-repeat right top; }
+.guide-hero-image.valla { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/valla60.png') no-repeat right top; }
+.guide-hero-image.zagara { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/zagara60.png') no-repeat right top; }
+.guide-hero-image.zeratul { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/zeratul60.png') no-repeat right top; }
+.guide-hero-image.sylvanas { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/sylvanas60.png') no-repeat right top; }
 
 .guide-heroes-1 { width: 100%; }
 .guide-heroes-2 { width: 50%; }
@@ -5204,21 +5204,56 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-talent-dot:last-child { margin-right: 0px; }
 .guide-talent-dot.active { background: #2766ad; }
 
-.guide-against {  }
-.guide-against h3,
-.guide-against p { margin-bottom: 0; padding: 20px; color: #FFF; white-space: pre-wrap; }
+.guide-map-header { margin-bottom: 20px; width: 100%; height: auto; }
+.guide-content-title { text-transform: uppercase; }
 
-.guide-against h3 { padding: 10px 20px; font-size: 16px; background: rgba(0,0,0,.3); }
+/* guide synergy */
+.guide-synergy,
+.guide-strong,
+.guide-weak { border: 1px solid #000; padding: 10px 20px; }
 
-.guide-against-strong { background: #2766ad; border-bottom: 1px solid #000; }
-.guide-against-weak { background: #E64C3C; border-bottom: 1px solid #000; }
+.guide-synergy { background: #6cbd45; }
+.guide-strong { background: #2766ad; }
+.guide-weak { background: #e94c3d; }
+
+.guide-synergy h1,
+.guide-strong h1,
+.guide-weak h1 { margin: 0; font-size: 20px; font-family: 'Open Sans Bold'; color: #FFF; }
+
+.guide-synergy span,
+.guide-strong span,
+.guide-weak span { font-size: 10px; color: #FFF; }
 
 .guide-votes { float: right; }
 
 .guide-video { width: 100%; border: none; }
 
+.guide-maps { padding: 0 20px 20px 0; }
+.guide-map { float: left; margin: 20px 0 0 20px; display: block; width: 92px; height: 92px; }
+.guide-map.blackheartsbay { background: url('../img/hots/maps/blackheart_small.png') no-repeat center center; }
+.guide-map.cursedhollow { background: url('../img/hots/maps/cursed_small.png') no-repeat center center; }
+.guide-map.dragonshrine { background: url('../img/hots/maps/dragon_small.png') no-repeat center center; }
+.guide-map.gardenofterror { background: url('../img/hots/maps/terror_small.png') no-repeat center center; }
+.guide-map.hauntedmines { background: url('../img/hots/maps/mine_small.png') no-repeat center center; }
+.guide-map.skytemple { background: url('../img/hots/maps/sky_small.png') no-repeat center center; }
+.guide-map.tomb-of-the-spider-queen { background: url('../img/hots/maps/spider_small.png') no-repeat center center; }
+
 .guide-subscribe > h1 { margin-top: 20px; color: #2766ad; font-family: 'Open Sans Bold'; }
 .guide-subscribe > h2 { margin-bottom: 20px; font-size: 20px; color: #FFF; }
+
+/* guide builder link */
+.guide-builder-link { padding: 2px; width: 100%; height: 200px; background: #90d7ed; /* Old browsers */
+    background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); /* IE6-9 */
+    -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+.guide-builder-link-inner { position: relative; height: 196px; background: #141316 url('../img/hots/modal/modalbg.jpg') no-repeat right top; }
+.guide-builder-link-inner a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/hots/guide-builder-button.png') no-repeat; background-position: center 0px; -webkit-transition: background-position ease-in-out .3s; transition: background-position ease-in-out .3s; }
+.guide-builder-link-inner a:hover { background-position: center -196px; }
 
 /* contact */
 .contact-wrapper { background: url(../img/black-60.png); background-size: 100%; padding: 20px; border-radius: 4px; border: 1px solid #000; }

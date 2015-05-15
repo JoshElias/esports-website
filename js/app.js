@@ -106,7 +106,6 @@ var app = angular.module('app', [
                     User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService', function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
                         if ($cookies.token) {
                             $window.sessionStorage.token = $cookies.token;
-                            delete $cookies.token;
                         }
                         if ($window.sessionStorage.token && !AuthenticationService.isLogged()) {
                             var d = $q.defer();
@@ -396,6 +395,9 @@ var app = angular.module('app', [
                             }],
                             dataHeroes: ['HeroService', function (HeroService) {
                                 return HeroService.getHeroes();
+                            }],
+                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getMaps();
                             }]
                         }
                     }
@@ -652,8 +654,9 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.decks.html',
                         controller: 'ProfileDecksCtrl',
                         resolve: {
-                            dataDecks: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
+                            dataDecks: ['User', '$stateParams', 'ProfileService', 'AuthenticationService', function (User, $stateParams, ProfileService, AuthenticationService) {
                                 var username = $stateParams.username;
+                                console.log(AuthenticationService.isLogged());
                                 if (AuthenticationService.isLogged()) {
                                     return ProfileService.getDecksLoggedIn(username);
                                 } else {
