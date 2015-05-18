@@ -2354,6 +2354,12 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.search = data.search;
         $scope.loading = false;
         
+        
+        $scope.metaservice = MetaService;
+        
+        $scope.metaservice.setOg('https://tempostorm.com/articles');
+        
+        
         $scope.hasSearch = function () {
             return (data.search) ? data.search.length : false;
         }
@@ -2459,6 +2465,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
+        
+        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/articles/' + $scope.article.photos.small;
+        $scope.metaservice.setOg('https://tempostorm.com/articles/' + data.article.slug.url, $scope.article.title, $scope.article.description, 'article', ogImg);
         
         $scope.getContent = function () {
             return $sce.trustAsHtml($scope.article.content);
@@ -2678,6 +2687,10 @@ angular.module('app.controllers', ['ngCookies'])
             return (data.search) ? data.search.length : false;
         }
         
+        
+        $scope.metaservice.setOg('https://tempostorm.com/decks');
+        
+        
         // advanced filters
         if (!$scope.app.settings.show.decks) {
             $scope.app.settings.show.decks = {
@@ -2837,6 +2850,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.deck.name + ' - Decks', $scope.deck.description);
         
+        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/decks/' + $scope.deck.playerClass + '.png';
+        $scope.metaservice.setOg('https://tempostorm.com/decks/' + $scope.deck.slug, $scope.deck.name, $scope.deck.description, 'article', ogImg.toLowerCase());
         
         // classes
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
@@ -3172,6 +3187,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.thread.title + ' - Forum');
         
+        $scope.metaservice.setOg('https://tempostorm.com/forum/' + $scope.thread.slug.url, $scope.thread.title);
+        
         // page flipping
         $scope.pagination = Pagination.new(20);
         $scope.pagination.results = function () {
@@ -3264,6 +3281,8 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.post.title + ' - ' + $scope.thread.title);
+        
+        $scope.metaservice.setOg('https://tempostorm.com/forum/' + $scope.post.slug.url, $scope.post.title, $scope.post.content);
         
         
         var defaultComment = {

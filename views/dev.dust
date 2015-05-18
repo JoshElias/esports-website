@@ -4,6 +4,13 @@
     <meta charset="utf-8" />
     <base href="/" />
     <title ng-bind="metaservice.metaTitle()">TempoStorm</title>
+    <!--og meta tags-->
+    <meta property="og:type" content="{{ metaservice.ogMetaType() }}"/>
+    <meta property="og:url" content="{{ metaservice.ogMetaUrl() }}"/>
+    <meta property="og:image" content="{{ metaservice.ogMetaImage() }}"/>
+    <meta property="og:title" content="{{ metaservice.ogMetaTitle() }}"/>
+    <meta property="og:description" content="{{ metaservice.ogMetaDescription() }}"/>
+    <!--/og meta tags-->
     <meta name="description" content="{{ metaservice.metaDescription() }}" />
     <meta name="keywords" content="{{ metaservice.metaKeywords() }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />

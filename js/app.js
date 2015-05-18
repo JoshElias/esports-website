@@ -61,6 +61,11 @@ var app = angular.module('app', [
                 if (toState.seo) {
                     $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords);
                 }
+                
+                //
+                if (!toState.og) {
+                    $rootScope.metaservice.setOg('https://tempostorm.com' + toState.url);
+                }
             });
             $rootScope.$on("$routeChangeError", function(evt, current, previous, rejection){
                 console.log(3);
@@ -196,7 +201,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                seo: { title: 'Articles', description: 'TempoStorm articles to bring you the latest news.', keywords: '' }
+                seo: { title: 'Articles', description: 'TempoStorm articles to bring you the latest news.', keywords: '' },
+                og: true
             })
             .state('app.articles.article', {
                 url: '/:slug',
@@ -242,7 +248,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                seo: { title: 'Decks', description: 'Hearthstone decks created by the community and TempoStorm content providers.', keywords: '' }
+                seo: { title: 'Decks', description: 'Hearthstone decks created by the community and TempoStorm content providers.', keywords: '' },
+                og: true
             })
             .state('app.decks.deck', {
                 url: '/:slug',
@@ -290,7 +297,7 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                },
+                }
             })
             .state('app.deckBuilder.edit', {
                 url: '/edit/:slug',
@@ -440,7 +447,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                og: true
             })
             .state('app.forum.add', {
                 url: '/:thread/add',
@@ -471,7 +479,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                og: true
             })
             .state('app.team', {
                 abstract: true,
@@ -483,7 +492,7 @@ var app = angular.module('app', [
                 }
             })
             .state('app.team.hearthstone', {
-                url: '/hearthstone',
+                url: '/team/hearthstone',
                 views: {
                     team: {
                         templateUrl: tpl + 'views/frontend/team.hearthstone.html'
@@ -492,7 +501,7 @@ var app = angular.module('app', [
                 seo: { title: 'Hearthstone', description: 'Tempo Storm Hearthstone team.', keywords: '' }
             })
             .state('app.team.heroes', {
-                url: '/hots',
+                url: '/team/hots',
                 views: {
                     team: {
                         templateUrl: tpl + 'views/frontend/team.hots.html'
@@ -501,7 +510,7 @@ var app = angular.module('app', [
                 seo: { title: 'Heroes of the Storm', description: 'Tempo Storm Heroes of the Storm team.', keywords: '' }
             })
             .state('app.team.csgo', {
-                url: '/csgo',
+                url: '/team/csgo',
                 views: {
                     team: {
                         templateUrl: tpl + 'views/frontend/team.csgo.html'
@@ -953,7 +962,6 @@ var app = angular.module('app', [
                     }
                 },
                 access: { auth: true, admin: true },
-                seo: { title: 'Admin Deck Edit', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone.cards', {
                 abstract: true,

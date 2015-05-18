@@ -2,19 +2,43 @@
 
 angular.module('app.services', [])
 .service('MetaService', function() {
-   var title = '';
-   var metaDescription = '';
-   var metaKeywords = '';
-   return {
-      set: function(newTitle, newMetaDescription, newKeywords) {
-          metaKeywords = newKeywords;
-          metaDescription = newMetaDescription;
-          title = newTitle + ' - TempoStorm'; 
-      },
-      metaTitle: function(){ return title; },
-      metaDescription: function() { return metaDescription; },
-      metaKeywords: function() { return metaKeywords; }
-   }
+   
+    var ogType = '';
+    var ogUrl = '';
+    var ogImage = '';
+    var ogTitle = 'They';
+    var ogDescription = ''
+    
+    var title = '';
+    var metaDescription = '';
+    var metaKeywords = '';
+    return {
+       setOg: function(newOgUrl, newOgTitle, newOgDescription, newOgType, newOgImage) {
+           ogType = newOgType || 'website';
+           ogUrl = newOgUrl || 'https://tempostorm.com';
+           ogImage = newOgImage || '';
+           ogTitle = newOgTitle || 'TempoStorm';
+           ogDescription = newOgDescription || 'TempoStorm Official Website.';
+       },
+       set: function(newTitle, newMetaDescription, newKeywords) {
+           metaKeywords = newKeywords;
+           metaDescription = newMetaDescription;
+           title = newTitle; 
+       },
+       ogMetaType: function() { return ogType; },
+       ogMetaUrl: function() { return ogUrl; },
+       ogMetaImage: function() { 
+           if(!ogImage || ogImage == '') { 
+               return 'https://s3-us-west-2.amazonaws.com/ts-node2/img/100x100tsoglogo.png'
+           }
+           return ogImage.toLowerCase();
+       },
+       ogMetaTitle: function(){ return ogTitle; },
+       ogMetaDescription: function() {return ogDescription.replace(/<\/?[^>]+(>|$)/g, "");},
+       metaTitle: function(){ return (title + ' - TempoStorm'); },
+       metaDescription: function() { return metaDescription; },
+       metaKeywords: function() { return metaKeywords; }
+    }
 })
 .factory('AuthenticationService', function() {
     var loggedIn = false,

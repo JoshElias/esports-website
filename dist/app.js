@@ -104,6 +104,11 @@ var app = angular.module('app', [
                 if (toState.seo) {
                     $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords);
                 }
+                
+                //
+                if (!toState.og) {
+                    $rootScope.metaservice.setOg('https://tempostorm.com' + toState.url);
+                }
             });
             $rootScope.$on("$routeChangeError", function(evt, current, previous, rejection){
                 console.log(3);
@@ -239,7 +244,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                seo: { title: 'Articles', description: 'TempoStorm articles to bring you the latest news.', keywords: '' }
+                seo: { title: 'Articles', description: 'TempoStorm articles to bring you the latest news.', keywords: '' },
+                og: true
             })
             .state('app.articles.article', {
                 url: '/:slug',
@@ -285,7 +291,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                seo: { title: 'Decks', description: 'Hearthstone decks created by the community and TempoStorm content providers.', keywords: '' }
+                seo: { title: 'Decks', description: 'Hearthstone decks created by the community and TempoStorm content providers.', keywords: '' },
+                og: true
             })
             .state('app.decks.deck', {
                 url: '/:slug',
@@ -333,7 +340,7 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                },
+                }
             })
             .state('app.deckBuilder.edit', {
                 url: '/edit/:slug',
@@ -483,7 +490,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                og: true
             })
             .state('app.forum.add', {
                 url: '/:thread/add',
@@ -514,7 +522,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                og: true
             })
             .state('app.team', {
                 abstract: true,
@@ -526,7 +535,7 @@ var app = angular.module('app', [
                 }
             })
             .state('app.team.hearthstone', {
-                url: '/hearthstone',
+                url: '/team/hearthstone',
                 views: {
                     team: {
                         templateUrl: tpl + 'views/frontend/team.hearthstone.html'
@@ -535,7 +544,7 @@ var app = angular.module('app', [
                 seo: { title: 'Hearthstone', description: 'Tempo Storm Hearthstone team.', keywords: '' }
             })
             .state('app.team.heroes', {
-                url: '/hots',
+                url: '/team/hots',
                 views: {
                     team: {
                         templateUrl: tpl + 'views/frontend/team.hots.html'
@@ -544,7 +553,7 @@ var app = angular.module('app', [
                 seo: { title: 'Heroes of the Storm', description: 'Tempo Storm Heroes of the Storm team.', keywords: '' }
             })
             .state('app.team.csgo', {
-                url: '/csgo',
+                url: '/team/csgo',
                 views: {
                     team: {
                         templateUrl: tpl + 'views/frontend/team.csgo.html'
@@ -996,7 +1005,6 @@ var app = angular.module('app', [
                     }
                 },
                 access: { auth: true, admin: true },
-                seo: { title: 'Admin Deck Edit', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone.cards', {
                 abstract: true,
@@ -3877,6 +3885,12 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.search = data.search;
         $scope.loading = false;
         
+        
+        $scope.metaservice = MetaService;
+        
+        $scope.metaservice.setOg('https://tempostorm.com/articles');
+        
+        
         $scope.hasSearch = function () {
             return (data.search) ? data.search.length : false;
         }
@@ -3982,6 +3996,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
+        
+        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/articles/' + $scope.article.photos.small;
+        $scope.metaservice.setOg('https://tempostorm.com/articles/' + data.article.slug.url, $scope.article.title, $scope.article.description, 'article', ogImg);
         
         $scope.getContent = function () {
             return $sce.trustAsHtml($scope.article.content);
@@ -4201,6 +4218,10 @@ angular.module('app.controllers', ['ngCookies'])
             return (data.search) ? data.search.length : false;
         }
         
+        
+        $scope.metaservice.setOg('https://tempostorm.com/decks');
+        
+        
         // advanced filters
         if (!$scope.app.settings.show.decks) {
             $scope.app.settings.show.decks = {
@@ -4360,6 +4381,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.deck.name + ' - Decks', $scope.deck.description);
         
+        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/decks/' + $scope.deck.playerClass + '.png';
+        $scope.metaservice.setOg('https://tempostorm.com/decks/' + $scope.deck.slug, $scope.deck.name, $scope.deck.description, 'article', ogImg.toLowerCase());
         
         // classes
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
@@ -4695,6 +4718,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.thread.title + ' - Forum');
         
+        $scope.metaservice.setOg('https://tempostorm.com/forum/' + $scope.thread.slug.url, $scope.thread.title);
+        
         // page flipping
         $scope.pagination = Pagination.new(20);
         $scope.pagination.results = function () {
@@ -4787,6 +4812,8 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.post.title + ' - ' + $scope.thread.title);
+        
+        $scope.metaservice.setOg('https://tempostorm.com/forum/' + $scope.post.slug.url, $scope.post.title, $scope.post.content);
         
         
         var defaultComment = {
@@ -7259,19 +7286,43 @@ angular.module('app.filters', [])
 
 angular.module('app.services', [])
 .service('MetaService', function() {
-   var title = '';
-   var metaDescription = '';
-   var metaKeywords = '';
-   return {
-      set: function(newTitle, newMetaDescription, newKeywords) {
-          metaKeywords = newKeywords;
-          metaDescription = newMetaDescription;
-          title = newTitle + ' - TempoStorm'; 
-      },
-      metaTitle: function(){ return title; },
-      metaDescription: function() { return metaDescription; },
-      metaKeywords: function() { return metaKeywords; }
-   }
+   
+    var ogType = '';
+    var ogUrl = '';
+    var ogImage = '';
+    var ogTitle = 'They';
+    var ogDescription = ''
+    
+    var title = '';
+    var metaDescription = '';
+    var metaKeywords = '';
+    return {
+       setOg: function(newOgUrl, newOgTitle, newOgDescription, newOgType, newOgImage) {
+           ogType = newOgType || 'website';
+           ogUrl = newOgUrl || 'https://tempostorm.com';
+           ogImage = newOgImage || '';
+           ogTitle = newOgTitle || 'TempoStorm';
+           ogDescription = newOgDescription || 'TempoStorm Official Website.';
+       },
+       set: function(newTitle, newMetaDescription, newKeywords) {
+           metaKeywords = newKeywords;
+           metaDescription = newMetaDescription;
+           title = newTitle; 
+       },
+       ogMetaType: function() { return ogType; },
+       ogMetaUrl: function() { return ogUrl; },
+       ogMetaImage: function() { 
+           if(!ogImage || ogImage == '') { 
+               return 'https://s3-us-west-2.amazonaws.com/ts-node2/img/100x100tsoglogo.png'
+           }
+           return ogImage.toLowerCase();
+       },
+       ogMetaTitle: function(){ return ogTitle; },
+       ogMetaDescription: function() {return ogDescription.replace(/<\/?[^>]+(>|$)/g, "");},
+       metaTitle: function(){ return (title + ' - TempoStorm'); },
+       metaDescription: function() { return metaDescription; },
+       metaKeywords: function() { return metaKeywords; }
+    }
 })
 .factory('AuthenticationService', function() {
     var loggedIn = false,
