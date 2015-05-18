@@ -1720,6 +1720,9 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .ad-banner { margin: 20px auto; width: 600px; height: 146px; }
 .ad-banner img { width: 600px; height: 146px; }
 
+.adSenseSidebarHome { height: 280px; width: auto; }
+.adSenseBanner { margin-top: 20px; height: 120px; width: auto; }
+
 /* terms / privacy */
 .terms,
 .privacy { margin: 20px auto; }

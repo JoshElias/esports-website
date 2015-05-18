@@ -23,6 +23,11 @@
     <!-- / header -->
 
     <div class="container container-dark">
+        
+        <div class="adSenseBanner" ng-if="!app.user.isSubscribed()">
+            <div ads-banner></div>
+        </div>
+        
         <div class="row">
             <div class="col-xs-12 m-t-md">
                 

@@ -188,9 +188,13 @@
                             <!-- / deck -->
                             <p class="home-no-decks" ng-show="!decks.length && klass === 'all' && !loading.community">There are currently no decks yet.</p>
                             <p class="home-no-decks" ng-show="!decks.length && klass !== 'all' && !loading.community">There are currently no decks under <strong>{{klass}}</strong> yet.</p>
+                            
                         </div>
                     </div>
                 </div>
+                <div class="adSenseSidebarHome" ng-if="!app.user.isSubscribed()">
+                        <div ads-sidebar-home></div>
+                    </div>
             </div>
         </div>
     </div>
