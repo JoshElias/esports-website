@@ -94,9 +94,9 @@ var app = angular.module('app', [
                 //ngProgress.complete();
                 $window.ga('send', 'pageview', $location.path());
                 // adsense refresh
-                if ($window.googletag && $window.googletag.pubads) {
-                    $window.googletag.pubads().refresh();
-                }
+                //if ($window.googletag && $window.googletag.pubads) {
+                //    $window.googletag.pubads().refresh();
+                //}
             });
             $rootScope.$on("$routeChangeError", function(evt, current, previous, rejection){
                 console.log(3);

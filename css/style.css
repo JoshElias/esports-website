@@ -4843,7 +4843,10 @@ p.white { color: #FFF; }
     .article-page .article-right { display: none; }
 }
 
-@media (min-width: 768px) and (max-width: 979px) {    
+@media (min-width: 768px) and (max-width: 979px) {
+    /* home */
+    .adSenseSidebarHome { height: 140px; }
+    
     /* forums */
     .forum-post { padding-right: 0px; }
     
@@ -4853,6 +4856,10 @@ p.white { color: #FFF; }
 }
 
 @media (max-width: 767px) {
+    /* home */
+    .adSenseSidebarHome { height: 140px; }
+
+    
     /* filters */
     .filter-bar { display: none; }
     .filter-class li { display: none; }
