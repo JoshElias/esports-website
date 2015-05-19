@@ -2204,5 +2204,306 @@ module.exports = {
                 }
             }
         };
+    },
+    pollsProviders: function (Schemas) {
+        return function (req, res, next) {
+            Schemas.User.find({ isProvider: true }).select('_id title').exec(function (err, users) {
+                if (err) { return res.json({ success: false }); }
+                return res.json({
+                    success: true,
+                    users: users
+                });
+            });
+        };
+    },
+    users: function (Schemas) {
+        return function (req, res, next) {
+            var page = req.body.page || 1,
+                perpage = req.body.perpage || 50,
+                search = req.body.search || '',
+                where = (search.length) ? { username: new RegExp(search, "i") } : {},
+                total, users;
+            
+            function getTotal (callback) {
+                Schemas.User.count({})
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            function getUsers (callback) {
+                Schemas.User.find({})
+                .where(where)
+                .sort({ username: 1 })
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    users = results;
+                    return callback();
+                });
+            }
+            
+            getTotal(function () {
+                getUsers(function () {
+                    return res.json({
+                        success: true,
+                        users: users,
+                        total: total,
+                        page: page,
+                        perpage: perpage,
+                        search: search
+                    });
+                });
+            });
+        };
+    },
+    user: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            
+            Schemas.User.findOne({ _id: _id }).exec(function (err, user) {
+                if (err || !user) {
+                    console.log(err || 'User not found');
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+                return res.json({
+                    success: true,
+                    user: user
+                });
+            });
+        };
+    },
+    userAdd: function (Schemas) {
+        return function (req, res, next) {
+            req.assert('email', 'A valid email address is required').notEmpty().isEmail();
+            req.assert('username', 'Username is required').notEmpty();
+            req.assert('password', 'Password is required').notEmpty();
+            req.assert('cpassword', 'Please confirm your password').notEmpty().equals(req.body.password);
+            
+            var errors = req.validationErrors(true);
+            
+            if (errors) {
+                return res.json({ success: false, errors: errors });
+            } else {
+                var error = false,
+                    errorMsgs = {};
+                
+                function checkEmail(cb) {
+                    Schemas.User.count({ email: req.body.email }, function(err, count){
+                        if (err) {
+                            error = true;
+                            errorMsgs.unknown = { 
+                                msg: 'An unknown error occurred'
+                            };
+                        }
+                        if (count > 0) {
+                            console.log('Email already exists on another account');
+                            error = true;
+                            errorMsgs.email = { 
+                                msg: 'Email already exists on another account'
+                            };
+                        }
+                        cb();
+                    });
+                }
+
+                function checkUsername(cb) {
+                    Schemas.User.count({ username: req.body.username }, function(err, count){
+                        if (err) {
+                            error = true;
+                            errorMsgs.unknown = { 
+                                msg: 'An unknown error occurred'
+                            };
+                        }
+                        if (count > 0) {
+                            error = true;
+                            errorMsgs.username = { 
+                                msg: 'Username already in use'
+                            };
+                        }
+                        cb();
+                    });
+                }
+                
+                function completeNewUser() {
+                    if (error) {
+                        return res.json({ success: false, errors: errorMsgs });
+                    } else {
+                        var newUser = new Schemas.User({
+                                email: req.body.email,
+                                username: req.body.username,
+                                password: req.body.password,
+                                firstName: req.body.firstName,
+                                lastName: req.body.lastName,
+                                about: req.body.about,
+                                social: {
+                                    twitter: req.body.social.twitter,
+                                    facebook: req.body.social.facebook,
+                                    twitch: req.body.social.twitch,
+                                    instagram: req.body.social.instagram,
+                                    youtube: req.body.social.youtube
+                                },
+                                subscription: {
+                                    isSubscribed: req.body.subscription.isSubscribed,
+                                    expiryDate: req.body.subscription.expiryDate || new Date().toISOString()
+                                },
+                                verified: true,
+                                isAdmin: req.body.isAdmin,
+                                isProvider: req.body.isProvider,
+                                active: req.body.active,
+                                createdDate: new Date().toISOString()
+                            });
+
+                        newUser.save(function(err, data){
+                            if (err) {
+                                console.log(err);
+                                return res.json({ success: false,
+                                    errors: {
+                                        unknown: {
+                                            msg: 'An unknown error occurred'
+                                        }
+                                    }
+                                });
+                            }
+                            return res.json({ success: true });
+                        });
+                    }
+                }
+
+                checkEmail(function (){
+                    checkUsername(function (){
+                        completeNewUser();
+                    });
+                });
+            }
+        };
+    },
+    userDelete: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            Schemas.User.findOne({ _id: _id }).remove().exec(function (err) {
+                if (err) {
+                    console.log(err);
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+                return res.json({ success: true });
+            });
+        };
+    },
+    userEdit: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            
+            // form validation
+            req.assert('email', 'A valid email address is required').notEmpty().isEmail();
+            req.assert('username', 'Username is required').notEmpty();
+            if (req.body.changePassword) {
+                req.assert('newPassword', 'Password is required').notEmpty();
+                req.assert('confirmNewPassword', 'Please confirm your password').notEmpty().equals(req.body.newPassword);
+            }
+            
+            var errors = req.validationErrors(true);
+            
+            if (errors) {
+                return res.json({ success: false, errors: errors });
+            } else {
+                
+                function checkEmail(callback) {
+                    Schemas.User.count({ email: req.body.email, _id: { $ne: _id } }).exec(function (err, count) {
+                        if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                        if (count > 0) {
+                            return res.json({ success: false, errors: { email: { msg: 'Email address already exists on another account' } } });
+                        }
+                        return callback();
+                    });
+                }
+                
+                function checkUsername(callback) {
+                    Schemas.User.count({ username: req.body.username, _id: { $ne: _id } }).exec(function (err, count) {
+                        if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                        if (count > 0) {
+                            return res.json({ success: false, errors: { username: { msg: 'Username already in use' } } });
+                        }
+                        return callback();
+                    });
+                }
+                
+                function updateUser(callback) {
+                    Schemas.User.findOne({ _id: _id }).exec(function (err, user) {
+                        if (err || !user) {
+                            console.log(err || 'User not found');
+                            return res.json({ success: false,
+                                errors: {
+                                    unknown: {
+                                        msg: 'An unknown error occurred'
+                                    }
+                                }
+                            });
+                        }
+
+                        user.email = req.body.email || '';
+                        user.username = req.body.username;
+                        if (req.body.changePassword) {
+                            user.password = req.body.newPassword;
+                        }
+                        user.firstName = req.body.firstName || '';
+                        user.lastName = req.body.lastName || '';
+                        user.about = req.body.about || '';
+                        user.social = req.body.social || {
+                            twitter: '',
+                            facebook: '',
+                            twitch: '',
+                            instagram: '',
+                            youtube: ''
+                        };
+                        user.subscription = {
+                            isSubscribed: req.body.subscription.isSubscribed,
+                            expiryDate: req.body.subscription.expiryDate || new Date().toISOString()
+                        };
+                        user.isAdmin = req.body.isAdmin || false;
+                        user.active = req.body.active;
+                        user.isProvider = req.body.isProvider || false;
+
+                        user.save(function (err) {
+                            if (err) {
+                                console.log(err);
+                                return res.json({ success: false,
+                                    errors: {
+                                        unknown: {
+                                            msg: 'An unknown error occurred'
+                                        }
+                                    }
+                                });
+                            }
+                            return callback();
+                        });
+                    });
+                }
+                
+                checkEmail(function () {
+                    checkUsername(function () {
+                        updateUser(function () {
+                            return res.json({ success: true });
+                        });
+                    });
+                });
+            }
+        };
     }
 };

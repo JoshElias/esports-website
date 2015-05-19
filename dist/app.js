@@ -1317,6 +1317,24 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
+            .state('app.admin.polls.list', {
+                url: '',
+                views: {
+                    polls: {
+                        templateUrl: tpl + 'views/admin/polls.list.html',
+                        controller: 'AdminUserPollListCtrl',
+                        resolve: {
+                            data: ['AdminUserService', function (AdminUserService) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminUserService.getUsers(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
             .state('app.admin.subscriptions', {
                 url: '/subscriptions',
                 views: {
@@ -3190,6 +3208,125 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.go('app.admin.users.list');
                 }
             });
+        };
+    }
+])
+.controller('AdminPollListCtrl', ['$scope', 'bootbox', 'Pagination', 'AlertService', 'AdminPollService', 'data', 
+    function ($scope, bootbox, Pagination, AlertService, AdminPollService, data) {
+        // grab alerts
+        if (AlertService.hasAlert()) {
+            $scope.success = AlertService.getSuccess();
+            AlertService.reset();
+        }
+        
+        // load users
+        $scope.polls = data.polls;
+        $scope.page = data.page;
+        $scope.perpage = data.perpage;
+        $scope.total = data.total;
+        $scope.search = data.search;
+        
+        $scope.getPolls = function () {
+            AdminPollService.getPolls($scope.page, $scope.perpage, $scope.search).then(function (data) {
+                $scope.users = data.users;
+                $scope.page = data.page;
+                $scope.total = data.total;
+            });
+        }
+        
+        $scope.searchUsers = function () {
+            $scope.page = 1;
+            $scope.getUsers();
+        }
+                
+        // pagination
+        $scope.pagination = {
+            page: function () {
+                return $scope.page;
+            },
+            perpage: function () {
+                return $scope.perpage;
+            },
+            results: function () {
+                return $scope.total;
+            },
+            setPage: function (page) {
+                $scope.page = page;
+                $scope.getUsers();
+            },
+            pagesArray: function () {
+                var pages = [],
+                    start = 1,
+                    end = this.totalPages();
+                
+                if (this.totalPages() > 5) {
+                    if (this.page() < 3) {
+                        start = 1;
+                        end = start + 4;
+                    } else if (this.page() > this.totalPages() - 2) {
+                        end = this.totalPages();
+                        start = end - 4;
+                    } else {
+                        start = this.page() - 2;
+                        end = this.page() + 2;
+                    }
+                    
+                }
+                
+                for (var i = start; i <= end; i++) {
+                    pages.push(i);
+                }
+                
+                return pages;
+            },
+            isPage: function (page) {
+                return (page === this.page());
+            },
+            totalPages: function (page) {
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
+            },
+            from: function () {
+                return (this.page() * this.perpage()) - this.perpage() + 1;
+            },
+            to: function () {
+                return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
+            }
+        };  
+        
+        // delete user
+        $scope.deleteUser = function (user) {
+            var box = bootbox.dialog({
+                title: 'Delete user: ' + user.username + '?',
+                message: 'Are you sure you want to delete the user <strong>' + user.username + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            AdminUserService.deleteUser(user._id).then(function (data) {
+                                if (data.success) {
+                                    var index = $scope.users.indexOf(user);
+                                    if (index !== -1) {
+                                        $scope.users.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: user.username + ' deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
         };
     }
 ])
@@ -7018,6 +7155,47 @@ angular.module('app.services', [])
         deleteUser: function (_id) {
             var d = $q.defer();
             $http.post('/api/admin/user/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
+.factory('AdminPollService', ['$http', '$q', function ($http, $q) {
+    return {
+        getProviders: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/polls/providers', {}).success(function (data) {
+                d.resolve(data);
+            });
+           return d.promise;
+        },
+        getPolls: function (page, perpage, search) {
+            var page = page || 1,
+                perpage = perpage || 50,
+                search = search || '';
+            var d = $q.defer();
+            $http.post('/api/admin/polls', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getPoll: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/poll', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addPoll: function (user) {
+            return $http.post('/api/admin/poll/add', user);
+        },
+        editPoll: function (user) {
+            return $http.post('/api/admin/poll/edit', user);
+        },
+        deletePoll: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/poll/delete', { _id: _id }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

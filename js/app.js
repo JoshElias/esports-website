@@ -1274,6 +1274,24 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
+            .state('app.admin.polls.list', {
+                url: '',
+                views: {
+                    polls: {
+                        templateUrl: tpl + 'views/admin/polls.list.html',
+                        controller: 'AdminPollListCtrl',
+                        resolve: {
+                            data: ['AdminUserService', function (AdminUserService) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminUserService.getUsers(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
             .state('app.admin.subscriptions', {
                 url: '/subscriptions',
                 views: {

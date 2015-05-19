@@ -525,6 +525,47 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('AdminPollService', ['$http', '$q', function ($http, $q) {
+    return {
+        getProviders: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/polls/providers', {}).success(function (data) {
+                d.resolve(data);
+            });
+           return d.promise;
+        },
+        getPolls: function (page, perpage, search) {
+            var page = page || 1,
+                perpage = perpage || 50,
+                search = search || '';
+            var d = $q.defer();
+            $http.post('/api/admin/polls', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getPoll: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/poll', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addPoll: function (user) {
+            return $http.post('/api/admin/poll/add', user);
+        },
+        editPoll: function (user) {
+            return $http.post('/api/admin/poll/edit', user);
+        },
+        deletePoll: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/poll/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
 .factory('AdminForumService', ['$http', '$q', function ($http, $q) {
     return {
         getCategories: function () {

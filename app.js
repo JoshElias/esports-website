@@ -173,6 +173,8 @@ if (cluster.isMaster) {
     app.post('/banners', routes.frontend.getBanners(Schemas));
 
     app.post('/upload', routes.frontend.uploadToImgur(fs, imgur));
+    
+    app.post('/poll' routes.frontend.Poll(Schemas));
 
     /* frontend - requires login */
     app.post('/api/verify', routes.frontend.verify(Schemas));
@@ -267,6 +269,8 @@ if (cluster.isMaster) {
     app.post('/api/admin/upload/article', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadArticle(fs, gm, amazon));
     app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadCard(fs, gm, amazon));
     app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadDeck(fs, gm, amazon));
+    
+    app.post('api/admin/poll', routes.admin.poll(Schemas));
 
     // 404
     app.use(function (req, res, next) {

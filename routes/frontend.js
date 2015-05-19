@@ -2429,6 +2429,13 @@ module.exports = {
             });
         };
     },
+    poll: function(Schemas) {
+        return function(req, res, next) {
+        
+            
+            
+        }
+    }
     sendContact: function (Mail) {
         return function(req, res, next) {
             //TODO: ADD FUNCTIONALITY

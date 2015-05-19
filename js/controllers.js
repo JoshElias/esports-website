@@ -1833,6 +1833,125 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+.controller('AdminPollListCtrl', ['$scope', 'bootbox', 'Pagination', 'AlertService', 'AdminPollService', 'data', 
+    function ($scope, bootbox, Pagination, AlertService, AdminPollService, data) {
+        // grab alerts
+        if (AlertService.hasAlert()) {
+            $scope.success = AlertService.getSuccess();
+            AlertService.reset();
+        }
+        
+        // load users
+        $scope.polls = data.polls;
+        $scope.page = data.page;
+        $scope.perpage = data.perpage;
+        $scope.total = data.total;
+        $scope.search = data.search;
+        
+        $scope.getPolls = function () {
+            AdminPollService.getPolls($scope.page, $scope.perpage, $scope.search).then(function (data) {
+                $scope.users = data.users;
+                $scope.page = data.page;
+                $scope.total = data.total;
+            });
+        }
+        
+        $scope.searchUsers = function () {
+            $scope.page = 1;
+            $scope.getUsers();
+        }
+                
+        // pagination
+        $scope.pagination = {
+            page: function () {
+                return $scope.page;
+            },
+            perpage: function () {
+                return $scope.perpage;
+            },
+            results: function () {
+                return $scope.total;
+            },
+            setPage: function (page) {
+                $scope.page = page;
+                $scope.getUsers();
+            },
+            pagesArray: function () {
+                var pages = [],
+                    start = 1,
+                    end = this.totalPages();
+                
+                if (this.totalPages() > 5) {
+                    if (this.page() < 3) {
+                        start = 1;
+                        end = start + 4;
+                    } else if (this.page() > this.totalPages() - 2) {
+                        end = this.totalPages();
+                        start = end - 4;
+                    } else {
+                        start = this.page() - 2;
+                        end = this.page() + 2;
+                    }
+                    
+                }
+                
+                for (var i = start; i <= end; i++) {
+                    pages.push(i);
+                }
+                
+                return pages;
+            },
+            isPage: function (page) {
+                return (page === this.page());
+            },
+            totalPages: function (page) {
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
+            },
+            from: function () {
+                return (this.page() * this.perpage()) - this.perpage() + 1;
+            },
+            to: function () {
+                return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
+            }
+        };  
+        
+        // delete user
+        $scope.deleteUser = function (user) {
+            var box = bootbox.dialog({
+                title: 'Delete user: ' + user.username + '?',
+                message: 'Are you sure you want to delete the user <strong>' + user.username + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            AdminUserService.deleteUser(user._id).then(function (data) {
+                                if (data.success) {
+                                    var index = $scope.users.indexOf(user);
+                                    if (index !== -1) {
+                                        $scope.users.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: user.username + ' deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        };
+    }
+])
 .controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
     function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
         // redirect back to class pick if no data
