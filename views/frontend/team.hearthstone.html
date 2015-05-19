@@ -1,7 +1,11 @@
 <div class="container-fluid team-banner team-banner-hs">
     <img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/team/hs-logo.png" class="img-responsive" alt="Hearthstone">
 </div>
+
 <div class="container team-page">
+    <div class="adSenseBanner" ng-if="!app.user.isSubscribed()">
+        <div ads-banner></div>
+    </div>
     <div class="m-t-lg m-b-md">
         <div class="team-member" ng-class="{active: reynad}">
             <a href="#" class="team-member-photo" ng-click="reynad = !reynad"><img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/team/reynad.jpg" class="img-responsive img-circle"></a>

@@ -32,5 +32,9 @@
 
       ga('create', 'UA-57639561-1', 'auto');
     </script>
+    
+    <!--AdSense-->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!--/AdSense-->
 </body>
 </html>

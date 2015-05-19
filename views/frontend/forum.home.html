@@ -1,4 +1,9 @@
 <div class="container m-b-md">
+    
+    <div class="adSenseBanner" ng-if="!app.user.isSubscribed()">
+        <div ads-banner></div>
+    </div>
+    
     <div ng-repeat="category in categories">
         <div class="forum-category">
             {{category.title}}

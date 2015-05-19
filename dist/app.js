@@ -94,9 +94,9 @@ var app = angular.module('app', [
                 //ngProgress.complete();
                 $window.ga('send', 'pageview', $location.path());
                 // adsense refresh
-                if ($window.googletag && $window.googletag.pubads) {
-                    $window.googletag.pubads().refresh();
-                }
+                //if ($window.googletag && $window.googletag.pubads) {
+                //    $window.googletag.pubads().refresh();
+                //}
             });
             $rootScope.$on("$routeChangeError", function(evt, current, previous, rejection){
                 console.log(3);
@@ -6428,6 +6428,36 @@ angular.module('app.directives', ['ui.load'])
     return {
         templateUrl: 'views/frontend/activity/activity.forumComment.html'
     };
+})
+.directive('adsSidebar', function () {
+    return {
+        restrict: 'A',
+        replace: true,
+        templateUrl: 'views/frontend/adsense/ads.sidebar.html',
+        controller: function (){
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        }
+    };
+})
+.directive('adsSidebarHome', function () {
+    return {
+        restrict: 'A',
+        replace: true,
+        templateUrl: 'views/frontend/adsense/ads.sidebar.home.html',
+        controller: function () {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        }
+    }
+})
+.directive('adsBanner', function () {
+    return {
+        restrict: 'A',
+        replace: true,
+        templateUrl: 'views/frontend/adsense/ads.banner.html',
+        controller: function () {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        }
+    }
 })
 ;;'use strict';
 
