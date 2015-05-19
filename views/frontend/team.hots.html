@@ -2,11 +2,10 @@
     <img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/team/hots-logo.png" class="img-responsive" alt="Heroes of the Storm">
 </div>
 
+<div class="container team-page"> 
     <div class="adSenseBanner" ng-if="!app.user.isSubscribed()">
         <div ads-banner></div>
-    </div>
-
-<div class="container team-page">
+    </div>   
     <div class="m-t-lg m-b-md">
         <div class="team-member" ng-class="{active: dreadnaught}">
             <a href="#" class="team-member-photo" ng-click="dreadnaught = !dreadnaught"><img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/team/dreadnaught.jpg" class="img-responsive img-circle"></a>
