@@ -4845,7 +4845,7 @@ p.white { color: #FFF; }
 
 @media (min-width: 768px) and (max-width: 979px) {
     /* home */
-    .adSenseSidebarHome { width: 720px; height: 140px; }
+    .adSenseSidebarHome { width: 720px; height: 60px; }
     
     /* forums */
     .forum-post { padding-right: 0px; }
@@ -4857,7 +4857,7 @@ p.white { color: #FFF; }
 
 @media (max-width: 767px) {
     /* home */
-    .adSenseSidebarHome { width: auto; height: 140px; }
+    .adSenseSidebarHome { width: auto; height: 60px; }
 
     
     /* filters */
