@@ -182,7 +182,7 @@ var app = angular.module('app', [
                             dataArticles: ['ArticleService', function (ArticleService) {
                                 var klass = 'all',
                                     page = 1,
-                                    perpage = 10;
+                                    perpage = 9;
                                 return ArticleService.getArticles(klass, page, perpage);
                             }],
                             dataDecks: ['DeckService', function (DeckService) {

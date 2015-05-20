@@ -65,11 +65,11 @@ if (cluster.isMaster) {
     /* mongoose */
     mongoose.connect(config.db);
 
-    app.use('/', express.static(__dirname + '/'));
+    app.use('/', express.static(__dirname + '/public'));
 
     app.engine('dust', cons.dust);
     app.set('template_engine', 'dust');
-    app.set('views', __dirname + '/views');
+    app.set('views', __dirname + '/public/views');
     app.set('view engine', 'dust');
 
     //app.use(require('prerender-node').set('prerenderToken', 'XrpCoT3t8wTNledN5pLU'));
