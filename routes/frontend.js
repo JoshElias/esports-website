@@ -1,3 +1,5 @@
+var util = require("util");
+
 module.exports = {
     index: function (config) {
         return function (req, res, next) {
@@ -364,6 +366,8 @@ module.exports = {
     },
     bnet: function (Schemas) {
         return function (accessToken, refreshToken, profile, done) {
+
+            console.log("Profile data: "+util.inspect(profile, {showHidden:true, depth: null}));
 
             function findByBnet (callback) {
                 Schemas.User.findOne({ bnetID: profile.id }).exec(function (err, user) {

@@ -42,6 +42,10 @@ var cluster = require('cluster'),
     amazon = require('./lib/amazon'),
     Subscription = require('./lib/sub');
 
+var BNET_ID = 'n8pr85xujqyrwtpzku3jaf5z8hb6bmds';
+var BNET_SECRET = 'etmCJEh5MSbavZfq92urHHDwfvPwUd4v';
+var BNET_CALLBACK_URL = 'https://tempostorm.com/auth/bnet/callback';
+
 if (cluster.isMaster) {
 
     var numCPUs = require('os').cpus().length;
@@ -118,9 +122,9 @@ if (cluster.isMaster) {
       }, routes.frontend.twitch(Schemas, jwt, JWT_SECRET) ));
 
     passport.use(new BnetStrategy({
-        clientID: 's3ra6aupeur7rvushzbwhf3hux4tcyun',
-        clientSecret: 'SBgAxZnwxNFjppBsnesaJbFwtCn6Tjrq',
-        callbackURL: "http://localhost:1337/auth/bnet/callback"
+        clientID: BNET_ID,
+        clientSecret: BNET_SECRET,
+        callbackURL: BNET_CALLBACK_URL
       }, routes.frontend.bnet(Schemas) ));
 
     /* twitch */
@@ -136,6 +140,7 @@ if (cluster.isMaster) {
     app.get('/auth/bnet', passport.authenticate('bnet'));
     app.get('/auth/bnet/callback', passport.authenticate('bnet', { failureRedirect: '/login' }),
       function(req, res) {
+        console.log("Calling bnet callback");
         var token = jwt.sign({ _id: req.user._id.toString() }, JWT_SECRET);
         res.cookie('token', token);
         res.redirect('/');
