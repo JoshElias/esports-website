@@ -140,7 +140,6 @@ if (cluster.isMaster) {
     app.get('/auth/bnet', passport.authenticate('bnet'));
     app.get('/auth/bnet/callback', passport.authenticate('bnet', { failureRedirect: '/login' }),
       function(req, res) {
-        console.log("Calling bnet callback");
         var token = jwt.sign({ _id: req.user._id.toString() }, JWT_SECRET);
         res.cookie('token', token);
         res.redirect('/');
