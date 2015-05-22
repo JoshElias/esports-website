@@ -262,20 +262,61 @@ var app = angular.module('app', [
                     }
                 }
             })
-            .state('app.decks', {
+            .state('app.hs', {
                 abstract: true,
-                url: 'decks',
+                url: 'hearthstone',
                 views: {
                     content: {
-                        templateUrl: tpl + 'views/frontend/decks.html'
+                        templateUrl: 'views/frontend/hs.html'
                     }
                 }
             })
-            .state('app.decks.list', {
+            .state('app.hs.home', {
+                url: '',
+                views: {
+                    hs: {
+                        templateUrl: tpl + 'views/frontend/hs.home.html',
+                        controller: 'HearthstoneHomeCtrl',
+                        resolve: {
+                            dataArticles: ['ArticleService', function (ArticleService) {
+                                var klass = 'all',
+                                    page = 1,
+                                    perpage = 9;
+                                return ArticleService.getArticles('hs', klass, page, perpage);
+                            }],
+                            dataDecks: ['DeckService', function (DeckService) {
+                                var klass = 'all',
+                                    page = 1,
+                                    perpage = 10;
+                                return DeckService.getDecksCommunity(klass, page, perpage);
+                            }],
+                            dataDecksFeatured: ['DeckService', function (DeckService) {
+                                var klass = 'all',
+                                    page = 1,
+                                    perpage = 10;
+                                return DeckService.getDecksFeatured(klass, page, perpage);
+                            }],
+                            dataBanners: ['BannerService', function (BannerService) {
+                                return BannerService.getBanners('hs');
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.hs.decks', {
+                abstract: true,
+                url: '/decks',
+                views: {
+                    hs: {
+                        templateUrl: tpl + 'views/frontend/hs.decks.html'
+                    }
+                }
+            })
+            .state('app.hs.decks.list', {
                 url: '?p&s&k&a&o',
                 views: {
                     decks: {
-                        templateUrl: tpl + 'views/frontend/decks.list.html',
+                        templateUrl: tpl + 'views/frontend/hs.decks.list.html',
                         controller: 'DecksCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
@@ -294,11 +335,11 @@ var app = angular.module('app', [
                 seo: { title: 'Decks', description: 'Hearthstone decks created by the community and TempoStorm content providers.', keywords: '' },
                 og: true
             })
-            .state('app.decks.deck', {
+            .state('app.hs.decks.deck', {
                 url: '/:slug',
                 views: {
                     decks: {
-                        templateUrl: tpl + 'views/frontend/decks.deck.html',
+                        templateUrl: tpl + 'views/frontend/hs.decks.deck.html',
                         controller: 'DeckCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
@@ -309,29 +350,29 @@ var app = angular.module('app', [
                     }
                 }
             })
-            .state('app.deckBuilder', {
+            .state('app.hs.deckBuilder', {
                 abstract: true,
-                url: 'deck-builder',
+                url: '/deck-builder',
                 views: {
-                    content: {
-                        templateUrl: tpl + 'views/frontend/deck-builder.html'
+                    hs: {
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.html'
                     }
                 }
             })
-            .state('app.deckBuilder.class', {
+            .state('app.hs.deckBuilder.class', {
                 url: '',
                 views: {
                     deckBuilder: {
-                        templateUrl: tpl + 'views/frontend/deck-builder.class.html'
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.class.html'
                     }
                 },
                 seo: { title: 'Deck Builder', description: 'Deck building tool for Hearthstone.', keywords: '' }
             })
-            .state('app.deckBuilder.build', {
+            .state('app.hs.deckBuilder.build', {
                 url: '/:playerClass',
                 views: {
                     deckBuilder: {
-                        templateUrl: tpl + 'views/frontend/deck-builder.build.html',
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.build.html',
                         controller: 'DeckBuilderCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
@@ -342,11 +383,11 @@ var app = angular.module('app', [
                     }
                 }
             })
-            .state('app.deckBuilder.edit', {
+            .state('app.hs.deckBuilder.edit', {
                 url: '/edit/:slug',
                 views: {
                     deckBuilder: {
-                        templateUrl: tpl + 'views/frontend/deck-builder.edit.html',
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.edit.html',
                         controller: 'DeckEditCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
@@ -452,6 +493,109 @@ var app = angular.module('app', [
                         }
                     }
                 }
+            })
+            .state('app.hots.guideBuilder', {
+                abstract: true,
+                url: '/guide-builder',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.html'
+                    }
+                }
+            })
+            .state('app.hots.guideBuilder.step1', {
+                url: '',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.step1.html'
+                    }
+                }
+            })
+            .state('app.hots.guideBuilder.hero', {
+                url: '/hero',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.hero.html',
+                        controller: 'HOTSGuideBuilderHeroCtrl',
+                        resolve: {
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
+                            }],
+                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getMaps();
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.hots.guideBuilder.map', {
+                url: '/map',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.map.html',
+                        controller: 'HOTSGuideBuilderMapCtrl',
+                        resolve: {
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
+                            }],
+                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getMaps();
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.hots.guideBuilder.edit', {
+                abstract: true,
+                url: '/:slug',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.html',
+                        resolve: {
+                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                var slug = $stateParams.slug;
+                                return HOTSGuideService.getGuide(slug);
+                            }],
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getAllHeroes();
+                            }],
+                            dataMaps: ['MapService', function (MapService) {
+                                return MapService.getAllMaps();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true }
+            })
+            .state('app.hots.guideBuilder.edit.step1', {
+                url: '',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.step1.html',
+                        controller: 'HOTSGuideBuilderEditStep1Ctrl'
+                    }
+                },
+                access: { auth: true }
+            })
+            .state('app.hots.guides.edit.hero', {
+                url: '/hero',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.hero.html',
+                        controller: 'HOTSGuideBuilderEditHeroCtrl'
+                    }
+                },
+                access: { auth: true }
+            })
+            .state('app.hots.guides.edit.map', {
+                url: '/map',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.map.html',
+                        controller: 'HOTSGuideBuilderEditMapCtrl'
+                    }
+                },
+                access: { auth: true }
             })
             .state('app.forum', {
                 abstract: true,
@@ -1752,6 +1896,64 @@ angular.module('app.controllers', ['ngCookies'])
     }
 ])
 .controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataDecks', 'dataDecksFeatured', 'ArticleService', 'DeckService', 
+    function ($scope, dataBanners, dataArticles, dataDecks, dataDecksFeatured, ArticleService, DeckService) {
+        // data
+        $scope.articles = dataArticles.articles;
+        $scope.decks = dataDecks.decks;
+        $scope.decksFeatured = dataDecksFeatured.decks;
+        $scope.loading = {
+            articles: false,
+            community: false,
+            featured: false
+        };
+        
+        // banner
+        $scope.banner = {
+            current: 0,
+            direction: 'left',
+            slides: dataBanners.banners,
+            setCurrent: function (current) {
+                this.direction = 'right';
+                this.current = current;
+            },
+            next: function () {
+                this.direction = 'right';
+                this.current = (this.current < (this.slides.length - 1)) ? ++this.current : 0;
+            },
+            prev: function () {
+                this.direction = 'left';
+                this.current = (this.current > 0) ? --this.current : this.slides.length - 1;
+            }
+        };
+        
+        // content
+        $scope.klass = 'all';
+        $scope.setKlass = function (klass) {
+            $scope.klass = klass;
+            $scope.loading = {
+                articles: true,
+                community: true,
+                featured: true
+            };
+            
+            ArticleService.getArticles('hs', klass, 1, 9).then(function (data) {
+                $scope.articles = data.articles;
+                $scope.loading.articles = false;
+            });
+
+            DeckService.getDecksCommunity(klass, 1, 10).then(function (data) {
+                $scope.decks = data.decks;
+                $scope.loading.community = false;
+            });
+            
+            DeckService.getDecksFeatured(klass, 1, 10).then(function (data) {
+                $scope.decksFeatured = data.decks;
+                $scope.loading.featured = false;
+            });
+        };
+    }
+])
+.controller('HearthstoneHomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataDecks', 'dataDecksFeatured', 'ArticleService', 'DeckService', 
     function ($scope, dataBanners, dataArticles, dataDecks, dataDecksFeatured, ArticleService, DeckService) {
         // data
         $scope.articles = dataArticles.articles;
@@ -3473,7 +3675,7 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data', 
     function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
         // redirect back to class pick if no data
-        if (!data || !data.success) { $state.transitionTo('app.deckBuilder.class'); return false; }
+        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
         
         // set default tab page
         $scope.step = 1;
@@ -3669,7 +3871,7 @@ angular.module('app.controllers', ['ngCookies'])
                 DeckBuilder.saveDeck($scope.deck).success(function (data) {
                     if (data.success) {
                         $scope.app.settings.deck = null;
-                        $state.transitionTo('app.decks.deck', { slug: data.slug });
+                        $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
                     } else {
                         $scope.errors = data.errors;
                         $scope.showError = true;
@@ -3860,7 +4062,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.updateDeck = function () {
             DeckBuilder.updateDeck($scope.deck).success(function (data) {
                 if (data.success) {
-                    $state.transitionTo('app.decks.deck', { slug: data.slug });
+                    $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
                 } else {
                     $scope.errors = data.errors;
                     $scope.showError = true;
@@ -4202,7 +4404,7 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('DecksCtrl', ['$scope', '$state', 'Hearthstone', 'DeckService', 'data', 
     function ($scope, $state, Hearthstone, DeckService, data) {
-        if (!data.success) { return $state.transitionTo('app.decks.list'); }
+        if (!data.success) { return $state.transitionTo('app.hs.decks.list'); }
         
         // decks
         $scope.decks = data.decks;
@@ -4301,7 +4503,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.loading = true;
-            $state.transitionTo('app.decks.list', params);
+            $state.transitionTo('app.hs.decks.list', params);
         }
         
         // pagination
@@ -4361,7 +4563,7 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
     function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, UserService, DeckService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
-        if (!data || !data.success) { return $state.go('app.decks.list'); }
+        if (!data || !data.success) { return $state.go('app.hs.decks.list'); }
 
         // load deck
         $scope.deck = data.deck;
@@ -6957,6 +7159,507 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         }
+    }
+])
+.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+        // create guide
+        $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
+        $scope.$watch('guide', function(){
+            $scope.app.settings.guide = $scope.guide;
+        }, true);
+
+        // heroes
+        $scope.heroes = dataHeroes.heroes;
+        
+        // maps
+        $scope.maps = dataMaps.maps;
+        
+        // steps
+        $scope.step = 2;
+        $scope.prevStep = function () {
+            if ($scope.step == 2) { return $state.go('app.hots.guideBuilder.step1', {}); }
+            if ($scope.step > 1) $scope.step = $scope.step - 1;
+        }
+        $scope.nextStep = function () {
+            if ($scope.step < 7) $scope.step = $scope.step + 1;
+        }
+        
+        $scope.stepOne = function () {
+            $state.go('app.hots.guideBuilder.step1', {});
+        };
+        
+        // draw hero rows
+        var heroRows = [9,10,9,8];
+        $scope.heroRows = [];
+        var index = 0;
+        for (var row = 0; row < heroRows.length; row++) {
+            var heroes = [];
+            for (var i = 0; i < heroRows[row]; i++) {
+                if (dataHeroes.heroes[index]) {
+                    heroes.push(dataHeroes.heroes[index]);
+                } else {
+                    heroes.push({});
+                }
+                index++;
+            }
+            $scope.heroRows.push(heroes);
+        }
+        
+        $scope.tooltipPos = function (row, $index) {
+            return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
+        };
+        
+        $scope.tooltipPosTalent = function ($index) {
+            return ($index === 2) ? 'left' : 'right';
+        };        
+        
+        // draw map rows
+        var mapRows = [4,3];
+        $scope.mapRows = [];
+        var index = 0;
+        for (var row = 0; row < mapRows.length; row++) {
+            var maps = [];
+            for (var i = 0; i < mapRows[row]; i++) {
+                if (dataMaps.maps[index]) {
+                    maps.push(dataMaps.maps[index]);
+                }
+                index++;
+            }
+            $scope.mapRows.push(maps);
+        }
+        
+        // talents
+        $scope.getTalents = function (hero) {
+            return $scope.guide.sortTalents(hero);
+        }
+        
+        // summernote options
+        $scope.options = {
+          height: 100,
+          toolbar: [
+            ['style', ['style']],
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['format', ['hr']],
+            ['misc', ['undo', 'redo']]
+          ]
+        };
+
+        // premium
+        $scope.premiumTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isPremium = function () {
+            var premium = $scope.guide.premium.isPremium;
+            for (var i = 0; i < $scope.premiumTypes.length; i++) {
+                if ($scope.premiumTypes[i].value === premium) {
+                    return $scope.premiumTypes[i].text;
+                }
+            }
+        }
+        
+        // featured
+        $scope.featuredTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isFeatured = function () {
+            var featured = $scope.guide.featured;
+            for (var i = 0; i < $scope.featuredTypes.length; i++) {
+                if ($scope.featuredTypes[i].value === featured) {
+                    return $scope.featuredTypes[i].text;
+                }
+            }
+        }
+        
+        // save guide
+        $scope.saveGuide = function () {
+            if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
+                return false;
+            }
+            
+            HOTSGuideService.addGuide($scope.guide).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    $scope.app.settings.guide = null;
+                    $state.go('app.hots.guides.guide', { slug: data.slug });
+                }
+            });
+        };
+    }
+])
+.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+        // create guide
+        $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
+        $scope.$watch('guide', function(){
+            $scope.app.settings.guide = $scope.guide;
+        }, true);
+
+        // heroes
+        $scope.heroes = dataHeroes.heroes;
+        
+        // maps
+        $scope.maps = dataMaps.maps;
+        
+        // steps
+        $scope.step = 2;
+        $scope.prevStep = function () {
+            if ($scope.step == 2) { return $state.go('app.hots.guideBuilder.step1', {}); }
+            if ($scope.step > 1) $scope.step = $scope.step - 1;
+        }
+        $scope.nextStep = function () {
+            if ($scope.step < 5) $scope.step = $scope.step + 1;
+        }
+        
+        $scope.stepOne = function () {
+            $state.go('app.hots.guideBuilder.step1', {});
+        };
+        
+        // draw map rows
+        var mapRows = [4,3];
+        $scope.mapRows = [];
+        var index = 0;
+        for (var row = 0; row < mapRows.length; row++) {
+            var maps = [];
+            for (var i = 0; i < mapRows[row]; i++) {
+                if (dataMaps.maps[index]) {
+                    maps.push(dataMaps.maps[index]);
+                }
+                index++;
+            }
+            $scope.mapRows.push(maps);
+        }
+
+        $scope.tooltipPos = function (row, $index) {
+            return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
+        };
+        
+        // summernote options
+        $scope.options = {
+          height: 100,
+          toolbar: [
+            ['style', ['style']],
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['format', ['hr']],
+            ['misc', ['undo', 'redo']]
+          ]
+        };
+
+        // premium
+        $scope.premiumTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isPremium = function () {
+            var premium = $scope.guide.premium.isPremium;
+            for (var i = 0; i < $scope.premiumTypes.length; i++) {
+                if ($scope.premiumTypes[i].value === premium) {
+                    return $scope.premiumTypes[i].text;
+                }
+            }
+        }
+        
+        // featured
+        $scope.featuredTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isFeatured = function () {
+            var featured = $scope.guide.featured;
+            for (var i = 0; i < $scope.featuredTypes.length; i++) {
+                if ($scope.featuredTypes[i].value === featured) {
+                    return $scope.featuredTypes[i].text;
+                }
+            }
+        }
+        
+        // save guide
+        $scope.saveGuide = function () {
+            if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
+                return false;
+            }
+            
+            HOTSGuideService.addGuide($scope.guide).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    $scope.app.settings.guide = null;
+                    $state.go('app.hots.guides.guide', { slug: data.slug });
+                }
+            });
+        };
+    }
+])
+.controller('HOTSGuideBuilderEditStep1Ctrl', ['$scope', 'dataGuide', 
+    function ($scope, dataGuide) {
+        $scope.guide = dataGuide.guide;
+    }
+])
+.controller('HOTSGuideBuilderEditHeroCtrl', ['$scope', '$state', '$window', 'GuideBuilder', 'HOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, GuideBuilder, HOTSGuideService, dataGuide, dataHeroes, dataMaps) {
+        // create guide
+        $scope.guide = GuideBuilder.new('hero', dataGuide.guide);
+        
+        // heroes
+        $scope.heroes = dataHeroes.heroes;
+        
+        // maps
+        $scope.maps = dataMaps.maps;
+        
+        // steps
+        $scope.step = 2;
+        $scope.prevStep = function () {
+            if ($scope.step == 2) { return $state.go('app.hots.guideBuilder.edit.step1', { slug: $scope.guide.slug }); }
+            if ($scope.step > 1) $scope.step = $scope.step - 1;
+        }
+        $scope.nextStep = function () {
+            if ($scope.step < 7) $scope.step = $scope.step + 1;
+        }
+        
+        $scope.stepOne = function () {
+            $state.go('app.hots.guideBuilder.edit.step1', { slug: $scope.guide.slug });
+        };
+        
+        // draw hero rows
+        var heroRows = [9,10,9,8];
+        $scope.heroRows = [];
+        var index = 0;
+        for (var row = 0; row < heroRows.length; row++) {
+            var heroes = [];
+            for (var i = 0; i < heroRows[row]; i++) {
+                if (dataHeroes.heroes[index]) {
+                    heroes.push(dataHeroes.heroes[index]);
+                } else {
+                    heroes.push({});
+                }
+                index++;
+            }
+            $scope.heroRows.push(heroes);
+        }
+        
+        // draw map rows
+        var mapRows = [4,3];
+        $scope.mapRows = [];
+        var index = 0;
+        for (var row = 0; row < mapRows.length; row++) {
+            var maps = [];
+            for (var i = 0; i < mapRows[row]; i++) {
+                if (dataMaps.maps[index]) {
+                    maps.push(dataMaps.maps[index]);
+                }
+                index++;
+            }
+            $scope.mapRows.push(maps);
+        }
+
+        $scope.tooltipPos = function (row, $index) {
+            return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
+        };
+        
+        $scope.tooltipPosTalent = function ($index) {
+            return ($index === 2) ? 'left' : 'right';
+        };
+
+        // talents
+        $scope.getTalents = function (hero) {
+            return $scope.guide.sortTalents(hero);
+        }
+        
+        $scope.hasTalent = function (hero, talent) {
+            return ($scope.guide.hasTalent(hero, talent)) ? ' active' : '';
+        }
+        
+        $scope.hasAnyTalent = function (hero, talent) {
+            return ($scope.guide.hasAnyTalent(hero, talent)) ? ' tier-selected' : '';
+        }
+        
+        // summernote options
+        $scope.options = {
+          height: 100,
+          toolbar: [
+            ['style', ['style']],
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['format', ['hr']],
+            ['misc', ['undo', 'redo']]
+          ]
+        };
+
+        // premium
+        $scope.premiumTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isPremium = function () {
+            var premium = $scope.guide.premium.isPremium;
+            for (var i = 0; i < $scope.premiumTypes.length; i++) {
+                if ($scope.premiumTypes[i].value === premium) {
+                    return $scope.premiumTypes[i].text;
+                }
+            }
+        }
+        
+        // featured
+        $scope.featuredTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isFeatured = function () {
+            var featured = $scope.guide.featured;
+            for (var i = 0; i < $scope.featuredTypes.length; i++) {
+                if ($scope.featuredTypes[i].value === featured) {
+                    return $scope.featuredTypes[i].text;
+                }
+            }
+        }
+        
+        // save guide
+        $scope.saveGuide = function () {
+            if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
+                return false;
+            }
+            
+            HOTSGuideService.editGuide($scope.guide).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    $state.go('app.hots.guides.guide', { slug: data.slug });
+                }
+            });
+        };
+    }
+])
+.controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'GuideBuilder', 'HOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, GuideBuilder, HOTSGuideService, dataGuide, dataHeroes, dataMaps) {
+        // create guide
+        $scope.guide = GuideBuilder.new('map', dataGuide.guide);
+        
+        // heroes
+        $scope.heroes = dataHeroes.heroes;
+        
+        // maps
+        $scope.maps = dataMaps.maps;
+        
+        // steps
+        $scope.step = 2;
+        $scope.prevStep = function () {
+            if ($scope.step == 2) { return $state.go('app.hots.guideBuilder.edit.step1', { slug: $scope.guide.slug }); }
+            if ($scope.step > 1) $scope.step = $scope.step - 1;
+        }
+        $scope.nextStep = function () {
+            if ($scope.step < 5) $scope.step = $scope.step + 1;
+        }
+        
+        $scope.stepOne = function () {
+            $state.go('app.hots.guideBuilder.edit.step1', { slug: $scope.guide.slug });
+        };
+        
+        // draw map rows
+        var mapRows = [4,3];
+        $scope.mapRows = [];
+        var index = 0;
+        for (var row = 0; row < mapRows.length; row++) {
+            var maps = [];
+            for (var i = 0; i < mapRows[row]; i++) {
+                if (dataMaps.maps[index]) {
+                    maps.push(dataMaps.maps[index]);
+                }
+                index++;
+            }
+            $scope.mapRows.push(maps);
+        }
+
+        $scope.tooltipPos = function (row, $index) {
+            return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
+        };
+        
+        // summernote options
+        $scope.options = {
+          height: 100,
+          toolbar: [
+            ['style', ['style']],
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['format', ['hr']],
+            ['misc', ['undo', 'redo']]
+          ]
+        };
+
+        // premium
+        $scope.premiumTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isPremium = function () {
+            var premium = $scope.guide.premium.isPremium;
+            for (var i = 0; i < $scope.premiumTypes.length; i++) {
+                if ($scope.premiumTypes[i].value === premium) {
+                    return $scope.premiumTypes[i].text;
+                }
+            }
+        }
+        
+        // featured
+        $scope.featuredTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isFeatured = function () {
+            var featured = $scope.guide.featured;
+            for (var i = 0; i < $scope.featuredTypes.length; i++) {
+                if ($scope.featuredTypes[i].value === featured) {
+                    return $scope.featuredTypes[i].text;
+                }
+            }
+        }
+        
+        // save guide
+        $scope.saveGuide = function () {
+            if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
+                return false;
+            }
+            
+            HOTSGuideService.editGuide($scope.guide).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    $state.go('app.hots.guides.guide', { slug: data.slug });
+                }
+            });
+        };
     }
 ])
 .controller('TeamCtrl', ['$scope',

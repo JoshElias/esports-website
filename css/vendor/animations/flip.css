@@ -1,0 +1,132 @@
+/* MegaNavbar v2.2.0 (http://www.MegaNavbar.com) Copyright 2014 MegaNavbar.com. All Rights Reserved.
+** Licensed under Regular License (http://codecanyon.net/licenses/regular) or Extended License (http://codecanyon.net/licenses/extended)
+** We will take legal action against those who copy our HTML content, CSS style sheets and JavaScript functions without a license.
+*/
+
+@keyframes FlipHorizontal{
+	from{-webkit-transform:rotateY(-180deg);-ms-transform:rotateY(-180deg);transform:rotateY(-180deg)}
+	to{-webkit-transform:rotateY(0deg);-ms-transform:rotateY(0deg);transform:rotateY(0deg)}
+}
+@-webkit-keyframes FlipHorizontal{
+	from{-webkit-transform:rotateY(-180deg);transform:rotateY(-180deg)}
+	to{-webkit-transform:rotateY(0deg);transform:rotateY(0deg)}
+}
+@keyframes FlipVertical{
+	from{-webkit-transform:rotateX(-180deg);-ms-transform:rotateX(-180deg);transform:rotateX(-180deg)}
+	to{-webkit-transform:rotateX(0deg);-ms-transform:rotateX(0deg);transform:rotateX(0deg)}
+}
+@-webkit-keyframes FlipVertical{
+	from{-webkit-transform:rotateX(-180deg);transform:rotateX(-180deg)}
+	to{-webkit-transform:rotateX(0deg);transform:rotateX(0deg)}
+}
+@keyframes FlipLeftToRightFrontLong{
+	from{-webkit-transform:perspective(3500px) rotateY(-180deg);-ms-transform:perspective(3500px) rotateY(-180deg);transform:perspective(3500px) rotateY(-180deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);-ms-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@-webkit-keyframes FlipLeftToRightFrontLong{
+	from{-webkit-transform:perspective(3500px) rotateY(-180deg);transform:perspective(3500px) rotateY(-180deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@keyframes flipLeftToRightBackLong{
+	from{-webkit-transform:perspective(3500px) rotateY(180deg);-ms-transform:perspective(3500px) rotateY(180deg);transform:perspective(3500px) rotateY(180deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);-ms-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@-webkit-keyframes flipLeftToRightBackLong{
+	from{-webkit-transform:perspective(3500px) rotateY(180deg);transform:perspective(3500px) rotateY(180deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@keyframes flipRightToLeftFrontLong{
+	from{-webkit-transform:perspective(3500px) rotateY(180deg);-ms-transform:perspective(3500px) rotateY(180deg);transform:perspective(3500px) rotateY(180deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);-ms-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@-webkit-keyframes flipRightToLeftFrontLong{
+	from{-webkit-transform:perspective(3500px) rotateY(180deg);transform:perspective(3500px) rotateY(180deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@keyframes flipRightToLeftBackLong{
+	from{-webkit-transform:perspective(3500px) rotateY(-180deg);-ms-transform:perspective(3500px) rotateY(-180deg);transform:perspective(3500px) rotateY(-180deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);-ms-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@-webkit-keyframes flipRightToLeftBackLong{
+	from{-webkit-transform:perspective(3500px) rotateY(-180deg);transform:perspective(3500px) rotateY(-180deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@keyframes FlipLeftToRightFrontMedium{
+	from{-webkit-transform:perspective(3500px) rotateY(-91deg);-ms-transform:perspective(3500px) rotateY(-91deg);transform:perspective(3500px) rotateY(-91deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);-ms-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@-webkit-keyframes FlipLeftToRightFrontMedium{
+	from{-webkit-transform:perspective(3500px) rotateY(-91deg);transform:perspective(3500px) rotateY(-91deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@keyframes flipLeftToRightBackMedium{
+	from{-webkit-transform:perspective(3500px) rotateY(91deg);-ms-transform:perspective(3500px) rotateY(91deg);transform:perspective(3500px) rotateY(91deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);-ms-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@-webkit-keyframes flipLeftToRightBackMedium{
+	from{-webkit-transform:perspective(3500px) rotateY(91deg);transform:perspective(3500px) rotateY(91deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@keyframes flipRightToLeftFrontMedium{
+	from{-webkit-transform:perspective(3500px) rotateY(91deg);-ms-transform:perspective(3500px) rotateY(91deg);transform:perspective(3500px) rotateY(91deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);-ms-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@-webkit-keyframes flipRightToLeftFrontMedium{
+	from{-webkit-transform:perspective(3500px) rotateY(91deg);transform:perspective(3500px) rotateY(91deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@keyframes flipRightToLeftBackMedium{
+	from{-webkit-transform:perspective(3500px) rotateY(-91deg);-ms-transform:perspective(3500px) rotateY(-91deg);transform:perspective(3500px) rotateY(-91deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);-ms-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@-webkit-keyframes flipRightToLeftBackMedium{
+	from{-webkit-transform:perspective(3500px) rotateY(-91deg);transform:perspective(3500px) rotateY(-91deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@keyframes FlipLeftToRightFrontShort{
+	from{-webkit-transform:perspective(3500px) rotateY(-45deg);-ms-transform:perspective(3500px) rotateY(-45deg);transform:perspective(3500px) rotateY(-45deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);-ms-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@-webkit-keyframes FlipLeftToRightFrontShort{
+	from{-webkit-transform:perspective(3500px) rotateY(-45deg);transform:perspective(3500px) rotateY(-45deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@keyframes flipLeftToRightBackShort{
+	from{-webkit-transform:perspective(3500px) rotateY(45deg);-ms-transform:perspective(3500px) rotateY(45deg);transform:perspective(3500px) rotateY(45deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);-ms-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@-webkit-keyframes flipLeftToRightBackShort{
+	from{-webkit-transform:perspective(3500px) rotateY(45deg);transform:perspective(3500px) rotateY(45deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@keyframes flipRightToLeftFrontShort{
+	from{-webkit-transform:perspective(3500px) rotateY(45deg);-ms-transform:perspective(3500px) rotateY(45deg);transform:perspective(3500px) rotateY(45deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);-ms-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@-webkit-keyframes flipRightToLeftFrontShort{
+	from{-webkit-transform:perspective(3500px) rotateY(45deg);transform:perspective(3500px) rotateY(45deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@keyframes flipRightToLeftBackShort{
+	from{-webkit-transform:perspective(3500px) rotateY(-45deg);-ms-transform:perspective(3500px) rotateY(-45deg);transform:perspective(3500px) rotateY(-45deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);-ms-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+@-webkit-keyframes flipRightToLeftBackShort{
+	from{-webkit-transform:perspective(3500px) rotateY(-45deg);transform:perspective(3500px) rotateY(-45deg)}
+	to{-webkit-transform:perspective(3500px) rotateY(0deg);transform:perspective(3500px) rotateY(0deg)}
+}
+
+.navbar .navbar-nav .dropdown-menu.FlipHorizontal,.navbar .navbar-nav.FlipHorizontal .dropdown-menu,.navbar.FlipHorizontal .navbar-nav .dropdown-menu{-webkit-transform-origin:50%;transform-origin:50%;-webkit-animation-name:FlipHorizontal;animation-name:FlipHorizontal}
+.navbar .navbar-nav .dropdown-menu.FlipVertical,.navbar .navbar-nav.FlipVertical .dropdown-menu,.navbar.FlipVertical .navbar-nav .dropdown-menu{-webkit-transform-origin:50%;transform-origin:50%;-webkit-animation-name:FlipVertical;animation-name:FlipVertical}
+.navbar .navbar-nav .dropdown-menu.FlipLeftToRightFrontLong,.navbar .navbar-nav.FlipLeftToRightFrontLong .dropdown-menu,.navbar.FlipLeftToRightFrontLong .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.FlipStartToEndFrontLong,.navbar .navbar-left.FlipStartToEndFrontLong .dropdown-menu,.navbar.FlipStartToEndFrontLong .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.FlipEndToStartFrontLong,.navbar .navbar-right.FlipEndToStartFrontLong .dropdown-menu,.navbar.FlipEndToStartFrontLong .navbar-right .dropdown-menu{-webkit-transform-origin:0;transform-origin:0;-webkit-animation-name:FlipLeftToRightFrontLong;animation-name:FlipLeftToRightFrontLong}
+.navbar .navbar-nav .dropdown-menu.flipLeftToRightBackLong,.navbar .navbar-nav.flipLeftToRightBackLong .dropdown-menu,.navbar.flipLeftToRightBackLong .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.flipStartToEndBackLong,.navbar .navbar-left.flipStartToEndBackLong .dropdown-menu,.navbar.flipStartToEndBackLong .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.flipEndToStartBackLong,.navbar .navbar-right.flipEndToStartBackLong .dropdown-menu,.navbar.flipEndToStartBackLong .navbar-right .dropdown-menu{-webkit-transform-origin:0;transform-origin:0;-webkit-animation-name:flipLeftToRightBackLong;animation-name:flipLeftToRightBackLong}
+.navbar .navbar-nav .dropdown-menu.flipRightToLeftFrontLong,.navbar .navbar-nav.flipRightToLeftFrontLong .dropdown-menu,.navbar.flipRightToLeftFrontLong .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.flipEndToStartFrontLong,.navbar .navbar-left.flipEndToStartFrontLong .dropdown-menu,.navbar.flipEndToStartFrontLong .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.flipStartToEndFrontLong,.navbar .navbar-right.flipStartToEndFrontLong .dropdown-menu,.navbar.flipStartToEndFrontLong .navbar-right .dropdown-menu{-webkit-transform-origin:100%;transform-origin:100%;-webkit-animation-name:flipRightToLeftFrontLong;animation-name:flipRightToLeftFrontLong}
+.navbar .navbar-nav .dropdown-menu.flipRightToLeftBackLong,.navbar .navbar-nav.flipRightToLeftBackLong .dropdown-menu,.navbar.flipRightToLeftBackLong .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.flipEndToStartBackLong,.navbar .navbar-left.flipEndToStartBackLong .dropdown-menu,.navbar.flipEndToStartBackLong .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.flipStartToEndBackLong,.navbar .navbar-right.flipStartToEndBackLong .dropdown-menu,.navbar.flipStartToEndBackLong .navbar-right .dropdown-menu{-webkit-transform-origin:100%;transform-origin:100%;-webkit-animation-name:flipRightToLeftBackLong;animation-name:flipRightToLeftBackLong}
+.navbar .navbar-nav .dropdown-menu.FlipLeftToRightFrontMedium,.navbar .navbar-nav.FlipLeftToRightFrontMedium .dropdown-menu,.navbar.FlipLeftToRightFrontMedium .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.FlipStartToEndFrontMedium,.navbar .navbar-left.FlipStartToEndFrontMedium .dropdown-menu,.navbar.FlipStartToEndFrontMedium .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.FlipEndToStartFrontMedium,.navbar .navbar-right.FlipEndToStartFrontMedium .dropdown-menu,.navbar.FlipEndToStartFrontMedium .navbar-right .dropdown-menu{-webkit-transform-origin:0;transform-origin:0;-webkit-animation-name:FlipLeftToRightFrontMedium;animation-name:FlipLeftToRightFrontMedium}
+.navbar .navbar-nav .dropdown-menu.flipLeftToRightBackMedium,.navbar .navbar-nav.flipLeftToRightBackMedium .dropdown-menu,.navbar.flipLeftToRightBackMedium .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.flipStartToEndBackMedium,.navbar .navbar-left.flipStartToEndBackMedium .dropdown-menu,.navbar.flipStartToEndBackMedium .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.flipEndToStartBackMedium,.navbar .navbar-right.flipEndToStartBackMedium .dropdown-menu,.navbar.flipEndToStartBackMedium .navbar-right .dropdown-menu{-webkit-transform-origin:0;transform-origin:0;-webkit-animation-name:flipLeftToRightBackMedium;animation-name:flipLeftToRightBackMedium}
+.navbar .navbar-nav .dropdown-menu.flipRightToLeftFrontMedium,.navbar .navbar-nav.flipRightToLeftFrontMedium .dropdown-menu,.navbar.flipRightToLeftFrontMedium .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.flipEndToStartFrontMedium,.navbar .navbar-left.flipEndToStartFrontMedium .dropdown-menu,.navbar.flipEndToStartFrontMedium .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.flipStartToEndFrontMedium,.navbar .navbar-right.flipStartToEndFrontMedium .dropdown-menu,.navbar.flipStartToEndFrontMedium .navbar-right .dropdown-menu{-webkit-transform-origin:100%;transform-origin:100%;-webkit-animation-name:flipRightToLeftFrontMedium;animation-name:flipRightToLeftFrontMedium}
+.navbar .navbar-nav .dropdown-menu.flipRightToLeftBackMedium,.navbar .navbar-nav.flipRightToLeftBackMedium .dropdown-menu,.navbar.flipRightToLeftBackMedium .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.flipEndToStartBackMedium,.navbar .navbar-left.flipEndToStartBackMedium .dropdown-menu,.navbar.flipEndToStartBackMedium .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.flipStartToEndBackMedium,.navbar .navbar-right.flipStartToEndBackMedium .dropdown-menu,.navbar.flipStartToEndBackMedium .navbar-right .dropdown-menu{-webkit-transform-origin:100%;transform-origin:100%;-webkit-animation-name:flipRightToLeftBackMedium;animation-name:flipRightToLeftBackMedium}
+.navbar .navbar-nav .dropdown-menu.FlipLeftToRightFrontShort,.navbar .navbar-nav.FlipLeftToRightFrontShort .dropdown-menu,.navbar.FlipLeftToRightFrontShort .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.FlipStartToEndFrontShort,.navbar .navbar-left.FlipStartToEndFrontShort .dropdown-menu,.navbar.FlipStartToEndFrontShort .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.FlipEndToStartFrontShort,.navbar .navbar-right.FlipEndToStartFrontShort .dropdown-menu,.navbar.FlipEndToStartFrontShort .navbar-right .dropdown-menu{-webkit-transform-origin:0;transform-origin:0;-webkit-animation-name:FlipLeftToRightFrontShort;animation-name:FlipLeftToRightFrontShort}
+.navbar .navbar-nav .dropdown-menu.flipLeftToRightBackShort,.navbar .navbar-nav.flipLeftToRightBackShort .dropdown-menu,.navbar.flipLeftToRightBackShort .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.flipStartToEndBackShort,.navbar .navbar-left.flipStartToEndBackShort .dropdown-menu,.navbar.flipStartToEndBackShort .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.flipEndToStartBackShort,.navbar .navbar-right.flipEndToStartBackShort .dropdown-menu,.navbar.flipEndToStartBackShort .navbar-right .dropdown-menu{-webkit-transform-origin:0;transform-origin:0;-webkit-animation-name:flipLeftToRightBackShort;animation-name:flipLeftToRightBackShort}
+.navbar .navbar-nav .dropdown-menu.flipRightToLeftFrontShort,.navbar .navbar-nav.flipRightToLeftFrontShort .dropdown-menu,.navbar.flipRightToLeftFrontShort .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.flipEndToStartFrontShort,.navbar .navbar-left.flipEndToStartFrontShort .dropdown-menu,.navbar.flipEndToStartFrontShort .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.flipStartToEndFrontShort,.navbar .navbar-right.flipStartToEndFrontShort .dropdown-menu,.navbar.flipStartToEndFrontShort .navbar-right .dropdown-menu{-webkit-transform-origin:100%;transform-origin:100%;-webkit-animation-name:flipRightToLeftFrontShort;animation-name:flipRightToLeftFrontShort}
+.navbar .navbar-nav .dropdown-menu.flipRightToLeftBackShort,.navbar .navbar-nav.flipRightToLeftBackShort .dropdown-menu,.navbar.flipRightToLeftBackShort .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.flipEndToStartBackShort,.navbar .navbar-left.flipEndToStartBackShort .dropdown-menu,.navbar.flipEndToStartBackShort .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.flipStartToEndBackShort,.navbar .navbar-right.flipStartToEndBackShort .dropdown-menu,.navbar.flipStartToEndBackShort .navbar-right .dropdown-menu{-webkit-transform-origin:100%;transform-origin:100%;-webkit-animation-name:flipRightToLeftBackShort;animation-name:flipRightToLeftBackShort}

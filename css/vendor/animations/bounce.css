@@ -1,0 +1,93 @@
+/* MegaNavbar v2.2.0 (http://www.MegaNavbar.com) Copyright 2014 MegaNavbar.com. All Rights Reserved.
+** Licensed under Regular License (http://codecanyon.net/licenses/regular) or Extended License (http://codecanyon.net/licenses/extended)
+** We will take legal action against those who copy our HTML content, CSS style sheets and JavaScript functions without a license.
+*/
+
+@-webkit-keyframes Bounce{
+	0%,100%,20%,40%,60%,80%{-webkit-transition-timing-function:cubic-bezier(0.215,.61,.355,1);transition-timing-function:cubic-bezier(0.215,.61,.355,1)}
+	0%{opacity:0;-webkit-transform:scale3d(.3,.3,.3);transform:scale3d(.3,.3,.3)}
+	20%{-webkit-transform:scale3d(1.1,1.1,1.1);transform:scale3d(1.1,1.1,1.1)}
+	40%{-webkit-transform:scale3d(.9,.9,.9);transform:scale3d(.9,.9,.9)}
+	60%{opacity:1;-webkit-transform:scale3d(1.03,1.03,1.03);transform:scale3d(1.03,1.03,1.03)}
+	80%{-webkit-transform:scale3d(.97,.97,.97);transform:scale3d(.97,.97,.97)}
+	100%{opacity:1;-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}
+}
+@keyframes Bounce{
+	0%,100%,20%,40%,60%,80%{-webkit-transition-timing-function:cubic-bezier(0.215,.61,.355,1);transition-timing-function:cubic-bezier(0.215,.61,.355,1)}
+	0%{opacity:0;-webkit-transform:scale3d(.3,.3,.3);-ms-transform:scale3d(.3,.3,.3);transform:scale3d(.3,.3,.3)}
+	20%{-webkit-transform:scale3d(1.1,1.1,1.1);-ms-transform:scale3d(1.1,1.1,1.1);transform:scale3d(1.1,1.1,1.1)}
+	40%{-webkit-transform:scale3d(.9,.9,.9);-ms-transform:scale3d(.9,.9,.9);transform:scale3d(.9,.9,.9)}
+	60%{opacity:1;-webkit-transform:scale3d(1.03,1.03,1.03);-ms-transform:scale3d(1.03,1.03,1.03);transform:scale3d(1.03,1.03,1.03)}
+	80%{-webkit-transform:scale3d(.97,.97,.97);-ms-transform:scale3d(.97,.97,.97);transform:scale3d(.97,.97,.97)}
+	100%{opacity:1;-webkit-transform:scale3d(1,1,1);-ms-transform:scale3d(1,1,1);transform:scale3d(1,1,1)}
+}
+@-webkit-keyframes BounceTopToBottom{
+	0%,100%,60%,75%,90%{-webkit-transition-timing-function:cubic-bezier(0.215,.61,.355,1);transition-timing-function:cubic-bezier(0.215,.61,.355,1)}
+	0%{opacity:0;-webkit-transform:translate3d(0,-3000px,0);transform:translate3d(0,-3000px,0)}
+	60%{opacity:1;-webkit-transform:translate3d(0,25px,0);transform:translate3d(0,25px,0)}
+	75%{-webkit-transform:translate3d(0,-10px,0);transform:translate3d(0,-10px,0)}
+	90%{-webkit-transform:translate3d(0,5px,0);transform:translate3d(0,5px,0)}
+	100%{-webkit-transform:none;transform:none}
+}
+@keyframes BounceTopToBottom{
+	0%,100%,60%,75%,90%{-webkit-transition-timing-function:cubic-bezier(0.215,.61,.355,1);transition-timing-function:cubic-bezier(0.215,.61,.355,1)}
+	0%{opacity:0;-webkit-transform:translate3d(0,-3000px,0);-ms-transform:translate3d(0,-3000px,0);transform:translate3d(0,-3000px,0)}
+	60%{opacity:1;-webkit-transform:translate3d(0,25px,0);-ms-transform:translate3d(0,25px,0);transform:translate3d(0,25px,0)}
+	75%{-webkit-transform:translate3d(0,-10px,0);-ms-transform:translate3d(0,-10px,0);transform:translate3d(0,-10px,0)}
+	90%{-webkit-transform:translate3d(0,5px,0);-ms-transform:translate3d(0,5px,0);transform:translate3d(0,5px,0)}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none}
+}
+@-webkit-keyframes BounceLeftToRight{
+	0%,100%,60%,75%,90%{-webkit-transition-timing-function:cubic-bezier(0.215,.61,.355,1);transition-timing-function:cubic-bezier(0.215,.61,.355,1)}
+	0%{opacity:0;-webkit-transform:translate3d(-3000px,0,0);transform:translate3d(-3000px,0,0)}
+	60%{opacity:1;-webkit-transform:translate3d(25px,0,0);transform:translate3d(25px,0,0)}
+	75%{-webkit-transform:translate3d(-10px,0,0);transform:translate3d(-10px,0,0)}
+	90%{-webkit-transform:translate3d(5px,0,0);transform:translate3d(5px,0,0)}
+	100%{-webkit-transform:none;transform:none}
+}
+@keyframes BounceLeftToRight{
+	0%,100%,60%,75%,90%{-webkit-transition-timing-function:cubic-bezier(0.215,.61,.355,1);transition-timing-function:cubic-bezier(0.215,.61,.355,1)}
+	0%{opacity:0;-webkit-transform:translate3d(-3000px,0,0);-ms-transform:translate3d(-3000px,0,0);transform:translate3d(-3000px,0,0)}
+	60%{opacity:1;-webkit-transform:translate3d(25px,0,0);-ms-transform:translate3d(25px,0,0);transform:translate3d(25px,0,0)}
+	75%{-webkit-transform:translate3d(-10px,0,0);-ms-transform:translate3d(-10px,0,0);transform:translate3d(-10px,0,0)}
+	90%{-webkit-transform:translate3d(5px,0,0);-ms-transform:translate3d(5px,0,0);transform:translate3d(5px,0,0)}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none}
+}
+@-webkit-keyframes BounceRightToLeft{
+	0%,100%,60%,75%,90%{-webkit-transition-timing-function:cubic-bezier(0.215,.61,.355,1);transition-timing-function:cubic-bezier(0.215,.61,.355,1)}
+	0%{opacity:0;-webkit-transform:translate3d(3000px,0,0);transform:translate3d(3000px,0,0)}
+	60%{opacity:1;-webkit-transform:translate3d(-25px,0,0);transform:translate3d(-25px,0,0)}
+	75%{-webkit-transform:translate3d(10px,0,0);transform:translate3d(10px,0,0)}
+	90%{-webkit-transform:translate3d(-5px,0,0);transform:translate3d(-5px,0,0)}
+	100%{-webkit-transform:none;transform:none}
+}
+@keyframes BounceRightToLeft{
+	0%,100%,60%,75%,90%{-webkit-transition-timing-function:cubic-bezier(0.215,.61,.355,1);transition-timing-function:cubic-bezier(0.215,.61,.355,1)}
+	0%{opacity:0;-webkit-transform:translate3d(3000px,0,0);-ms-transform:translate3d(3000px,0,0);transform:translate3d(3000px,0,0)}
+	60%{opacity:1;-webkit-transform:translate3d(-25px,0,0);-ms-transform:translate3d(-25px,0,0);transform:translate3d(-25px,0,0)}
+	75%{-webkit-transform:translate3d(10px,0,0);-ms-transform:translate3d(10px,0,0);transform:translate3d(10px,0,0)}
+	90%{-webkit-transform:translate3d(-5px,0,0);-ms-transform:translate3d(-5px,0,0);transform:translate3d(-5px,0,0)}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none}
+}
+@-webkit-keyframes BounceBottomToTop{
+	0%,100%,60%,75%,90%{-webkit-transition-timing-function:cubic-bezier(0.215,.61,.355,1);transition-timing-function:cubic-bezier(0.215,.61,.355,1)}
+	0%{opacity:0;-webkit-transform:translate3d(0,3000px,0);transform:translate3d(0,3000px,0)}
+	60%{opacity:1;-webkit-transform:translate3d(0,-20px,0);transform:translate3d(0,-20px,0)}
+	75%{-webkit-transform:translate3d(0,10px,0);transform:translate3d(0,10px,0)}
+	90%{-webkit-transform:translate3d(0,-5px,0);transform:translate3d(0,-5px,0)}
+	100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
+}
+@keyframes BounceBottomToTop{
+	0%,100%,60%,75%,90%{-webkit-transition-timing-function:cubic-bezier(0.215,.61,.355,1);transition-timing-function:cubic-bezier(0.215,.61,.355,1)}
+	0%{opacity:0;-webkit-transform:translate3d(0,3000px,0);-ms-transform:translate3d(0,3000px,0);transform:translate3d(0,3000px,0)}
+	60%{opacity:1;-webkit-transform:translate3d(0,-20px,0);-ms-transform:translate3d(0,-20px,0);transform:translate3d(0,-20px,0)}
+	75%{-webkit-transform:translate3d(0,10px,0);-ms-transform:translate3d(0,10px,0);transform:translate3d(0,10px,0)}
+	90%{-webkit-transform:translate3d(0,-5px,0);-ms-transform:translate3d(0,-5px,0);transform:translate3d(0,-5px,0)}
+	100%{-webkit-transform:translate3d(0,0,0);-ms-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
+}
+
+.navbar .navbar-nav .dropdown-menu.Bounce,.navbar .navbar-nav.Bounce .dropdown-menu,.navbar.Bounce .navbar-nav .dropdown-menu{-webkit-animation-name:Bounce;animation-name:Bounce}
+.navbar .navbar-nav .dropdown-menu.BounceTopToBottom,.navbar .navbar-nav.BounceTopToBottom .dropdown-menu,.navbar.BounceTopToBottom .navbar-nav .dropdown-menu{-webkit-animation-name:BounceTopToBottom;animation-name:BounceTopToBottom}
+.navbar .navbar-nav .dropdown-menu.BounceBottomToTop,.navbar .navbar-nav.BounceBottomToTop .dropdown-menu,.navbar.BounceBottomToTop .navbar-nav .dropdown-menu{-webkit-animation-name:BounceBottomToTop;animation-name:BounceBottomToTop}
+.navbar .navbar-left .dropdown-menu.BounceStartToEnd,.navbar .navbar-left.BounceStartToEnd .dropdown-menu,.navbar.BounceStartToEnd .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.BounceEndToStart,.navbar .navbar-right.BounceEndToStart .dropdown-menu,.navbar.BounceEndToStart .navbar-right .dropdown-menu,.navbar .navbar-nav .dropdown-menu.BounceLeftToRight,.navbar .navbar-nav.BounceLeftToRight .dropdown-menu,.navbar.BounceLeftToRight .navbar-nav .dropdown-menu{-webkit-animation-name:BounceLeftToRight;animation-name:BounceLeftToRight}
+.navbar .navbar-left .dropdown-menu.BounceEndToStart,.navbar .navbar-left.BounceEndToStart .dropdown-menu,.navbar.BounceEndToStart .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.BounceStartToEnd,.navbar .navbar-right.BounceStartToEnd .dropdown-menu,.navbar.BounceStartToEnd .navbar-right .dropdown-menu,.navbar .navbar-nav .dropdown-menu.BounceRightToLeft,.navbar .navbar-nav.BounceRightToLeft .dropdown-menu,.navbar.BounceRightToLeft .navbar-nav .dropdown-menu{-webkit-animation-name:BounceRightToLeft;animation-name:BounceRightToLeft}

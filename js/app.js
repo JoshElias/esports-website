@@ -219,20 +219,61 @@ var app = angular.module('app', [
                     }
                 }
             })
-            .state('app.decks', {
+            .state('app.hs', {
                 abstract: true,
-                url: 'decks',
+                url: 'hearthstone',
                 views: {
                     content: {
-                        templateUrl: tpl + 'views/frontend/decks.html'
+                        templateUrl: 'views/frontend/hs.html'
                     }
                 }
             })
-            .state('app.decks.list', {
+            .state('app.hs.home', {
+                url: '',
+                views: {
+                    hs: {
+                        templateUrl: tpl + 'views/frontend/hs.home.html',
+                        controller: 'HearthstoneHomeCtrl',
+                        resolve: {
+                            dataArticles: ['ArticleService', function (ArticleService) {
+                                var klass = 'all',
+                                    page = 1,
+                                    perpage = 9;
+                                return ArticleService.getArticles('hs', klass, page, perpage);
+                            }],
+                            dataDecks: ['DeckService', function (DeckService) {
+                                var klass = 'all',
+                                    page = 1,
+                                    perpage = 10;
+                                return DeckService.getDecksCommunity(klass, page, perpage);
+                            }],
+                            dataDecksFeatured: ['DeckService', function (DeckService) {
+                                var klass = 'all',
+                                    page = 1,
+                                    perpage = 10;
+                                return DeckService.getDecksFeatured(klass, page, perpage);
+                            }],
+                            dataBanners: ['BannerService', function (BannerService) {
+                                return BannerService.getBanners('hs');
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.hs.decks', {
+                abstract: true,
+                url: '/decks',
+                views: {
+                    hs: {
+                        templateUrl: tpl + 'views/frontend/hs.decks.html'
+                    }
+                }
+            })
+            .state('app.hs.decks.list', {
                 url: '?p&s&k&a&o',
                 views: {
                     decks: {
-                        templateUrl: tpl + 'views/frontend/decks.list.html',
+                        templateUrl: tpl + 'views/frontend/hs.decks.list.html',
                         controller: 'DecksCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
@@ -251,11 +292,11 @@ var app = angular.module('app', [
                 seo: { title: 'Decks', description: 'Hearthstone decks created by the community and TempoStorm content providers.', keywords: '' },
                 og: true
             })
-            .state('app.decks.deck', {
+            .state('app.hs.decks.deck', {
                 url: '/:slug',
                 views: {
                     decks: {
-                        templateUrl: tpl + 'views/frontend/decks.deck.html',
+                        templateUrl: tpl + 'views/frontend/hs.decks.deck.html',
                         controller: 'DeckCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
@@ -266,29 +307,29 @@ var app = angular.module('app', [
                     }
                 }
             })
-            .state('app.deckBuilder', {
+            .state('app.hs.deckBuilder', {
                 abstract: true,
-                url: 'deck-builder',
+                url: '/deck-builder',
                 views: {
-                    content: {
-                        templateUrl: tpl + 'views/frontend/deck-builder.html'
+                    hs: {
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.html'
                     }
                 }
             })
-            .state('app.deckBuilder.class', {
+            .state('app.hs.deckBuilder.class', {
                 url: '',
                 views: {
                     deckBuilder: {
-                        templateUrl: tpl + 'views/frontend/deck-builder.class.html'
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.class.html'
                     }
                 },
                 seo: { title: 'Deck Builder', description: 'Deck building tool for Hearthstone.', keywords: '' }
             })
-            .state('app.deckBuilder.build', {
+            .state('app.hs.deckBuilder.build', {
                 url: '/:playerClass',
                 views: {
                     deckBuilder: {
-                        templateUrl: tpl + 'views/frontend/deck-builder.build.html',
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.build.html',
                         controller: 'DeckBuilderCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
@@ -299,11 +340,11 @@ var app = angular.module('app', [
                     }
                 }
             })
-            .state('app.deckBuilder.edit', {
+            .state('app.hs.deckBuilder.edit', {
                 url: '/edit/:slug',
                 views: {
                     deckBuilder: {
-                        templateUrl: tpl + 'views/frontend/deck-builder.edit.html',
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.edit.html',
                         controller: 'DeckEditCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
@@ -409,6 +450,109 @@ var app = angular.module('app', [
                         }
                     }
                 }
+            })
+            .state('app.hots.guideBuilder', {
+                abstract: true,
+                url: '/guide-builder',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.html'
+                    }
+                }
+            })
+            .state('app.hots.guideBuilder.step1', {
+                url: '',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.step1.html'
+                    }
+                }
+            })
+            .state('app.hots.guideBuilder.hero', {
+                url: '/hero',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.hero.html',
+                        controller: 'HOTSGuideBuilderHeroCtrl',
+                        resolve: {
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
+                            }],
+                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getMaps();
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.hots.guideBuilder.map', {
+                url: '/map',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.map.html',
+                        controller: 'HOTSGuideBuilderMapCtrl',
+                        resolve: {
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
+                            }],
+                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getMaps();
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.hots.guideBuilder.edit', {
+                abstract: true,
+                url: '/:slug',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.html',
+                        resolve: {
+                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                var slug = $stateParams.slug;
+                                return HOTSGuideService.getGuide(slug);
+                            }],
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getAllHeroes();
+                            }],
+                            dataMaps: ['MapService', function (MapService) {
+                                return MapService.getAllMaps();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true }
+            })
+            .state('app.hots.guideBuilder.edit.step1', {
+                url: '',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.step1.html',
+                        controller: 'HOTSGuideBuilderEditStep1Ctrl'
+                    }
+                },
+                access: { auth: true }
+            })
+            .state('app.hots.guides.edit.hero', {
+                url: '/hero',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.hero.html',
+                        controller: 'HOTSGuideBuilderEditHeroCtrl'
+                    }
+                },
+                access: { auth: true }
+            })
+            .state('app.hots.guides.edit.map', {
+                url: '/map',
+                views: {
+                    guideBuilder: {
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.map.html',
+                        controller: 'HOTSGuideBuilderEditMapCtrl'
+                    }
+                },
+                access: { auth: true }
             })
             .state('app.forum', {
                 abstract: true,

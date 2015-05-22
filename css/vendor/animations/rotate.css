@@ -1,0 +1,95 @@
+/* MegaNavbar v2.2.0 (http://www.MegaNavbar.com) Copyright 2014 MegaNavbar.com. All Rights Reserved.
+** Licensed under Regular License (http://codecanyon.net/licenses/regular) or Extended License (http://codecanyon.net/licenses/extended)
+** We will take legal action against those who copy our HTML content, CSS style sheets and JavaScript functions without a license.
+*/
+
+@keyframes RotateLeftTopFixedDown{
+	from{-webkit-transform:rotateZ(-90deg);-ms-transform:rotateZ(-90deg);transform:rotateZ(-90deg)}
+	to{-webkit-transform:rotateZ(0deg);-ms-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@-webkit-keyframes RotateLeftTopFixedDown{
+	from{-webkit-transform:rotateZ(-90deg);transform:rotateZ(-90deg)}
+	to{-webkit-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@keyframes RotateLeftTopFixedUp{
+	from{-webkit-transform:rotateZ(90deg);-ms-transform:rotateZ(90deg);transform:rotateZ(90deg)}
+	to{-webkit-transform:rotateZ(0deg);-ms-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@-webkit-keyframes RotateLeftTopFixedUp{
+	from{-webkit-transform:rotateZ(90deg);transform:rotateZ(90deg)}
+	to{-webkit-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@keyframes RotateRightTopFixedDown{
+	from{-webkit-transform:rotateZ(-90deg);-ms-transform:rotateZ(-90deg);transform:rotateZ(-90deg)}
+	to{-webkit-transform:rotateZ(0deg);-ms-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@-webkit-keyframes RotateRightTopFixedDown{
+	from{-webkit-transform:rotateZ(-90deg);transform:rotateZ(-90deg)}
+	to{-webkit-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@keyframes RotateRightTopFixedUp{
+	from{-webkit-transform:rotateZ(90deg);-ms-transform:rotateZ(90deg);transform:rotateZ(90deg)}
+	to{-webkit-transform:rotateZ(0deg);-ms-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@-webkit-keyframes RotateRightTopFixedUp{
+	from{-webkit-transform:rotateZ(90deg);transform:rotateZ(90deg)}
+	to{-webkit-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@keyframes RotateLeftBottomFixedDown{
+	from{-webkit-transform:rotateZ(-90deg);-ms-transform:rotateZ(-90deg);transform:rotateZ(-90deg)}
+	to{-webkit-transform:rotateZ(0deg);-ms-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@-webkit-keyframes RotateLeftBottomFixedDown{
+	from{-webkit-transform:rotateZ(-90deg);transform:rotateZ(-90deg)}
+	to{-webkit-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@keyframes RotateLeftBottomFixedUp{
+	from{-webkit-transform:rotateZ(90deg);-ms-transform:rotateZ(90deg);transform:rotateZ(90deg)}
+	to{-webkit-transform:rotateZ(0deg);-ms-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@-webkit-keyframes RotateLeftBottomFixedUp{
+	from{-webkit-transform:rotateZ(90deg);transform:rotateZ(90deg)}
+	to{-webkit-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@keyframes RotateRightBottomFixedDown{
+	from{-webkit-transform:rotateZ(-90deg);-ms-transform:rotateZ(-90deg);transform:rotateZ(-90deg)}
+	to{-webkit-transform:rotateZ(0deg);-ms-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@-webkit-keyframes RotateRightBottomFixedDown{
+	from{-webkit-transform:rotateZ(-90deg);transform:rotateZ(-90deg)}
+	to{-webkit-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@keyframes RotateRightBottomFixedUp{
+	from{-webkit-transform:rotateZ(90deg);-ms-transform:rotateZ(90deg);transform:rotateZ(90deg)}
+	to{-webkit-transform:rotateZ(0deg);-ms-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@-webkit-keyframes RotateRightBottomFixedUp{
+	from{-webkit-transform:rotateZ(90deg);transform:rotateZ(90deg)}
+	to{-webkit-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@keyframes RotateCenterFixedToRight{
+	from{-webkit-transform:rotateZ(-90deg);-ms-transform:rotateZ(-90deg);transform:rotateZ(-90deg)}
+	to{-webkit-transform:rotateZ(0deg);-ms-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@-webkit-keyframes RotateCenterFixedToRight{
+	from{-webkit-transform:rotateZ(-90deg);transform:rotateZ(-90deg)}
+	to{-webkit-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@keyframes RotateCenterFixedToLeft{
+	from{-webkit-transform:rotateZ(90deg);-ms-transform:rotateZ(90deg);transform:rotateZ(90deg)}
+	to{-webkit-transform:rotateZ(0deg);-ms-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+@-webkit-keyframes RotateCenterFixedToLeft{
+	from{-webkit-transform:rotateZ(90deg);transform:rotateZ(90deg)}
+	to{-webkit-transform:rotateZ(0deg);transform:rotateZ(0deg)}
+}
+.navbar .navbar-nav .dropdown-menu.RotateLeftTopFixedDown,.navbar .navbar-nav.RotateLeftTopFixedDown .dropdown-menu,.navbar.RotateLeftTopFixedDown .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.RotateStartTopFixedDown,.navbar .navbar-left.RotateStartTopFixedDown .dropdown-menu,.navbar.RotateStartTopFixedDown .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.RotateEndTopFixedUp,.navbar .navbar-right.RotateEndTopFixedUp .dropdown-menu,.navbar.RotateEndTopFixedUp .navbar-right .dropdown-menu{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0;-webkit-animation-name:RotateLeftTopFixedDown;animation-name:RotateLeftTopFixedDown}
+.navbar .navbar-nav .dropdown-menu.RotateLeftTopFixedUp,.navbar .navbar-nav.RotateLeftTopFixedUp .dropdown-menu,.navbar.RotateLeftTopFixedUp .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.RotateStartTopFixedUp,.navbar .navbar-left.RotateStartTopFixedUp .dropdown-menu,.navbar.RotateStartTopFixedUp .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.RotateEndTopFixedDown,.navbar .navbar-right.RotateEndTopFixedDown .dropdown-menu,.navbar.RotateEndTopFixedDown .navbar-right .dropdown-menu{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0;-webkit-animation-name:RotateLeftTopFixedUp;animation-name:RotateLeftTopFixedUp}
+.navbar .navbar-nav .dropdown-menu.RotateRightTopFixedDown,.navbar .navbar-nav.RotateRightTopFixedDown .dropdown-menu,.navbar.RotateRightTopFixedDown .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.RotateEndTopFixedDown,.navbar .navbar-left.RotateEndTopFixedDown .dropdown-menu,.navbar.RotateEndTopFixedDown .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.RotateStartTopFixedUp,.navbar .navbar-right.RotateStartTopFixedUp .dropdown-menu,.navbar.RotateStartTopFixedUp .navbar-right .dropdown-menu{-webkit-transform-origin:100% 0;-ms-transform-origin:100% 0;transform-origin:100% 0;-webkit-animation-name:RotateRightTopFixedDown;animation-name:RotateRightTopFixedDown}
+.navbar .navbar-nav .dropdown-menu.RotateRightTopFixedUp,.navbar .navbar-nav.RotateRightTopFixedUp .dropdown-menu,.navbar.RotateRightTopFixedUp .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.RotateEndTopFixedUp,.navbar .navbar-left.RotateEndTopFixedUp .dropdown-menu,.navbar.RotateEndTopFixedUp .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.RotateStartTopFixedDown,.navbar .navbar-right.RotateStartTopFixedDown .dropdown-menu,.navbar.RotateStartTopFixedDown .navbar-right .dropdown-menu{-webkit-transform-origin:100% 0;-ms-transform-origin:100% 0;transform-origin:100% 0;-webkit-animation-name:RotateRightTopFixedUp;animation-name:RotateRightTopFixedUp}
+.navbar .navbar-nav .dropdown-menu.RotateLeftBottomFixedDown,.navbar .navbar-nav.RotateLeftBottomFixedDown .dropdown-menu,.navbar.RotateLeftBottomFixedDown .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.RotateStartBottomFixedDown,.navbar .navbar-left.RotateStartBottomFixedDown .dropdown-menu,.navbar.RotateStartBottomFixedDown .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.RotateEndBottomFixedUp,.navbar .navbar-right.RotateEndBottomFixedUp .dropdown-menu,.navbar.RotateEndBottomFixedUp .navbar-right .dropdown-menu{-webkit-transform-origin:0 100%;-ms-transform-origin:0 100%;transform-origin:0 100%;-webkit-animation-name:RotateLeftBottomFixedDown;animation-name:RotateLeftBottomFixedDown}
+.navbar .navbar-nav .dropdown-menu.RotateLeftBottomFixedUp,.navbar .navbar-nav.RotateLeftBottomFixedUp .dropdown-menu,.navbar.RotateLeftBottomFixedUp .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.RotateStartBottomFixedUp,.navbar .navbar-left.RotateStartBottomFixedUp .dropdown-menu,.navbar.RotateStartBottomFixedUp .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.RotateEndBottomFixedDown,.navbar .navbar-right.RotateEndBottomFixedDown .dropdown-menu,.navbar.RotateEndBottomFixedDown .navbar-right .dropdown-menu{-webkit-transform-origin:0 100%;-ms-transform-origin:0 100%;transform-origin:0 100%;-webkit-animation-name:RotateLeftBottomFixedUp;animation-name:RotateLeftBottomFixedUp}
+.navbar .navbar-nav .dropdown-menu.RotateRightBottomFixedDown,.navbar .navbar-nav.RotateRightBottomFixedDown .dropdown-menu,.navbar.RotateRightBottomFixedDown .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.RotateEndBottomFixedDown,.navbar .navbar-left.RotateEndBottomFixedDown .dropdown-menu,.navbar.RotateEndBottomFixedDown .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.RotateStartBottomFixedUp,.navbar .navbar-right.RotateStartBottomFixedUp .dropdown-menu,.navbar.RotateStartBottomFixedUp .navbar-right .dropdown-menu{-webkit-transform-origin:100% 100%;-ms-transform-origin:100% 100%;transform-origin:100% 100%;-webkit-animation-name:RotateRightBottomFixedDown;animation-name:RotateRightBottomFixedDown}
+.navbar .navbar-nav .dropdown-menu.RotateRightBottomFixedUp,.navbar .navbar-nav.RotateRightBottomFixedUp .dropdown-menu,.navbar.RotateRightBottomFixedUp .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.RotateEndBottomFixedUp,.navbar .navbar-left.RotateEndBottomFixedUp .dropdown-menu,.navbar.RotateEndBottomFixedUp .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.RotateStartBottomFixedDown,.navbar .navbar-right.RotateStartBottomFixedDown .dropdown-menu,.navbar.RotateStartBottomFixedDown .navbar-right .dropdown-menu{-webkit-transform-origin:100% 100%;-ms-transform-origin:100% 100%;transform-origin:100% 100%;-webkit-animation-name:RotateRightBottomFixedUp;animation-name:RotateRightBottomFixedUp}
+.navbar .navbar-nav .dropdown-menu.RotateCenterFixedToRight,.navbar .navbar-nav.RotateCenterFixedToRight .dropdown-menu,.navbar.RotateCenterFixedToRight .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.RotateCenterFixedToEnd,.navbar .navbar-left.RotateCenterFixedToEnd .dropdown-menu,.navbar.RotateCenterFixedToEnd .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.RotateCenterFixedToStart,.navbar .navbar-right.RotateCenterFixedToStart .dropdown-menu,.navbar.RotateCenterFixedToStart .navbar-right .dropdown-menu{-webkit-transform-origin:50% 50%;-ms-transform-origin:50% 50%;transform-origin:50% 50%;-webkit-animation-name:RotateCenterFixedToRight;animation-name:RotateCenterFixedToRight}
+.navbar .navbar-nav .dropdown-menu.RotateCenterFixedToLeft,.navbar .navbar-nav.RotateCenterFixedToLeft .dropdown-menu,.navbar.RotateCenterFixedToLeft .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.RotateCenterFixedToStart,.navbar .navbar-left.RotateCenterFixedToStart .dropdown-menu,.navbar.RotateCenterFixedToStart .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.RotateCenterFixedToEnd,.navbar .navbar-right.RotateCenterFixedToEnd .dropdown-menu,.navbar.RotateCenterFixedToEnd .navbar-right .dropdown-menu{-webkit-transform-origin:50% 50%;-ms-transform-origin:50% 50%;transform-origin:50% 50%;-webkit-animation-name:RotateCenterFixedToLeft;animation-name:RotateCenterFixedToLeft}

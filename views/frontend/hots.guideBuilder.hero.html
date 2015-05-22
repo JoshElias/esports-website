@@ -1,0 +1,273 @@
+<div class="container">
+    <ul class="gb-steps clearfix">
+        <li class="steps-arrow steps-arrow-prev">
+            <button ng-click="prevStep()">
+                <i class="fa fa-angle-left"></i>
+            </button>
+        </li>
+        <li ng-class="{active:step === 1}">
+            <button ng-click="stepOne()">
+                STEP 1
+                <small>GUIDE TYPE</small>
+            </button>
+        </li>
+        <li ng-class="{active:step === 2}">
+            <button ng-click="step = 2">
+                STEP 2
+                <small>HEROES</small>
+            </button>
+        </li>
+        <li ng-class="{active:step === 3}">
+            <button ng-click="step = 3">
+                STEP 3
+                <small>TALENTS</small>
+            </button>
+        </li>
+        <li ng-class="{active:step === 4}">
+            <button ng-click="step = 4">
+                STEP 4
+                <small>SYNERGY</small>
+            </button>
+        </li>
+        <li ng-class="{active:step === 5}">
+            <button ng-click="step = 5">
+                STEP 5
+                <small>MAPS</small>
+            </button>
+        </li>
+        <li ng-class="{active:step === 6}">
+            <button ng-click="step = 6">
+                STEP 6
+                <small>DESCRIPTION</small>
+            </button>
+        </li>
+        <li ng-class="{active:step === 7}">
+            <button ng-click="step = 7">
+                STEP 7
+                <small>SUBMIT</small>
+            </button>
+        </li>
+        <li class="steps-arrow steps-arrow-next">
+            <button ng-click="nextStep()">
+                <i class="fa fa-angle-right"></i>
+            </button>
+        </li>
+    </ul>
+</div>
+<div class="container" ng-show="step === 2">
+    <div class="guide-text hero-select"></div>
+    <div class="hero-selection">
+        <div class="hero-row hero-{{row.length}}" ng-repeat="row in heroRows">
+            <div>
+                <div class="hero" ng-repeat="hero in row track by $index">
+                    <span class="icon-wrap">
+                        <span class="icon" ng-class="{ active: guide.hasHero(hero) }">
+                            <a href="#" class="icon-{{hero.className}}" ng-if="hero.active" ng-click="guide.toggleHero(hero)" hots-hero tooltip-pos="{{tooltipPos(row, $index)}}"></a>
+                            <span class="icon-ts" ng-if="!hero.active"></span>
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container" ng-show="step === 3">
+    <div class="guide-text talent-select"></div>
+    <p ng-show="!guide.heroes.length" class="white darkbox wrapper-md">You must select at least 1 hero before you can choose talents.</p>
+    <div class="row">
+        <div class="col-xs-4" ng-repeat="hero in guide.heroes track by $index">
+            <div class="gb-talents">
+                <div class="gb-talents-title talents-title {{hero.hero.className}}">{{hero.hero.name}}</div>
+                <ul class="gb-talents-tiers">
+                    <li class="clearfix" ng-repeat="tier in guide.tiers()">
+                        <span>{{tier}}</span>
+                        <ul class="gb-talents-icons clearfix">
+                            <li ng-repeat="talent in guide.talentsByTier(hero.hero, tier) | orderBy: talent.orderNum">
+                                <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}" ng-class="{ 'tier-selected': guide.hasAnyTalent(hero, talent), active: guide.hasTalent(hero, talent) }" ng-click="guide.toggleTalent(hero, talent)" hots-talent tooltip-pos="{{tooltipPosTalent($parent.$parent.$index)}}">{{talent.name}}</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container" ng-show="step === 4">
+    <div class="guide-text hero-information"></div>
+    <div class="row">
+        <div class="col-xs-4">
+            <div class="gb-synergy">
+                <h1>SYNERGY</h1>
+                <span>Who plays well with this guide?</span>
+            </div>
+            <ul class="hero-list">
+                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasSynergy(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleSynergy(hero)" hots-hero>{{hero.name}}</a></li>
+            </ul>
+        </div>
+        <div class="col-xs-4">
+            <div class="gb-strong">
+                <h1>STRONG AGAINST</h1>
+                <span>Who are they strong against?</span>
+            </div>
+            <ul class="hero-list">
+                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasStrong(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleStrong(hero)" hots-hero>{{hero.name}}</a></li>
+            </ul>
+        </div>
+        <div class="col-xs-4">
+            <div class="gb-weak">
+                <h1>WEAK AGAINST</h1>
+                <span>Who are they weak against?</span>
+            </div>
+            <ul class="hero-list">
+                <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasWeak(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleWeak(hero)" hots-hero tooltip-pos="left">{{hero.name}}</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container" ng-show="step === 5">
+    <div class="guide-text map-select"></div>
+    <div class="map-selection">
+        <div class="map-row map-row-{{row.length}}" ng-repeat="row in mapRows">
+            <div>
+                <div class="map" ng-repeat="map in row track by $index">
+                    <span class="icon-wrap">
+                        <span class="icon" ng-class="{ active: guide.hasMap(map) }">
+                            <a href="#" class="icon-{{map.className}}" ng-click="guide.toggleMap(map)" hots-map tooltip-pos="{{tooltipPos(row, $index)}}"></a>
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container" ng-show="step === 6">
+    <div class="guide-text hero-discussion"></div>
+    <div class="db-section m-b-md" ng-repeat="content in guide.content track by $index | orderBy: content.orderNum">
+        <div class="gb-content-title">
+            <a href="#" class="gb-content-delete" ng-show="guide.content.length" ng-click="guide.deleteContent(content)"><i class="fa fa-times"></i></a>
+            <input type="text" name="contentTitle{{$index}}" class="form-control input-content-title" value="" ng-model="content.title">
+        </div>
+        <div>
+            <summernote id="contentBody{{$index}}" config="options" ng-model="content.body"></summernote>
+        </div>
+    </div>
+    <a href="#" class="hots-button" ng-click="guide.addContent()">
+        <i class="fa fa-plus-circle m-r-xs"></i>
+        ADD CHAPTER
+    </a>
+</div>
+<div class="container" ng-show="step === 7">
+    <div class="guide-text save-guide-now"></div>
+    <div class="panel panel-danger error-modal" ng-show="!guide.hasAnyHero() || !guide.allTalentsDone()">
+        <div class="panel-heading">
+            <strong>UNABLE TO SAVE GUIDE</strong>
+        </div>
+        <div class="panel-body">
+            <ul class="error text-danger">
+                <li ng-show="!guide.hasAnyHero()">Your guide must have at least one hero.</li>
+                <li ng-show="!guide.allTalentsDone()">Heroes must have all talents selected.</li>
+            </ul>
+        </div>
+    </div>
+    <div ng-show="guide.hasAnyHero() && guide.allTalentsDone()">
+        <div class="panel panel-danger error-modal animated" ng-show="showError">
+            <div class="panel-heading">
+                <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+                <strong>Unable to add guide</strong>
+            </div>
+            <div class="panel-body">
+                <ul class="error text-danger">
+                    <li ng-repeat="error in errors">{{error.msg}}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="db-section">
+            <div class="db-section-title">
+                <h1>SAVE YOUR GUIDE</h1>
+            </div>
+            <div class="wrapper-md">
+                <form name="gbForm">
+                    <div class="form-group row">
+                        <label for="name" class="control-label col-sm-2">Guide Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="name" name="name" class="form-control input-dark" ng-model="guide.name" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="description" class="control-label col-sm-2">Description</label>
+                        <div class="col-sm-10">
+                            <textarea id="description" name="description" class="form-control input-dark" ng-model="guide.description" required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="video" class="control-label col-sm-2">Video<br><small>(YouTube only)</small></label>
+                        <div class="col-sm-10">
+                            <input type="text" id="video" name="video" class="form-control input-dark" ng-model="guide.video">
+                        </div>
+                    </div>
+                    <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                        <div class="form-group row">
+                            <label for="premium" class="col-sm-2 control-label">Premium</label>
+                            <div class="col-sm-10">
+                                <div class="dropdown">
+                                    <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                        <span>{{isPremium()}}</span>
+                                        <b class="caret"></b>
+                                    </button>
+                                    <ul class="list-group dropdown-menu dropdown-dark">
+                                        <li class="list-group-item" ng-class="{active: guide.premium.isPremium === type.value}" ng-repeat="type in premiumTypes">
+                                            <a href="#" ng-click="guide.premium.isPremium = type.value">{{type.text}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" ng-show="guide.premium.isPremium">
+                            <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
+                            <div class="col-sm-10">
+                                <div date-picker data-id="expiryDate" data-name="expiryDate" data-class="input-dark" ng-model="guide.premium.expiryDate" ng-disabled="!guide.premium.isPremium"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                        <div class="form-group row">
+                            <label for="premium" class="col-sm-2 control-label">Featured</label>
+                            <div class="col-sm-10">
+                                <div class="dropdown">
+                                    <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                        <span>{{isFeatured()}}</span>
+                                        <b class="caret"></b>
+                                    </button>
+                                    <ul class="list-group dropdown-menu dropdown-dark">
+                                        <li class="list-group-item" ng-class="{active: guide.featured === type.value}" ng-repeat="type in featuredTypes">
+                                            <a href="#" ng-click="guide.featured = type.value">{{type.text}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10 col-sm-offset-2">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="public" ng-model="guide.public" value="true"> Make this guide public
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="public" ng-model="guide.public" value="false"> Make this guide private
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row m-b-none">
+                        <div class="col-sm-10 col-sm-offset-2">
+                            <button type="submit" class="btn btn-blue" ng-disabled="gbForm.$invalid" ng-click="saveGuide()">Save Guide</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

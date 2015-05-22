@@ -1,0 +1,126 @@
+/* MegaNavbar v2.2.0 (http://www.MegaNavbar.com) Copyright 2014 MegaNavbar.com. All Rights Reserved.
+** Licensed under Regular License (http://codecanyon.net/licenses/regular) or Extended License (http://codecanyon.net/licenses/extended)
+** We will take legal action against those who copy our HTML content, CSS style sheets and JavaScript functions without a license.
+*/
+
+@-webkit-keyframes HingeUpToDown{
+	0%{-webkit-transform-origin:50% 0;transform-origin:50% 0;-webkit-transform:perspective(3000px) rotateX(-90deg);transform:perspective(3000px) rotateX(-90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateX(20deg);transform:perspective(3000px) rotateX(20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateX(-10deg);transform:perspective(3000px) rotateX(-10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateX(5deg);transform:perspective(3000px) rotateX(5deg)}
+	100%{-webkit-transform-origin:50% 0;transform-origin:50% 0;-webkit-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@keyframes HingeUpToDown{
+	0%{-webkit-transform-origin:50% 0;-ms-transform-origin:50% 0;transform-origin:50% 0;-webkit-transform:perspective(3000px) rotateX(-90deg);-ms-transform:perspective(3000px) rotateX(-90deg);transform:perspective(3000px) rotateX(-90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateX(20deg);-ms-transform:perspective(3000px) rotateX(20deg);transform:perspective(3000px) rotateX(20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateX(-10deg);-ms-transform:perspective(3000px) rotateX(-10deg);transform:perspective(3000px) rotateX(-10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateX(5deg);-ms-transform:perspective(3000px) rotateX(5deg);transform:perspective(3000px) rotateX(5deg)}
+	100%{-webkit-transform-origin:50% 0;-ms-transform-origin:50% 0;transform-origin:50% 0;-webkit-transform:perspective(3000px);-ms-transform:perspective(3000px);transform:perspective(3000px)}
+}
+
+@-webkit-keyframes HingeLeftToRight{
+	0%{-webkit-transform-origin:0 50%;transform-origin:0 50%;-webkit-transform:perspective(3000px) rotateY(-90deg);transform:perspective(3000px) rotateY(-90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateY(20deg);transform:perspective(3000px) rotateY(20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateY(-10deg);transform:perspective(3000px) rotateY(-10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateY(5deg);transform:perspective(3000px) rotateY(5deg)}
+	100%{-webkit-transform-origin:0 50%;transform-origin:0 50%;-webkit-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@keyframes HingeLeftToRight{
+	0%{-webkit-transform-origin:0 50%;-ms-transform-origin:0 50%;transform-origin:0 50%;-webkit-transform:perspective(3000px) rotateY(-90deg);-ms-transform:perspective(3000px) rotateY(-90deg);transform:perspective(3000px) rotateY(-90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateY(20deg);-ms-transform:perspective(3000px) rotateY(20deg);transform:perspective(3000px) rotateY(20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateY(-10deg);-ms-transform:perspective(3000px) rotateY(-10deg);transform:perspective(3000px) rotateY(-10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateY(5deg);-ms-transform:perspective(3000px) rotateY(5deg);transform:perspective(3000px) rotateY(5deg)}
+	100%{-webkit-transform-origin:0 50%;-ms-transform-origin:0 50%;transform-origin:0 50%;-webkit-transform:perspective(3000px);-ms-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@-webkit-keyframes HingeRightToLeftInverse{
+	0%{-webkit-transform-origin:100% -50%;transform-origin:100% -50%;-webkit-transform:perspective(3000px) rotateY(-90deg);transform:perspective(3000px) rotateY(-90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateY(20deg);transform:perspective(3000px) rotateY(20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateY(-10deg);transform:perspective(3000px) rotateY(-10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateY(5deg);transform:perspective(3000px) rotateY(5deg)}
+	100%{-webkit-transform-origin:100% 50%;transform-origin:100% 50%;-webkit-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@keyframes HingeRightToLeftInverse{
+	0%{-webkit-transform-origin:100% 50%;-ms-transform-origin:100% 50%;transform-origin:100% 50%;-webkit-transform:perspective(3000px) rotateY(-90deg);-ms-transform:perspective(3000px) rotateY(-90deg);transform:perspective(3000px) rotateY(-90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateY(20deg);-ms-transform:perspective(3000px) rotateY(20deg);transform:perspective(3000px) rotateY(20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateY(-10deg);-ms-transform:perspective(3000px) rotateY(-10deg);transform:perspective(3000px) rotateY(-10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateY(5deg);-ms-transform:perspective(3000px) rotateY(5deg);transform:perspective(3000px) rotateY(5deg)}
+	100%{-webkit-transform-origin:100% 50%;-ms-transform-origin:100% 50%;transform-origin:100% 50%;-webkit-transform:perspective(3000px);-ms-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@-webkit-keyframes HingeLeftToRightInverse{
+	0%{-webkit-transform-origin:0 50%;transform-origin:0 50%;-webkit-transform:perspective(3000px) rotateY(90deg);transform:perspective(3000px) rotateY(90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateY(-20deg);transform:perspective(3000px) rotateY(-20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateY(10deg);transform:perspective(3000px) rotateY(10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateY(-5deg);transform:perspective(3000px) rotateY(-5deg)}
+	100%{-webkit-transform-origin:0 50%;transform-origin:0 50%;-webkit-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@keyframes HingeLeftToRightInverse{
+	0%{-webkit-transform-origin:0 50%;-ms-transform-origin:0 50%;transform-origin:0 50%;-webkit-transform:perspective(3000px) rotateY(90deg);-ms-transform:perspective(3000px) rotateY(90deg);transform:perspective(3000px) rotateY(90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateY(-20deg);-ms-transform:perspective(3000px) rotateY(-20deg);transform:perspective(3000px) rotateY(-20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateY(10deg);-ms-transform:perspective(3000px) rotateY(10deg);transform:perspective(3000px) rotateY(10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateY(-5deg);-ms-transform:perspective(3000px) rotateY(-5deg);transform:perspective(3000px) rotateY(-5deg)}
+	100%{-webkit-transform-origin:0 50%;-ms-transform-origin:0 50%;transform-origin:0 50%;-webkit-transform:perspective(3000px);-ms-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@-webkit-keyframes HingeRightToLeft{
+	0%{-webkit-transform-origin:100% -50%;transform-origin:100% -50%;-webkit-transform:perspective(3000px) rotateY(90deg);transform:perspective(3000px) rotateY(90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateY(-20deg);transform:perspective(3000px) rotateY(-20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateY(10deg);transform:perspective(3000px) rotateY(10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateY(-5deg);transform:perspective(3000px) rotateY(-5deg)}
+	100%{-webkit-transform-origin:100% 50%;transform-origin:100% 50%;-webkit-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@keyframes HingeRightToLeft{
+	0%{-webkit-transform-origin:100% 50%;-ms-transform-origin:100% 50%;transform-origin:100% 50%;-webkit-transform:perspective(3000px) rotateY(90deg);-ms-transform:perspective(3000px) rotateY(90deg);transform:perspective(3000px) rotateY(90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateY(-20deg);-ms-transform:perspective(3000px) rotateY(-20deg);transform:perspective(3000px) rotateY(-20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateY(10deg);-ms-transform:perspective(3000px) rotateY(10deg);transform:perspective(3000px) rotateY(10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateY(-5deg);-ms-transform:perspective(3000px) rotateY(-5deg);transform:perspective(3000px) rotateY(-5deg)}
+	100%{-webkit-transform-origin:100% 50%;-ms-transform-origin:100% 50%;transform-origin:100% 50%;-webkit-transform:perspective(3000px);-ms-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@-webkit-keyframes HingeDownToUp{
+	0%{-webkit-transform-origin:50% 100%;transform-origin:50% 100%;-webkit-transform:perspective(3000px) rotateX(-90deg);transform:perspective(3000px) rotateX(-90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateX(20deg);transform:perspective(3000px) rotateX(20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateX(-10deg);transform:perspective(3000px) rotateX(-10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateX(5deg);transform:perspective(3000px) rotateX(5deg)}
+	100%{-webkit-transform-origin:50% 100%;transform-origin:50% 100%;-webkit-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@keyframes HingeDownToUp{
+	0%{-webkit-transform-origin:50% 100%;-ms-transform-origin:50% 100%;transform-origin:50% 100%;-webkit-transform:perspective(3000px) rotateX(-90deg);-ms-transform:perspective(3000px) rotateX(-90deg);transform:perspective(3000px) rotateX(-90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateX(20deg);-ms-transform:perspective(3000px) rotateX(20deg);transform:perspective(3000px) rotateX(20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateX(-10deg);-ms-transform:perspective(3000px) rotateX(-10deg);transform:perspective(3000px) rotateX(-10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateX(5deg);-ms-transform:perspective(3000px) rotateX(5deg);transform:perspective(3000px) rotateX(5deg)}
+	100%{-webkit-transform-origin:50% 100%;-ms-transform-origin:50% 100%;transform-origin:50% 100%;-webkit-transform:perspective(3000px);-ms-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@-webkit-keyframes HingeUpToDownInverse{
+	0%{-webkit-transform-origin:50% 0;transform-origin:50% 0;-webkit-transform:perspective(3000px) rotateX(90deg);transform:perspective(3000px) rotateX(90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateX(-20deg);transform:perspective(3000px) rotateX(-20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateX(10deg);transform:perspective(3000px) rotateX(10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateX(-5deg);transform:perspective(3000px) rotateX(-5deg)}
+	100%{-webkit-transform-origin:50% 0;transform-origin:50% 0;-webkit-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@keyframes HingeUpToDownInverse{
+	0%{-webkit-transform-origin:50% 0;-ms-transform-origin:50% 0;transform-origin:50% 0;-webkit-transform:perspective(3000px) rotateX(90deg);-ms-transform:perspective(3000px) rotateX(90deg);transform:perspective(3000px) rotateX(90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateX(-20deg);-ms-transform:perspective(3000px) rotateX(-20deg);transform:perspective(3000px) rotateX(-20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateX(10deg);-ms-transform:perspective(3000px) rotateX(10deg);transform:perspective(3000px) rotateX(10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateX(-5deg);-ms-transform:perspective(3000px) rotateX(-5deg);transform:perspective(3000px) rotateX(-5deg)}
+	100%{-webkit-transform-origin:50% 0;-ms-transform-origin:50% 0;transform-origin:50% 0;-webkit-transform:perspective(3000px);-ms-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@-webkit-keyframes HingeDownToUpInverse{
+	0%{-webkit-transform-origin:50% 100%;transform-origin:50% 100%;-webkit-transform:perspective(3000px) rotateX(90deg);transform:perspective(3000px) rotateX(90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateX(-20deg);transform:perspective(3000px) rotateX(-20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateX(10deg);transform:perspective(3000px) rotateX(10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateX(-5deg);transform:perspective(3000px) rotateX(-5deg)}
+	100%{-webkit-transform-origin:50% 100%;transform-origin:50% 100%;-webkit-transform:perspective(3000px);transform:perspective(3000px)}
+}
+@keyframes HingeDownToUpInverse{
+	0%{-webkit-transform-origin:50% 100%;-ms-transform-origin:50% 100%;transform-origin:50% 100%;-webkit-transform:perspective(3000px) rotateX(90deg);-ms-transform:perspective(3000px) rotateX(90deg);transform:perspective(3000px) rotateX(90deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	40%{-webkit-transform:perspective(3000px) rotateX(-20deg);-ms-transform:perspective(3000px) rotateX(-20deg);transform:perspective(3000px) rotateX(-20deg);-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}
+	60%{-webkit-transform:perspective(3000px) rotateX(10deg);-ms-transform:perspective(3000px) rotateX(10deg);transform:perspective(3000px) rotateX(10deg)}
+	80%{-webkit-transform:perspective(3000px) rotateX(-5deg);-ms-transform:perspective(3000px) rotateX(-5deg);transform:perspective(3000px) rotateX(-5deg)}
+	100%{-webkit-transform-origin:50% 100%;-ms-transform-origin:50% 100%;transform-origin:50% 100%;-webkit-transform:perspective(3000px);-ms-transform:perspective(3000px);transform:perspective(3000px)}
+}
+.navbar .navbar-nav .dropdown-menu.HingeUpToDown,.navbar .navbar-nav.HingeUpToDown .dropdown-menu,.navbar.HingeUpToDown .navbar-nav .dropdown-menu{-webkit-animation-name:HingeUpToDown;animation-name:HingeUpToDown}
+.navbar .navbar-nav .dropdown-menu.HingeUpToDownInverse,.navbar .navbar-nav.HingeUpToDownInverse .dropdown-menu,.navbar.HingeUpToDownInverse .navbar-nav .dropdown-menu{-webkit-animation-name:HingeUpToDownInverse;animation-name:HingeUpToDownInverse}
+.navbar .navbar-nav .dropdown-menu.HingeDownToUp,.navbar .navbar-nav.HingeDownToUp .dropdown-menu,.navbar.HingeDownToUp .navbar-nav .dropdown-menu{-webkit-animation-name:HingeDownToUp;animation-name:HingeDownToUp}
+.navbar .navbar-nav .dropdown-menu.HingeDownToUpInverse,.navbar .navbar-nav.HingeDownToUpInverse .dropdown-menu,.navbar.HingeDownToUpInverse .navbar-nav .dropdown-menu{-webkit-animation-name:HingeDownToUpInverse;animation-name:HingeDownToUpInverse}
+.navbar .navbar-nav .dropdown-menu.HingeLeftToRight,.navbar .navbar-nav.HingeLeftToRight .dropdown-menu,.navbar.HingeLeftToRight .navbar-nav .dropdown-menu,.navbar .navbar-left .dropdown-menu.HingeStartToEnd,.navbar .navbar-left.HingeStartToEnd .dropdown-menu,.navbar.HingeStartToEnd .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.HingeEndToStart,.navbar .navbar-right.HingeEndToStart .dropdown-menu,.navbar.HingeEndToStart .navbar-right .dropdown-menu{-webkit-animation-name:HingeLeftToRight;animation-name:HingeLeftToRight}
+.navbar .navbar-nav .dropdown-menu.HingeLeftToRightInverse,.navbar .navbar-nav.HingeLeftToRightInverse .dropdown-menu,.navbar.HingeLeftToRightInverse .navbar-nav .dropdown-menu,.navbar .navbar-right .dropdown-menu.HingeEndToStartInverse,.navbar .navbar-right.HingeEndToStartInverse .dropdown-menu,.navbar.HingeEndToStartInverse .navbar-right .dropdown-menu,.navbar .navbar-left .dropdown-menu.HingeStartToEndInverse,.navbar .navbar-left.HingeStartToEndInverse .dropdown-menu,.navbar.HingeStartToEndInverse .navbar-left .dropdown-menu{-webkit-animation-name:HingeLeftToRightInverse;animation-name:HingeLeftToRightInverse}
+.navbar .navbar-nav .dropdown-menu.HingeRightToLeft,.navbar .navbar-nav.HingeRightToLeft .dropdown-menu,.navbar.HingeRightToLeft .navbar-nav .dropdown-menu,.navbar .navbar-right .dropdown-menu.HingeStartToEnd,.navbar .navbar-right.HingeStartToEnd .dropdown-menu,.navbar.HingeStartToEnd .navbar-right .dropdown-menu,.navbar .navbar-left .dropdown-menu.HingeEndToStart,.navbar .navbar-left.HingeEndToStart .dropdown-menu,.navbar.HingeEndToStart .navbar-left .dropdown-menu{-webkit-animation-name:HingeRightToLeft;animation-name:HingeRightToLeft}
+.navbar .navbar-nav .dropdown-menu.HingeRightToLeftInverse,.navbar .navbar-nav.HingeRightToLeftInverse .dropdown-menu,.navbar.HingeRightToLeftInverse .navbar-nav .dropdown-menu,.navbar .navbar-right .dropdown-menu.HingeStartToEndInverse,.navbar .navbar-right.HingeStartToEndInverse .dropdown-menu,.navbar.HingeStartToEndInverse .navbar-right .dropdown-menu,.navbar .navbar-left .dropdown-menu.HingeEndToStartInverse,.navbar .navbar-left.HingeEndToStartInverse .dropdown-menu,.navbar.HingeEndToStartInverse .navbar-left .dropdown-menu{-webkit-animation-name:HingeRightToLeftInverse;animation-name:HingeRightToLeftInverse}

@@ -1,0 +1,77 @@
+/* MegaNavbar v2.2.0 (http://www.MegaNavbar.com) Copyright 2014 MegaNavbar.com. All Rights Reserved.
+** Licensed under Regular License (http://codecanyon.net/licenses/regular) or Extended License (http://codecanyon.net/licenses/extended)
+** We will take legal action against those who copy our HTML content, CSS style sheets and JavaScript functions without a license.
+*/
+
+@keyframes SlideTopToBottom{
+	0%{-webkit-transform:translate(0,-50px);-ms-transform:translate(0,-50px);transform:translate(0,-50px)}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none}
+}
+@-webkit-keyframes SlideTopToBottom{
+	0%{-webkit-transform:translate(0,-50px);transform:translate(0,-50px)}
+	100%{-webkit-transform:none;transform:none}
+}
+@keyframes SlideBottomToTop{
+	0%{-webkit-transform:translate(0,50px);-ms-transform:translate(0,50px);transform:translate(0,50px)}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none}
+}
+@-webkit-keyframes SlideBottomToTop{
+	0%{-webkit-transform:translate(0,50px);transform:translate(0,50px)}
+	100%{-webkit-transform:none;transform:none}
+}
+@keyframes SlideLeftToRight{
+	0%{-webkit-transform:translate(-50px,0px);-ms-transform:translate(-50px,0px);transform:translate(-50px,0px)}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none}
+}
+@-webkit-keyframes SlideLeftToRight{
+	0%{-webkit-transform:translate(-50px,0px);transform:translate(-50px,0px)}
+	100%{-webkit-transform:none;transform:none}
+}
+@keyframes SlideRightToLeft{
+	0%{-webkit-transform:translate(50px,0px);-ms-transform:translate(50px,0px);transform:translate(50px,0px)}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none}
+}
+@-webkit-keyframes SlideRightToLeft{
+	0%{-webkit-transform:translate(50px,0px);transform:translate(50px,0px)}
+	100%{-webkit-transform:none;transform:none}
+}
+@keyframes SlideLeftTopToRightBottom{
+	0%{-webkit-transform:translate(-50px,-50px);-ms-transform:translate(-50px,-50px);transform:translate(-50px,-50px)}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none}
+}
+@-webkit-keyframes SlideLeftTopToRightBottom{
+	0%{-webkit-transform:translate(-50px,-50px);transform:translate(-50px,-50px)}
+	100%{-webkit-transform:none;transform:none}
+}
+@keyframes SlideRightTopToLeftBottom{
+	0%{-webkit-transform:translate(50px,-50px);-ms-transform:translate(50px,-50px);transform:translate(50px,-50px)}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none}
+}
+@-webkit-keyframes SlideRightTopToLeftBottom{
+	0%{-webkit-transform:translate(50px,-50px);transform:translate(50px,-50px)}
+	100%{-webkit-transform:none;transform:none}
+}
+@keyframes SlideLeftBottomToRightTop{
+	0%{-webkit-transform:translate(-50px,50px);-ms-transform:translate(-50px,50px);transform:translate(-50px,50px)}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none}
+}
+@-webkit-keyframes SlideLeftBottomToRightTop{
+	0%{-webkit-transform:translate(-50px,50px);transform:translate(-50px,50px)}
+	100%{-webkit-transform:none;transform:none}
+}
+@keyframes SlideRightBottomToLeftTop{
+	0%{-webkit-transform:translate(50px,50px);-ms-transform:translate(50px,50px);transform:translate(50px,50px)}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none}
+}
+@-webkit-keyframes SlideRightBottomToLeftTop{
+	0%{-webkit-transform:translate(50px,50px);transform:translate(50px,50px)}
+	100%{-webkit-transform:none;transform:none}
+}
+.navbar .navbar-nav .dropdown-menu.SlideTopToBottom,.navbar .navbar-nav.SlideTopToBottom .dropdown-menu,.navbar.SlideTopToBottom .navbar-nav .dropdown-menu{-webkit-animation-name:SlideTopToBottom;animation-name:SlideTopToBottom}
+.navbar .navbar-nav .dropdown-menu.SlideBottomToTop,.navbar .navbar-nav.SlideBottomToTop .dropdown-menu,.navbar.SlideBottomToTop .navbar-nav .dropdown-menu{-webkit-animation-name:SlideBottomToTop;animation-name:SlideBottomToTop}
+.navbar .navbar-left .dropdown-menu.SlideStartToEnd,.navbar .navbar-left.SlideStartToEnd .dropdown-menu,.navbar.SlideStartToEnd .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SlideEndToStart,.navbar .navbar-right.SlideEndToStart .dropdown-menu,.navbar.SlideEndToStart .navbar-right .dropdown-menu,.navbar .navbar-nav .dropdown-menu.SlideLeftToRight,.navbar .navbar-nav.SlideLeftToRight .dropdown-menu,.navbar.SlideLeftToRight .navbar-nav .dropdown-menu{-webkit-animation-name:SlideLeftToRight;animation-name:SlideLeftToRight}
+.navbar .navbar-left .dropdown-menu.SlideEndToStart,.navbar .navbar-left.SlideEndToStart .dropdown-menu,.navbar.SlideEndToStart .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SlideStartToEnd,.navbar .navbar-right.SlideStartToEnd .dropdown-menu,.navbar.SlideStartToEnd .navbar-right .dropdown-menu,.navbar .navbar-nav .dropdown-menu.SlideRightToLeft,.navbar .navbar-nav.SlideRightToLeft .dropdown-menu,.navbar.SlideRightToLeft .navbar-nav .dropdown-menu{-webkit-animation-name:SlideRightToLeft;animation-name:SlideRightToLeft}
+.navbar .navbar-left .dropdown-menu.SlideStartTopToEndBottom,.navbar .navbar-left.SlideStartTopToEndBottom .dropdown-menu,.navbar.SlideStartTopToEndBottom .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SlideEndTopToStartBottom,.navbar .navbar-right.SlideEndTopToStartBottom .dropdown-menu,.navbar.SlideEndTopToStartBottom .navbar-right .dropdown-menu,.navbar .navbar-nav .dropdown-menu.SlideLeftTopToRightBottom,.navbar .navbar-nav.SlideLeftTopToRightBottom .dropdown-menu,.navbar.SlideLeftTopToRightBottom .navbar-nav .dropdown-menu{-webkit-animation-name:SlideLeftTopToRightBottom;animation-name:SlideLeftTopToRightBottom}
+.navbar .navbar-left .dropdown-menu.SlideEndTopToStartBottom,.navbar .navbar-left.SlideEndTopToStartBottom .dropdown-menu,.navbar.SlideEndTopToStartBottom .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SlideStartTopToEndBottom,.navbar .navbar-right.SlideStartTopToEndBottom .dropdown-menu,.navbar.SlideStartTopToEndBottom .navbar-right .dropdown-menu,.navbar .navbar-nav .dropdown-menu.SlideRightTopToLeftBottom,.navbar .navbar-nav.SlideRightTopToLeftBottom .dropdown-menu,.navbar.SlideRightTopToLeftBottom .navbar-nav .dropdown-menu{-webkit-animation-name:SlideRightTopToLeftBottom;animation-name:SlideRightTopToLeftBottom}
+.navbar .navbar-left .dropdown-menu.SlideStartBottomToEndTop,.navbar .navbar-left.SlideStartBottomToEndTop .dropdown-menu,.navbar.SlideStartBottomToEndTop .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SlideEndBottomToStartTop,.navbar .navbar-right.SlideEndBottomToStartTop .dropdown-menu,.navbar.SlideEndBottomToStartTop .navbar-right .dropdown-menu,.navbar .navbar-nav .dropdown-menu.SlideLeftBottomToRightTop,.navbar .navbar-nav.SlideLeftBottomToRightTop .dropdown-menu,.navbar.SlideLeftBottomToRightTop .navbar-nav .dropdown-menu{-webkit-animation-name:SlideLeftBottomToRightTop;animation-name:SlideLeftBottomToRightTop}
+.navbar .navbar-left .dropdown-menu.SlideEndBottomToStartTop,.navbar .navbar-left.SlideEndBottomToStartTop .dropdown-menu,.navbar.SlideEndBottomToStartTop .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SlideStartBottomToEndTop,.navbar .navbar-right.SlideStartBottomToEndTop .dropdown-menu,.navbar.SlideStartBottomToEndTop .navbar-right .dropdown-menu,.navbar .navbar-nav .dropdown-menu.SlideRightBottomToLeftTop,.navbar .navbar-nav.SlideRightBottomToLeftTop .dropdown-menu,.navbar.SlideRightBottomToLeftTop .navbar-nav .dropdown-menu{-webkit-animation-name:SlideRightBottomToLeftTop;animation-name:SlideRightBottomToLeftTop}

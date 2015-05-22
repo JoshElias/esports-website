@@ -36,7 +36,7 @@ module.exports = function(grunt) {
             },
             minify: {
                 files: {
-                    '<%= distFolder %>/vendor.min.css': 'css/vendor/**/*.css',
+                    '<%= distFolder %>/vendor.min.css': ['css/vendor/bootstrap/bootstrap.min.css', 'css/vendor/**/*.css'],
                     '<%= distFolder %>/style.min.css': 'css/style.css',
                 }
             }

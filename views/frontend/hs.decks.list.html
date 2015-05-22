@@ -124,7 +124,7 @@
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="deck in decks">
         <div class="deck-wrapper">
             <div class="deck large {{deck.playerClass.toLowerCase()}}" ng-class="{ premium: deck.premium.isPremium }">
-                <a href="./decks/{{deck.slug}}"></a>
+                <a href="./hearthstone/decks/{{deck.slug}}"></a>
                 <div class="deck-overlay"></div>
                 <div class="deck-premium" ng-if="deck.premium.isPremium"></div>
                 <div class="deck-title">{{deck.name}}</div>
@@ -143,7 +143,7 @@
                         </div>
                         <div class="pull-left">
                             <span class="fa fa-comment-o"></span>
-                            <span><a href="./decks/{{deck.slug}}">{{deck.comments.length}} Comment<span ng-hide="deck.comments.length === 1">s</span></a></span>
+                            <span><a href="./hearthstone/decks/{{deck.slug}}">{{deck.comments.length}} Comment<span ng-hide="deck.comments.length === 1">s</span></a></span>
                         </div>
                     </div>
                 </div>

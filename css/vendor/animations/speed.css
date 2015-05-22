@@ -1,0 +1,86 @@
+/* MegaNavbar v2.2.0 (http://www.MegaNavbar.com) Copyright 2014 MegaNavbar.com. All Rights Reserved.
+** Licensed under Regular License (http://codecanyon.net/licenses/regular) or Extended License (http://codecanyon.net/licenses/extended)
+** We will take legal action against those who copy our HTML content, CSS style sheets and JavaScript functions without a license.
+*/
+
+@-webkit-keyframes SpeedRightToLeftShort{
+	0%{-webkit-transform:translate3d(250px,0,0) skewX(-20deg);-ms-transform:translate3d(250px,0,0) skewX(-20deg);transform:translate3d(250px,0,0) skewX(-20deg);opacity:0}
+	60%{-webkit-transform:skewX(10deg);transform:skewX(10deg);opacity:1}
+	80%{-webkit-transform:skewX(-5deg);transform:skewX(-5deg);opacity:1}
+	100%{-webkit-transform:none;transform:none;opacity:1}
+}
+@keyframes SpeedRightToLeftShort{
+	0%{-webkit-transform:translate3d(250px,0,0) skewX(-20deg);-ms-transform:translate3d(250px,0,0) skewX(-20deg);transform:translate3d(250px,0,0) skewX(-20deg);opacity:0}
+	60%{-webkit-transform:skewX(10deg);-ms-transform:skewX(10deg);transform:skewX(10deg);opacity:1}
+	80%{-webkit-transform:skewX(-5deg);-ms-transform:skewX(-5deg);transform:skewX(-5deg);opacity:1}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none;opacity:1}
+}
+@-webkit-keyframes SpeedRightToLeftMedium{
+	0%{-webkit-transform:translate3d(500px,0,0) skewX(-20deg);transform:translate3d(500px,0,0) skewX(-20deg);opacity:0}
+	60%{-webkit-transform:skewX(10deg);transform:skewX(10deg);opacity:1}
+	80%{-webkit-transform:skewX(-5deg);transform:skewX(-5deg);opacity:1}
+	100%{-webkit-transform:none;transform:none;opacity:1}
+}
+@keyframes SpeedRightToLeftMedium{
+	0%{-webkit-transform:translate3d(500px,0,0) skewX(-20deg);-ms-transform:translate3d(500px,0,0) skewX(-20deg);transform:translate3d(500px,0,0) skewX(-20deg);opacity:0}
+	60%{-webkit-transform:skewX(10deg);-ms-transform:skewX(10deg);transform:skewX(10deg);opacity:1}
+	80%{-webkit-transform:skewX(-5deg);-ms-transform:skewX(-5deg);transform:skewX(-5deg);opacity:1}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none;opacity:1}
+}
+@-webkit-keyframes SpeedRightToLeftLong{
+	0%{-webkit-transform:translate3d(1000px,0,0) skewX(-20deg);transform:translate3d(1000px,0,0) skewX(-20deg);opacity:0}
+	60%{-webkit-transform:skewX(10deg);transform:skewX(10deg);opacity:1}
+	80%{-webkit-transform:skewX(-5deg);transform:skewX(-5deg);opacity:1}
+	100%{-webkit-transform:none;transform:none;opacity:1}
+}
+@keyframes SpeedRightToLeftLong{
+	0%{-webkit-transform:translate3d(1000px,0,0) skewX(-20deg);-ms-transform:translate3d(1000px,0,0) skewX(-20deg);transform:translate3d(1000px,0,0) skewX(-20deg);opacity:0}
+	60%{-webkit-transform:skewX(10deg);-ms-transform:skewX(10deg);transform:skewX(10deg);opacity:1}
+	80%{-webkit-transform:skewX(-5deg);-ms-transform:skewX(-5deg);transform:skewX(-5deg);opacity:1}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none;opacity:1}
+}
+@-webkit-keyframes SpeedLeftToRightShort{
+	0%{-webkit-transform:translate3d(-250px,0,0) skewX(20deg);transform:translate3d(-250px,0,0) skewX(20deg);opacity:0}
+	60%{-webkit-transform:skewX(-10deg);transform:skewX(-10deg);opacity:1}
+	80%{-webkit-transform:skewX(5deg);transform:skewX(5deg);opacity:1}
+	100%{-webkit-transform:none;transform:none;opacity:1}
+}
+@keyframes SpeedLeftToRightShort{
+	0%{-webkit-transform:translate3d(-250px,0,0) skewX(20deg);-ms-transform:translate3d(-250px,0,0) skewX(20deg);transform:translate3d(-250px,0,0) skewX(20deg);opacity:0}
+	60%{-webkit-transform:skewX(-10deg);-ms-transform:skewX(-10deg);transform:skewX(-10deg);opacity:1}
+	80%{-webkit-transform:skewX(5deg);-ms-transform:skewX(5deg);transform:skewX(5deg);opacity:1}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none;opacity:1}
+}
+@-webkit-keyframes SpeedLeftToRightMedium{
+	0%{-webkit-transform:translate3d(-500px,0,0) skewX(20deg);transform:translate3d(-500px,0,0) skewX(20deg);opacity:0}
+	60%{-webkit-transform:skewX(-10deg);transform:skewX(-10deg);opacity:1}
+	80%{-webkit-transform:skewX(5deg);transform:skewX(5deg);opacity:1}
+	100%{-webkit-transform:none;transform:none;opacity:1}
+}
+@keyframes SpeedLeftToRightMedium{
+	0%{-webkit-transform:translate3d(-500px,0,0) skewX(20deg);-ms-transform:translate3d(-500px,0,0) skewX(20deg);transform:translate3d(-500px,0,0) skewX(20deg);opacity:0}
+	60%{-webkit-transform:skewX(-10deg);-ms-transform:skewX(-10deg);transform:skewX(-10deg);opacity:1}
+	80%{-webkit-transform:skewX(5deg);-ms-transform:skewX(5deg);transform:skewX(5deg);opacity:1}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none;opacity:1}
+}
+@-webkit-keyframes SpeedLeftToRightLong{
+	0%{-webkit-transform:translate3d(-1000px,0,0) skewX(20deg);transform:translate3d(-1000px,0,0) skewX(20deg);opacity:0}
+	60%{-webkit-transform:skewX(-10deg);transform:skewX(-10deg);opacity:1}
+	80%{-webkit-transform:skewX(5deg);transform:skewX(5deg);opacity:1}
+	100%{-webkit-transform:none;transform:none;opacity:1}
+}
+@keyframes SpeedLeftToRightLong{
+	0%{-webkit-transform:translate3d(-1000px,0,0) skewX(20deg);-ms-transform:translate3d(-1000px,0,0) skewX(20deg);transform:translate3d(-1000px,0,0) skewX(20deg);opacity:0}
+	60%{-webkit-transform:skewX(-10deg);-ms-transform:skewX(-10deg);transform:skewX(-10deg);opacity:1}
+	80%{-webkit-transform:skewX(5deg);-ms-transform:skewX(5deg);transform:skewX(5deg);opacity:1}
+	100%{-webkit-transform:none;-ms-transform:none;transform:none;opacity:1}
+}
+.navbar .navbar-left .dropdown-menu.SpeedStartToEndShort,.navbar .navbar-left.SpeedStartToEndShort .dropdown-menu,.navbar.SpeedStartToEndShort .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SpeedEndToStartShort,.navbar .navbar-right.SpeedEndToStartShort .dropdown-menu,.navbar.SpeedEndToStartShort .navbar-right .dropdown-menu{-webkit-animation-name:SpeedLeftToRightShort;animation-name:SpeedRightToLeftShort;-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}
+.navbar .navbar-left .dropdown-menu.SpeedEndToStartShort,.navbar .navbar-left.SpeedEndToStartShort .dropdown-menu,.navbar.SpeedEndToStartShort .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SpeedStartToEndShort,.navbar .navbar-right.SpeedStartToEndShort .dropdown-menu,.navbar.SpeedStartToEndShort .navbar-right .dropdown-menu,.navbar .navbar-nav .dropdown-menu.SpeedRightToLeftShort,.navbar .navbar-nav.SpeedRightToLeftShort .dropdown-menu,.navbar.SpeedRightToLeftShort .navbar-nav .dropdown-menu{-webkit-animation-name:SpeedRightToLeftShort;animation-name:SpeedRightToLeftShort;-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}
+.navbar .navbar-left .dropdown-menu.SpeedStartToEndMedium,.navbar .navbar-left.SpeedStartToEndMedium .dropdown-menu,.navbar.SpeedStartToEndMedium .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SpeedEndToStartMedium,.navbar .navbar-right.SpeedEndToStartMedium .dropdown-menu,.navbar.SpeedEndToStartMedium .navbar-right .dropdown-menu{-webkit-animation-name:SpeedLeftToRightMedium;animation-name:SpeedRightToLeftMedium;-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}
+.navbar .navbar-left .dropdown-menu.SpeedEndToStartMedium,.navbar .navbar-left.SpeedEndToStartMedium .dropdown-menu,.navbar.SpeedEndToStartMedium .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SpeedStartToEndMedium,.navbar .navbar-right.SpeedStartToEndMedium .dropdown-menu,.navbar.SpeedStartToEndMedium .navbar-right .dropdown-menu,.navbar .navbar-nav .dropdown-menu.SpeedRightToLeftMedium,.navbar .navbar-nav.SpeedRightToLeftMedium .dropdown-menu,.navbar.SpeedRightToLeftMedium .navbar-nav .dropdown-menu{-webkit-animation-name:SpeedRightToLeftMedium;animation-name:SpeedRightToLeftMedium;-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}
+.navbar .navbar-left .dropdown-menu.SpeedStartToEndLong,.navbar .navbar-left.SpeedStartToEndLong .dropdown-menu,.navbar.SpeedStartToEndLong .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SpeedEndToStartLong,.navbar .navbar-right.SpeedEndToStartLong .dropdown-menu,.navbar.SpeedEndToStartLong .navbar-right .dropdown-menu{-webkit-animation-name:SpeedLeftToRightLong;animation-name:SpeedRightToLeftLong;-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}
+.navbar .navbar-left .dropdown-menu.SpeedEndToStartLong,.navbar .navbar-left.SpeedEndToStartLong .dropdown-menu,.navbar.SpeedEndToStartLong .navbar-left .dropdown-menu,.navbar .navbar-right .dropdown-menu.SpeedStartToEndLong,.navbar .navbar-right.SpeedStartToEndLong .dropdown-menu,.navbar.SpeedStartToEndLong .navbar-right .dropdown-menu,.navbar .navbar-nav .dropdown-menu.SpeedRightToLeftLong,.navbar .navbar-nav.SpeedRightToLeftLong .dropdown-menu,.navbar.SpeedRightToLeftLong .navbar-nav .dropdown-menu{-webkit-animation-name:SpeedRightToLeftLong;animation-name:SpeedRightToLeftLong;-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}
+.navbar .navbar-nav .dropdown-menu.SpeedLeftToRightShort,.navbar .navbar-nav.SpeedLeftToRightShort .dropdown-menu,.navbar.SpeedLeftToRightShort .navbar-nav .dropdown-menu{-webkit-animation-name:SpeedLeftToRightShort;animation-name:SpeedLeftToRightShort;-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}
+.navbar .navbar-nav .dropdown-menu.SpeedLeftToRightMedium,.navbar .navbar-nav.SpeedLeftToRightMedium .dropdown-menu,.navbar.SpeedLeftToRightMedium .navbar-nav .dropdown-menu{-webkit-animation-name:SpeedLeftToRightMedium;animation-name:SpeedLeftToRightMedium;-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}
+.navbar .navbar-nav .dropdown-menu.SpeedLeftToRightLong,.navbar .navbar-nav.SpeedLeftToRightLong .dropdown-menu,.navbar.SpeedLeftToRightLong .navbar-nav .dropdown-menu{-webkit-animation-name:SpeedLeftToRightLong;animation-name:SpeedLeftToRightLong;-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out}
