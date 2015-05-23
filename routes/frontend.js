@@ -2515,8 +2515,7 @@ module.exports = {
     getBanners: function (Schemas) {
         return function (req, res, next) {
             function getBanners (callback) {
-                Schemas.Banner.find({ active: true })
-                .where({bannerType: req.body.bannerType})
+                Schemas.Banner.find({ active: true, bannerType: req.body.bannerType })
                 .sort({ orderNum: 1 })
                 .exec(function (err, banners) {
                     if (err) { return res.json({ success: false, banners: [] }); }

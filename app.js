@@ -170,7 +170,6 @@ if (cluster.isMaster) {
     app.post('/hots/guides/community', routes.frontend.hots.guidesCommunity(Schemas));
     app.post('/hots/guides/featured', routes.frontend.hots.guidesFeatured(Schemas));
     app.post('/hots/guide', routes.frontend.hots.guide(Schemas));
-    app.post('/hots/guidebuilder', routes.frontend.hots.guideBuilder(Schemas, Util));
 
     app.post('/hots/heroes', routes.frontend.hots.heroes(Schemas));
     app.post('/hots/hero', routes.frontend.hots.hero(Schemas));
@@ -199,7 +198,7 @@ if (cluster.isMaster) {
     app.post('/api/deck/comment/add', routes.frontend.deckCommentAdd(Schemas, mongoose));
 
     app.post('/api/hots/guide', routes.frontend.hots.guideEdit(Schemas));
-    app.post('/api/hots/guide/add', routes.frontend.hots.guideAdd(Schemas, Util));
+    app.post('/api/hots/guide/add', routes.frontend.hots.guideAdd(Schemas, Util, mongoose));
     app.post('/api/hots/guide/update', routes.frontend.hots.guideUpdate(Schemas, Util));
     app.post('/api/hots/guide/delete', routes.frontend.hots.guideDelete(Schemas));
     app.post('/api/hots/guide/vote', routes.frontend.hots.guideVote(Schemas));

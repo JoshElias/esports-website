@@ -220,17 +220,10 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataDecks', 'dataDecksFeatured', 'ArticleService', 'DeckService', 
-    function ($scope, dataBanners, dataArticles, dataDecks, dataDecksFeatured, ArticleService, DeckService) {
+.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles',  
+    function ($scope, dataBanners, dataArticles) {
         // data
         $scope.articles = dataArticles.articles;
-        $scope.decks = dataDecks.decks;
-        $scope.decksFeatured = dataDecksFeatured.decks;
-        $scope.loading = {
-            articles: false,
-            community: false,
-            featured: false
-        };
         
         // banner
         $scope.banner = {
@@ -249,32 +242,6 @@ angular.module('app.controllers', ['ngCookies'])
                 this.direction = 'left';
                 this.current = (this.current > 0) ? --this.current : this.slides.length - 1;
             }
-        };
-        
-        // content
-        $scope.klass = 'all';
-        $scope.setKlass = function (klass) {
-            $scope.klass = klass;
-            $scope.loading = {
-                articles: true,
-                community: true,
-                featured: true
-            };
-            
-            ArticleService.getArticles('hs', klass, 1, 9).then(function (data) {
-                $scope.articles = data.articles;
-                $scope.loading.articles = false;
-            });
-
-            DeckService.getDecksCommunity(klass, 1, 10).then(function (data) {
-                $scope.decks = data.decks;
-                $scope.loading.community = false;
-            });
-            
-            DeckService.getDecksFeatured(klass, 1, 10).then(function (data) {
-                $scope.decksFeatured = data.decks;
-                $scope.loading.featured = false;
-            });
         };
     }
 ])
@@ -5246,7 +5213,7 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSGuideCtrl', ['$scope', '$state', '$sce', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 
     function ($scope, $state, $sce, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps) {
         $scope.guide = data.guide;
-        $scope.currentHero = $scope.guide.heroes[0];
+        $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0].hero : false;
         $scope.heroes = dataHeroes.heroes;
         $scope.maps = dataMaps.maps;
         
@@ -5270,7 +5237,22 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.getCurrentHero = function () {
-            return $scope.currentHero;
+            for (var i = 0; i < $scope.guide.heroes.length; i++) {
+                if ($scope.guide.heroes[i].hero._id === $scope.currentHero._id) {
+                    return $scope.guide.heroes[i];
+                }
+            }
+            return false;
+        };
+        
+        $scope.justHeroes = function () {
+            var out = [];
+            
+            for (var i = 0; i < $scope.guide.heroes.length; i++) {
+                out.push($scope.guide.heroes[i].hero);
+            }
+            
+            return out;
         };
         
         $scope.getTiers = function () {
@@ -5315,7 +5297,12 @@ angular.module('app.controllers', ['ngCookies'])
         
         // maps
         $scope.hasMap = function (map) {
-            return ($scope.guide.maps.indexOf(map._id) !== -1);
+            for (var i = 0; i < $scope.guide.maps.length; i++) {
+                if ($scope.guide.maps[i]._id === map._id) {
+                    return true;
+                }
+            }
+            return false;
         };
         
         $scope.getVideo = function () {
@@ -5486,8 +5473,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
         $scope.$watch('guide', function(){
@@ -5559,6 +5546,14 @@ angular.module('app.controllers', ['ngCookies'])
             return $scope.guide.sortTalents(hero);
         }
         
+        $scope.hasTalent = function (hero, talent) {
+            return ($scope.guide.hasTalent(hero, talent)) ? ' active' : '';
+        }
+        
+        $scope.hasAnyTalent = function (hero, talent) {
+            return ($scope.guide.hasAnyTalent(hero, talent)) ? ' tier-selected' : '';
+        }
+        
         // summernote options
         $scope.options = {
           height: 100,
@@ -5623,8 +5618,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
         $scope.$watch('guide', function(){

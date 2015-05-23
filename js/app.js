@@ -151,22 +151,10 @@ var app = angular.module('app', [
                                 var klass = 'all',
                                     page = 1,
                                     perpage = 9;
-                                return ArticleService.getArticles('hs', klass, page, perpage);
-                            }],
-                            dataDecks: ['DeckService', function (DeckService) {
-                                var klass = 'all',
-                                    page = 1,
-                                    perpage = 10;
-                                return DeckService.getDecksCommunity(klass, page, perpage);
-                            }],
-                            dataDecksFeatured: ['DeckService', function (DeckService) {
-                                var klass = 'all',
-                                    page = 1,
-                                    perpage = 10;
-                                return DeckService.getDecksFeatured(klass, page, perpage);
+                                return ArticleService.getArticles('ts', klass, page, perpage);
                             }],
                             dataBanners: ['BannerService', function (BannerService) {
-                                return BannerService.getBanners('hs');
+                                return BannerService.getBanners('ts');
                             }]
                         }
                     }
@@ -504,22 +492,10 @@ var app = angular.module('app', [
             })
             .state('app.hots.guideBuilder.edit', {
                 abstract: true,
-                url: '/:slug',
+                url: '/edit/:slug',
                 views: {
                     guideBuilder: {
-                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.html',
-                        resolve: {
-                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
-                                var slug = $stateParams.slug;
-                                return HOTSGuideService.getGuide(slug);
-                            }],
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getAllHeroes();
-                            }],
-                            dataMaps: ['MapService', function (MapService) {
-                                return MapService.getAllMaps();
-                            }]
-                        }
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.html'
                     }
                 },
                 access: { auth: true }
@@ -527,29 +503,59 @@ var app = angular.module('app', [
             .state('app.hots.guideBuilder.edit.step1', {
                 url: '',
                 views: {
-                    guideBuilder: {
+                    edit: {
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.step1.html',
-                        controller: 'HOTSGuideBuilderEditStep1Ctrl'
+                        controller: 'HOTSGuideBuilderEditStep1Ctrl',
+                        resolve: {
+                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                var slug = $stateParams.slug;
+                                return HOTSGuideService.guideEdit(slug);
+                            }]
+                        }
                     }
                 },
                 access: { auth: true }
             })
-            .state('app.hots.guides.edit.hero', {
+            .state('app.hots.guideBuilder.edit.hero', {
                 url: '/hero',
                 views: {
-                    guideBuilder: {
+                    edit: {
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.hero.html',
-                        controller: 'HOTSGuideBuilderEditHeroCtrl'
+                        controller: 'HOTSGuideBuilderEditHeroCtrl',
+                        resolve: {
+                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                var slug = $stateParams.slug;
+                                return HOTSGuideService.guideEdit(slug);
+                            }],
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
+                            }],
+                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getMaps();
+                            }]
+                        }
                     }
                 },
                 access: { auth: true }
             })
-            .state('app.hots.guides.edit.map', {
+            .state('app.hots.guideBuilder.edit.map', {
                 url: '/map',
                 views: {
-                    guideBuilder: {
+                    edit: {
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.map.html',
-                        controller: 'HOTSGuideBuilderEditMapCtrl'
+                        controller: 'HOTSGuideBuilderEditMapCtrl',
+                        resolve: {
+                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                var slug = $stateParams.slug;
+                                return HOTSGuideService.guideEdit(slug);
+                            }],
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
+                            }],
+                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getMaps();
+                            }]
+                        }
                     }
                 },
                 access: { auth: true }

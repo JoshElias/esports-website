@@ -194,22 +194,10 @@ var app = angular.module('app', [
                                 var klass = 'all',
                                     page = 1,
                                     perpage = 9;
-                                return ArticleService.getArticles('hs', klass, page, perpage);
-                            }],
-                            dataDecks: ['DeckService', function (DeckService) {
-                                var klass = 'all',
-                                    page = 1,
-                                    perpage = 10;
-                                return DeckService.getDecksCommunity(klass, page, perpage);
-                            }],
-                            dataDecksFeatured: ['DeckService', function (DeckService) {
-                                var klass = 'all',
-                                    page = 1,
-                                    perpage = 10;
-                                return DeckService.getDecksFeatured(klass, page, perpage);
+                                return ArticleService.getArticles('ts', klass, page, perpage);
                             }],
                             dataBanners: ['BannerService', function (BannerService) {
-                                return BannerService.getBanners('hs');
+                                return BannerService.getBanners('ts');
                             }]
                         }
                     }
@@ -547,22 +535,10 @@ var app = angular.module('app', [
             })
             .state('app.hots.guideBuilder.edit', {
                 abstract: true,
-                url: '/:slug',
+                url: '/edit/:slug',
                 views: {
                     guideBuilder: {
-                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.html',
-                        resolve: {
-                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
-                                var slug = $stateParams.slug;
-                                return HOTSGuideService.getGuide(slug);
-                            }],
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getAllHeroes();
-                            }],
-                            dataMaps: ['MapService', function (MapService) {
-                                return MapService.getAllMaps();
-                            }]
-                        }
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.html'
                     }
                 },
                 access: { auth: true }
@@ -570,29 +546,59 @@ var app = angular.module('app', [
             .state('app.hots.guideBuilder.edit.step1', {
                 url: '',
                 views: {
-                    guideBuilder: {
+                    edit: {
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.step1.html',
-                        controller: 'HOTSGuideBuilderEditStep1Ctrl'
+                        controller: 'HOTSGuideBuilderEditStep1Ctrl',
+                        resolve: {
+                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                var slug = $stateParams.slug;
+                                return HOTSGuideService.guideEdit(slug);
+                            }]
+                        }
                     }
                 },
                 access: { auth: true }
             })
-            .state('app.hots.guides.edit.hero', {
+            .state('app.hots.guideBuilder.edit.hero', {
                 url: '/hero',
                 views: {
-                    guideBuilder: {
+                    edit: {
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.hero.html',
-                        controller: 'HOTSGuideBuilderEditHeroCtrl'
+                        controller: 'HOTSGuideBuilderEditHeroCtrl',
+                        resolve: {
+                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                var slug = $stateParams.slug;
+                                return HOTSGuideService.guideEdit(slug);
+                            }],
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
+                            }],
+                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getMaps();
+                            }]
+                        }
                     }
                 },
                 access: { auth: true }
             })
-            .state('app.hots.guides.edit.map', {
+            .state('app.hots.guideBuilder.edit.map', {
                 url: '/map',
                 views: {
-                    guideBuilder: {
+                    edit: {
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.map.html',
-                        controller: 'HOTSGuideBuilderEditMapCtrl'
+                        controller: 'HOTSGuideBuilderEditMapCtrl',
+                        resolve: {
+                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                var slug = $stateParams.slug;
+                                return HOTSGuideService.guideEdit(slug);
+                            }],
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
+                            }],
+                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getMaps();
+                            }]
+                        }
                     }
                 },
                 access: { auth: true }
@@ -1895,17 +1901,10 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataDecks', 'dataDecksFeatured', 'ArticleService', 'DeckService', 
-    function ($scope, dataBanners, dataArticles, dataDecks, dataDecksFeatured, ArticleService, DeckService) {
+.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles',  
+    function ($scope, dataBanners, dataArticles) {
         // data
         $scope.articles = dataArticles.articles;
-        $scope.decks = dataDecks.decks;
-        $scope.decksFeatured = dataDecksFeatured.decks;
-        $scope.loading = {
-            articles: false,
-            community: false,
-            featured: false
-        };
         
         // banner
         $scope.banner = {
@@ -1924,32 +1923,6 @@ angular.module('app.controllers', ['ngCookies'])
                 this.direction = 'left';
                 this.current = (this.current > 0) ? --this.current : this.slides.length - 1;
             }
-        };
-        
-        // content
-        $scope.klass = 'all';
-        $scope.setKlass = function (klass) {
-            $scope.klass = klass;
-            $scope.loading = {
-                articles: true,
-                community: true,
-                featured: true
-            };
-            
-            ArticleService.getArticles('hs', klass, 1, 9).then(function (data) {
-                $scope.articles = data.articles;
-                $scope.loading.articles = false;
-            });
-
-            DeckService.getDecksCommunity(klass, 1, 10).then(function (data) {
-                $scope.decks = data.decks;
-                $scope.loading.community = false;
-            });
-            
-            DeckService.getDecksFeatured(klass, 1, 10).then(function (data) {
-                $scope.decksFeatured = data.decks;
-                $scope.loading.featured = false;
-            });
         };
     }
 ])
@@ -6921,7 +6894,7 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSGuideCtrl', ['$scope', '$state', '$sce', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 
     function ($scope, $state, $sce, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps) {
         $scope.guide = data.guide;
-        $scope.currentHero = $scope.guide.heroes[0];
+        $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0].hero : false;
         $scope.heroes = dataHeroes.heroes;
         $scope.maps = dataMaps.maps;
         
@@ -6945,7 +6918,22 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.getCurrentHero = function () {
-            return $scope.currentHero;
+            for (var i = 0; i < $scope.guide.heroes.length; i++) {
+                if ($scope.guide.heroes[i].hero._id === $scope.currentHero._id) {
+                    return $scope.guide.heroes[i];
+                }
+            }
+            return false;
+        };
+        
+        $scope.justHeroes = function () {
+            var out = [];
+            
+            for (var i = 0; i < $scope.guide.heroes.length; i++) {
+                out.push($scope.guide.heroes[i].hero);
+            }
+            
+            return out;
         };
         
         $scope.getTiers = function () {
@@ -6990,7 +6978,12 @@ angular.module('app.controllers', ['ngCookies'])
         
         // maps
         $scope.hasMap = function (map) {
-            return ($scope.guide.maps.indexOf(map._id) !== -1);
+            for (var i = 0; i < $scope.guide.maps.length; i++) {
+                if ($scope.guide.maps[i]._id === map._id) {
+                    return true;
+                }
+            }
+            return false;
         };
         
         $scope.getVideo = function () {
@@ -7161,8 +7154,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
         $scope.$watch('guide', function(){
@@ -7234,6 +7227,14 @@ angular.module('app.controllers', ['ngCookies'])
             return $scope.guide.sortTalents(hero);
         }
         
+        $scope.hasTalent = function (hero, talent) {
+            return ($scope.guide.hasTalent(hero, talent)) ? ' active' : '';
+        }
+        
+        $scope.hasAnyTalent = function (hero, talent) {
+            return ($scope.guide.hasAnyTalent(hero, talent)) ? ' tier-selected' : '';
+        }
+        
         // summernote options
         $scope.options = {
           height: 100,
@@ -7298,8 +7299,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
         $scope.$watch('guide', function(){
@@ -9265,6 +9266,7 @@ angular.module('app.services', [])
         var gb = {
             _id: data._id || null,
             name: data.name || '',
+            slug: data.slug || '',
             guideType: guideType,
             description: data.description || '',
             content: data.content || [],
@@ -9630,6 +9632,12 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
+        addGuide: function (guide) {
+            return $http.post('/api/hots/guide/add', guide);
+        },
+        editGuide: function (guide) {
+            return $http.post('/api/hots/guide/update', guide);
+        },
         guideDelete: function (_id) {
             return $http.post('/api/hots/guide/delete', { _id: _id });
         },
@@ -9738,8 +9746,9 @@ angular.module('app.services', [])
     return {
         getBanners: function (bannerType) {
             var d = $q.defer(),
-                bannerType = bannerType;
-            $http.post('/banners', {bannerType: bannerType}).success(function (data) {
+                bannerType = bannerType || 'ts';
+            
+            $http.post('/banners', { bannerType: bannerType }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

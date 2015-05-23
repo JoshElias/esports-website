@@ -27,7 +27,8 @@
                 </div>
                 <div class="guide-info clearfix">
                     <div class="guide-owner" ng-if="app.user.getUserID() === guide.author">
-                        <a href="./heroes-of-the-storm/guide-builder/edit/{{guide.slug}}" class="btn btn-blue btn-xs">Edit</a>
+                        <a ui-sref="app.hots.guideBuilder.edit.hero({ slug: guide.slug })" class="btn btn-blue btn-xs" ng-if="guide.guideType == 'hero'">Edit</a>
+                        <a ui-sref="app.hots.guideBuilder.edit.map({ slug: guide.slug })" class="btn btn-blue btn-xs" ng-if="guide.guideType == 'map'">Edit</a>
                         <a href="#" class="btn btn-danger btn-xs" ng-click="guideDelete(guide)">Delete</a>
                     </div>
                     <div class="pull-left m-r-sm">

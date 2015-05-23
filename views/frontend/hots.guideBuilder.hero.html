@@ -59,7 +59,7 @@
     <div class="hero-selection">
         <div class="hero-row hero-{{row.length}}" ng-repeat="row in heroRows">
             <div>
-                <div class="hero" ng-repeat="hero in row track by $index">
+                <div class="hero" ng-repeat="hero in row">
                     <span class="icon-wrap">
                         <span class="icon" ng-class="{ active: guide.hasHero(hero) }">
                             <a href="#" class="icon-{{hero.className}}" ng-if="hero.active" ng-click="guide.toggleHero(hero)" hots-hero tooltip-pos="{{tooltipPos(row, $index)}}"></a>
@@ -75,7 +75,7 @@
     <div class="guide-text talent-select"></div>
     <p ng-show="!guide.heroes.length" class="white darkbox wrapper-md">You must select at least 1 hero before you can choose talents.</p>
     <div class="row">
-        <div class="col-xs-4" ng-repeat="hero in guide.heroes track by $index">
+        <div class="col-xs-4" ng-repeat="hero in guide.heroes">
             <div class="gb-talents">
                 <div class="gb-talents-title talents-title {{hero.hero.className}}">{{hero.hero.name}}</div>
                 <ul class="gb-talents-tiers">
@@ -83,7 +83,7 @@
                         <span>{{tier}}</span>
                         <ul class="gb-talents-icons clearfix">
                             <li ng-repeat="talent in guide.talentsByTier(hero.hero, tier) | orderBy: talent.orderNum">
-                                <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}" ng-class="{ 'tier-selected': guide.hasAnyTalent(hero, talent), active: guide.hasTalent(hero, talent) }" ng-click="guide.toggleTalent(hero, talent)" hots-talent tooltip-pos="{{tooltipPosTalent($parent.$parent.$index)}}">{{talent.name}}</a>
+                                <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}{{hasAnyTalent(hero, talent)}}{{hasTalent(hero, talent)}}" ng-click="guide.toggleTalent(hero, talent)" hots-talent tooltip-pos="{{tooltipPosTalent($parent.$parent.$index)}}">{{talent.name}}</a>
                             </li>
                         </ul>
                     </li>

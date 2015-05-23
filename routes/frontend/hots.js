@@ -317,25 +317,233 @@ module.exports = {
             });
         };
     },
-    guideBuilder: function (Schemas, Util) {
-        return function (req, res, next) {
-            
-        };
-    },
     guideEdit: function (Schemas) {
         return function (req, res, next) {
-
+            var slug = req.body.slug,
+                userID = req.user._id;
+            
+            Schemas.Guide.findOne({ slug: slug, author: userID })
+            .lean()
+            .populate([{
+                    path: 'heroes.hero'
+            }])
+            .exec(function (err, guide) {
+                if (err || !guide) { return res.json({ success: false }); }
+                
+                return res.json({
+                    success: true,
+                    guide: guide
+                });
+            });
         };
     },
-    guideAdd: function (Schemas, Util) {
+    guideAdd: function (Schemas, Util, mongoose) {
         return function (req, res, next) {
+            var userID = req.user._id;
             
+            req.assert('name', 'Guide name is required').notEmpty();
+            req.assert('name', 'Guide name cannot be more than 60 characters').len(1, 60);
+            req.assert('description', 'Guide description is required').notEmpty();
+            req.assert('description', 'Guide description cannot be more than 400 characters').len(1, 400);
+            
+            function checkForm (callback) {
+               var errors = req.validationErrors();
+
+                if (errors) {
+                    return res.json({ success: false, errors: errors });
+                } else {
+                    return callback();
+                }
+            }
+            
+            function checkSlug (callback) {
+                // check slug length
+                if (!Util.slugify(req.body.name).length) {
+                    return res.json({ success: false, errors: { name: { msg: 'An invalid name has been entered' } } });
+                }
+                
+                // check if slug exists
+                Schemas.Guide.count({ slug: Util.slugify(req.body.name) })
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    if (count > 0) {
+                        return res.json({ success: false, errors: { name: { msg: 'That guide name already exists. Please choose a different guide name.' } } });
+                    }
+                    return callback();
+                });
+            }
+            
+            function createGuide(callback) {
+                var heroes = [];
+                
+                for (var i = 0; i < req.body.heroes.length; i++) {
+                    var obj = {
+                        hero: req.body.heroes[i].hero._id,
+                        talents: req.body.heroes[i].talents
+                    };
+                    heroes.push(obj);
+                }
+                
+                var newGuide = new Schemas.Guide({
+                        name: req.body.name,
+                        slug: Util.slugify(req.body.name),
+                        guideType: req.body.guideType,
+                        description: req.body.description,
+                        content: req.body.content,
+                        author: req.user._id,
+                        heroes: (req.body.guideType === 'hero') ? heroes : [],
+                        maps: req.body.maps,
+                        synergy: req.body.synergy,
+                        against: {
+                            strong: req.body.against.strong || [],
+                            weak: req.body.against.weak || []
+                        },
+                        public: req.body.public,
+                        video: req.body.video,
+                        views: 0,
+                        votesCount: 1,
+                        votes: [{
+                            userID: req.user._id,
+                            direction: 1
+                        }],
+                        featured: req.body.featured,
+                        comments: [],
+                        createdDate: new Date().toISOString(),
+                        premium: {
+                            isPremium: req.body.premium.isPremium || false,
+                            expiryDate: req.body.premium.expiryDate || new Date().toISOString()
+                        }
+                    });
+
+                newGuide.save(function(err, data){
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    return callback();
+                });
+            }
+            
+            function addActivity(callback) {
+                var activity = new Schemas.Activity({
+                    author: userID,
+                    activityType: "createGuide",
+                    guide: mongoose.Types.ObjectId(),
+                    active: req.body.public,
+                    createdDate: new Date().toISOString()
+                });
+                activity.save(function(err, data) {
+                    if (err) {
+                        return res.json({ 
+                            success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
+                        });
+                    }
+                    return callback();
+                });
+            }
+            
+            checkForm(function () {
+                checkSlug(function () {
+                    createGuide(function () {
+                        addActivity(function () {
+                            return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                        });
+                    });
+                });
+                
+            });
         };
     },
     guideUpdate: function (Schemas, Util) {
         return function (req, res, next) {
+            var userID = req.user._id;
             
+            req.assert('name', 'Guide name is required').notEmpty();
+            req.assert('name', 'Guide name cannot be more than 60 characters').len(1, 60);
+            req.assert('description', 'Guide description is required').notEmpty();
+            req.assert('description', 'Guide description cannot be more than 400 characters').len(1, 400);
             
+            function checkForm (callback) {
+               var errors = req.validationErrors();
+
+                if (errors) {
+                    return res.json({ success: false, errors: errors });
+                } else {
+                    return callback();
+                }
+            }
+            
+            function checkSlug (callback) {
+                // check slug length
+                if (!Util.slugify(req.body.name).length) {
+                    return res.json({ success: false, errors: { name: { msg: 'An invalid name has been entered' } } });
+                }
+                
+                // check if slug exists
+                Schemas.Guide.count({ _id: { $ne: req.body._id }, slug: Util.slugify(req.body.name) })
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    if (count > 0) {
+                        return res.json({ success: false, errors: { name: { msg: 'That deck name already exists. Please choose a different deck name.' } } });
+                    }
+                    return callback();
+                });
+            }
+            
+            function updateGuide (callback) {
+                Schemas.Guide.findOne({ _id: req.body._id })
+                .exec(function (err, guide) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    
+                    var heroes = [];
+                    for (var i = 0; i < req.body.heroes.length; i++) {
+                        var obj = {
+                            hero: req.body.heroes[i].hero._id,
+                            talents: req.body.heroes[i].talents
+                        };
+                        heroes.push(obj);
+                    }
+                    
+                    guide.name = req.body.name;
+                    guide.slug = Util.slugify(req.body.name);
+                    guide.guideType = req.body.guideType;
+                    guide.description = req.body.description;
+                    guide.content = req.body.content;
+                    guide.heroes = (req.body.guideType === 'hero') ? heroes : [];
+                    guide.maps = req.body.maps;
+                    guide.synergy = req.body.synergy;
+                    guide.against = {
+                        strong: req.body.against.strong || [],
+                        weak: req.body.against.weak || []
+                    };
+                    guide.public = req.body.public;
+                    guide.video = req.body.video;
+                    guide.featured = req.body.featured;
+                    guide.premium = {
+                        isPremium: req.body.premium.isPremium || false,
+                        expiryDate: req.body.premium.expiryDate || new Date().toISOString()
+                    };
+                    
+                    guide.save(function(err, data){
+                        if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                        return callback();
+                    });
+                });
+            }
+            
+            function updateActivities(callback) {
+                console.log(req.body._id);
+                    Schemas.Activity.update({guide: req.body._id, activityType: 'guideComment'}, {active: req.body.public}).exec(function (err, data) {
+                        return callback();
+                });
+            }
+            
+            checkForm(function () {
+                checkSlug(function () {
+                    updateGuide(function () {
+                        updateActivities(function () {
+                            return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                        });
+                    });
+                });
+            });
         };
     },
     guideDelete: function (Schemas) {

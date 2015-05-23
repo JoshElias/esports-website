@@ -1278,6 +1278,7 @@ angular.module('app.services', [])
         var gb = {
             _id: data._id || null,
             name: data.name || '',
+            slug: data.slug || '',
             guideType: guideType,
             description: data.description || '',
             content: data.content || [],
@@ -1643,6 +1644,12 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
+        addGuide: function (guide) {
+            return $http.post('/api/hots/guide/add', guide);
+        },
+        editGuide: function (guide) {
+            return $http.post('/api/hots/guide/update', guide);
+        },
         guideDelete: function (_id) {
             return $http.post('/api/hots/guide/delete', { _id: _id });
         },
@@ -1751,8 +1758,9 @@ angular.module('app.services', [])
     return {
         getBanners: function (bannerType) {
             var d = $q.defer(),
-                bannerType = bannerType;
-            $http.post('/banners', {bannerType: bannerType}).success(function (data) {
+                bannerType = bannerType || 'ts';
+            
+            $http.post('/banners', { bannerType: bannerType }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
