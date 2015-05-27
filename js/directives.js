@@ -155,6 +155,16 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/admin/hots.heroes.talent.edit.html'
     };
 })
+.directive('charAddForm', function () {
+    return {
+        templateUrl: 'views/admin/hots.heroes.char.add.html'
+    };
+})
+.directive('charEditForm', function () {
+    return {
+        templateUrl: 'views/admin/hots.heroes.char.edit.html'
+    };
+})
 .directive('talentModal', function () {
     return {
         templateUrl: 'views/frontend/hots.talent.modal.html'
@@ -173,6 +183,10 @@ angular.module('app.directives', ['ui.load'])
 .directive('hotsTalent', ['$compile', function ($compile) {
     return {
         restrict: 'A',
+        scope: {
+            hero: '=hero',
+            talent: '=talent'
+        },
         link: function (scope, el, attr) {
             var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -560 : 111;
             el.wTooltip({

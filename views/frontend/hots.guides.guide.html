@@ -78,7 +78,7 @@
                                 <div class="guide-talent-wrapper" ng-repeat="talent in hero.hero.talents" ng-if="selectedTalent(hero, talent.tier, talent)">
                                     <div class="guide-talent">
                                         <div class="guide-talent-level">LEVEL {{talent.tier}}</div>
-                                        <div class="guide-talent-icon talents-icon large active {{hero.hero.className}} {{talent.className}}" hots-talent></div>
+                                        <div class="guide-talent-icon talents-icon large active {{hero.hero.className}} {{talent.className}}" hots-talent hero="hero.hero" talent="talent"></div>
                                         <div class="guide-talent-dots">
                                             <div class="guide-talent-dot" ng-class="{ active: selectedTalent(hero, talent.tier, dot) }" ng-repeat="dot in getTalents(hero, talent.tier)"></div>
                                         </div>

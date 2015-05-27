@@ -46,6 +46,12 @@
             </div>
         </div>
         <div class="row form-group">
+            <label for="manaType" class="col-sm-2 control-label">Mana Type</label>
+            <div class="col-sm-10">
+                <select id="manaType" name="manaType" class="form-control" ng-options="manaType as manaType for manaType in manaTypes" ng-model="hero.manaType" required></select>
+            </div>
+        </div>
+        <div class="row form-group">
             <label for="universe" class="col-sm-2 control-label">Universe</label>
             <div class="col-sm-10">
                 <select id="universe" name="universe" class="form-control" ng-options="universe as universe for universe in universes" ng-model="hero.universe" required></select>
@@ -111,6 +117,27 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading clearfix">
+                <a href="#" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="charAddWnd()">
+                    <i class="fa fa-plus-circle m-r-xs"></i>Add
+                </a>
+                <strong class="lh-lg">Characters</strong>
+            </div>
+            <ul class="list-group" ng-show="hero.characters.length">
+                <li class="list-group-item lh-lg clearfix" ng-repeat="character in hero.characters | orderBy: character.name">
+                    {{character.name}}
+                    <div class="pull-right">
+                        <button class="btn btn-sm btn-default" ng-click="charEditWnd(character)">Edit</button>
+                        <button class="btn btn-sm btn-danger" ng-click="deleteChar(character)">Delete</button>
+                    </div>
+                </li>
+            </ul>
+            <div class="panel-body" ng-show="!hero.characters.length">
+                <p class="m-b-none">There are no characters added for this hero yet.</p>
+            </div>
+        </div>
+        <!--
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
                 <div class="btn-group pull-right clearfix">
                     <a href="#" class="btn btn-sm btn-blue pull-left" ng-click="prevLevel()" ng-disabled="getLevel() === 1"><i class="fa fa-angle-left"></i></a>
                     <a href="#" class="btn btn-sm btn-blue pull-left" ng-click="nextLevel()" ng-disabled="getLevel() === 30"><i class="fa fa-angle-right"></i></a>
@@ -162,6 +189,7 @@
                 </div>
             </div>
         </div>
+        -->
         <div class="row form-group">
             <label for="className" class="col-sm-2 control-label">CSS Class</label>
             <div class="col-sm-10">

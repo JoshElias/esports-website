@@ -1,0 +1,155 @@
+<div class="container container-dark">
+    <div class="row">
+        <div class="xs-col-4">
+            <img ng-src="./img/hots/hots-logo.png" class="img-responsive">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-9">
+            <div class="tc-section">
+                <div class="tc-section-title guide-hero-image {{getCurrentHero().className}}">
+                    <h3>{{getCurrentHero().name}}</h3>
+                </div>
+                <div class="tc-section-content clearfix tc-hero {{getCurrentHero().className}}">
+                    <div class="row m-b-md">
+                        <div class="col-xs-6">
+                            <div class="tc-abilities-title">ABILITIES</div>
+                            <div class="row">
+                                <div class="col-xs-4" ng-repeat="ability in getAbilities()">
+                                    <div class="tc-ability-wrapper" ng-click="toggleAbility(ability)" ng-class="{ active: getCurrentAbility() == ability }">
+                                        <div class="tc-ability">
+                                            <div class="talents-icon large {{getCurrentHero().className}} {{ability.className}}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="tc-heroics-title">HEROICS</div>
+                            <div class="row">
+                                <div class="col-xs-6" ng-repeat="heroic in getHeroics()">
+                                    <div class="tc-heroic-wrapper" ng-click="toggleAbility(heroic)" ng-class="{ active: getCurrentAbility() == heroic }">
+                                        <div class="tc-heroic">
+                                            <div class="talents-icon large {{getCurrentHero().className}} {{heroic.className}}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-2">
+                            <div class="tc-trait-title">TRAIT</div>
+                            <div class="tc-trait-wrapper" ng-click="toggleAbility(getTrait())" ng-class="{ active: getCurrentAbility() == getTrait() }">
+                                <div class="tc-trait">
+                                    <div class="talents-icon large {{getCurrentHero().className}} {{getTrait().className}}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-b-md">
+                        <div class="col-xs-6">
+                            <ul class="tc-talents-tiers">
+                                <li class="clearfix" ng-repeat="tier in tiers">
+                                    <span>{{tier}}</span>
+                                    <ul class="tc-talents-icons clearfix">
+                                        <li ng-repeat="talent in talentsByTier(tier) | orderBy: talent.orderNum">
+                                            <a href="#" class="talents-icon {{getCurrentHero().className}} {{talent.className}}{{hasAnyTalent(talent)}}{{hasTalent(talent)}}" ng-click="toggleTalent(talent)" hots-talent hero="getCurrentHero()" talent="talent">{{talent.name}}</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="tc-damage" ng-class="" ng-show="getCurrentAbility()">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-b-md">
+                        <div class="col-xs-6"></div>
+                        <div class="col-xs-6">
+                            <div class="row tc-levels">
+                                <div class="col-xs-3">
+                                    <div class="tc-level-title">LEVEL</div>
+                                </div>
+                                <div class="col-xs-7">
+                                    <input class="tc-level-slider" type="range" min="1" max="30" ng-model="level">
+                                </div>
+                                <div class="col-xs-2">
+                                    <div class="tc-level">{{level}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 p-r-xs">
+                            <div class="tc-datas clearfix">
+                                <div class="tc-data-wrapper">
+                                    <div class="tc-data tc-data-green">
+                                        <div class="tc-data-title">HEALTH</div>
+                                        <div class="tc-data-number">750</div>
+                                    </div>
+                                </div>
+                                <div class="tc-data-wrapper">
+                                    <div class="tc-data tc-data-green">
+                                        <div class="tc-data-title">REGEN</div>
+                                        <div class="tc-data-number">1.81</div>
+                                    </div>
+                                </div>
+                                <div class="tc-data-wrapper">
+                                    <div class="tc-data tc-data-blue">
+                                        <div class="tc-data-title">MANA</div>
+                                        <div class="tc-data-number">500</div>
+                                    </div>
+                                </div>
+                                <div class="tc-data-wrapper">
+                                    <div class="tc-data tc-data-blue">
+                                        <div class="tc-data-title">REGEN</div>
+                                        <div class="tc-data-number">3</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6 p-l-xs">
+                            <div class="tc-datas clearfix">
+                                <div class="tc-data-wrapper">
+                                    <div class="tc-data tc-data-yellow">
+                                        <div class="tc-data-title">SPEED</div>
+                                        <div class="tc-data-number">1</div>
+                                    </div>
+                                </div>
+                                <div class="tc-data-wrapper">
+                                    <div class="tc-data tc-data-red">
+                                        <div class="tc-data-title">RANGE</div>
+                                        <div class="tc-data-number">5.5</div>
+                                    </div>
+                                </div>
+                                <div class="tc-data-wrapper">
+                                    <div class="tc-data tc-data-red">
+                                        <div class="tc-data-title">DAMAGE</div>
+                                        <div class="tc-data-number">32</div>
+                                    </div>
+                                </div>
+                                <div class="tc-data-wrapper">
+                                    <div class="tc-data tc-data-red">
+                                        <div class="tc-data-title">DPS</div>
+                                        <div class="tc-data-number">32</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="tc-section">
+                <div class="tc-section-title">
+                    <h3>HERO SELECT</h3>
+                </div>
+                <ul class="hero-list">
+                    <li ng-repeat="hero in heroes" ng-class="{ active: hero == currentHero }"><a href="#" class="{{hero.className}}" ng-click="setCurrentHero(hero)" hots-hero tooltip-pos="left">{{hero.name}}</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -264,10 +264,8 @@ if (cluster.isMaster) {
     app.post('/api/admin/article/delete', routes.admin.isAdmin(Schemas), routes.admin.articleDelete(Schemas));
     app.post('/api/admin/article/edit', routes.admin.isAdmin(Schemas), routes.admin.articleEdit(Schemas));
     
-    
     app.post('/api/admin/article/names', routes.admin.isAdmin(Schemas), routes.admin.articleGetNames(Schemas, async));
 
-    
     app.post('/api/admin/forum/categories', routes.admin.isAdmin(Schemas), routes.admin.categories(Schemas));
     app.post('/api/admin/forum/category', routes.admin.isAdmin(Schemas), routes.admin.category(Schemas));
     app.post('/api/admin/forum/category/add', routes.admin.isAdmin(Schemas), routes.admin.categoryAdd(Schemas));
@@ -290,7 +288,8 @@ if (cluster.isMaster) {
     app.post('/api/admin/upload/article', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadArticle(fs, gm, amazon));
     app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadCard(fs, gm, amazon));
     app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadDeck(fs, gm, amazon));
-    
+
+    app.post('/api/admin/id', routes.admin.isAdmin(Schemas), routes.admin.getObjectID(mongoose));
 
     // 404
     app.use(function (req, res, next) {

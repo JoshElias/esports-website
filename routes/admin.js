@@ -1002,13 +1002,14 @@ module.exports = {
                         title: hero.title,
                         role: hero.role,
                         heroType: hero.heroType,
+                        manaType: hero.manaType,
                         universe: hero.universe,
                         price: {
                             gold: hero.price.gold
                         },
                         abilities: hero.abilities,
                         talents: hero.talents,
-                        stats: hero.stats,
+                        characters: hero.characters,
                         orderNum: orderNum,
                         className: hero.className,
                         active: hero.active
@@ -1040,13 +1041,14 @@ module.exports = {
                     result.title = hero.title;
                     result.role = hero.role;
                     result.heroType = hero.heroType;
+                    result.manaType = hero.manaType;
                     result.universe = hero.universe;
                     result.price = {
                         gold: hero.price.gold
                     };
                     result.abilities = hero.abilities;
                     result.talents = hero.talents;
-                    result.stats = hero.stats;
+                    result.characters = hero.characters;
                     result.className = hero.className;
                     result.active = hero.active;
                     
@@ -2297,6 +2299,12 @@ module.exports = {
                     });
                 }
             }
+        };
+    },
+    getObjectID: function (mongoose) {
+        return function (req, res, next) {
+            var id = mongoose.Types.ObjectId();
+            return res.json({ success: true, id: id });
         };
     }
 };

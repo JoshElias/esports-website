@@ -603,6 +603,20 @@ var app = angular.module('app', [
                 },
                 access: { auth: true }
             })
+            .state('app.hots.talentCalculator', {
+                url: '/talent-calculator',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/frontend/hots.talentCalculator.html',
+                        controller: 'HOTSTalentCalculatorCtrl',
+                        resolve: {
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
+                            }]
+                        }
+                    }
+                }
+            })
             .state('app.forum', {
                 abstract: true,
                 url: 'forum',
@@ -5459,8 +5473,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'AdminHeroService', 
-    function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, AdminHeroService) {
+.controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService', 
+    function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, AdminHeroService) {
         // default hero
         var defaultHero = {
                 name : '',
@@ -5469,11 +5483,12 @@ angular.module('app.controllers', ['ngCookies'])
                 role: HOTS.roles[0],
                 heroType: HOTS.types[0],
                 universe: HOTS.universes[0],
+                manaType: HOTS.manaTypes[0],
                 abilities: [],
                 talents: [],
-                stats: HOTS.genStats(),
+                characters: [],
                 price: {
-                    gold: '',
+                    gold: ''
                 },
                 className: '',
                 active: true
@@ -5493,8 +5508,32 @@ angular.module('app.controllers', ['ngCookies'])
                 name: '',
                 tier: HOTS.tiers[0],
                 description: '',
+                ability: null,
                 className: '',
                 orderNum: 1
+            },
+            defaultCharacter = {
+                name: '',
+                stats: {
+                    base: {
+                        health: 0,
+                        healthRegen: 0,
+                        mana: 0,
+                        manaRegen: 0,
+                        attackSpeed: 0,
+                        range: 0,
+                        damage: 0
+                    },
+                    gain: {
+                        health: 0,
+                        healthRegen: 0,
+                        mana: 0,
+                        manaRegen: 0,
+                        attackSpeed: 0,
+                        range: 0,
+                        damage: 0
+                    }
+                }
             };
         
         // load hero
@@ -5509,6 +5548,9 @@ angular.module('app.controllers', ['ngCookies'])
         // universe
         $scope.universes = HOTS.universes;
         
+        // mana types
+        $scope.manaTypes = HOTS.manaTypes;
+        
         // select options
         $scope.heroActive = [
             { name: 'Yes', value: true },
@@ -5520,9 +5562,14 @@ angular.module('app.controllers', ['ngCookies'])
         var box;
         $scope.abilityAddWnd = function () {
             $scope.currentAbility = angular.copy(defaultAbility);
-            box = bootbox.dialog({
-                title: 'Add Ability',
-                message: $compile('<div ability-add-form></div>')($scope)
+            Util.getObjectID().success(function (data) {
+                if (data.success) {
+                    $scope.currentAbility._id = data.id;
+                    box = bootbox.dialog({
+                        title: 'Add Ability',
+                        message: $compile('<div ability-add-form></div>')($scope)
+                    });
+                }
             });
         };
 
@@ -5602,6 +5649,44 @@ angular.module('app.controllers', ['ngCookies'])
             console.log($scope.hero.talents);
         };
         
+        $scope.talentAbilities = function () {
+            return [{ _id: null, name: 'None' }].concat($scope.hero.abilities);
+        };
+        
+        // characters
+        $scope.charAddWnd = function () {
+            console.log('blah');
+            $scope.currentCharacter = angular.copy(defaultCharacter);
+            box = bootbox.dialog({
+                title: 'Add Character',
+                message: $compile('<div char-add-form></div>')($scope)
+            });
+        };
+
+        $scope.charEditWnd = function (character) {
+            $scope.currentCharacter = character;
+            box = bootbox.dialog({
+                title: 'Edit Character',
+                message: $compile('<div char-edit-form></div>')($scope)
+            });
+        };
+
+        $scope.addCharacter = function () {
+            $scope.hero.characters.push($scope.currentCharacter);
+            box.modal('hide');
+            $scope.currentCharacter = false;
+        };
+        
+        $scope.editCharacter = function (character) {
+            box.modal('hide');
+            $scope.currentCharacter = false;
+        };
+        
+        $scope.deleteChar = function (character) {
+            var index = $scope.hero.characters.indexOf(character);
+            $scope.hero.characters.splice(index, 1);
+        };
+
         $scope.updateDND = function (list, index) {
             list.splice(index, 1);
             
@@ -5610,37 +5695,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             console.log(list);
-        };
-        
-        // stats
-        $scope.statLevel = 1;
-        
-        $scope.nextLevel = function () {
-            var next = $scope.statLevel + 1;
-            if (next <= 30) {
-                $scope.statLevel = next;
-            }
-        };
-        
-        $scope.prevLevel = function () {
-            var prev = $scope.statLevel - 1;
-            if (prev >= 1) {
-                $scope.statLevel = prev;
-            }
-        };
-        
-        $scope.getLevel = function () {
-            return $scope.statLevel;
-        };
-        
-        $scope.currentStats = function () {
-            for (var i = 0; i < $scope.hero.stats.length; i++) {
-                if ($scope.hero.stats[i].level === $scope.getLevel()) {
-                    return $scope.hero.stats[i];
-                }
-            }
-            
-            return false;
         };
         
         $scope.addHero = function () {
@@ -5659,8 +5713,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'AdminHeroService', 'data', 
-    function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, AdminHeroService, data) {
+.controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService', 'data', 
+    function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, AdminHeroService, data) {
         // defaults
         var defaultAbility = {
                 name: '',
@@ -5677,8 +5731,32 @@ angular.module('app.controllers', ['ngCookies'])
                 name: '',
                 tier: HOTS.tiers[0],
                 description: '',
+                ability: null,
                 className: '',
                 orderNum: 1
+            },
+            defaultCharacter = {
+                name: '',
+                stats: {
+                    base: {
+                        health: 0,
+                        healthRegen: 0,
+                        mana: 0,
+                        manaRegen: 0,
+                        attackSpeed: 0,
+                        range: 0,
+                        damage: 0
+                    },
+                    gain: {
+                        health: 0,
+                        healthRegen: 0,
+                        mana: 0,
+                        manaRegen: 0,
+                        attackSpeed: 0,
+                        range: 0,
+                        damage: 0
+                    }
+                }
             };
         
         // load hero
@@ -5692,7 +5770,10 @@ angular.module('app.controllers', ['ngCookies'])
         
         // universe
         $scope.universes = HOTS.universes;
-        
+
+        // mana types
+        $scope.manaTypes = HOTS.manaTypes;
+
         // select options
         $scope.heroActive = [
             { name: 'Yes', value: true },
@@ -5704,9 +5785,14 @@ angular.module('app.controllers', ['ngCookies'])
         var box;
         $scope.abilityAddWnd = function () {
             $scope.currentAbility = angular.copy(defaultAbility);
-            box = bootbox.dialog({
-                title: 'Add Ability',
-                message: $compile('<div ability-add-form></div>')($scope)
+            Util.getObjectID().success(function (data) {
+                if (data.success) {
+                    $scope.currentAbility._id = data.id;
+                    box = bootbox.dialog({
+                        title: 'Add Ability',
+                        message: $compile('<div ability-add-form></div>')($scope)
+                    });
+                }
             });
         };
 
@@ -5766,13 +5852,11 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.hero.talents.push($scope.currentTalent);
             box.modal('hide');
             $scope.currentTalent = false;
-            
-            console.log($scope.hero.talents);
         };
         
         $scope.editTalent = function (talent) {
             box.modal('hide');
-            $scope.currentAbility = false;
+            $scope.currentTalent = false;
         };
         
         $scope.deleteTalent = function (talent) {
@@ -5782,8 +5866,43 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < $scope.hero.talents.length; i++) {
                 $scope.hero.talents[i].orderNum = i + 1;
             }
-            
-            console.log($scope.hero.talents);
+        };
+        
+        $scope.talentAbilities = function () {
+            return [{ _id: null, name: 'None' }].concat($scope.hero.abilities);
+        };
+
+        // characters
+        $scope.charAddWnd = function () {
+            $scope.currentCharacter = angular.copy(defaultCharacter);
+            box = bootbox.dialog({
+                title: 'Add Character',
+                message: $compile('<div char-add-form></div>')($scope)
+            });
+        };
+
+        $scope.charEditWnd = function (character) {
+            $scope.currentCharacter = character;
+            box = bootbox.dialog({
+                title: 'Edit Character',
+                message: $compile('<div char-edit-form></div>')($scope)
+            });
+        };
+
+        $scope.addCharacter = function () {
+            $scope.hero.characters.push($scope.currentCharacter);
+            box.modal('hide');
+            $scope.currentCharacter = false;
+        };
+        
+        $scope.editCharacter = function (character) {
+            box.modal('hide');
+            $scope.currentCharacter = false;
+        };
+        
+        $scope.deleteChar = function (character) {
+            var index = $scope.hero.characters.indexOf(character);
+            $scope.hero.characters.splice(index, 1);
         };
         
         $scope.updateDND = function (list, index) {
@@ -5792,39 +5911,6 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
             }
-            
-            console.log(list);
-        };
-        
-        // stats
-        $scope.statLevel = 1;
-        
-        $scope.nextLevel = function () {
-            var next = $scope.statLevel + 1;
-            if (next <= 30) {
-                $scope.statLevel = next;
-            }
-        };
-        
-        $scope.prevLevel = function () {
-            var prev = $scope.statLevel - 1;
-            if (prev >= 1) {
-                $scope.statLevel = prev;
-            }
-        };
-        
-        $scope.getLevel = function () {
-            return $scope.statLevel;
-        };
-        
-        $scope.currentStats = function () {
-            for (var i = 0; i < $scope.hero.stats.length; i++) {
-                if ($scope.hero.stats[i].level === $scope.getLevel()) {
-                    return $scope.hero.stats[i];
-                }
-            }
-            
-            return false;
         };
         
         $scope.editHero = function () {
@@ -7663,6 +7749,111 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+.controller('HOTSTalentCalculatorCtrl', ['$scope', 'HOTS', 'dataHeroes', 
+    function ($scope, HOTS, dataHeroes) {
+        $scope.heroes = dataHeroes.heroes;
+        $scope.currentHero = $scope.heroes[0];
+        $scope.currentAbility = false;
+        $scope.level = 1;
+        
+        var defaultTalents = {
+            tier1: null,
+            tier4: null,
+            tier7: null,
+            tier10: null,
+            tier13: null,
+            tier16: null,
+            tier20: null
+        };
+        $scope.currentTalents = angular.copy(defaultTalents);
+        
+        $scope.getCurrentHero = function () {
+            return $scope.currentHero;
+        };
+        
+        $scope.setCurrentHero = function (hero) {
+            $scope.currentHero = hero;
+        };
+        
+        $scope.getAbilities = function () {
+            var abilities = $scope.getCurrentHero().abilities,
+                out = [];
+            for (var i = 0; i < abilities.length; i++) {
+                if (abilities[i].abilityType == 'Ability') {
+                    out.push(abilities[i]);
+                }
+            }
+            return out;
+        };
+        
+        $scope.getHeroics = function () {
+            var abilities = $scope.getCurrentHero().abilities,
+                out = [];
+            for (var i = 0; i < abilities.length; i++) {
+                if (abilities[i].abilityType == 'Heroic Ability') {
+                    out.push(abilities[i]);
+                }
+            }
+            return out;
+        };
+        
+        $scope.getTrait = function () {
+            var abilities = $scope.getCurrentHero().abilities;
+            for (var i = 0; i < abilities.length; i++) {
+                if (abilities[i].abilityType == 'Combat Trait') {
+                    return abilities[i];
+                }
+            }
+            return false;
+        };
+        
+        $scope.getCurrentAbility = function () {
+            return $scope.currentAbility;
+        };
+        
+        $scope.toggleAbility = function (ability) {
+            if (!$scope.getCurrentAbility() || $scope.getCurrentAbility() !== ability) {
+                $scope.currentAbility = ability;
+            } else {
+                $scope.currentAbility = false;
+            }
+        };
+        
+        $scope.tiers = HOTS.tiers;
+        
+        $scope.talentsByTier = function (tier) {
+            var hero = $scope.currentHero,
+                talents = [];
+            
+            for (var i = 0; i < hero.talents.length; i++) {
+                if (hero.talents[i].tier === tier) {
+                    talents.push(hero.talents[i]);
+                }
+            }
+            return talents;
+        };
+        
+        $scope.hasTalent = function (talent) {
+            return ($scope.currentTalents['tier'+talent.tier] == talent._id) ? ' active' : '';
+        }
+        
+        $scope.hasAnyTalent = function (talent) {
+            return ($scope.currentTalents['tier'+talent.tier] !== null) ? ' tier-selected' : '';
+        }
+        
+        $scope.toggleTalent = function (talent) {
+            if ($scope.hasTalent(talent)) {
+                $scope.currentTalents['tier'+talent.tier] = null;
+            } else {
+                $scope.currentTalents['tier'+talent.tier] = talent._id;
+            }
+        };
+        
+        $scope.getSliderWidth = function (level) {
+            return Math.ceil((level / 30) * 100);
+        };
+    }
+])
 .controller('TeamCtrl', ['$scope',
     function ($scope) {
         
@@ -7830,6 +8021,16 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/admin/hots.heroes.talent.edit.html'
     };
 })
+.directive('charAddForm', function () {
+    return {
+        templateUrl: 'views/admin/hots.heroes.char.add.html'
+    };
+})
+.directive('charEditForm', function () {
+    return {
+        templateUrl: 'views/admin/hots.heroes.char.edit.html'
+    };
+})
 .directive('talentModal', function () {
     return {
         templateUrl: 'views/frontend/hots.talent.modal.html'
@@ -7848,6 +8049,10 @@ angular.module('app.directives', ['ui.load'])
 .directive('hotsTalent', ['$compile', function ($compile) {
     return {
         restrict: 'A',
+        scope: {
+            hero: '=hero',
+            talent: '=talent'
+        },
         link: function (scope, el, attr) {
             var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -560 : 111;
             el.wTooltip({
@@ -8703,7 +8908,7 @@ angular.module('app.services', [])
     
     return pagination;
 })
-.factory('Util', function () {
+.factory('Util', ['$http', function ($http) {
     return {
         toSelect: function (arr) {
             arr = arr || [];
@@ -8715,9 +8920,12 @@ angular.module('app.services', [])
         },
         slugify: function (str) {
             return (str) ? str.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') : '';
+        },
+        getObjectID: function () {
+            return $http.post('/api/admin/id', {});
         }
-    }
-})
+    };
+}])
 .factory('Hearthstone', function () {
     var hs = {};
     
@@ -8737,7 +8945,8 @@ angular.module('app.services', [])
     hots.roles = ["Warrior", "Assassin", "Support", "Specialist"];
     hots.types = ["Melee", "Ranged"];
     hots.universes = ["Warcraft", "Starcraft", "Diablo", "Blizzard"];
-    hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability"];
+    hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Mount"];
+    hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
     
     hots.genStats = function () {

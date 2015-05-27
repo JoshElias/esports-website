@@ -715,7 +715,7 @@ angular.module('app.services', [])
     
     return pagination;
 })
-.factory('Util', function () {
+.factory('Util', ['$http', function ($http) {
     return {
         toSelect: function (arr) {
             arr = arr || [];
@@ -727,9 +727,12 @@ angular.module('app.services', [])
         },
         slugify: function (str) {
             return (str) ? str.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') : '';
+        },
+        getObjectID: function () {
+            return $http.post('/api/admin/id', {});
         }
-    }
-})
+    };
+}])
 .factory('Hearthstone', function () {
     var hs = {};
     
@@ -749,7 +752,8 @@ angular.module('app.services', [])
     hots.roles = ["Warrior", "Assassin", "Support", "Specialist"];
     hots.types = ["Melee", "Ranged"];
     hots.universes = ["Warcraft", "Starcraft", "Diablo", "Blizzard"];
-    hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability"];
+    hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Mount"];
+    hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
     
     hots.genStats = function () {

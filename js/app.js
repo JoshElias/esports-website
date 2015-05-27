@@ -560,6 +560,20 @@ var app = angular.module('app', [
                 },
                 access: { auth: true }
             })
+            .state('app.hots.talentCalculator', {
+                url: '/talent-calculator',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/frontend/hots.talentCalculator.html',
+                        controller: 'HOTSTalentCalculatorCtrl',
+                        resolve: {
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroes();
+                            }]
+                        }
+                    }
+                }
+            })
             .state('app.forum', {
                 abstract: true,
                 url: 'forum',
