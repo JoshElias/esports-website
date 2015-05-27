@@ -30,13 +30,13 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="pull-right btn-toolbar">
-                        <a href="./admin/users/edit/{{poll._id}}" class="btn btn-default">Edit</a>
-                        <button class="btn btn-danger" ng-click="deletePoll(user)">Delete</button>
+                        <a href="./admin/polls/edit/{{poll._id}}" class="btn btn-default">Edit</a>
+                        <button class="btn btn-danger" ng-click="deletePoll(poll)">Delete</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="list-group-item" ng-if="!users.length && !search.length">
+        <div class="list-group-item" ng-if="!polls.length && !search.length">
             There are no polls yet.
         </div>
         <div class="list-group-item b-t-none" ng-if="search.length && pagination.results() == 0">

@@ -1,0 +1,100 @@
+<div class="panel panel-danger error-modal animated" ng-show="showError">
+    <div class="panel-heading">
+        <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+        <strong>Unable to add poll</strong>
+    </div>
+    <div class="panel-body">
+        <ul class="error text-danger">
+            <li ng-repeat="error in errors">{{error.msg}}</li>
+        </ul>
+    </div>
+</div>
+<div class="panel panel-default br-none">
+    <form name="form" role="form" class="form-horizontal">
+    <div class="panel-heading">
+        Add Poll
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label for="title" class="col-sm-2 control-label">Title</label>
+            <div class="col-sm-10">
+                <input type="title" id="title" name="title" class="form-control" ng-model="poll.title" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="subTitle" class="col-sm-2 control-label">Sub Title</label>
+            <div class="col-sm-10">
+                <input type="subTitle" id="subTitle" name="subTitle" class="form-control" ng-model="poll.subTitle" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description" class="col-sm-2 control-label">Description</label>
+            <div class="col-sm-10">
+                <input type="description" id="description" name="description" class="form-control" ng-model="poll.description" required>
+            </div>
+        </div>
+        
+         <div class="form-group">
+            <label for="voteLimit" class="col-sm-2 control-label">Vote Limit</label>
+            <div class="col-sm-10">
+                <select id="voteLimit" name="voteLimit" class="form-control" ng-options="number as number for number in voteLimit()" ng-model="poll.voteLimit"></select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="type" class="col-sm-2 control-label">Poll Type</label>
+            <div class="col-sm-10">
+                <select id="type" name="type" class="form-control" ng-options="type.value as type.name for type in pollType" ng-model="poll.type" required></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="view" class="col-sm-2 control-label">View</label>
+            <div class="col-sm-10">
+                <select id="view" name="view" class="form-control" ng-options="view.value as view.name for view in pollView" ng-model="poll.view" required></select>
+            </div>
+        </div>
+        <!--
+        <div class="form-group">
+            <label for="active" class="col-sm-2 control-label">Votable</label>
+            <div class="col-sm-10">
+                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in pollActive" ng-model="poll.active" required></select>
+            </div>
+        </div>
+        -->
+        
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <a href="#" ng-disabled="form.$invalid" class="btn btn-sm btn-green btn-rounded pull-right" ng-click="itemAddWnd()">
+                    <i class="fa fa-plus-circle m-r-xs"></i>Add
+                </a>
+                <strong class="lh-lg">Items</strong>
+            </div>
+            <ul class="list-group" dnd-list="poll.items" ng-show="poll.items.length">
+                <li class="list-group-item lh-lg clearfix"
+                    ng-repeat="item in poll.items | orderBy: item.orderNum"
+                    dnd-draggable="item"
+                    dnd-moved="updateDND(poll.items, $index)"
+                    dnd-disable-if="poll.items.length < 2"
+                >
+                    {{item.name}}
+                    <div class="pull-right">
+                        <button class="btn btn-sm btn-default" ng-click="itemEditWnd(item)">Edit</button>
+                        <button class="btn btn-sm btn-danger" ng-click="deleteItem(item)">Delete</button>
+                    </div>
+                </li>
+            </ul>
+            <div class="panel-body" ng-show="!poll.items.length">
+                <p class="m-b-none">There are no items added for this poll yet.</p>
+            </div>
+        </div>
+        
+        
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="col-sm-10 col-sm-offset-2">
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || poll.items.length < 2" ng-click="addPoll()">Add Poll</button>
+        </div>
+    </div>
+    </form>
+    </div>
+</div>

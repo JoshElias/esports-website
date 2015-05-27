@@ -525,6 +525,28 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('PollService', ['$http', '$q', '$localStorage', function ($http, $q, $localStorage) {
+    return {
+        getPolls: function (view) {
+            var d = $q.defer();
+            $http.post('/polls', { view: view }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        postVote: function(poll, votes) {
+            return $http.post('/polls/vote', { poll: poll, votes: votes});
+        },
+        setStorage: function (poll, bool) {
+
+            return $localStorage['tspoll-' + poll] = bool;
+        },
+        getStorage: function (poll) {
+
+            return $localStorage['tspoll-' + poll];
+        }
+    };
+}])
 .factory('AdminPollService', ['$http', '$q', function ($http, $q) {
     return {
         getProviders: function () {
@@ -551,11 +573,11 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
-        addPoll: function (user) {
-            return $http.post('/api/admin/poll/add', user);
+        addPoll: function (poll) {
+            return $http.post('/api/admin/poll/add', poll);
         },
-        editPoll: function (user) {
-            return $http.post('/api/admin/poll/edit', user);
+        editPoll: function (poll) {
+            return $http.post('/api/admin/poll/edit', poll);
         },
         deletePoll: function (_id) {
             var d = $q.defer();

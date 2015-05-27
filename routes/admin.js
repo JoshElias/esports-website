@@ -1991,7 +1991,7 @@ module.exports = {
             });
         };
     },
-    uploadArticle: function (fs, gm, amazon) {
+    uploadPoll: function (fs, gm, amazon) {
         return function(req, res, next) {
             // check if image file
             var types = ['image/png', 'image/jpeg', 'image/gif'];
@@ -2009,9 +2009,8 @@ module.exports = {
                     name = arr.splice(0, arr.length - 1).join('.'),
                     ext = '.' + arr.pop(),
                     large = name + '.large' + ext,
-                    medium = name + '.medium' + ext,
-                    small = name + '.small' + ext,
-                    path = BASE_DIR + '/photos/articles/';
+                    thumb = name + '.thumb' + ext,
+                    path = BASE_DIR + '/polls';
                     copyFile(function () {
                         var files = [];
                         files.push({
@@ -2019,20 +2018,15 @@ module.exports = {
                             name: large
                         });
                         files.push({
-                            path: path + medium,
-                            name: medium
+                            path: path + thumb,
+                            name: thumb
                         });
-                        files.push({
-                            path: path + small,
-                            name: small
-                        });
-                        amazon.upload(files, 'articles/', function () {
+                        amazon.upload(files, 'polls', function () {
                             return res.json({
                                 success: true,
                                 large: large,
-                                medium: medium,
-                                small: small,
-                                path: './photos/articles/'
+                                thumb: thumb,
+                                path: './photos/polls'
                             });
                         });
                     });
@@ -2051,18 +2045,15 @@ module.exports = {
                                 fs.unlink(req.files.file.path, function(err){
                                     if (err) return next(err);
                                     // resize
-                                    gm(path + large).quality(100).gravity('Center').crop(1920, 480, 0, 0).write(path + large, function(err){
+                                    gm(path + large).quality(100).resize(800, 600, ">").write(path + large, function(err){
                                         if (err) return next(err);
-                                        gm(path + large).quality(100).resize(800, 200, "!").write(path + medium, function(err){
+                                        gm(path + large).quality(100).resize(140, 140, "^").write(path + thumb, function(err){
                                             if (err) return next(err);
-                                            fs.chmod(path + medium, 0777, function(err){
+                                            gm(path + thumb).quality(100).gravity('Center').crop(140, 140).write(path + thumb, function(err){
                                                 if (err) return next(err);
-                                                gm(path + large).quality(100).resize(400, 100, "!").write(path + small, function(err){
+                                                fs.chmod(path + thumb, 0777, function(err){
                                                     if (err) return next(err);
-                                                    fs.chmod(path + small, 0777, function(err){
-                                                        if (err) return next(err);
-                                                        return callback();
-                                                    });
+                                                    return callback();
                                                 });
                                             });
                                         });
@@ -2205,27 +2196,102 @@ module.exports = {
             }
         };
     },
-    pollsProviders: function (Schemas) {
-        return function (req, res, next) {
-            Schemas.User.find({ isProvider: true }).select('_id title').exec(function (err, users) {
-                if (err) { return res.json({ success: false }); }
-                return res.json({
-                    success: true,
-                    users: users
+    uploadArticle: function (fs, gm, amazon) {
+        return function(req, res, next) {
+            // check if image file
+            var types = ['image/png', 'image/jpeg', 'image/gif'];
+            if (types.indexOf(req.files.file.type) === -1) {
+                fs.unlink(req.files.file.path, function(err){
+                    if (err) return next(err);
+                    var output = {
+                            success: false,
+                            error: 'Invalid photo uploaded.',
+                        };
+                    return res.json(output);
                 });
-            });
+            } else {
+                var arr = req.files.file.name.split('.'),
+                    name = arr.splice(0, arr.length - 1).join('.'),
+                    ext = '.' + arr.pop(),
+                    large = name + '.large' + ext,
+                    medium = name + '.medium' + ext,
+                    small = name + '.small' + ext,
+                    path = BASE_DIR + '/photos/articles/';
+                    copyFile(function () {
+                        var files = [];
+                        files.push({
+                            path: path + large,
+                            name: large
+                        });
+                        files.push({
+                            path: path + medium,
+                            name: medium
+                        });
+                        files.push({
+                            path: path + small,
+                            name: small
+                        });
+                        amazon.upload(files, 'articles/', function () {
+                            return res.json({
+                                success: true,
+                                large: large,
+                                medium: medium,
+                                small: small,
+                                path: './photos/articles/'
+                            });
+                        });
+                    });
+
+                function copyFile(callback) {
+                    // read file
+                    fs.readFile(req.files.file.path, function(err, data){
+                        if (err) return next(err);
+                        // write file
+                        fs.writeFile(path + large, data, function(err){
+                            if (err) return next(err);
+                            // chmod new file
+                            fs.chmod(path + large, 0777, function(err){
+                                if (err) return next(err);
+                                // delete tmp file
+                                fs.unlink(req.files.file.path, function(err){
+                                    if (err) return next(err);
+                                    // resize
+                                    gm(path + large).quality(100).gravity('Center').crop(1920, 480, 0, 0).write(path + large, function(err){
+                                        if (err) return next(err);
+                                        gm(path + large).quality(100).resize(800, 200, "!").write(path + medium, function(err){
+                                            if (err) return next(err);
+                                            fs.chmod(path + medium, 0777, function(err){
+                                                if (err) return next(err);
+                                                gm(path + large).quality(100).resize(400, 100, "!").write(path + small, function(err){
+                                                    if (err) return next(err);
+                                                    fs.chmod(path + small, 0777, function(err){
+                                                        if (err) return next(err);
+                                                        return callback();
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }
+            }
         };
     },
-    users: function (Schemas) {
+    polls: function (Schemas) {
         return function (req, res, next) {
             var page = req.body.page || 1,
                 perpage = req.body.perpage || 50,
                 search = req.body.search || '',
-                where = (search.length) ? { username: new RegExp(search, "i") } : {},
-                total, users;
+                where = (search.length) ? { title: new RegExp(search, "i") } : {},
+                total, polls;
+            
+    
             
             function getTotal (callback) {
-                Schemas.User.count({})
+                Schemas.Poll.count({})
                 .where(where)
                 .exec(function (err, count) {
                     if (err) { return res.json({ success: false }); }
@@ -2234,24 +2300,24 @@ module.exports = {
                 });
             }
             
-            function getUsers (callback) {
-                Schemas.User.find({})
+            function getPolls (callback) {
+                Schemas.Poll.find({})
                 .where(where)
-                .sort({ username: 1 })
+                .sort({ title: 1 })
                 .skip((perpage * page) - perpage)
                 .limit(perpage)
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
-                    users = results;
+                    polls = results;
                     return callback();
                 });
             }
             
             getTotal(function () {
-                getUsers(function () {
+                getPolls(function () {
                     return res.json({
                         success: true,
-                        users: users,
+                        polls: polls,
                         total: total,
                         page: page,
                         perpage: perpage,
@@ -2261,13 +2327,13 @@ module.exports = {
             });
         };
     },
-    user: function (Schemas) {
+    poll: function (Schemas) {
         return function (req, res, next) {
             var _id = req.body._id;
             
-            Schemas.User.findOne({ _id: _id }).exec(function (err, user) {
-                if (err || !user) {
-                    console.log(err || 'User not found');
+            Schemas.Poll.findOne({ _id: _id }).exec(function (err, poll) {
+                if (err || !poll) {
+                    console.log(err || 'Poll not found');
                     return res.json({ success: false,
                         errors: {
                             unknown: {
@@ -2278,17 +2344,17 @@ module.exports = {
                 }
                 return res.json({
                     success: true,
-                    user: user
+                    poll: poll
                 });
             });
         };
     },
-    userAdd: function (Schemas) {
+    pollAdd: function (Schemas) {
         return function (req, res, next) {
-            req.assert('email', 'A valid email address is required').notEmpty().isEmail();
-            req.assert('username', 'Username is required').notEmpty();
-            req.assert('password', 'Password is required').notEmpty();
-            req.assert('cpassword', 'Please confirm your password').notEmpty().equals(req.body.password);
+            req.assert('title', 'Please enter a title').notEmpty();
+            req.assert('subTitle', 'A Sub Title is required').notEmpty();
+            req.assert('description', 'A description is required').notEmpty();
+            req.assert('type', 'A type is required').notEmpty();
             
             var errors = req.validationErrors(true);
             
@@ -2298,27 +2364,9 @@ module.exports = {
                 var error = false,
                     errorMsgs = {};
                 
-                function checkEmail(cb) {
-                    Schemas.User.count({ email: req.body.email }, function(err, count){
-                        if (err) {
-                            error = true;
-                            errorMsgs.unknown = { 
-                                msg: 'An unknown error occurred'
-                            };
-                        }
-                        if (count > 0) {
-                            console.log('Email already exists on another account');
-                            error = true;
-                            errorMsgs.email = { 
-                                msg: 'Email already exists on another account'
-                            };
-                        }
-                        cb();
-                    });
-                }
-
-                function checkUsername(cb) {
-                    Schemas.User.count({ username: req.body.username }, function(err, count){
+                
+                function checkTitle(callback) {
+                    Schemas.Poll.count({ title: req.body.title }, function(err, count){
                         if (err) {
                             error = true;
                             errorMsgs.unknown = { 
@@ -2327,44 +2375,32 @@ module.exports = {
                         }
                         if (count > 0) {
                             error = true;
-                            errorMsgs.username = { 
-                                msg: 'Username already in use'
+                            errorMsgs.title = { 
+                                msg: 'Title already in use.'
                             };
                         }
-                        cb();
+                        callback();
                     });
                 }
                 
-                function completeNewUser() {
+                
+                function completeNewPoll() {
                     if (error) {
                         return res.json({ success: false, errors: errorMsgs });
                     } else {
-                        var newUser = new Schemas.User({
-                                email: req.body.email,
-                                username: req.body.username,
-                                password: req.body.password,
-                                firstName: req.body.firstName,
-                                lastName: req.body.lastName,
-                                about: req.body.about,
-                                social: {
-                                    twitter: req.body.social.twitter,
-                                    facebook: req.body.social.facebook,
-                                    twitch: req.body.social.twitch,
-                                    instagram: req.body.social.instagram,
-                                    youtube: req.body.social.youtube
-                                },
-                                subscription: {
-                                    isSubscribed: req.body.subscription.isSubscribed,
-                                    expiryDate: req.body.subscription.expiryDate || new Date().toISOString()
-                                },
-                                verified: true,
-                                isAdmin: req.body.isAdmin,
-                                isProvider: req.body.isProvider,
+                        var newPoll = new Schemas.Poll({
+                                title: req.body.title,
+                                subTitle: req.body.subTitle,
+                                description: req.body.description,
+                                type: req.body.type,
+                                items: req.body.items, 
                                 active: req.body.active,
+                                view: req.body.view,
+                                voteLimit: req.body.voteLimit,
                                 createdDate: new Date().toISOString()
                             });
 
-                        newUser.save(function(err, data){
+                        newPoll.save(function(err, data){
                             if (err) {
                                 console.log(err);
                                 return res.json({ success: false,
@@ -2379,19 +2415,16 @@ module.exports = {
                         });
                     }
                 }
-
-                checkEmail(function (){
-                    checkUsername(function (){
-                        completeNewUser();
-                    });
+                checkTitle(function() {
+                    completeNewPoll();
                 });
             }
         };
     },
-    userDelete: function (Schemas) {
+    pollDelete: function (Schemas) {
         return function (req, res, next) {
             var _id = req.body._id;
-            Schemas.User.findOne({ _id: _id }).remove().exec(function (err) {
+            Schemas.Poll.findOne({ _id: _id }).remove().exec(function (err) {
                 if (err) {
                     console.log(err);
                     return res.json({ success: false,
@@ -2406,17 +2439,50 @@ module.exports = {
             });
         };
     },
-    userEdit: function (Schemas) {
+    itemEdit: function (Schemas) {
+        return function (req, res, next) {
+            _id = req.body._id;
+            
+            var errors = req.validationErrors(true);
+            
+            Schemas.Poll.findOne({ _id: _id }).exec(function (err, item) {
+                if (err || !item) {
+                    console.log(err || 'item not found');
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+
+                item.name = req.body.name || '';
+                item.photos = req.body.photos;
+
+                item.save(function (err) {
+                    if (err) {
+                        console.log(err);
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        };
+    },
+    pollEdit: function (Schemas) {
         return function (req, res, next) {
             var _id = req.body._id;
             
-            // form validation
-            req.assert('email', 'A valid email address is required').notEmpty().isEmail();
-            req.assert('username', 'Username is required').notEmpty();
-            if (req.body.changePassword) {
-                req.assert('newPassword', 'Password is required').notEmpty();
-                req.assert('confirmNewPassword', 'Please confirm your password').notEmpty().equals(req.body.newPassword);
-            }
+            req.assert('title', 'Please enter a title').notEmpty();
+            req.assert('subTitle', 'A Sub Title is required').notEmpty();
+            req.assert('description', 'A description is required').notEmpty();
+            req.assert('type', 'A type is required').notEmpty();
             
             var errors = req.validationErrors(true);
             
@@ -2424,30 +2490,20 @@ module.exports = {
                 return res.json({ success: false, errors: errors });
             } else {
                 
-                function checkEmail(callback) {
-                    Schemas.User.count({ email: req.body.email, _id: { $ne: _id } }).exec(function (err, count) {
+                function checkTitle(callback) {
+                    Schemas.Poll.count({ title: req.body.title, _id: { $ne: _id } }).exec(function (err, count) {
                         if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
                         if (count > 0) {
-                            return res.json({ success: false, errors: { email: { msg: 'Email address already exists on another account' } } });
+                            return res.json({ success: false, errors: { email: { msg: 'A poll with that title already exists.' } } });
                         }
                         return callback();
                     });
                 }
                 
-                function checkUsername(callback) {
-                    Schemas.User.count({ username: req.body.username, _id: { $ne: _id } }).exec(function (err, count) {
-                        if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
-                        if (count > 0) {
-                            return res.json({ success: false, errors: { username: { msg: 'Username already in use' } } });
-                        }
-                        return callback();
-                    });
-                }
-                
-                function updateUser(callback) {
-                    Schemas.User.findOne({ _id: _id }).exec(function (err, user) {
-                        if (err || !user) {
-                            console.log(err || 'User not found');
+                function updatePoll(callback) {
+                    Schemas.Poll.findOne({ _id: _id }).exec(function (err, poll) {
+                        if (err || !poll) {
+                            console.log(err || 'Poll not found');
                             return res.json({ success: false,
                                 errors: {
                                     unknown: {
@@ -2457,30 +2513,15 @@ module.exports = {
                             });
                         }
 
-                        user.email = req.body.email || '';
-                        user.username = req.body.username;
-                        if (req.body.changePassword) {
-                            user.password = req.body.newPassword;
-                        }
-                        user.firstName = req.body.firstName || '';
-                        user.lastName = req.body.lastName || '';
-                        user.about = req.body.about || '';
-                        user.social = req.body.social || {
-                            twitter: '',
-                            facebook: '',
-                            twitch: '',
-                            instagram: '',
-                            youtube: ''
-                        };
-                        user.subscription = {
-                            isSubscribed: req.body.subscription.isSubscribed,
-                            expiryDate: req.body.subscription.expiryDate || new Date().toISOString()
-                        };
-                        user.isAdmin = req.body.isAdmin || false;
-                        user.active = req.body.active;
-                        user.isProvider = req.body.isProvider || false;
-
-                        user.save(function (err) {
+                        poll.title = req.body.title || '';
+                        poll.subTitle = req.body.subTitle,
+                        poll.description = req.body.description,
+                        poll.type = req.body.type,
+                        poll.active = req.body.active,
+                        poll.view = req.body.view,
+                        poll.items = req.body.items,
+                        poll.voteLimit = req.body.voteLimit;
+                        poll.save(function (err) {
                             if (err) {
                                 console.log(err);
                                 return res.json({ success: false,
@@ -2496,11 +2537,9 @@ module.exports = {
                     });
                 }
                 
-                checkEmail(function () {
-                    checkUsername(function () {
-                        updateUser(function () {
-                            return res.json({ success: true });
-                        });
+                checkTitle(function () {
+                    updatePoll(function () {
+                        return res.json({ success: true });
                     });
                 });
             }
