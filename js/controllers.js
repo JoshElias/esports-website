@@ -1841,10 +1841,6 @@ angular.module('app.controllers', ['ngCookies'])
             AlertService.reset();
         }
         
-        
-        
-        
-        
         // load polls
         $scope.polls = data.polls;
         $scope.page = data.page;
@@ -1920,7 +1916,7 @@ angular.module('app.controllers', ['ngCookies'])
         };  
         
         
-        // delete user
+        // delete poll
         $scope.deletePoll = function (poll) {
             var box = bootbox.dialog({
                 title: 'Delete poll: ' + poll.title + '?',
@@ -2078,12 +2074,10 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
             }
-            //console.log(list);
         };
         
         $scope.getImage = function () {
-            return ($scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
-            //return ($scope.currentItem.photos.thumb === '') ?  './img/blank.png' : '.' + $scope.imgPath + $scope.currentItem.photos.thumb;
+            return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
         };
         
         // add Poll
@@ -2227,8 +2221,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.getImage = function () {
-            return ($scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
-            //return ($scope.currentItem.photos.thumb === '') ? './img/blank.png' : '.' + $scope.imgPath + $scope.currentItem.photos.thumb;
+            if (!$scope.currentItem) { return '/img/blank.png'; }
+            return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
         };
         
         $scope.editPoll = function () {

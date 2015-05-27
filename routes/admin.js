@@ -2010,7 +2010,7 @@ module.exports = {
                     ext = '.' + arr.pop(),
                     large = name + '.large' + ext,
                     thumb = name + '.thumb' + ext,
-                    path = BASE_DIR + '/polls';
+                    path = BASE_DIR + '/photos/polls/';
                     copyFile(function () {
                         var files = [];
                         files.push({
@@ -2021,12 +2021,12 @@ module.exports = {
                             path: path + thumb,
                             name: thumb
                         });
-                        amazon.upload(files, 'polls', function () {
+                        amazon.upload(files, 'polls/', function () {
                             return res.json({
                                 success: true,
                                 large: large,
                                 thumb: thumb,
-                                path: './photos/polls'
+                                path: '/photos/polls'
                             });
                         });
                     });
