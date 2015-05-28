@@ -175,7 +175,9 @@ if (cluster.isMaster) {
     app.post('/forum/post', routes.frontend.forumPost(Schemas));
 
     app.post('/banners', routes.frontend.getBanners(Schemas));
-
+    app.post('/polls', routes.frontend.pollsPage(Schemas, async));
+    app.post('/polls/vote', routes.frontend.pollsVote(Schemas));
+    
     app.post('/upload', routes.frontend.uploadToImgur(fs, imgur));
     
     /* frontend - requires login */
@@ -271,6 +273,13 @@ if (cluster.isMaster) {
     app.post('/api/admin/upload/article', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadArticle(fs, gm, amazon));
     app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadCard(fs, gm, amazon));
     app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadDeck(fs, gm, amazon));
+    app.post('/api/admin/upload/polls', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadPoll(fs, gm, amazon));
+    
+    app.post('/api/admin/polls', routes.admin.isAdmin(Schemas), routes.admin.polls(Schemas));
+    app.post('/api/admin/poll', routes.admin.isAdmin(Schemas), routes.admin.poll(Schemas));
+    app.post('/api/admin/poll/delete', routes.admin.isAdmin(Schemas), routes.admin.pollDelete(Schemas));
+    app.post('/api/admin/poll/add', routes.admin.isAdmin(Schemas), routes.admin.pollAdd(Schemas));
+    app.post('/api/admin/poll/edit', routes.admin.isAdmin(Schemas), routes.admin.pollEdit(Schemas));
 
     // 404
     app.use(function (req, res, next) {

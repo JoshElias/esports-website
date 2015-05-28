@@ -1,5 +1,6 @@
 {
     "jscodehints.detectedExclusions": [
-        "C:/Users/codephobia/Documents/GitHub/tempostorm/js/controllers.js"
+        "C:/Users/codephobia/Documents/GitHub/tempostorm/js/controllers.js",
+        "C:/Users/Uther/Documents/GitHub/tempostorm/js/services.js"
     ]
 }

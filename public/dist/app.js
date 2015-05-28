@@ -441,6 +441,23 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.polls', {
+                url: 'vote',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/polls.html',
+                        controller: 'PollsCtrl',
+                        resolve: {
+                            dataPollsMain: ['PollService', function(PollService) {
+                                return PollService.getPolls('main');
+                            }],
+                            dataPollsSide: ['PollService', function(PollService) {
+                                return PollService.getPolls('side');
+                            }]
+                        }
+                    }
+                }
+            }) 
             .state('app.sponsors', {
                 url: 'sponsors',
                 views: {
@@ -1317,6 +1334,60 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
+            .state('app.admin.polls', {
+                abstract: true,
+                url: '/polls',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/polls.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.polls.list', {
+                url: '',
+                views: {
+                    polls: {
+                        templateUrl: tpl + 'views/admin/polls.list.html',
+                        controller: 'AdminPollListCtrl',
+                        resolve: {
+                            data: ['AdminPollService', function (AdminPollService) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminPollService.getPolls(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.polls.add', {
+                url: '/add',
+                views: {
+                    polls: {
+                        templateUrl: tpl + 'views/admin/polls.add.html',
+                        controller: 'AdminPollAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.polls.edit', {
+                url: '/edit/:pollID',
+                views: {
+                    polls: {
+                        templateUrl: tpl + 'views/admin/polls.edit.html',
+                        controller: 'AdminPollEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminPollService', function($stateParams, AdminPollService){
+                                var pollID = $stateParams.pollID;
+                                return AdminPollService.getPoll(pollID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
             .state('app.admin.subscriptions', {
                 url: '/subscriptions',
                 views: {
@@ -1343,7 +1414,8 @@ var app = angular.module('app', [
                         controller: 'ContactCtrl'
                     }
                 }
-            });        
+            });       
+           
     }]
 );
 
@@ -1969,7 +2041,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }).success(function(data, status, headers, config) {
                     $scope.card.photos.medium = data.medium;
                     $scope.card.photos.large = data.large;
-                    $scope.cardImg = '.' + data.path + data.large;
+                    $scope.cardImg = $scope.app.cdn + data.path + data.large;
                     box.modal('hide');
                 });
             }
@@ -2296,7 +2368,7 @@ angular.module('app.controllers', ['ngCookies'])
                         medium: data.medium,
                         small: data.small
                     };
-                    $scope.cardImg = '.' + data.path + data.small;
+                    $scope.cardImg = $scope.app.cdn + data.path + data.small;
                     box.modal('hide');
                 });
             }
@@ -2409,7 +2481,7 @@ angular.module('app.controllers', ['ngCookies'])
                         medium: data.medium,
                         small: data.small
                     };
-                    $scope.cardImg = '.' + data.path + data.small;
+                    $scope.cardImg = $scope.app.cdn + data.path + data.small;
                     box.modal('hide');
                 });
             }
@@ -3193,238 +3265,412 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
-    function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
-        // redirect back to class pick if no data
-        if (!data || !data.success) { $state.transitionTo('app.deckBuilder.class'); return false; }
-        
-        // set default tab page
-        $scope.step = 1;
-        $scope.showManaCurve = false;
-        $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
-        
-        // steps
-        $scope.stepDesc = {
-            1: 'Select the cards for your deck.',
-            2: 'Select which cards to mulligan for.',
-            3: 'Provide a description for how to play your deck.',
-            4: 'Select how your deck preforms against other classes.',
-            5: 'Provide a synopsis and title for your deck.'            
-        };
-        
-        
-        $scope.prevStep = function () {
-            if ($scope.step > 1) $scope.step = $scope.step - 1;
-        }
-        $scope.nextStep = function () {
-            if ($scope.step < 5) $scope.step = $scope.step + 1;
+.controller('AdminPollListCtrl', ['$scope', 'bootbox', 'Pagination', 'AlertService', 'AdminPollService', 'data', 
+    function ($scope, bootbox, Pagination, AlertService, AdminPollService, data) {
+        // grab alerts
+        if (AlertService.hasAlert()) {
+            $scope.success = AlertService.getSuccess();
+            AlertService.reset();
         }
         
-        // summernote options
-        $scope.options = {
-          height: 100,
-          toolbar: [
-            ['style', ['style']],
-            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['table', ['table']],
-            ['insert', ['link', 'picture', 'video']],
-            ['format', ['hr']],
-            ['misc', ['undo', 'redo']]
-          ]
-        };
-
-        // load cards
-        $scope.className = data.className;
-        $scope.cards = data.cards;
-        $scope.cards.current = $scope.cards.class;
-
-        // page flipping
-        $scope.pagination = Pagination.new(6);
-        $scope.pagination.perpage = 10;
-        $scope.pagination.results = function () {
-            return ($scope.filtered) ? $scope.filtered.length : $scope.cards.current.length;
-        };
+        // load polls
+        $scope.polls = data.polls;
+        $scope.page = data.page;
+        $scope.perpage = data.perpage;
+        $scope.total = data.total;
+        $scope.search = data.search;
         
-        // filters
-        $scope.filters = {
-            search: '',
-            mechanics: [],
-            mana: 'all'
-        };
-        
-        $scope.mechanics = Hearthstone.mechanics;
-        $scope.inMechanics = function (mechanic) {
-            return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
-        }
-        $scope.toggleMechanic = function (mechanic) {
-            var index = $scope.filters.mechanics.indexOf(mechanic);
-            if (index === -1) {
-                $scope.filters.mechanics.push(mechanic);
-            } else {
-                $scope.filters.mechanics.splice(index, 1);
-            }
+        $scope.getPolls = function () {
+            AdminPollService.getPolls($scope.page, $scope.perpage, $scope.search).then(function (data) {
+                $scope.polls = data.polls;
+                $scope.page = data.page;
+                $scope.total = data.total;
+            });
         }
         
-        // filter by mechanics
-        $scope.filters.byMechanics = function () {
-            return function (item) {
-                if (!$scope.filters.mechanics.length) { return true; }
-                var matched = 0;
-                for (var i = 0; i < item['mechanics'].length; i++) {
-                    if ($scope.inMechanics(item['mechanics'][i])) matched++;
-                }
-                return (matched === $scope.filters.mechanics.length);
-            }
+        $scope.searchPolls = function () {
+            $scope.page = 1;
+            $scope.getPolls();
         }
-        
-        // filter by mana
-        $scope.filters.byMana = function () {
-            return function (item) {
-                switch ($scope.filters.mana) {
-                    case 'all':
-                        return true;
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                        return (item['cost'] === $scope.filters.mana);
-                    case '7+':
-                        return (item['cost'] >= 7);
-                }
-            }
-        };
-        
-        $scope.getManaCost = function () {
-            switch ($scope.filters.mana) {
-                    case 'all':
-                        return 'All';
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case '7+':
-                        return $scope.filters.mana;
-                }
-        }
-        
-        // deck
-        $scope.deckTypes = Hearthstone.deckTypes;
-        
-        //$scope.deck = DeckBuilder.new(data.className);
-        $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && data.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new(data.className, $scope.app.settings.deck) : DeckBuilder.new(data.className);
-        $scope.$watch('deck', function(){
-            $scope.app.settings.deck = {
-                name: $scope.deck.name,
-                deckType: $scope.deck.deckType,
-                description: $scope.deck.description,
-                contentEarly: $scope.deck.contentEarly,
-                contentMid: $scope.deck.contentMid,
-                contentLate: $scope.deck.contentLate,
-                cards: $scope.deck.cards,
-                playerClass: $scope.deck.playerClass,
-                arena: $scope.deck.arena,
-                mulligans: $scope.deck.mulligans,
-                against: $scope.deck.against,
-                video: $scope.deck.video,
-                public: $scope.deck.public
-            };
-        }, true);
-        
-        // current mulligan
-        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
-        
-        $scope.setMulligan = function (mulligan) {
-            $scope.currentMulligan = mulligan;
-        };
-        
-        $scope.isMulliganSet = function (mulligan) {
-            return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
-        };
-        
-        // premium
-        $scope.premiumTypes = [
-            { text: 'No', value: false },
-            { text: 'Yes', value: true }
-        ];
-        
-        $scope.isPremium = function () {
-            var premium = $scope.deck.premium.isPremium;
-            for (var i = 0; i < $scope.premiumTypes.length; i++) {
-                if ($scope.premiumTypes[i].value === premium) {
-                    return $scope.premiumTypes[i].text;
-                }
-            }
-        }
-        
-        // featured
-        $scope.featuredTypes = [
-            { text: 'No', value: false },
-            { text: 'Yes', value: true }
-        ];
-        
-        $scope.isFeatured = function () {
-            var featured = $scope.deck.featured;
-            for (var i = 0; i < $scope.featuredTypes.length; i++) {
-                if ($scope.featuredTypes[i].value === featured) {
-                    return $scope.featuredTypes[i].text;
-                }
-            }
-        }
-        
-        // save deck
-        var box;
-        $scope.saveDeck = function () {
-            if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-            } else {
-                DeckBuilder.saveDeck($scope.deck).success(function (data) {
-                    if (data.success) {
-                        $scope.app.settings.deck = null;
-                        $state.transitionTo('app.decks.deck', { slug: data.slug });
+            
+        // pagination
+        $scope.pagination = {
+            page: function () {
+                return $scope.page;
+            },
+            perpage: function () {
+                return $scope.perpage;
+            },
+            results: function () {
+                return $scope.total;
+            },
+            setPage: function (page) {
+                $scope.page = page;
+                $scope.getPolls();
+            },
+            pagesArray: function () {
+                var pages = [],
+                    start = 1,
+                    end = this.totalPages();
+                
+                if (this.totalPages() > 5) {
+                    if (this.page() < 3) {
+                        start = 1;
+                        end = start + 4;
+                    } else if (this.page() > this.totalPages() - 2) {
+                        end = this.totalPages();
+                        start = end - 4;
                     } else {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
+                        start = this.page() - 2;
+                        end = this.page() + 2;
                     }
+                    
+                }
+                
+                for (var i = start; i <= end; i++) {
+                    pages.push(i);
+                }
+                
+                return pages;
+            },
+            isPage: function (page) {
+                return (page === this.page());
+            },
+            totalPages: function (page) {
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
+            },
+            from: function () {
+                return (this.page() * this.perpage()) - this.perpage() + 1;
+            },
+            to: function () {
+                return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
+            }
+        };  
+        
+        
+        // delete poll
+        $scope.deletePoll = function (poll) {
+            var box = bootbox.dialog({
+                title: 'Delete poll: ' + poll.title + '?',
+                message: 'Are you sure you want to delete the poll <strong>' + poll.title + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            AdminPollService.deletePoll(poll._id).then(function (data) {
+                                if (data.success) {
+                                    var index = $scope.polls.indexOf(poll);
+                                    if (index !== -1) {
+                                        $scope.polls.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: poll.title + ' deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        };
+    }
+])
+.controller('AdminPollAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'AdminPollService', 'AlertService',
+    function ($scope, $state, $window, $upload, $compile, AdminPollService, AlertService) {
+        var box,
+            defaultPoll = {
+                title : '',
+                subTitle: '',
+                description: '',
+                type: '',
+                active: false,
+                view: '',
+                items: []
+            },
+            defaultItem = {
+                name: '',
+                orderNum: 0,
+                photos: {
+                    large: '',
+                    thumb: ''
+                }
+            }
+        
+        // load Poll
+        $scope.poll = angular.copy(defaultPoll);
+        $scope.item = angular.copy(defaultItem);
+        $scope.currentItem = angular.copy(defaultItem);
+        $scope.imgPath = '/polls/';
+        
+        $scope.pollType = [
+            { name: 'Image', value: 'img' },
+            { name: 'Text', value: 'txt' }
+        ];
+        
+        $scope.pollView = [
+            { name: 'Main', value: 'main' },
+            { name: 'Sidebar', value: 'side' },
+            { name: 'Hide', value: 'hide'}
+        ];
+        
+        $scope.pollActive = [
+            { name: 'Yes', value: 'true'},
+            { name: 'No', value: 'false'}
+        ];
+        
+        $scope.voteLimit = function() {
+            var out = [];
+            
+            for (var i = 0; i < $scope.poll.items.length; i++) {
+                out.push(i + 1);
+            }
+            
+            return out;
+        }
+        
+        $scope.photoUpload = function ($files) {
+            if (!$files.length) return false;
+            var uploadBox = bootbox.dialog({
+                message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                closeButton: false,
+                animate: false
+            });
+            $scope.uploading = 0;
+            uploadBox.modal('show');
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/admin/upload/polls',
+                    method: 'POST',
+                    file: file
+                }).progress(function(evt) {
+                    $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                }).success(function(data, status, headers, config) {
+                    $scope.currentItem.photos = {
+                        large: data.large,
+                        thumb: data.thumb
+                    };
+                    uploadBox.modal('hide');
                 });
             }
         };
         
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    $scope.saveDeck();
-                }).error(function() {
+        $scope.itemEditWnd = function (item) {
+            $scope.currentItem = item;
+                box = bootbox.dialog({
+                title: 'Edit Item',
+                message: $compile('<div poll-item-edit-form></div>')($scope)
+            });
+        };
+        
+        $scope.editItem = function () {
+            box.modal('hide');
+            $scope.currentItem = false;
+        };
+        
+        $scope.deleteItem = function (item) {
+            var index = $scope.poll.items.indexOf(item);
+            $scope.poll.items.splice(index, 1);
+            for (var i = 0; i < $scope.poll.items.length; i++) {
+                $scope.poll.items[i].orderNum = i + 1;
+            }
+        };
+        
+        $scope.itemAddWnd = function () {
+            $scope.currentItem = angular.copy($scope.item);
+            box = bootbox.dialog({
+                title: 'Add Item',
+                message: $compile('<div poll-item-add-form></div>')($scope)
+            });
+        };
+        
+        $scope.addItem = function () {
+            $scope.currentItem.orderNum = $scope.poll.items.length + 1;
+            $scope.poll.items.push($scope.currentItem);
+            box.modal('hide');
+            $scope.currentItem = false;
+        };
+        
+        $scope.updateDND = function (list, index) {
+            list.splice(index, 1);
+            for (var i = 0; i < list.length; i++) {
+                list[i].orderNum = i + 1;
+            }
+        };
+        
+        $scope.getImage = function () {
+            return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
+        };
+        
+        // add Poll
+        $scope.addPoll = function () {
+            AdminPollService.addPoll($scope.poll).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
                     $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been added successfully.' });
+                    $state.go('app.admin.polls.list');
+                }
+            });
+        };
+    }
+])
+.controller('AdminPollEditCtrl', ['$scope', '$state', '$window', '$compile', '$upload', 'AdminPollService', 'AlertService', 'data', 
+    function ($scope, $state, $window, $compile, $upload, AdminPollService, AlertService, data) {
+        var box,
+            defaultPoll = {
+                title : '',
+                subTitle: '',
+                description: '',
+                type: '',
+                active: false,
+                view: '',
+                items: []
+            },
+            defaultItem = {
+                name: '',
+                orderNum: 0,
+                photos: {
+                    large: '',
+                    thumb: ''
+                }
+            }
+            
+        
+        // load Poll
+        $scope.poll = data.poll;
+        $scope.item = angular.copy(defaultItem);
+        $scope.currentItem = angular.copy(defaultItem);
+        $scope.imgPath = '/polls/';
+        
+        $scope.pollType = [
+            { name: 'Image', value: 'img' },
+            { name: 'Text', value: 'txt' }
+        ];
+        
+        $scope.pollView = [
+            { name: 'Main', value: 'main' },
+            { name: 'Sidebar', value: 'side' },
+            { name: 'Hide', value: 'hide'}
+        ];
+        
+        $scope.pollActive = [
+            { name: 'Yes', value: 'true'},
+            { name: 'No', value: 'false'}
+        ];
+        
+        $scope.voteLimit = function() {
+            var out = [];
+            
+            for (var i = 0; i < $scope.poll.items.length; i++) {
+                out.push(i + 1);
+            }
+            
+            return out;
+        }
+        
+        $scope.photoUpload = function ($files) {
+            if (!$files.length) return false;
+            var uploadBox = bootbox.dialog({
+                message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                closeButton: false,
+                animate: false
+            });
+            $scope.uploading = 0;
+            uploadBox.modal('show');
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/admin/upload/polls',
+                    method: 'POST',
+                    file: file
+                }).progress(function(evt) {
+                    $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                }).success(function(data, status, headers, config) {
+                    $scope.currentItem.photos = {
+                        large: data.large,
+                        thumb: data.thumb
+                    };
+                    uploadBox.modal('hide');
                 });
             }
-        }
+        };
+        
+        $scope.itemEditWnd = function (item) {
+            $scope.currentItem = item;
+                box = bootbox.dialog({
+                title: 'Edit Item',
+                message: $compile('<div poll-item-edit-form></div>')($scope)
+            });
+        };
+        
+        $scope.editItem = function () {
+            box.modal('hide');
+            $scope.currentItem = false;
+        };
+        
+        $scope.deleteItem = function (item) {
+            var index = $scope.poll.items.indexOf(item);
+            $scope.poll.items.splice(index, 1);
+            for (var i = 0; i < $scope.poll.items.length; i++) {
+                $scope.poll.items[i].orderNum = i + 1;
+            }
+        };
+        
+        $scope.itemAddWnd = function () {
+            $scope.currentItem = angular.copy($scope.item);
+            box = bootbox.dialog({
+                title: 'Add Item',
+                message: $compile('<div poll-item-add-form></div>')($scope)
+            });
+        };
+        
+        $scope.addItem = function () {
+            $scope.currentItem.orderNum = $scope.poll.items.length + 1;
+            $scope.poll.items.push($scope.currentItem);
+            box.modal('hide');
+            $scope.currentItem = false;
+        };
+        
+        $scope.updateDND = function (list, index) {
+            list.splice(index, 1);
+            for (var i = 0; i < list.length; i++) {
+                list[i].orderNum = i + 1;
+            }
+            //console.log(list);
+        };
+        
+        $scope.getImage = function () {
+            if (!$scope.currentItem) { return '/img/blank.png'; }
+            return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
+        };
+        
+        $scope.editPoll = function () {
+            $scope.showError = false;
+
+            AdminPollService.editPoll($scope.poll).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been updated successfully.' });
+                    $state.go('app.admin.polls.list');
+                }
+            });
+        };
     }
 ])
 .controller('DeckEditCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'data',
@@ -5084,7 +5330,7 @@ angular.module('app.controllers', ['ngCookies'])
                 message: $compile('<div talent-edit-form></div>')($scope)
             });
         };
-
+        
         $scope.addTalent = function () {
             $scope.currentTalent.orderNum = $scope.hero.talents.length + 1;
             $scope.hero.talents.push($scope.currentTalent);
@@ -6164,14 +6410,92 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+.controller('PollsCtrl', ['$scope', '$cookies', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 
+    function ($scope, $cookies, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
+        $scope.pollsMain = dataPollsMain.polls;
+        $scope.pollsSide = dataPollsSide.polls;
+        
+        console.log($scope.pollsMain);
+        console.log($scope.pollsSide);
+        
+        $scope.toggleItem = function (poll, item) {
+            if (!poll.votes) { poll.votes = []; }
+            
+            if ($scope.hasVoted(poll, item)) {
+                poll.votes.splice(poll.votes.indexOf(item._id), 1);
+            } else {
+                if (poll.votes.length >= poll.voteLimit) { return false; }
+                poll.votes.push(item._id);
+            }
+        };
+        
+        $scope.voteCurve = function (item, poll) {
+            var v = item.votes,
+                big = 0,
+                item,
+                cnt;
+            for (var i = 0; i < poll.items.length; i++) {
+                cnt = poll.items[i].votes;
+                if (cnt > big) { big = cnt; }
+            }
+
+            if (big === 0) { return 0; }
+            return Math.ceil(v / big * 100);
+        };
+        
+        $scope.votePercentage = function (item, poll) {            
+            var v = item.votes,
+                cnt = 0;
+            for (var i = 0; i < poll.items.length; i++) {
+                cnt = parseInt(cnt + poll.items[i].votes);
+            }
+            if (cnt === 0) { return 0; }
+            return Math.ceil(v / cnt * 100);
+        };
+        
+        $scope.hasVoted = function (poll, item) {
+            if (!poll.votes) { return false; }
+            return (poll.votes.indexOf(item._id) !== -1);
+        };
+        
+        $scope.doneVoting = function (poll) {
+            return PollService.getStorage(poll);
+        };
+        
+        $scope.getVotes = function (poll) {
+            return poll.votes
+        };
+        
+        $scope.bigImg = function (img, title) {
+            var box = bootbox.dialog({
+                title: title,
+                message: $compile('<img class="img-responsive" ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/polls/' +img+ '" alt="">')($scope),
+            });
+            box.modal('show');
+        };
+        
+        $scope.submitVote = function (poll) {
+            console.log(poll);
+            PollService.postVote(poll, poll.votes).success(function (data) {
+                if(!data.success) {
+                    $data.errors = data.errors;
+                } else {
+                    PollService.setStorage(poll._id, true);
+                    for (var i = 0; i != poll.items.length; i++){
+                        for (var j = 0; j != $scope.getVotes(poll).length; j++) {
+                            if (poll.items[i]._id == $scope.getVotes(poll)[j]) {
+                                poll.items[i].votes++;
+                            }
+                        }
+                    }
+                }
+            })
+        };
+    }                                         
+])
 .controller('TeamCtrl', ['$scope',
     function ($scope) {
         
-    }
-])
-.controller('ContactCtrl', ['$scope',
-    function ($scope) {
-
     }
 ])
 ;;'use strict';
@@ -6311,6 +6635,16 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
+.directive('pollItemAddForm', function () {
+    return {
+        templateUrl: 'views/admin/polls.item.add.html'
+    };
+})
+.directive('pollItemEditForm', function () {
+    return {
+        templateUrl: 'views/admin/polls.item.edit.html'
+    };
+})
 .directive('abilityAddForm', function () {
     return {
         templateUrl: 'views/admin/hots.heroes.ability.add.html'
@@ -7018,6 +7352,69 @@ angular.module('app.services', [])
         deleteUser: function (_id) {
             var d = $q.defer();
             $http.post('/api/admin/user/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
+.factory('PollService', ['$http', '$q', '$localStorage', function ($http, $q, $localStorage) {
+    return {
+        getPolls: function (view) {
+            var d = $q.defer();
+            $http.post('/polls', { view: view }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        postVote: function(poll, votes) {
+            return $http.post('/polls/vote', { poll: poll, votes: votes});
+        },
+        setStorage: function (poll, bool) {
+
+            return $localStorage['tspoll-' + poll] = bool;
+        },
+        getStorage: function (poll) {
+
+            return $localStorage['tspoll-' + poll];
+        }
+    };
+}])
+.factory('AdminPollService', ['$http', '$q', function ($http, $q) {
+    return {
+        getProviders: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/polls/providers', {}).success(function (data) {
+                d.resolve(data);
+            });
+           return d.promise;
+        },
+        getPolls: function (page, perpage, search) {
+            var page = page || 1,
+                perpage = perpage || 50,
+                search = search || '';
+            var d = $q.defer();
+            $http.post('/api/admin/polls', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getPoll: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/poll', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addPoll: function (poll) {
+            return $http.post('/api/admin/poll/add', poll);
+        },
+        editPoll: function (poll) {
+            return $http.post('/api/admin/poll/edit', poll);
+        },
+        deletePoll: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/poll/delete', { _id: _id }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

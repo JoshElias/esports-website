@@ -2429,6 +2429,65 @@ module.exports = {
             });
         };
     },
+    pollsPage: function(Schemas, async) {
+        return function(req, res, next) {
+            var view = req.body.view;
+            
+            var iterPolls = function(poll, callback) {
+                Schemas.Poll.populate(poll.items, {
+                    path: 'items',
+                    select: '_id name votes orderNum'
+                }, callback);
+            }
+            
+            
+            function getPolls(callback) {
+                Schemas.Poll.find({ view: view })
+                .lean()
+                .sort({ orderNum : 1 })
+                .exec(function (err, polls) {
+                    if (err) {return res.json({ success: false, polls: [] }); }
+                    async.each(polls, iterPolls, function (err) {
+                        if (err) { return res.json({ success: false }); }
+                        return callback(polls);
+                    });
+                });
+            }
+            
+            
+            getPolls(function(polls) {
+                return res.json({ success: true, polls: polls });
+            });
+        };
+    },
+    pollsVote: function (Schemas) {
+        return function(req, res, next) {
+            
+            var votes = req.body.poll.votes;
+            
+            function postVotes(callback) {
+                Schemas.Poll.findOne({ _id: req.body.poll._id })
+                .exec(function(err, poll) {
+                    for (var i = 0; i < votes.length; i++) {
+                        var item = poll.items.id(votes[i]);
+                        item.votes++;
+                    }
+                    
+                    poll.save(function (err) {
+                        if (err) { return res.json({ success: false }); }
+                        return res.json({
+                            success: true,
+                            votes: item.votes
+                        }); 
+                    });
+                })
+            }
+            
+            postVotes(function(poll) {
+                return res.json({ success: true });
+            });
+        }
+    },
     sendContact: function (Mail) {
         return function(req, res, next) {
             //TODO: ADD FUNCTIONALITY

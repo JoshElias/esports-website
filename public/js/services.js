@@ -525,6 +525,69 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('PollService', ['$http', '$q', '$localStorage', function ($http, $q, $localStorage) {
+    return {
+        getPolls: function (view) {
+            var d = $q.defer();
+            $http.post('/polls', { view: view }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        postVote: function(poll, votes) {
+            return $http.post('/polls/vote', { poll: poll, votes: votes});
+        },
+        setStorage: function (poll, bool) {
+
+            return $localStorage['tspoll-' + poll] = bool;
+        },
+        getStorage: function (poll) {
+
+            return $localStorage['tspoll-' + poll];
+        }
+    };
+}])
+.factory('AdminPollService', ['$http', '$q', function ($http, $q) {
+    return {
+        getProviders: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/polls/providers', {}).success(function (data) {
+                d.resolve(data);
+            });
+           return d.promise;
+        },
+        getPolls: function (page, perpage, search) {
+            var page = page || 1,
+                perpage = perpage || 50,
+                search = search || '';
+            var d = $q.defer();
+            $http.post('/api/admin/polls', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getPoll: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/poll', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addPoll: function (poll) {
+            return $http.post('/api/admin/poll/add', poll);
+        },
+        editPoll: function (poll) {
+            return $http.post('/api/admin/poll/edit', poll);
+        },
+        deletePoll: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/poll/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
 .factory('AdminForumService', ['$http', '$q', function ($http, $q) {
     return {
         getCategories: function () {

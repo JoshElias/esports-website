@@ -398,6 +398,23 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.polls', {
+                url: 'vote',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/polls.html',
+                        controller: 'PollsCtrl',
+                        resolve: {
+                            dataPollsMain: ['PollService', function(PollService) {
+                                return PollService.getPolls('main');
+                            }],
+                            dataPollsSide: ['PollService', function(PollService) {
+                                return PollService.getPolls('side');
+                            }]
+                        }
+                    }
+                }
+            }) 
             .state('app.sponsors', {
                 url: 'sponsors',
                 views: {
@@ -1274,6 +1291,60 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true }
             })
+            .state('app.admin.polls', {
+                abstract: true,
+                url: '/polls',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/polls.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.polls.list', {
+                url: '',
+                views: {
+                    polls: {
+                        templateUrl: tpl + 'views/admin/polls.list.html',
+                        controller: 'AdminPollListCtrl',
+                        resolve: {
+                            data: ['AdminPollService', function (AdminPollService) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminPollService.getPolls(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.polls.add', {
+                url: '/add',
+                views: {
+                    polls: {
+                        templateUrl: tpl + 'views/admin/polls.add.html',
+                        controller: 'AdminPollAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.polls.edit', {
+                url: '/edit/:pollID',
+                views: {
+                    polls: {
+                        templateUrl: tpl + 'views/admin/polls.edit.html',
+                        controller: 'AdminPollEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminPollService', function($stateParams, AdminPollService){
+                                var pollID = $stateParams.pollID;
+                                return AdminPollService.getPoll(pollID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
             .state('app.admin.subscriptions', {
                 url: '/subscriptions',
                 views: {
@@ -1300,7 +1371,8 @@ var app = angular.module('app', [
                         controller: 'ContactCtrl'
                     }
                 }
-            });        
+            });       
+           
     }]
 );
 

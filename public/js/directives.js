@@ -135,6 +135,16 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
+.directive('pollItemAddForm', function () {
+    return {
+        templateUrl: 'views/admin/polls.item.add.html'
+    };
+})
+.directive('pollItemEditForm', function () {
+    return {
+        templateUrl: 'views/admin/polls.item.edit.html'
+    };
+})
 .directive('abilityAddForm', function () {
     return {
         templateUrl: 'views/admin/hots.heroes.ability.add.html'
