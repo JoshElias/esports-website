@@ -128,7 +128,7 @@
                         
                         <div class="voted-poll-txt-item" ng-repeat="item in poll.items | orderBy: '-votes'">
                             <div class="voted-curve-bar">
-                                <span style="width: {{voteCurve(item, poll)}}%;"></span>
+                                <span ng-style="{width: voteCurve(item, poll)%;}"></span>
                                 <h3 class="voted-curve-bar-name">{{item.name}}</h3>
                                 <h3 class="voted-curve-percentage">{{votePercentage(item, poll)}}%</h3>
                                 <h3 class="voted-curve-amount"><i class="fa fa-check-circle past-polls-icon"></i>{{item.votes}}</h3>

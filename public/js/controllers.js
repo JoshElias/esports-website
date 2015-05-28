@@ -851,7 +851,29 @@ angular.module('app.controllers', ['ngCookies'])
                 expiryDate: d
             },
             active: true
-        };
+        },
+        deckID,
+        deckAddBox;
+        
+        /*DECKADD*/
+        $scope.addDeckArticle = function () {
+                deckAddBox = bootbox.dialog({
+                message: $compile('<div article-deck-add></div>')($scope),
+                closeButton: true,
+                animate: true
+            });
+            deckAddBox.modal('show');
+        }
+
+        $scope.addDeck = function (deck) {
+            deckID = deck._id;
+            $scope.article.deck = deck;
+            deckAddBox.modal('hide');
+        }
+        
+        $scope.removeDeckArticle = function () {
+            $scope.article.deck = undefined;
+        }
         
         // load article
         $scope.article = angular.copy(defaultArticle);
@@ -944,7 +966,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.addArticle = function () {
             $scope.showError = false;
-
+            $scope.article.deck = $scope.article.deck._id;
             AdminArticleService.addArticle($scope.article).success(function (data) {
                 if (!data.success) {
                     $scope.errors = data.errors;
@@ -958,8 +980,30 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataArticles', 'dataProviders', 
-    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles, dataProviders) {
+.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataArticles', 'dataProviders', 
+    function ($scope, $state, $window, $upload, $compile, $filter, bootbox, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataArticles, dataProviders) {
+        var deckAddBox,
+            deckID;
+        
+        /*DECKADD*/
+        $scope.addDeckArticle = function () {
+                deckAddBox = bootbox.dialog({
+                message: $compile('<div article-deck-add></div>')($scope),
+                closeButton: true,
+                animate: true
+            });
+            deckAddBox.modal('show');
+        }
+
+        $scope.addDeck = function (deck) {
+            $scope.article.deck = deck;
+            deckAddBox.modal('hide');
+        }
+        
+        $scope.removeDeckArticle = function () {
+            $scope.article.deck = undefined;
+        }
+        
         // load article
         $scope.article = data.article;
         
@@ -981,6 +1025,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.article.slug.linked = !$scope.article.slug.linked;
             $scope.setSlug();
         };
+        
+        
         
         // photo
         $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? $scope.app.cdn + '/articles/' + $scope.article.photos.small : $scope.app.cdn + '/img/blank.png';
@@ -1057,7 +1103,8 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.editArticle = function () {
             $scope.showError = false;
-
+            console.log($scope.article.deck);
+            $scope.article.deck = $scope.article.deck._id;
             AdminArticleService.editArticle($scope.article).success(function (data) {
                 if (!data.success) {
                     $scope.errors = data.errors;
@@ -4983,9 +5030,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.pollsMain = dataPollsMain.polls;
         $scope.pollsSide = dataPollsSide.polls;
         
-        console.log($scope.pollsMain);
-        console.log($scope.pollsSide);
-        
         $scope.toggleItem = function (poll, item) {
             if (!poll.votes) { poll.votes = []; }
             
@@ -5006,7 +5050,6 @@ angular.module('app.controllers', ['ngCookies'])
                 cnt = poll.items[i].votes;
                 if (cnt > big) { big = cnt; }
             }
-
             if (big === 0) { return 0; }
             return Math.ceil(v / big * 100);
         };
@@ -5043,7 +5086,6 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.submitVote = function (poll) {
-            console.log(poll);
             PollService.postVote(poll, poll.votes).success(function (data) {
                 if(!data.success) {
                     $data.errors = data.errors;

@@ -416,6 +416,12 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .no-articles { color: #FFF; }
 /* end articles */
 
+/*article deck add*/
+
+
+
+/*end article deck add*/
+
 /* start decks */
 .home-decks { margin-bottom: 20px; }
 .home-decks h1.decks-title { margin: 0; padding: 20px 0px 10px 0px; font-family: 'Open Sans Bold'; font-size: 30px; background: #2766ad; color: #FFF; text-indent: 10px; }
@@ -904,6 +910,38 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     color: #555;
     background-color: #f5f5f5;
     border-bottom: 1px solid #ddd;
+}
+
+
+/* dark panel */
+.panel-dark {
+    border: 1px solid #555555;
+}
+
+.panel-dark .panel-heading {
+    color: #F5F5F5;
+    background-color: #444444;
+    border-bottom: 1px solid #555555;
+}
+
+.panel-dark .panel-body {
+    color: #F5F5F5;
+    background-color: #666666;
+}
+
+.panel-dark .list-group {
+    color: #F5F5F5;
+    background-color: #666666;
+}
+
+.panel-dark .list-group-item {
+    color: #F5F5F5;
+    background-color: #666666;
+}
+
+.panel-dark .panel-footer {
+    background-color: #555555;
+    border-top: 1px solid #555555;
 }
 
 /* login / signup */

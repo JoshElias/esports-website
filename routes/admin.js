@@ -646,6 +646,7 @@ module.exports = {
         return function (req, res, next) {
             var _id = req.body._id;
             Schemas.Article.findOne({ _id: _id })
+            .populate('deck', '_id name')
             .exec(function (err, article) {
                 if (err || !article) {
                     console.log(err || 'No article found');

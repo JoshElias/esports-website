@@ -263,6 +263,11 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/activity/activity.forumComment.html'
     };
 })
+.directive('articleDeckAdd', function () {
+    return {
+        templateUrl: 'views/admin/articles.deck.add.html',
+    };
+})
 .directive('adsSidebar', function () {
     return {
         restrict: 'A',
