@@ -441,6 +441,22 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.team.fifa', {
+                url: '/fifa',
+                views: {
+                    team: {
+                        templateUrl: tpl + 'views/frontend/team.fifa.html'
+                    }
+                }
+            })
+            .state('app.team.fgc', {
+                url: '/fgc',
+                views: {
+                    team: {
+                        templateUrl: tpl + 'views/frontend/team.fgc.html'
+                    }
+                }
+            })
             .state('app.polls', {
                 url: 'vote',
                 views: {
@@ -2396,9 +2412,19 @@ angular.module('app.controllers', ['ngCookies'])
             }
         };
         
+        
+        $scope.getImage = function () {
+            $scope.imgPath = '/articles/';
+            if (!$scope.article) { return '/img/blank.png'; }
+            return ($scope.article.photos && $scope.article.photos.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photos.small;
+        };
+        
+        
         $scope.addArticle = function () {
             $scope.showError = false;
-            $scope.article.deck = $scope.article.deck._id;
+            if ($scope.article.deck) {
+                $scope.article.deck = $scope.article.deck._id;
+            }
             AdminArticleService.addArticle($scope.article).success(function (data) {
                 if (!data.success) {
                     $scope.errors = data.errors;
@@ -2533,10 +2559,17 @@ angular.module('app.controllers', ['ngCookies'])
             }
         };
         
+        $scope.getImage = function () {
+            $scope.imgPath = '/articles/';
+            if (!$scope.article) { return '/img/blank.png'; }
+            return ($scope.article.photos && $scope.article.photos.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photos.small;
+        };
+        
         $scope.editArticle = function () {
             $scope.showError = false;
-            console.log($scope.article.deck);
-            $scope.article.deck = $scope.article.deck._id;
+            if ($scope.article.deck) {
+                $scope.article.deck = $scope.article.deck._id;
+            }
             AdminArticleService.editArticle($scope.article).success(function (data) {
                 if (!data.success) {
                     $scope.errors = data.errors;
@@ -3718,6 +3751,240 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             });
         };
+    }
+])
+.controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
+    function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
+        // redirect back to class pick if no data
+        if (!data || !data.success) { $state.transitionTo('app.deckBuilder.class'); return false; }
+        
+        // set default tab page
+        $scope.step = 1;
+        $scope.showManaCurve = false;
+        $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
+        
+        // steps
+        $scope.stepDesc = {
+            1: 'Select the cards for your deck.',
+            2: 'Select which cards to mulligan for.',
+            3: 'Provide a description for how to play your deck.',
+            4: 'Select how your deck preforms against other classes.',
+            5: 'Provide a synopsis and title for your deck.'            
+        };
+        
+        
+        $scope.prevStep = function () {
+            if ($scope.step > 1) $scope.step = $scope.step - 1;
+        }
+        $scope.nextStep = function () {
+            if ($scope.step < 5) $scope.step = $scope.step + 1;
+        }
+        
+        // summernote options
+        $scope.options = {
+          height: 100,
+          toolbar: [
+            ['style', ['style']],
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['format', ['hr']],
+            ['misc', ['undo', 'redo']]
+          ]
+        };
+
+        // load cards
+        $scope.className = data.className;
+        $scope.cards = data.cards;
+        $scope.cards.current = $scope.cards.class;
+
+        // page flipping
+        $scope.pagination = Pagination.new(6);
+        $scope.pagination.perpage = 10;
+        $scope.pagination.results = function () {
+            return ($scope.filtered) ? $scope.filtered.length : $scope.cards.current.length;
+        };
+        
+        // filters
+        $scope.filters = {
+            search: '',
+            mechanics: [],
+            mana: 'all'
+        };
+        
+        $scope.mechanics = Hearthstone.mechanics;
+        $scope.inMechanics = function (mechanic) {
+            return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
+        }
+        $scope.toggleMechanic = function (mechanic) {
+            var index = $scope.filters.mechanics.indexOf(mechanic);
+            if (index === -1) {
+                $scope.filters.mechanics.push(mechanic);
+            } else {
+                $scope.filters.mechanics.splice(index, 1);
+            }
+        }
+        
+        // filter by mechanics
+        $scope.filters.byMechanics = function () {
+            return function (item) {
+                if (!$scope.filters.mechanics.length) { return true; }
+                var matched = 0;
+                for (var i = 0; i < item['mechanics'].length; i++) {
+                    if ($scope.inMechanics(item['mechanics'][i])) matched++;
+                }
+                return (matched === $scope.filters.mechanics.length);
+            }
+        }
+        
+        // filter by mana
+        $scope.filters.byMana = function () {
+            return function (item) {
+                switch ($scope.filters.mana) {
+                    case 'all':
+                        return true;
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                        return (item['cost'] === $scope.filters.mana);
+                    case '7+':
+                        return (item['cost'] >= 7);
+                }
+            }
+        };
+        
+        $scope.getManaCost = function () {
+            switch ($scope.filters.mana) {
+                    case 'all':
+                        return 'All';
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case '7+':
+                        return $scope.filters.mana;
+                }
+        }
+        
+        // deck
+        $scope.deckTypes = Hearthstone.deckTypes;
+        
+        //$scope.deck = DeckBuilder.new(data.className);
+        $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && data.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new(data.className, $scope.app.settings.deck) : DeckBuilder.new(data.className);
+        $scope.$watch('deck', function(){
+            $scope.app.settings.deck = {
+                name: $scope.deck.name,
+                deckType: $scope.deck.deckType,
+                description: $scope.deck.description,
+                contentEarly: $scope.deck.contentEarly,
+                contentMid: $scope.deck.contentMid,
+                contentLate: $scope.deck.contentLate,
+                cards: $scope.deck.cards,
+                playerClass: $scope.deck.playerClass,
+                arena: $scope.deck.arena,
+                mulligans: $scope.deck.mulligans,
+                against: $scope.deck.against,
+                video: $scope.deck.video,
+                public: $scope.deck.public
+            };
+        }, true);
+        
+        // current mulligan
+        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
+        
+        $scope.setMulligan = function (mulligan) {
+            $scope.currentMulligan = mulligan;
+        };
+        
+        $scope.isMulliganSet = function (mulligan) {
+            return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
+        };
+        
+        // premium
+        $scope.premiumTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isPremium = function () {
+            var premium = $scope.deck.premium.isPremium;
+            for (var i = 0; i < $scope.premiumTypes.length; i++) {
+                if ($scope.premiumTypes[i].value === premium) {
+                    return $scope.premiumTypes[i].text;
+                }
+            }
+        }
+        
+        // featured
+        $scope.featuredTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
+        $scope.isFeatured = function () {
+            var featured = $scope.deck.featured;
+            for (var i = 0; i < $scope.featuredTypes.length; i++) {
+                if ($scope.featuredTypes[i].value === featured) {
+                    return $scope.featuredTypes[i].text;
+                }
+            }
+        }
+        
+        // save deck
+        var box;
+        $scope.saveDeck = function () {
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+            } else {
+                DeckBuilder.saveDeck($scope.deck).success(function (data) {
+                    if (data.success) {
+                        $scope.app.settings.deck = null;
+                        $state.transitionTo('app.decks.deck', { slug: data.slug });
+                    } else {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                        $window.scrollTo(0,0);
+                    }
+                });
+            }
+        };
+        
+        // login for modal
+        $scope.login = function login(email, password) {
+            if (email !== undefined && password !== undefined) {
+                UserService.login(email, password).success(function(data) {
+                    AuthenticationService.setLogged(true);
+                    AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
+                    $window.sessionStorage.userID = data.userID;
+                    $window.sessionStorage.username = data.username;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+                    box.modal('hide');
+                    $scope.saveDeck();
+                }).error(function() {
+                    $scope.showError = true;
+                });
+            }
+        }
     }
 ])
 .controller('DeckEditCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'data',

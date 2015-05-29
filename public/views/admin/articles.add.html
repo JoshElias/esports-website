@@ -59,7 +59,7 @@
                 <div class="photo-input">
                     <div class="upload-thumbnail upload-thumbnail-article">
                         <div class="upload-drop" ng-show="article.photos.large === ''" ng-file-drop="photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
-                        <img src="{{cardImg}}" alt="" ng-show="article.photos.large !== ''">
+                        <img src="{{getImage()}}" alt="" ng-show="article.photos.large !== ''">
                     </div>
                     <div class="btn-toolbar">
                         <button class="btn btn-default" ng-file-select="photoUpload($files)" onclick="this.value=null" accept="image/*">

@@ -2096,6 +2096,8 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .team-banner-hs { background: url('../img/team/hs-back.jpg') center center; background-size: cover; }
 .team-banner-hots { background: url('../img/team/hots-back.jpg') center center; background-size: cover; }
 .team-banner-csgo { background: url('../img/team/csgo-back.jpg') center center; background-size: cover; }
+.team-banner-fifa { background: url('../img/team/fifa-banner.jpg') center center; background-size: cover; }
+.team-banner-fgc { background: url('../img/team/fgc-banner.jpg') center center; background-size: cover; }
 
 .team-banner img { margin: 30px auto; width: 553px; height: auto; }
 

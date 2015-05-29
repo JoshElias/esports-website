@@ -398,6 +398,22 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.team.fifa', {
+                url: '/fifa',
+                views: {
+                    team: {
+                        templateUrl: tpl + 'views/frontend/team.fifa.html'
+                    }
+                }
+            })
+            .state('app.team.fgc', {
+                url: '/fgc',
+                views: {
+                    team: {
+                        templateUrl: tpl + 'views/frontend/team.fgc.html'
+                    }
+                }
+            })
             .state('app.polls', {
                 url: 'vote',
                 views: {
