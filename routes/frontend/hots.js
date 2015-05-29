@@ -712,12 +712,46 @@ module.exports = {
             });
         };
     },
+    heroesList: function (Schemas) {
+        return function (req, res, next) {
+            function getHeroes (callback) {
+                Schemas.Hero.find({ active: true })
+                .select('name description role heroType universe title className')
+                .sort({ name: 1 })
+                .exec(function (err, results) {
+                    if (err || !results) { res.json({ success: false }); }
+                    return callback(results);
+                });
+            }
+            
+            getHeroes(function (heroes) {
+                return res.json({ success: true, heroes: heroes });
+            });
+        };
+    },
     hero: function (Schemas) {
         return function (req, res, next) {
             var _id = req.body._id;
             
             function getHero (callback) {
-                Schemas.Hero.find({ _id: _id, active: true })
+                Schemas.Hero.findOne({ _id: _id, active: true })
+                .exec(function (err, results) {
+                    if (err || !results) { res.json({ success: false }); }
+                    return callback(results);
+                });
+            }
+            
+            getHero(function (hero) {
+                return res.json({ success: true, hero: hero });
+            });
+        };
+    },
+    heroByClass: function (Schemas) {
+        return function (req, res, next) {
+            var hero = req.body.hero;
+            
+            function getHero (callback) {
+                Schemas.Hero.findOne({ className: hero, active: true })
                 .exec(function (err, results) {
                     if (err || !results) { res.json({ success: false }); }
                     return callback(results);

@@ -1,0 +1,141 @@
+<div class="tc-section">
+    <div class="tc-section-title guide-hero-image {{getCurrentHero().className}}">
+        <h3>{{getCurrentHero().name}}</h3>
+    </div>
+    <div class="tc-characters wrapper-md clearfix" ng-if="getCurrentHero().characters.length > 1">
+        <div class="pull-right">
+            <a href="#" class="tc-character pull-left" ng-class="{ active: getCurrentCharacter() == character }" ng-repeat="character in getCurrentHero().characters" ng-click="setCurrentCharacter(character)">
+                {{character.name}}
+            </a>
+        </div>
+    </div>
+    <div class="tc-section-content clearfix tc-hero {{getCurrentHero().className}}">
+        <div class="row m-b-md">
+            <div class="col-xs-6">
+                <div class="tc-abilities-title">ABILITIES</div>
+                <div class="row">
+                    <div class="col-xs-4" ng-repeat="ability in getAbilities()">
+                        <div class="tc-ability-wrapper" ng-click="toggleAbility(ability)" ng-class="{ active: getCurrentAbility() == ability }">
+                            <div class="tc-ability">
+                                <div class="talents-icon large {{getCurrentHero().className}} {{ability.className}}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="tc-heroics-title">HEROICS</div>
+                <div class="row">
+                    <div class="col-xs-6" ng-repeat="heroic in getHeroics()">
+                        <div class="tc-heroic-wrapper" ng-click="toggleAbility(heroic)" ng-class="{ active: getCurrentAbility() == heroic }">
+                            <div class="tc-heroic">
+                                <div class="talents-icon large {{getCurrentHero().className}} {{heroic.className}}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="tc-trait-title">TRAIT</div>
+                <div class="tc-trait-wrapper" ng-click="toggleAbility(getTrait())" ng-class="{ active: getCurrentAbility() == getTrait() }">
+                    <div class="tc-trait">
+                        <div class="talents-icon large {{getCurrentHero().className}} {{getTrait().className}}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row m-b-md">
+            <div class="col-xs-6">
+                <ul class="tc-talents-tiers">
+                    <li class="clearfix" ng-repeat="tier in tiers">
+                        <span>{{tier}}</span>
+                        <ul class="tc-talents-icons clearfix">
+                            <li ng-repeat="talent in talentsByTier(tier) | orderBy: talent.orderNum">
+                                <a href="#" class="talents-icon {{getCurrentHero().className}} {{talent.className}}{{hasAnyTalent(talent)}}{{hasTalent(talent)}}" ng-click="toggleTalent(talent, $parent.$index, $index)" hots-talent hero="getCurrentHero()" talent="talent">{{talent.name}}</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-xs-6">
+                <div class="tc-damage" ng-class="" ng-show="getCurrentAbility()">
+
+                </div>
+            </div>
+        </div>
+        <div class="row m-b-md">
+            <div class="col-xs-6"></div>
+            <div class="col-xs-6">
+                <div class="row tc-levels">
+                    <div class="col-xs-3">
+                        <div class="tc-level-title">LEVEL</div>
+                    </div>
+                    <div class="col-xs-7">
+                        <input class="tc-level-slider" type="range" min="1" max="30" ng-model="level">
+                    </div>
+                    <div class="col-xs-2">
+                        <div class="tc-level">{{level}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 p-r-xs">
+                <div class="tc-datas clearfix">
+                    <div class="tc-data-wrapper">
+                        <div class="tc-data tc-data-green">
+                            <div class="tc-data-title">HEALTH</div>
+                            <div class="tc-data-number">{{getHealth()}}</div>
+                        </div>
+                    </div>
+                    <div class="tc-data-wrapper">
+                        <div class="tc-data tc-data-green">
+                            <div class="tc-data-title">REGEN</div>
+                            <div class="tc-data-number">{{getHealthRegen()}}</div>
+                        </div>
+                    </div>
+                    <div class="tc-data-wrapper">
+                        <div class="tc-data tc-data-blue">
+                            <div class="tc-data-title">{{getCurrentHero().manaType}}</div>
+                            <div class="tc-data-number">{{getMana()}}</div>
+                        </div>
+                    </div>
+                    <div class="tc-data-wrapper">
+                        <div class="tc-data tc-data-blue">
+                            <div class="tc-data-title">REGEN</div>
+                            <div class="tc-data-number">{{getManaRegen()}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6 p-l-xs">
+                <div class="tc-datas clearfix">
+                    <div class="tc-data-wrapper">
+                        <div class="tc-data tc-data-yellow">
+                            <div class="tc-data-title">SPEED</div>
+                            <div class="tc-data-number">{{getSpeed()}}</div>
+                        </div>
+                    </div>
+                    <div class="tc-data-wrapper">
+                        <div class="tc-data tc-data-red">
+                            <div class="tc-data-title">RANGE</div>
+                            <div class="tc-data-number">{{getRange()}}</div>
+                        </div>
+                    </div>
+                    <div class="tc-data-wrapper">
+                        <div class="tc-data tc-data-red">
+                            <div class="tc-data-title">DAMAGE</div>
+                            <div class="tc-data-number">{{getDamage()}}</div>
+                        </div>
+                    </div>
+                    <div class="tc-data-wrapper">
+                        <div class="tc-data tc-data-red">
+                            <div class="tc-data-title">DPS</div>
+                            <div class="tc-data-number">{{getDPS()}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

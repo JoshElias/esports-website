@@ -561,14 +561,42 @@ var app = angular.module('app', [
                 access: { auth: true }
             })
             .state('app.hots.talentCalculator', {
+                abstract: true,
                 url: '/talent-calculator',
                 views: {
                     hots: {
                         templateUrl: tpl + 'views/frontend/hots.talentCalculator.html',
                         controller: 'HOTSTalentCalculatorCtrl',
                         resolve: {
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+                            dataHeroesList: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroesList();
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.hots.talentCalculator.redirect', {
+                url: '',
+                resolve: {
+                    dataHeroesList: ['HeroService', function (HeroService) {
+                        return HeroService.getHeroesList();
+                    }],
+                    redirect: ['$q', '$state', 'dataHeroesList', function ($q, $state, dataHeroesList) {
+                        $state.go('app.hots.talentCalculator.hero', { hero: dataHeroesList.heroes[0].className });
+                        return $q.reject();
+                    }]
+                }
+            })
+            .state('app.hots.talentCalculator.hero', {
+                url: '/:hero',
+                views: {
+                    calc: {
+                        templateUrl: tpl + 'views/frontend/hots.talentCalculator.hero.html',
+                        controller: 'HOTSTalentCalculatorHeroCtrl',
+                        resolve: {
+                            dataHero: ['$stateParams', 'HeroService', function ($stateParams, HeroService) {
+                                var hero = $stateParams.hero;
+                                return HeroService.getHeroByClass(hero);
                             }]
                         }
                     }

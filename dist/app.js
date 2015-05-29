@@ -604,14 +604,42 @@ var app = angular.module('app', [
                 access: { auth: true }
             })
             .state('app.hots.talentCalculator', {
+                abstract: true,
                 url: '/talent-calculator',
                 views: {
                     hots: {
                         templateUrl: tpl + 'views/frontend/hots.talentCalculator.html',
                         controller: 'HOTSTalentCalculatorCtrl',
                         resolve: {
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+                            dataHeroesList: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroesList();
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.hots.talentCalculator.redirect', {
+                url: '',
+                resolve: {
+                    dataHeroesList: ['HeroService', function (HeroService) {
+                        return HeroService.getHeroesList();
+                    }],
+                    redirect: ['$q', '$state', 'dataHeroesList', function ($q, $state, dataHeroesList) {
+                        $state.go('app.hots.talentCalculator.hero', { hero: dataHeroesList.heroes[0].className });
+                        return $q.reject();
+                    }]
+                }
+            })
+            .state('app.hots.talentCalculator.hero', {
+                url: '/:hero',
+                views: {
+                    calc: {
+                        templateUrl: tpl + 'views/frontend/hots.talentCalculator.hero.html',
+                        controller: 'HOTSTalentCalculatorHeroCtrl',
+                        resolve: {
+                            dataHero: ['$stateParams', 'HeroService', function ($stateParams, HeroService) {
+                                var hero = $stateParams.hero;
+                                return HeroService.getHeroByClass(hero);
                             }]
                         }
                     }
@@ -5610,6 +5638,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.talentTiers = HOTS.tiers;
         $scope.talentAddWnd = function () {
             $scope.currentTalent = angular.copy(defaultTalent);
+            $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
             box = bootbox.dialog({
                 title: 'Add Talent',
                 message: $compile('<div talent-add-form></div>')($scope)
@@ -5618,6 +5647,7 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.talentEditWnd = function (talent) {
             $scope.currentTalent = talent;
+            $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
             box = bootbox.dialog({
                 title: 'Edit Talent',
                 message: $compile('<div talent-edit-form></div>')($scope)
@@ -5648,11 +5678,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             console.log($scope.hero.talents);
         };
-        
-        $scope.talentAbilities = function () {
-            return [{ _id: null, name: 'None' }].concat($scope.hero.abilities);
-        };
-        
+                
         // characters
         $scope.charAddWnd = function () {
             console.log('blah');
@@ -5833,6 +5859,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.talentTiers = HOTS.tiers;
         $scope.talentAddWnd = function () {
             $scope.currentTalent = angular.copy(defaultTalent);
+            $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
             box = bootbox.dialog({
                 title: 'Add Talent',
                 message: $compile('<div talent-add-form></div>')($scope)
@@ -5841,6 +5868,7 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.talentEditWnd = function (talent) {
             $scope.currentTalent = talent;
+            $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
             box = bootbox.dialog({
                 title: 'Edit Talent',
                 message: $compile('<div talent-edit-form></div>')($scope)
@@ -5868,10 +5896,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
         };
         
-        $scope.talentAbilities = function () {
-            return [{ _id: null, name: 'None' }].concat($scope.hero.abilities);
-        };
-
         // characters
         $scope.charAddWnd = function () {
             $scope.currentCharacter = angular.copy(defaultCharacter);
@@ -7749,12 +7773,29 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSTalentCalculatorCtrl', ['$scope', 'HOTS', 'dataHeroes', 
-    function ($scope, HOTS, dataHeroes) {
-        $scope.heroes = dataHeroes.heroes;
-        $scope.currentHero = $scope.heroes[0];
+.controller('HOTSTalentCalculatorCtrl', ['$scope', 'dataHeroesList', 
+    function ($scope, dataHeroesList) {
+        $scope.heroes = dataHeroesList.heroes;
+        $scope.currentHero = false;
+        
+        $scope.setCurrentHero = function (hero) {
+            $scope.currentHero = hero;
+        }
+
+        $scope.getCurrentHero = function () {
+            return $scope.currentHero;
+        };
+    }
+])
+.controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', 'HOTS', 'Base64', 'dataHero', 
+    function ($scope, $state, $stateParams, $location, HOTS, Base64, dataHero) {
+        if (!dataHero.success) { return $state.go('app.hots.talentCalculator.hero', { hero: $scope.heroes[0].className }); }
+
+        $scope.setCurrentHero(dataHero.hero);
+        $scope.currentCharacter = $scope.currentHero.characters[0];
         $scope.currentAbility = false;
         $scope.level = 1;
+        $scope.hash = getHash();
         
         var defaultTalents = {
             tier1: null,
@@ -7767,12 +7808,12 @@ angular.module('app.controllers', ['ngCookies'])
         };
         $scope.currentTalents = angular.copy(defaultTalents);
         
-        $scope.getCurrentHero = function () {
-            return $scope.currentHero;
+        $scope.getCurrentCharacter = function () {
+            return $scope.currentCharacter;
         };
         
-        $scope.setCurrentHero = function (hero) {
-            $scope.currentHero = hero;
+        $scope.setCurrentCharacter = function (character) {
+            $scope.currentCharacter = character;
         };
         
         $scope.getAbilities = function () {
@@ -7807,6 +7848,7 @@ angular.module('app.controllers', ['ngCookies'])
             return false;
         };
         
+        // abilities
         $scope.getCurrentAbility = function () {
             return $scope.currentAbility;
         };
@@ -7819,6 +7861,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
         };
         
+        // talents
         $scope.tiers = HOTS.tiers;
         
         $scope.talentsByTier = function (tier) {
@@ -7841,16 +7884,100 @@ angular.module('app.controllers', ['ngCookies'])
             return ($scope.currentTalents['tier'+talent.tier] !== null) ? ' tier-selected' : '';
         }
         
-        $scope.toggleTalent = function (talent) {
+        $scope.toggleTalent = function (talent, tierIndex, talentIndex) {
             if ($scope.hasTalent(talent)) {
                 $scope.currentTalents['tier'+talent.tier] = null;
             } else {
                 $scope.currentTalents['tier'+talent.tier] = talent._id;
             }
+            
+            // set hash
+            $scope.hash[tierIndex] = talentIndex + 1;
+            if (checkHash($scope.hash)) {
+                setHash();
+            }
         };
         
-        $scope.getSliderWidth = function (level) {
-            return Math.ceil((level / 30) * 100);
+        // hash
+        function getHash () {
+            var hash = $location.hash();
+            if (hash && checkHash(Base64.toInt(hash).split(''))) {
+                return Base64.toInt(hash).split('');
+            } else {
+                return [0,0,0,0,0,0,0];
+            }
+        }
+        
+        function checkHash (hash) {
+            if (hash.length !== 7) { return false; }
+            
+            for (var i = 1; i <= 7; i++) {
+                var num = +hash[i - 1];
+                if ((num < 1) || (num > $scope.talentsByTier($scope.tiers[i - 1]).length)) { return false; }
+            }
+            return true;
+        }
+        
+        function setHash() {
+            var hashInt = +$scope.hash.join(''),
+                hash = (hashInt > 0) ? Base64.fromInt(hashInt) : '';
+            $location.hash(hash);
+        }
+        
+        // stats
+        function isNum (num) {
+            return (num % 1 == 0);
+        }
+        
+        $scope.getHealth = function () {
+            var char = $scope.getCurrentCharacter(),
+                level = $scope.level;
+            
+            return (char.stats.base.health + ((level * char.stats.gain.health) - char.stats.gain.health));
+        };
+        $scope.getHealthRegen = function () {
+            var char = $scope.getCurrentCharacter(),
+                level = $scope.level,
+                val = (char.stats.base.healthRegen + ((level * char.stats.gain.healthRegen) - char.stats.gain.healthRegen));
+            
+            return (isNum(val)) ? val : +val.toFixed(2);
+        };
+        $scope.getMana = function () {
+            var char = $scope.getCurrentCharacter(),
+                level = $scope.level;
+            
+            return (char.stats.base.mana + ((level * char.stats.gain.mana) - char.stats.gain.mana)) || 'N/A';
+        };
+        $scope.getManaRegen = function () {
+            var char = $scope.getCurrentCharacter(),
+                level = $scope.level,
+                val = (char.stats.base.manaRegen + ((level * char.stats.gain.manaRegen) - char.stats.gain.manaRegen));
+            
+            return (isNum(val)) ? val || 'N/A' : +val.toFixed(2);
+        };
+        $scope.getSpeed = function () {
+            var char = $scope.getCurrentCharacter(),
+                level = $scope.level,
+                val = (char.stats.base.attackSpeed + ((level * char.stats.gain.attackSpeed) - char.stats.gain.attackSpeed));
+            
+            return (isNum(val)) ? val : +val.toFixed(2);
+        };
+        $scope.getRange = function () {
+            var char = $scope.getCurrentCharacter(),
+                level = $scope.level,
+                val = (char.stats.base.range + ((level * char.stats.gain.range) - char.stats.gain.range));
+            
+            return (isNum(val)) ? val : +val.toFixed(2);
+        };
+        $scope.getDamage = function () {
+            var char = $scope.getCurrentCharacter(),
+                level = $scope.level;
+            
+            return (char.stats.base.damage + ((level * char.stats.gain.damage) - char.stats.gain.damage));
+        };
+        $scope.getDPS = function () {
+            var val = ($scope.getSpeed() * $scope.getDamage());
+            return (isNum(val)) ? val : +val.toFixed(2);
         };
     }
 ])
@@ -8152,6 +8279,18 @@ angular.module('app.directives', ['ui.load'])
             (adsbygoogle = window.adsbygoogle || []).push({});
         }
     };
+})
+.directive('a', function() {
+    return {
+        restrict: 'E',
+        link: function(scope, elem, attrs) {
+            if(attrs.ngClick || attrs.href === '' || attrs.href === '#'){
+                elem.on('click', function(e){
+                    e.preventDefault();
+                });
+            }
+        }
+   };
 })
 ;;'use strict';
 
@@ -8926,6 +9065,37 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('Base64', function () {
+    var digitsStr = 
+    //   0       8       16      24      32      40      48      56     63
+    //   v       v       v       v       v       v       v       v      v
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-";
+    var digits = digitsStr.split('');
+    var digitsMap = {};
+    for (var i = 0; i < digits.length; i++) {
+        digitsMap[digits[i]] = i;
+    }
+    return {
+        fromInt: function(int32) {
+            var result = '';
+            while (true) {
+                result = digits[int32 & 0x3f] + result;
+                int32 >>>= 6;
+                if (int32 === 0)
+                    break;
+            }
+            return result;
+        },
+        toInt: function(digitsStr) {
+            var result = 0;
+            var digits = digitsStr.split('');
+            for (var i = 0; i < digits.length; i++) {
+                result = (result << 6) + digitsMap[digits[i]];
+            }
+            return result;
+        }
+    };
+})
 .factory('Hearthstone', function () {
     var hs = {};
     
@@ -8945,7 +9115,7 @@ angular.module('app.services', [])
     hots.roles = ["Warrior", "Assassin", "Support", "Specialist"];
     hots.types = ["Melee", "Ranged"];
     hots.universes = ["Warcraft", "Starcraft", "Diablo", "Blizzard"];
-    hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Mount"];
+    hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Heroic Skill", "Mount"];
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
     
@@ -9857,6 +10027,13 @@ angular.module('app.services', [])
 }])
 .factory('HeroService', ['$http', '$q', function ($http, $q) {
     return {
+        getHeroesList: function () {
+            var d = $q.defer();
+            $http.post('/hots/heroes/list', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
         getHeroes: function () {
             var d = $q.defer();
             $http.post('/hots/heroes', {}).success(function (data) {
@@ -9867,6 +10044,13 @@ angular.module('app.services', [])
         getHero: function (_id) {
             var d = $q.defer();
             $http.post('/hots/hero', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getHeroByClass: function (hero) {
+            var d = $q.defer();
+            $http.post('/hots/hero/class', { hero: hero }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

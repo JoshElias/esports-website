@@ -733,6 +733,37 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('Base64', function () {
+    var digitsStr = 
+    //   0       8       16      24      32      40      48      56     63
+    //   v       v       v       v       v       v       v       v      v
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-";
+    var digits = digitsStr.split('');
+    var digitsMap = {};
+    for (var i = 0; i < digits.length; i++) {
+        digitsMap[digits[i]] = i;
+    }
+    return {
+        fromInt: function(int32) {
+            var result = '';
+            while (true) {
+                result = digits[int32 & 0x3f] + result;
+                int32 >>>= 6;
+                if (int32 === 0)
+                    break;
+            }
+            return result;
+        },
+        toInt: function(digitsStr) {
+            var result = 0;
+            var digits = digitsStr.split('');
+            for (var i = 0; i < digits.length; i++) {
+                result = (result << 6) + digitsMap[digits[i]];
+            }
+            return result;
+        }
+    };
+})
 .factory('Hearthstone', function () {
     var hs = {};
     
@@ -752,7 +783,7 @@ angular.module('app.services', [])
     hots.roles = ["Warrior", "Assassin", "Support", "Specialist"];
     hots.types = ["Melee", "Ranged"];
     hots.universes = ["Warcraft", "Starcraft", "Diablo", "Blizzard"];
-    hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Mount"];
+    hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Heroic Skill", "Mount"];
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
     
@@ -1664,6 +1695,13 @@ angular.module('app.services', [])
 }])
 .factory('HeroService', ['$http', '$q', function ($http, $q) {
     return {
+        getHeroesList: function () {
+            var d = $q.defer();
+            $http.post('/hots/heroes/list', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
         getHeroes: function () {
             var d = $q.defer();
             $http.post('/hots/heroes', {}).success(function (data) {
@@ -1674,6 +1712,13 @@ angular.module('app.services', [])
         getHero: function (_id) {
             var d = $q.defer();
             $http.post('/hots/hero', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getHeroByClass: function (hero) {
+            var d = $q.defer();
+            $http.post('/hots/hero/class', { hero: hero }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

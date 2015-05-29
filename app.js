@@ -172,7 +172,9 @@ if (cluster.isMaster) {
     app.post('/hots/guide', routes.frontend.hots.guide(Schemas));
 
     app.post('/hots/heroes', routes.frontend.hots.heroes(Schemas));
+    app.post('/hots/heroes/list', routes.frontend.hots.heroesList(Schemas));
     app.post('/hots/hero', routes.frontend.hots.hero(Schemas));
+    app.post('/hots/hero/class', routes.frontend.hots.heroByClass(Schemas));
 
     app.post('/hots/maps', routes.frontend.hots.maps(Schemas));
     
