@@ -7900,9 +7900,17 @@ angular.module('app.controllers', ['ngCookies'])
         
         // hash
         function getHash () {
-            var hash = $location.hash();
-            if (hash && checkHash(Base64.toInt(hash).split(''))) {
-                return Base64.toInt(hash).split('');
+            var hash = $location.hash(),
+                hashInt = Base64.toInt(hash),
+                arr = (hashInt+'').split('');
+            
+            for (var i = 0; i < arr.length; i++) {
+                arr[i] = +arr[i];
+            }
+            
+            console.log(arr);
+            if (checkHash(arr)) {
+                return arr;
             } else {
                 return [0,0,0,0,0,0,0];
             }
