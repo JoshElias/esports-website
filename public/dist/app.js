@@ -2366,6 +2366,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // summernote options
         $scope.options = {
+          disableDragAndDrop: true,
           height: 300,
           fontNames: ['Open Sans Regular', 'Open Sans Bold'],
           defaultFontName: 'Open Sans Regular',
@@ -2513,6 +2514,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // summernote options
         $scope.options = {
+          disableDragAndDrop: true,
           height: 300,
           fontNames: ['Open Sans Regular', 'Open Sans Bold'],
           defaultFontName: 'Open Sans Regular',
@@ -2787,6 +2789,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // summernote options
         $scope.options = {
+          disableDragAndDrop: true,
           height: 100,
           toolbar: [
             ['style', ['style']],
@@ -2996,6 +2999,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // summernote options
         $scope.options = {
+          disableDragAndDrop: true,
           height: 100,
           toolbar: [
             ['style', ['style']],
@@ -3345,8 +3349,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminPollListCtrl', ['$scope', 'bootbox', 'Pagination', 'AlertService', 'AdminPollService', 'data', 
-    function ($scope, bootbox, Pagination, AlertService, AdminPollService, data) {
+.controller('AdminPollListCtrl', ['$scope', '$compile', 'bootbox', 'Pagination', 'AlertService', 'AdminPollService', 'data', 
+    function ($scope, $compile, bootbox, Pagination, AlertService, AdminPollService, data) {
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
@@ -3359,6 +3363,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.perpage = data.perpage;
         $scope.total = data.total;
         $scope.search = data.search;
+        
         
         $scope.getPolls = function () {
             AdminPollService.getPolls($scope.page, $scope.perpage, $scope.search).then(function (data) {
@@ -3485,6 +3490,25 @@ angular.module('app.controllers', ['ngCookies'])
                     thumb: ''
                 }
             }
+        
+        $scope.options = {
+          disableDragAndDrop: true,
+          height: 300,
+          disableDragAndDrop: true,
+          fontNames: ['Open Sans Regular', 'Open Sans Bold'],
+          defaultFontName: 'Open Sans Regular',
+          toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['format', ['hr']],
+            ['misc', ['undo', 'redo', 'codeview']]
+          ]
+        };
         
         // load Poll
         $scope.poll = angular.copy(defaultPoll);
@@ -3628,6 +3652,24 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
             
+        $scope.options = {
+          disableDragAndDrop: true,
+          height: 300,
+          disableDragAndDrop: true,
+          fontNames: ['Open Sans Regular', 'Open Sans Bold'],
+          defaultFontName: 'Open Sans Regular',
+          toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['format', ['hr']],
+            ['misc', ['undo', 'redo', 'codeview']]
+          ]
+        };
         
         // load Poll
         $scope.poll = data.poll;
@@ -3782,7 +3824,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         // summernote options
         $scope.options = {
+          disableDragAndDrop: true,
           height: 100,
+          disableDragAndDrop: true,
           toolbar: [
             ['style', ['style']],
             ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
@@ -4016,6 +4060,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // summernote options
         $scope.options = {
+          disableDragAndDrop: true,
           height: 100,
           toolbar: [
             ['style', ['style']],
@@ -4991,6 +5036,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // summernote options
         $scope.options = {
+          disableDragAndDrop: true,
           height: 300,
           toolbar: [
             ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
@@ -6294,6 +6340,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // summernote options
         $scope.options = {
+          disableDragAndDrop: true,
           height: 100,
           toolbar: [
             ['style', ['style']],
@@ -6406,6 +6453,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // summernote options
         $scope.options = {
+          disableDragAndDrop: true,
           height: 100,
           toolbar: [
             ['style', ['style']],
@@ -6554,6 +6602,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // summernote options
         $scope.options = {
+          disableDragAndDrop: true,
           height: 100,
           toolbar: [
             ['style', ['style']],
@@ -6662,6 +6711,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // summernote options
         $scope.options = {
+          disableDragAndDrop: true,
           height: 100,
           toolbar: [
             ['style', ['style']],
@@ -6724,8 +6774,10 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('PollsCtrl', ['$scope', '$cookies', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 
-    function ($scope, $cookies, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
+.controller('PollsCtrl', ['$scope', '$sce', '$cookies', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 
+    function ($scope, $sce, $cookies, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
+        
+        var box;
         $scope.pollsMain = dataPollsMain.polls;
         $scope.pollsSide = dataPollsSide.polls;
         
@@ -6739,6 +6791,14 @@ angular.module('app.controllers', ['ngCookies'])
                 poll.votes.push(item._id);
             }
         };
+        
+        $scope.getContent = function (content) {
+            return $sce.trustAsHtml(content);
+        };
+        
+        $scope.btnText = function (poll, item) {
+            return ($scope.hasVoted(poll, item)) ? 'Unpick' : 'Pick';
+        }
         
         $scope.voteCurve = function (item, poll) {
             var v = item.votes,
@@ -6768,28 +6828,52 @@ angular.module('app.controllers', ['ngCookies'])
             return (poll.votes.indexOf(item._id) !== -1);
         };
         
-        $scope.doneVoting = function (poll) {
-            return PollService.getStorage(poll);
+        
+        $scope.isDoneVoting = function (poll) {
+            if (PollService.getStorage(poll)) {
+                return PollService.getStorage(poll);
+            }
+            return null;
+        };
+        
+        $scope.setDoneVoting = function (poll, votes) {
+            return PollService.setStorage(poll._id, votes);
         };
         
         $scope.getVotes = function (poll) {
             return poll.votes
         };
         
+        $scope.getLocalVotes = function (poll, item) {
+            var localVotes = PollService.getStorage(poll._id).split(',');
+            for (var i = 0; i < localVotes.length; i++) {
+                if(item._id == localVotes[i]) {
+                    return true;
+                }
+            }
+        }
+        
         $scope.bigImg = function (img, title) {
-            var box = bootbox.dialog({
+                box = bootbox.dialog({
                 title: title,
-                message: $compile('<img class="img-responsive" ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/polls/' +img+ '" alt="">')($scope),
+                message: $compile('<a ng-click="closeBox()"><img class="img-responsive" ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/polls/' +img+ '" alt=""></a>')($scope),
+                backdrop: true
             });
+            
             box.modal('show');
         };
+        
+        $scope.closeBox = function () {
+            box.modal('hide');
+        }
         
         $scope.submitVote = function (poll) {
             PollService.postVote(poll, poll.votes).success(function (data) {
                 if(!data.success) {
                     $data.errors = data.errors;
                 } else {
-                    PollService.setStorage(poll._id, true);
+                    var votesString = $scope.getVotes(poll).join(',');
+                    $scope.setDoneVoting(poll, votesString);
                     for (var i = 0; i != poll.items.length; i++){
                         for (var j = 0; j != $scope.getVotes(poll).length; j++) {
                             if (poll.items[i]._id == $scope.getVotes(poll)[j]) {
@@ -7684,12 +7768,10 @@ angular.module('app.services', [])
         postVote: function(poll, votes) {
             return $http.post('/polls/vote', { poll: poll, votes: votes});
         },
-        setStorage: function (poll, bool) {
-
-            return $localStorage['tspoll-' + poll] = bool;
+        setStorage: function (poll, votes) {
+            return $localStorage['tspoll-' + poll] = votes;
         },
         getStorage: function (poll) {
-
             return $localStorage['tspoll-' + poll];
         }
     };

@@ -537,12 +537,10 @@ angular.module('app.services', [])
         postVote: function(poll, votes) {
             return $http.post('/polls/vote', { poll: poll, votes: votes});
         },
-        setStorage: function (poll, bool) {
-
-            return $localStorage['tspoll-' + poll] = bool;
+        setStorage: function (poll, votes) {
+            return $localStorage['tspoll-' + poll] = votes;
         },
         getStorage: function (poll) {
-
             return $localStorage['tspoll-' + poll];
         }
     };

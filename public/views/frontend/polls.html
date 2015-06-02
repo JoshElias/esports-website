@@ -27,141 +27,136 @@
                     <div class="past-polls-title clearfix">
                         <h3 class="pull-left">PAST POLLS</h3>
                     </div>
-                 
-                        <ul class="past-polls-content">
-                            <li ng-repeat="poll in pollsSide">
-                                <a href="#" ng-click="show.past = !show.past">
-                                    <div class="past-polls-content-head" ng-class="{'active': show.past}">
-                                        <h3>{{poll.title}}</h3>
-                                        <div class="m-l-md m-r-md pull-right">
-                                            <i class="fa past-polls-arrow" ng-class="{ 'fa-angle-down': !show.past, 'fa-angle-up': show.past }"></i>
-                                        </div>
-                                    </div>
-                                </a>
-                                <div class="past-polls-content-body" ng-repeat="item in poll.items | orderBy: '-votes'" ng-show="show.past">
-                                    <div class="votes-curve-bar">
-                                        <span style="width: {{voteCurve(item, poll)*3}}px;"></span>
-                                        <h3>{{item.name}}</h3>
-                                        <h3 class="votes-curve-percentage">{{votePercentage(item, poll)}}%</h3>
-                                        <h3 class="votes-curve-amount"><i class="fa fa-check-circle past-polls-icon"></i>{{item.votes}}</h3>
+                    <ul class="past-polls-content">
+                        <li ng-repeat="poll in pollsSide">
+                            <a href="#" ng-click="show.past = !show.past">
+                                <div class="past-polls-content-head" ng-class="{'active': show.past}">
+                                    <h3 class="ell">{{poll.title}}</h3>
+                                    <div class="m-l-md m-r-md pull-right">
+                                        <i class="fa past-polls-arrow" ng-class="{ 'fa-angle-down': !show.past, 'fa-angle-up': show.past }"></i>
                                     </div>
                                 </div>
-                            </li>   
-                        </ul>
-              
+                            </a>
+                            <div class="past-polls-content-body" ng-repeat="item in poll.items | orderBy: '-votes'" ng-show="show.past">
+                                <div class="votes-curve-bar">
+                                    <span style="width: {{voteCurve(item, poll)*3}}px;"></span>
+                                    <h3>{{item.name}}</h3>
+                                    <h3 class="votes-curve-percentage">{{votePercentage(item, poll)}}%</h3>
+                                    <h3 class="votes-curve-amount"><i class="fa fa-check-circle past-polls-icon"></i>{{item.votes}}</h3>
+                                </div>
+                            </div>
+                        </li>   
+                    </ul>
                 </div>
             </div>
             <!-- / deck -->
-            
         </div>
         <!-- / article right -->
 
         <!-- article left -->
         <div class="poll-left">
         
-            
             <div class="no-polls darkbox" ng-if="!pollsMain.length">
                 <p>There are currently no active polls.</p>
             </div>
             
-            <div class="poll-img poll" ng-repeat="poll in pollsMain" ng-if="poll.type == 'img' && !doneVoting(poll._id)">
-                <div class="poll-title-wrapper">
-                    <h1 class="poll-title">{{poll.title}}</h1>
-                    <h4 class="poll-subTitle">{{poll.subTitle}}</h4>
-                </div>
+            <div ng-repeat="poll in pollsMain | orderBy: '-createdDate'">
+                <div class="poll" ng-class="{ 'poll-img' : poll.type == 'img'}" ng-if="poll.type == 'img' && !isDoneVoting(poll._id)">
+                    <div class="poll-title-wrapper">
+                        <h1 class="poll-title">{{poll.title}}</h1>
+                        <h4 class="poll-subTitle">{{poll.subTitle}}</h4>
+                    </div>
 
-                <div class="poll-description"><p>{{poll.description}}</p></div>
+                    <div class="poll-description" ng-bind-html="getContent(poll.description)"></div>
 
-                <div class="row">
-                    <div class="item-wrapper wrapper-xs">
-                        <div class="poll-item-img-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-3"  ng-repeat="item in poll.items">
-                            <a href="#" ng-click="bigImg(item.photos.large)">
-                                <img ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/polls/{{item.photos.thumb}}" alt="">
-                                <a href="#" ng-click="toggleItem(poll, item)">
-                                    <i class="fa fa-check-circle" ng-class="{ 'active' : hasVoted(poll, item)}"></i>
+                    <div class="row">
+                        <div class="item-wrapper wrapper-xs">
+                            <div class="poll-item-img-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-3"  ng-repeat="item in poll.items">
+                                <a href="#" ng-click="bigImg(item.photos.large)">
+                                    <img ng-class="{ 'active' : hasVoted(poll, item) }" ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/polls/{{item.photos.thumb}}" alt="">
+                                    <i class="fa fa-check" ng-class="{ 'active' : hasVoted(poll, item)}"></i>
                                 </a>
-                            </a>    
+                                <button class="poll-item-img-button btn btn-blue" ng-bind="btnText(poll, item)" ng-class="{ 'active' : hasVoted(poll, item) }" ng-click="toggleItem(poll, item)"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn btn-blue" ng-disabled="!poll.votes.length" ng-click="submitVote(poll)">SUBMIT VOTE</button>
+                    </div>
+                </div>
+
+                <div class="poll" ng-class="{ 'poll-txt' : poll.type == 'txt'}" ng-if="poll.type == 'txt' && !isDoneVoting(poll._id)">
+                    <div class="poll-title-wrapper">
+                        <h1 class="poll-title">{{poll.title}}</h1>
+                        <h4 class="poll-subTitle">{{poll.subTitle}}</h4>
+                    </div>
+
+                    <div class="poll-description" ng-bind-html="getContent(poll.description)"></div>
+
+                    <div class="row">
+                        <div class="poll-item-txt-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-6" ng-repeat="item in poll.items">
+                            <a href="#" ng-click="toggleItem(poll, item)">
+                                <div class="poll-item-txt" ng-class="{ active: hasVoted(poll, item) }">
+                                    <i class="fa" ng-class="{ 'fa-check-circle': hasVoted(poll, item), 'fa-circle-thin': !hasVoted(poll, item) }"></i>
+                                    <p class="m-b-none">{{item.name}}</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn btn-blue" ng-disabled="!poll.votes.length" ng-click="submitVote(poll)">SUBMIT VOTE</button>
+                    </div>
+                </div>
+
+
+                <div class="poll" ng-class="{ 'poll-txt' : poll.type == 'txt'}" ng-if="poll.type == 'txt' && isDoneVoting(poll._id)">
+                    <div class="poll-title-wrapper">
+                        <h1 class="poll-title">{{poll.title}}</h1>
+                        <h4 class="poll-subTitle">{{poll.subTitle}}</h4>
+                    </div>
+
+                    <div class="poll-description" ng-bind-html="getContent(poll.description)"></div>
+
+                    <div class="row">
+                        <div class="voted-poll-item-txt-wrapper m-b-md col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                            <div class="voted-poll-txt-item" ng-repeat="item in poll.items | orderBy: '-votes'">
+                                <div class="voted-curve-bar" ng-class="{ 'active' : getLocalVotes(poll, item) }">
+                                    <span style="width: {{voteCurve(item, poll)}}%;"></span>
+                                    <h3 class="voted-curve-bar-name ell">{{item.name}}</h3>
+                                    <h3 class="voted-curve-percentage">{{votePercentage(item, poll)}}%</h3>
+                                    <h3 class="voted-curve-amount"><i class="fa fa-check-circle past-polls-icon"></i>{{item.votes}}</h3>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div>
-                    <button type="submit" class="btn btn-blue" ng-disabled="!poll.votes.length" ng-click="submitVote(poll)">SUBMIT VOTE</button>
-                </div>
-            </div>
-            
-            <div class="poll-txt poll" ng-repeat="poll in pollsMain" ng-if="poll.type == 'txt' && !doneVoting(poll._id)">
-                <div class="poll-title-wrapper">
-                    <h1 class="poll-title">{{poll.title}}</h1>
-                    <h4 class="poll-subTitle">{{poll.subTitle}}</h4>
-                </div>
-
-                <div class="poll-description"><p>{{poll.description}}</p></div>
-
-                <div class="row">
-                    <div class="poll-item-txt-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-6" ng-repeat="item in poll.items">
-                        <a href="#" ng-click="toggleItem(poll, item)">
-                            <div class="poll-item-txt" ng-class="{ active: hasVoted(poll, item) }">
-                                <i class="fa" ng-class="{ 'fa-check-circle': hasVoted(poll, item), 'fa-circle-thin': !hasVoted(poll, item) }"></i>
-                                <p class="m-b-none">{{item.name}}</p>
-                            </div>
-                        </a>
+                <div class="poll" ng-class="{ 'poll-img' : poll.type == 'img'}" ng-if="poll.type == 'img' && isDoneVoting(poll._id)">
+                    <div class="poll-title-wrapper">
+                        <h1 class="poll-title">{{poll.title}}</h1>
+                        <h4 class="poll-subTitle">{{poll.subTitle}}</h4>
                     </div>
-                </div>
-
-                <div>
-                    <button type="submit" class="btn btn-blue" ng-disabled="!poll.votes.length" ng-click="submitVote(poll)">SUBMIT VOTE</button>
-                </div>
-            </div>
-            
-            
-            <div class="poll poll-txt" ng-repeat="poll in pollsMain" ng-if="poll.type == 'txt' && doneVoting(poll._id)">
-                <div class="poll-title-wrapper">
-                    <h1 class="poll-title">{{poll.title}}</h1>
-                    <h4 class="poll-subTitle">{{poll.subTitle}}</h4>
-                </div>
-
-                <div class="poll-description"><p>{{poll.description}}</p></div>
-
-                <div class="row">
-                    <div class="voted-poll-item-txt-wrapper m-b-md col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        
-                        <div class="voted-poll-txt-item" ng-repeat="item in poll.items | orderBy: '-votes'">
-                            <div class="voted-curve-bar">
-                                <span ng-style="{width: voteCurve(item, poll)%;}"></span>
-                                <h3 class="voted-curve-bar-name">{{item.name}}</h3>
-                                <h3 class="voted-curve-percentage">{{votePercentage(item, poll)}}%</h3>
-                                <h3 class="voted-curve-amount"><i class="fa fa-check-circle past-polls-icon"></i>{{item.votes}}</h3>
+                    <div class="poll-description" ng-bind-html="getContent(poll.description)"></div>
+                    <div class="row">
+                        <div class="clearfix voted-img-item-wrapper wrapper-xs">
+                            <div class="voted-poll-item-img-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-3" ng-class="{ 'active' : getLocalVotes(poll, item) }"  ng-repeat="item in poll.items | orderBy: '-votes'">
+                                <a href="#" ng-click="bigImg(item.photos.large)">
+                                    <span style="height: {{voteCurve(item, poll)}}%;"></span>
+                                    <div>
+                                        <h3>{{item.votes}}</h3>
+                                        <h4>VOTES</h4>
+                                    </div>
+                                    <img ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/polls/{{item.photos.thumb}}" alt="">
+                                </a>
                             </div>
                         </div>
-                        
                     </div>
                 </div>
             </div>
-            
-            <div class="poll-img poll" ng-repeat="poll in pollsMain" ng-if="poll.type == 'img' && doneVoting(poll._id)">
-                <div class="poll-title-wrapper">
-                    <h1 class="poll-title">{{poll.title}}</h1>
-                    <h4 class="poll-subTitle">{{poll.subTitle}}</h4>
-                </div>
 
-                <div class="poll-description"><p>{{poll.description}}</p></div>
-
-                <div class="row">
-                    <div class="clearfix voted-img-item-wrapper wrapper-xs">
-                        <div class="voted-poll-item-img-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-3"  ng-repeat="item in poll.items | orderBy: '-votes'">
-                            <span style="height: {{voteCurve(item, poll)}}%;"></span>
-                            <div>
-                                <h3>{{item.votes}}</h3>
-                                <h4>VOTES</h3>
-                            </div>
-                            <img ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/polls/{{item.photos.thumb}}" alt="">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            
         </div>
         <!-- / article left -->
 
