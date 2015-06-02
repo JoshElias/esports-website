@@ -75,7 +75,7 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 /* nav bar */
 .navbar-tempo {
     margin-bottom: 0px;
-    height: 52px;
+    /*height: 52px;*/
     background: #FFF;
     color: #2766ad;
     border-bottom: 2px solid #000;
@@ -317,11 +317,9 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 
 /* start banner */
 .home-banner { position: relative; margin-bottom: 0px; }
-.home-banner .container { height: 700px; }
-.banner-bolt { position: absolute; top: 0px; left: 0px; width: 100%; height: 126px; background: url('../img/header-bolt.png') center center no-repeat; z-index: 4; }
 
 .banner-prev,
-.banner-next { position: absolute; top: 282px; display: block; width: 40px; height: 135px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.5); color: #FFF !important; font-size: 30px; text-align: center; line-height: 135px; transition: all .1s linear; z-index: 4; }
+.banner-next { position: absolute; top: 132px; display: block; width: 40px; height: 135px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.5); color: #FFF !important; font-size: 30px; text-align: center; line-height: 135px; transition: all .1s linear; z-index: 4; }
 .banner-prev { left: 0px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-left: none; }
 .banner-next { right: 0px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; border-right: none; }
 .banner-prev:hover,
@@ -336,17 +334,16 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .banner-pages li.active a { background: rgba(39,102,173,.8); }
 .banner-pages li.active a:hover { background: rgba(39,102,173,1); }
 
-.home-banner .banner-slide-wrapper { position: relative; height: 700px; overflow: hidden; white-space: nowrap; }
-.home-banner .banner-slide { display: none; position: absolute; top: 0px; left: 0px; width: 100%; height: 700px; z-index: 2; overflow: hidden; }
+.home-banner .banner-slide-wrapper { position: relative; height: 400px; overflow: hidden; white-space: nowrap; }
+.home-banner .banner-slide { display: none; position: absolute; top: 0px; left: 0px; width: 100%; height: 400px; z-index: 2; overflow: hidden; }
 .home-banner .banner-slide.active { display: block; z-index: 3; }
-.home-banner .banner-panel { position: absolute; top: 250px; left: 50%; margin-left: -300px; width: 600px; height: 200px; background: url('../img/black-60.png'); border-radius: 4px; border: 1px solid rgba(255,255,255,.5); }
-.home-banner .banner-panel h1 { margin: 20px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 30px; text-align: center; }
-.home-banner .banner-panel p { margin: 20px; color: #FFF; white-space: normal; }
-.home-banner .banner-panel .banner-btn-wrapper { position: absolute; left: 0px; bottom: 0px; margin: 0 0 20px 0; width: 600px; height: 40px; text-align: center; }
-.home-banner .banner-panel .banner-btn { background: rgba(39,102,173,.8); border: 1px solid rgba(255,255,255,.5); color: #FFF; padding: 10px 30px; border-radius: 4px; text-decoration: none; }
+.home-banner .banner-slide .container { position: relative; }
+.home-banner .banner-panel { position: absolute; top: 50px; left: 0px; width: 600px; height: 200px; }
+.home-banner .banner-panel h1 { margin: 20px; display: inline-block; padding: 10px 30px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 30px; background: #2766ad; }
+.home-banner .banner-panel p { margin: 0 20px 20px; padding: 10px 30px; display: inline-block; color: #FFF; white-space: normal; background: rgba(0,0,0,.8); }
+.home-banner .banner-panel .banner-btn-wrapper { margin: 20px; }
+.home-banner .banner-panel .banner-btn { background: rgba(39,102,173,.8); border: 1px solid rgba(255,255,255,.5); color: #FFF; padding: 10px 30px; text-decoration: none; }
 .home-banner .banner-panel .banner-btn:hover { color: #2766ad; background: #FFF; border-color: #2766ad; box-shadow: 0px 0px 30px rgba(255,255,255,1); }
-
-.home-banner .banner-slide video { position: absolute; right: 0; bottom: -20px; min-width: 100%; min-height: 100%; width: auto; height: auto; z-index: -100; }
 /* end banner */
 
 /* start filters */
@@ -421,12 +418,25 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .no-articles { color: #FFF; }
 /* end articles */
 
+/* deck builder link */
+.deck-builder-link { padding: 2px; width: 100%; height: 200px; background: #ef922c; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ef922c 40%, #ef781f 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(40%,#ef922c), color-stop(100%,#ef781f)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ef922c 40%,#ef781f 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ef922c 40%,#ef781f 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ef922c 40%,#ef781f 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ef922c 40%,#ef781f 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ef922c', endColorstr='#ef781f',GradientType=0 ); /* IE6-9 */
+    -webkit-animation-name: glow-premium; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow-premium; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+.deck-builder-link-inner { position: relative; height: 196px; background: #a97344 url('../img/decks/hs-deck-button-bg.jpg') no-repeat right top; }
+.deck-builder-link-inner a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/decks/deck-builder-button.png') no-repeat; background-position: center 0px; -webkit-transition: background-position ease-in-out .3s; transition: background-position ease-in-out .3s; }
+.deck-builder-link-inner a:hover { background-position: center -196px; }
+
 /* start decks */
 .home-decks { margin-bottom: 20px; }
 .home-decks h1.decks-title { margin: 0; padding: 20px 0px 10px 0px; font-family: 'Open Sans Bold'; font-size: 30px; background: #2766ad; color: #FFF; text-indent: 10px; }
 .home-decks h1.decks-title-small { padding: 10px; font-size: 20px; line-height: 20px; }
 .home-no-decks { padding: 10px; background: rgba(0,0,0,.6); color: #FFF; }
-a.create-a-deck { display: block; margin-bottom: 20px; height: 119px; background: #487dba url('../img/create-a-deck-bg.png') no-repeat; background-position: right top; }
 
 .home-decks .deck-wrapper { position: relative; width: 100%; height: 90px; }
 .home-decks .deck { position: absolute; top: 0px; left: 0px; width: inherit; height: 90px; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; z-index: 10; }
@@ -584,6 +594,16 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .p-r-none { padding-right: 0px; }
 .p-b-none { padding-bottom: 0px; }
 .p-l-none { padding-left: 0px; }
+
+/* bs no pad */
+.row.no-pad {
+  margin-right:0;
+  margin-left:0;
+}
+.row.no-pad > [class*='col-'] {
+  padding-right:0;
+  padding-left:0;
+}
 
 /* positions */
 .pos-rl { position: relative; }
@@ -903,6 +923,9 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-deck-class.warlock { background-position: 0px -420px; }
 .profile-deck-class.hunter { background-position: 0px -240px; }
 .profile-deck-class.druid { background-position: 0px -180px; }
+
+/* profile guides */
+.profile-guides { margin: 15px -15px; }
 
 /* profile - no content */
 .profile-no-content { margin-top: 20px; color: #FFF; border: 1px solid #000; background: rgba(0,0,0,.6); border-radius: 4px; padding: 20px 30px; }
@@ -1996,6 +2019,7 @@ ul[dnd-list] .dndPlaceholder {
 .icon-zagara { background: url('../img/hots/heroes/zagara-hex.png') no-repeat center center; }
 .icon-zeratul { background: url('../img/hots/heroes/zeratul-hex.png') no-repeat center center; }
 .icon-sylvanas { background: url('../img/hots/heroes/sylvanas-hex.png') no-repeat center center; }
+.icon-kaelthas { background: url('../img/hots/heroes/kaelthas-hex.png') no-repeat center center; }
 
 .hero-selection .hero .icon-wrap .icon:hover { background-color: rgba(88, 43, 128, 1); }
 .hero-selection .hero .icon-wrap .icon.active { background-color: #2766ad; }
@@ -2096,6 +2120,7 @@ p.white { color: #FFF; }
 .hero-list li a.zagara { background: url('../img/hots/heroes/28x/zagara28.png') no-repeat center right; }
 .hero-list li a.zeratul { background: url('../img/hots/heroes/28x/zeratul28.png') no-repeat center right; }
 .hero-list li a.sylvanas { background: url('../img/hots/heroes/28x/sylvanas28.png') no-repeat center right; }
+.hero-list li a.kaelthas { background: url('../img/hots/heroes/28x/kaelthas28.png') no-repeat center right; }
 
 /* guide steps */
 .gb-steps { margin: 0 0 20px 0; padding: 0 1px; }
@@ -2171,6 +2196,7 @@ p.white { color: #FFF; }
 .talents-title.valla { background: url('../img/hots/heroes/60x/valla60.png') no-repeat; }
 .talents-title.zagara { background: url('../img/hots/heroes/60x/zagara60.png') no-repeat; }
 .talents-title.zeratul { background: url('../img/hots/heroes/60x/zeratul60.png') no-repeat; }
+.talents-title.kaelthas { background: url('../img/hots/heroes/60x/kaelthas60.png') no-repeat; }
 
 /* talents icons */
 .talents-icon { display: block; width: 30px; height: 30px; overflow: hidden; white-space: nowrap; text-indent: -99999px; opacity: .5; transition: opacity .1s linear; }
@@ -2216,6 +2242,77 @@ p.white { color: #FFF; }
 .talents-icon.valla { background: url('../img/hots/talents/valla.png') no-repeat; }
 .talents-icon.zagara { background: url('../img/hots/talents/zagara.png') no-repeat; }
 .talents-icon.zeratul { background: url('../img/hots/talents/zeratul.png') no-repeat; }
+.talents-icon.kaelthas { background: url('../img/hots/talents/kaelthas.png') no-repeat; }
+
+/* talents - kaelthas - small */
+/* Tier 1 */
+.talents-icon.kaelthas.mana-addict { background-position: 0px 0px; }
+.talents-icon.kaelthas.convection { background-position: 0px -30px; }
+.talents-icon.kaelthas.energy-roil { background-position: 0px -60px; }
+.talents-icon.kaelthas.fel-infusion { background-position: 0px -90px; }
+/* Tier 2 */
+.talents-icon.kaelthas.mana-tap { background-position: 0px -30px; }
+.talents-icon.kaelthas.nether-wind { background-position: 0px -60px; }
+.talents-icon.kaelthas.gathering-power { background-position: 0px -120px; }
+.talents-icon.kaelthas.envenom { background-position: 0px -150px; }
+/* Tier 3 */
+.talents-icon.kaelthas.fission-bomb { background-position: 0px -180px; }
+.talents-icon.kaelthas.sunfire-enchantment { background-position: 0px -90px; }
+.talents-icon.kaelthas.tri-optimal { background-position: 0px -60px; }
+.talents-icon.kaelthas.clairvoyance { background-position: 0px -210px; }
+/* Tier 4 */
+.talents-icon.kaelthas.phoenix { background-position: 0px -240px; }
+.talents-icon.kaelthas.pyroblast { background-position: 0px -270px; }
+/* Tier 5 */
+.talents-icon.kaelthas.flamethrower { background-position: 0px -30px; }
+.talents-icon.kaelthas.chain-bomb { background-position: 0px -180px; }
+.talents-icon.kaelthas.pyromaniac { background-position: 0px -180px; }
+.talents-icon.kaelthas.spell-shield { background-position: 0px -300px; }
+/* Tier 6 */
+.talents-icon.kaelthas.ignite { background-position: 0px -30px; }
+.talents-icon.kaelthas.backdraft { background-position: 0px -180px; }
+.talents-icon.kaelthas.gravity-throw { background-position: 0px -60px; }
+.talents-icon.kaelthas.arcane-barrier { background-position: 0px -330px; }
+/* Tier 7 */
+.talents-icon.kaelthas.rebirth { background-position: 0px -240px; }
+.talents-icon.kaelthas.presence-of-mind { background-position: 0px -270px; }
+.talents-icon.kaelthas.bolt-of-the-storm { background-position: 0px -360px; }
+.talents-icon.kaelthas.arcane-power { background-position: 0px -390px; }
+
+/* talents - kaelthas - large */
+/* Tier 1 */
+.talents-icon.kaelthas.large.mana-addict { background-position: -30px 0px; }
+.talents-icon.kaelthas.large.convection { background-position: -30px -102px; }
+.talents-icon.kaelthas.large.energy-roil { background-position: -30px -204px; }
+.talents-icon.kaelthas.large.fel-infusion { background-position: -30px -306px; }
+/* Tier 2 */
+.talents-icon.kaelthas.large.mana-tap { background-position: -30px -102px; }
+.talents-icon.kaelthas.large.nether-wind { background-position: -30px -204px; }
+.talents-icon.kaelthas.large.gathering-power { background-position: -30px -408px; }
+.talents-icon.kaelthas.large.envenom { background-position: -30px -510px; }
+/* Tier 3 */
+.talents-icon.kaelthas.large.fission-bomb { background-position: -30px -612px; }
+.talents-icon.kaelthas.large.sunfire-enchantment { background-position: -30px -306px; }
+.talents-icon.kaelthas.large.tri-optimal { background-position: -30px -204px; }
+.talents-icon.kaelthas.large.clairvoyance { background-position: -30px -714px; }
+/* Tier 4 */
+.talents-icon.kaelthas.large.phoenix { background-position: -30px -816px; }
+.talents-icon.kaelthas.large.pyroblast { background-position: -30px -918px; }
+/* Tier 5 */
+.talents-icon.kaelthas.large.flamethrower { background-position: -30px -102px; }
+.talents-icon.kaelthas.large.chain-bomb { background-position: -30px -612px; }
+.talents-icon.kaelthas.large.pyromaniac { background-position: -30px -612px; }
+.talents-icon.kaelthas.large.spell-shield { background-position: -30px -1020px; }
+/* Tier 6 */
+.talents-icon.kaelthas.large.ignite { background-position: -30px -102px; }
+.talents-icon.kaelthas.large.backdraft { background-position: -30px -612px; }
+.talents-icon.kaelthas.large.gravity-throw { background-position: -30px -204px; }
+.talents-icon.kaelthas.large.arcane-barrier { background-position: -30px -1122px; }
+/* Tier 7 */
+.talents-icon.kaelthas.large.rebirth { background-position: -30px -816px; }
+.talents-icon.kaelthas.large.presence-of-mind { background-position: -30px -918px; }
+.talents-icon.kaelthas.large.bolt-of-the-storm { background-position: -30px -1224px; }
+.talents-icon.kaelthas.large.arcane-power { background-position: -30px -1326px; }
 
 /* talents - lili - small */
 .talents-icon.lili.conjurers-pursuit { background-position: 0px 0px; }
@@ -2729,140 +2826,144 @@ p.white { color: #FFF; }
 /* talents - diablo - small */
 /* Tier 1 */
 .talents-icon.diablo.devils-due { background-position: 0px 0px; }
-.talents-icon.diablo.soul-feast { background-position: 0px 0px; }
 .talents-icon.diablo.block { background-position: 0px -30px; }
-.talents-icon.diablo.soul-steal { background-position: 0px -60px; }
+.talents-icon.diablo.soul-feast { background-position: 0px 0px; }
+.talents-icon.diablo.overwhelming-force { background-position: 0px -60px; }
 /* Tier 2 */
-.talents-icon.diablo.amplified-healing { background-position: 0px -90px; }
-.talents-icon.diablo.swallowing-flames { background-position: 0px -120px; }
-.talents-icon.diablo.molten-impact { background-position: 0px -120px; }
-.talents-icon.diablo.demonic-strength { background-position: 0px -60px; }
+.talents-icon.diablo.demonic-strength { background-position: 0px -90px; }
+.talents-icon.diablo.soul-catcher { background-position: 0px 0px; }
+.talents-icon.diablo.essence-of-the-slain { background-position: 0px 0px; }
+.talents-icon.diablo.fire-devil { background-position: 0px -120px; }
 /* Tier 3 */
 .talents-icon.diablo.battle-momentum { background-position: 0px -150px; }
-.talents-icon.diablo.endless-death { background-position: 0px 0px; }
-.talents-icon.diablo.siphon-the-dead { background-position: 0px 0px; }
+.talents-icon.diablo.from-the-shadows { background-position: 0px -60px; }
+.talents-icon.diablo.devastating-charge { background-position: 0px -60px; }
+.talents-icon.diablo.soul-steal { background-position: 0px 0px; }
 /* Tier 4 */
 .talents-icon.diablo.apocalypse { background-position: 0px -180px; }
 .talents-icon.diablo.lightning-breath { background-position: 0px -210px; }
 /* Tier 5 */
-.talents-icon.diablo.from-the-shadows { background-position: 0px -240px; }
-.talents-icon.diablo.crippling-shadows { background-position: 0px -240px; }
-.talents-icon.diablo.spell-shield { background-position: 0px -270px; }
-.talents-icon.diablo.relentless { background-position: 0px -300px; }
-/* Tier 6 */
-.talents-icon.diablo.fire-devil { background-position: 0px -120px; }
+.talents-icon.diablo.siphon-the-dead { background-position: 0px 0px; }
+.talents-icon.diablo.spell-shield { background-position: 0px -240px; }
+.talents-icon.diablo.life-leech { background-position: 0px -270px; }
 .talents-icon.diablo.firestorm { background-position: 0px -120px; }
-.talents-icon.diablo.imposing-presence { background-position: 0px -330px; }
-.talents-icon.diablo.continuous-overpower { background-position: 0px -60px; }
+/* Tier 6 */
+.talents-icon.diablo.continuous-overpower { background-position: 0px -90px; }
+.talents-icon.diablo.imposing-presence { background-position: 0px -300px; }
+.talents-icon.diablo.domination { background-position: 0px -90px; }
+.talents-icon.diablo.rampage { background-position: 0px -120px; }
 /* Tier 7 */
 .talents-icon.diablo.dying-breath { background-position: 0px -180px; }
 .talents-icon.diablo.hellstorm { background-position: 0px -210px; }
-.talents-icon.diablo.storm-shield { background-position: 0px -360px; }
-.talents-icon.diablo.bolt-of-the-storm { background-position: 0px -390px; }
+.talents-icon.diablo.lord-of-terror { background-position: 0px -330px; }
+.talents-icon.diablo.bolt-of-the-storm { background-position: 0px -360px; }
 
 /* talents - diablo - large */
 /* Tier 1 */
 .talents-icon.diablo.large.devils-due { background-position: -30px 0px; }
-.talents-icon.diablo.large.soul-feast { background-position: -30px 0px; }
 .talents-icon.diablo.large.block { background-position: -30px -102px; }
-.talents-icon.diablo.large.soul-steal { background-position: -30px -204px; }
+.talents-icon.diablo.large.soul-feast { background-position: -30px 0px; }
+.talents-icon.diablo.large.overwhelming-force { background-position: -30px -204px; }
 /* Tier 2 */
-.talents-icon.diablo.large.amplified-healing { background-position: -30px -306px; }
-.talents-icon.diablo.large.swallowing-flames { background-position: -30px -408px; }
-.talents-icon.diablo.large.molten-impact { background-position: -30px -408px; }
-.talents-icon.diablo.large.demonic-strength { background-position: -30px -204px; }
+.talents-icon.diablo.large.demonic-strength { background-position: -30px -306px; }
+.talents-icon.diablo.large.soul-catcher { background-position: -30px 0px; }
+.talents-icon.diablo.large.essence-of-the-slain { background-position: -30px 0px; }
+.talents-icon.diablo.large.fire-devil { background-position: -30px -408px; }
 /* Tier 3 */
 .talents-icon.diablo.large.battle-momentum { background-position: -30px -510px; }
-.talents-icon.diablo.large.endless-death { background-position: -30px 0px; }
-.talents-icon.diablo.large.siphon-the-dead { background-position: -30px 0px; }
+.talents-icon.diablo.large.from-the-shadows { background-position: -30px -204px; }
+.talents-icon.diablo.large.devastating-charge { background-position: -30px -204px; }
+.talents-icon.diablo.large.soul-steal { background-position: -30px 0px; }
 /* Tier 4 */
 .talents-icon.diablo.large.apocalypse { background-position: -30px -612px; }
 .talents-icon.diablo.large.lightning-breath { background-position: -30px -714px; }
 /* Tier 5 */
-.talents-icon.diablo.large.from-the-shadows { background-position: -30px -816px; }
-.talents-icon.diablo.large.crippling-shadows { background-position: -30px -816px; }
-.talents-icon.diablo.large.spell-shield { background-position: -30px -918px; }
-.talents-icon.diablo.large.relentless { background-position: -30px -1020px; }
-/* Tier 6 */
-.talents-icon.diablo.large.fire-devil { background-position: -30px -408px; }
+.talents-icon.diablo.large.siphon-the-dead { background-position: -30px 0px; }
+.talents-icon.diablo.large.spell-shield { background-position: -30px -816px; }
+.talents-icon.diablo.large.life-leech { background-position: -30px -918px; }
 .talents-icon.diablo.large.firestorm { background-position: -30px -408px; }
-.talents-icon.diablo.large.imposing-presence { background-position: -30px -1122px; }
-.talents-icon.diablo.large.continuous-overpower { background-position: -30px -204px; }
+/* Tier 6 */
+.talents-icon.diablo.large.continuous-overpower { background-position: -30px -306px; }
+.talents-icon.diablo.large.imposing-presence { background-position: -30px -1020px; }
+.talents-icon.diablo.large.domination { background-position: -30px -306px; }
+.talents-icon.diablo.large.rampage { background-position: -30px -408px; }
 /* Tier 7 */
 .talents-icon.diablo.large.dying-breath { background-position: -30px -612px; }
 .talents-icon.diablo.large.hellstorm { background-position: -30px -714px; }
-.talents-icon.diablo.large.storm-shield { background-position: -30px -1224px; }
-.talents-icon.diablo.large.bolt-of-the-storm { background-position: -30px -1326px; }
+.talents-icon.diablo.large.lord-of-terror { background-position: -30px -1122px; }
+.talents-icon.diablo.large.bolt-of-the-storm { background-position: -30px -1224px; }
 
 /* talents - etc - small */
 /* Tier 1 */
-.talents-icon.etc.block { background-position: 0px 0px; }
-.talents-icon.etc.damage-slide { background-position: 0px -30px; }
-.talents-icon.etc.dance-your-pants-off { background-position: 0px -60px; }
-.talents-icon.etc.scouting-drone { background-position: 0px -90px; }
+.talents-icon.etc.rolling-like-a-stone { background-position: 0px 0px; }
+.talents-icon.etc.pwn-shop-guitar { background-position: 0px -30px; }
+.talents-icon.etc.prog-rock { background-position: 0px -30px; }
+.talents-icon.etc.block { background-position: 0px -60px; }
 /* Tier 2 */
-.talents-icon.etc.superiority { background-position: 0px -120px; }
-.talents-icon.etc.pwn-shop-guitar { background-position: 0px -150px; }
-.talents-icon.etc.groupies { background-position: 0px -150px; }
-.talents-icon.etc.echo-pedal { background-position: 0px -180px; }
+.talents-icon.etc.double-necked-guitar { background-position: 0px 0px; }
+.talents-icon.etc.mic-check { background-position: 0px -90px; }
+.talents-icon.etc.hammer-on { background-position: 0px -120px; }
+.talents-icon.etc.pinball-wizard { background-position: 0px -90px; }
 /* Tier 3 */
-.talents-icon.etc.battle-momentum { background-position: 0px -210px; }
-.talents-icon.etc.monster-slide { background-position: 0px -30px; }
-.talents-icon.etc.loud-speakers { background-position: 0px -60px; }
-.talents-icon.etc.guitar-hero { background-position: 0px -150px; }
+.talents-icon.etc.loud-speakers { background-position: 0px -90px; }
+.talents-icon.etc.guitar-hero { background-position: 0px -30px; }
+.talents-icon.etc.just-keep-rockin { background-position: 0px -30px; }
+.talents-icon.etc.follow-through { background-position: 0px -150px; }
 /* Tier 4 */
-.talents-icon.etc.mosh-pit { background-position: 0px -240px; }
-.talents-icon.etc.stage-dive { background-position: 0px -270px; }
+.talents-icon.etc.mosh-pit { background-position: 0px -180px; }
+.talents-icon.etc.stage-dive { background-position: 0px -210px; }
 /* Tier 5 */
-.talents-icon.etc.uber-rockstar { background-position: 0px -300px; }
-.talents-icon.etc.rockin-out { background-position: 0px -300px; }
-.talents-icon.etc.relentless { background-position: 0px -450px; }
-.talents-icon.etc.face-smelt { background-position: 0px -60px; }
+.talents-icon.etc.groupies { background-position: 0px -30px; }
+.talents-icon.etc.face-smelt { background-position: 0px -90px; }
+.talents-icon.etc.show-stopper { background-position: 0px 0px; }
+.talents-icon.etc.spell-shield { background-position: 0px -240px; }
 /* Tier 6 */
-.talents-icon.etc.head-crack { background-position: 0px -30px; }
-.talents-icon.etc.guitar-instrumental { background-position: 0px -150px; }
-.talents-icon.etc.imposing-presence { background-position: 0px -330px; }
-.talents-icon.etc.stoneskin { background-position: 0px -360px; }
+.talents-icon.etc.speed-metal { background-position: 0px -120px; }
+.talents-icon.etc.echo-pedal { background-position: 0px -270px; }
+.talents-icon.etc.encore { background-position: 0px -90px; }
+.talents-icon.etc.imposing-presence { background-position: 0px -300px; }
 /* Tier 7 */
-.talents-icon.etc.death-metal { background-position: 0px -240px; }
-.talents-icon.etc.rock-god { background-position: 0px -270px; }
-.talents-icon.etc.hardened-shield { background-position: 0px -390px; }
-.talents-icon.etc.bolt-of-the-storm { background-position: 0px -420px; }
+.talents-icon.etc.tour-bus { background-position: 0px -180px; }
+.talents-icon.etc.crowd-pleaser { background-position: 0px -210px; }
+.talents-icon.etc.death-metal { background-position: 0px -180px; }
+.talents-icon.etc.storm-shield { background-position: 0px -330px; }
+.talents-icon.etc.bolt-of-the-storm { background-position: 0px -360px; }
 
 /* talents - etc - large */
 /* Tier 1 */
-.talents-icon.etc.large.block { background-position: -30px 0px; }
-.talents-icon.etc.large.damage-slide { background-position: -30px -102px; }
-.talents-icon.etc.large.dance-your-pants-off { background-position: -30px -204px; }
-.talents-icon.etc.large.scouting-drone { background-position: -30px -306px; }
+.talents-icon.etc.large.rolling-like-a-stone { background-position: -30px 0px; }
+.talents-icon.etc.large.pwn-shop-guitar { background-position: -30px -102px; }
+.talents-icon.etc.large.prog-rock { background-position: -30px -102px; }
+.talents-icon.etc.large.block { background-position: -30px -204px; }
 /* Tier 2 */
-.talents-icon.etc.large.superiority { background-position: -30px -408px; }
-.talents-icon.etc.large.pwn-shop-guitar { background-position: -30px -510px; }
-.talents-icon.etc.large.groupies { background-position: -30px -510px; }
-.talents-icon.etc.large.echo-pedal { background-position: -30px -612px; }
+.talents-icon.etc.large.double-necked-guitar { background-position: -30px 0px; }
+.talents-icon.etc.large.mic-check { background-position: -30px -306px; }
+.talents-icon.etc.large.hammer-on { background-position: -30px -408px; }
+.talents-icon.etc.large.pinball-wizard { background-position: -30px -306px; }
 /* Tier 3 */
-.talents-icon.etc.large.battle-momentum { background-position: -30px -714px; }
-.talents-icon.etc.large.monster-slide { background-position: -30px -102px; }
-.talents-icon.etc.large.loud-speakers { background-position: -30px -204px; }
-.talents-icon.etc.large.guitar-hero { background-position: -30px -510px; }
+.talents-icon.etc.large.loud-speakers { background-position: -30px -306px; }
+.talents-icon.etc.large.guitar-hero { background-position: -30px -102px; }
+.talents-icon.etc.large.just-keep-rockin { background-position: -30px -102px; }
+.talents-icon.etc.large.follow-through { background-position: -30px -510px; }
 /* Tier 4 */
-.talents-icon.etc.large.mosh-pit { background-position: -30px -816px; }
-.talents-icon.etc.large.stage-dive { background-position: -30px -918px; }
+.talents-icon.etc.large.mosh-pit { background-position: -30px -612px; }
+.talents-icon.etc.large.stage-dive { background-position: -30px -714px; }
 /* Tier 5 */
-.talents-icon.etc.large.uber-rockstar { background-position: -30px -1020px; }
-.talents-icon.etc.large.rockin-out { background-position: -30px -1020px; }
-.talents-icon.etc.large.relentless { background-position: -30px -1530px; }
-.talents-icon.etc.large.face-smelt { background-position: -30px -204px; }
+.talents-icon.etc.large.groupies { background-position: -30px -102px; }
+.talents-icon.etc.large.face-smelt { background-position: -30px -306px; }
+.talents-icon.etc.large.show-stopper { background-position: -30px 0px; }
+.talents-icon.etc.large.spell-shield { background-position: -30px -816px; }
 /* Tier 6 */
-.talents-icon.etc.large.head-crack { background-position: -30px -102px; }
-.talents-icon.etc.large.guitar-instrumental { background-position: -30px -510px; }
-.talents-icon.etc.large.imposing-presence { background-position: -30px -1122px; }
-.talents-icon.etc.large.stoneskin { background-position: -30px -1224px; }
+.talents-icon.etc.large.speed-metal { background-position: -30px -408px; }
+.talents-icon.etc.large.echo-pedal { background-position: -30px -918px; }
+.talents-icon.etc.large.encore { background-position: -30px -306px; }
+.talents-icon.etc.large.imposing-presence { background-position: -30px -1020px; }
 /* Tier 7 */
-.talents-icon.etc.large.death-metal { background-position: -30px -816px; }
-.talents-icon.etc.large.rock-god { background-position: -30px -918px; }
-.talents-icon.etc.large.hardened-shield { background-position: -30px -1326px; }
-.talents-icon.etc.large.bolt-of-the-storm { background-position: -30px -1428px; }
+.talents-icon.etc.large.tour-bus { background-position: -30px -612px; }
+.talents-icon.etc.large.crowd-pleaser { background-position: -30px -714px; }
+.talents-icon.etc.large.death-metal { background-position: -30px -612px; }
+.talents-icon.etc.large.storm-shield { background-position: -30px -1122px; }
+.talents-icon.etc.large.bolt-of-the-storm { background-position: -30px -1224px; }
 
 /* talents - falstad - small */
 /* Tier 1 */
@@ -4829,6 +4930,7 @@ p.white { color: #FFF; }
 .hots-modal .hero.zagara { background: url('../img/hots/modal/heroes/zagara.png') no-repeat center right; }
 .hots-modal .hero.zeratul { background: url('../img/hots/modal/heroes/zeratul.png') no-repeat center right; }
 .hots-modal .hero.sylvanas { background: url('../img/hots/modal/heroes/sylvanas.png') no-repeat center right; }
+.hots-modal .hero.kaelthas { background: url('../img/hots/modal/heroes/kaelthas.png') no-repeat center right; }
 
 .hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
 .hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
@@ -4988,6 +5090,12 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-images .guide-image.guide-images-3.lili { background: url('../img/hots/heroes/guide-images/3/lili3.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-4.lili { background: url('../img/hots/heroes/guide-images/4/lili4.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-5.lili { background: url('../img/hots/heroes/guide-images/5/lili5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.guide-images-1.kaelthas { background: url('../img/hots/heroes/guide-images/1/kaelthas.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-2.kaelthas { background: url('../img/hots/heroes/guide-images/2/kaelthas2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-3.kaelthas { background: url('../img/hots/heroes/guide-images/3/kaelthas3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-4.kaelthas { background: url('../img/hots/heroes/guide-images/4/kaelthas4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-5.kaelthas { background: url('../img/hots/heroes/guide-images/5/kaelthas5.jpg') no-repeat center top; background-size: cover; }
 
 .guide-images .guide-image.guide-images-1.thelostvikings { background: url('../img/hots/heroes/guide-images/1/lostviking.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-2.thelostvikings { background: url('../img/hots/heroes/guide-images/2/lostviking2.jpg') no-repeat center top; background-size: cover; }
@@ -5230,6 +5338,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-hero-image.zagara { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/zagara60.png') no-repeat right top; }
 .guide-hero-image.zeratul { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/zeratul60.png') no-repeat right top; }
 .guide-hero-image.sylvanas { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/sylvanas60.png') no-repeat right top; }
+.guide-hero-image.kaelthas { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/kaelthas60.png') no-repeat right top; }
 
 .guide-heroes-1 { width: 100%; }
 .guide-heroes-2 { width: 50%; }
@@ -5368,8 +5477,9 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .tc-talents-icons li { float: left; list-style: none; margin-right: 5px; padding: 5px; width: 40px; height: 40px; }
 .tc-talents-icons li:last-child { margin-right: 0px; }
 
-.tc-datas { margin-right: -10px; }
-.tc-data-wrapper { float: left; padding-right: 10px; width: 25%; }
+.tc-data-fix { margin-right: -10px !important; }
+.tc-datas { }
+.tc-data-wrapper { float: left; padding-right: 10px; width: 50%; }
 .tc-data {  }
 .tc-data-title { padding: 3px 10px; font-size: 14px; color: #FFF; letter-spacing: 2px; text-align: center; text-transform: uppercase; }
 .tc-data-green .tc-data-title { background: #24aa51; }
@@ -5378,6 +5488,9 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .tc-data-red .tc-data-title { background: #aa2526; }
 
 .tc-data-number { padding: 10px 0px; font-size: 24px; color: #bbb; text-align: center; background: #000; }
+
+.tc-url-box { padding: 7px 10px; border: 1px solid #000; background: rgba(0,0,0,.4); }
+.tc-url { font-size: 10px; text-align: right !important; }
 
 .tc-levels { margin-right: 0px; margin-left: 0px; border: 1px solid #000; background: rgba(0,0,0,.4); }
 .tc-level-title,
@@ -5421,6 +5534,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .tc-hero.zagara { background: url('../img/hots/modal/heroes/zagara.png') no-repeat right 120px; }
 .tc-hero.zeratul { background: url('../img/hots/modal/heroes/zeratul.png') no-repeat right 120px; }
 .tc-hero.sylvanas { background: url('../img/hots/modal/heroes/sylvanas.png') no-repeat right 120px; }
+.tc-hero.kaelthas { background: url('../img/hots/modal/heroes/kaelthas.png') no-repeat right 120px; }
 
 /* range */
 input[type=range] {
@@ -5519,11 +5633,6 @@ input[type=range]:focus::-ms-fill-upper {
 
 /* mobile */
 @media (min-width: 768px) {
-    /* nav */
-/*    .navbar-tempo .dropdown-menu li,
-    .navbar-tempo .dropdown-menu li a { color: #2766ad; height: 40px; line-height: 36px; }
-    .navbar-tempo .dropdown-menu li a:focus { color: #2766ad; }
-    .navbar-tempo .dropdown-menu li.active a { background: #2766ad; color: #FFF !important; }*/
 }
 @media (min-width: 768px) and (max-width: 1199px) {
     /* filters */
@@ -5545,6 +5654,9 @@ input[type=range]:focus::-ms-fill-upper {
     /* article */
     .article-page .article-left { margin-right: 0px; }
     .article-page .article-right { display: none; }
+    
+    /* talent calc */
+    .tc-section-content { background-image: none !important; }
 }
 
 @media (min-width: 768px) and (max-width: 979px) {    
@@ -5554,6 +5666,9 @@ input[type=range]:focus::-ms-fill-upper {
     /* decks */
     .deck-page .deck-right { float: none; margin: 0 auto; }
     .deck-page .deck-left { margin-right: 0px; }
+
+    /* talent calc */
+    .tc-section-content { background-image: none !important; }
 }
 
 @media (max-width: 767px) {
@@ -5585,4 +5700,7 @@ input[type=range]:focus::-ms-fill-upper {
     .team-member-content h1 { font-size: 18px; }
     .team-member-photo { left: -25px; width: 50px; height: 50px; }
     .team-member-photo img { width: 38px; height: 38px; }
+
+    /* talent calc */
+    .tc-section-content { background-image: none !important; }
 }

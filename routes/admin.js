@@ -670,6 +670,7 @@ module.exports = {
             // insert new article
             function insertArticle(callback) {
                 var newArticle = new Schemas.Article({
+                    articleType: req.body.articleType,
                     title: req.body.title,
                     slug: {
                         url: req.body.slug.url,
@@ -772,6 +773,7 @@ module.exports = {
                     
                     oldActivityid = article._id;
                     
+                    article.articleType = req.body.articleType;
                     article.title = req.body.title;
                     article.slug = {
                         url: req.body.slug.url,

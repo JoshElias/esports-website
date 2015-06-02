@@ -928,7 +928,7 @@ angular.module('app.controllers', ['ngCookies'])
                 isPremium: false,
                 expiryDate: d
             },
-            articleType: AdminArticleService.articleTypes()[0].value,
+            articleType: [],
             active: true
         };
         
@@ -6064,15 +6064,14 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', 'HOTS', 'Base64', 'dataHero', 
-    function ($scope, $state, $stateParams, $location, HOTS, Base64, dataHero) {
+.controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', '$window', 'HOTS', 'Base64', 'dataHero', 
+    function ($scope, $state, $stateParams, $location, $window, HOTS, Base64, dataHero) {
         if (!dataHero.success) { return $state.go('app.hots.talentCalculator.hero', { hero: $scope.heroes[0].className }); }
 
         $scope.setCurrentHero(dataHero.hero);
         $scope.currentCharacter = $scope.currentHero.characters[0];
         $scope.currentAbility = false;
         $scope.level = 1;
-        $scope.hash = getHash();
         
         var defaultTalents = {
             tier1: null,
@@ -6083,7 +6082,6 @@ angular.module('app.controllers', ['ngCookies'])
             tier16: null,
             tier20: null
         };
-        $scope.currentTalents = angular.copy(defaultTalents);
         
         $scope.getCurrentCharacter = function () {
             return $scope.currentCharacter;
@@ -6140,7 +6138,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // talents
         $scope.tiers = HOTS.tiers;
-        
+
         $scope.talentsByTier = function (tier) {
             var hero = $scope.currentHero,
                 talents = [];
@@ -6169,44 +6167,75 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             // set hash
-            $scope.hash[tierIndex] = talentIndex + 1;
+            $scope.hash[tierIndex] = ($scope.hasTalent(talent)) ? talentIndex + 2 : 1;
             if (checkHash($scope.hash)) {
                 setHash();
             }
         };
         
         // hash
-        function getHash () {
-            var hash = $location.hash(),
-                hashInt = Base64.toInt(hash),
+        $scope.hash = [1,1,1,1,1,1,1];
+
+        function getHash (hash) {
+            hash = hash || $location.hash();
+            var hashInt = Base64.toInt(hash),
                 arr = (hashInt+'').split('');
             
             for (var i = 0; i < arr.length; i++) {
                 arr[i] = +arr[i];
             }
             
-            console.log(arr);
             if (checkHash(arr)) {
-                return arr;
+                $scope.hash =  arr;
             } else {
-                return [0,0,0,0,0,0,0];
+                $scope.hash = [1,1,1,1,1,1,1];
             }
+            setHash();
         }
+        getHash();
         
         function checkHash (hash) {
             if (hash.length !== 7) { return false; }
             
             for (var i = 1; i <= 7; i++) {
                 var num = +hash[i - 1];
-                if ((num < 1) || (num > $scope.talentsByTier($scope.tiers[i - 1]).length)) { return false; }
+                if ((num < 1) || (num > $scope.talentsByTier($scope.tiers[i - 1]).length + 1)) { return false; }
             }
             return true;
         }
         
         function setHash() {
             var hashInt = +$scope.hash.join(''),
-                hash = (hashInt > 0) ? Base64.fromInt(hashInt) : '';
+                hash = (hashInt > 1111111) ? Base64.fromInt(hashInt) : '';
             $location.hash(hash);
+        }
+        
+        function getTalents () {
+            var hash = $scope.hash,
+                out = {};
+            if (checkHash(hash)) {
+                for (var i = 1; i <= 7; i++) {
+                    var num = +hash[i - 1];
+                    out['tier' + $scope.tiers[i - 1]] = (num > 1) ? $scope.talentsByTier($scope.tiers[i - 1])[num - 2]._id : null;
+                }
+                return out;
+            } else {
+                return angular.copy(defaultTalents);
+            }
+        }
+        $scope.currentTalents = getTalents();
+        
+        $scope.$watch(function () {
+            return location.hash;
+        }, function (value) {
+            var newHash = value.substr(1, value.length-1);
+            getHash(newHash);
+            $scope.currentTalents = getTalents();
+        });
+        
+        // url
+        $scope.url = function () {
+            return $location.absUrl();
         }
         
         // stats

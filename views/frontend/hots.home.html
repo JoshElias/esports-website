@@ -12,14 +12,17 @@
         </div>
         <div class="banner-slide-wrapper">
             <div class="banner-slide slide-animation" ng-class="{ active: banner.current == $index }" ng-background="https://s3-us-west-2.amazonaws.com/ts-node2/img/{{slide.photo}}" ng-repeat="slide in banner.slides">
-                <video loop autoplay ng-if="slide.hasVideo">
-                    <source src="https://s3-us-west-2.amazonaws.com/ts-node2/img/brm.mp4" type="video/mp4" />
-                </video>
-                <div class="banner-panel" ng-class="{ 'has-button': slide.button.hasButton }">
-                    <h1>{{slide.title}}</h1>
-                    <p>{{slide.description}}</p>
-                    <div class="banner-btn-wrapper" ng-if="slide.button.hasButton">
-                        <a href="{{slide.button.buttonLink}}" class="banner-btn" ng-if="slide.button">{{slide.button.buttonText}}</a>
+                <div class="container">
+                    <div class="banner-panel" ng-class="{ 'has-button': slide.button.hasButton }">
+                        <div>
+                            <h1>{{slide.title}}</h1>
+                        </div>
+                        <div>
+                            <p>{{slide.description}}</p>
+                        </div>
+                        <div class="banner-btn-wrapper" ng-if="slide.button.hasButton">
+                            <a href="{{slide.button.buttonLink}}" class="banner-btn" ng-if="slide.button">{{slide.button.buttonText}}</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -29,22 +32,17 @@
 <!-- banner end -->
 
 <!-- filter start -->
-<div class="container-fluid padding-none filter-bar filter-bar-home">
+<!--<div class="container-fluid padding-none filter-bar filter-bar-home">
     <div class="container">
         <div class="row">
             <div class="col-sm-12 clearfix">
                 <h1 class="pull-left">FILTER <br>CONTENT:</h1>
                 <ul class="filter-class pull-right">
-                    <!--
-                    <li class="all" ng-class="{active:klass === 'all'}">
-                        <a href="#" ng-click="setKlass('all')" ng-tooltip title="All Classes">All Classes</a>
-                    </li>
-                    -->
                 </ul>
             </div>
         </div>
     </div>
-</div>
+</div>-->
 <!-- filter end -->
 
 <!-- content banner start -->
@@ -108,12 +106,14 @@
             </div>
             <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
                 <div class="row">
-                    <!--<div class="col-xs-12">
-                        <a href="./deck-builder" class="create-a-deck">
-                            <img ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/img/create-a-deck.png" alt="create a deck">
-                        </a>
-                    </div>-->
                     <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
+                        <!-- guide builder -->
+                        <div class="guide-builder-link m-b-md">
+                            <div class="guide-builder-link-inner">
+                                <a href="./heroes-of-the-storm/guide-builder"></a>
+                            </div>
+                        </div>
+                        <!-- / guide builder -->
                         <div class="home-guides">
                             <h1 class="guides-title guides-title-small">FEATURED GUIDES</h1>
                             <!-- guide -->

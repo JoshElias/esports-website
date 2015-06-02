@@ -12,11 +12,17 @@
         </div>
         <div class="banner-slide-wrapper">
             <div class="banner-slide slide-animation" ng-class="{ active: banner.current == $index }" ng-background="https://s3-us-west-2.amazonaws.com/ts-node2/img/{{slide.photo}}" ng-repeat="slide in banner.slides">
-                <div class="banner-panel" ng-class="{ 'has-button': slide.button.hasButton }">
-                    <h1>{{slide.title}}</h1>
-                    <p>{{slide.description}}</p>
-                    <div class="banner-btn-wrapper" ng-if="slide.button.hasButton">
-                        <a href="{{slide.button.buttonLink}}" class="banner-btn" ng-if="slide.button">{{slide.button.buttonText}}</a>
+                <div class="container">
+                    <div class="banner-panel" ng-class="{ 'has-button': slide.button.hasButton }">
+                        <div>
+                            <h1>{{slide.title}}</h1>
+                        </div>
+                        <div>
+                            <p>{{slide.description}}</p>
+                        </div>
+                        <div class="banner-btn-wrapper" ng-if="slide.button.hasButton">
+                            <a href="{{slide.button.buttonLink}}" class="banner-btn" ng-if="slide.button">{{slide.button.buttonText}}</a>
+                        </div>
                     </div>
                 </div>
             </div>

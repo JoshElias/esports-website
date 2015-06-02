@@ -299,4 +299,19 @@ angular.module('app.directives', ['ui.load'])
         }
    };
 })
+.directive('resizer', ['$window', function ($window) {
+    return {
+        restrict: 'A',
+        link: function (scope, elem, attrs) {  
+            
+            scope.isLarge = ($window.innerWidth >= 1200) ? ' large' : '';
+            
+            angular.element($window).on('resize', function () {
+                scope.$apply(function(){
+                    scope.isLarge = ($window.innerWidth >= 1200) ? ' large' : '';
+                })
+            });
+        }
+    }
+}])
 ;

@@ -18,7 +18,7 @@ angular.module('app.animations', ['ngAnimate'])
                     element.find('.banner-panel').css({ left: startPoint });
                     
                     TweenMax.to(element, 1, { left: 0, ease: Power2.easeInOut }, done);
-                    TweenMax.to(element.find('.banner-panel'), 1.2, { left: '50%', ease: Back.easeOut });
+                    TweenMax.to(element.find('.banner-panel'), 1.2, { left: '0px', ease: Back.easeOut });
                 }
                 else {
                     done();
