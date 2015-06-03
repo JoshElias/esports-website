@@ -109,7 +109,11 @@
                         </div>
                     </div>
                     <!-- / guide description -->
-
+                    
+                    <div class="guide-subscribe" ng-if="isPremium() && !app.user.isSubscribed() && !app.user.isAdmin() && !app.user.isProvider()">
+                        <div premium-page></div>
+                    </div>
+                    
                     <!-- guide -->
                     <div ng-if="!isPremium() || app.user.isSubscribed() || app.user.isAdmin() || app.user.isProvider()">
                     

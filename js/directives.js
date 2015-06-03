@@ -277,6 +277,11 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/activity/activity.guide.comment.html'
     };
 })
+.directive('premiumPage', function () {
+    return {
+        templateUrl: 'views/frontend/premiumDirective.html'
+    };
+})
 .directive('googleAdSense', function () {
     return {
         restrict: 'A',

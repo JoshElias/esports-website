@@ -2860,14 +2860,17 @@ angular.module('app.controllers', ['ngCookies'])
         // load deck
         $scope.deck = data.deck;
         
+        $scope.premiumTypes = [
+            { text: 'No', value: false },
+            { text: 'Yes', value: true }
+        ];
+        
         $scope.isPremium = function () {
-            if (!$scope.deck.premium.isPremium) { return false; }
-            var now = new Date().getTime(),
-                expiry = new Date($scope.deck.premium.expiryDate).getTime();
-            if (expiry > now) {
-                return true;
-            } else {
-                return false;
+            var premium = $scope.deck.premium.isPremium;
+            for (var i = 0; i < $scope.premiumTypes.length; i++) {
+                if ($scope.premiumTypes[i].value === premium) {
+                    return $scope.premiumTypes[i].text;
+                }
             }
         }
         
@@ -5278,8 +5281,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuideCtrl', ['$scope', '$state', '$sce', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $sce, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps) {
+.controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
+    function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
         $scope.guide = data.guide;
         $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0].hero : false;
         $scope.heroes = dataHeroes.heroes;
@@ -5497,6 +5500,18 @@ angular.module('app.controllers', ['ngCookies'])
             }
         };
         
+        //is premium
+        $scope.isPremium = function () {
+            if (!$scope.guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date($scope.guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
         // get premium
         $scope.getPremium = function (plan) {
             if ($scope.app.user.isLogged()) {
@@ -5541,8 +5556,10 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
+    function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
+        var box;
+        
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
         $scope.$watch('guide', function(){
@@ -5638,17 +5655,14 @@ angular.module('app.controllers', ['ngCookies'])
         };
 
         // premium
-        $scope.premiumTypes = [
-            { text: 'No', value: false },
-            { text: 'Yes', value: true }
-        ];
-        
         $scope.isPremium = function () {
-            var premium = $scope.guide.premium.isPremium;
-            for (var i = 0; i < $scope.premiumTypes.length; i++) {
-                if ($scope.premiumTypes[i].value === premium) {
-                    return $scope.premiumTypes[i].text;
-                }
+            if (!$scope.guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date($scope.guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
             }
         }
         
@@ -5667,27 +5681,58 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
+        // login for modal
+        $scope.login = function login(email, password) {
+            if (email !== undefined && password !== undefined) {
+                UserService.login(email, password).success(function(data) {
+                    AuthenticationService.setLogged(true);
+                    AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    $window.sessionStorage.userID = data.userID;
+                    $window.sessionStorage.username = data.username;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+                    box.modal('hide');
+                    $scope.saveGuide;
+                }).error(function() {
+                    $scope.showError = true;
+                });
+            }
+        }
+        
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
                 return false;
             }
-            
-            HOTSGuideService.addGuide($scope.guide).success(function (data) {
-                if (!data.success) {
-                    $scope.errors = data.errors;
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
-                } else {
-                    $scope.app.settings.guide = null;
-                    $state.go('app.hots.guides.guide', { slug: data.slug });
-                }
-            });
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+            } else {
+                HOTSGuideService.addGuide($scope.guide).success(function (data) {
+                    if (!data.success) {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                        $window.scrollTo(0,0);
+                    } else {
+                        $scope.app.settings.guide = null;
+                        $state.go('app.hots.guides.guide', { slug: data.slug });
+                    }
+                });
+            }
         };
     }
 ])
-.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
+    function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
+        var box;
+        
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
         $scope.$watch('guide', function(){
@@ -5778,22 +5823,51 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
+        // login for modal
+        $scope.login = function login(email, password) {
+            if (email !== undefined && password !== undefined) {
+                UserService.login(email, password).success(function(data) {
+                    AuthenticationService.setLogged(true);
+                    AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    $window.sessionStorage.userID = data.userID;
+                    $window.sessionStorage.username = data.username;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+                    box.modal('hide');
+                    $scope.saveGuide();
+                }).error(function() {
+                    $scope.showError = true;
+                });
+            }
+        }
+        
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                 return false;
             }
-            
-            HOTSGuideService.addGuide($scope.guide).success(function (data) {
-                if (!data.success) {
-                    $scope.errors = data.errors;
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
-                } else {
-                    $scope.app.settings.guide = null;
-                    $state.go('app.hots.guides.guide', { slug: data.slug });
-                }
-            });
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+            } else {
+                HOTSGuideService.addGuide($scope.guide).success(function (data) {
+                    if (!data.success) {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                        $window.scrollTo(0,0);
+                    } else {
+                        $scope.app.settings.guide = null;
+                        $state.go('app.hots.guides.guide', { slug: data.slug });
+                    }
+                });
+            }
         };
     }
 ])
@@ -5925,21 +5999,52 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
+        $scope.login = function login(email, password) {
+            if (email !== undefined && password !== undefined) {
+                UserService.login(email, password).success(function(data) {
+                    AuthenticationService.setLogged(true);
+                    AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
+                    $window.sessionStorage.userID = data.userID;
+                    $window.sessionStorage.username = data.username;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+                    box.modal('hide');
+                    $scope.saveGuide();
+                }).error(function() {
+                    $scope.showError = true;
+                });
+            }
+        }
+        
+        
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
                 return false;
             }
-            
-            HOTSGuideService.editGuide($scope.guide).success(function (data) {
-                if (!data.success) {
-                    $scope.errors = data.errors;
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
-                } else {
-                    $state.go('app.hots.guides.guide', { slug: data.slug });
-                }
-            });
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+            } else {
+                HOTSGuideService.editGuide($scope.guide).success(function (data) {
+                    if (!data.success) {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                        $window.scrollTo(0,0);
+                    } else {
+                        $state.go('app.hots.guides.guide', { slug: data.slug });
+                    }
+                });
+            }
         };
     }
 ])
@@ -6032,21 +6137,51 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
+        $scope.login = function login(email, password) {
+            if (email !== undefined && password !== undefined) {
+                UserService.login(email, password).success(function(data) {
+                    AuthenticationService.setLogged(true);
+                    AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
+                    $window.sessionStorage.userID = data.userID;
+                    $window.sessionStorage.username = data.username;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+                    box.modal('hide');
+                    $scope.saveGuide();
+                }).error(function() {
+                    $scope.showError = true;
+                });
+            }
+        }
+        
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                 return false;
             }
-            
-            HOTSGuideService.editGuide($scope.guide).success(function (data) {
-                if (!data.success) {
-                    $scope.errors = data.errors;
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
-                } else {
-                    $state.go('app.hots.guides.guide', { slug: data.slug });
-                }
-            });
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+            } else {
+                HOTSGuideService.editGuide($scope.guide).success(function (data) {
+                    if (!data.success) {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                        $window.scrollTo(0,0);
+                    } else {
+                        $state.go('app.hots.guides.guide', { slug: data.slug });
+                    }
+                });
+            }
         };
     }
 ])
