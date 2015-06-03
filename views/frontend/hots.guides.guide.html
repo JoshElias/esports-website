@@ -9,7 +9,7 @@
                     <h1>{{guide.name}}</h1>
                     <p>posted by <a href="./user/{{guide.author.username}}" class="m-r-sm">@{{guide.author.username}}</a><i class="fa fa-clock-o"></i> {{guide.createdDate | date:'mediumDate'}}</p>
                 </div>
-                <div class="pull-right">
+                <div class="pull-right hidden-xs">
                     <!-- guide-votes -->
                     <div class="guide-votes clearfix">
                         <div class="vote-count vote-large m-l-sm pull-right"><span><em ng-show="guide.votesCount > 0">+</em>{{guide.votesCount}}</span></div>
@@ -25,32 +25,12 @@
         <!-- / header -->
 
         <div class="row">
-            <div class="col-xs-12 m-t-md">
-                
-                <!-- guide right -->
-                <div class="guide-right">
-                    <!-- guide builder -->
-                    <div class="guide-builder-link m-b-md">
-                        <div class="guide-builder-link-inner">
-                            <a href="./heroes-of-the-storm/guide-builder"></a>
-                        </div>
-                    </div>
-                    <!-- / guide builder -->
-                    
-                    <!-- g2a -->
-                    <div class="g2a-square">
-                        <a href="https://www.g2a.com/r/tempo-storm"><img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/g2a-tempo.png" alt="G2A"></a>
-                    </div>
-                    <!-- / g2a -->
-                    
-                </div>
-                <!-- / guide right -->
                 
                 <!-- guide left -->
-                <div class="guide-left">
+                <div class="col-md-12 col-lg-9">
                     
                     <!-- guide heroes -->
-                    <div class="guide-heroes clearfix m-b-md" ng-if="guide.guideType == 'hero'">
+                    <div class="guide-heroes clearfix m-t-md m-b-md" ng-if="guide.guideType == 'hero'">
                         <div class="guide-hero-wrapper guide-heroes-{{guide.heroes.length}}" ng-repeat="hero in justHeroes()">
                             <div class="guide-hero" ng-class="{ active: hero == getCurrentHero().hero }">
                                 <a href="#" ng-click="setCurrentHero(hero)" hots-hero>
@@ -77,9 +57,9 @@
                             <div class="guide-talents clearfix" ng-repeat="hero in [getCurrentHero()]">
                                 <div class="guide-talent-wrapper" ng-repeat="talent in hero.hero.talents" ng-if="selectedTalent(hero, talent.tier, talent)">
                                     <div class="guide-talent">
-                                        <div class="guide-talent-level">LEVEL {{talent.tier}}</div>
-                                        <div class="guide-talent-icon talents-icon large active {{hero.hero.className}} {{talent.className}}" hots-talent hero="hero.hero" talent="talent"></div>
-                                        <div class="guide-talent-dots">
+                                        <div class="guide-talent-level"><span class="hidden-xs hidden-sm">LEVEL </span>{{talent.tier}}</div>
+                                        <div class="guide-talent-icon talents-icon active {{hero.hero.className}} {{talent.className}}{{isLarge}}" talent-icon-md hots-talent hero="hero.hero" talent="talent"></div>
+                                        <div class="guide-talent-dots hidden-xs">
                                             <div class="guide-talent-dot" ng-class="{ active: selectedTalent(hero, talent.tier, dot) }" ng-repeat="dot in getTalents(hero, talent.tier)"></div>
                                         </div>
                                     </div>
@@ -272,8 +252,29 @@
                     </div>
                     <!-- / guide -->
                     
-                </div>
             </div>
+            <!-- / guide left -->
+            
+            <!-- guide right -->
+            <div class="col-md-12 col-lg-3">
+                <!-- guide builder -->
+                <div class="guide-builder-link m-t-md m-b-md">
+                    <div class="guide-builder-link-inner">
+                        <a href="./heroes-of-the-storm/guide-builder"></a>
+                    </div>
+                </div>
+                <!-- / guide builder -->
+
+                <!-- g2a -->
+                <div class="g2a-square">
+                    <a href="https://www.g2a.com/r/tempo-storm"><img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/g2a-tempo.png" class="img-responsive" alt="G2A"></a>
+                </div>
+                <!-- / g2a -->
+
+            </div>
+            <!-- / guide right -->
+            
+            
         </div>
     </div>
 </div>

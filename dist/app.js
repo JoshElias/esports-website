@@ -8329,7 +8329,7 @@ angular.module('app.directives', ['ui.load'])
         }
    };
 })
-.directive('resizer', ['$window', function ($window) {
+.directive('talentIconLg', ['$window', function ($window) {
     return {
         restrict: 'A',
         link: function (scope, elem, attrs) {  
@@ -8339,6 +8339,21 @@ angular.module('app.directives', ['ui.load'])
             angular.element($window).on('resize', function () {
                 scope.$apply(function(){
                     scope.isLarge = ($window.innerWidth >= 1200) ? ' large' : '';
+                })
+            });
+        }
+    }
+}])
+.directive('talentIconMd', ['$window', function ($window) {
+    return {
+        restrict: 'A',
+        link: function (scope, elem, attrs) {  
+            
+            scope.isLarge = ($window.innerWidth >= 992) ? ' large' : '';
+            
+            angular.element($window).on('resize', function () {
+                scope.$apply(function(){
+                    scope.isLarge = ($window.innerWidth >= 992) ? ' large' : '';
                 })
             });
         }

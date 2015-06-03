@@ -121,7 +121,7 @@
                                 <div class="guide {{guides.heroes[0].className}}" ng-class="{ premium: guide.premium.isPremium }">
                                     <a href="./heroes-of-the-storm/guides/{{guide.slug}}"></a>
                                     <div class="guide-images" ng-if="guide.guideType == 'hero'">
-                                        <div class="guide-image guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
+                                        <div class="guide-image side guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
                                     </div>
                                     <div class="guide-images" ng-if="guide.guideType == 'map'">
                                         <div class="guide-image guide-image-1 {{guide.maps[0].className}}"></div>
@@ -153,7 +153,7 @@
                                 <div class="guide" ng-class="{ premium: guide.premium.isPremium }">
                                     <a href="./heroes-of-the-storm/guides/{{guide.slug}}"></a>
                                     <div class="guide-images" ng-if="guide.guideType == 'hero'">
-                                        <div class="guide-image guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
+                                        <div class="guide-image side guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
                                     </div>
                                     <div class="guide-images" ng-if="guide.guideType == 'map'">
                                         <div class="guide-image guide-image-1 {{guide.maps[0].className}}"></div>

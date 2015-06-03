@@ -17,7 +17,7 @@
                     <div class="col-xs-4" ng-repeat="ability in getAbilities()">
                         <div class="tc-ability-wrapper" ng-click="toggleAbility(ability)" ng-class="{ active: getCurrentAbility() == ability }">
                             <div class="tc-ability">
-                                <div class="talents-icon {{getCurrentHero().className}} {{ability.className}}{{isLarge}}" resizer></div>
+                                <div class="talents-icon {{getCurrentHero().className}} {{ability.className}}{{isLarge}}" talent-icon-lg></div>
                             </div>
                         </div>
                     </div>
