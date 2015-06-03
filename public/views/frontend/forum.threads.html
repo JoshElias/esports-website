@@ -1,0 +1,48 @@
+<div class="container m-b-md">
+    
+    <div class="adSenseBanner" ng-if="!app.user.isSubscribed()">
+                    <div ads-banner></div>
+                </div>
+    
+    <div class="forum-thread-title clearfix">
+        <a href="./forum/{{thread.slug.url}}/add" class="btn btn-blue pull-right">Write a Post</a>
+        <h1>{{thread.title}}</h1>
+    </div>
+    <div class="forum-thread-info clearfix" ng-if="thread.posts.length">
+        <div class="pull-right">
+            <span class="btn-group">
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
+                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == pagination.pages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+            </span>
+        </div>
+    </div>
+    <table class="table forum-thread" ng-if="thread.posts.length">
+        <thead>
+            <tr>
+                <th class="title">Title</th>
+                <th class="author">Author</th>
+                <th class="views hidden-xs">Views</th>
+                <th class="comments hidden-xs">Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="post in thread.posts">
+                <td class="title"><a href="./forum/{{thread.slug.url}}/{{post.slug.url}}">{{post.title}}</a><em am-time-ago="post.createdDate"></em></td>
+                <td class="author"><a href="#" class="avatar hidden-xs"><img gravatar-src-once="post.author.email" alt="" /></a><a href="./user/{{post.author.username}}">@{{post.author.username}}</a></td>
+                <td class="views hidden-xs">{{post.views}}</td>
+                <td class="comments hidden-xs">{{post.comments.length}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="well" ng-if="!thread.posts.length">There are currently no posts in this thread yet.</p>
+    <div class="forum-thread-info clearfix" ng-if="thread.posts.length">
+        <div class="pull-right">
+            <span class="btn-group">
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
+                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == pagination.pages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+            </span>
+        </div>
+    </div>
+</div>

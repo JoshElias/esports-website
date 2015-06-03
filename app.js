@@ -42,6 +42,10 @@ var cluster = require('cluster'),
     amazon = require('./lib/amazon'),
     Subscription = require('./lib/sub');
 
+var BNET_ID = 'n8pr85xujqyrwtpzku3jaf5z8hb6bmds';
+var BNET_SECRET = 'etmCJEh5MSbavZfq92urHHDwfvPwUd4v';
+var BNET_CALLBACK_URL = 'https://tempostorm.com/auth/bnet/callback';
+
 if (cluster.isMaster) {
 
     var numCPUs = require('os').cpus().length;
@@ -65,13 +69,14 @@ if (cluster.isMaster) {
     /* mongoose */
     mongoose.connect(config.db);
 
-    app.use('/', express.static(__dirname + '/'));
+    app.use('/', express.static(__dirname + '/public'));
 
     app.engine('dust', cons.dust);
     app.set('template_engine', 'dust');
-    app.set('views', __dirname + '/views');
+    app.set('views', __dirname + '/public/views');
     app.set('view engine', 'dust');
 
+    //app.use(require('prerender-node').set('prerenderToken', 'XrpCoT3t8wTNledN5pLU'));
     app.use(favicon(path.join(__dirname, 'favicon.ico')));
     app.use(compression({
         threshold: 512
@@ -117,9 +122,9 @@ if (cluster.isMaster) {
       }, routes.frontend.twitch(Schemas, jwt, JWT_SECRET) ));
 
     passport.use(new BnetStrategy({
-        clientID: 's3ra6aupeur7rvushzbwhf3hux4tcyun',
-        clientSecret: 'SBgAxZnwxNFjppBsnesaJbFwtCn6Tjrq',
-        callbackURL: "http://localhost:1337/auth/bnet/callback"
+        clientID: BNET_ID,
+        clientSecret: BNET_SECRET,
+        callbackURL: BNET_CALLBACK_URL
       }, routes.frontend.bnet(Schemas) ));
 
     /* twitch */
@@ -183,9 +188,11 @@ if (cluster.isMaster) {
     app.post('/forum/post', routes.frontend.forumPost(Schemas));
 
     app.post('/banners', routes.frontend.getBanners(Schemas));
-
+    app.post('/polls', routes.frontend.pollsPage(Schemas, async));
+    app.post('/polls/vote', routes.frontend.pollsVote(Schemas));
+    
     app.post('/upload', routes.frontend.uploadToImgur(fs, imgur));
-
+    
     /* frontend - requires login */
     app.post('/api/verify', routes.frontend.verify(Schemas));
 
@@ -290,6 +297,13 @@ if (cluster.isMaster) {
     app.post('/api/admin/upload/article', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadArticle(fs, gm, amazon));
     app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadCard(fs, gm, amazon));
     app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadDeck(fs, gm, amazon));
+    app.post('/api/admin/upload/polls', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadPoll(fs, gm, amazon));
+    
+    app.post('/api/admin/polls', routes.admin.isAdmin(Schemas), routes.admin.polls(Schemas));
+    app.post('/api/admin/poll', routes.admin.isAdmin(Schemas), routes.admin.poll(Schemas));
+    app.post('/api/admin/poll/delete', routes.admin.isAdmin(Schemas), routes.admin.pollDelete(Schemas));
+    app.post('/api/admin/poll/add', routes.admin.isAdmin(Schemas), routes.admin.pollAdd(Schemas));
+    app.post('/api/admin/poll/edit', routes.admin.isAdmin(Schemas), routes.admin.pollEdit(Schemas));
 
     app.post('/api/admin/id', routes.admin.isAdmin(Schemas), routes.admin.getObjectID(mongoose));
 

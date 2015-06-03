@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
 
     grunt.initConfig({
-        distFolder: 'dist',
+        distFolder: 'public/dist',
         pkg: grunt.file.readJSON('package.json'),
         concat: {
             options: {
@@ -10,9 +10,9 @@ module.exports = function(grunt) {
             },
             build: {
                 files: {
-                    '<%= distFolder %>/vendor.js': ['js/vendor/jquery/jquery-2.1.1.min.js', 'js/vendor/jquery/jquery-ui.min', 'js/vendor/**/*.js'],
-                    '<%= distFolder %>/angular.js': ['js/angular/angular.js', 'js/angular/*.js'],
-                    '<%= distFolder %>/app.js': ['js/*.js'],
+                    '<%= distFolder %>/vendor.js': ['public/js/vendor/jquery/jquery-2.1.1.min.js', 'public/js/vendor/jquery/jquery-ui.min', 'public/js/vendor/**/*.js'],
+                    '<%= distFolder %>/angular.js': ['public/js/angular/angular.js', 'public/js/angular/*.js'],
+                    '<%= distFolder %>/app.js': ['public/js/*.js'],
                 }
             }
         },
@@ -36,14 +36,14 @@ module.exports = function(grunt) {
             },
             minify: {
                 files: {
-                    '<%= distFolder %>/vendor.min.css': ['css/vendor/bootstrap/bootstrap.min.css', 'css/vendor/**/*.css'],
-                    '<%= distFolder %>/style.min.css': 'css/style.css',
+                    '<%= distFolder %>/vendor.min.css': ['public/css/vendor/bootstrap/bootstrap.min.css', 'public/css/vendor/**/*.css'],
+                    '<%= distFolder %>/style.min.css': 'public/css/style.css',
                 }
             }
         },
         watch: {
             scripts: {
-                files: ['js/**/*.js', 'css/**/*.css'],
+                files: ['public/js/**/*.js', 'public/css/**/*.css'],
                 tasks: ['concat', 'uglify', 'cssmin'],
                 options: {
                     spawn: false,

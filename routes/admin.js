@@ -649,6 +649,7 @@ module.exports = {
         return function (req, res, next) {
             var _id = req.body._id;
             Schemas.Article.findOne({ _id: _id })
+            .populate('deck', '_id name')
             .exec(function (err, article) {
                 if (err || !article) {
                     console.log(err || 'No article found');
@@ -2089,7 +2090,7 @@ module.exports = {
             });
         };
     },
-    uploadArticle: function (fs, gm, amazon) {
+    uploadPoll: function (fs, gm, amazon) {
         return function(req, res, next) {
             // check if image file
             var types = ['image/png', 'image/jpeg', 'image/gif'];
@@ -2107,9 +2108,8 @@ module.exports = {
                     name = arr.splice(0, arr.length - 1).join('.'),
                     ext = '.' + arr.pop(),
                     large = name + '.large' + ext,
-                    medium = name + '.medium' + ext,
-                    small = name + '.small' + ext,
-                    path = BASE_DIR + '/photos/articles/';
+                    thumb = name + '.thumb' + ext,
+                    path = BASE_DIR + '/photos/polls/';
                     copyFile(function () {
                         var files = [];
                         files.push({
@@ -2117,20 +2117,15 @@ module.exports = {
                             name: large
                         });
                         files.push({
-                            path: path + medium,
-                            name: medium
+                            path: path + thumb,
+                            name: thumb
                         });
-                        files.push({
-                            path: path + small,
-                            name: small
-                        });
-                        amazon.upload(files, 'articles/', function () {
+                        amazon.upload(files, 'polls/', function () {
                             return res.json({
                                 success: true,
                                 large: large,
-                                medium: medium,
-                                small: small,
-                                path: './photos/articles/'
+                                thumb: thumb,
+                                path: '/photos/polls'
                             });
                         });
                     });
@@ -2149,18 +2144,15 @@ module.exports = {
                                 fs.unlink(req.files.file.path, function(err){
                                     if (err) return next(err);
                                     // resize
-                                    gm(path + large).quality(100).gravity('Center').crop(1920, 480, 0, 0).write(path + large, function(err){
+                                    gm(path + large).quality(100).resize(800, 600, ">").write(path + large, function(err){
                                         if (err) return next(err);
-                                        gm(path + large).quality(100).resize(800, 200, "!").write(path + medium, function(err){
+                                        gm(path + large).quality(100).resize(140, 140, "^").write(path + thumb, function(err){
                                             if (err) return next(err);
-                                            fs.chmod(path + medium, 0777, function(err){
+                                            gm(path + thumb).quality(100).gravity('Center').crop(140, 140).write(path + thumb, function(err){
                                                 if (err) return next(err);
-                                                gm(path + large).quality(100).resize(400, 100, "!").write(path + small, function(err){
+                                                fs.chmod(path + thumb, 0777, function(err){
                                                     if (err) return next(err);
-                                                    fs.chmod(path + small, 0777, function(err){
-                                                        if (err) return next(err);
-                                                        return callback();
-                                                    });
+                                                    return callback();
                                                 });
                                             });
                                         });
@@ -2300,6 +2292,355 @@ module.exports = {
                         });
                     });
                 }
+            }
+        };
+    },
+    uploadArticle: function (fs, gm, amazon) {
+        return function(req, res, next) {
+            // check if image file
+            var types = ['image/png', 'image/jpeg', 'image/gif'];
+            if (types.indexOf(req.files.file.type) === -1) {
+                fs.unlink(req.files.file.path, function(err){
+                    if (err) return next(err);
+                    var output = {
+                            success: false,
+                            error: 'Invalid photo uploaded.',
+                        };
+                    return res.json(output);
+                });
+            } else {
+                var arr = req.files.file.name.split('.'),
+                    name = arr.splice(0, arr.length - 1).join('.'),
+                    ext = '.' + arr.pop(),
+                    large = name + '.large' + ext,
+                    medium = name + '.medium' + ext,
+                    small = name + '.small' + ext,
+                    path = BASE_DIR + '/photos/articles/';
+                    copyFile(function () {
+                        var files = [];
+                        files.push({
+                            path: path + large,
+                            name: large
+                        });
+                        files.push({
+                            path: path + medium,
+                            name: medium
+                        });
+                        files.push({
+                            path: path + small,
+                            name: small
+                        });
+                        amazon.upload(files, 'articles/', function () {
+                            return res.json({
+                                success: true,
+                                large: large,
+                                medium: medium,
+                                small: small,
+                                path: './photos/articles/'
+                            });
+                        });
+                    });
+
+                function copyFile(callback) {
+                    // read file
+                    fs.readFile(req.files.file.path, function(err, data){
+                        if (err) return next(err);
+                        // write file
+                        fs.writeFile(path + large, data, function(err){
+                            if (err) return next(err);
+                            // chmod new file
+                            fs.chmod(path + large, 0777, function(err){
+                                if (err) return next(err);
+                                // delete tmp file
+                                fs.unlink(req.files.file.path, function(err){
+                                    if (err) return next(err);
+                                    // resize
+                                    gm(path + large).quality(100).gravity('Center').crop(1920, 480, 0, 0).write(path + large, function(err){
+                                        if (err) return next(err);
+                                        gm(path + large).quality(100).resize(800, 200, "!").write(path + medium, function(err){
+                                            if (err) return next(err);
+                                            fs.chmod(path + medium, 0777, function(err){
+                                                if (err) return next(err);
+                                                gm(path + large).quality(100).resize(400, 100, "!").write(path + small, function(err){
+                                                    if (err) return next(err);
+                                                    fs.chmod(path + small, 0777, function(err){
+                                                        if (err) return next(err);
+                                                        return callback();
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }
+            }
+        };
+    },
+    polls: function (Schemas) {
+        return function (req, res, next) {
+            var page = req.body.page || 1,
+                perpage = req.body.perpage || 50,
+                search = req.body.search || '',
+                where = (search.length) ? { title: new RegExp(search, "i") } : {},
+                total, polls;
+            
+    
+            
+            function getTotal (callback) {
+                Schemas.Poll.count({})
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            function getPolls (callback) {
+                Schemas.Poll.find({})
+                .where(where)
+                .sort({ title: 1 })
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    polls = results;
+                    return callback();
+                });
+            }
+            
+            getTotal(function () {
+                getPolls(function () {
+                    return res.json({
+                        success: true,
+                        polls: polls,
+                        total: total,
+                        page: page,
+                        perpage: perpage,
+                        search: search
+                    });
+                });
+            });
+        };
+    },
+    poll: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            
+            Schemas.Poll.findOne({ _id: _id }).exec(function (err, poll) {
+                if (err || !poll) {
+                    console.log(err || 'Poll not found');
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+                return res.json({
+                    success: true,
+                    poll: poll
+                });
+            });
+        };
+    },
+    pollAdd: function (Schemas) {
+        return function (req, res, next) {
+            req.assert('title', 'Please enter a title').notEmpty();
+            req.assert('subTitle', 'A Sub Title is required').notEmpty();
+            req.assert('description', 'A description is required').notEmpty();
+            req.assert('type', 'A type is required').notEmpty();
+            
+            var errors = req.validationErrors(true);
+            
+            if (errors) {
+                return res.json({ success: false, errors: errors });
+            } else {
+                var error = false,
+                    errorMsgs = {};
+                
+                
+                function checkTitle(callback) {
+                    Schemas.Poll.count({ title: req.body.title }, function(err, count){
+                        if (err) {
+                            error = true;
+                            errorMsgs.unknown = { 
+                                msg: 'An unknown error occurred'
+                            };
+                        }
+                        if (count > 0) {
+                            error = true;
+                            errorMsgs.title = { 
+                                msg: 'Title already in use.'
+                            };
+                        }
+                        callback();
+                    });
+                }
+                
+                
+                function completeNewPoll() {
+                    if (error) {
+                        return res.json({ success: false, errors: errorMsgs });
+                    } else {
+                        var newPoll = new Schemas.Poll({
+                                title: req.body.title,
+                                subTitle: req.body.subTitle,
+                                description: req.body.description,
+                                type: req.body.type,
+                                items: req.body.items, 
+                                active: req.body.active,
+                                view: req.body.view,
+                                voteLimit: req.body.voteLimit,
+                                createdDate: new Date().toISOString()
+                            });
+
+                        newPoll.save(function(err, data){
+                            if (err) {
+                                console.log(err);
+                                return res.json({ success: false,
+                                    errors: {
+                                        unknown: {
+                                            msg: 'An unknown error occurred'
+                                        }
+                                    }
+                                });
+                            }
+                            return res.json({ success: true });
+                        });
+                    }
+                }
+                checkTitle(function() {
+                    completeNewPoll();
+                });
+            }
+        };
+    },
+    pollDelete: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            Schemas.Poll.findOne({ _id: _id }).remove().exec(function (err) {
+                if (err) {
+                    console.log(err);
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+                return res.json({ success: true });
+            });
+        };
+    },
+    itemEdit: function (Schemas) {
+        return function (req, res, next) {
+            _id = req.body._id;
+            
+            var errors = req.validationErrors(true);
+            
+            Schemas.Poll.findOne({ _id: _id }).exec(function (err, item) {
+                if (err || !item) {
+                    console.log(err || 'item not found');
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+
+                item.name = req.body.name || '';
+                item.photos = req.body.photos;
+
+                item.save(function (err) {
+                    if (err) {
+                        console.log(err);
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        };
+    },
+    pollEdit: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            
+            req.assert('title', 'Please enter a title').notEmpty();
+            req.assert('subTitle', 'A Sub Title is required').notEmpty();
+            req.assert('description', 'A description is required').notEmpty();
+            req.assert('type', 'A type is required').notEmpty();
+            
+            var errors = req.validationErrors(true);
+            
+            if (errors) {
+                return res.json({ success: false, errors: errors });
+            } else {
+                
+                function checkTitle(callback) {
+                    Schemas.Poll.count({ title: req.body.title, _id: { $ne: _id } }).exec(function (err, count) {
+                        if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                        if (count > 0) {
+                            return res.json({ success: false, errors: { email: { msg: 'A poll with that title already exists.' } } });
+                        }
+                        return callback();
+                    });
+                }
+                
+                function updatePoll(callback) {
+                    Schemas.Poll.findOne({ _id: _id }).exec(function (err, poll) {
+                        if (err || !poll) {
+                            console.log(err || 'Poll not found');
+                            return res.json({ success: false,
+                                errors: {
+                                    unknown: {
+                                        msg: 'An unknown error occurred'
+                                    }
+                                }
+                            });
+                        }
+
+                        poll.title = req.body.title || '';
+                        poll.subTitle = req.body.subTitle,
+                        poll.description = req.body.description,
+                        poll.type = req.body.type,
+                        poll.active = req.body.active,
+                        poll.view = req.body.view,
+                        poll.items = req.body.items,
+                        poll.voteLimit = req.body.voteLimit;
+                        poll.save(function (err) {
+                            if (err) {
+                                console.log(err);
+                                return res.json({ success: false,
+                                    errors: {
+                                        unknown: {
+                                            msg: 'An unknown error occurred'
+                                        }
+                                    }
+                                });
+                            }
+                            return callback();
+                        });
+                    });
+                }
+                
+                checkTitle(function () {
+                    updatePoll(function () {
+                        return res.json({ success: true });
+                    });
+                });
             }
         };
     },
