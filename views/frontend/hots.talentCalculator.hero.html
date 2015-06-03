@@ -29,7 +29,7 @@
                     <div class="col-xs-6" ng-repeat="heroic in getHeroics()">
                         <div class="tc-heroic-wrapper" ng-click="toggleAbility(heroic)" ng-class="{ active: getCurrentAbility() == heroic }">
                             <div class="tc-heroic">
-                                <div class="talents-icon {{getCurrentHero().className}} {{heroic.className}}{{isLarge}}" resizer></div>
+                                <div class="talents-icon {{getCurrentHero().className}} {{heroic.className}}{{isLarge}}" talent-icon-lg></div>
                             </div>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                 <div class="tc-trait-title">TRAIT</div>
                 <div class="tc-trait-wrapper" ng-click="toggleAbility(getTrait())" ng-class="{ active: getCurrentAbility() == getTrait() }">
                     <div class="tc-trait">
-                        <div class="talents-icon {{getCurrentHero().className}} {{getTrait().className}}{{isLarge}}" resizer></div>
+                        <div class="talents-icon {{getCurrentHero().className}} {{getTrait().className}}{{isLarge}}" talent-icon-lg></div>
                     </div>
                 </div>
             </div>
