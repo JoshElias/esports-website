@@ -2144,6 +2144,22 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 /* subscription */
 .badge-grey { padding: 5px 10px; background: #F2F2F2; color: #222; }
 .badge-green { padding: 5px 10px; background: #27c24c; }
+.spinner { 
+    display: inline-block; 
+    opacity: 0;
+    max-width: 0;/*
+    -webkit-transition: opacity 0.25s, max-width 0.45s; 
+    -moz-transition: opacity 0.25s, max-width 0.45s;
+    -o-transition: opacity 0.25s, max-width 0.45s;
+    transition: opacity 0.25s, max-width 0.45s;  Duration fixed since we animate additional hidden width */
+}
+.has-spinner.disabled {
+    cursor:progress;
+}
+.has-spinner.disabled .spinner {
+    max-width: 50px; 
+    opacity: 1; 
+}
 
 /* sponsor page */
 .sponsor-page { padding-top: 50px; padding-bottom: 50px; }

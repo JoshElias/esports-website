@@ -1,2 +1,5 @@
-<span ng-if="activity.deck.public">created a new deck!  <a href="./decks/{{activity.deck.slug}}">{{activity.deck.name}}</a></span>
-<span ng-if="!activity.deck.public">created a private deck!</span>
+<span ng-if="!activity.exists">deleted a deck.</span>
+<span ng-if="activity.exists">
+    <span ng-if="activity.deck.public">created a new deck! <a href="./decks/{{activity.deck.slug}}">{{activity.deck.name}}</a></span>
+    <span ng-if="!activity.deck.public">created a private deck!</span>
+</span>

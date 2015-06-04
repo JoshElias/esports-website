@@ -64,7 +64,7 @@ var app = angular.module('app', [
                 
                 //
                 if (!toState.og) {
-                    $rootScope.metaservice.setOg('https://tempostorm.com' + toState.url);
+                    $rootScope.metaservice.setOg('https://tempoStorm.com' + toState.url);
                 }
             });
             $rootScope.$on("$routeChangeError", function(evt, current, previous, rejection){
@@ -246,7 +246,9 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Hearthstone', description: 'TempoStorm Hearthstone featured and community decks.', keywords: '' },
+                og: true
             })
             .state('app.hs.decks', {
                 abstract: true,
@@ -377,7 +379,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Heroes of the Storm', description: 'TempoStorm Heroes of the Storm home.', keywords: '' }
             })
             .state('app.hots.guides', {
                 abstract: true,
@@ -437,7 +440,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                og: true
             })
             .state('app.hots.guideBuilder', {
                 abstract: true,
@@ -447,6 +451,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.html'
                     }
                 }
+                
             })
             .state('app.hots.guideBuilder.step1', {
                 url: '',
@@ -454,7 +459,8 @@ var app = angular.module('app', [
                     guideBuilder: {
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.step1.html'
                     }
-                }
+                },
+                seo: { title: 'Guide Builder', description: 'Heroes of the Storm guide builder.', keywords: '' }
             })
             .state('app.hots.guideBuilder.hero', {
                 url: '/hero',
@@ -471,7 +477,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Guide Builder', description: 'Heroes of the Storm guide builder.', keywords: '' }
             })
             .state('app.hots.guideBuilder.map', {
                 url: '/map',
@@ -488,7 +495,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Guide Builder', description: 'Heroes of the Storm guide builder.', keywords: '' }
             })
             .state('app.hots.guideBuilder.edit', {
                 abstract: true,
@@ -514,6 +522,7 @@ var app = angular.module('app', [
                         }
                     }
                 },
+                seo: { title: 'Guide Builder', description: 'Heroes of the Storm guide builder.', keywords: '' },
                 access: { auth: true }
             })
             .state('app.hots.guideBuilder.edit.hero', {
@@ -536,6 +545,7 @@ var app = angular.module('app', [
                         }
                     }
                 },
+                seo: { title: 'Guide Builder', description: 'Heroes of the Storm guide builder.', keywords: '' },
                 access: { auth: true }
             })
             .state('app.hots.guideBuilder.edit.map', {
@@ -558,6 +568,7 @@ var app = angular.module('app', [
                         }
                     }
                 },
+                seo: { title: 'Guide Builder', description: 'Heroes of the Storm guide builder.', keywords: '' },
                 access: { auth: true }
             })
             .state('app.hots.talentCalculator', {
@@ -585,7 +596,8 @@ var app = angular.module('app', [
                         $state.go('app.hots.talentCalculator.hero', { hero: dataHeroesList.heroes[0].className });
                         return $q.reject();
                     }]
-                }
+                },
+                seo: { title: 'Talent Caluclator', description: 'Talent Calculator for Heroes of the Storm', keywords: '' }
             })
             .state('app.hots.talentCalculator.hero', {
                 url: '/:hero',
@@ -600,7 +612,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Talent Caluclator', description: 'Talent Calculator for Heroes of the Storm', keywords: '' }
             })
             .state('app.forum', {
                 abstract: true,
@@ -690,7 +703,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/team.hearthstone.html'
                     }
                 },
-                seo: { title: 'Hearthstone', description: 'Tempo Storm Hearthstone team.', keywords: '' }
+                seo: { title: 'Hearthstone', description: 'TempoStorm Hearthstone team.', keywords: '' }
             })
             .state('app.team.heroes', {
                 url: '/team/hots',
@@ -699,7 +712,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/team.hots.html'
                     }
                 },
-                seo: { title: 'Heroes of the Storm', description: 'Tempo Storm Heroes of the Storm team.', keywords: '' }
+                seo: { title: 'Heroes of the Storm', description: 'TempoStorm Heroes of the Storm team.', keywords: '' }
             })
             .state('app.team.csgo', {
                 url: '/team/csgo',
@@ -708,7 +721,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/team.csgo.html'
                     }
                 },
-                seo: { title: 'CS:GO', description: 'Tempo Storm Counter Strike: Global Offensive team.', keywords: '' }
+                seo: { title: 'CS:GO', description: 'TempoStorm Counter Strike: Global Offensive team.', keywords: '' }
             })
             .state('app.team.fifa', {
                 url: '/fifa',
@@ -716,7 +729,8 @@ var app = angular.module('app', [
                     team: {
                         templateUrl: tpl + 'views/frontend/team.fifa.html'
                     }
-                }
+                },
+                seo: { title: 'FIFA', description: 'TempoStorm FIFA team.', keywords: '' }
             })
             .state('app.team.fgc', {
                 url: '/fgc',
@@ -724,7 +738,8 @@ var app = angular.module('app', [
                     team: {
                         templateUrl: tpl + 'views/frontend/team.fgc.html'
                     }
-                }
+                },
+                seo: { title: 'FGC', description: 'TempoStorm FGC team.', keywords: '' }
             })
             .state('app.polls', {
                 url: 'vote',
@@ -741,7 +756,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Vote', description: 'Vote on TempoStorm', keywords: '' }
             }) 
             .state('app.sponsors', {
                 url: 'sponsors',
@@ -750,7 +766,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/sponsors.html'
                     }
                 },
-                seo: { title: 'Sponsors', description: 'Tempo Storm sponsor page.', keywords: '' }
+                seo: { title: 'Sponsors', description: 'TempoStorm sponsor page.', keywords: '' }
             })
             .state('app.premium', {
                 url: 'premium',
@@ -760,7 +776,7 @@ var app = angular.module('app', [
                         controller: 'PremiumCtrl'
                     }
                 },
-                seo: { title: 'Get Premium', description: 'Get Premium with Tempo Storm', keywords: '' }
+                seo: { title: 'Get Premium', description: 'Get Premium with TempoStorm', keywords: '' }
             })
             .state('app.terms', {
                 url: 'terms',
@@ -769,7 +785,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/terms.html'
                     }
                 },
-                seo: { title: 'Terms and Conditions', description: 'Tempo Storm Terms and Conditions', keywords: '' }
+                seo: { title: 'Terms and Conditions', description: 'TempoStorm Terms and Conditions', keywords: '' }
             })
             .state('app.privacy', {
                 url: 'privacy',
@@ -778,7 +794,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/privacy.html'
                     }
                 },
-                seo: { title: 'Privacy Policy', description: 'Tempo Storm Privacy Policy', keywords: '' }
+                seo: { title: 'Privacy Policy', description: 'TempoStorm Privacy Policy', keywords: '' }
             })
             .state('app.login', {
                 url: 'login',
@@ -789,7 +805,7 @@ var app = angular.module('app', [
                     }
                 },
                 access: { noauth: true },
-                seo: { title: 'Login', description: 'Tempo Storm login screen.', keywords: '' }
+                seo: { title: 'Login', description: 'Login to TempoStorm', keywords: '' }
             })
             .state('app.signup', {
                 url: 'signup',
@@ -800,7 +816,7 @@ var app = angular.module('app', [
                     }
                 },
                 access: { noauth: true },
-                seo: { title: 'Sign up', description: 'Sign up for Tempo Storm.', keywords: '' }
+                seo: { title: 'Sign up', description: 'Sign up for TempoStorm.', keywords: '' }
             })
             .state('app.verify', {
                 url: 'verify?email&code',

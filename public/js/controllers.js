@@ -419,7 +419,10 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('ProfileSubscriptionCtrl', ['$scope', '$stateParams', 'SubscriptionService', 'dataProfileEdit',  
     function ($scope, $stateParams, SubscriptionService, dataProfileEdit) {
+        $scope.loading = false;
         $scope.profile = dataProfileEdit.user;
+        $scope.error = '';
+        $scope.success = '';
         
         if ($scope.profile.subscription.isSubscribed) {
             $scope.plan = dataProfileEdit.user.subscription.plan || 'tempostorm_semi';
@@ -437,8 +440,40 @@ angular.module('app.controllers', ['ngCookies'])
                     plan = 'tempostorm_semi';
                     break;
             }
-            
             $scope.plan = plan;
+        }
+        
+        $scope.isLoading = function () {
+            return $scope.loading;
+        }
+        
+        $scope.setLoading = function (bool) {
+            $scope.loading = bool;
+        }
+        
+        $scope.setSuccess = function (s) {
+            $scope.error = '';
+            $scope.success = s;
+        }
+        
+        $scope.setError = function (s) {
+            $scope.success = '';
+            $scope.error = s;
+        }
+        
+        $scope.setErrorCode = function (c) {
+            $scope.error = 'An error has occured. Code: ' + c + ': ' + $scope.getError(c);
+        }
+        
+        $scope.getError = function (c) {
+            switch (c) {
+                case 400 : return 'Missing a required parameter.'; break;
+                case 401 : return 'No valid API key provided.'; break;
+                case 402 : return 'Parameters were valid but request failed. Check your information and please try again.'; break;
+                case 404 : return 'The requested item doesn\'t exist!'; break;
+                case 500 || 502 || 503 || 504 : return 'Something went wrong on Stripe\'s end.'; break;
+
+            }
         }
         
         $scope.getExpiryDate = function () {
@@ -456,8 +491,10 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.subscribe = function (code, result) {
+            $scope.setLoading(true);
             if (result.error) {
-                console.log(result);
+                $scope.setErrorCode(code);
+                $scope.setLoading(false);
             } else {
                 SubscriptionService.setPlan($scope.plan, result.id).success(function (data) {
                     if (data.success) {
@@ -470,6 +507,11 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.number = '';
                         $scope.cvc = '';
                         $scope.expiry = '';
+                        $scope.error =  '';
+                        $scope.setSuccess('We have successfully processed your payment. Thank you for subscribing with TempoStorm.com!');
+                    } else {
+                        $scope.setError( 'An unknown error has occured.' );
+                        $scope.setLoading(false);
                     }
                 });
             }
@@ -932,25 +974,28 @@ angular.module('app.controllers', ['ngCookies'])
             active: true
         },
         deckID,
-        deckAddBox;
+        itemAddBox;
         
-        /*DECKADD*/
-        $scope.addDeckArticle = function () {
-                deckAddBox = bootbox.dialog({
-                message: $compile('<div article-deck-add></div>')($scope),
+        //open the modal to choose what item to add
+        $scope.addItemArticle = function () {
+            itemAddBox = bootbox.dialog({
+                message: $compile('<div article-item-add></div>')($scope),
                 closeButton: true,
                 animate: true
             });
-            deckAddBox.modal('show');
+            itemAddBox.modal('show');
         }
 
-        $scope.addDeck = function (deck) {
-            deckID = deck._id;
-            $scope.article.deck = deck;
-            deckAddBox.modal('hide');
+        //change the article item
+        $scope.modifyItem = function (item) {
+            switch ($scope.article.articleType.toString()) {
+                case 'hs': $scope.article.deck = item; break;
+                case 'hots': $scope.article.guide = item; break;
+            }
+            itemAddBox.modal('hide');
         }
         
-        $scope.removeDeckArticle = function () {
+        $scope.removeItemArticle = function () {
             $scope.article.deck = undefined;
         }
         
@@ -1071,9 +1116,6 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.addArticle = function () {
             $scope.showError = false;
-            if ($scope.article.deck) {
-                $scope.article.deck = $scope.article.deck._id;
-            }
             AdminArticleService.addArticle($scope.article).success(function (data) {
                 if (!data.success) {
                     $scope.errors = data.errors;
@@ -1089,27 +1131,8 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes',  
     function ($scope, $state, $window, $upload, $compile, $filter, bootbox, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
-        var deckAddBox,
+        var itemAddBox,
             deckID;
-        
-        /*DECKADD*/
-        $scope.addDeckArticle = function () {
-                deckAddBox = bootbox.dialog({
-                message: $compile('<div article-deck-add></div>')($scope),
-                closeButton: true,
-                animate: true
-            });
-            deckAddBox.modal('show');
-        }
-
-        $scope.addDeck = function (deck) {
-            $scope.article.deck = deck;
-            deckAddBox.modal('hide');
-        }
-        
-        $scope.removeDeckArticle = function () {
-            $scope.article.deck = undefined;
-        }
         
         // load article
         $scope.article = data.article;
@@ -1125,6 +1148,26 @@ angular.module('app.controllers', ['ngCookies'])
 
         // load providers
         $scope.providers = dataProviders.users;
+        
+        
+        //open the modal to choose what item to add
+        $scope.addItemArticle = function () {
+            itemAddBox = bootbox.dialog({
+                message: $compile('<div article-item-add></div>')($scope),
+                closeButton: true,
+                animate: true
+            });
+            itemAddBox.modal('show');
+        }
+
+        //change the article item
+        $scope.modifyItem = function (item) {
+            switch ($scope.article.articleType.toString()) {
+                case 'hs':  $scope.article.deck = item; break;
+                case 'hots': $scope.article.guide = item; break;
+            }
+            itemAddBox.modal('hide');
+        }
         
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }
@@ -1234,9 +1277,6 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.editArticle = function () {
             $scope.showError = false;
-            if ($scope.article.deck) {
-                $scope.article.deck = $scope.article.deck._id;
-            }
             AdminArticleService.editArticle($scope.article).success(function (data) {
                 if (!data.success) {
                     $scope.errors = data.errors;
@@ -4517,8 +4557,6 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
             }
-            
-            console.log(list);
         };
         
         $scope.addHero = function () {
@@ -5803,12 +5841,19 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
-    function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
+.controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService', 'MetaService',
+    function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService, MetaService) {
         $scope.guide = data.guide;
         $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0].hero : false;
         $scope.heroes = dataHeroes.heroes;
         $scope.maps = dataMaps.maps;
+        
+        
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set($scope.guide.name + ' - Guides', $scope.guide.description);
+        
+        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/hots-logo';
+        $scope.metaservice.setOg('https://tempostorm.com/articles/' + data.guide.slug, $scope.guide.name, $scope.guide.description, 'article', ogImg);
         
         // show
         if (!$scope.app.settings.show.guide) {

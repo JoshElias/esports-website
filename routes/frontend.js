@@ -877,7 +877,6 @@ module.exports = {
     },
     profileGuides: function (Schemas) {
         return function (req, res, next) {
-            console.log("profileGuides");
             var username = req.params.username,
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 12;
@@ -1414,8 +1413,10 @@ module.exports = {
         return function (req, res, next) {
             var _id = req.body._id;
             Schemas.Deck.findOne({ _id: _id, author: req.user._id }).remove().exec(function (err) {
-                if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
-                return res.json({ success: true });
+                Schemas.Activity.update({ deck: _id }, { exists: false }).exec(function (err) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    return res.json({ success: true });
+                });
             });
         };
     },
@@ -2560,7 +2561,6 @@ module.exports = {
     },
     pollsVote: function (Schemas) {
         return function(req, res, next) {
-            
             var votes = req.body.poll.votes;
             
             function postVotes(callback) {

@@ -339,7 +339,8 @@ module.exports = {
     },
     guideAdd: function (Schemas, Util, mongoose) {
         return function (req, res, next) {
-            var userID = req.user._id;
+            var userID = req.user._id,
+                guideID = mongoose.Types.ObjectId();
             
             req.assert('name', 'Guide name is required').notEmpty();
             req.assert('name', 'Guide name cannot be more than 60 characters').len(1, 60);
@@ -385,6 +386,7 @@ module.exports = {
                 }
                 
                 var newGuide = new Schemas.Guide({
+                        _id: guideID,
                         name: req.body.name,
                         slug: Util.slugify(req.body.name),
                         guideType: req.body.guideType,
@@ -425,7 +427,7 @@ module.exports = {
                 var activity = new Schemas.Activity({
                     author: userID,
                     activityType: "createGuide",
-                    guide: mongoose.Types.ObjectId(),
+                    guide: guideID,
                     active: req.body.public,
                     createdDate: new Date().toISOString()
                 });
@@ -529,8 +531,7 @@ module.exports = {
             }
             
             function updateActivities(callback) {
-                console.log(req.body._id);
-                    Schemas.Activity.update({guide: req.body._id, activityType: 'guideComment'}, {active: req.body.public}).exec(function (err, data) {
+                    Schemas.Activity.update({guide: req.body._id}, {active: req.body.public}).exec(function (err, data) {
                         return callback();
                 });
             }
@@ -550,8 +551,10 @@ module.exports = {
         return function (req, res, next) {
             var _id = req.body._id;
             Schemas.Guide.findOne({ _id: _id, author: req.user._id }).remove().exec(function (err) {
-                if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
-                return res.json({ success: true });
+                Schemas.Activity.update({ guide: _id }, { exists: false }).exec(function (err) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    return res.json({ success: true });
+                });
             });
         };
     },
