@@ -27,10 +27,6 @@ var app = angular.module('app', [
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage", 
         function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies, $localStorage) {
-            console.log('run');
-            console.log($cookies);
-            //console.log($localStorage.settings.token);
-            
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
@@ -117,8 +113,6 @@ var app = angular.module('app', [
                 },
                 resolve: {
                     User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService', function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
-                        console.log('user');
-                        console.log($cookies);
                         if ($cookies.token) {
                             $window.sessionStorage.token = $cookies.token;
                             //delete $cookies.token;
@@ -139,7 +133,6 @@ var app = angular.module('app', [
                                 $window.sessionStorage.email = data.email;
                                 d.resolve();
                             }).error(function (err) {
-                                console.log('error: ' + err);
                                 delete $window.sessionStorage.userID;
                                 delete $window.sessionStorage.username;
                                 delete $window.sessionStorage.token;

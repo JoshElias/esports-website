@@ -70,10 +70,6 @@ var app = angular.module('app', [
 .run(
     ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage", 
         function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies, $localStorage) {
-            console.log('run');
-            console.log($cookies);
-            //console.log($localStorage.settings.token);
-            
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
@@ -160,8 +156,6 @@ var app = angular.module('app', [
                 },
                 resolve: {
                     User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService', function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
-                        console.log('user');
-                        console.log($cookies);
                         if ($cookies.token) {
                             $window.sessionStorage.token = $cookies.token;
                             //delete $cookies.token;
@@ -182,7 +176,6 @@ var app = angular.module('app', [
                                 $window.sessionStorage.email = data.email;
                                 d.resolve();
                             }).error(function (err) {
-                                console.log('error: ' + err);
                                 delete $window.sessionStorage.userID;
                                 delete $window.sessionStorage.username;
                                 delete $window.sessionStorage.token;
@@ -1937,22 +1930,11 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.app.settings.show.decks = null;
         }
         
-        // persistent login  
-        //if ($scope.app.settings.token && $scope.app.settings.token !== null) {
-        //    console.log('set session token: ' + $scope.app.settings.token);
-        //    $localStorage.settings.token = $scope.app.settings.token;
-        //}
       } else {
-        console.log('set local token: ' + $scope.app.settings.token);
         $localStorage.settings = $scope.app.settings;
       }
       $scope.$watch('app.settings', function(){ 
-          console.log('set local token: ' + $scope.app.settings.token);
           $localStorage.settings = $scope.app.settings;
-      }, true);
-      $scope.$watch('app.settings.token', function(){
-        console.log('set cookie token: ' + $scope.app.settings.token);
-        //$cookies.token = $scope.app.settings.token;
       }, true);
 
       function isSmartDevice( $window )
