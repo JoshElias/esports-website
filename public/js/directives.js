@@ -292,10 +292,20 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/premiumDirective.html'
     };
 })
-.directive('articleDeckAdd', function () {
+.directive('articleItemAdd', function () {
     return {
-        templateUrl: 'views/admin/articles.deck.add.html',
+        templateUrl: 'views/admin/articles.item.add.html',
     };
+})
+.directive('hsBuilder', function() {
+    return {
+        templateUrl: 'views/frontend/hs.deckBuilder.directive.html',
+    }
+})
+.directive('hotsBuilder', function() {
+    return {
+        templateUrl: 'views/frontend/hots.guideBuilder.directive.html',
+    }
 })
 .directive('adsSidebar', function () {
     return {
@@ -369,4 +379,17 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 })
+.directive('spinnerButton', [function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            element.addClass("has-spinner");
+            element.append(' <span class="spinner"><i class="fa fa-refresh fa-spin"></i></span>');
+
+            scope.$watch(attrs.spinnerButton, function(value) {
+                element.toggleClass("spinning", value);
+            });
+        }
+    };
+}])
 ;

@@ -24,16 +24,16 @@
 
     <div class="container container-dark">
         
-        <div class="adSenseBanner" ng-if="!app.user.isSubscribed()">
-            <div ads-banner></div>
-        </div>
+        
         
         <div class="row">
             <div class="col-xs-12 m-t-md">
                 
                 <!-- deck right -->
                 <div class="deck-right">
-                    
+                    <div class="adSenseSidebarHome" ng-show="!app.user.isSubscribed()">
+                        <div ads-sidebar></div>
+                    </div>
                     <!-- mana curve -->
                     <div class="db-mana-curve clearfix">
                         <div class="db-mana-curve-title">

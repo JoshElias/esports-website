@@ -710,7 +710,7 @@ module.exports = {
                         medium: req.body.photos.medium,
                         small: req.body.photos.small
                     },
-                    deck: req.body.deck || undefined,
+                    deck: (req.body.deck ? req.body.deck._id : undefined),
                     related: req.body.related || undefined,
                     classTags: req.body.classTags,
                     views: 0,
@@ -813,7 +813,7 @@ module.exports = {
                         medium: req.body.photos.medium,
                         small: req.body.photos.small
                     };
-                    article.deck = req.body.deck || undefined;
+                    article.deck = (req.body.deck ? req.body.deck._id : undefined);
                     article.related = req.body.related || undefined;
                     article.classTags = req.body.classTags || [];
                     article.featured = req.body.featured;

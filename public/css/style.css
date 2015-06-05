@@ -316,7 +316,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 }
 
 /* start banner */
-.home-banner { position: relative; margin-bottom: 0px; }
+.home-banner { position: relative; margin-bottom: 0px; box-shadow: 0px 1px 1px black }
 
 .banner-prev,
 .banner-next { position: absolute; top: 132px; display: block; width: 40px; height: 135px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.5); color: #FFF !important; font-size: 30px; text-align: center; line-height: 135px; transition: all .1s linear; z-index: 4; }
@@ -325,7 +325,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .banner-prev:hover,
 .banner-next:hover { width: 60px; background: rgba(39,102,173,.8); font-size: 50px; }
 
-.banner-pages-wrapper { position: absolute; left: 0px; bottom: 22px; width: 100%; height: 24px; text-align: center; z-index: 4; }
+.banner-pages-wrapper { position: absolute; left: 0px; bottom: 70px; width: 100%; height: 24px; text-align: center; z-index: 4; }
 .banner-pages { margin: 0; padding: 0; display: inline-block; *display: inline; zoom: 1; height: 24px; border: 1px solid rgba(255,255,255,.5); background: rgba(0,0,0,.6); border-radius: 12px; }
 .banner-pages li { margin: 4px 0px 4px 8px; padding: 0; display: inline-block; *display: inline; zoom: 1; }
 .banner-pages li:last-child { margin: 4px 8px 4px 8px; }
@@ -388,7 +388,15 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 /* end filters */
 
 /* content start */
-.home-content-banner { background: #2766ad; }
+.home-content-banner { background: rgba(0,0,0,.85); height:65px; right:0; left: 0; bottom: 0; z-index: 4; border: 1px solid black; position: absolute; }
+.home-banner-logo-button { height: 65px; display: inline-block; overflow: hidden; }
+.home-banner-logo-button a { height: 130px; width: 165px; display: block; }
+.home-banner-logo-button a:hover { margin-top: -65px; }
+
+.home-banner-hots a { background-image: url(./../img/hots-button.png); }
+.home-banner-hs a { background-image: url(./../img/hs-button.png); }
+
+.home-banner-button-wrapper { text-align: center; height: 65px; }
 .home-content-banner h1 { margin: 0; padding: 10px 0px; font-size: 50px; color: #FFF; font-family: 'Open Sans Bold'; }
 .home-content { padding-top: 20px; background: url('../img/black-60.png'); }
 /* content end */
@@ -726,6 +734,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     transition: top .5s, left .5s, opacity .75s, font-size .5s;
     opacity: 1 !important;
 }
+
 
 /* premium */
 .premium-plan h3 { margin-left: 0px; }
@@ -2167,6 +2176,22 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 /* subscription */
 .badge-grey { padding: 5px 10px; background: #F2F2F2; color: #222; }
 .badge-green { padding: 5px 10px; background: #27c24c; }
+.spinner { 
+    display: inline-block; 
+    opacity: 0;
+    max-width: 0;/*
+    -webkit-transition: opacity 0.25s, max-width 0.45s; 
+    -moz-transition: opacity 0.25s, max-width 0.45s;
+    -o-transition: opacity 0.25s, max-width 0.45s;
+    transition: opacity 0.25s, max-width 0.45s;  Duration fixed since we animate additional hidden width */
+}
+.has-spinner.disabled {
+    cursor:progress;
+}
+.has-spinner.disabled .spinner {
+    max-width: 50px; 
+    opacity: 1; 
+}
 
 /* sponsor page */
 .sponsor-page { padding-top: 50px; padding-bottom: 50px; }
