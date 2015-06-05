@@ -68,8 +68,11 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService',
-        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', 
+        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies) {
+            console.log('run');
+            console.log($cookies);
+            
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
@@ -156,10 +159,11 @@ var app = angular.module('app', [
                 },
                 resolve: {
                     User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService', function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
+                        console.log('user');
                         console.log($cookies);
                         if ($cookies.token) {
                             $window.sessionStorage.token = $cookies.token;
-                            delete $cookies.token;
+                            //delete $cookies.token;
                         }
                         if ($window.sessionStorage.token && !AuthenticationService.isLogged()) {
                             var d = $q.defer();
@@ -176,7 +180,8 @@ var app = angular.module('app', [
                                 $window.sessionStorage.username = data.username;
                                 $window.sessionStorage.email = data.email;
                                 d.resolve();
-                            }).error(function () {
+                            }).error(function (err) {
+                                console.log('error: ' + err);
                                 delete $window.sessionStorage.userID;
                                 delete $window.sessionStorage.username;
                                 delete $window.sessionStorage.token;
