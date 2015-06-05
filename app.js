@@ -131,10 +131,8 @@ if (cluster.isMaster) {
     app.get('/auth/twitch', passport.authenticate('twitch'));
     app.get('/auth/twitch/callback', passport.authenticate('twitch', { failureRedirect: '/login' }),
       function(req, res) {
-        console.log(req.user._id);
         var token = jwt.sign({ _id: req.user._id.toString() }, JWT_SECRET);
         res.cookie('token', token);
-        console.log(token);
         res.redirect('/');
       });
 

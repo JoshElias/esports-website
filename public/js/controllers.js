@@ -14,7 +14,7 @@ angular.module('app.controllers', ['ngCookies'])
         copyright: new Date().getFullYear(),
         cdn: 'https://s3-us-west-2.amazonaws.com/ts-node2',
         settings: {
-            token: null,
+            token: $cookies.token || null,
             deck: null,
             show: {
                 deck: null,
@@ -84,7 +84,7 @@ angular.module('app.controllers', ['ngCookies'])
         if (!$scope.app.settings.show.decks) {
             $scope.app.settings.show.decks = null;
         }
-          
+        
         // persistent login  
         if ($scope.app.settings.token && $scope.app.settings.token !== null) {
             $window.sessionStorage.token = $scope.app.settings.token;
