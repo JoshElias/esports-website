@@ -34,6 +34,10 @@ var app = angular.module('app', [
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
                 //ngProgress.start();
+                if (toState.redirectTo) {
+                    event.preventDefault();
+                    $state.go(toState.redirectTo, toParams);
+                }
                 if (toState.access && toState.access.noauth && $window.sessionStorage.token && AuthenticationService.isLogged()) {
                     event.preventDefault();
                     $state.transitionTo('app.home');
@@ -215,6 +219,18 @@ var app = angular.module('app', [
                         templateUrl: 'views/frontend/hs.html'
                     }
                 }
+            })
+            .state('app.decks', {
+                url: 'decks?p&s&k&a&o',
+                redirectTo: 'app.hs.decks.list'
+            })
+            .state('app.decks.deck', {
+                url: '/:slug',
+                redirectTo: 'app.hs.decks.deck'
+            })
+            .state('app.deckBuilder', {
+                url: 'deck-builder',
+                redirectTo: 'app.hs.deckBuilder.class'
             })
             .state('app.hs.home', {
                 url: '',
@@ -1044,7 +1060,10 @@ var app = angular.module('app', [
                         controller: 'AdminArticleListCtrl',
                         resolve: {
                             data: ['AdminArticleService', function (AdminArticleService) {
-                                return AdminArticleService.getArticles();
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminArticleService.getArticles(page, perpage, search);
                             }]
                         }
                     }

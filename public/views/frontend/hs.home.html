@@ -151,7 +151,7 @@
                             <!-- deck -->
                             <div class="deck-wrapper" ng-repeat="deck in decksFeatured">
                                 <div class="deck {{deck.playerClass.toLowerCase()}}" ng-class="{ premium: deck.premium.isPremium }">
-                                    <a href="./decks/{{deck.slug}}"></a>
+                                    <a href="./hearthstone/decks/{{deck.slug}}"></a>
                                     <div class="deck-overlay"></div>
                                     <div class="deck-premium" ng-if="deck.premium.isPremium"></div>
                                     <div class="deck-title">{{deck.name}}</div>
@@ -178,7 +178,7 @@
                             <!-- deck -->
                             <div class="deck-wrapper" ng-repeat="deck in decks">
                                 <div class="deck {{deck.playerClass.toLowerCase()}}" ng-class="{ premium: deck.premium.isPremium }">
-                                    <a href="./decks/{{deck.slug}}"></a>
+                                    <a href="./hearthstone/decks/{{deck.slug}}"></a>
                                     <div class="deck-overlay"></div>
                                     <div class="deck-premium" ng-if="deck.premium.isPremium"></div>
                                     <div class="deck-title">{{deck.name}}</div>

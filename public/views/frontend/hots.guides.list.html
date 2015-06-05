@@ -147,7 +147,7 @@
                     </div>
                     <div class="guide-overlay"></div>
                     <div class="guide-premium" ng-if="guide.premium.isPremium"></div>
-                    <div class="guide-title">{{guide.name}}</div>
+                    <div class="guide-title">[{{guide.guideType.toUpperCase()}}]&nbsp;{{guide.name}}</div>
                     <div class="guide-score"><span><em ng-if="guide.votesCount > 0">+</em>{{guide.votesCount}}</span></div>
                     <div class="guide-description">
                         <p>{{guide.description}}</p>

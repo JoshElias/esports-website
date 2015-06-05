@@ -360,9 +360,12 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
-        getArticles: function () {
-            var d = $q.defer();
-            $http.post('/api/admin/articles', {}).success(function (data) {
+        getArticles: function (page, perpage, search) {
+            var page = page || 1,
+                perpage = perpage || 50,
+                search = search || '',
+                d = $q.defer();
+            $http.post('/api/admin/articles', { page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
@@ -847,6 +850,7 @@ angular.module('app.services', [])
     hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Heroic Skill", "Mount"];
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
+    hots.heroRows = [7, 8, 9, 8, 5];
     
     hots.genStats = function () {
         var stats = [],
@@ -1406,6 +1410,26 @@ angular.module('app.services', [])
         
         gb.getContent = function (content) {
             return $sce.trustAsHtml(content);
+        };
+        
+        gb.moveContentUp = function (content) {
+            var oldIndex = gb.content.indexOf(content),
+                newIndex = oldIndex - 1;
+            
+            if (newIndex < 0) { return false; }
+            
+            gb.content.splice(oldIndex, 1);
+            gb.content.splice(newIndex, 0, content);
+        };
+        
+        gb.moveContentDown = function (content) {
+            var oldIndex = gb.content.indexOf(content),
+                newIndex = oldIndex + 1;
+            
+            if (newIndex > (gb.content.length - 1)) { return false; }
+            
+            gb.content.splice(oldIndex, 1);
+            gb.content.splice(newIndex, 0, content);
         };
         
         gb.toggleHero = function (hero) {
