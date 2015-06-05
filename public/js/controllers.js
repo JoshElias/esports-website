@@ -96,7 +96,7 @@ angular.module('app.controllers', ['ngCookies'])
       }
       $scope.$watch('app.settings', function(){ 
           console.log('set local token: ' + $scope.app.settings.token);
-          //$localStorage.settings = $scope.app.settings;
+          $localStorage.settings = $scope.app.settings;
       }, true);
       $scope.$watch('app.settings.token', function(){
         console.log('set cookie token: ' + $scope.app.settings.token);
