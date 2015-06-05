@@ -86,10 +86,10 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // persistent login  
-        if ($scope.app.settings.token && $scope.app.settings.token !== null) {
-            console.log('set session token: ' + $scope.app.settings.token);
-            $localStorage.settings.token = $scope.app.settings.token;
-        }
+        //if ($scope.app.settings.token && $scope.app.settings.token !== null) {
+        //    console.log('set session token: ' + $scope.app.settings.token);
+        //    $localStorage.settings.token = $scope.app.settings.token;
+        //}
       } else {
         console.log('set local token: ' + $scope.app.settings.token);
         $localStorage.settings = $scope.app.settings;
