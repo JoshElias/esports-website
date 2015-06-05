@@ -72,7 +72,7 @@ var app = angular.module('app', [
         function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies, $localStorage) {
             console.log('run');
             console.log($cookies);
-            console.log($localStorage.settings.token);
+            //console.log($localStorage.settings.token);
             
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
