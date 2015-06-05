@@ -186,7 +186,7 @@ var app = angular.module('app', [
                                 delete $window.sessionStorage.username;
                                 delete $window.sessionStorage.token;
                                 delete $window.sessionStorage.email;
-                                $state.transitionTo('app.login');
+                                //$state.transitionTo('app.login');
                                 $q.reject();
                             });
                             return d.promise;
@@ -1944,7 +1944,7 @@ angular.module('app.controllers', ['ngCookies'])
         $localStorage.settings = $scope.app.settings;
       }
       $scope.$watch('app.settings', function(){ $localStorage.settings = $scope.app.settings; }, true);
-      //$scope.$watch('app.settings.token', function(){ $cookies.token = $scope.app.settings.token;}, true);
+      $scope.$watch('app.settings.token', function(){ $cookies.token = $scope.app.settings.token;}, true);
 
       function isSmartDevice( $window )
       {

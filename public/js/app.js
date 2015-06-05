@@ -143,7 +143,7 @@ var app = angular.module('app', [
                                 delete $window.sessionStorage.username;
                                 delete $window.sessionStorage.token;
                                 delete $window.sessionStorage.email;
-                                $state.transitionTo('app.login');
+                                //$state.transitionTo('app.login');
                                 $q.reject();
                             });
                             return d.promise;
