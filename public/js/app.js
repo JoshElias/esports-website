@@ -113,6 +113,7 @@ var app = angular.module('app', [
                 },
                 resolve: {
                     User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService', function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
+                        console.log($cookies);
                         if ($cookies.token) {
                             $window.sessionStorage.token = $cookies.token;
                             delete $cookies.token;
