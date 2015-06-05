@@ -158,6 +158,7 @@ var app = angular.module('app', [
                     User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService', function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
                         if ($cookies.token) {
                             $window.sessionStorage.token = $cookies.token;
+                            delete $cookies.token;
                         }
                         if ($window.sessionStorage.token && !AuthenticationService.isLogged()) {
                             var d = $q.defer();
@@ -197,7 +198,7 @@ var app = angular.module('app', [
                             dataArticles: ['ArticleService', function (ArticleService) {
                                 var klass = 'all',
                                     page = 1,
-                                    perpage = 9;
+                                    perpage = 3;
                                 return ArticleService.getArticles('ts', klass, page, perpage);
                             }],
                             dataBanners: ['BannerService', function (BannerService) {
