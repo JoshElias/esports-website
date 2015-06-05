@@ -114,7 +114,7 @@ var app = angular.module('app', [
                 resolve: {
                     User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService', function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
                         if ($cookies.token) {
-                            $window.sessionStorage.token = $cookies.token;
+                            delete $window.sessionStorage.token = $cookies.token;
                         }
                         if ($window.sessionStorage.token && !AuthenticationService.isLogged()) {
                             var d = $q.defer();
