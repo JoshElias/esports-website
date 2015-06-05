@@ -297,6 +297,16 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/admin/articles.item.add.html',
     };
 })
+.directive('hsBuilder', function() {
+    return {
+        templateUrl: 'views/frontend/hs.deckBuilder.directive.html',
+    }
+})
+.directive('hotsBuilder', function() {
+    return {
+        templateUrl: 'views/frontend/hots.guideBuilder.directive.html',
+    }
+})
 .directive('adsSidebar', function () {
     return {
         restrict: 'A',

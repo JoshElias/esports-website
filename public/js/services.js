@@ -1877,6 +1877,13 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('TwitchService', ['$http', '$q', function(){
+    return {
+        getSteam : function () {
+            return $http.get('/twitch', data);
+        }
+    }
+}])
 .factory('ContactService', ['$http', '$q', function ($http, $q) {
     return {
         sendContact: function (contact) {

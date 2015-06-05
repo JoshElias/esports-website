@@ -8934,6 +8934,13 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }                                         
 ])
+.controller('twitchCtrl', ['$scope',
+    function($scope) {
+        
+        console.log('Hello World');
+        
+    }
+])
 .controller('TeamCtrl', ['$scope',
     function ($scope) {
         
@@ -9237,6 +9244,16 @@ angular.module('app.directives', ['ui.load'])
     return {
         templateUrl: 'views/admin/articles.item.add.html',
     };
+})
+.directive('hsBuilder', function() {
+    return {
+        templateUrl: 'views/frontend/hs.deckBuilder.directive.html',
+    }
+})
+.directive('hotsBuilder', function() {
+    return {
+        templateUrl: 'views/frontend/hots.guideBuilder.directive.html',
+    }
 })
 .directive('adsSidebar', function () {
     return {
@@ -11239,6 +11256,13 @@ angular.module('app.services', [])
             return d.promise;
         }
     };
+}])
+.factory('TwitchService', ['$http', '$q', function(){
+    return {
+        getSteam : function () {
+            return $http.get('/twitch', data);
+        }
+    }
 }])
 .factory('ContactService', ['$http', '$q', function ($http, $q) {
     return {

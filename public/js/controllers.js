@@ -7109,6 +7109,13 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }                                         
 ])
+.controller('twitchCtrl', ['$scope',
+    function($scope) {
+        
+        console.log('Hello World');
+        
+    }
+])
 .controller('TeamCtrl', ['$scope',
     function ($scope) {
         
