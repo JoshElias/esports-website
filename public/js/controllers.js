@@ -87,13 +87,21 @@ angular.module('app.controllers', ['ngCookies'])
         
         // persistent login  
         if ($scope.app.settings.token && $scope.app.settings.token !== null) {
+            console.log('set session token: ' + $scope.app.settings.token);
             $window.sessionStorage.token = $scope.app.settings.token;
         }
       } else {
+        console.log('set local token: ' + $scope.app.settings.token);
         $localStorage.settings = $scope.app.settings;
       }
-      $scope.$watch('app.settings', function(){ $localStorage.settings = $scope.app.settings; }, true);
-      $scope.$watch('app.settings.token', function(){ $cookies.token = $scope.app.settings.token;}, true);
+      $scope.$watch('app.settings', function(){ 
+          console.log('set local token: ' + $scope.app.settings.token);
+          $localStorage.settings = $scope.app.settings;
+      }, true);
+      $scope.$watch('app.settings.token', function(){
+        console.log('set cookie token: ' + $scope.app.settings.token);
+        $cookies.token = $scope.app.settings.token;
+      }, true);
 
       function isSmartDevice( $window )
       {
