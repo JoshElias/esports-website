@@ -144,7 +144,7 @@ var app = angular.module('app', [
                                 delete $window.sessionStorage.token;
                                 delete $window.sessionStorage.email;
                                 $state.transitionTo('app.login');
-                                d.resolve();
+                                $q.reject();
                             });
                             return d.promise;
                         }
