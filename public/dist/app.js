@@ -180,6 +180,7 @@ var app = angular.module('app', [
                                 delete $window.sessionStorage.username;
                                 delete $window.sessionStorage.token;
                                 delete $window.sessionStorage.email;
+                                //delete $localStorage.settings.token;
                                 delete $cookies.token;
                                 //$state.transitionTo('app.login');
                                 $q.reject();
