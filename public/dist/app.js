@@ -180,6 +180,7 @@ var app = angular.module('app', [
                                 delete $window.sessionStorage.username;
                                 delete $window.sessionStorage.token;
                                 delete $window.sessionStorage.email;
+                                delete $cookies.token;
                                 //$state.transitionTo('app.login');
                                 $q.reject();
                             });
@@ -2867,16 +2868,28 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // tags
+        $scope.hasTags = function () {
+            var type = $scope.article.articleType,
+                isHS = (type.indexOf('hs') !== -1) ? true : false,
+                isHOTS = (type.indexOf('hots') !== -1) ? true : false;
+            
+            return ((isHS && !isHOTS) || (isHOTS && !isHS));
+        }
+        
         $scope.getTags = function () {
-            switch ($scope.article.articleType) {
-                case 'hs':
-                    return ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
-                case 'hots':
-                    var out = [];
-                    for (var i = 0; i < dataHeroes.heroes.length; i++) {
-                        out.push(dataHeroes.heroes[i].name);
-                    }
-                    return out;
+            var type = $scope.article.articleType,
+                isHS = (type.indexOf('hs') !== -1) ? true : false,
+                isHOTS = (type.indexOf('hots') !== -1) ? true : false;
+            
+            if (isHS && !isHOTS) {
+                return ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
+            }
+            if (isHOTS && !isHS) {
+                var out = [];
+                for (var i = 0; i < dataHeroes.heroes.length; i++) {
+                    out.push(dataHeroes.heroes[i].name);
+                }
+                return out;
             }
         };
         
@@ -3027,16 +3040,28 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? $scope.app.cdn + '/articles/' + $scope.article.photos.small : $scope.app.cdn + '/img/blank.png';
         
         // tags
+        $scope.hasTags = function () {
+            var type = $scope.article.articleType,
+                isHS = (type.indexOf('hs') !== -1) ? true : false,
+                isHOTS = (type.indexOf('hots') !== -1) ? true : false;
+            
+            return ((isHS && !isHOTS) || (isHOTS && !isHS));
+        }
+        
         $scope.getTags = function () {
-            switch ($scope.article.articleType) {
-                case 'hs':
-                    return ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
-                case 'hots':
-                    var out = [];
-                    for (var i = 0; i < dataHeroes.heroes.length; i++) {
-                        out.push(dataHeroes.heroes[i].name);
-                    }
-                    return out;
+            var type = $scope.article.articleType,
+                isHS = (type.indexOf('hs') !== -1) ? true : false,
+                isHOTS = (type.indexOf('hots') !== -1) ? true : false;
+            
+            if (isHS && !isHOTS) {
+                return ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
+            }
+            if (isHOTS && !isHS) {
+                var out = [];
+                for (var i = 0; i < dataHeroes.heroes.length; i++) {
+                    out.push(dataHeroes.heroes[i].name);
+                }
+                return out;
             }
         };
         
