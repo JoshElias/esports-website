@@ -2272,7 +2272,7 @@ ul[dnd-list] .dndPlaceholder {
 
 /* hots guide - step 2 */
 .hero-selection { margin: 40px auto 20px auto; }
-.hero-selection .hero-row { margin: -20px auto 0 auto; }
+.hero-selection .hero-row { margin: -20px auto 0 auto; white-space: nowrap; }
 
 .hero-selection .hero-row.hero-1 { max-width: 90px; }
 .hero-selection .hero-row.hero-2 { max-width: 180px; }
@@ -2347,7 +2347,7 @@ p.white { color: #FFF; }
 
 /* maps */
 .map-selection { margin: 70px auto 20px auto; }
-.map-selection .map-row { margin: -50px auto 0 auto; }
+.map-selection .map-row { margin: -50px auto 0 auto; white-space: nowrap; }
 
 .map-selection .map-row.map-row-1 { max-width: 191px; }
 .map-selection .map-row.map-row-2 { max-width: 382px; }
@@ -6303,6 +6303,21 @@ input[type=range]:focus::-ms-fill-upper {
     
     /* talent calc */
     .tc-section-content { background-image: none !important; }
+
+    /* guides */
+    .gb-steps { padding: 0 30px; position: relative; }
+    .gb-steps li { display: none; float: none; }
+    .gb-steps li.active,
+    .gb-steps li.steps-arrow-prev,
+    .gb-steps li.steps-arrow-next { display: block; }
+    .gb-steps li.steps-arrow-prev,
+    .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
+    .gb-steps li.steps-arrow-prev { left: 0px; }
+    .gb-steps li.steps-arrow-next { right: 0px; }
+    
+    .gb-steps li.active,
+    .gb-steps li.active button { width: 100%; }
+
 }
 
 @media (min-width: 768px) and (max-width: 979px) {
@@ -6324,12 +6339,25 @@ input[type=range]:focus::-ms-fill-upper {
     .guide-header h1 { font-size: 20px; }
     .guide-hero-wrapper { margin: 0 0 10px 0; width: 100%; }
     .guide-hero-wrapper:last-child { margin: 0; }
+
+    .gb-steps { padding: 0 30px; position: relative; }
+    .gb-steps li { display: none; float: none; }
+    .gb-steps li.active,
+    .gb-steps li.steps-arrow-prev,
+    .gb-steps li.steps-arrow-next { display: block; }
+    .gb-steps li.steps-arrow-prev,
+    .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
+    .gb-steps li.steps-arrow-prev { left: 0px; }
+    .gb-steps li.steps-arrow-next { right: 0px; }
+    
+    .gb-steps li.active,
+    .gb-steps li.active button { width: 100%; }
+
 }
 
 @media (max-width: 767px) {
     /* home */
     .adSenseSidebarHome { height: 140px; }
-
     
     /* filters */
     .filter-bar { display: none; }
@@ -6368,7 +6396,20 @@ input[type=range]:focus::-ms-fill-upper {
     .guide-header h1 { font-size: 20px; }
     .guide-hero-wrapper { margin: 0 0 10px 0; width: 100%; }
     .guide-hero-wrapper:last-child { margin: 0; }
-
+    
+    .gb-steps { padding: 0 30px; position: relative; }
+    .gb-steps li { display: none; float: none; }
+    .gb-steps li.active,
+    .gb-steps li.steps-arrow-prev,
+    .gb-steps li.steps-arrow-next { display: block; }
+    .gb-steps li.steps-arrow-prev,
+    .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
+    .gb-steps li.steps-arrow-prev { left: 0px; }
+    .gb-steps li.steps-arrow-next { right: 0px; }
+    
+    .gb-steps li.active,
+    .gb-steps li.active button { width: 100%; }
+        
     /* polls */
     .poll-page .poll-left { margin-right: 20px; }
     .poll-item-img-wrapper,
