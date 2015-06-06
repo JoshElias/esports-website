@@ -91,7 +91,9 @@
             </div>
             <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
                 <div class="row">
-                    <div ads-sidebar-home></div>
+                    <div class="adSenseSidebarHome m-b-md clearfix" ng-show="!app.user.isSubscribed()">
+                        <div ads-sidebar-home></div>
+                    </div>
                     <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
                         <!-- guide builder -->
                         <div hots-builder></div>
