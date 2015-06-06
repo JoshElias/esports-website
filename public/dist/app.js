@@ -11245,7 +11245,7 @@ angular.module('app.services', [])
         getGuidesCommunity: function (hero, page, perpage) {
             hero = hero || 'all';
             page = page || 1;
-            perpage = perpage || 24;
+            perpage = perpage || 10;
             
             var d = $q.defer();
             $http.post('/hots/guides/community', { hero: hero, page: page, perpage: perpage }).success(function (data) {
@@ -11256,7 +11256,7 @@ angular.module('app.services', [])
         getGuidesFeatured: function (hero, page, perpage) {
             hero = hero || 'all';
             page = page || 1;
-            perpage = perpage || 24;
+            perpage = perpage || 10;
             
             var d = $q.defer();
             $http.post('/hots/guides/featured', { hero: hero, page: page, perpage: perpage }).success(function (data) {
