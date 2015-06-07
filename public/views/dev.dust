@@ -22,7 +22,7 @@
     <!-- vendor -->
     <script src="./dist/vendor.min.js"></script>
     <!-- angular -->
-    <script src="./dist/angular.js"></script>
+    <script src="./dist/angular.min.js"></script>
     <!-- app -->
     <script src="./dist/app.min.js"></script>
     <!-- stripe -->

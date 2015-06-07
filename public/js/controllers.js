@@ -2303,7 +2303,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.options = {
           disableDragAndDrop: true,
           height: 300,
-          disableDragAndDrop: true,
           fontNames: ['Open Sans Regular', 'Open Sans Bold'],
           defaultFontName: 'Open Sans Regular',
           toolbar: [
@@ -2464,7 +2463,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.options = {
           disableDragAndDrop: true,
           height: 300,
-          disableDragAndDrop: true,
           fontNames: ['Open Sans Regular', 'Open Sans Bold'],
           defaultFontName: 'Open Sans Regular',
           toolbar: [
@@ -2635,7 +2633,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.options = {
           disableDragAndDrop: true,
           height: 100,
-          disableDragAndDrop: true,
           toolbar: [
             ['style', ['style']],
             ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
