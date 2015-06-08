@@ -132,12 +132,10 @@ app.get('/auth/bnet/callback', passport.authenticate('bnet', { failureRedirect: 
 app.get('/', routes.frontend.index(config));
 app.get('*', routes.frontend.index(config));
 
-
-
 /* frontend */
-app.post('/login', routes.frontend.login(Schemas, jwt, config.JWT_SECRET));
+app.post('/login', routes.frontend.login(Schemas, jwt, JWT_SECRET));
 app.post('/signup', routes.frontend.signup(Schemas, uuid, Mail));
-app.post('/verify', routes.frontend.verifyEmail(Schemas, Mail, jwt, config.JWT_SECRET));
+app.post('/verify', routes.frontend.verifyEmail(Schemas, Mail, jwt, JWT_SECRET));
 app.post('/forgot-password', routes.frontend.forgotPassword(Schemas, Mail, uuid));
 app.post('/forgot-password/reset', routes.frontend.resetPassword(Schemas, Mail));
 
@@ -147,6 +145,7 @@ app.post('/profile/:username', routes.frontend.profile(Schemas));
 app.post('/profile/:username/activity', routes.frontend.profileActivity(Schemas, async));
 app.post('/profile/:username/articles', routes.frontend.profileArticles(Schemas));
 app.post('/profile/:username/decks', routes.frontend.profileDecks(Schemas));
+app.post('/profile/:username/guides', routes.frontend.profileGuides(Schemas));
 
 app.post('/articles', routes.frontend.articles(Schemas));
 app.post('/article', routes.frontend.article(Schemas));
@@ -157,11 +156,25 @@ app.post('/decks/featured', routes.frontend.decksFeatured(Schemas));
 app.post('/deck', routes.frontend.deck(Schemas));
 app.post('/deckbuilder', routes.frontend.deckBuilder(Schemas, Util));
 
+app.post('/hots/guides', routes.frontend.hots.guides(Schemas));
+app.post('/hots/guides/community', routes.frontend.hots.guidesCommunity(Schemas));
+app.post('/hots/guides/featured', routes.frontend.hots.guidesFeatured(Schemas));
+app.post('/hots/guide', routes.frontend.hots.guide(Schemas));
+
+app.post('/hots/heroes', routes.frontend.hots.heroes(Schemas));
+app.post('/hots/heroes/list', routes.frontend.hots.heroesList(Schemas));
+app.post('/hots/hero', routes.frontend.hots.hero(Schemas));
+app.post('/hots/hero/class', routes.frontend.hots.heroByClass(Schemas));
+
+app.post('/hots/maps', routes.frontend.hots.maps(Schemas));
+
 app.post('/forum', routes.frontend.forum(Schemas, async));
 app.post('/forum/thread', routes.frontend.forumThread(Schemas));
 app.post('/forum/post', routes.frontend.forumPost(Schemas));
 
 app.post('/banners', routes.frontend.getBanners(Schemas));
+app.post('/polls', routes.frontend.pollsPage(Schemas, async));
+app.post('/polls/vote', routes.frontend.pollsVote(Schemas));
 
 app.post('/upload', routes.frontend.uploadToImgur(fs, imgur));
 
@@ -178,6 +191,13 @@ app.post('/api/deck/delete', routes.frontend.deckDelete(Schemas));
 app.post('/api/deck/vote', routes.frontend.deckVote(Schemas));
 app.post('/api/deck/comment/add', routes.frontend.deckCommentAdd(Schemas, mongoose));
 
+app.post('/api/hots/guide', routes.frontend.hots.guideEdit(Schemas));
+app.post('/api/hots/guide/add', routes.frontend.hots.guideAdd(Schemas, Util, mongoose));
+app.post('/api/hots/guide/update', routes.frontend.hots.guideUpdate(Schemas, Util));
+app.post('/api/hots/guide/delete', routes.frontend.hots.guideDelete(Schemas));
+app.post('/api/hots/guide/vote', routes.frontend.hots.guideVote(Schemas));
+app.post('/api/hots/guide/comment/add', routes.frontend.hots.guideCommentAdd(Schemas, mongoose));
+
 app.post('/api/forum/post/add', routes.frontend.forumPostAdd(Schemas, Util, mongoose));
 app.post('/api/forum/post/comment/add', routes.frontend.forumCommentAdd(Schemas, mongoose));
 
@@ -188,6 +208,7 @@ app.post('/api/profile/changeEmail', routes.frontend.changeEmail(Schemas, uuid, 
 app.post('/api/profile/updateEmail', routes.frontend.updateEmail(Schemas, Mail));
 app.post('/api/profile/:username', routes.frontend.userProfile(Schemas));
 app.post('/api/profile/:username/decks', routes.frontend.profileDecksLoggedIn(Schemas));
+app.post('/api/profile/:username/guides', routes.frontend.profileGuidesLoggedIn(Schemas));
 
 app.post('/api/subscription/setplan', routes.frontend.subSetPlan(Schemas, Subscription));
 app.post('/api/subscription/setcard', routes.frontend.subSetCard(Schemas, Subscription));
@@ -224,8 +245,9 @@ app.post('/api/admin/map/delete', routes.admin.isAdmin(Schemas), routes.admin.ma
 app.post('/api/admin/map/edit', routes.admin.isAdmin(Schemas), routes.admin.mapEdit(Schemas));
 
 app.post('/api/admin/guides', routes.admin.isAdmin(Schemas), routes.admin.guides(Schemas));
+app.post('/api/admin/guides/all', routes.admin.isAdmin(Schemas), routes.admin.allGuides(Schemas));
 app.post('/api/admin/guide', routes.admin.isAdmin(Schemas), routes.admin.guide(Schemas));
-app.post('/api/admin/guide/add', routes.admin.isAdmin(Schemas), routes.admin.guideAdd(Schemas, Util));
+app.post('/api/admin/guide/add', routes.admin.isAdmin(Schemas), routes.admin.guideAdd(Schemas, Util, mongoose));
 app.post('/api/admin/guide/delete', routes.admin.isAdmin(Schemas), routes.admin.guideDelete(Schemas));
 app.post('/api/admin/guide/edit', routes.admin.isAdmin(Schemas), routes.admin.guideEdit(Schemas, Util));
 
@@ -235,6 +257,8 @@ app.post('/api/admin/article', routes.admin.isAdmin(Schemas), routes.admin.artic
 app.post('/api/admin/article/add', routes.admin.isAdmin(Schemas), routes.admin.articleAdd(Schemas));
 app.post('/api/admin/article/delete', routes.admin.isAdmin(Schemas), routes.admin.articleDelete(Schemas));
 app.post('/api/admin/article/edit', routes.admin.isAdmin(Schemas), routes.admin.articleEdit(Schemas));
+
+app.post('/api/admin/article/names', routes.admin.isAdmin(Schemas), routes.admin.articleGetNames(Schemas, async));
 
 app.post('/api/admin/forum/categories', routes.admin.isAdmin(Schemas), routes.admin.categories(Schemas));
 app.post('/api/admin/forum/category', routes.admin.isAdmin(Schemas), routes.admin.category(Schemas));
@@ -258,6 +282,15 @@ app.post('/api/admin/users/providers', routes.admin.isAdmin(Schemas), routes.adm
 app.post('/api/admin/upload/article', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadArticle(fs, gm, amazon));
 app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadCard(fs, gm, amazon));
 app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadDeck(fs, gm, amazon));
+app.post('/api/admin/upload/polls', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadPoll(fs, gm, amazon));
+
+app.post('/api/admin/polls', routes.admin.isAdmin(Schemas), routes.admin.polls(Schemas));
+app.post('/api/admin/poll', routes.admin.isAdmin(Schemas), routes.admin.poll(Schemas));
+app.post('/api/admin/poll/delete', routes.admin.isAdmin(Schemas), routes.admin.pollDelete(Schemas));
+app.post('/api/admin/poll/add', routes.admin.isAdmin(Schemas), routes.admin.pollAdd(Schemas));
+app.post('/api/admin/poll/edit', routes.admin.isAdmin(Schemas), routes.admin.pollEdit(Schemas));
+
+app.post('/api/admin/id', routes.admin.isAdmin(Schemas), routes.admin.getObjectID(mongoose));
 
 // 404
 app.use(function (req, res, next) {
