@@ -56,7 +56,7 @@ app.set('template_engine', 'dust');
 app.set('views', __dirname + '/public/views');
 app.set('view engine', 'dust');
 
-//app.use(require('prerender-node').set('prerenderToken', 'XrpCoT3t8wTNledN5pLU'));
+app.use(require('prerender-node').set('prerenderToken', 'XrpCoT3t8wTNledN5pLU'));
 app.use(favicon(path.join(__dirname, 'favicon.ico')));
 app.use(compression({
     threshold: 512
