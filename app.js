@@ -193,6 +193,8 @@ if (cluster.isMaster) {
     
     app.post('/upload', routes.frontend.uploadToImgur(fs, imgur));
     
+    app.post('/twitch', routes.frontend.twitch(Schemas));
+    
     /* frontend - requires login */
     app.post('/api/verify', routes.frontend.verify(Schemas));
 

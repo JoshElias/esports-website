@@ -97,7 +97,44 @@
         </div>
         
         <div class="hidden-xs hidden-s col-md-3 col-lg-3">
-            <div ads-sidebar-home></div>
+            
+            <div class="adSenseSidebarHome clearfix" ng-show="!app.user.isSubscribed()">
+                <div ads-sidebar-home></div>
+            </div>
+            
+            <div class="twitch-feed clearfix m-b-md">
+                <div class="twitch-head">
+                    <div>
+                        <i class="fa fa-twitch"></i>
+                        <h3>TEMPO STREAMS</h3>
+                    </div>
+                </div>
+                <div class="twitch-body">
+                    <div class="stream">
+                        <a ng-href="{{stuff.channelUrl}}">
+                            <img ng-src="{{stuff.logoUrl}}">
+                            <div class="stream-info pull-right">
+                                <div class="stream-info-top">
+                                    <h4>{{stuff.displayName}}</h4>
+                                </div>
+                                <div class="stream-info-bottom clearfix">
+                                    <p>{{stuff.gameName}}</p>
+                                    <h4 class="pull-right">{{stuff.viewerCount}}</h4><i class="fa fa-eye"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="stream lite"></div>
+                    <div class="stream"></div>
+                    <div class="stream lite"></div>
+                    <div class="stream"></div>
+                    <div class="stream lite"></div>
+                    <div class="stream"></div>
+                    <div class="stream lite"></div>
+                    <div class="stream"></div>
+                    <div class="stream lite"></div>
+                </div>
+            </div>
         </div>
         
     </div>

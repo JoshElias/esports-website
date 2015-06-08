@@ -220,10 +220,13 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles',  
-    function ($scope, dataBanners, dataArticles) {
+.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataTwitch', 
+    function ($scope, dataBanners, dataArticles, dataTwitch) {
         // data
         $scope.articles = dataArticles.articles;
+        $scope.stuff = dataTwitch.stuff;
+        
+        console.log(dataTwitch.stuff);
         
         // banner
         $scope.banner = {
@@ -7109,11 +7112,9 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }                                         
 ])
-.controller('twitchCtrl', ['$scope',
-    function($scope) {
-        
-        console.log('Hello World');
-        
+.controller('twitchCtrl', ['$scope', 'dataTwitch',
+    function($scope, dataTwitch) {
+        $scope.streams = dataTwitch.stuff;
     }
 ])
 .controller('TeamCtrl', ['$scope',

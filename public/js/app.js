@@ -151,10 +151,13 @@ var app = angular.module('app', [
                                 var klass = 'all',
                                     page = 1,
                                     perpage = 9;
-                                return ArticleService.getArticles('ts', klass, page, perpage);
+                                 return ArticleService.getArticles('ts', klass, page, perpage);
                             }],
                             dataBanners: ['BannerService', function (BannerService) {
-                                return BannerService.getBanners('ts');
+                                 return BannerService.getBanners('ts');
+                            }], 
+                            dataTwitch: ['TwitchService', function (TwitchService) {
+                                 return TwitchService.getStreams();
                             }]
                         }
                     }
@@ -597,7 +600,7 @@ var app = angular.module('app', [
                         return $q.reject();
                     }]
                 },
-                seo: { title: 'Talent Caluclator', description: 'Talent Calculator for Heroes of the Storm', keywords: '' }
+                seo: { title: 'Talent Calculator', description: 'Talent Calculator for Heroes of the Storm', keywords: '' }
             })
             .state('app.hots.talentCalculator.hero', {
                 url: '/:hero',
@@ -613,7 +616,7 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                seo: { title: 'Talent Caluclator', description: 'Talent Calculator for Heroes of the Storm', keywords: '' }
+                seo: { title: 'Talent Calculator', description: 'Talent Calculator for Heroes of the Storm', keywords: '' }
             })
             .state('app.forum', {
                 abstract: true,

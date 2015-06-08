@@ -15,7 +15,7 @@
     <meta name="keywords" content="{{ metaservice.metaKeywords() }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="stylesheet" href="./dist/vendor.min.css" type="text/css" />
-    <link rel="stylesheet" href="./dist/style.min.css" type="text/css" />
+    <link rel="stylesheet" href="./css/style.css" type="text/css" />
 </head>
 <body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
     <div class="app" id="app" ui-view="root"></div>

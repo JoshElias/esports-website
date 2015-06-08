@@ -309,6 +309,34 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
     animation: fadeOutRight 0.5s;
 }
 
+
+/* twitch FEED */
+.twitch-feed { width: auto; height: 420px; display:block; } 
+.twitch-feed .twitch-head { height: 60px; background-color: #64449b; text-align: center; }
+.twitch-feed div { padding:5px; }
+.twitch-feed div h3,
+.twitch-feed div i { color: white; display:inline-block; line-height: 40px; text-shadow: 0px 0px 8px #fdedf4; vertical-align: middle; margin: 0px 10px 0px 0px }
+
+.twitch-feed div h3 { font-size: 20px; font-family: 'Open Sans Bold' }
+.twitch-feed div i { font-size: 28px; margin: 0px 10px }
+
+.twitch-feed .twitch-body { height: 360px; padding: 0px; overflow-y: auto }
+.twitch-feed .twitch-body .stream { border-bottom: 1px solid #171514; height: 60px; background-color: #0f0f0f; position: relative; }
+.twitch-feed .twitch-body img { width: 40px; height: 40px; position: absolute; margin:auto; top: 0; bottom: 0; left: 10;  }
+.twitch-feed .twitch-body .stream-info { color:white; position: relative; top: 0; bottom: 0; right: 0; width: 200px;}
+.twitch-feed .twitch-body .stream-info  div { padding:0px }
+.twitch-feed .twitch-body .stream-info .stream-info-bottom h4 { color: #BCBCBC; font-size: 14px; margin: 0px; float: right; }
+.twitch-feed .twitch-body .stream-info .stream-info-top h4 { color: #BCBCBC; font-size: 14px; margin: 0px; }
+.twitch-feed .twitch-body .stream-info .stream-info-bottom p { color: #7F6AAF; float: left; margin: 0px;  }
+.twitch-feed .twitch-body .stream-info .stream-info-top {}
+.twitch-feed .twitch-body .stream-info .stream-info-bottom { padding: 8px 0px}
+.twitch-feed .twitch-body .stream-info .stream-info-bottom i { color: #BCBCBC; font-size: 14px; height:14px; line-height: 1; margin:0px 5px 0px 0px; text-shadow: none; float: right; }
+
+
+.twitch-feed .twitch-body .stream.lite { background-color: #161515 }
+
+
+
 /* animated dropdowns */
 .open .dropdown-menu {
     -webkit-animation: fadeInRight 0.5s;
@@ -2049,7 +2077,8 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .ad-banner { margin: 20px auto; width: 600px; height: 146px; }
 .ad-banner img { width: 600px; height: 146px; }
 
-.adSenseSidebarHome { height: 280px; width: auto; margin-bottom: 20px; }
+.adSenseSidebarHome { height: auto; width: auto; margin-bottom: 20px; }
+.adSenseSidebar { height: 280px; width: auto; } 
 .adSenseBanner { margin-top: 20px; height: 120px; width: auto; }
 
 /* terms / privacy */
