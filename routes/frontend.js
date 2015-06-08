@@ -2,7 +2,7 @@ module.exports = {
     hots: require('./frontend/hots'),
     index: function (config) {
         return function (req, res, next) {
-            return res.render(config.tpl);
+            return res.render(config.APP_INDEX);
         };
     },
     login: function(Schemas, jwt, JWT_SECRET) {

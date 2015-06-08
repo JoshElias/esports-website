@@ -2,10 +2,10 @@
     <!-- not subscribed -->
     
     <!-- Error panel -->
-    <div ng-show="error || success" class="panel panel-danger m-t-md" ng-class="{ 'panel-danger' : error, 'panel-success' : success }">
+    <div ng-show="error || success" class="panel m-t-md" ng-class="{ 'panel-danger' : error, 'panel-success' : success }">
         <div class="panel-heading">{{error ? 'Error' : 'Success'}}</div>
         <div class="panel-body">
-            <ul class="error text-danger" ng-class="{ 'text-danger' : error, 'text-success' : success }">
+            <ul class="" ng-class="{ 'text-danger' : error, 'text-success' : success }">
                 <li>{{error || success}}</li>
             </ul>
         </div>
