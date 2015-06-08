@@ -162,9 +162,6 @@ var app = angular.module('app', [
                             }],
                             dataBanners: ['BannerService', function (BannerService) {
                                  return BannerService.getBanners('ts');
-                            }], 
-                            dataTwitch: ['TwitchService', function (TwitchService) {
-                                 return TwitchService.getStreams();
                             }]
                         }
                     }

@@ -205,9 +205,6 @@ var app = angular.module('app', [
                             }],
                             dataBanners: ['BannerService', function (BannerService) {
                                  return BannerService.getBanners('ts');
-                            }], 
-                            dataTwitch: ['TwitchService', function (TwitchService) {
-                                 return TwitchService.getStreams();
                             }]
                         }
                     }
@@ -2067,15 +2064,24 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataTwitch', 
-    function ($scope, dataBanners, dataArticles, dataTwitch) {
+.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'TwitchService',
+    function ($scope, dataBanners, dataArticles, TwitchService) {
         // data
         $scope.articles = dataArticles.articles;
-        $scope.stuff = dataTwitch.stuff;
+        $scope.streamWheel = false;
+        $scope.streams = undefined;
         
-        console.log(dataTwitch.stuff);
+        
+        TwitchService.getStreams().then(function(data) {
+            $scope.streamWheel = true;
+            $scope.streams = data.streamFeed;
+        });
+        
+        
+        console.log($scope.streams);
         
         // banner
+        
         $scope.banner = {
             current: 0,
             direction: 'left',
@@ -9414,6 +9420,11 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/hots.guideBuilder.directive.html',
     }
 })
+.directive('hotsTc', function() {
+    return {
+        templateUrl: 'views/frontend/hots.tc.directive.html',
+    }
+})
 .directive('adsSidebar', function () {
     return {
         restrict: 'A',
@@ -11444,7 +11455,7 @@ angular.module('app.services', [])
     return {
         getStreams: function () {
             var d = $q.defer();
-            $http.post('/twitch', { limit: 50 }).success(function (data) {
+            $http.post('/twitchFeed', { limit: 50 }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

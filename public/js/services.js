@@ -1905,7 +1905,7 @@ angular.module('app.services', [])
     return {
         getStreams: function () {
             var d = $q.defer();
-            $http.post('/twitch', { limit: 50 }).success(function (data) {
+            $http.post('/twitchFeed', { limit: 50 }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

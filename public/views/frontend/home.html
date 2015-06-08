@@ -41,14 +41,13 @@
 </div>
 <!-- banner end -->
 
-<!-- content banner start -->
-
-<!-- content banner end -->
-
 <!-- content start -->
 <div class="container home-content">
     <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-7" ng-class="{ 'col-lg-5': !app.user.isSubscribed(), 'col-lg-8': app.user.isSubscribed() }">
+        <div class="adSenseBanner clearfix" ng-if="!app.user.isSubscribed()">
+            <div ads-banner></div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-7 col-lg-5" >
             <div class="home-articles">
                 <!-- article -->
                 <div class="article-wrapper" ng-repeat="article in articles">
@@ -88,52 +87,45 @@
             </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
-            <!-- guide builder -->
-            <div hots-builder></div>
-            <!-- / guide builder -->
+            <!-- talent calc -->
+            <div hots-tc></div>
+            <!-- /talent calc -->
             <!-- deck builder -->
             <div hs-builder></div>
             <!-- / deck builder -->
+            <!-- guide builder -->
+            <div hots-builder></div>
+            <!-- / guide builder -->
         </div>
         
         <div class="hidden-xs hidden-s col-md-3 col-lg-3">
-            
-            <div class="adSenseSidebarHome clearfix" ng-show="!app.user.isSubscribed()">
-                <div ads-sidebar-home></div>
-            </div>
-            
             <div class="twitch-feed clearfix m-b-md">
-                <div class="twitch-head">
+                <div class="twitch-head wrapper-sm">
                     <div>
-                        <i class="fa fa-twitch"></i>
+                        <i class="fa" ng-class="{ 'fa-twitch': streamWheel, 'fa-cog': !streamWheel, 'fa-spin': !streamWheel }"></i>
                         <h3>TEMPO STREAMS</h3>
                     </div>
                 </div>
-                <div class="twitch-body">
-                    <div class="stream">
-                        <a ng-href="{{stuff.channelUrl}}">
-                            <img ng-src="{{stuff.logoUrl}}">
+                <div class="twitch-body" ng-show="streams">
+                    <div class="stream wrapper-xs" ng-repeat="stream in streams | orderBy:'-viewerCount'">
+                        <a target="_blank" ng-href="{{stream.channelUrl}}">
+                            <i class="fa fa-cog fa-spin" ng-show="!streams"></i>
+                            <img ng-src="{{stream.logoUrl}}">
                             <div class="stream-info pull-right">
                                 <div class="stream-info-top">
-                                    <h4>{{stuff.displayName}}</h4>
+                                    <h4>{{stream.displayName}}</h4>
+                                    <div class="views">
+                                        <h4 class="pull-right">{{stream.viewerCount}}</h4><i class="fa fa-eye pull-right"></i>
+                                    </div>
                                 </div>
                                 <div class="stream-info-bottom clearfix">
-                                    <p>{{stuff.gameName}}</p>
-                                    <h4 class="pull-right">{{stuff.viewerCount}}</h4><i class="fa fa-eye"></i>
+                                    <p>{{stream.gameName}}</p>
                                 </div>
                             </div>
                         </a>
                     </div>
-                    <div class="stream lite"></div>
-                    <div class="stream"></div>
-                    <div class="stream lite"></div>
-                    <div class="stream"></div>
-                    <div class="stream lite"></div>
-                    <div class="stream"></div>
-                    <div class="stream lite"></div>
-                    <div class="stream"></div>
-                    <div class="stream lite"></div>
                 </div>
+                <div class="darkbox nostream wrapper-md" ng-show="!streams && streamWheel"><p class="m-b-none">Sorry, there are currently no streams available.</p></div>
             </div>
         </div>
         
