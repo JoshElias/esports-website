@@ -456,6 +456,12 @@ var app = angular.module('app', [
                             }],
                             dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
                                 return HOTSGuideService.getMaps();
+                            }],
+                            og: ['$q', 'MetaService', 'data', function ($q, MetaService, data) {
+                                var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/hots-logo.png';
+                                MetaService.set(data.guide.name + ' - Guides', data.guide.description);
+                                MetaService.setOg('https://tempostorm.com/articles/' + data.guide.slug, data.guide.name, data.guide.description, 'article', ogImg);
+                                $q.reject();
                             }]
                         }
                     }
