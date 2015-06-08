@@ -112,7 +112,7 @@ passport.use(new BnetStrategy({
 app.get('/auth/twitch', passport.authenticate('twitch'));
 app.get('/auth/twitch/callback', passport.authenticate('twitch', { failureRedirect: '/login' }),
   function(req, res) {
-    var token = jwt.sign({ _id: req.user._id.toString() }, JWT_SECRET);
+    var token = jwt.sign({ _id: req.user._id.toString() }, config.JWT_SECRET);
     res.cookie('token', token);
     res.redirect('/');
   });
@@ -121,7 +121,7 @@ app.get('/auth/twitch/callback', passport.authenticate('twitch', { failureRedire
 app.get('/auth/bnet', passport.authenticate('bnet'));
 app.get('/auth/bnet/callback', passport.authenticate('bnet', { failureRedirect: '/login' }),
   function(req, res) {
-    var token = jwt.sign({ _id: req.user._id.toString() }, JWT_SECRET);
+    var token = jwt.sign({ _id: req.user._id.toString() }, config.JWT_SECRET);
     res.cookie('token', token);
     res.redirect('/');
   });
@@ -133,9 +133,9 @@ app.get('/', routes.frontend.index(config));
 app.get('*', routes.frontend.index(config));
 
 /* frontend */
-app.post('/login', routes.frontend.login(Schemas, jwt, JWT_SECRET));
+app.post('/login', routes.frontend.login(Schemas, jwt, config.JWT_SECRET));
 app.post('/signup', routes.frontend.signup(Schemas, uuid, Mail));
-app.post('/verify', routes.frontend.verifyEmail(Schemas, Mail, jwt, JWT_SECRET));
+app.post('/verify', routes.frontend.verifyEmail(Schemas, Mail, jwt, config.JWT_SECRET));
 app.post('/forgot-password', routes.frontend.forgotPassword(Schemas, Mail, uuid));
 app.post('/forgot-password/reset', routes.frontend.resetPassword(Schemas, Mail));
 
