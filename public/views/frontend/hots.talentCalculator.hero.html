@@ -58,18 +58,28 @@
                 </ul>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="tc-damage" ng-class="{ 'tc-damage-ability': false, 'tc-damage-heroic': false, 'tc-damage-trait': false }" ng-show="getCurrentAbility()">
-                    
+                <div class="tc-damage wrapper-md" ng-class="{ 'tc-damage-ability': getCurrentAbility().abilityType == 'Ability', 'tc-damage-heroic': getCurrentAbility().abilityType == 'Heroic Ability', 'tc-damage-trait': getCurrentAbility().abilityType == 'Combat Trait' }" ng-show="getCurrentAbility()">
+                    <div class="tc-damage-ability m-b-md pos-rl">
+                        <div class="talents-icon {{getCurrentHero().className}} {{getCurrentAbility().className}}"></div>
+                        <h3>{{getCurrentAbility().name}}</h3>
+                        <p>{{getCurrentAbility().description}}</p>
+                    </div>
+                    <div class="tc-damage-talent m-b-md pos-rl" ng-repeat="talent in getAbilityTalents()">
+                        <div class="talents-icon {{getCurrentHero().className}} {{talent.className}}"></div>
+                        <h3>{{talent.name}}</h3>
+                        <p>{{talent.description}}</p>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="row m-b-md">
-            <div class="hidden-xs col-md-6">
+            <div class="hidden-xs hidden-sm col-md-6">
                 <div class="tc-url-box">
                     <div class="input-group">
                         <input type="text" value="{{url()}}" class="form-control input-dark tc-url" readonly>
                         <span class="input-group-btn">
                             <a href="#" class="btn btn-blue" ng-click="copyUrl()">COPY</a>
+                            <a href="#" class="btn btn-red" ng-click="reset()">RESET</a>
                         </span>
                     </div>
                 </div>

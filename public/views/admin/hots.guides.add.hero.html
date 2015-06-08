@@ -75,7 +75,7 @@
     <div class="guide-text talent-select"></div>
     <p ng-show="!guide.heroes.length" class="white wrapper-md">You must select at least 1 hero before you can choose talents.</p>
     <div class="row">
-        <div class="col-xs-4" ng-repeat="hero in guide.heroes track by $index">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="hero in guide.heroes track by $index">
             <div class="gb-talents">
                 <div class="gb-talents-title talents-title {{hero.hero.className}}">{{hero.hero.name}}</div>
                 <ul class="gb-talents-tiers">
@@ -95,7 +95,7 @@
 <div class="container" ng-show="step === 4">
     <div class="guide-text hero-information"></div>
     <div class="row">
-        <div class="col-xs-4">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
             <div class="gb-synergy">
                 <h1>SYNERGY</h1>
                 <span>Who plays well with this guide?</span>
@@ -104,7 +104,7 @@
                 <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasSynergy(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleSynergy(hero)" hots-hero>{{hero.name}}</a></li>
             </ul>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
             <div class="gb-strong">
                 <h1>STRONG AGAINST</h1>
                 <span>Who are they strong against?</span>
@@ -113,7 +113,7 @@
                 <li ng-repeat="hero in heroes" ng-class="{ active: guide.hasStrong(hero) }"><a href="#" class="{{hero.className}}" ng-click="guide.toggleStrong(hero)" hots-hero>{{hero.name}}</a></li>
             </ul>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
             <div class="gb-weak">
                 <h1>WEAK AGAINST</h1>
                 <span>Who are they weak against?</span>
@@ -144,7 +144,11 @@
     <div class="guide-text hero-discussion"></div>
     <div class="db-section m-b-md" ng-repeat="content in guide.content track by $index | orderBy: content.orderNum">
         <div class="gb-content-title">
-            <a href="#" class="gb-content-delete" ng-show="guide.content.length" ng-click="guide.deleteContent(content)"><i class="fa fa-times"></i></a>
+            <div class="gb-content-btns clearfix">
+                <a href="#" class="gb-content-down m-r-xs" ng-class="{ 'disabled': $index == (guide.content.length - 1) }" ng-show="guide.content.length > 1" ng-click="guide.moveContentDown(content)"><i class="fa fa-caret-down"></i></a>
+                <a href="#" class="gb-content-up m-r-md" ng-class="{ 'disabled': $index == 0 }" ng-show="guide.content.length > 1" ng-click="guide.moveContentUp(content)"><i class="fa fa-caret-up"></i></a>
+                <a href="#" class="gb-content-delete" ng-show="guide.content.length" ng-click="guide.deleteContent(content)"><i class="fa fa-times"></i></a>
+            </div>
             <input type="text" name="contentTitle{{$index}}" class="form-control input-content-title" value="" ng-model="content.title">
         </div>
         <div>

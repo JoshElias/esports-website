@@ -626,23 +626,48 @@ module.exports = {
     },
     articles: function (Schemas) {
         return function (req, res, next) {
-            Schemas.Article.find({})
-            .select('_id title')
-            .sort({ createdDate: -1 })
-            .exec(function (err, articles){
-                if (err) {
-                    console.log(err);
+            var page = req.body.page || 1,
+                perpage = req.body.perpage || 50,
+                search = req.body.search || '',
+                where = (search.length) ? { title: new RegExp(search, "i") } : {},
+                total, articles;
+            
+            function getTotal (callback) {
+                Schemas.Article.count({})
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            function getArticles (callback) {
+                Schemas.Article.find({})
+                .where(where)
+                .sort({ createdDate: -1 })
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    articles = results;
+                    return callback();
+                });
+            }
+            
+            getTotal(function () {
+                getArticles(function () {
                     return res.json({
-                        success: false,
-                        errors: {
-                            unknown: {
-                                msg: 'An unknown error occurred'
-                            }
-                        }
+                        success: true,
+                        articles: articles,
+                        total: total,
+                        page: page,
+                        perpage: perpage,
+                        search: search
                     });
-                }
-                return res.json({ success: true, articles: articles });
+                });
             });
+            
         };
     },
     article: function (Schemas) {

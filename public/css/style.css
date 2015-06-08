@@ -367,8 +367,8 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-banner .banner-slide.active { display: block; z-index: 3; }
 .home-banner .banner-slide .container { position: relative; }
 .home-banner .banner-panel { position: absolute; top: 50px; left: 0px; width: 600px; height: 200px; }
-.home-banner .banner-panel h1 { margin: 20px; display: inline-block; padding: 10px 30px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 30px; background: #2766ad; }
-.home-banner .banner-panel p { margin: 0 20px 20px; padding: 10px 30px; display: inline-block; color: #FFF; white-space: normal; background: rgba(0,0,0,.8); }
+.home-banner .banner-panel h1 { margin: 20px; display: inline-block; padding: 10px 30px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 30px; background: rgba(39,102,173,.8); letter-spacing: 2px; }
+.home-banner .banner-panel p { margin: 0 20px 20px; padding: 15px 30px; display: inline-block; color: #FFF; white-space: normal; background: rgba(0,0,0,.8); }
 .home-banner .banner-panel .banner-btn-wrapper { margin: 20px; }
 .home-banner .banner-panel .banner-btn { background: rgba(39,102,173,.8); border: 1px solid rgba(255,255,255,.5); color: #FFF; padding: 10px 30px; text-decoration: none; }
 .home-banner .banner-panel .banner-btn:hover { color: #2766ad; background: #FFF; border-color: #2766ad; box-shadow: 0px 0px 30px rgba(255,255,255,1); }
@@ -953,6 +953,29 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .btn-blue:disabled {
     background: #2766ad;
+    color: #FFF;
+    opacity: .5;
+}
+
+.btn-red {
+    background: #aa2526;
+    color: #FFF;
+}
+
+.btn-red:hover,
+.btn-red:focus {
+    background: #800d0d;
+    color: #FFF;
+}
+
+.btn-red.active {
+    background: #aa2526;
+    color: #FFF;
+    font-weight: bold;
+}
+
+.btn-red:disabled {
+    background: #aa2526;
     color: #FFF;
     opacity: .5;
 }
@@ -2278,7 +2301,7 @@ ul[dnd-list] .dndPlaceholder {
 
 /* hots guide - step 2 */
 .hero-selection { margin: 40px auto 20px auto; }
-.hero-selection .hero-row { margin: -20px auto 0 auto; }
+.hero-selection .hero-row { margin: -20px auto 0 auto; white-space: nowrap; }
 
 .hero-selection .hero-row.hero-1 { max-width: 90px; }
 .hero-selection .hero-row.hero-2 { max-width: 180px; }
@@ -2343,6 +2366,7 @@ ul[dnd-list] .dndPlaceholder {
 .icon-zeratul { background: url('../img/hots/heroes/zeratul-hex.png') no-repeat center center; }
 .icon-sylvanas { background: url('../img/hots/heroes/sylvanas-hex.png') no-repeat center center; }
 .icon-kaelthas { background: url('../img/hots/heroes/kaelthas-hex.png') no-repeat center center; }
+.icon-johanna { background: url('../img/hots/heroes/johanna-hex.png') no-repeat center center; }
 
 .hero-selection .hero .icon-wrap .icon:hover { background-color: rgba(88, 43, 128, 1); }
 .hero-selection .hero .icon-wrap .icon.active { background-color: #2766ad; }
@@ -2352,7 +2376,7 @@ p.white { color: #FFF; }
 
 /* maps */
 .map-selection { margin: 70px auto 20px auto; }
-.map-selection .map-row { margin: -50px auto 0 auto; }
+.map-selection .map-row { margin: -50px auto 0 auto; white-space: nowrap; }
 
 .map-selection .map-row.map-row-1 { max-width: 191px; }
 .map-selection .map-row.map-row-2 { max-width: 382px; }
@@ -2378,8 +2402,18 @@ p.white { color: #FFF; }
 
 /* guide content */
 .gb-content-title { position: relative; min-height: 60px; line-height: 60px; border-bottom: 1px solid #000; background: rgba(0,0,0,.3); }
-.input-content-title { padding-right: 60px; height: 60px; line-height: 60px; font-size: 20px; color: #FFF; font-family: 'Open Sans Bold'; background: transparent; border: none; text-transform: uppercase; }
-.gb-content-delete { position: absolute; top: 20px; right: 20px; width: 20px; height: 20px; line-height: 20px; text-align: center; background: rgba(255,255,255,.8); color: #000; border-radius: 4px; font-size: 20px; }
+.input-content-title { padding-right: 125px; height: 60px; line-height: 60px; font-size: 20px; color: #FFF; font-family: 'Open Sans Bold'; background: transparent; border: none; text-transform: uppercase; }
+.gb-content-btns { position: absolute; top: 20px; right: 20px; }
+.gb-content-down,
+.gb-content-up,
+.gb-content-delete { float: left; width: 20px; height: 20px; line-height: 20px; text-align: center; background: rgba(255,255,255,.4); color: #000 !important; border-radius: 4px; font-size: 20px; }
+
+.gb-content-down:hover,
+.gb-content-up:hover,
+.gb-content-delete:hover { background: rgba(255,255,255,.8); }
+
+.gb-content-down.disabled,
+.gb-content-up.disabled { opacity: .3; cursor: default; }
 
 /* synergy */
 .gb-synergy,
@@ -2444,6 +2478,7 @@ p.white { color: #FFF; }
 .hero-list li a.zeratul { background: url('../img/hots/heroes/28x/zeratul28.png') no-repeat center right; }
 .hero-list li a.sylvanas { background: url('../img/hots/heroes/28x/sylvanas28.png') no-repeat center right; }
 .hero-list li a.kaelthas { background: url('../img/hots/heroes/28x/kaelthas28.png') no-repeat center right; }
+.hero-list li a.johanna { background: url('../img/hots/heroes/28x/johanna28.png') no-repeat center right; }
 
 /* guide steps */
 .gb-steps { margin: 0 0 20px 0; padding: 0 1px; }
@@ -2520,6 +2555,7 @@ p.white { color: #FFF; }
 .talents-title.zagara { background: url('../img/hots/heroes/60x/zagara60.png') no-repeat; }
 .talents-title.zeratul { background: url('../img/hots/heroes/60x/zeratul60.png') no-repeat; }
 .talents-title.kaelthas { background: url('../img/hots/heroes/60x/kaelthas60.png') no-repeat; }
+.talents-title.johanna { background: url('../img/hots/heroes/60x/johanna60.png') no-repeat; }
 
 /* talents icons */
 .talents-icon { display: block; width: 30px; height: 30px; overflow: hidden; white-space: nowrap; text-indent: -99999px; opacity: .5; transition: opacity .1s linear; }
@@ -2566,6 +2602,77 @@ p.white { color: #FFF; }
 .talents-icon.zagara { background: url('../img/hots/talents/zagara.png') no-repeat; }
 .talents-icon.zeratul { background: url('../img/hots/talents/zeratul.png') no-repeat; }
 .talents-icon.kaelthas { background: url('../img/hots/talents/kaelthas.png') no-repeat; }
+.talents-icon.johanna { background: url('../img/hots/talents/johanna.png') no-repeat; }
+
+/* talents - johanna - small */
+/* Tier 1 */
+.talents-icon.johanna.reinforce { background-position: 0px 0px; }
+.talents-icon.johanna.knight-takes-pawn { background-position: 0px -30px; }
+.talents-icon.johanna.righteous-smash { background-position: 0px -60px; }
+.talents-icon.johanna.regeneration-master { background-position: 0px -90px; }
+/* Tier 2 */
+.talents-icon.johanna.amplified-healing { background-position: 0px -120px; }
+.talents-icon.johanna.roar { background-position: 0px -60px; }
+.talents-icon.johanna.eternal-retaliation { background-position: 0px -30px; }
+.talents-icon.johanna.laws-of-hope { background-position: 0px -150px; }
+/* Tier 3 */
+.talents-icon.johanna.battle-momentum { background-position: 0px -180px; }
+.talents-icon.johanna.sins-exposed { background-position: 0px -210px; }
+.talents-icon.johanna.the-crusade-marches-on { background-position: 0px -240px; }
+.talents-icon.johanna.conviction { background-position: 0px -30px; }
+/* Tier 4 */
+.talents-icon.johanna.falling-sword { background-position: 0px -270px; }
+.talents-icon.johanna.blessed-shield { background-position: 0px -300px; }
+/* Tier 5 */
+.talents-icon.johanna.burning-rage { background-position: 0px -330px; }
+.talents-icon.johanna.hold-your-ground { background-position: 0px -240px; }
+.talents-icon.johanna.subdue { background-position: 0px -60px; }
+.talents-icon.johanna.spell-shield { background-position: 0px -360px; }
+/* Tier 6 */
+.talents-icon.johanna.holy-renewal { background-position: 0px -210px; }
+.talents-icon.johanna.fanaticism { background-position: 0px -240px; }
+.talents-icon.johanna.blessed-hammer { background-position: 0px -30px; }
+.talents-icon.johanna.imposing-presence { background-position: 0px -390px; }
+/* Tier 7 */
+.talents-icon.johanna.heavens-fury { background-position: 0px -270px; }
+.talents-icon.johanna.radiating-faith { background-position: 0px -300px; }
+.talents-icon.johanna.indestructible { background-position: 0px -420px; }
+.talents-icon.johanna.storm-shield { background-position: 0px -450px; }
+
+/* talents - johanna - large */
+/* Tier 1 */
+.talents-icon.johanna.large.reinforce { background-position: -30px 0px; }
+.talents-icon.johanna.large.knight-takes-pawn { background-position: -30px -102px; }
+.talents-icon.johanna.large.righteous-smash { background-position: -30px -204px; }
+.talents-icon.johanna.large.regeneration-master { background-position: -30px -306px; }
+/* Tier 2 */
+.talents-icon.johanna.large.amplified-healing { background-position: -30px -408px; }
+.talents-icon.johanna.large.roar { background-position: -30px -204px; }
+.talents-icon.johanna.large.eternal-retaliation { background-position: -30px -102px; }
+.talents-icon.johanna.large.laws-of-hope { background-position: -30px -510px; }
+/* Tier 3 */
+.talents-icon.johanna.large.battle-momentum { background-position: -30px -612px; }
+.talents-icon.johanna.large.sins-exposed { background-position: -30px -714px; }
+.talents-icon.johanna.large.the-crusade-marches-on { background-position: -30px -816px; }
+.talents-icon.johanna.large.conviction { background-position: -30px -102px; }
+/* Tier 4 */
+.talents-icon.johanna.large.falling-sword { background-position: -30px -918px; }
+.talents-icon.johanna.large.blessed-shield { background-position: -30px -1020px; }
+/* Tier 5 */
+.talents-icon.johanna.large.burning-rage { background-position: -30px -1122px; }
+.talents-icon.johanna.large.hold-your-ground { background-position: -30px -816px; }
+.talents-icon.johanna.large.subdue { background-position: -30px -204px; }
+.talents-icon.johanna.large.spell-shield { background-position: -30px -1224px; }
+/* Tier 6 */
+.talents-icon.johanna.large.holy-renewal { background-position: -30px -714px; }
+.talents-icon.johanna.large.fanaticism { background-position: -30px -816px; }
+.talents-icon.johanna.large.blessed-hammer { background-position: -30px -102px; }
+.talents-icon.johanna.large.imposing-presence { background-position: -30px -1326px; }
+/* Tier 7 */
+.talents-icon.johanna.large.heavens-fury { background-position: -30px -918px; }
+.talents-icon.johanna.large.radiating-faith { background-position: -30px -1020px; }
+.talents-icon.johanna.large.indestructible { background-position: -30px -1428px; }
+.talents-icon.johanna.large.storm-shield { background-position: -30px -1530px; }
 
 /* talents - kaelthas - small */
 /* Tier 1 */
@@ -4054,6 +4161,8 @@ p.white { color: #FFF; }
 .talents-icon.raynor.a-card-to-play { background-position: 0px -480px; }
 .talents-icon.raynor.nexus-frenzy { background-position: 0px -510px; }
 .talents-icon.raynor.bolt-of-the-storm { background-position: 0px -540px; }
+/* Trait */
+.talents-icon.raynor.advanced-optics { background-position: 0px -570px; }
 
 /* talents - raynor - large */
 /* Tier 1 */
@@ -4091,6 +4200,8 @@ p.white { color: #FFF; }
 .talents-icon.raynor.large.a-card-to-play { background-position: -30px -1632px; }
 .talents-icon.raynor.large.nexus-frenzy { background-position: -30px -1734px; }
 .talents-icon.raynor.large.bolt-of-the-storm { background-position: -30px -1836px; }
+/* Trait */
+.talents-icon.raynor.large.advanced-optics { background-position: -30px -1938px; }
 
 /* talents - rehgar - small */
 /* Tier 1 */
@@ -5254,6 +5365,7 @@ p.white { color: #FFF; }
 .hots-modal .hero.zeratul { background: url('../img/hots/modal/heroes/zeratul.png') no-repeat center right; }
 .hots-modal .hero.sylvanas { background: url('../img/hots/modal/heroes/sylvanas.png') no-repeat center right; }
 .hots-modal .hero.kaelthas { background: url('../img/hots/modal/heroes/kaelthas.png') no-repeat center right; }
+.hots-modal .hero.johanna { background: url('../img/hots/modal/heroes/johanna.png') no-repeat center right; }
 
 .hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
 .hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
@@ -5419,6 +5531,12 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-images .guide-image.guide-images-3.kaelthas { background: url('../img/hots/heroes/guide-images/3/kaelthas3.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-4.kaelthas { background: url('../img/hots/heroes/guide-images/4/kaelthas4.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-5.kaelthas { background: url('../img/hots/heroes/guide-images/5/kaelthas5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.guide-images-1.johanna { background: url('../img/hots/heroes/guide-images/1/johanna.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-2.johanna { background: url('../img/hots/heroes/guide-images/2/johanna2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-3.johanna { background: url('../img/hots/heroes/guide-images/3/johanna3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-4.johanna { background: url('../img/hots/heroes/guide-images/4/johanna4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-5.johanna { background: url('../img/hots/heroes/guide-images/5/johanna5.jpg') no-repeat center top; background-size: cover; }
 
 .guide-images .guide-image.guide-images-1.thelostvikings { background: url('../img/hots/heroes/guide-images/1/lostviking.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-2.thelostvikings { background: url('../img/hots/heroes/guide-images/2/lostviking2.jpg') no-repeat center top; background-size: cover; }
@@ -5618,17 +5736,17 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-images .guide-image.side.guide-images-4.jaina { background: url('../img/hots/heroes/guide-images/side/4/jaina4.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-5.jaina { background: url('../img/hots/heroes/guide-images/side/5/jaina5.jpg') no-repeat center top; background-size: cover; }
 
-.guide-images .guide-image.side.guide-images-1.johanna { background: url('../img/hots/heroes/guide-images/side/1/johanna.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.side.guide-images-2.johanna { background: url('../img/hots/heroes/guide-images/side/2/johanna2.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.side.guide-images-3.johanna { background: url('../img/hots/heroes/guide-images/side/3/johanna3.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.side.guide-images-4.johanna { background: url('../img/hots/heroes/guide-images/side/4/johanna4.jpg') no-repeat center top; background-size: cover; }
-.guide-images .guide-image.side.guide-images-5.johanna { background: url('../img/hots/heroes/guide-images/side/5/johanna5.jpg') no-repeat center top; background-size: cover; }
-
 .guide-images .guide-image.side.guide-images-1.kaelthas { background: url('../img/hots/heroes/guide-images/side/1/kaelthas.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-2.kaelthas { background: url('../img/hots/heroes/guide-images/side/2/kaelthas2.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-3.kaelthas { background: url('../img/hots/heroes/guide-images/side/3/kaelthas3.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-4.kaelthas { background: url('../img/hots/heroes/guide-images/side/4/kaelthas4.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-5.kaelthas { background: url('../img/hots/heroes/guide-images/side/5/kaelthas5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.side.guide-images-1.johanna { background: url('../img/hots/heroes/guide-images/side/1/johanna.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-2.johanna { background: url('../img/hots/heroes/guide-images/side/2/johanna2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-3.johanna { background: url('../img/hots/heroes/guide-images/side/3/johanna3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-4.johanna { background: url('../img/hots/heroes/guide-images/side/4/johanna4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-5.johanna { background: url('../img/hots/heroes/guide-images/side/5/johanna5.jpg') no-repeat center top; background-size: cover; }
 
 .guide-images .guide-image.side.guide-images-1.kerrigan { background: url('../img/hots/heroes/guide-images/side/1/kerrigan.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-2.kerrigan { background: url('../img/hots/heroes/guide-images/side/2/kerrigan2.jpg') no-repeat center top; background-size: cover; }
@@ -5884,6 +6002,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-hero-image.zeratul { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/zeratul60.png') no-repeat right top; }
 .guide-hero-image.sylvanas { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/sylvanas60.png') no-repeat right top; }
 .guide-hero-image.kaelthas { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/kaelthas60.png') no-repeat right top; }
+.guide-hero-image.johanna { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/johanna60.png') no-repeat right top; }
 
 .guide-heroes-1 { width: 100%; }
 .guide-heroes-2 { width: 50%; }
@@ -6022,6 +6141,16 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .tc-talents-icons li { float: left; list-style: none; margin-right: 5px; padding: 5px; width: 40px; height: 40px; }
 .tc-talents-icons li:last-child { margin-right: 0px; }
 
+.tc-damage { height: 280px; background: rgba(0,0,0,.8); box-shadow: 0px 0px 5px rgba(0,0,0,.5); overflow-y: auto; }
+.tc-damage.tc-damage-ability { border: 2px solid #2766ad; }
+.tc-damage.tc-damage-heroic { border: 2px solid #a9782a; }
+.tc-damage.tc-damage-trait { border: 2px solid #4d286c; }
+
+.tc-damage .talents-icon { position: absolute; top: 0px; left: 0px; opacity: 1; }
+.tc-damage .tc-damage-ability h3 { padding-left: 50px; color: #4791d0; text-transform: uppercase; font-family: 'Open Sans Bold' text-shadow: 2px 2px 2px rgba(0,0,0,.75); }
+.tc-damage .tc-damage-talent h3 { padding-left: 50px; color: #e8cc00; font-size: 12px; text-transform: uppercase; font-family: 'Open Sans Bold' text-shadow: 2px 2px 2px rgba(0,0,0,.75); }
+.tc-damage p { padding-left: 50px; font-size: 10px; }
+
 .tc-data-fix { margin-right: -10px !important; }
 .tc-datas { }
 .tc-data-wrapper { float: left; padding-right: 10px; width: 50%; }
@@ -6080,6 +6209,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .tc-hero.zeratul { background: url('../img/hots/modal/heroes/zeratul.png') no-repeat right 120px; }
 .tc-hero.sylvanas { background: url('../img/hots/modal/heroes/sylvanas.png') no-repeat right 120px; }
 .tc-hero.kaelthas { background: url('../img/hots/modal/heroes/kaelthas.png') no-repeat right 120px; }
+.tc-hero.johanna { background: url('../img/hots/modal/heroes/johanna.png') no-repeat right 120px; }
 
 /* range */
 input[type=range] {
@@ -6202,6 +6332,21 @@ input[type=range]:focus::-ms-fill-upper {
     
     /* talent calc */
     .tc-section-content { background-image: none !important; }
+
+    /* guides */
+    .gb-steps { padding: 0 30px; position: relative; }
+    .gb-steps li { display: none; float: none; }
+    .gb-steps li.active,
+    .gb-steps li.steps-arrow-prev,
+    .gb-steps li.steps-arrow-next { display: block; }
+    .gb-steps li.steps-arrow-prev,
+    .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
+    .gb-steps li.steps-arrow-prev { left: 0px; }
+    .gb-steps li.steps-arrow-next { right: 0px; }
+    
+    .gb-steps li.active,
+    .gb-steps li.active button { width: 100%; }
+
 }
 
 @media (min-width: 768px) and (max-width: 979px) {
@@ -6223,12 +6368,25 @@ input[type=range]:focus::-ms-fill-upper {
     .guide-header h1 { font-size: 20px; }
     .guide-hero-wrapper { margin: 0 0 10px 0; width: 100%; }
     .guide-hero-wrapper:last-child { margin: 0; }
+
+    .gb-steps { padding: 0 30px; position: relative; }
+    .gb-steps li { display: none; float: none; }
+    .gb-steps li.active,
+    .gb-steps li.steps-arrow-prev,
+    .gb-steps li.steps-arrow-next { display: block; }
+    .gb-steps li.steps-arrow-prev,
+    .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
+    .gb-steps li.steps-arrow-prev { left: 0px; }
+    .gb-steps li.steps-arrow-next { right: 0px; }
+    
+    .gb-steps li.active,
+    .gb-steps li.active button { width: 100%; }
+
 }
 
 @media (max-width: 767px) {
     /* home */
     .adSenseSidebarHome { height: 140px; }
-
     
     /* filters */
     .filter-bar { display: none; }
@@ -6267,7 +6425,20 @@ input[type=range]:focus::-ms-fill-upper {
     .guide-header h1 { font-size: 20px; }
     .guide-hero-wrapper { margin: 0 0 10px 0; width: 100%; }
     .guide-hero-wrapper:last-child { margin: 0; }
-
+    
+    .gb-steps { padding: 0 30px; position: relative; }
+    .gb-steps li { display: none; float: none; }
+    .gb-steps li.active,
+    .gb-steps li.steps-arrow-prev,
+    .gb-steps li.steps-arrow-next { display: block; }
+    .gb-steps li.steps-arrow-prev,
+    .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
+    .gb-steps li.steps-arrow-prev { left: 0px; }
+    .gb-steps li.steps-arrow-next { right: 0px; }
+    
+    .gb-steps li.active,
+    .gb-steps li.active button { width: 100%; }
+        
     /* polls */
     .poll-page .poll-left { margin-right: 20px; }
     .poll-item-img-wrapper,

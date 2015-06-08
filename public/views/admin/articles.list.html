@@ -7,23 +7,23 @@
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
         <div class="pull-right">
-            <span class="m-r-sm">Showing: <strong>{{pagination.showStart()}}</strong> to <strong>{{pagination.showEnd()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
+            <span class="m-r-sm">Showing: <strong>{{pagination.from()}}</strong> to <strong>{{pagination.to()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
             <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)"><i class="fa fa-arrow-circle-left"></i></button>
                 <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == pagination.pages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
             </span>
         </div>
         <div class="pull-left">
             <form>
                 <span class="pull-left m-r-sm">
-                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="pagination.setPage(1)">
+                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="searchArticles()">
                 </span>
             </form>
         </div>
     </div>
     <div class="list-group">
-        <div class="list-group-item admin-list-item clearfix" ng-repeat="article in filtered = (articles | filterAll:search | orderBy:'-createdDate' | startFrom:pagination.pageStart() | limitTo:pagination.perpage)">
+        <div class="list-group-item admin-list-item clearfix" ng-repeat="article in articles">
             <div class="row">
                 <div class="col-sm-6">
                     <span>{{article.title}}</span>
@@ -36,26 +36,26 @@
                 </div>
             </div>
         </div>
-        <div class="list-group-item" ng-show="!articles.length">
+        <div class="list-group-item" ng-if="!articles.length && !search.length">
             There are no articles yet.
         </div>
-        <div class="list-group-item b-t-none" ng-show="articles.length && filtered && !filtered.length">
+        <div class="list-group-item b-t-none" ng-if="search.length && pagination.results() == 0">
             That search returned no results.
         </div>
     </div>
     <div class="panel-footer clearfix">
         <div class="pull-right">
-            <span class="m-r-sm">Showing: <strong>{{pagination.showStart()}}</strong> to <strong>{{pagination.showEnd()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
+            <span class="m-r-sm">Showing: <strong>{{pagination.from()}}</strong> to <strong>{{pagination.to()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
             <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)"><i class="fa fa-arrow-circle-left"></i></button>
                 <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == pagination.pages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
             </span>
         </div>
         <div class="pull-left">
             <form>
                 <span class="pull-left m-r-sm">
-                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="pagination.setPage(1)">
+                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="searchArticles()">
                 </span>
             </form>
         </div>

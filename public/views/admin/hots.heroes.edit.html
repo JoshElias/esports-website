@@ -71,7 +71,7 @@
                 <strong class="lh-lg">Abilities</strong>
             </div>
             <ul class="list-group" dnd-list="hero.abilities" dnd-allowed-types="['ability']" ng-show="hero.abilities.length">
-                <li class="list-group-item lh-lg clearfix"
+                <li class="list-group-item admin-list-item lh-lg clearfix"
                     ng-repeat="ability in hero.abilities | orderBy: ability.orderNum"
                     dnd-draggable="ability"
                     dnd-moved="updateDND(hero.abilities, $index)"
@@ -97,7 +97,7 @@
                 <strong class="lh-lg">Talents</strong>
             </div>
             <ul class="list-group" dnd-list="hero.talents" dnd-allowed-types="['talent']" ng-show="hero.talents.length">
-                <li class="list-group-item lh-lg clearfix"
+                <li class="list-group-item admin-list-item lh-lg clearfix"
                     ng-repeat="talent in hero.talents | orderBy: talent.orderNum"
                     dnd-draggable="talent"
                     dnd-moved="updateDND(hero.talents, $index)"
@@ -123,7 +123,7 @@
                 <strong class="lh-lg">Characters</strong>
             </div>
             <ul class="list-group" ng-show="hero.characters.length">
-                <li class="list-group-item lh-lg clearfix" ng-repeat="character in hero.characters | orderBy: character.name">
+                <li class="list-group-item admin-list-item lh-lg clearfix" ng-repeat="character in hero.characters | orderBy: character.name">
                     {{character.name}}
                     <div class="pull-right">
                         <button class="btn btn-sm btn-default" ng-click="charEditWnd(character)">Edit</button>

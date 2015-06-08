@@ -48,121 +48,120 @@
 <!-- content start -->
 <div class="container home-content">
     <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-7 col-lg-8">
-                <div class="home-articles">
-                    <!-- article -->
-                    <div class="article-wrapper" ng-repeat="article in articles">
-                        <div class="article" ng-class="{ premium: article.premium.isPremium }">
-                            <a href="./articles/{{article.slug.url}}"></a>
-                            <div class="article-premium" ng-if="article.premium.isPremium"></div>
-                            <div class="article-theme" ng-class="{overcast:article.theme === 'overcast'}" ng-if="article.theme !== 'none'"><a href="./articles/{{article.slug.url}}"></a></div>
-                            <div class="article-img" ng-background="https://s3-us-west-2.amazonaws.com/ts-node2/articles/{{article.photos.medium}}"></div>
-                            <div class="article-content-wrapper">
-                                <div class="article-content flex-col">
-                                    <h1>{{article.title}}</h1>
-                                    <p class="flex-grow">{{article.description}}</p>
-                                    <div class="article-info">
+        <div class="col-xs-12 col-sm-12 col-md-7 col-lg-8">
+            <div class="home-articles">
+                <!-- article -->
+                <div class="article-wrapper" ng-repeat="article in articles">
+                    <div class="article" ng-class="{ premium: article.premium.isPremium }">
+                        <a href="./articles/{{article.slug.url}}"></a>
+                        <div class="article-premium" ng-if="article.premium.isPremium"></div>
+                        <div class="article-theme" ng-class="{overcast:article.theme === 'overcast'}" ng-if="article.theme !== 'none'"><a href="./articles/{{article.slug.url}}"></a></div>
+                        <div class="article-img" ng-background="https://s3-us-west-2.amazonaws.com/ts-node2/articles/{{article.photos.medium}}"></div>
+                        <div class="article-content-wrapper">
+                            <div class="article-content flex-col">
+                                <h1>{{article.title}}</h1>
+                                <p class="flex-grow">{{article.description}}</p>
+                                <div class="article-info">
+                                    <div class="pull-left m-r-sm">
+                                        <span>by <a href="./user/{{article.author.username}}">@{{article.author.username}}</a></span>
+                                    </div>
+                                    <div class="pull-right">
                                         <div class="pull-left m-r-sm">
-                                            <span>by <a href="./user/{{article.author.username}}">@{{article.author.username}}</a></span>
-                                        </div>
-                                        <div class="pull-right">
-                                            <div class="pull-left m-r-sm">
-                                                <span class="fa fa-clock-o"></span>
-                                                <span>{{article.createdDate | date : 'mediumDate'}}</span>
-                                            </div>
-                                            <div class="pull-left m-r-sm">
-                                                <span class="fa fa-comment-o"></span>
-                                                <a href="./articles/{{article.slug.url}}">{{article.comments.length}} Comment<span ng-if="article.comments.length === 1">s</span></a>
-                                            </div>
-                                            <div class="pull-left">
-                                                <span class="fa fa-thumbs-o-up"></span>
-                                                <span><span ng-if="article.votesCount > 0">+</span>{{article.votesCount}}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- / article -->
-                    <p class="no-articles" ng-show="!articles.length && klass === 'all' && !loading.articles">There are curently no articles yet.</p>
-                    <p class="no-articles" ng-show="!articles.length && klass !== 'all' && !loading.articles">There are curently no articles under <strong>{{klass}}</strong> yet.</p>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
-                <div class="row">
-                    <div class="adSenseSidebarHome clearfix" ng-show="!app.user.isSubscribed()">
-                        <div ads-sidebar-home></div>
-                    </div>
-                    <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
-                        <!-- guide builder -->
-                        <div hots-builder></div>
-                        <!-- / guide builder -->
-                        <div class="home-guides">
-                            <h1 class="guides-title guides-title-small">FEATURED GUIDES</h1>
-                            <!-- guide -->
-                            <div class="guide-wrapper" ng-repeat="guide in guidesFeatured">
-                                <div class="guide {{guides.heroes[0].className}}" ng-class="{ premium: guide.premium.isPremium }">
-                                    <a href="./heroes-of-the-storm/guides/{{guide.slug}}"></a>
-                                    <div class="guide-images" ng-if="guide.guideType == 'hero'">
-                                        <div class="guide-image side guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
-                                    </div>
-                                    <div class="guide-images" ng-if="guide.guideType == 'map'">
-                                        <div class="guide-image guide-image-1 {{guide.maps[0].className}}"></div>
-                                    </div>
-                                    <div class="guide-overlay"></div>
-                                    <div class="guide-premium" ng-if="guide.premium.isPremium"></div>
-                                    <div class="guide-title">[{{guide.guideType.toUpperCase()}}]&nbsp;{{guide.name}}</div>
-                                    <div class="guide-score"><span><em ng-if="guide.votesCount > 0">+</em>{{guide.votesCount}}</span></div>
-                                    <div class="guide-info clearfix">
-                                        <div class="pull-left m-r-sm">
-                                            <span>by <a href="./user/{{guide.author.username}}">@{{guide.author.username}}</a></span>
-                                        </div>
-                                        <div class="pull-right">
                                             <span class="fa fa-clock-o"></span>
-                                            <span>{{guide.createdDate | date : 'mediumDate'}}</span>
+                                            <span>{{article.createdDate | date : 'mediumDate'}}</span>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- / guide -->
-                            <p class="home-no-guides" ng-show="!guidesFeatured.length && !loading.featured">There are currently no featured guides yet.</p>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
-                        <div class="home-guides">
-                            <h1 class="guides-title guides-title-small">COMMUNITY GUIDES</h1>
-                            <!-- guide -->
-                            <div class="guide-wrapper" ng-repeat="guide in guidesCommunity">
-                                <div class="guide" ng-class="{ premium: guide.premium.isPremium }">
-                                    <a href="./heroes-of-the-storm/guides/{{guide.slug}}"></a>
-                                    <div class="guide-images" ng-if="guide.guideType == 'hero'">
-                                        <div class="guide-image side guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
-                                    </div>
-                                    <div class="guide-images" ng-if="guide.guideType == 'map'">
-                                        <div class="guide-image guide-image-1 {{guide.maps[0].className}}"></div>
-                                    </div>
-                                    <div class="guide-overlay"></div>
-                                    <div class="guide-premium" ng-if="guide.premium.isPremium"></div>
-                                    <div class="guide-title">[{{guide.guideType.toUpperCase()}}]&nbsp;{{guide.name}}</div>
-                                    <div class="guide-score"><span><em ng-if="guide.votesCount > 0">+</em>{{guide.votesCount}}</span></div>
-                                    <div class="guide-info clearfix">
                                         <div class="pull-left m-r-sm">
-                                            <span>by <a href="./user/{{guide.author.username}}">@{{guide.author.username}}</a></span>
+                                            <span class="fa fa-comment-o"></span>
+                                            <a href="./articles/{{article.slug.url}}">{{article.comments.length}} Comment<span ng-if="article.comments.length === 1">s</span></a>
                                         </div>
-                                        <div class="pull-right">
-                                            <span class="fa fa-clock-o"></span>
-                                            <span>{{guide.createdDate | date : 'mediumDate'}}</span>
+                                        <div class="pull-left">
+                                            <span class="fa fa-thumbs-o-up"></span>
+                                            <span><span ng-if="article.votesCount > 0">+</span>{{article.votesCount}}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!-- / guide -->
-                            <p class="home-no-guides" ng-show="!guidesCommunity.length && !loading.community">There are currently no community guides yet.</p>
                         </div>
                     </div>
                 </div>
+                <!-- / article -->
+                <p class="no-articles" ng-show="!articles.length && klass === 'all' && !loading.articles">There are curently no articles yet.</p>
+                <p class="no-articles" ng-show="!articles.length && klass !== 'all' && !loading.articles">There are curently no articles under <strong>{{klass}}</strong> yet.</p>
             </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <div class="home-guides">
+                        <h1 class="guides-title guides-title-small">FEATURED GUIDES</h1>
+                        <!-- guide -->
+                        <div class="guide-wrapper" ng-repeat="guide in guidesFeatured">
+                            <div class="guide {{guides.heroes[0].className}}" ng-class="{ premium: guide.premium.isPremium }">
+                                <a href="./heroes-of-the-storm/guides/{{guide.slug}}"></a>
+                                <div class="guide-images" ng-if="guide.guideType == 'hero'">
+                                    <div class="guide-image side guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
+                                </div>
+                                <div class="guide-images" ng-if="guide.guideType == 'map'">
+                                    <div class="guide-image guide-images-1 {{guide.maps[0].className}}"></div>
+                                </div>
+                                <div class="guide-overlay"></div>
+                                <div class="guide-premium" ng-if="guide.premium.isPremium"></div>
+                                <div class="guide-title">[{{guide.guideType.toUpperCase()}}]&nbsp;{{guide.name}}</div>
+                                <div class="guide-score"><span><em ng-if="guide.votesCount > 0">+</em>{{guide.votesCount}}</span></div>
+                                <div class="guide-info clearfix">
+                                    <div class="pull-left m-r-sm">
+                                        <span>by <a href="./user/{{guide.author.username}}">@{{guide.author.username}}</a></span>
+                                    </div>
+                                    <div class="pull-right">
+                                        <span class="fa fa-clock-o"></span>
+                                        <span>{{guide.createdDate | date : 'mediumDate'}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- / guide -->
+                        <p class="home-no-guides" ng-show="!guidesFeatured.length && !loading.featured">There are currently no featured guides yet.</p>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <div class="home-guides">
+                        <h1 class="guides-title guides-title-small">COMMUNITY GUIDES</h1>
+                        <!-- guide -->
+                        <div class="guide-wrapper" ng-repeat="guide in guidesCommunity">
+                            <div class="guide" ng-class="{ premium: guide.premium.isPremium }">
+                                <a href="./heroes-of-the-storm/guides/{{guide.slug}}"></a>
+                                <div class="guide-images" ng-if="guide.guideType == 'hero'">
+                                    <div class="guide-image side guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
+                                </div>
+                                <div class="guide-images" ng-if="guide.guideType == 'map'">
+                                    <div class="guide-image guide-images-1 {{guide.maps[0].className}}"></div>
+                                </div>
+                                <div class="guide-overlay"></div>
+                                <div class="guide-premium" ng-if="guide.premium.isPremium"></div>
+                                <div class="guide-title">[{{guide.guideType.toUpperCase()}}]&nbsp;{{guide.name}}</div>
+                                <div class="guide-score"><span><em ng-if="guide.votesCount > 0">+</em>{{guide.votesCount}}</span></div>
+                                <div class="guide-info clearfix">
+                                    <div class="pull-left m-r-sm">
+                                        <span>by <a href="./user/{{guide.author.username}}">@{{guide.author.username}}</a></span>
+                                    </div>
+                                    <div class="pull-right">
+                                        <span class="fa fa-clock-o"></span>
+                                        <span>{{guide.createdDate | date : 'mediumDate'}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- / guide -->
+                        <p class="home-no-guides" ng-show="!guidesCommunity.length && !loading.community">There are currently no community guides yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
+            <div class="adSenseSidebarHome m-b-md clearfix" ng-show="!app.user.isSubscribed()">
+                <div ads-sidebar-home></div>
+            </div>
+            <!-- guide builder -->
+            <div hots-builder></div>
+            <!-- / guide builder -->
         </div>
     </div>
 </div>

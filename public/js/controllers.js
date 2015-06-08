@@ -14,7 +14,7 @@ angular.module('app.controllers', ['ngCookies'])
         copyright: new Date().getFullYear(),
         cdn: 'https://s3-us-west-2.amazonaws.com/ts-node2',
         settings: {
-            token: null,
+            token: $cookies.token || null,
             deck: null,
             show: {
                 deck: null,
@@ -84,16 +84,13 @@ angular.module('app.controllers', ['ngCookies'])
         if (!$scope.app.settings.show.decks) {
             $scope.app.settings.show.decks = null;
         }
-          
-        // persistent login  
-        if ($scope.app.settings.token && $scope.app.settings.token !== null) {
-            $window.sessionStorage.token = $scope.app.settings.token;
-        }
+        
       } else {
         $localStorage.settings = $scope.app.settings;
       }
-      $scope.$watch('app.settings', function(){ $localStorage.settings = $scope.app.settings; }, true);
-      $scope.$watch('app.settings.token', function(){ $cookies.token = $scope.app.settings.token; }, true);
+      $scope.$watch('app.settings', function(){ 
+          $localStorage.settings = $scope.app.settings;
+      }, true);
 
       function isSmartDevice( $window )
       {
@@ -1028,16 +1025,28 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // tags
+        $scope.hasTags = function () {
+            var type = $scope.article.articleType,
+                isHS = (type.indexOf('hs') !== -1) ? true : false,
+                isHOTS = (type.indexOf('hots') !== -1) ? true : false;
+            
+            return ((isHS && !isHOTS) || (isHOTS && !isHS));
+        }
+        
         $scope.getTags = function () {
-            switch ($scope.article.articleType) {
-                case 'hs':
-                    return ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
-                case 'hots':
-                    var out = [];
-                    for (var i = 0; i < dataHeroes.heroes.length; i++) {
-                        out.push(dataHeroes.heroes[i].name);
-                    }
-                    return out;
+            var type = $scope.article.articleType,
+                isHS = (type.indexOf('hs') !== -1) ? true : false,
+                isHOTS = (type.indexOf('hots') !== -1) ? true : false;
+            
+            if (isHS && !isHOTS) {
+                return ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
+            }
+            if (isHOTS && !isHS) {
+                var out = [];
+                for (var i = 0; i < dataHeroes.heroes.length; i++) {
+                    out.push(dataHeroes.heroes[i].name);
+                }
+                return out;
             }
         };
         
@@ -1188,16 +1197,28 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? $scope.app.cdn + '/articles/' + $scope.article.photos.small : $scope.app.cdn + '/img/blank.png';
         
         // tags
+        $scope.hasTags = function () {
+            var type = $scope.article.articleType,
+                isHS = (type.indexOf('hs') !== -1) ? true : false,
+                isHOTS = (type.indexOf('hots') !== -1) ? true : false;
+            
+            return ((isHS && !isHOTS) || (isHOTS && !isHS));
+        }
+        
         $scope.getTags = function () {
-            switch ($scope.article.articleType) {
-                case 'hs':
-                    return ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
-                case 'hots':
-                    var out = [];
-                    for (var i = 0; i < dataHeroes.heroes.length; i++) {
-                        out.push(dataHeroes.heroes[i].name);
-                    }
-                    return out;
+            var type = $scope.article.articleType,
+                isHS = (type.indexOf('hs') !== -1) ? true : false,
+                isHOTS = (type.indexOf('hots') !== -1) ? true : false;
+            
+            if (isHS && !isHOTS) {
+                return ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
+            }
+            if (isHOTS && !isHS) {
+                var out = [];
+                for (var i = 0; i < dataHeroes.heroes.length; i++) {
+                    out.push(dataHeroes.heroes[i].name);
+                }
+                return out;
             }
         };
         
@@ -1322,11 +1343,76 @@ angular.module('app.controllers', ['ngCookies'])
         
         // load articles
         $scope.articles = data.articles;
-    
-        // page flipping
-        $scope.pagination = Pagination.new(100);
-        $scope.pagination.results = function () {
-            return ($scope.filtered) ? $scope.filtered.length : $scope.articles.length;
+        $scope.page = data.page;
+        $scope.perpage = data.perpage;
+        $scope.total = data.total;
+        $scope.search = data.search;
+        
+        $scope.getArticles = function () {
+            AdminArticleService.getArticles($scope.page, $scope.perpage, $scope.search).then(function (data) {
+                $scope.articles = data.articles;
+                $scope.page = data.page;
+                $scope.total = data.total;
+            });
+        }
+        
+        $scope.searchArticles = function () {
+            $scope.page = 1;
+            $scope.getArticles();
+        }
+        
+        // pagination
+        $scope.pagination = {
+            page: function () {
+                return $scope.page;
+            },
+            perpage: function () {
+                return $scope.perpage;
+            },
+            results: function () {
+                return $scope.total;
+            },
+            setPage: function (page) {
+                $scope.page = page;
+                $scope.getArticles();
+            },
+            pagesArray: function () {
+                var pages = [],
+                    start = 1,
+                    end = this.totalPages();
+                
+                if (this.totalPages() > 5) {
+                    if (this.page() < 3) {
+                        start = 1;
+                        end = start + 4;
+                    } else if (this.page() > this.totalPages() - 2) {
+                        end = this.totalPages();
+                        start = end - 4;
+                    } else {
+                        start = this.page() - 2;
+                        end = this.page() + 2;
+                    }
+                    
+                }
+                
+                for (var i = start; i <= end; i++) {
+                    pages.push(i);
+                }
+                
+                return pages;
+            },
+            isPage: function (page) {
+                return (page === this.page());
+            },
+            totalPages: function (page) {
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
+            },
+            from: function () {
+                return (this.page() * this.perpage()) - this.perpage() + 1;
+            },
+            to: function () {
+                return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
+            }
         };
         
         // delete article
@@ -2220,7 +2306,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.options = {
           disableDragAndDrop: true,
           height: 300,
-          disableDragAndDrop: true,
           fontNames: ['Open Sans Regular', 'Open Sans Bold'],
           defaultFontName: 'Open Sans Regular',
           toolbar: [
@@ -2381,7 +2466,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.options = {
           disableDragAndDrop: true,
           height: 300,
-          disableDragAndDrop: true,
           fontNames: ['Open Sans Regular', 'Open Sans Bold'],
           defaultFontName: 'Open Sans Regular',
           toolbar: [
@@ -2552,7 +2636,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.options = {
           disableDragAndDrop: true,
           height: 100,
-          disableDragAndDrop: true,
           toolbar: [
             ['style', ['style']],
             ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
@@ -5100,8 +5183,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', 'AlertService', 'AdminHOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, AlertService, AdminHOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+.controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', 'AlertService', 'AdminHOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, AlertService, AdminHOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
         $scope.$watch('guide', function(){
@@ -5129,7 +5212,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // draw hero rows
-        var heroRows = [9,10,9,8];
+        var heroRows = HOTS.heroRows;
         $scope.heroRows = [];
         var index = 0;
         for (var row = 0; row < heroRows.length; row++) {
@@ -5357,8 +5440,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.guide = dataGuide.guide;
     }
 ])
-.controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'AdminHOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, AlertService, GuideBuilder, AdminHOTSGuideService, dataGuide, dataHeroes, dataMaps) {
+.controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'AdminHOTSGuideService', 'HOTS', 'dataGuide', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, AlertService, GuideBuilder, AdminHOTSGuideService, HOTS, dataGuide, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = GuideBuilder.new('hero', dataGuide.guide);
         
@@ -5383,7 +5466,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // draw hero rows
-        var heroRows = [9,10,9,8];
+        var heroRows = HOTS.heroRows;
         $scope.heroRows = [];
         var index = 0;
         for (var row = 0; row < heroRows.length; row++) {
@@ -6126,8 +6209,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
-    function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
+.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
+    function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
         var box;
         
         // create guide
@@ -6157,7 +6240,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // draw hero rows
-        var heroRows = [9,10,9,8];
+        var heroRows = HOTS.heroRows;
         $scope.heroRows = [];
         var index = 0;
         for (var row = 0; row < heroRows.length; row++) {
@@ -6446,8 +6529,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.guide = dataGuide.guide;
     }
 ])
-.controller('HOTSGuideBuilderEditHeroCtrl', ['$scope', '$state', '$window', 'GuideBuilder', 'HOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, GuideBuilder, HOTSGuideService, dataGuide, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderEditHeroCtrl', ['$scope', '$state', '$window', 'GuideBuilder', 'HOTSGuideService', 'HOTS', 'dataGuide', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, GuideBuilder, HOTSGuideService, HOTS, dataGuide, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = GuideBuilder.new('hero', dataGuide.guide);
         
@@ -6472,7 +6555,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // draw hero rows
-        var heroRows = [9,10,9,8];
+        var heroRows = HOTS.heroRows;
         $scope.heroRows = [];
         var index = 0;
         for (var row = 0; row < heroRows.length; row++) {
@@ -6877,7 +6960,7 @@ angular.module('app.controllers', ['ngCookies'])
                 setHash();
             }
         };
-        
+                
         // hash
         $scope.hash = [1,1,1,1,1,1,1];
 
@@ -6938,6 +7021,37 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.currentTalents = getTalents();
         });
         
+        function getTalentByID (id) {
+            var hero = $scope.getCurrentHero();
+            for (var i = 0; i < hero.talents.length; i++) {
+                if (hero.talents[i]._id == id) {
+                    return hero.talents[i];
+                }
+            }
+            return false;
+        }
+        
+        $scope.getAbilityTalents = function () {
+            var ability = $scope.getCurrentAbility(),
+                currentTalents = $scope.currentTalents,
+                tiers = $scope.tiers,
+                out = [],
+                talent;
+            
+            if (!ability) { return out; }
+            
+            for (var i = 0; i < tiers.length; i++) {
+                if (currentTalents['tier' + tiers[i]] !== null) {
+                    talent = getTalentByID(currentTalents['tier' + tiers[i]]);
+                    if (talent && talent.ability == ability._id) {
+                        out.push(talent);
+                    }
+                }
+            }
+            
+            return out;
+        };
+        
         // url
         $scope.url = function () {
             return $location.absUrl();
@@ -6997,6 +7111,25 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getDPS = function () {
             var val = ($scope.getSpeed() * $scope.getDamage());
             return (isNum(val)) ? val : +val.toFixed(2);
+        };
+        
+        // copy
+        $scope.copyUrl = function () {
+            var url = document.querySelector('.tc-url');  
+            url.select();
+
+            try {  
+                var successful = document.execCommand('copy');  
+            } catch(err) {  
+                alert('Your browser does not support this feature.');
+            }
+            
+            window.getSelection().removeAllRanges();
+        };
+        
+        // reset
+        $scope.reset = function () {
+            $location.hash('');
         };
     }
 ])

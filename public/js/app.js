@@ -25,8 +25,8 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService',
-        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage", 
+        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies, $localStorage) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
@@ -34,6 +34,10 @@ var app = angular.module('app', [
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
                 //ngProgress.start();
+                if (toState.redirectTo) {
+                    event.preventDefault();
+                    $state.go(toState.redirectTo, toParams);
+                }
                 if (toState.access && toState.access.noauth && $window.sessionStorage.token && AuthenticationService.isLogged()) {
                     event.preventDefault();
                     $state.transitionTo('app.home');
@@ -111,6 +115,7 @@ var app = angular.module('app', [
                     User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService', function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
                         if ($cookies.token) {
                             $window.sessionStorage.token = $cookies.token;
+                            //delete $cookies.token;
                         }
                         if ($window.sessionStorage.token && !AuthenticationService.isLogged()) {
                             var d = $q.defer();
@@ -127,13 +132,15 @@ var app = angular.module('app', [
                                 $window.sessionStorage.username = data.username;
                                 $window.sessionStorage.email = data.email;
                                 d.resolve();
-                            }).error(function () {
+                            }).error(function (err) {
                                 delete $window.sessionStorage.userID;
                                 delete $window.sessionStorage.username;
                                 delete $window.sessionStorage.token;
                                 delete $window.sessionStorage.email;
-                                $state.transitionTo('app.login');
-                                d.resolve();
+                                //delete $localStorage.settings.token;
+                                delete $cookies.token;
+                                //$state.transitionTo('app.login');
+                                $q.reject();
                             });
                             return d.promise;
                         }
@@ -150,8 +157,8 @@ var app = angular.module('app', [
                             dataArticles: ['ArticleService', function (ArticleService) {
                                 var klass = 'all',
                                     page = 1,
-                                    perpage = 9;
-                                 return ArticleService.getArticles('ts', klass, page, perpage);
+                                    perpage = 3;
+                                return ArticleService.getArticles('ts', klass, page, perpage);
                             }],
                             dataBanners: ['BannerService', function (BannerService) {
                                  return BannerService.getBanners('ts');
@@ -218,6 +225,18 @@ var app = angular.module('app', [
                         templateUrl: 'views/frontend/hs.html'
                     }
                 }
+            })
+            .state('app.decks', {
+                url: 'decks?p&s&k&a&o',
+                redirectTo: 'app.hs.decks.list'
+            })
+            .state('app.decks.deck', {
+                url: '/:slug',
+                redirectTo: 'app.hs.decks.deck'
+            })
+            .state('app.deckBuilder', {
+                url: 'deck-builder',
+                redirectTo: 'app.hs.deckBuilder.class'
             })
             .state('app.hs.home', {
                 url: '',
@@ -1063,7 +1082,10 @@ var app = angular.module('app', [
                         controller: 'AdminArticleListCtrl',
                         resolve: {
                             data: ['AdminArticleService', function (AdminArticleService) {
-                                return AdminArticleService.getArticles();
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminArticleService.getArticles(page, perpage, search);
                             }]
                         }
                     }

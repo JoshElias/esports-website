@@ -531,7 +531,7 @@ module.exports = {
             }
             
             function updateActivities(callback) {
-                    Schemas.Activity.update({guide: req.body._id}, {active: req.body.public}).exec(function (err, data) {
+                    Schemas.Activity.update({guide: req.body._id, activityType: 'guideComment'}, {active: req.body.public}).exec(function (err, data) {
                         return callback();
                 });
             }

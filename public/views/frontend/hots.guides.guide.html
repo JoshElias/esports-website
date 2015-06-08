@@ -71,7 +71,9 @@
                     <!-- / guide talents -->
                     
                     <!-- guide map image -->
-                    <img ng-src="./img/hots/maps/guides/headers/{{guide.maps[0].className}}.jpg" class="guide-map-header img-responsive" ng-if="guide.guideType == 'map'">
+                    <div class="m-t-md" ng-if="guide.guideType == 'map'">
+                        <img ng-src="./img/hots/maps/guides/headers/{{guide.maps[0].className}}.jpg" class="guide-map-header img-responsive">
+                    </div>
                     <!-- / guide map image -->
                     
                     <!-- guide description -->
@@ -125,7 +127,7 @@
                             </div>
                             <div class="guide-section-content unpadded" ng-show="show.matchups">
                                 <div class="guide-matchups row">
-                                    <div class="col-xs-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                                         <div class="guide-synergy">
                                             <h1>SYNERGY</h1>
                                             <span>Who plays well with this guide?</span>
@@ -135,20 +137,24 @@
                                         </ul>
                                         <p class="white wrapper-sm" ng-if="!guide.synergy.length">No heroes were selected for synergy.</p>
                                     </div>
-                                    <div class="col-xs-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                                         <div class="guide-strong">
-                                            <h1>STRONG AGAINST</h1>
-                                            <span>Who are they strong against?</span>
+                                            <h1 ng-if="guide.guideType == 'hero'">STRONG AGAINST</h1>
+                                            <span ng-if="guide.guideType == 'hero'">Who are they strong against?</span>
+                                            <h1 ng-if="guide.guideType == 'map'">STRONG ON MAP</h1>
+                                            <span ng-if="guide.guideType == 'map'">Who is strong on this map?</span>
                                         </div>
                                         <ul class="hero-list" ng-if="guide.against.strong.length">
                                             <li ng-repeat="hero in heroes" ng-if="hasStrong(hero)"><a href="#" class="{{hero.className}}" hots-hero>{{hero.name}}</a></li>
                                         </ul>
                                         <p class="white wrapper-sm" ng-if="!guide.against.strong.length">No heroes were selected for strong against.</p>
                                     </div>
-                                    <div class="col-xs-4">
+                                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                                         <div class="guide-weak">
-                                            <h1>WEAK AGAINST</h1>
-                                            <span>Who are they weak against?</span>
+                                            <h1 ng-if="guide.guideType == 'hero'">WEAK AGAINST</h1>
+                                            <span ng-if="guide.guideType == 'hero'">Who are they weak against?</span>
+                                            <h1 ng-if="guide.guideType == 'map'">WEAK ON MAP</h1>
+                                            <span ng-if="guide.guideType == 'map'">Who is weak on this map?</span>
                                         </div>
                                         <ul class="hero-list" ng-if="guide.against.weak.length">
                                             <li ng-repeat="hero in heroes" ng-if="hasWeak(hero)"><a href="#" class="{{hero.className}}" hots-hero>{{hero.name}}</a></li>
