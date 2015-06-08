@@ -1,0 +1,32 @@
+{
+  "general" : {
+      "DB_URL" : "mongodb://localhost:27017/tempostorm",
+
+      "JWT_SECRET" : "83udfhjdsfh93HJKHel338283ru",
+      "SESSION_SECRET" : "kjadhKJHJKhsdjhd82387sjJK",
+
+      "BNET_ID" : "n8pr85xujqyrwtpzku3jaf5z8hb6bmds",
+      "BNET_SECRET" : "etmCJEh5MSbavZfq92urHHDwfvPwUd4v",
+      "BNET_CALLBACK_URL" : "http://104.236.65.200:8080/auth/bnet/callback",
+
+      "TWITCH_ID" : "kxjhxkwq4t3egwy3ses7xdpaq314ldm",
+      "TWITCH_SECRET" : "530y82dvigic8mwlpgk5jqidbkpnld8",
+      "TWITCH_CALLBACK_URL" : "http://tempostorm.com/auth/twitch/callback"
+  }, 
+
+  "development" : {
+      "APP_URL" : "localhost",
+      "APP_PORT" : 1337,
+      "APP_INDEX" : "dev-index",
+
+      "DB_URL" : "mongodb://localhost:27017/tempostorm"
+  },
+
+  "production" : {
+      "APP_URL": "tempostorm.com",
+      "APP_PORT" : 8080,
+      "APP_INDEX" : "pro-index",
+
+      "DB_URL" : "mongodb://104.236.245.160:27017/tempostorm"
+  }
+}
