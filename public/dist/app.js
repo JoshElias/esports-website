@@ -341,8 +341,7 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                seo: { title: 'Decks', description: 'Hearthstone decks created by the community and TempoStorm content providers.', keywords: '' },
-                og: true
+                seo: { title: 'Decks', description: 'Hearthstone decks created by the community and TempoStorm content providers.', keywords: '' }
             })
             .state('app.hs.decks.deck', {
                 url: '/:slug',
@@ -499,12 +498,6 @@ var app = angular.module('app', [
                             }],
                             dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
                                 return HOTSGuideService.getMaps();
-                            }],
-                            og: ['$q', 'MetaService', 'data', function ($q, MetaService, data) {
-                                var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/hots-logo.png';
-                                MetaService.set(data.guide.name + ' - Guides', data.guide.description);
-                                MetaService.setOg('https://tempostorm.com/articles/' + data.guide.slug, data.guide.name, data.guide.description, 'article', ogImg);
-                                $q.reject();
                             }]
                         }
                     }
@@ -5704,10 +5697,10 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ForumCategoryCtrl', ['$scope', 'data', 
-    function ($scope, data) {
+.controller('ForumCategoryCtrl', ['$scope', 'data', 'MetaService',
+    function ($scope, data, MetaService) {
         $scope.categories = data.categories;
-    
+        $scope.metaservice.setOg('https://tempostorm.com/forum');
     }
 ])
 .controller('ForumThreadCtrl', ['$scope', 'Pagination', 'data', 'MetaService',
@@ -5813,7 +5806,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.post.title + ' - ' + $scope.thread.title);
         
-        $scope.metaservice.setOg('https://tempostorm.com/forum/' + $scope.post.slug.url, $scope.post.title, $scope.post.content);
+        $scope.metaservice.setOg('https://tempostorm.com/forum/' + $scope.thread.slug.url + '/' + $scope.post.slug.url, $scope.post.title, $scope.post.content);
         
         
         var defaultComment = {
@@ -8711,8 +8704,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', '$window', 'HOTS', 'Base64', 'dataHero', 
-    function ($scope, $state, $stateParams, $location, $window, HOTS, Base64, dataHero) {
+.controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', '$window', 'HOTS', 'Base64', 'dataHero', 'MetaService',
+    function ($scope, $state, $stateParams, $location, $window, HOTS, Base64, dataHero, MetaService) {
         if (!dataHero.success) { return $state.go('app.hots.talentCalculator.hero', { hero: $scope.heroes[0].className }); }
 
         $scope.setCurrentHero(dataHero.hero);
@@ -8729,6 +8722,12 @@ angular.module('app.controllers', ['ngCookies'])
             tier16: null,
             tier20: null
         };
+        
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set(dataHero.hero.name + ' - Talent Calculator', dataHero.hero.description);
+        
+        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/hots/hots-logo.png';
+        $scope.metaservice.setOg($location.absUrl(), dataHero.hero.name, dataHero.hero.description, 'article', ogImg);
         
         $scope.getCurrentCharacter = function () {
             return $scope.currentCharacter;

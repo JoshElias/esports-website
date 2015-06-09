@@ -110,10 +110,12 @@ passport.use(new BnetStrategy({
 app.get('/auth/twitch', passport.authenticate('twitch'));
 app.get('/auth/twitch/callback', passport.authenticate('twitch', { failureRedirect: '/login' }),
   function(req, res) {
+    console.log("Getting twitch callback");
     var token = jwt.sign({ _id: req.user._id.toString() }, config.JWT_SECRET);
+    console.log("Token: "+JSON.stringify(token));
     res.cookie('token', token);
     res.redirect('/');
-  });
+});
 
 /* bnet */
 app.get('/auth/bnet', passport.authenticate('bnet'));

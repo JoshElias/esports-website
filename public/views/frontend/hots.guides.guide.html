@@ -24,10 +24,10 @@
         </div>
         <!-- / header -->
 
-        <div class="row">
+        <div class="row m-t-md">
                 
                 <!-- guide left -->
-                <div class="col-md-12 col-lg-9 m-t-md">
+                <div class="col-md-12 col-lg-9">
                     
                     <!-- guide heroes -->
                     <div class="guide-heroes clearfix m-t-md m-b-md" ng-if="guide.guideType == 'hero'">
@@ -267,7 +267,7 @@
             
             <!-- guide right -->
             <div class="col-md-12 col-lg-3 m-t-md">
-                <div class="adSenseSidebarHome m-t-md" ng-show="!app.user.isSubscribed()">
+                <div class="adSenseSidebarHome" ng-if="!app.user.isSubscribed()">
                     <div ads-sidebar-home></div>
                 </div>
                 <!-- guide builder -->
