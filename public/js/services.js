@@ -1901,12 +1901,16 @@ angular.module('app.services', [])
         }
     };
 }])
-.factory('TwitchService', ['$http', '$q', function(){
+.factory('TwitchService', ['$http', '$q', function($http, $q) {
     return {
-        getSteam : function () {
-            return $http.get('/twitch', data);
+        getStreams: function () {
+            var d = $q.defer();
+            $http.post('/twitchFeed', { limit: 50 }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
         }
-    }
+    };
 }])
 .factory('ContactService', ['$http', '$q', function ($http, $q) {
     return {

@@ -307,6 +307,11 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/hots.guideBuilder.directive.html',
     }
 })
+.directive('hotsTc', function() {
+    return {
+        templateUrl: 'views/frontend/hots.tc.directive.html',
+    }
+})
 .directive('adsSidebar', function () {
     return {
         restrict: 'A',

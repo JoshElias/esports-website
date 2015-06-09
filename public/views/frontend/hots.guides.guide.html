@@ -267,7 +267,9 @@
             
             <!-- guide right -->
             <div class="col-md-12 col-lg-3">
-                <div class="m-t-lg" ads-sidebar-home></div>
+                <div class="adSenseSidebarHome" ng-show="!app.user.isSubscribed()">
+                    <div ads-sidebar-home></div>
+                </div>
                 <!-- guide builder -->
                 <div hots-builder></div>
                 <!-- / guide builder -->

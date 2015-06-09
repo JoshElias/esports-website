@@ -132,6 +132,7 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 .navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover { background: #2766ad; border-color: #083f7d; }
 .navbar-default .navbar-toggle:focus .icon-bar, .navbar-default .navbar-toggle:hover .icon-bar { background-color: #FFF; }
 .navbar-default .navbar-nav .open .dropdown-menu > li > a { padding-top: 10px; padding-bottom: 11px; }
+.navbar-nav .gameHeadLink { display: block; padding: 5px 15px; font-size: 16px; line-height: 20px; white-space: nowrap; font-weight: 700; }
 
 /* notifications */
 .notifications .badge {
@@ -308,6 +309,37 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
     -webkit-animation: fadeOutRight 0.5s;
     animation: fadeOutRight 0.5s;
 }
+
+
+/* twitch FEED */
+.twitch-feed { width: auto; height: 420px; display:block; } 
+.twitch-feed .twitch-head { height: 60px; background-color: #64449b; text-align: center; }
+.twitch-feed div {  }
+.twitch-feed div h3,
+.twitch-feed div i { color: white; display:inline-block; line-height: 40px; text-shadow: 0px 0px 8px #fdedf4; vertical-align: middle; margin: 0px 10px 0px 0px }
+
+.twitch-feed div h3 { font-size: 20px; font-family: 'Open Sans Bold' }
+.twitch-feed div i { font-size: 28px; margin: 0px 10px }
+
+.twitch-feed .twitch-body { height: 360px; padding: 0px; overflow-y: auto }
+.twitch-feed .twitch-body .stream { border-bottom: 1px solid #171514; height: 60px; background-color: #0f0f0f; position: relative; }
+.twitch-feed .twitch-body .stream:nth-child(2n) { background-color: #161515 }
+.twitch-feed .twitch-body .stream:hover { background-color: #363434 }
+.twitch-feed .twitch-body img { width: 40px; height: 40px; position: absolute; margin:auto; top: 0; bottom: 0; left: 10;  }
+.twitch-feed .twitch-body .stream-info { color:white; position: relative; top: 0; bottom: 0; right: 0; width: 200px;}
+.twitch-feed .twitch-body .stream-info  div { padding:0px }
+.twitch-feed .twitch-body .stream-info .stream-info-top { position:relative; }
+.twitch-feed .twitch-body .stream-info .stream-info-top .views { position:absolute; top: 0; right: 0; }
+.twitch-feed .twitch-body .stream-info .stream-info-top h4 { color: #BCBCBC; font-size: 14px; margin: 0px; }
+.twitch-feed .twitch-body .stream-info .stream-info-top i { color: #BCBCBC; font-size: 14px; height:14px; line-height: 1; margin:0px 5px 0px 0px; text-shadow: none; }
+
+.twitch-feed .twitch-body .stream-info .stream-info-bottom p { color: #7F6AAF; margin: 0px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width:inherit }
+.twitch-feed .twitch-body .stream-info .stream-info-bottom { padding: 8px 0px; max-width: 190px;}
+.twitch-feed .nostream p { color: white; font-size: 14px; padding: 0px }
+
+.twitch-feed .twitch-body .stream.lite { background-color: #161515 }
+
+
 
 /* animated dropdowns */
 .open .dropdown-menu {
@@ -1489,6 +1521,24 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
   50% { -webkit-box-shadow: 0 0 18px rgba(73,223,253,1); -moz-box-shadow: 0 0 18px rgba(73,223,253,1); box-shadow: 0 0 18px rgba(73,223,253,1); }
   to { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
 }
+
+@-webkit-keyframes glow-purple {
+  from { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(107,63,152,1); -moz-box-shadow: 0 0 18px rgba(107,63,152,1); box-shadow: 0 0 18px rgba(107,63,152,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
+}
+
+@-moz-keyframes glow-purple {
+  from { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(107,63,152,1); -moz-box-shadow: 0 0 18px rgba(107,63,152,1); box-shadow: 0 0 18px rgba(107,63,152,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
+}
+
+@keyframes glow-purple {
+  from { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(107,63,152,1); -moz-box-shadow: 0 0 18px rgba(107,63,152,1); box-shadow: 0 0 18px rgba(107,63,152,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
+}
 /* end glows */
 
 .db-builder { position: relative; margin: 20px 0; }
@@ -2072,7 +2122,8 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .ad-banner { margin: 20px auto; width: 600px; height: 146px; }
 .ad-banner img { width: 600px; height: 146px; }
 
-.adSenseSidebarHome { height: 280px; width: auto; margin-bottom: 20px; }
+.adSenseSidebarHome { height: auto; width: auto; margin-bottom: 20px; }
+.adSenseSidebar { height: 280px; width: auto; } 
 .adSenseBanner { margin-top: 20px; height: 120px; width: auto; }
 
 /* terms / privacy */
@@ -6181,6 +6232,22 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .tc-hero.sylvanas { background: url('../img/hots/modal/heroes/sylvanas.png') no-repeat right 120px; }
 .tc-hero.kaelthas { background: url('../img/hots/modal/heroes/kaelthas.png') no-repeat right 120px; }
 .tc-hero.johanna { background: url('../img/hots/modal/heroes/johanna.png') no-repeat right 120px; }
+
+
+/* talent calculator link */
+.talent-calculator-link { padding: 2px; width: 100%; height: 200px; background: #9b81b6; /* Old browsers */
+    background: -moz-linear-gradient(top,  #9b81b6 40%, #6b3f98 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(40%,#9b81b6), color-stop(100%,#6b3f98)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #9b81b6 40%,#6b3f98 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #9b81b6 40%,#6b3f98 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #9b81b6 40%,#6b3f98 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #9b81b6 40%,#6b3f98 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9b81b6', endColorstr='#6b3f98',GradientType=0 ); /* IE6-9 */
+    -webkit-animation-name: glow-purple; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow-purple; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+.talent-calculator-link-inner { position: relative; height: 196px; background: #a97344 url('../img/hots/talent-calculator-back.jpg') no-repeat right top; }
+.talent-calculator-link-inner a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/hots/talent-calculator-front.png') no-repeat; background-position: center 0px; -webkit-transition: background-position ease-in-out .3s; transition: background-position ease-in-out .3s; }
+.talent-calculator-link-inner a:hover { background-position: center -196px; }
+
 
 /* range */
 input[type=range] {

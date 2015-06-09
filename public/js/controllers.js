@@ -217,12 +217,22 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles',  
-    function ($scope, dataBanners, dataArticles) {
+.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'TwitchService',
+    function ($scope, dataBanners, dataArticles, TwitchService) {
         // data
         $scope.articles = dataArticles.articles;
+        $scope.streamWheel = false;
+        $scope.streams = undefined;
+        
+        
+        TwitchService.getStreams().then(function(data) {
+            $scope.streamWheel = true;
+            $scope.streams = data.streamFeed;
+        });
+        
         
         // banner
+        
         $scope.banner = {
             current: 0,
             direction: 'left',
@@ -3509,11 +3519,10 @@ angular.module('app.controllers', ['ngCookies'])
             var premium = $scope.deck.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
                 if ($scope.premiumTypes[i].value === premium) {
-                    return $scope.premiumTypes[i].text;
+                    return $scope.premiumTypes[i].value;
                 }
             }
         }
-        
         
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.deck.name + ' - Decks', $scope.deck.description);
@@ -5936,7 +5945,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice.set($scope.guide.name + ' - Guides', $scope.guide.description);
         
         var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/hots-logo';
-        $scope.metaservice.setOg('https://tempostorm.com/articles/' + data.guide.slug, $scope.guide.name, $scope.guide.description, 'article', ogImg);
+        $scope.metaservice.setOg('https://tempostorm.com/heroes-of-the-storm/guides/' + data.guide.slug, $scope.guide.name, $scope.guide.description, 'article', ogImg);
         
         // show
         if (!$scope.app.settings.show.guide) {
@@ -7242,11 +7251,9 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }                                         
 ])
-.controller('twitchCtrl', ['$scope',
-    function($scope) {
-        
-        console.log('Hello World');
-        
+.controller('twitchCtrl', ['$scope', 'dataTwitch',
+    function($scope, dataTwitch) {
+        $scope.streams = dataTwitch.stuff;
     }
 ])
 .controller('TeamCtrl', ['$scope',
