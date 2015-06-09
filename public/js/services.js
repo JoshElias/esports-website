@@ -14,11 +14,11 @@ angular.module('app.services', [])
     var metaKeywords = '';
     return {
        setOg: function(newOgUrl, newOgTitle, newOgDescription, newOgType, newOgImage) {
-           ogType = newOgType || 'website';
            ogUrl = newOgUrl || 'https://tempostorm.com';
-           ogImage = newOgImage || '';
            ogTitle = newOgTitle || 'TempoStorm';
            ogDescription = newOgDescription || 'TempoStorm Official Website.';
+           ogType = newOgType || 'website';
+           ogImage = newOgImage || '';
        },
        set: function(newTitle, newMetaDescription, newKeywords) {
            metaKeywords = newKeywords;
@@ -34,7 +34,7 @@ angular.module('app.services', [])
            return ogImage.toLowerCase();
        },
        ogMetaTitle: function(){ return ogTitle; },
-       ogMetaDescription: function() {return ogDescription.replace(/<\/?[^>]+(>|$)/g, "");},
+       ogMetaDescription: function() { return ogDescription.replace(/<\/?[^>]+(>|$)/g, ""); },
        metaTitle: function(){ return (title + ' - TempoStorm'); },
        metaDescription: function() { return metaDescription; },
        metaKeywords: function() { return metaKeywords; }

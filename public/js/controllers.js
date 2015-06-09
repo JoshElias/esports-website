@@ -3142,7 +3142,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
         
         var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/articles/' + $scope.article.photos.small;
-        $scope.metaservice.setOg('https://tempostorm.com/articles/' + data.article.slug.url, $scope.article.title, $scope.article.description, 'article', ogImg);
+        $scope.metaservice.setOg('https://tempostorm.com/hearthstone/articles/' + data.article.slug.url, $scope.article.title, $scope.article.description, 'article', ogImg);
         
         $scope.getContent = function () {
             return $sce.trustAsHtml($scope.article.content);
@@ -3528,7 +3528,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice.set($scope.deck.name + ' - Decks', $scope.deck.description);
         
         var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/decks/' + $scope.deck.playerClass + '.png';
-        $scope.metaservice.setOg('https://tempostorm.com/decks/' + $scope.deck.slug, $scope.deck.name, $scope.deck.description, 'article', ogImg.toLowerCase());
+        $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks/' + $scope.deck.slug, $scope.deck.name, $scope.deck.description, 'article', ogImg.toLowerCase());
         
         // classes
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
@@ -5944,7 +5944,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.guide.name + ' - Guides', $scope.guide.description);
         
-        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/hots-logo';
+        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/hots/hots-logo.png';
         $scope.metaservice.setOg('https://tempostorm.com/heroes-of-the-storm/guides/' + data.guide.slug, $scope.guide.name, $scope.guide.description, 'article', ogImg);
         
         // show
