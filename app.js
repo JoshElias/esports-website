@@ -139,6 +139,8 @@ app.post('/forgot-password/reset', routes.frontend.resetPassword(Schemas, Mail))
 
 twitch.route(app);
 
+app.post('/twitterFeed', routes.frontend.twitterFeed());
+
 app.post('/profile/:username', routes.frontend.profile(Schemas));
 app.post('/profile/:username/activity', routes.frontend.profileActivity(Schemas, async));
 app.post('/profile/:username/articles', routes.frontend.profileArticles(Schemas));

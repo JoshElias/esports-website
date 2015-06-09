@@ -109,7 +109,6 @@
                 <div class="twitch-body" ng-show="streams">
                     <div class="stream wrapper-xs" ng-repeat="stream in streams | orderBy:'-viewerCount'">
                         <a target="_blank" ng-href="{{stream.channelUrl}}">
-                            <i class="fa fa-cog fa-spin" ng-show="!streams"></i>
                             <img ng-src="{{stream.logoUrl}}">
                             <div class="stream-info pull-right">
                                 <div class="stream-info-top">
@@ -127,6 +126,34 @@
                 </div>
                 <div class="darkbox nostream wrapper-md" ng-show="!streams && streamWheel"><p class="m-b-none">Sorry, there are currently no streams available.</p></div>
             </div>
+            
+            
+            <div class="twitter-feed clearfix m-b-md">
+                <div class="twitter-head wrapper-sm">
+                    <div>
+                        <i class="fa" ng-class="{ 'fa-twitter': twitWheel, 'fa-cog': !twitWheel, 'fa-spin': !twitWheel }"></i>
+                        <h3>TEMPO FEED</h3>
+                    </div>
+                </div>
+                <div class="twitter-body" ng-show="tweets">
+                    <div class="tweet wrapper-sm" ng-repeat="tweet in tweets">
+                        <div class="tweet-info">
+                            <div class="tweet-info-top">
+                                <h4>{{tweet.screenName}}</h4>
+                                <div class="time">
+                                    <i class="fa fa-clock-o"></i><h4 class="pull-right">{{tweet.timeStamp}}</h4>
+                                </div>
+                            </div>
+                            <div class="tweet-info-bottom wrapper-sm clearfix">
+                                <p>{{tweet.text}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="darkbox nofeed wrapper-md" ng-show="!tweets && twitWheel"><p class="m-b-none">Sorry, there are currently no tweets available.</p></div>
+            </div>
+            
+            
         </div>
         
     </div>

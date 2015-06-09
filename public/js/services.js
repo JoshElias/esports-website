@@ -1912,6 +1912,17 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('TwitterService', ['$http', '$q', function($http, $q) {
+    return {
+        getFeed: function () {
+            var d = $q.defer();
+            $http.post('/twitterFeed', { limit: 50 }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
 .factory('ContactService', ['$http', '$q', function ($http, $q) {
     return {
         sendContact: function (contact) {

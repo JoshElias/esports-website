@@ -312,8 +312,8 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 
 
 /* twitch FEED */
-.twitch-feed { width: auto; height: 420px; display:block; } 
-.twitch-feed .twitch-head { height: 60px; background-color: #64449b; text-align: center; }
+.twitch-feed { width: auto; max-height: 420px; display:block; } 
+.twitch-feed .twitch-head { height: 60px; background-color: #64449b; }
 .twitch-feed div {  }
 .twitch-feed div h3,
 .twitch-feed div i { color: white; display:inline-block; line-height: 40px; text-shadow: 0px 0px 8px #fdedf4; vertical-align: middle; margin: 0px 10px 0px 0px }
@@ -321,8 +321,8 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .twitch-feed div h3 { font-size: 20px; font-family: 'Open Sans Bold' }
 .twitch-feed div i { font-size: 28px; margin: 0px 10px }
 
-.twitch-feed .twitch-body { height: 360px; padding: 0px; overflow-y: auto }
-.twitch-feed .twitch-body .stream { border-bottom: 1px solid #171514; height: 60px; background-color: #0f0f0f; position: relative; }
+.twitch-feed .twitch-body { max-height: 360px; padding: 0px; overflow-y: auto; border: 4px solid #0f0f0f }
+.twitch-feed .twitch-body .stream { border-bottom: 1px solid #171514; height: 60px; background-color: #0f0f0f; position: relative; padding-top: 10px }
 .twitch-feed .twitch-body .stream:nth-child(2n) { background-color: #161515 }
 .twitch-feed .twitch-body .stream:hover { background-color: #363434 }
 .twitch-feed .twitch-body img { width: 40px; height: 40px; position: absolute; margin:auto; top: 0; bottom: 0; left: 10;  }
@@ -338,6 +338,36 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .twitch-feed .nostream p { color: white; font-size: 14px; padding: 0px }
 
 .twitch-feed .twitch-body .stream.lite { background-color: #161515 }
+
+
+
+
+/* twitter FEED */
+.twitter-feed { width: auto; height: 420px; display:block; } 
+.twitter-feed .twitter-head { height: 60px; background-color: #6CADDE; }
+.twitter-feed div h3,
+.twitter-feed div i { color: white; display:inline-block; line-height: 40px; text-shadow: 0px 0px 8px #fdedf4; vertical-align: middle; margin: 0px 10px 0px 0px }
+
+.twitter-feed div h3 { font-size: 20px; font-family: 'Open Sans Bold' }
+.twitter-feed div i { font-size: 28px; margin: 0px 10px }
+
+.twitter-feed .twitter-body { height: 360px; padding: 0px; overflow-y: auto }
+.twitter-feed .twitter-body .tweet { border-bottom: 1px solid #171514; height: 60px; background-color: #0f0f0f; position: relative; height: auto; }
+.twitter-feed .twitter-body .tweet:nth-child(2n) { background-color: #161515 }
+.twitter-feed .twitter-body img { width: 40px; height: 40px; position: absolute; margin:auto; top: 0; bottom: 0; left: 10;  }
+.twitter-feed .twitter-body .tweet-info { color:white; position: relative; top: 0; bottom: 0; right: 0; }
+.twitter-feed .twitter-body .tweet-info .tweet-info-top { position:relative; }
+.twitter-feed .twitter-body .tweet-info .tweet-info-top h4 { color: #6CADDE; font-size: 14px; margin: 0px; }
+.twitter-feed .twitter-body .tweet-info .tweet-info-top .time { color: #BCBCBC; position:absolute; top: 0; right: 0; }
+.twitter-feed .twitter-body .tweet-info .tweet-info-top .time h4 { color: #BCBCBC }
+.twitter-feed .twitter-body .tweet-info .tweet-info-top .time i { color: #BCBCBC; font-size: 14px; height:14px; line-height: .5; margin:0px 5px 0px 0px; text-shadow: none; }
+
+.twitter-feed .twitter-body .tweet-info .tweet-info-bottom p {color: #BCBCBC;  margin: 0px; width:inherit }
+.twitter-feed .twitter-body .tweet-info .tweet-info-bottom { padding-bottom: 0px; }
+.twitter-feed .nostream p { color: white; font-size: 14px; padding: 0px }
+
+.twitter-feed .twitter-body .stream.lite { background-color: #161515 }
+
 
 
 

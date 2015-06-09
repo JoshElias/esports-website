@@ -1049,6 +1049,7 @@ var app = angular.module('app', [
                     }
                 },
                 access: { auth: true, admin: true }
+             
             })
             .state('app.admin.dashboard', {
                 url: '',
@@ -1068,7 +1069,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/articles.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.articles.list', {
                 url: '',
@@ -1086,7 +1088,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.articles.add', {
                 url: '/add',
@@ -1113,7 +1116,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.articles.edit', {
                 url: '/edit/:articleID',
@@ -1144,7 +1148,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone', {
                 abstract: true,
@@ -1154,7 +1159,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hearthstone.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone.decks', {
                 abstract: true,
@@ -1164,7 +1170,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone.decks.list', {
                 url: '',
@@ -1182,7 +1189,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone.decks.add', {
                 url: '/add',
@@ -1191,7 +1199,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.add.class.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone.decks.addBuild', {
                 url: '/add/:playerClass',
@@ -1207,7 +1216,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone.decks.edit', {
                 url: '/edit/:deckID',
@@ -1224,6 +1234,7 @@ var app = angular.module('app', [
                     }
                 },
                 access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone.cards', {
                 abstract: true,
@@ -1249,6 +1260,7 @@ var app = angular.module('app', [
                     }
                 },
                 access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone.cards.add', {
                 url: '/add',
@@ -1258,7 +1270,8 @@ var app = angular.module('app', [
                         controller: 'AdminCardAddCtrl'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hearthstone.cards.edit', {
                 url: '/edit/:cardID',
@@ -1274,7 +1287,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots', {
                 abstract: true,
@@ -1284,7 +1298,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.heroes', {
                 abstract: true,
@@ -1312,7 +1327,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.heroes.add', {
                 url: '/add',
@@ -1322,7 +1338,8 @@ var app = angular.module('app', [
                         controller: 'AdminHeroAddCtrl'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.heroes.edit', {
                 url: '/edit/:heroID',
@@ -1338,7 +1355,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.maps', {
                 abstract: true,
@@ -1348,7 +1366,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.maps.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.maps.list', {
                 url: '',
@@ -1366,7 +1385,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.maps.add', {
                 url: '/add',
@@ -1376,7 +1396,8 @@ var app = angular.module('app', [
                         controller: 'AdminMapAddCtrl'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.maps.edit', {
                 url: '/edit/:mapID',
@@ -1392,7 +1413,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.guides', {
                 abstract: true,
@@ -1402,7 +1424,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.guides.list', {
                 url: '',
@@ -1420,7 +1443,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.guides.add', {
                 abstract: true,
@@ -1430,7 +1454,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.add.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.guides.add.step1', {
                 url: '',
@@ -1439,7 +1464,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.add.step1.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.guides.add.hero', {
                 url: '/hero',
@@ -1457,7 +1483,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.guides.add.map', {
                 url: '/map',
@@ -1475,7 +1502,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.guides.edit', {
                 abstract: true,
@@ -1485,7 +1513,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.edit.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.guides.edit.step1', {
                 url: '/:guideID',
@@ -1501,7 +1530,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.guides.edit.hero', {
                 url: '/:guideID/hero',
@@ -1523,7 +1553,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.hots.guides.edit.map', {
                 url: '/:guideID/map',
@@ -1545,7 +1576,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.forum', {
                 abstract: true,
@@ -1565,7 +1597,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/forum.structure.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.forum.structure.list', {
                 url: '',
@@ -1580,7 +1613,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.forum.structure.categoryAdd', {
                 url: '/category/add',
@@ -1590,7 +1624,8 @@ var app = angular.module('app', [
                         controller: 'AdminForumCategoryAddCtrl'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.forum.structure.categoryEdit', {
                 url: '/category/edit/:categoryID',
@@ -1606,7 +1641,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.forum.structure.threadAdd', {
                 url: '/thread/add',
@@ -1621,7 +1657,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.forum.structure.threadEdit', {
                 url: '/thread/edit/:threadID',
@@ -1640,7 +1677,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.forum.management', {
                 url: '/management',
@@ -1649,7 +1687,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/forum.management.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.users', {
                 abstract: true,
@@ -1659,7 +1698,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/users.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.users.list', {
                 url: '',
@@ -1677,7 +1717,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.users.add', {
                 url: '/add',
@@ -1687,7 +1728,8 @@ var app = angular.module('app', [
                         controller: 'AdminUserAddCtrl'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.users.edit', {
                 url: '/edit/:userID',
@@ -1703,7 +1745,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.polls', {
                 abstract: true,
@@ -1713,7 +1756,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/polls.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.polls.list', {
                 url: '',
@@ -1731,7 +1775,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.polls.add', {
                 url: '/add',
@@ -1741,7 +1786,8 @@ var app = angular.module('app', [
                         controller: 'AdminPollAddCtrl'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.polls.edit', {
                 url: '/edit/:pollID',
@@ -1757,7 +1803,8 @@ var app = angular.module('app', [
                         }
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.subscriptions', {
                 url: '/subscriptions',
@@ -1766,7 +1813,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/subscriptions.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.streams', {
                 url: '/streams',
@@ -1775,7 +1823,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/streams.html'
                     }
                 },
-                access: { auth: true, admin: true }
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.contact', {
                 url: 'contact',
