@@ -2072,6 +2072,14 @@ angular.module('app.controllers', ['ngCookies'])
         
         
         TwitchService.getStreams().then(function(data) {
+            
+            for (var i = 0; i < data.streamFeed.length; i++) {
+                var log = data.streamFeed[i].logoUrl;
+                var sub = log.substr(4);
+                var im = "https" + sub;
+                data.streamFeed[i].logoUrl = im;
+            }
+                        
             $scope.streamWheel = true;
             $scope.streams = data.streamFeed;
         });
