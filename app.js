@@ -97,7 +97,7 @@ passport.use(new TwitchStrategy({
     clientSecret: config.TWITCH_SECRET,
     callbackURL: config.TWITCH_CALLBACK_URL,
     scope: "user_read"
-  }, routes.frontend.twitch(Schemas, jwt, config.JWT_SECRET) ));
+  }, routes.frontend.twitch(Schemas) ));
 
 passport.use(new BnetStrategy({
     clientID: config.BNET_ID,
@@ -110,9 +110,7 @@ passport.use(new BnetStrategy({
 app.get('/auth/twitch', passport.authenticate('twitch'));
 app.get('/auth/twitch/callback', passport.authenticate('twitch', { failureRedirect: '/login' }),
   function(req, res) {
-    console.log("Getting twitch callback");
     var token = jwt.sign({ _id: req.user._id.toString() }, config.JWT_SECRET);
-    console.log("Token: "+JSON.stringify(token));
     res.cookie('token', token);
     res.redirect('/');
 });

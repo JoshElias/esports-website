@@ -2134,7 +2134,7 @@ module.exports = {
                     ext = '.' + arr.pop(),
                     large = name + '.large' + ext,
                     thumb = name + '.thumb' + ext,
-                    path = BASE_DIR + '/photos/polls/';
+                    path = __dirname+'/../photos/polls/';
                     copyFile(function () {
                         var files = [];
                         files.push({
@@ -2209,7 +2209,7 @@ module.exports = {
                     ext = '.' + arr.pop(),
                     large = name + '.large' + ext,
                     medium = name + '.medium' + ext,
-                    path = BASE_DIR + '/photos/cards/';
+                    path = __dirname+'/../photos/cards/';
                     copyFile(function () {
                         var files = [];
                         files.push({
@@ -2278,7 +2278,7 @@ module.exports = {
                     name = arr.splice(0, arr.length - 1).join('.'),
                     ext = '.' + arr.pop(),
                     small = name + '.small' + ext,
-                    path = BASE_DIR + '/photos/cards/';
+                    path = __dirname+'/../photos/cards/';
                     copyFile(function () {
                         var files = [];
                         files.push({
@@ -2340,7 +2340,7 @@ module.exports = {
                     large = name + '.large' + ext,
                     medium = name + '.medium' + ext,
                     small = name + '.small' + ext,
-                    path = BASE_DIR + '/photos/articles/';
+                    path = __dirname+'/../photos/articles/';
                     copyFile(function () {
                         var files = [];
                         files.push({
