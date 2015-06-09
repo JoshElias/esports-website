@@ -2112,8 +2112,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'TwitchService', 'TwitterService',
-    function ($scope, dataBanners, dataArticles, TwitchService, TwitterService) {
+.controller('HomeCtrl', ['$scope', '$sce', 'dataBanners', 'dataArticles', 'TwitchService', 'TwitterService',
+    function ($scope, $sce, dataBanners, dataArticles, TwitchService, TwitterService) {
         // data
         $scope.articles = dataArticles.articles;
         $scope.streamWheel = false;
@@ -2123,23 +2123,25 @@ angular.module('app.controllers', ['ngCookies'])
         
         
         TwitchService.getStreams().then(function(data) {
-<<<<<<< HEAD
             for (var i = 0; i < data.streamFeed.length; i++) {
                 var log = data.streamFeed[i].logoUrl;
                 var sub = log.substr(4);
                 var im = "https" + sub;
                 data.streamFeed[i].logoUrl = im;
             }
-=======
->>>>>>> fac61927507d7abddc605fbf9d3bf3bced3a0bc7
             $scope.streamWheel = true;
             $scope.streams = data.streamFeed;
         });
         
         TwitterService.getFeed().then(function(data) {
+            console.log(data);
             $scope.twitWheel = true;
-            $scope.tweets = data.someTwitter;
+            $scope.tweets = data;
         });
+        
+        $scope.getContent = function (c) {
+            return $sce.trustAsHtml(c);
+        }
         
         // banner
         
@@ -11532,7 +11534,7 @@ angular.module('app.services', [])
     return {
         getFeed: function () {
             var d = $q.defer();
-            $http.post('/twitterFeed', { limit: 50 }).success(function (data) {
+            $http.post('/twitterFeed', { limit: 20 }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

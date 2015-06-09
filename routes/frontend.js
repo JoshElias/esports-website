@@ -2586,23 +2586,6 @@ module.exports = {
             });
         }
     },
-    twitterFeed: function () {
-        return function (req, res, next) {
-            var someTwitter = [{
-                    screenName : "@twitdude123",
-                    text : "Hello friends",
-                    logoUrl : "https://pbs.twimg.com/profile_images/607653124296220673/u-CxrxQ5_400x400.jpg",
-                    timeStamp : "2:33pm June 500th"
-                },
-                {
-                    screenName : "@twitdude123",
-                    text : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec purus in ante pretium blandit. Aliquam erat volutpat. Nulla libero lectus.",
-                    logoUrl : "https://pbs.twimg.com/profile_images/607653124296220673/u-CxrxQ5_400x400.jpg",
-                    timeStamp : "2:33pm June 500th"
-                }]
-            return res.json({ success: true, someTwitter: someTwitter });
-        }
-    },
     sendContact: function (Mail) {
         return function(req, res, next) {
             //TODO: ADD FUNCTIONALITY

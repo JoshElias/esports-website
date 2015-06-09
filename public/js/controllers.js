@@ -217,8 +217,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'TwitchService', 'TwitterService',
-    function ($scope, dataBanners, dataArticles, TwitchService, TwitterService) {
+.controller('HomeCtrl', ['$scope', '$sce', 'dataBanners', 'dataArticles', 'TwitchService', 'TwitterService',
+    function ($scope, $sce, dataBanners, dataArticles, TwitchService, TwitterService) {
         // data
         $scope.articles = dataArticles.articles;
         $scope.streamWheel = false;
@@ -239,9 +239,14 @@ angular.module('app.controllers', ['ngCookies'])
         });
         
         TwitterService.getFeed().then(function(data) {
+            console.log(data);
             $scope.twitWheel = true;
-            $scope.tweets = data.someTwitter;
+            $scope.tweets = data;
         });
+        
+        $scope.getContent = function (c) {
+            return $sce.trustAsHtml(c);
+        }
         
         // banner
         

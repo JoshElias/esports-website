@@ -141,11 +141,11 @@
                             <div class="tweet-info-top">
                                 <h4>{{tweet.screenName}}</h4>
                                 <div class="time">
-                                    <i class="fa fa-clock-o"></i><h4 class="pull-right">{{tweet.timeStamp}}</h4>
+                                    <i class="fa fa-clock-o"></i><h4 am-time-ago="tweet.timestamp" class="pull-right"></h4>
                                 </div>
                             </div>
                             <div class="tweet-info-bottom wrapper-sm clearfix">
-                                <p>{{tweet.text}}</p>
+                                <p ng-bind-html="getContent(tweet.text)"></p>
                             </div>
                         </div>
                     </div>
