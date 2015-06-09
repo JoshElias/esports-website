@@ -2586,18 +2586,6 @@ module.exports = {
             });
         }
     },
-    twitch: function (Schemas) {
-        return function (req, res, next) {
-            var stuff = {
-                channelUrl : 'https://google.ca',
-                gameName : 'A shitty game',
-                viewerCount : '1337',
-                displayName : 'fuk u',
-                logoUrl : 'no'
-            }
-            return res.json({ success: true, stuff : stuff });
-        }
-    },
     sendContact: function (Mail) {
         return function(req, res, next) {
             //TODO: ADD FUNCTIONALITY
