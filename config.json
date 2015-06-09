@@ -11,7 +11,7 @@
 
       "TWITCH_ID" : "kxjhxkwq4t3egwy3ses7xdpaq314ldm",
       "TWITCH_SECRET" : "530y82dvigic8mwlpgk5jqidbkpnld8",
-      "TWITCH_CALLBACK_URL" : "https://tempostorm.com/auth/twitch/callback"
+      "TWITCH_CALLBACK_URL" : "http://tempostorm.com/auth/twitch/callback"
   }, 
 
   "development" : {
