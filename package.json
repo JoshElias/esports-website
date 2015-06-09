@@ -45,6 +45,7 @@
     "request": "^2.57.0",
     "serve-favicon": "latest",
     "stripe": "3.0.3",
+    "twitter": "^1.2.5",
     "underscore": "^1.8.3"
   },
   "devDependencies": {

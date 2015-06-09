@@ -11,7 +11,12 @@
 
       "TWITCH_ID" : "kxjhxkwq4t3egwy3ses7xdpaq314ldm",
       "TWITCH_SECRET" : "17c78usqj6xa2o2jras3coniw13rc7c",
-      "TWITCH_CALLBACK_URL" : "http://tempostorm.com/auth/twitch/callback"
+      "TWITCH_CALLBACK_URL" : "http://tempostorm.com/auth/twitch/callback",
+
+      "TWITTER_KEY" : "BEInxp4PzT4vWFiWMtASZiSlS",
+      "TWITTER_SECRET" : "hNDEcIeKCl1nq0huhEfq6WAI89c5LrcCd1z7omk0BGaSQqhrp2",
+      "TWITTER_TOKEN_KEY" : "",
+      "TWITTER_TOKEN_SECRET" : ""
   }, 
 
   "development" : {
