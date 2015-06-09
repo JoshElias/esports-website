@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "async": "0.9.0",
+    "autolinker": "^0.17.1",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "latest",
     "compression": "latest",

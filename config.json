@@ -15,8 +15,8 @@
 
       "TWITTER_KEY" : "BEInxp4PzT4vWFiWMtASZiSlS",
       "TWITTER_SECRET" : "hNDEcIeKCl1nq0huhEfq6WAI89c5LrcCd1z7omk0BGaSQqhrp2",
-      "TWITTER_TOKEN_KEY" : "",
-      "TWITTER_TOKEN_SECRET" : ""
+      "TWITTER_TOKEN_KEY" : "184958971-uxQALHEb8vLW7OxPxFccPz5oNP2PoIm9rhxOWd8D",
+      "TWITTER_TOKEN_SECRET" : "vwOFCoLOEwFK3Ykh4Q6N2qflQYjPdBefscapTBsWj7ora"
   }, 
 
   "development" : {

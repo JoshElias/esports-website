@@ -42,7 +42,8 @@ var cluster = require('cluster'),
     amazon = require('./lib/amazon'),
     Subscription = require('./lib/sub'),
     util = require('util'),
-    twitch = require("./lib/twitch")
+    twitch = require("./lib/twitch"),
+    twitter = require("./lib/twitter")
 
 /* mongoose */
 mongoose.connect(config.DB_URL);
@@ -138,6 +139,7 @@ app.post('/forgot-password', routes.frontend.forgotPassword(Schemas, Mail, uuid)
 app.post('/forgot-password/reset', routes.frontend.resetPassword(Schemas, Mail));
 
 twitch.route(app);
+twitter.route(app);
 
 app.post('/profile/:username', routes.frontend.profile(Schemas));
 app.post('/profile/:username/activity', routes.frontend.profileActivity(Schemas, async));
