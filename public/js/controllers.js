@@ -231,8 +231,6 @@ angular.module('app.controllers', ['ngCookies'])
         });
         
         
-        console.log($scope.streams);
-        
         // banner
         
         $scope.banner = {
@@ -3521,11 +3519,10 @@ angular.module('app.controllers', ['ngCookies'])
             var premium = $scope.deck.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
                 if ($scope.premiumTypes[i].value === premium) {
-                    return $scope.premiumTypes[i].text;
+                    return $scope.premiumTypes[i].value;
                 }
             }
         }
-        
         
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.deck.name + ' - Decks', $scope.deck.description);
@@ -5948,7 +5945,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice.set($scope.guide.name + ' - Guides', $scope.guide.description);
         
         var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/hots-logo';
-        $scope.metaservice.setOg('https://tempostorm.com/articles/' + data.guide.slug, $scope.guide.name, $scope.guide.description, 'article', ogImg);
+        $scope.metaservice.setOg('https://tempostorm.com/heroes-of-the-storm/guides/' + data.guide.slug, $scope.guide.name, $scope.guide.description, 'article', ogImg);
         
         // show
         if (!$scope.app.settings.show.guide) {
