@@ -51,6 +51,7 @@
                     </li>
                     <li ng-class="{active:$state.includes('app.forum')}"><a ui-sref="app.forum.home">Forum</a></li>
                     <li ng-class="{active:$state.includes('app.sponsors')}"><a ui-sref="app.sponsors">Sponsors</a></li>
+                    <li ng-class="{active:$state.includes('app.polls')}"><a ui-sref="app.polls">Vote</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li ng-class="{active:$state.includes('app.login')}" ng-hide="app.user.isLogged()"><a ui-sref="app.login">Login</a></li>
