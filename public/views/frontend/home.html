@@ -106,7 +106,7 @@
                         <h3>TEMPO STREAMS</h3>
                     </div>
                 </div>
-                <div class="twitch-body" ng-show="streams">
+                <div ng-if="streams > 0" class="twitch-body" ng-show="streams">
                     <div class="stream wrapper-xs" ng-repeat="stream in streams | orderBy:'-viewerCount'">
                         <a target="_blank" ng-href="{{stream.channelUrl}}">
                             <div class="stream-img-wrapper">
@@ -126,10 +126,8 @@
                         </a>
                     </div>
                 </div>
-                <div class="darkbox nostream wrapper-md" ng-show="!streams && streamWheel"><p class="m-b-none">Sorry, there are currently no streams available.</p></div>
+                <div class="darkbox nostream wrapper-md" ng-if="streams.length < 1 && streamWheel"><p class="m-b-none">Sorry, there are currently no streams available.</p></div>
             </div>
-            
-            
             
             <div class="twitter-feed clearfix m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-12">
                 <div class="twitter-head wrapper-sm">
