@@ -141,8 +141,6 @@ app.post('/forgot-password/reset', routes.frontend.resetPassword(Schemas, Mail))
 twitch.route(app);
 twitter.route(app);
 
-//app.post('/twitterFeed', routes.frontend.twitterFeed());
-
 app.post('/profile/:username', routes.frontend.profile(Schemas));
 app.post('/profile/:username/activity', routes.frontend.profileActivity(Schemas, async));
 app.post('/profile/:username/articles', routes.frontend.profileArticles(Schemas));
@@ -151,6 +149,8 @@ app.post('/profile/:username/guides', routes.frontend.profileGuides(Schemas));
 
 app.post('/articles', routes.frontend.articles(Schemas));
 app.post('/article', routes.frontend.article(Schemas));
+
+
 
 app.post('/decks', routes.frontend.decks(Schemas));
 app.post('/decks/community', routes.frontend.decksCommunity(Schemas));

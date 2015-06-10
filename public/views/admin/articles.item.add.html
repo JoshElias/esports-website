@@ -7,7 +7,7 @@
             </div>
         </div>
 
-        <form class="list-group">
+        <form class="list-group m-b-none">
             <a class="list-group-item" ng-click="modifyItem(deck)" ng-repeat="deck in filtered = (decks | filterAll:search | orderBy:'-createdDate' | limitTo:10)">
                 {{deck.name}}
             </a>
@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <form class="list-group">
+        <form class="list-group m-b-none">
             <a class="list-group-item" ng-click="modifyItem(guide)" ng-repeat="guide in filtered = (guides | filterAll:search | orderBy:'-createdDate' | limitTo:10)">
                 {{guide.name}}
             </a>
