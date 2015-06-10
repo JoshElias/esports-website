@@ -239,7 +239,6 @@ angular.module('app.controllers', ['ngCookies'])
         });
         
         TwitterService.getFeed().then(function(data) {
-            console.log(data);
             $scope.twitWheel = true;
             $scope.tweets = data;
         });
