@@ -31,3 +31,9 @@ photos
 
 # Windows thumb image files
 Thumbs.db
+*.eot
+*.ttf
+*.svg
+*.woff
+*.otf
+*.woff2
