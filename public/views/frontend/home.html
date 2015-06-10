@@ -98,8 +98,8 @@
             <!-- / guide builder -->
         </div>
         
-        <div class="hidden-xs hidden-s col-md-3 col-lg-3">
-            <div class="twitch-feed clearfix m-b-md">
+        <div class="col-md-12 col-lg-3">
+            <div class="twitch-feed clearfix m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-12">
                 <div class="twitch-head wrapper-sm">
                     <div>
                         <i class="fa" ng-class="{ 'fa-twitch': streamWheel, 'fa-cog': !streamWheel, 'fa-spin': !streamWheel }"></i>
@@ -109,8 +109,10 @@
                 <div class="twitch-body" ng-show="streams">
                     <div class="stream wrapper-xs" ng-repeat="stream in streams | orderBy:'-viewerCount'">
                         <a target="_blank" ng-href="{{stream.channelUrl}}">
-                            <img ng-src="{{stream.logoUrl}}">
-                            <div class="stream-info pull-right">
+                            <div class="stream-img-wrapper">
+                                <img ng-src="{{stream.logoUrl}}">
+                            </div>
+                            <div class="stream-info">
                                 <div class="stream-info-top">
                                     <h4>{{stream.displayName}}</h4>
                                     <div class="views">
@@ -128,7 +130,8 @@
             </div>
             
             
-            <div class="twitter-feed clearfix m-b-md">
+            <!--
+            <div class="twitter-feed clearfix m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-12">
                 <div class="twitter-head wrapper-sm">
                     <div>
                         <i class="fa" ng-class="{ 'fa-twitter': twitWheel, 'fa-cog': !twitWheel, 'fa-spin': !twitWheel }"></i>
@@ -152,7 +155,7 @@
                 </div>
                 <div class="darkbox nofeed wrapper-md" ng-show="!tweets && twitWheel"><p class="m-b-none">Sorry, there are currently no tweets available.</p></div>
             </div>
-            
+            -->
             
         </div>
         

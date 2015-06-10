@@ -312,7 +312,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 
 
 /* twitch FEED */
-.twitch-feed { width: auto; max-height: 420px; display:block; } 
+.twitch-feed { max-height: 420px; display:block; padding: 0px; } 
 .twitch-feed .twitch-head { height: 60px; background-color: #64449b; }
 .twitch-feed div {  }
 .twitch-feed div h3,
@@ -322,12 +322,12 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .twitch-feed div i { font-size: 28px; margin: 0px 10px }
 
 .twitch-feed .twitch-body { max-height: 360px; padding: 0px; overflow-y: auto; border: 4px solid #0f0f0f }
-.twitch-feed .twitch-body .stream { border-bottom: 1px solid #171514; height: 60px; background-color: #0f0f0f; position: relative; padding-top: 10px }
+.twitch-feed .twitch-body .stream { border-bottom: 1px solid #171514; height: 60px; background-color: #0f0f0f; padding-top: 8px }
 .twitch-feed .twitch-body .stream:nth-child(2n) { background-color: #161515 }
 .twitch-feed .twitch-body .stream:hover { background-color: #363434 }
-.twitch-feed .twitch-body img { width: 40px; height: 40px; position: absolute; margin:auto; top: 0; bottom: 0; left: 10;  }
-.twitch-feed .twitch-body .stream-info { color:white; position: relative; top: 0; bottom: 0; right: 0; width: 200px;}
-.twitch-feed .twitch-body .stream-info  div { padding:0px }
+.twitch-feed .twitch-body .stream-img-wrapper,
+.twitch-feed .twitch-body .stream-img-wrapper img { width: 40px; height: 40px; margin:auto; float:left; vertical-align:top; }
+.twitch-feed .twitch-body .stream-info { color:white; position: relative; padding-left:45px; }
 .twitch-feed .twitch-body .stream-info .stream-info-top { position:relative; }
 .twitch-feed .twitch-body .stream-info .stream-info-top .views { position:absolute; top: 0; right: 0; }
 .twitch-feed .twitch-body .stream-info .stream-info-top h4 { color: #BCBCBC; font-size: 14px; margin: 0px; }
@@ -343,7 +343,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 
 
 /* twitter FEED */
-.twitter-feed { width: auto; height: 420px; display:block; } 
+.twitter-feed { height: 420px; display:block; padding: 0px; } 
 .twitter-feed .twitter-head { height: 60px; background-color: #6CADDE; }
 .twitter-feed div h3,
 .twitter-feed div i { color: white; display:inline-block; line-height: 40px; text-shadow: 0px 0px 8px #fdedf4; vertical-align: middle; margin: 0px 10px 0px 0px }
@@ -6274,7 +6274,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
     background: linear-gradient(to bottom,  #9b81b6 40%,#6b3f98 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9b81b6', endColorstr='#6b3f98',GradientType=0 ); /* IE6-9 */
     -webkit-animation-name: glow-purple; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow-purple; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
-.talent-calculator-link-inner { position: relative; height: 196px; background: #a97344 url('../img/hots/talent-calculator-back.jpg') no-repeat right top; }
+.talent-calculator-link-inner { position: relative; height: 196px; background: url('../img/hots/talent-calculator-back.jpg') right top; }
 .talent-calculator-link-inner a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/hots/talent-calculator-front.png') no-repeat; background-position: center 0px; -webkit-transition: background-position ease-in-out .3s; transition: background-position ease-in-out .3s; }
 .talent-calculator-link-inner a:hover { background-position: center -196px; }
 
@@ -6378,6 +6378,10 @@ input[type=range]:focus::-ms-fill-upper {
 @media (min-width: 768px) {
 }
 @media (min-width: 768px) and (max-width: 1199px) {
+    /* HOME FEEDS */
+    .twitch-feed { padding-right: 10px; }
+    .twitter-feed { padding-left: 10px; }
+    
     /* filters */
     .filter-bar h1 { font-size: 20px; line-height: 32px; }
     .filter-bar h1 br { display: none; }
@@ -6419,6 +6423,8 @@ input[type=range]:focus::-ms-fill-upper {
 
 @media (min-width: 768px) and (max-width: 979px) {
     /* home */
+    .twitch-feed { padding-right: 0px; }
+    .twitter-feed { padding-left: 0px; }
     .adSenseSidebarHome { height: 140px; }
     
     /* forums */
@@ -6454,6 +6460,8 @@ input[type=range]:focus::-ms-fill-upper {
 
 @media (max-width: 767px) {
     /* home */
+    .twitch-feed { padding-right: 0px; }
+    .twitter-feed { padding-left: 0px; }
     .adSenseSidebarHome { height: 140px; }
     
     /* filters */
