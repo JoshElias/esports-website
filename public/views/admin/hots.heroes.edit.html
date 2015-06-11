@@ -72,7 +72,7 @@
             </div>
             <ul class="list-group" dnd-list="hero.abilities" dnd-allowed-types="['ability']" ng-show="hero.abilities.length">
                 <li class="list-group-item admin-list-item lh-lg clearfix"
-                    ng-repeat="ability in hero.abilities | orderBy: ability.orderNum"
+                    ng-repeat="ability in hero.abilities | orderBy: 'orderNum'"
                     dnd-draggable="ability"
                     dnd-moved="updateDND(hero.abilities, $index)"
                     dnd-disable-if="hero.abilities.length < 2"
@@ -98,7 +98,7 @@
             </div>
             <ul class="list-group" dnd-list="hero.talents" dnd-allowed-types="['talent']" ng-show="hero.talents.length">
                 <li class="list-group-item admin-list-item lh-lg clearfix"
-                    ng-repeat="talent in hero.talents | orderBy: talent.orderNum"
+                    ng-repeat="talent in hero.talents | orderBy: 'orderNum'"
                     dnd-draggable="talent"
                     dnd-moved="updateDND(hero.talents, $index)"
                     dnd-disable-if="hero.talents.length < 2"
@@ -123,7 +123,7 @@
                 <strong class="lh-lg">Characters</strong>
             </div>
             <ul class="list-group" ng-show="hero.characters.length">
-                <li class="list-group-item admin-list-item lh-lg clearfix" ng-repeat="character in hero.characters | orderBy: character.name">
+                <li class="list-group-item admin-list-item lh-lg clearfix" ng-repeat="character in hero.characters | orderBy: 'name'">
                     {{character.name}}
                     <div class="pull-right">
                         <button class="btn btn-sm btn-default" ng-click="charEditWnd(character)">Edit</button>

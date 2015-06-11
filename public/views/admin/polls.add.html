@@ -63,7 +63,7 @@
             </div>
             <ul class="list-group" dnd-list="poll.items" ng-show="poll.items.length">
                 <li class="list-group-item lh-lg clearfix"
-                    ng-repeat="item in poll.items | orderBy: item.orderNum"
+                    ng-repeat="item in poll.items | orderBy: 'orderNum'"
                     dnd-draggable="item"
                     dnd-moved="updateDND(poll.items, $index)"
                     dnd-disable-if="poll.items.length < 2"
