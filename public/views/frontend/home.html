@@ -106,7 +106,7 @@
                         <h3>TEMPO STREAMS</h3>
                     </div>
                 </div>
-                <div ng-if="streams > 0" class="twitch-body" ng-show="streams">
+                <div ng-if="streams.length > 0" class="twitch-body" ng-show="streams">
                     <div class="stream wrapper-xs" ng-repeat="stream in streams | orderBy:'-viewerCount'">
                         <a target="_blank" ng-href="{{stream.channelUrl}}">
                             <div class="stream-img-wrapper">
