@@ -2129,12 +2129,12 @@ angular.module('app.controllers', ['ngCookies'])
                 var im = "https" + sub;
                 data.data.streamFeed[i].logoUrl = im;
             }
+            console.log(data);
             $scope.streamWheel = true;
             $scope.streams = data.data;
         });
         
         TwitterService.getFeed().then(function(data) {
-            console.log(data);
             $scope.twitWheel = true;
             $scope.tweets = data.data;
         });
