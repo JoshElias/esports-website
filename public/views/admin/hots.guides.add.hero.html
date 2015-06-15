@@ -82,7 +82,7 @@
                     <li class="clearfix" ng-repeat="tier in guide.tiers()">
                         <span>{{tier}}</span>
                         <ul class="gb-talents-icons clearfix">
-                            <li ng-repeat="talent in guide.talentsByTier(hero.hero, tier) | orderBy: talent.orderNum">
+                            <li ng-repeat="talent in guide.talentsByTier(hero.hero, tier) | orderBy: 'orderNum'">
                                 <a href="#" class="talents-icon {{hero.hero.className}} {{talent.className}}" ng-class="{ 'tier-selected': guide.hasAnyTalent(hero, talent), active: guide.hasTalent(hero, talent) }" ng-click="guide.toggleTalent(hero, talent)" hots-talent hero="hero.hero" talent="talent" tooltip-pos="{{tooltipPosTalent($parent.$parent.$index)}}">{{talent.name}}</a>
                             </li>
                         </ul>
@@ -142,7 +142,7 @@
 </div>
 <div class="container" ng-show="step === 6">
     <div class="guide-text hero-discussion"></div>
-    <div class="db-section m-b-md" ng-repeat="content in guide.content track by $index | orderBy: content.orderNum">
+    <div class="db-section m-b-md" ng-repeat="content in guide.content track by $index | orderBy: 'orderNum'">
         <div class="gb-content-title">
             <div class="gb-content-btns clearfix">
                 <a href="#" class="gb-content-down m-r-xs" ng-class="{ 'disabled': $index == (guide.content.length - 1) }" ng-show="guide.content.length > 1" ng-click="guide.moveContentDown(content)"><i class="fa fa-caret-down"></i></a>
