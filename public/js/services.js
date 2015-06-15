@@ -2,7 +2,9 @@
 
 angular.module('app.services', [])
 .service('MetaService', function() {
-   
+    
+    var statusCode = undefined;
+    
     var ogType = '';
     var ogUrl = '';
     var ogImage = '';
@@ -13,6 +15,9 @@ angular.module('app.services', [])
     var metaDescription = '';
     var metaKeywords = '';
     return {
+       setStatusCode: function (s) {
+            statusCode = s;
+       },
        setOg: function(newOgUrl, newOgTitle, newOgDescription, newOgType, newOgImage) {
            ogUrl = newOgUrl || 'https://tempostorm.com';
            ogTitle = newOgTitle || 'TempoStorm';
@@ -37,7 +42,8 @@ angular.module('app.services', [])
        ogMetaDescription: function() { return ogDescription.replace(/<\/?[^>]+(>|$)/g, ""); },
        metaTitle: function(){ return (title + ' - TempoStorm'); },
        metaDescription: function() { return metaDescription; },
-       metaKeywords: function() { return metaKeywords; }
+       metaKeywords: function() { return metaKeywords; },
+       getStatusCode: function() { return statusCode; }
     }
 })
 .factory('AuthenticationService', function() {

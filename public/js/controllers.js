@@ -101,6 +101,9 @@ angular.module('app.controllers', ['ngCookies'])
       }
 
   }])
+.controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
+    MetaService.setStatusCode(404);
+}])
 .controller('UserCtrl', ['$scope', '$location', '$window', '$state', 'UserService', 'AuthenticationService', 'AlertService', 'SubscriptionService', 
     function ($scope, $location, $window, $state, UserService, AuthenticationService, AlertService, SubscriptionService) {
         // grab alerts

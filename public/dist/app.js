@@ -68,11 +68,12 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage", 
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage",
         function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies, $localStorage) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
+            
             
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
@@ -96,6 +97,7 @@ var app = angular.module('app', [
                 $window.scrollTo(0,0);
             });
             $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
+                $rootScope.metaservice.setStatusCode(200);
                 //ngProgress.complete();
                 $window.ga('send', 'pageview', $location.path());
 
@@ -108,11 +110,12 @@ var app = angular.module('app', [
                 if (toState.seo) {
                     $rootScope.metaservice.set(toState.seo.title, toState.seo.description, toState.seo.keywords);
                 }
-                
-                //
                 if (!toState.og) {
                     $rootScope.metaservice.setOg('https://tempoStorm.com' + toState.url);
                 }
+            });
+            $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {
+                $state.transitionTo('app.404');
             });
             $rootScope.$on("$routeChangeError", function(evt, current, previous, rejection){
                 console.log(3);
@@ -144,7 +147,7 @@ var app = angular.module('app', [
         var production = false,
             tpl = (production) ? 'https://s3-us-west-2.amazonaws.com/ts-node2' : '';
         
-        $urlRouterProvider.otherwise('/');
+        $urlRouterProvider.otherwise('404');
         $stateProvider
             .state('app', {
                 abstract: true,
@@ -189,6 +192,16 @@ var app = angular.module('app', [
                         }
                     }]
                 }
+            })
+            .state('app.404', {
+                url: '404',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/404.html',
+                        controller: '404Ctrl',
+                    }
+                },
+                seo: { title: '404' }
             })
             .state('app.home', {
                 url: '',
@@ -249,9 +262,15 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/articles.article.html',
                         controller: 'ArticleCtrl',
                         resolve: {
-                            data: ['$stateParams', 'ArticleService', function ($stateParams, ArticleService) {
+                            data: ['$stateParams', '$q', 'ArticleService', function ($stateParams, $q, ArticleService) {
                                 var slug = $stateParams.slug;
-                                return ArticleService.getArticle(slug);
+                                return ArticleService.getArticle(slug).then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('Unable to find article');
+                                    }
+                                 });
                             }]
                         }
                     }
@@ -352,7 +371,13 @@ var app = angular.module('app', [
                         resolve: {
                             data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
                                 var slug = $stateParams.slug;
-                                return DeckService.getDeck(slug);
+                                return DeckService.getDeck(slug).then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('unable to find deck');
+                                    }
+                                 });
                             }]
                         }
                     }
@@ -491,7 +516,13 @@ var app = angular.module('app', [
                         resolve: {
                             data: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
                                 var slug = $stateParams.slug;
-                                return HOTSGuideService.getGuide(slug);
+                                return HOTSGuideService.getGuide(slug).then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('Unable to find guide');
+                                    }
+                                 });
                             }],
                             dataHeroes: ['HeroService', function (HeroService) {
                                 return HeroService.getHeroes();
@@ -650,8 +681,14 @@ var app = angular.module('app', [
             .state('app.hots.talentCalculator.redirect', {
                 url: '',
                 resolve: {
-                    dataHeroesList: ['HeroService', function (HeroService) {
-                        return HeroService.getHeroesList();
+                    dataHeroesList: ['HeroService', '$q', function (HeroService, $q) {
+                        return HeroService.getHeroesList().then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('unable to find hero');
+                                    }
+                                 });
                     }],
                     redirect: ['$q', '$state', 'dataHeroesList', function ($q, $state, dataHeroesList) {
                         $state.go('app.hots.talentCalculator.hero', { hero: dataHeroesList.heroes[0].className });
@@ -667,9 +704,15 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.talentCalculator.hero.html',
                         controller: 'HOTSTalentCalculatorHeroCtrl',
                         resolve: {
-                            dataHero: ['$stateParams', 'HeroService', function ($stateParams, HeroService) {
+                            dataHero: ['$stateParams', '$q', 'HeroService', function ($stateParams, $q, HeroService) {
                                 var hero = $stateParams.hero;
-                                return HeroService.getHeroByClass(hero);
+                                return HeroService.getHeroByClass(hero).then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('unable to find hero');
+                                    }
+                                 });
                             }]
                         }
                     }
@@ -692,8 +735,14 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.home.html',
                         controller: 'ForumCategoryCtrl',
                         resolve: {
-                            data: ['ForumService', function (ForumService) {
-                                return ForumService.getCategories();
+                            data: ['ForumService', '$q', function (ForumService, $q) {
+                                return ForumService.getCategories().then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('unable to find catagory');
+                                    }
+                                 });;
                             }]
                         }
                     }
@@ -707,9 +756,15 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.threads.html',
                         controller: 'ForumThreadCtrl',
                         resolve: {
-                            data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
+                            data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
                                 var thread = $stateParams.thread;
-                                return ForumService.getThread(thread);
+                                return ForumService.getThread(thread).then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('unable to find thread');
+                                    }
+                                 });;
                             }]
                         }
                     }
@@ -738,10 +793,16 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.post.html',
                         controller: 'ForumPostCtrl',
                         resolve: {
-                            data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
+                            data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
                                 var thread = $stateParams.thread,
                                     post = $stateParams.post;
-                                return ForumService.getPost(thread, post);
+                                return ForumService.getPost(thread, post).then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('unable to find post');
+                                    }
+                                 });;
                             }]
                         }
                     }
@@ -922,7 +983,13 @@ var app = angular.module('app', [
                         resolve: {
                             dataProfile: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
                                 var username = $stateParams.username;
-                                return ProfileService.getProfile(username);
+                                return ProfileService.getProfile(username).then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('Unable to find profile');
+                                    }
+                                 });
                             }]
                         }
                     }
@@ -1996,6 +2063,9 @@ angular.module('app.controllers', ['ngCookies'])
       }
 
   }])
+.controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
+    MetaService.setStatusCode(404);
+}])
 .controller('UserCtrl', ['$scope', '$location', '$window', '$state', 'UserService', 'AuthenticationService', 'AlertService', 'SubscriptionService', 
     function ($scope, $location, $window, $state, UserService, AuthenticationService, AlertService, SubscriptionService) {
         // grab alerts
@@ -9619,7 +9689,9 @@ angular.module('app.filters', [])
 
 angular.module('app.services', [])
 .service('MetaService', function() {
-   
+    
+    var statusCode = undefined;
+    
     var ogType = '';
     var ogUrl = '';
     var ogImage = '';
@@ -9630,6 +9702,9 @@ angular.module('app.services', [])
     var metaDescription = '';
     var metaKeywords = '';
     return {
+       setStatusCode: function (s) {
+            statusCode = s;
+       },
        setOg: function(newOgUrl, newOgTitle, newOgDescription, newOgType, newOgImage) {
            ogUrl = newOgUrl || 'https://tempostorm.com';
            ogTitle = newOgTitle || 'TempoStorm';
@@ -9654,7 +9729,8 @@ angular.module('app.services', [])
        ogMetaDescription: function() { return ogDescription.replace(/<\/?[^>]+(>|$)/g, ""); },
        metaTitle: function(){ return (title + ' - TempoStorm'); },
        metaDescription: function() { return metaDescription; },
-       metaKeywords: function() { return metaKeywords; }
+       metaKeywords: function() { return metaKeywords; },
+       getStatusCode: function() { return statusCode; }
     }
 })
 .factory('AuthenticationService', function() {

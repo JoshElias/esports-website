@@ -362,6 +362,15 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .twitter-feed .twitter-body .stream.lite { background-color: #161515 }
 
 
+/* 404 */
+.fofOuter {  padding: 0px; }
+.fof { background: url(../img/black-60.png); margin: 0px auto; }
+.fof .inner {  }
+.fof .inner img { display: block; margin: 20px auto; }
+.fof .inner h1 { font-family: "Open Sans Bold"; font-size: 48px; color: #2766AD }
+.fof .inner h2 { font-size: 24px; color: #BCBCBC }
+.fof .inner p { font-size: 16px; color: #BCBCBC }
+.fof .inner button { display: block; margin: 0px auto; }
 
 
 /* animated dropdowns */

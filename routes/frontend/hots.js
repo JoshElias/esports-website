@@ -705,7 +705,7 @@ module.exports = {
                 Schemas.Hero.find({ active: true })
                 .sort({ name: 1 })
                 .exec(function (err, results) {
-                    if (err || !results) { res.json({ success: false }); }
+                    if (err || !results) { return res.json({ success: false }); }
                     return callback(results);
                 });
             }
@@ -722,7 +722,7 @@ module.exports = {
                 .select('name description role heroType universe title className')
                 .sort({ name: 1 })
                 .exec(function (err, results) {
-                    if (err || !results) { res.json({ success: false }); }
+                    if (err || !results) { return res.json({ success: false }); }
                     return callback(results);
                 });
             }
@@ -739,7 +739,7 @@ module.exports = {
             function getHero (callback) {
                 Schemas.Hero.findOne({ _id: _id, active: true })
                 .exec(function (err, results) {
-                    if (err || !results) { res.json({ success: false }); }
+                    if (err || !results) { return res.json({ success: false }); }
                     return callback(results);
                 });
             }
@@ -756,7 +756,7 @@ module.exports = {
             function getHero (callback) {
                 Schemas.Hero.findOne({ className: hero, active: true })
                 .exec(function (err, results) {
-                    if (err || !results) { res.json({ success: false }); }
+                    if (err || !results) { return res.json({ success: false }); }
                     return callback(results);
                 });
             }
@@ -772,7 +772,7 @@ module.exports = {
                 Schemas.Map.find({ active: true })
                 .sort({ name: 1 })
                 .exec(function (err, results) {
-                    if (err || !results) { res.json({ success: false }); }
+                    if (err || !results) { return res.json({ success: false }); }
                     return callback(results);
                 });
             }

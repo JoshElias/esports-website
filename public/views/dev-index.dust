@@ -14,6 +14,9 @@
     <meta name="description" content="{{ metaservice.metaDescription() }}" />
     <meta name="keywords" content="{{ metaservice.metaKeywords() }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    
+    <meta name="prerender-status-code" content="{{ metaservice.getStatusCode() }}">
+    
     <link rel="stylesheet" href="./dist/vendor.min.css" type="text/css" />
     <link rel="stylesheet" href="./css/style.css" type="text/css" />
 </head>

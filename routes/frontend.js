@@ -496,7 +496,7 @@ module.exports = {
             var username = req.params.username;
             
             Schemas.User.findOne({ username: username, active: true }).select('username email firstName lastName photos social about subscription.isSubscribed').exec(function (err, user) {
-                if (err || !user) { return res.sendStatus(404); }
+                if (err || !user) { return res.json({ success: false }); }
                 return res.json({ success: true, user: user });
             });
         };
@@ -506,8 +506,8 @@ module.exports = {
             var username = req.params.username;
             
             Schemas.User.findOne({ username: username, active: true }).exec(function (err, user) {
-                if (err || !user) { return res.sendStatus(404); }
-                if (user._id.toString() !== req.user._id) { return res.sendStatus(404); }
+                if (err || !user) { return res.json({ success: false }); }
+                if (user._id.toString() !== req.user._id) { return res.json({ success: false }); }
                 return res.json({ success: true, user: user });
             });
         };
