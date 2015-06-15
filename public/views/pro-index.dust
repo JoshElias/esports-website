@@ -15,7 +15,7 @@
     <meta name="keywords" content="{{ metaservice.metaKeywords() }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     
-    <meta ng-if="life" name="prerender-status-code" content="404">
+    <meta name="prerender-status-code" content="{{ metaservice.getStatusCode() }}">
     
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/dist/vendor.min.css" type="text/css" />
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/dist/style.min.css?06112015" type="text/css" />
