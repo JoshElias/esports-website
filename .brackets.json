@@ -2,6 +2,9 @@
     "jscodehints.detectedExclusions": [
         "C:/Users/codephobia/Documents/GitHub/tempostorm/js/controllers.js",
         "C:/Users/Uther/Documents/GitHub/tempostorm/js/services.js",
-        "C:/Users/Uther/Documents/GitHub/tempostorm/public/js/services.js"
+        "C:/Users/Uther/Documents/GitHub/tempostorm/public/js/services.js",
+        "C:/Users/codephobia/Documents/GitHub/tempostorm/dist/js/vendor.min.js",
+        "C:/Users/codephobia/Documents/GitHub/tempostorm/dist/js/vendor.min.782ec220.js",
+        "C:/Users/codephobia/Documents/GitHub/tempostorm/grunt/concurrent.js"
     ]
 }

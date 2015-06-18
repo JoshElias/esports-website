@@ -17,17 +17,17 @@
     
     <meta name="prerender-status-code" content="{{ metaservice.getStatusCode() }}">
     
-    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/dist/vendor.min.css" type="text/css" />
-    <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/ts-node2/dist/style.min.css?06152015" type="text/css" />
+    <link rel="stylesheet" href="https://s3-us-west-1.amazonaws.com/tempo-pro/dist/css/{vendor_min_css}" type="text/css" />
+    <link rel="stylesheet" href="https://s3-us-west-1.amazonaws.com/tempo-pro/dist/css/{style_min_css}" type="text/css" />
 </head>
 <body ng-class="{ admin: $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
     <div class="app" id="app" ui-view="root"></div>
     <!-- vendor -->
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/dist/vendor.min.js"></script>
+    <script src="https://s3-us-west-1.amazonaws.com/tempo-pro/dist/js/{vendor_min_js}"></script>
     <!-- angular -->
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/dist/angular.min.js"></script>
+    <script src="https://s3-us-west-1.amazonaws.com/tempo-pro/dist/js/{angular_min_js}"></script>
     <!-- app -->
-    <script src="https://s3-us-west-2.amazonaws.com/ts-node2/dist/app.min.js?06152015"></script>
+    <script src="https://s3-us-west-1.amazonaws.com/tempo-pro/dist/js/{app_min_js}"></script>
     <!-- stripe -->
     <script src="https://js.stripe.com/v2/"></script>
     <script>

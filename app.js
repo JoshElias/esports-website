@@ -44,6 +44,7 @@ var cluster = require('cluster'),
     util = require('util'),
     twitch = require("./lib/twitch"),
     twitter = require("./lib/twitter")
+    assets = require("./lib/assets");
 
 /* mongoose */
 mongoose.connect(config.DB_URL);
@@ -128,8 +129,8 @@ app.get('/auth/bnet/callback', passport.authenticate('bnet', { failureRedirect: 
 
 
 /* spa */
-app.get('/', routes.frontend.index(config));
-app.get('*', routes.frontend.index(config));
+app.get('/', routes.frontend.index(config, assets));
+app.get('*', routes.frontend.index(config, assets));
 
 /* frontend */
 app.post('/login', routes.frontend.login(Schemas, jwt, config.JWT_SECRET));
