@@ -285,12 +285,20 @@ app.post('/api/admin/upload/article', routes.admin.isAdmin(Schemas), multipartMi
 app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadCard(fs, gm, amazon));
 app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadDeck(fs, gm, amazon));
 app.post('/api/admin/upload/polls', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadPoll(fs, gm, amazon));
+app.post('/api/admin/upload/banners', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadBanner(fs, gm, amazon));
 
 app.post('/api/admin/polls', routes.admin.isAdmin(Schemas), routes.admin.polls(Schemas));
 app.post('/api/admin/poll', routes.admin.isAdmin(Schemas), routes.admin.poll(Schemas));
 app.post('/api/admin/poll/delete', routes.admin.isAdmin(Schemas), routes.admin.pollDelete(Schemas));
 app.post('/api/admin/poll/add', routes.admin.isAdmin(Schemas), routes.admin.pollAdd(Schemas));
 app.post('/api/admin/poll/edit', routes.admin.isAdmin(Schemas), routes.admin.pollEdit(Schemas));
+
+app.post('/api/admin/banners', routes.admin.isAdmin(Schemas), routes.admin.banners(Schemas));
+app.post('/api/admin/banners/order', routes.admin.isAdmin(Schemas), routes.admin.bannersOrder(Schemas));
+app.post('/api/admin/banner', routes.admin.isAdmin(Schemas), routes.admin.banner(Schemas));
+app.post('/api/admin/banner/delete', routes.admin.isAdmin(Schemas), routes.admin.bannerDelete(Schemas));
+app.post('/api/admin/banner/add', routes.admin.isAdmin(Schemas), routes.admin.bannerAdd(Schemas));
+app.post('/api/admin/banner/edit', routes.admin.isAdmin(Schemas), routes.admin.bannerEdit(Schemas));
 
 app.post('/api/admin/id', routes.admin.isAdmin(Schemas), routes.admin.getObjectID(mongoose));
 

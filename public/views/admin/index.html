@@ -91,6 +91,12 @@
                 <span>Polls</span>
             </a>
         </li>
+        <li ng-class="{active:$state.includes('app.admin.banners')}">
+            <a ui-sref="app.admin.banners.list">
+                <i class="fa fa-bullhorn m-r-sm"></i>
+                <span>Banners</span>
+            </a>
+        </li>
         <!--<li ng-class="{active:$state.includes('app.admin.subscriptions')}">
             <a ui-sref="app.admin.subscriptions">
                 <i class="fa fa-money m-r-sm"></i>
