@@ -56,7 +56,9 @@ var app = angular.module('app', [
             $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
                 $rootScope.metaservice.setStatusCode(200);
                 //ngProgress.complete();
-                $window.ga('send', 'pageview', $location.path());
+                if ($window.ga) {
+                    $window.ga('send', 'pageview', $location.path());
+                }
 
                 // adsense refresh
                 //if ($window.googletag && $window.googletag.pubads) {
@@ -101,8 +103,7 @@ var app = angular.module('app', [
         $locationProvider.html5Mode(true);
         $httpProvider.interceptors.push('TokenInterceptor');
         
-        var production = false,
-            tpl = (production) ? 'https://s3-us-west-2.amazonaws.com/ts-node2' : '';
+        var tpl = (cdnUrl) ? cdnUrl : '';
         
         $urlRouterProvider.otherwise('404');
         $stateProvider

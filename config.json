@@ -24,7 +24,17 @@
       "APP_PORT" : 1337,
       "APP_INDEX" : "dev-index",
 
-      "DB_URL" : "mongodb://localhost:27017/tempostorm"
+      "DB_URL" : "mongodb://localhost:27017/tempostorm",
+      "CDN_URL" : ""
+  },
+
+  "staging" : {
+      "APP_URL" : "localhost",
+      "APP_PORT" : 1337,
+      "APP_INDEX" : "staging-index",
+
+      "DB_URL" : "mongodb://localhost:27017/tempostorm",
+      "CDN_URL" : "https://staging-cdn.tempostorm.com"
   },
 
   "production" : {
@@ -32,6 +42,7 @@
       "APP_PORT" : 8080,
       "APP_INDEX" : "pro-index",
 
-      "DB_URL" : "mongodb://104.236.245.160:27017/tempostorm"
+      "DB_URL" : "mongodb://104.236.245.160:27017/tempostorm",
+      "CDN_URL" : "https://cdn.tempostorm.com"
   }
 }
