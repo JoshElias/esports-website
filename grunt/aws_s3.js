@@ -1,9 +1,11 @@
+var config = require('./../lib/config');
+
 module.exports = {
     staging: {
         options: {
-            accessKeyId: 'AKIAI5GMLIWXZP6TQXYQ',
-            secretAccessKey: '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',
-            bucket: 'tempo-staging',
+            accessKeyId: config.AMAZON_KEY,
+            secretAccessKey: config.AMAZON_SECRET,
+            bucket: 'staging-cdn.tempostorm.com',
             region: 'us-west-2',
             access: 'public-read',
             uploadConcurrency: 5,
@@ -41,9 +43,9 @@ module.exports = {
     },
     production: {
         options: {
-            accessKeyId: 'AKIAI5GMLIWXZP6TQXYQ',
-            secretAccessKey: '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',
-            bucket: 'tempo-pro',
+            accessKeyId: config.AMAZON_KEY,
+            secretAccessKey: config.AMAZON_SECRET,
+            bucket: 'cdn.tempostorm.com',
             region: 'us-west-1',
             access: 'public-read',
             uploadConcurrency: 5,
