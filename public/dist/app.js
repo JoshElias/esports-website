@@ -9303,7 +9303,7 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/login.form.html'
     };
 })
-.directive('datePicker', function($compile){
+.directive('datePicker', function(){
     return {
         replace: true,
         templateUrl: 'views/admin/date-picker.html',
