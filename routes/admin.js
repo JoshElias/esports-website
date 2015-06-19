@@ -612,7 +612,7 @@ module.exports = {
         return function (req, res, next) {
             function getArticles(callback){
                 Schemas.Article.find({})
-                .select('_id title')
+                .select('_id title createdDate')
                 .exec(function (err, articles) {
                     if (err) { return res.json({ success: false, articles: [] }); }
                     return callback(articles);
