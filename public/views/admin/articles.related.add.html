@@ -1,0 +1,14 @@
+<div class="panel panel-dark m-b-none">
+    <div class="panel-heading clearfix">
+        <strong class="lh-lg">ADD RELATED ARTICLE</strong>
+        <div class="pull-right m-r-sm">
+            <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+        </div>
+    </div>
+
+    <form class="list-group m-b-none">
+        <a class="list-group-item" ng-click="modifyRelated(article)" ng-repeat="article in filtered = (articles | limitTo:10 | orderBy: '-createdDate' | filterAll:search)">
+            {{article.title}}
+        </a>
+    </form>
+</div>

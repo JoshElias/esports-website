@@ -79,12 +79,38 @@
         </div>
         
         
+<!--
         <div class="form-group">
-            <label for="related" class="col-sm-2 control-label">Related Articles</label>
+            <label for="deck" class="col-sm-2 control-label">Related Article</label>
             <div class="col-sm-10">
-                <select class="form-control" ng-options="item._id as item.title for item in articles" ng-model="article.related" multiple></select>
+                <button type="button" class="col-sm-1 btn btn-green" ng-click="addRelatedArticle()">Related Article</button>
+                <input class="form-control col-sm-8" ng-model="article.related" multiple>
             </div>
         </div>
+-->
+        
+        
+
+        <div class="form-group">
+            <label for="deck" class="col-sm-2 control-label">Related Articles</label>
+
+            <div class="col-sm-10 panel panel-default">
+                <span class="panel-heading">
+                    <button type="button" class="btn btn-green" ng-click="addRelatedArticle()">Related Article</button>
+                </span>
+                <ul class="list-group">
+                    <li class="panel-body" ng-repeat="a in article.related">
+                        <span>{{a.title}}</span>
+                        <button type="button" class="btn btn-danger" ng-click="removeRelatedArticle(a)">
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        
+        
         <div class="form-group" ng-show="article.articleType == 'hs'">
             <label for="deck" class="col-sm-2 control-label">Deck</label>
             <div class="col-sm-10">

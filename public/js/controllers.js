@@ -1021,8 +1021,26 @@ angular.module('app.controllers', ['ngCookies'])
             itemAddBox.modal('hide');
         }
         
-        $scope.removeItemArticle = function () {
-            $scope.article.deck = undefined;
+        //this is for the related article modal
+        $scope.addRelatedArticle = function () {
+            itemAddBox = bootbox.dialog({
+                message: $compile('<div article-related-add></div>')($scope),
+                closeButton: true,
+                animate: true
+            });
+            itemAddBox.modal('show');
+        }
+        
+        $scope.modifyRelated = function (a) {
+            $scope.article.related.push(a);
+            $scope.articles.splice($scope.articles.indexOf(a), 1);
+        }
+        
+        $scope.removeRelatedArticle = function (a) {
+            for (var i = 0; i < $scope.article.related.length; i++) {
+                if (a === $scope.article.related[i])
+                    $scope.article.related.splice(i, 1);
+            }
         }
         
         // load article
@@ -1205,6 +1223,28 @@ angular.module('app.controllers', ['ngCookies'])
                 case 'hots': $scope.article.guide = item; break;
             }
             itemAddBox.modal('hide');
+        }
+        
+        //this is for the related article modal
+        $scope.addRelatedArticle = function () {
+            itemAddBox = bootbox.dialog({
+                message: $compile('<div article-related-add></div>')($scope),
+                closeButton: true,
+                animate: true
+            });
+            itemAddBox.modal('show');
+        }
+        
+        $scope.modifyRelated = function (a) {
+            $scope.article.related.push(a);
+            $scope.articles.splice($scope.articles.indexOf(a), 1);
+        }
+        
+        $scope.removeRelatedArticle = function (a) {
+            for (var i = 0; i < $scope.article.related.length; i++) {
+                if (a === $scope.article.related[i])
+                    $scope.article.related.splice(i, 1);
+            }
         }
         
         $scope.setSlug = function () {
