@@ -2669,6 +2669,31 @@ module.exports = {
             }
         };
     },
+    snapshots: function () {
+        return function (req, res, next) {
+            return res.json({success: true});
+        }
+    },
+    snapshot: function () {
+        return function (req, res, next) {
+            return res.json({success: true});
+        }
+    },
+    snapshotAdd: function () {
+        return function (req, res, next) {
+            return res.json({success: true});
+        }
+    },
+    snapshotEdit: function () {
+        return function (req, res, next) {
+            return res.json({success: true});
+        }
+    },
+    snapshotDelete: function () {
+        return function (req, res, next) {
+            return res.json({success: true});
+        }
+    },
     getObjectID: function (mongoose) {
         return function (req, res, next) {
             var id = mongoose.Types.ObjectId();

@@ -671,6 +671,33 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('AdminSnapshotService', ['$http', '$q', function($http, $q) {
+    return {
+        getSnapshots: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getSnapshot: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/snapshot', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            })
+            return d.promise;
+        },
+        addSnapshot: function (snapshot) {
+            return $http.post('/api/admin/snapshot/add', snapshot);
+        },
+        editSnapshot: function (snapshot) {
+            return $http.post('/api/admin/snapshot/add', snapshot);
+        },
+        deleteSnapshot: function (snapshot) {
+            return $http.post('/api/admin/snapshot/delete', snapshot);
+        }
+    }
+}])
 .factory('AdminForumService', ['$http', '$q', function ($http, $q) {
     return {
         getCategories: function () {

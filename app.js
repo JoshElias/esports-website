@@ -292,6 +292,12 @@ app.post('/api/admin/poll/delete', routes.admin.isAdmin(Schemas), routes.admin.p
 app.post('/api/admin/poll/add', routes.admin.isAdmin(Schemas), routes.admin.pollAdd(Schemas));
 app.post('/api/admin/poll/edit', routes.admin.isAdmin(Schemas), routes.admin.pollEdit(Schemas));
 
+app.post('/api/admin/snapshots', routes.admin.isAdmin(Schemas), routes.admin.snapshots(Schemas));
+app.post('/api/admin/snapshot', routes.admin.isAdmin(Schemas), routes.admin.snapshot(Schemas));
+app.post('/api/admin/snapshot/add', routes.admin.isAdmin(Schemas), routes.admin.snapshotAdd(Schemas));
+app.post('/api/admin/snapshot/delete', routes.admin.isAdmin(Schemas), routes.admin.snapshotDelete(Schemas));
+app.post('/api/admin/snapshot/edit', routes.admin.isAdmin(Schemas), routes.admin.snapshotEdit(Schemas));
+
 app.post('/api/admin/id', routes.admin.isAdmin(Schemas), routes.admin.getObjectID(mongoose));
 
 // 404

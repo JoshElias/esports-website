@@ -60,7 +60,7 @@ angular.module('app.directives', ['ui.load'])
             ngDisabled: '=',
             dateOptions: '='
         },
-        link: function($scope, $element, $attrs, $controller){
+        link: function($scope, $element, $attrs, $controller) {
             var id = $attrs.id || 'datePicker',
                 name = $attrs.name || 'datePicker',
                 $button = $element.find('button'),
