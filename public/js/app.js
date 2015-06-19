@@ -1873,6 +1873,34 @@ var app = angular.module('app', [
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
             })
+            .state('app.admin.snapshots', {
+                abstract: true,
+                url: '/snapshots',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/snapshots.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.snapshots.list', {
+                url: '/add',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/snapshots.list.html',
+                        controller: 'AdminSnapshotListCtrl',
+                        resolve: {
+                            data: ['AdminSnapshotService', function (AdminSnapshotService) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminSnapshotService.getSnapshots(page, perpage, search);
+                            }]
+                        }
+                    }
+                }
+            })
             .state('app.admin.subscriptions', {
                 url: '/subscriptions',
                 views: {
