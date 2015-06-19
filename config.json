@@ -34,18 +34,18 @@
   },
 
   "staging" : {
-      "APP_URL" : "localhost",
-      "APP_PORT" : 1337,
+      "APP_URL" : "52.26.75.137",
+      "APP_PORT" : 8080,
       "APP_INDEX" : "staging-index",
 
       "DB_URL" : "mongodb://localhost:27017/tempostorm",
-      "CDN_URL" : "https://staging-cdn.tempostorm.com",
+      "CDN_URL" : "https://staging-cdn.joshelias.ca/dist/",
       
-      "AMAZON_BUCKET" : "staging-cdn.tempostorm.com"
+      "AMAZON_BUCKET" : "staging-cdn.joshelias.ca"
   },
 
   "production" : {
-      "APP_URL": "tempostorm.com",
+      "APP_URL": "joshelias.ca",
       "APP_PORT" : 8080,
       "APP_INDEX" : "pro-index",
 
