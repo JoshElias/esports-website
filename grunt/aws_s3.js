@@ -5,7 +5,7 @@ module.exports = {
         options: {
             accessKeyId: config.AMAZON_KEY,
             secretAccessKey: config.AMAZON_SECRET,
-            bucket: 'staging-cdn.tempostorm.com',
+            bucket: 'staging-cdn.joshelias.ca',
             region: 'us-west-2',
             access: 'public-read',
             uploadConcurrency: 5,
