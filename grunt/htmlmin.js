@@ -8,7 +8,7 @@ module.exports = {
             expand: true,
             cwd: 'public/views',
             src: '{,*/}*.html',
-            dest: 'dist/html'
+            dest: 'dist/views'
         }]
     }
 };

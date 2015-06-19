@@ -29,9 +29,9 @@ module.exports = {
             },
             {
                 expand: true,
-                cwd: 'dist/html/',
+                cwd: 'dist/views/',
                 src: ['**/*'],
-                dest: 'dist/html'
+                dest: 'dist/views'
             },
             {
                 expand: true,
@@ -70,9 +70,9 @@ module.exports = {
             },
             {
                 expand: true,
-                cwd: 'dist/html/',
+                cwd: 'dist/views/',
                 src: ['**/*'],
-                dest: 'dist/html'
+                dest: 'dist/views'
             },
             {
                 expand: true,
