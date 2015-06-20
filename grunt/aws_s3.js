@@ -19,13 +19,25 @@ module.exports = {
                 expand: true,
                 cwd: 'dist/js/',
                 src: ['*.min.*.js'],
-                dest: 'dist/js/'
+                dest: 'dist/js'
+            },
+            {
+                expand: true,
+                cwd: 'dist/js/',
+                src: ['**/*', '!**/*.js'],
+                dest: 'dist/js'
             },
             {
                 expand: true,
                 cwd: 'dist/css/',
                 src: ['*.min.*.css'],
                 dest: 'dist/css'
+            },
+            {
+                expand: true,
+                cwd: 'dist/css/fonts/',
+                src: ['**/*'],
+                dest: 'dist/css/fonts'
             },
             {
                 expand: true,
@@ -60,13 +72,25 @@ module.exports = {
                 expand: true,
                 cwd: 'dist/js/',
                 src: ['*.min.*.js'],
-                dest: 'dist/js/'
+                dest: 'dist/js'
+            },
+            {
+                expand: true,
+                cwd: 'dist/js/',
+                src: ['**/*', '!**/*.js'],
+                dest: 'dist/js'
             },
             {
                 expand: true,
                 cwd: 'dist/css/',
                 src: ['*.min.*.css'],
                 dest: 'dist/css'
+            },
+            {
+                expand: true,
+                cwd: 'dist/css/fonts/',
+                src: ['**/*'],
+                dest: 'dist/css/fonts'
             },
             {
                 expand: true,

@@ -34,7 +34,7 @@
 <body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
     <div class="app" id="app" ui-view="root"></div>
     <script>
-        var cdnUrl = '{cdnUrl}';
+        var tpl = '{cdnUrl}';
     </script>
     <!-- vendor -->
     <script src="./js/vendor/jquery/jquery-2.1.1.min.js"></script>

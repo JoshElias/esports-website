@@ -19,8 +19,10 @@
       "TWITTER_TOKEN_SECRET" : "vwOFCoLOEwFK3Ykh4Q6N2qflQYjPdBefscapTBsWj7ora",
       
       "AMAZON_KEY" : "AKIAI5GMLIWXZP6TQXYQ",
-      "AMAZON_SECRET" : "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"
-  }, 
+      "AMAZON_SECRET" : "+KtXI6Pvdt8ijq4uOCpkIT5f76Wxf23avEdy311f",
+      
+      "PRERENDER_IO_KEY" : "XrpCoT3t8wTNledN5pLU"
+  },
 
   "development" : {
       "APP_URL" : "localhost",
@@ -28,9 +30,10 @@
       "APP_INDEX" : "dev-index",
 
       "DB_URL" : "mongodb://localhost:27017/tempostorm",
-      "CDN_URL" : "https://staging-cdn.tempostorm.com",
+      "DB_OPTIONS" : {},
+      "CDN_URL" : "https://staging-cdn.joshelias.ca/",
 
-      "AMAZON_BUCKET" : "staging-cdn.tempostorm.com"
+      "AMAZON_BUCKET" : "staging-cdn.joshelias.ca"
   },
 
   "staging" : {
@@ -38,8 +41,14 @@
       "APP_PORT" : 8080,
       "APP_INDEX" : "staging-index",
 
-      "DB_URL" : "mongodb://localhost:27017/tempostorm",
-      "CDN_URL" : "https://staging-cdn.joshelias.ca/dist/",
+      "DB_URL" : "mongodb://52.26.156.55:27017,52.11.14.8:27017,52.8.169.246:27017/tempostorm",
+      "DB_OPTIONS" : {
+          "replSet": {
+            "rs_name": "tempostormRepSet",
+            "readPreference": "ReadPreference.NEAREST"
+          }
+      },
+      "CDN_URL" : "https://staging-cdn.joshelias.ca/",
       
       "AMAZON_BUCKET" : "staging-cdn.joshelias.ca"
   },
@@ -49,8 +58,14 @@
       "APP_PORT" : 8080,
       "APP_INDEX" : "pro-index",
 
-      "DB_URL" : "mongodb://104.236.245.160:27017/tempostorm",
-      "CDN_URL" : "https://cdn.tempostorm.com",
+      "DB_URL" : "mongodb://52.26.156.55:27017,52.11.14.8:27017,52.8.169.246:27017/tempostorm",
+      "DB_OPTIONS" : {
+          "replSet": {
+            "rs_name": "tempostormRepSet",
+            "readPreference": "ReadPreference.NEAREST"
+          }
+      },
+      "CDN_URL" : "https://cdn.tempostorm.com/",
       
       "AMAZON_BUCKET" : "cdn.tempostorm.com"
   }

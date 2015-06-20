@@ -48,15 +48,7 @@ var cluster = require('cluster'),
 
 
 // mongoose 
-var replOptions = { 
-    replSet: {
-        rs_name: "tempostormRepSet",
-        readPreference: 'ReadPreference.NEAREST'
-    } 
-};
-var replSetUrl = "mongodb://52.26.156.55:27017,52.11.14.8:27017,52.8.169.246:27017/tempostorm";
-
-mongoose.connect(replSetUrl, replOptions);
+mongoose.connect(config.DB_URL, config.DB_OPTIONS);
 
 app.use(express.static(__dirname + '/public'));
 
@@ -65,7 +57,7 @@ app.set('template_engine', 'dust');
 app.set('views', __dirname + '/public/views');
 app.set('view engine', 'dust');
 
-app.use(require('prerender-node').set('prerenderToken', 'XrpCoT3t8wTNledN5pLU'));
+app.use(require('prerender-node').set('prerenderToken', config.PRERENDER_IO_KEY));
 app.use(favicon(path.join(__dirname, 'favicon.ico')));
 app.use(compression({
     threshold: 512

@@ -7,7 +7,7 @@ module.exports = {
         files: [{
             expand: true,
             cwd: 'public/views',
-            src: '{,*/}*.html',
+            src: '**/*.html',
             dest: 'dist/views'
         }]
     }

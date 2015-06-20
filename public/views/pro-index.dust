@@ -17,17 +17,20 @@
     
     <meta name="prerender-status-code" content="{{ metaservice.getStatusCode() }}">
     
-    <link rel="stylesheet" href="{cdnUrl}/dist/css/{assets.vendor_min_css}" type="text/css" />
-    <link rel="stylesheet" href="{cdnUrl}/dist/css/{assets.style_min_css}" type="text/css" />
+    <link rel="stylesheet" href="{cdnUrl}dist/css/{assets.vendor_min_css}" type="text/css" />
+    <link rel="stylesheet" href="{cdnUrl}dist/css/{assets.style_min_css}" type="text/css" />
 </head>
 <body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
     <div class="app" id="app" ui-view="root"></div>
+    <script>
+        var tpl = '{cdnUrl}';
+    </script>
     <!-- vendor -->
-    <script src="{cdnUrl}/dist/js/{assets.vendor_min_js}"></script>
+    <script src="{cdnUrl}dist/js/{assets.vendor_min_js}"></script>
     <!-- angular -->
-    <script src="{cdnUrl}/dist/js/{assets.angular_min_js}"></script>
+    <script src="{cdnUrl}dist/js/{assets.angular_min_js}"></script>
     <!-- app -->
-    <script src="{cdnUrl}/dist/js/{assets.app_min_js}"></script>
+    <script src="{cdnUrl}dist/js/{assets.app_min_js}"></script>
     <!-- stripe -->
     <script src="https://js.stripe.com/v2/"></script>
     <script>
