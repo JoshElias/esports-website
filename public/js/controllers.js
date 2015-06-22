@@ -966,8 +966,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes', 
-    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
+.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'AdminDeckService', 'AdminHOTSGuideService', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes', 'dataDecks', 
+    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, AdminDeckService, AdminHOTSGuideService, dataGuides, dataArticles, dataProviders, dataHeroes, dataDecks) {
         // default article
         var d = new Date();
         d.setMonth(d.getMonth()+1);
@@ -1002,12 +1002,67 @@ angular.module('app.controllers', ['ngCookies'])
         deckID,
         itemAddBox;
         
+        $scope.search = '';
+        
+        
+        //search functions
+        function escapeStr( str ) {
+            return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+        
+        
+        //search functions
+        $scope.getDecks = function () {
+            AdminDeckService.getDecks(1, 10, escapeStr($scope.search)).then(function (data) {
+                console.log(data);
+                $scope.decks = data.decks;
+            });
+        } 
+        
+        $scope.searchDecks = function () {
+            console.log($scope.search);
+            $scope.getDecks();
+        }
+        
+        $scope.getArticles = function () {
+            AdminArticleService.getArticles(1, 10, escapeStr($scope.search)).then(function (data) {
+                console.log(data);
+                $scope.articles = data.articles;
+            });
+        }
+        
+        $scope.searchArticles = function () {
+            console.log($scope.search);
+            $scope.getArticles();
+        }
+        
+        $scope.getGuides = function () {
+            AdminHOTSGuideService.getGuides(1, 10, escapeStr($scope.search)).then(function (data) {
+                console.log(data);
+                $scope.guides = data.guides;
+            });
+        }
+        
+        $scope.searchGuides = function () {
+            console.log($scope.search);
+            $scope.getGuides();
+        }
+        //!search functions
+        
+        
+        
         //open the modal to choose what item to add
         $scope.addItemArticle = function () {
             itemAddBox = bootbox.dialog({
                 message: $compile('<div article-item-add></div>')($scope),
                 closeButton: true,
-                animate: true
+                animate: true,
+                onEscape: function () { //We want to clear the search results when we close the bootbox
+                    console.log('Dalatin;');
+                    $scope.search = '';
+                    $scope.searchDecks();
+                    $scope.searchGuides();
+                }
             });
             itemAddBox.modal('show');
         }
@@ -1018,6 +1073,7 @@ angular.module('app.controllers', ['ngCookies'])
                 case 'hs': $scope.article.deck = item; break;
                 case 'hots': $scope.article.guide = item; break;
             }
+            $scope.search = '';
             itemAddBox.modal('hide');
         }
         
@@ -1026,7 +1082,12 @@ angular.module('app.controllers', ['ngCookies'])
             itemAddBox = bootbox.dialog({
                 message: $compile('<div article-related-add></div>')($scope),
                 closeButton: true,
-                animate: true
+                animate: true,
+                onEscape: function () { //We want to clear the search results when we close the bootbox
+                    console.log('Dalatin;');
+                    $scope.search = '';
+                    $scope.searchArticles;
+                }
             });
             itemAddBox.modal('show');
         }
@@ -1038,8 +1099,10 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.removeRelatedArticle = function (a) {
             for (var i = 0; i < $scope.article.related.length; i++) {
-                if (a === $scope.article.related[i])
+                if (a === $scope.article.related[i]) {
                     $scope.article.related.splice(i, 1);
+                    $scope.articles.push(a);
+                }
             }
         }
         
@@ -1047,7 +1110,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.article = angular.copy(defaultArticle);
         
         // load decks
-        $scope.decks = [{_id: undefined, name: 'No deck'}].concat(dataDecks.decks);
+        $scope.decks = dataDecks.decks;
 
         // load guides
         $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);
@@ -1185,19 +1248,22 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes',  
-    function ($scope, $state, $window, $upload, $compile, $filter, bootbox, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
+.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'AdminDeckService', 'AdminHOTSGuideService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes',  
+    function ($scope, $state, $window, $upload, $compile, $filter, bootbox, Hearthstone, Util, AlertService, AdminArticleService, AdminDeckService, AdminHOTSGuideService, data, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
         var itemAddBox,
             deckID;
         
         // load article
         $scope.article = data.article;
         
+        console.log(data.article);
+        console.log(dataDecks);
+        
         // load decks
         $scope.decks = [{_id: undefined, name: 'No deck'}].concat(dataDecks.decks);
 
         // load guides
-        $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);        
+        $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);       
         
         // load articles
         $scope.articles = dataArticles.articles;
@@ -1205,13 +1271,67 @@ angular.module('app.controllers', ['ngCookies'])
         // load providers
         $scope.providers = dataProviders.users;
         
+        $scope.search = '';
+        
+        
+        
+        
+        
+        //search functions
+        function escapeStr( str ) {
+            return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+        
+        $scope.getDecks = function () {
+            AdminDeckService.getDecks(1, 10, escapeStr($scope.search)).then(function (data) {
+                console.log(data);
+                $scope.decks = data.decks;
+            });
+        } 
+        
+        $scope.searchDecks = function () {
+            console.log($scope.search);
+            $scope.getDecks();
+        }
+        
+        $scope.getArticles = function () {
+            AdminArticleService.getArticles(1, 10, escapeStr($scope.search)).then(function (data) {
+                console.log(data);
+                $scope.articles = data.articles;
+            });
+        }
+        
+        $scope.searchArticles = function () {
+            console.log($scope.search);
+            $scope.getArticles();
+        }
+        
+        $scope.getGuides = function () {
+            AdminHOTSGuideService.getGuides(1, 10, escapeStr($scope.search)).then(function (data) {
+                console.log(data);
+                $scope.guides = data.guides;
+            });
+        }
+        
+        $scope.searchGuides = function () {
+            console.log($scope.search);
+            $scope.getGuides();
+        }
+        //!search functions
+
         
         //open the modal to choose what item to add
         $scope.addItemArticle = function () {
             itemAddBox = bootbox.dialog({
                 message: $compile('<div article-item-add></div>')($scope),
                 closeButton: true,
-                animate: true
+                animate: true,
+                onEscape: function () { //We want to clear the search results when we close the bootbox
+                    console.log('Dalatin;');
+                    $scope.search = '';
+                    $scope.searchDecks();
+                    $scope.searchGuides();
+                }
             });
             itemAddBox.modal('show');
         }
@@ -1219,9 +1339,10 @@ angular.module('app.controllers', ['ngCookies'])
         //change the article item
         $scope.modifyItem = function (item) {
             switch ($scope.article.articleType.toString()) {
-                case 'hs':  $scope.article.deck = item; break;
+                case 'hs': $scope.article.deck = item; break;
                 case 'hots': $scope.article.guide = item; break;
             }
+            $scope.search = '';
             itemAddBox.modal('hide');
         }
         
@@ -1230,7 +1351,12 @@ angular.module('app.controllers', ['ngCookies'])
             itemAddBox = bootbox.dialog({
                 message: $compile('<div article-related-add></div>')($scope),
                 closeButton: true,
-                animate: true
+                animate: true,
+                onEscape: function () { //We want to clear the search results when we close the bootbox
+                    console.log('Dalatin;');
+                    $scope.search = '';
+                    $scope.searchArticles;
+                }
             });
             itemAddBox.modal('show');
         }
@@ -1242,10 +1368,13 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.removeRelatedArticle = function (a) {
             for (var i = 0; i < $scope.article.related.length; i++) {
-                if (a === $scope.article.related[i])
+                if (a === $scope.article.related[i]) {
                     $scope.article.related.splice(i, 1);
+                    $scope.articles.push(a);
+                }
             }
         }
+        
         
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }
@@ -1256,7 +1385,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.article.slug.linked = !$scope.article.slug.linked;
             $scope.setSlug();
         };
-        
         
         
         // photo

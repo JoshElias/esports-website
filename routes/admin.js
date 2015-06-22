@@ -612,7 +612,7 @@ module.exports = {
         return function (req, res, next) {
             function getArticles(callback){
                 Schemas.Article.find({})
-                .select('_id title createdDate')
+                .select('_id title createdDate slug.url')
                 .exec(function (err, articles) {
                     if (err) { return res.json({ success: false, articles: [] }); }
                     return callback(articles);
@@ -674,7 +674,17 @@ module.exports = {
         return function (req, res, next) {
             var _id = req.body._id;
             Schemas.Article.findOne({ _id: _id })
-            .populate('deck', '_id name')
+            //.populate('deck', '_id name')
+            .populate([
+                {
+                    path: 'deck',
+                    select: '_id name'
+                },
+                {
+                    path: 'related',
+                    select: '_id title slug.url'
+                }
+            ])
             .exec(function (err, article) {
                 if (err || !article) {
                     console.log(err || 'No article found');

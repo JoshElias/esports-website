@@ -1166,13 +1166,13 @@ var app = angular.module('app', [
                         controller: 'AdminArticleAddCtrl',
                         resolve: {
                             dataDecks: ['AdminDeckService', function (AdminDeckService) {
-                                return AdminDeckService.getAllDecks();
+                                return AdminDeckService.getDecks(1, 10, '');
                             }],
                             dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
-                                return AdminHOTSGuideService.getAllGuides();
+                                return AdminHOTSGuideService.getGuides(1, 10, '');
                             }],
                             dataArticles: ['AdminArticleService', function (AdminArticleService) {
-                                return AdminArticleService.getAllArticles();
+                                return AdminArticleService.getArticles(1, 10, '');
                             }],
                             dataProviders: ['AdminUserService', function (AdminUserService) {
                                 return AdminUserService.getProviders();
@@ -1198,7 +1198,10 @@ var app = angular.module('app', [
                                 return AdminArticleService.getArticle(articleID);
                             }],
                             dataDecks: ['AdminDeckService', function (AdminDeckService) {
-                                return AdminDeckService.getAllDecks();
+                                var page = 1,
+                                    perpage = 10,
+                                    search = '';
+                                return AdminDeckService.getDecks(page, perpage, search);
                             }],
                             dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
                                 return AdminHOTSGuideService.getAllGuides();

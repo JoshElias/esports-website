@@ -819,6 +819,7 @@ ul.premium-features li i { margin-right: 5px; color: #85c440; }
 .premium-icon.premium-semi { background: url('../img/premium-semi.png') no-repeat; }
 
 /* wrappers */
+.wrapper-none { padding: 0px; }
 .wrapper-xs { padding: 5px; }
 .wrapper-sm { padding: 10px; }
 .wrapper-md { padding: 20px; }
@@ -884,6 +885,14 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .p-r-none { padding-right: 0px; }
 .p-b-none { padding-bottom: 0px; }
 .p-l-none { padding-left: 0px; }
+
+/* vertical center*/
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
 
 /* bs no pad */
 .row.no-pad {

@@ -94,18 +94,28 @@
         <div class="form-group">
             <label for="deck" class="col-sm-2 control-label">Related Articles</label>
 
-            <div class="col-sm-10 panel panel-default">
-                <span class="panel-heading">
-                    <button type="button" class="btn btn-green" ng-click="addRelatedArticle()">Related Article</button>
-                </span>
-                <ul class="list-group">
-                    <li class="panel-body" ng-repeat="a in article.related">
-                        <span>{{a.title}}</span>
-                        <button type="button" class="btn btn-danger" ng-click="removeRelatedArticle(a)">
-                            <i class="fa fa-close"></i>
-                        </button>
-                    </li>
-                </ul>
+            <div class="col-sm-10">
+                <div class="panel panel-default">
+                    <div class="panel-heading wrapper-sm clearfix">
+                        <div class="vcenter">
+                            <h4 class="pull-left">Article Title</h4>
+                        </div>
+                        <button type="button" class="btn btn-green pull-right" ng-click="addRelatedArticle()">Add Article</button>
+                    </div>
+                    <ul ng-if="article.related.length" class="list-group clearfix">
+                        <li ng-repeat="a in article.related" class="list-group-item clearfix">
+                            <a href="https://tempostorm.com/articles/{{a.slug.url}}" target="_blank" class="pull-left clearfix" >
+                                <div>
+                                    {{a.title}} 
+                                </div>
+                            </a>
+                            <button type="button" class="btn btn-danger pull-right" ng-click="removeRelatedArticle(a)">
+                                <i class="fa fa-close"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="wrapper-md" ng-if="!article.related.length">There are no currently related articles selected.</div>
+                </div>
             </div>
         </div>
 
@@ -133,7 +143,7 @@
                         <button type="button" class="btn btn-danger" ng-show="article.guide" ng-click="modifyItem(undefined)"><i class="fa fa-close"></i></button>
                         <button type="button" class="btn btn-blue" ng-show="article.guide" ng-click="addItemArticle()"><i class="fa fa-exchange"></i></button>
                     </span>
-                    <input type="text" id="deck" name="deck" class="form-control" ng-model="article.deck.name" readonly>
+                    <input type="text" id="deck" name="deck" class="form-control" ng-model="article.guide.name" readonly>
                 </div>           
             </div>
         </div>
