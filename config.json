@@ -37,7 +37,7 @@
   },
 
   "staging" : {
-      "APP_URL" : "52.26.75.137",
+      "APP_URL" : "localhost",
       "APP_PORT" : 8080,
       "APP_INDEX" : "staging-index",
 
