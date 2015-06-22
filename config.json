@@ -41,7 +41,7 @@
       "APP_PORT" : 8080,
       "APP_INDEX" : "staging-index",
 
-      "DB_URL" : "mongodb://52.26.156.55:27017,52.11.14.8:27017,52.8.169.246:27017/tempostorm",
+      "DB_URL" : "mongodb://52.26.156.55:27017,52.11.14.8:27017,52.8.169.246:27017,54.174.103.94:27017,52.28.87.90:27017,54.79.121.240:27017/tempostorm",
       "DB_OPTIONS" : {
           "replSet": {
             "rs_name": "tempostormRepSet",
@@ -58,7 +58,7 @@
       "APP_PORT" : 8080,
       "APP_INDEX" : "pro-index",
 
-      "DB_URL" : "mongodb://52.26.156.55:27017,52.11.14.8:27017,52.8.169.246:27017/tempostorm",
+      "DB_URL" : "mongodb://52.26.156.55:27017,52.11.14.8:27017,52.8.169.246:27017,54.174.103.94:27017,52.28.87.90:27017,54.79.121.240:27017/tempostorm",
       "DB_OPTIONS" : {
           "replSet": {
             "rs_name": "tempostormRepSet",
