@@ -276,6 +276,54 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.snapshots', {
+                abstract: 'true',
+                url: 'snapshots',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/snapshots.html',
+                    }
+                }
+            })
+            .state('app.snapshots.list', {
+                url: '?s&p',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/frontend/snapshots.list.html',
+                        //controller: 'SnapshotsCtrl',
+//                        resolve: {
+//                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
+//                                var page = $stateParams.p || 1,
+//                                    perpage = 10,
+//                                    search = $stateParams.s || '';
+//                                console.log('fuk no');
+//                                return SnapshotService.getSnapshots(page, perpage, search);
+//                            }]
+//                        }
+                    }
+                }
+            })
+            .state('app.snapshots.snapshot', {
+                url: '/:slug',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/frontend/snapshots.snapshot.html',
+                        //controller: '',
+                        resolve: {
+                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
+                                var slug = $stateParams.slug;
+                                return SnapshotService.getSnapshot(slug).then(function (result) {
+                                    if(result.success === true) {
+                                    return result;
+                                    } else {
+                                        return $q.reject('Unable to find snapshot');
+                                    }
+                                });
+                            }]
+                        }
+                    }
+                }
+            })
             .state('app.hs', {
                 abstract: true,
                 url: 'hearthstone',
@@ -1928,17 +1976,43 @@ var app = angular.module('app', [
                 seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.snapshots.list', {
-                url: '/add',
+                url: '',
                 views: {
                     snapshots: {
                         templateUrl: tpl + 'views/admin/snapshots.list.html',
-                        controller: 'AdminSnapshotListCtrl',
+                        //controller: 'AdminSnapshotListCtrl',
                         resolve: {
                             data: ['AdminSnapshotService', function (AdminSnapshotService) {
                                 var page = 1,
                                     perpage = 50,
                                     search = '';
                                 return AdminSnapshotService.getSnapshots(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.snapshots.add', {
+                url: '/add',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/snapshots.add.html',
+                        //controller: 'AdminSnapshotAddCtrl',
+                    }
+                }
+            })
+            .state('app.admin.snapshots.edit', {
+                url: '/:snapshotID',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/snapshots.edit.html',
+                        controller: 'AdminSnapshotEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminSnapshotService', function ($stateParams, AdminSnapshotService) {
+                                var snapshotID = $stateParams.snapshotID;
+                                return AdminSnapshotService.getSnapshot(snapshotID);
                             }]
                         }
                     }
@@ -9901,6 +9975,30 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory ('SnapshotService', ['$http', '$q', function ($http, $q) {
+    return {
+        getSnapshots: function (page, perpage, search) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 10,
+                search = search || '';
+            
+            $http.post('/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            
+            return d.promise;
+        },
+        getSnapshot: function (slug) {
+            var d = $q.defer();
+            $http.post('/snapshot', {slug: slug}).success(function (data) {
+                d.resolve(data);
+            });
+            
+            return d.promise;
+        }
+    }
+}])
 .factory('ProfileService', ['$http', '$q', function ($http, $q) {
     return {
         getUserProfile: function (username) {
@@ -10349,13 +10447,6 @@ angular.module('app.services', [])
 }])
 .factory('AdminPollService', ['$http', '$q', function ($http, $q) {
     return {
-        getProviders: function () {
-            var d = $q.defer();
-            $http.post('/api/admin/polls/providers', {}).success(function (data) {
-                d.resolve(data);
-            });
-           return d.promise;
-        },
         getPolls: function (page, perpage, search) {
             var page = page || 1,
                 perpage = perpage || 50,
@@ -10390,7 +10481,11 @@ angular.module('app.services', [])
 }])
 .factory('AdminSnapshotService', ['$http', '$q', function($http, $q) {
     return {
-        getSnapshots: function () {
+        getSnapshots: function (page, perpage, search) {
+            var page = page || 1,
+                perpage = perpage || 10,
+                search = search || '';
+            
             var d = $q.defer();
             $http.post('/api/admin/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
@@ -10408,7 +10503,7 @@ angular.module('app.services', [])
             return $http.post('/api/admin/snapshot/add', snapshot);
         },
         editSnapshot: function (snapshot) {
-            return $http.post('/api/admin/snapshot/add', snapshot);
+            return $http.post('/api/admin/snapshot/edit', snapshot);
         },
         deleteSnapshot: function (snapshot) {
             return $http.post('/api/admin/snapshot/delete', snapshot);

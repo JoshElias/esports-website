@@ -233,6 +233,54 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.snapshots', {
+                abstract: 'true',
+                url: 'snapshots',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/snapshots.html',
+                    }
+                }
+            })
+            .state('app.snapshots.list', {
+                url: '?s&p',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/frontend/snapshots.list.html',
+                        //controller: 'SnapshotsCtrl',
+//                        resolve: {
+//                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
+//                                var page = $stateParams.p || 1,
+//                                    perpage = 10,
+//                                    search = $stateParams.s || '';
+//                                console.log('fuk no');
+//                                return SnapshotService.getSnapshots(page, perpage, search);
+//                            }]
+//                        }
+                    }
+                }
+            })
+            .state('app.snapshots.snapshot', {
+                url: '/:slug',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/frontend/snapshots.snapshot.html',
+                        //controller: '',
+                        resolve: {
+                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
+                                var slug = $stateParams.slug;
+                                return SnapshotService.getSnapshot(slug).then(function (result) {
+                                    if(result.success === true) {
+                                    return result;
+                                    } else {
+                                        return $q.reject('Unable to find snapshot');
+                                    }
+                                });
+                            }]
+                        }
+                    }
+                }
+            })
             .state('app.hs', {
                 abstract: true,
                 url: 'hearthstone',
@@ -1885,17 +1933,43 @@ var app = angular.module('app', [
                 seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.snapshots.list', {
-                url: '/add',
+                url: '',
                 views: {
                     snapshots: {
                         templateUrl: tpl + 'views/admin/snapshots.list.html',
-                        controller: 'AdminSnapshotListCtrl',
+                        //controller: 'AdminSnapshotListCtrl',
                         resolve: {
                             data: ['AdminSnapshotService', function (AdminSnapshotService) {
                                 var page = 1,
                                     perpage = 50,
                                     search = '';
                                 return AdminSnapshotService.getSnapshots(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.snapshots.add', {
+                url: '/add',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/snapshots.add.html',
+                        //controller: 'AdminSnapshotAddCtrl',
+                    }
+                }
+            })
+            .state('app.admin.snapshots.edit', {
+                url: '/:snapshotID',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/snapshots.edit.html',
+                        controller: 'AdminSnapshotEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminSnapshotService', function ($stateParams, AdminSnapshotService) {
+                                var snapshotID = $stateParams.snapshotID;
+                                return AdminSnapshotService.getSnapshot(snapshotID);
                             }]
                         }
                     }

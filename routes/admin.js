@@ -2669,27 +2669,27 @@ module.exports = {
             }
         };
     },
-    snapshots: function () {
+    snapshots: function (Schemas) {
         return function (req, res, next) {
             return res.json({success: true});
         }
     },
-    snapshot: function () {
+    snapshot: function (Schemas) {
         return function (req, res, next) {
             return res.json({success: true});
         }
     },
-    snapshotAdd: function () {
+    snapshotAdd: function (Schemas) {
         return function (req, res, next) {
             return res.json({success: true});
         }
     },
-    snapshotEdit: function () {
+    snapshotEdit: function (Schemas) {
         return function (req, res, next) {
             return res.json({success: true});
         }
     },
-    snapshotDelete: function () {
+    snapshotDelete: function (Schemas) {
         return function (req, res, next) {
             return res.json({success: true});
         }

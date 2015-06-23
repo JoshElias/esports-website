@@ -150,7 +150,8 @@ app.post('/profile/:username/guides', routes.frontend.profileGuides(Schemas));
 app.post('/articles', routes.frontend.articles(Schemas));
 app.post('/article', routes.frontend.article(Schemas));
 
-
+app.post('/snapshots', routes.frontend.snapshots(Schemas));
+app.post('/snapshot', routes.frontend.snapshot(Schemas));
 
 app.post('/decks', routes.frontend.decks(Schemas));
 app.post('/decks/community', routes.frontend.decksCommunity(Schemas));

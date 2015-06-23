@@ -184,6 +184,30 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory ('SnapshotService', ['$http', '$q', function ($http, $q) {
+    return {
+        getSnapshots: function (page, perpage, search) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 10,
+                search = search || '';
+            
+            $http.post('/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            
+            return d.promise;
+        },
+        getSnapshot: function (slug) {
+            var d = $q.defer();
+            $http.post('/snapshot', {slug: slug}).success(function (data) {
+                d.resolve(data);
+            });
+            
+            return d.promise;
+        }
+    }
+}])
 .factory('ProfileService', ['$http', '$q', function ($http, $q) {
     return {
         getUserProfile: function (username) {
@@ -632,13 +656,6 @@ angular.module('app.services', [])
 }])
 .factory('AdminPollService', ['$http', '$q', function ($http, $q) {
     return {
-        getProviders: function () {
-            var d = $q.defer();
-            $http.post('/api/admin/polls/providers', {}).success(function (data) {
-                d.resolve(data);
-            });
-           return d.promise;
-        },
         getPolls: function (page, perpage, search) {
             var page = page || 1,
                 perpage = perpage || 50,
@@ -673,7 +690,11 @@ angular.module('app.services', [])
 }])
 .factory('AdminSnapshotService', ['$http', '$q', function($http, $q) {
     return {
-        getSnapshots: function () {
+        getSnapshots: function (page, perpage, search) {
+            var page = page || 1,
+                perpage = perpage || 10,
+                search = search || '';
+            
             var d = $q.defer();
             $http.post('/api/admin/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
@@ -691,7 +712,7 @@ angular.module('app.services', [])
             return $http.post('/api/admin/snapshot/add', snapshot);
         },
         editSnapshot: function (snapshot) {
-            return $http.post('/api/admin/snapshot/add', snapshot);
+            return $http.post('/api/admin/snapshot/edit', snapshot);
         },
         deleteSnapshot: function (snapshot) {
             return $http.post('/api/admin/snapshot/delete', snapshot);
