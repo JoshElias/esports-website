@@ -111,7 +111,7 @@ var app = angular.module('app', [
                 url: '/',
                 views: {
                     root: {
-                        templateUrl: tpl + 'dist/views/frontend/index.html'
+                        templateUrl: tpl + 'views/frontend/index.html'
                     }
                 },
                 resolve: {
@@ -154,7 +154,7 @@ var app = angular.module('app', [
                 url: '404',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/404.html',
+                        templateUrl: tpl + 'views/frontend/404.html',
                         controller: '404Ctrl',
                     }
                 },
@@ -164,7 +164,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/home.html',
+                        templateUrl: tpl + 'views/frontend/home.html',
                         controller: 'HomeCtrl',
                         resolve: {
                             dataArticles: ['ArticleService', function (ArticleService) {
@@ -186,7 +186,7 @@ var app = angular.module('app', [
                 url: 'articles',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/articles.html'
+                        templateUrl: tpl + 'views/frontend/articles.html'
                     }
                 }
             })
@@ -194,7 +194,7 @@ var app = angular.module('app', [
                 url: '?s&p&t&f',
                 views: {
                     articles: {
-                        templateUrl: tpl + 'dist/views/frontend/articles.list.html',
+                        templateUrl: tpl + 'views/frontend/articles.list.html',
                         controller: 'ArticlesCtrl',
                         resolve: {
                             data: ['$stateParams', 'ArticleService', function ($stateParams, ArticleService) {
@@ -216,7 +216,7 @@ var app = angular.module('app', [
                 url: '/:slug',
                 views: {
                     articles: {
-                        templateUrl: tpl + 'dist/views/frontend/articles.article.html',
+                        templateUrl: tpl + 'views/frontend/articles.article.html',
                         controller: 'ArticleCtrl',
                         resolve: {
                             data: ['$stateParams', '$q', 'ArticleService', function ($stateParams, $q, ArticleService) {
@@ -238,7 +238,7 @@ var app = angular.module('app', [
                 url: 'hearthstone',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/hs.html'
+                        templateUrl: tpl + 'views/frontend/hs.html'
                     }
                 }
             })
@@ -258,7 +258,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     hs: {
-                        templateUrl: tpl + 'dist/views/frontend/hs.home.html',
+                        templateUrl: tpl + 'views/frontend/hs.home.html',
                         controller: 'HearthstoneHomeCtrl',
                         resolve: {
                             dataArticles: ['ArticleService', function (ArticleService) {
@@ -293,7 +293,7 @@ var app = angular.module('app', [
                 url: '/decks',
                 views: {
                     hs: {
-                        templateUrl: tpl + 'dist/views/frontend/hs.decks.html'
+                        templateUrl: tpl + 'views/frontend/hs.decks.html'
                     }
                 }
             })
@@ -301,7 +301,7 @@ var app = angular.module('app', [
                 url: '?p&s&k&a&o',
                 views: {
                     decks: {
-                        templateUrl: tpl + 'dist/views/frontend/hs.decks.list.html',
+                        templateUrl: tpl + 'views/frontend/hs.decks.list.html',
                         controller: 'DecksCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
@@ -323,7 +323,7 @@ var app = angular.module('app', [
                 url: '/:slug',
                 views: {
                     decks: {
-                        templateUrl: tpl + 'dist/views/frontend/hs.decks.deck.html',
+                        templateUrl: tpl + 'views/frontend/hs.decks.deck.html',
                         controller: 'DeckCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
@@ -345,7 +345,7 @@ var app = angular.module('app', [
                 url: '/deck-builder',
                 views: {
                     hs: {
-                        templateUrl: tpl + 'dist/views/frontend/hs.deck-builder.html'
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.html'
                     }
                 }
             })
@@ -353,7 +353,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     deckBuilder: {
-                        templateUrl: tpl + 'dist/views/frontend/hs.deck-builder.class.html'
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.class.html'
                     }
                 },
                 seo: { title: 'Deck Builder', description: 'Deck building tool for Hearthstone.', keywords: '' }
@@ -362,7 +362,7 @@ var app = angular.module('app', [
                 url: '/:playerClass',
                 views: {
                     deckBuilder: {
-                        templateUrl: tpl + 'dist/views/frontend/hs.deck-builder.build.html',
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.build.html',
                         controller: 'DeckBuilderCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
@@ -377,7 +377,7 @@ var app = angular.module('app', [
                 url: '/edit/:slug',
                 views: {
                     deckBuilder: {
-                        templateUrl: tpl + 'dist/views/frontend/hs.deck-builder.edit.html',
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.edit.html',
                         controller: 'DeckEditCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
@@ -394,7 +394,7 @@ var app = angular.module('app', [
                 url: 'heroes-of-the-storm',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.html'
+                        templateUrl: tpl + 'views/frontend/hots.html'
                     }
                 }
             })
@@ -402,7 +402,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     hots: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.home.html',
+                        templateUrl: tpl + 'views/frontend/hots.home.html',
                         controller: 'HOTSHomeCtrl',
                         resolve: {
                             dataArticles: ['ArticleService', function (ArticleService) {
@@ -430,7 +430,7 @@ var app = angular.module('app', [
                 url: '/guides',
                 views: {
                     hots: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.guides.html'
+                        templateUrl: tpl + 'views/frontend/hots.guides.html'
                     }
                 }
             })
@@ -438,7 +438,7 @@ var app = angular.module('app', [
                 url: '?p&s&t&h&m&a&o',
                 views: {
                     guides: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.guides.list.html',
+                        templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
                             data: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
@@ -468,7 +468,7 @@ var app = angular.module('app', [
                 url: '/:slug',
                 views: {
                     guides: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.guides.guide.html',
+                        templateUrl: tpl + 'views/frontend/hots.guides.guide.html',
                         controller: 'HOTSGuideCtrl',
                         resolve: {
                             data: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
@@ -497,7 +497,7 @@ var app = angular.module('app', [
                 url: '/guide-builder',
                 views: {
                     hots: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.guideBuilder.html'
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.html'
                     }
                 }
                 
@@ -506,7 +506,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     guideBuilder: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.guideBuilder.step1.html'
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.step1.html'
                     }
                 },
                 seo: { title: 'Guide Builder', description: 'Heroes of the Storm guide builder.', keywords: '' }
@@ -515,7 +515,7 @@ var app = angular.module('app', [
                 url: '/hero',
                 views: {
                     guideBuilder: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.guideBuilder.hero.html',
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.hero.html',
                         controller: 'HOTSGuideBuilderHeroCtrl',
                         resolve: {
                             dataHeroes: ['HeroService', function (HeroService) {
@@ -533,7 +533,7 @@ var app = angular.module('app', [
                 url: '/map',
                 views: {
                     guideBuilder: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.guideBuilder.map.html',
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.map.html',
                         controller: 'HOTSGuideBuilderMapCtrl',
                         resolve: {
                             dataHeroes: ['HeroService', function (HeroService) {
@@ -552,7 +552,7 @@ var app = angular.module('app', [
                 url: '/edit/:slug',
                 views: {
                     guideBuilder: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.guideBuilder.edit.html'
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.html'
                     }
                 },
                 access: { auth: true }
@@ -561,7 +561,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     edit: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.guideBuilder.edit.step1.html',
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.step1.html',
                         controller: 'HOTSGuideBuilderEditStep1Ctrl',
                         resolve: {
                             dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
@@ -578,7 +578,7 @@ var app = angular.module('app', [
                 url: '/hero',
                 views: {
                     edit: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.guideBuilder.edit.hero.html',
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.hero.html',
                         controller: 'HOTSGuideBuilderEditHeroCtrl',
                         resolve: {
                             dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
@@ -601,7 +601,7 @@ var app = angular.module('app', [
                 url: '/map',
                 views: {
                     edit: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.guideBuilder.edit.map.html',
+                        templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.map.html',
                         controller: 'HOTSGuideBuilderEditMapCtrl',
                         resolve: {
                             dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
@@ -625,7 +625,7 @@ var app = angular.module('app', [
                 url: '/talent-calculator',
                 views: {
                     hots: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.talentCalculator.html',
+                        templateUrl: tpl + 'views/frontend/hots.talentCalculator.html',
                         controller: 'HOTSTalentCalculatorCtrl',
                         resolve: {
                             dataHeroesList: ['HeroService', function (HeroService) {
@@ -658,7 +658,7 @@ var app = angular.module('app', [
                 url: '/:hero',
                 views: {
                     calc: {
-                        templateUrl: tpl + 'dist/views/frontend/hots.talentCalculator.hero.html',
+                        templateUrl: tpl + 'views/frontend/hots.talentCalculator.hero.html',
                         controller: 'HOTSTalentCalculatorHeroCtrl',
                         resolve: {
                             dataHero: ['$stateParams', '$q', 'HeroService', function ($stateParams, $q, HeroService) {
@@ -681,7 +681,7 @@ var app = angular.module('app', [
                 url: 'forum',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/forum.html'
+                        templateUrl: tpl + 'views/frontend/forum.html'
                     }
                 }
             })
@@ -689,7 +689,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     forum: {
-                        templateUrl: tpl + 'dist/views/frontend/forum.home.html',
+                        templateUrl: tpl + 'views/frontend/forum.home.html',
                         controller: 'ForumCategoryCtrl',
                         resolve: {
                             data: ['ForumService', '$q', function (ForumService, $q) {
@@ -710,7 +710,7 @@ var app = angular.module('app', [
                 url: '/:thread',
                 views: {
                     forum: {
-                        templateUrl: tpl + 'dist/views/frontend/forum.threads.html',
+                        templateUrl: tpl + 'views/frontend/forum.threads.html',
                         controller: 'ForumThreadCtrl',
                         resolve: {
                             data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
@@ -732,7 +732,7 @@ var app = angular.module('app', [
                 url: '/:thread/add',
                 views: {
                     forum: {
-                        templateUrl: tpl + 'dist/views/frontend/forum.add.html',
+                        templateUrl: tpl + 'views/frontend/forum.add.html',
                         controller: 'ForumAddCtrl',
                         resolve: {
                             data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
@@ -747,7 +747,7 @@ var app = angular.module('app', [
                 url: '/:thread/:post',
                 views: {
                     forum: {
-                        templateUrl: tpl + 'dist/views/frontend/forum.post.html',
+                        templateUrl: tpl + 'views/frontend/forum.post.html',
                         controller: 'ForumPostCtrl',
                         resolve: {
                             data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
@@ -771,7 +771,7 @@ var app = angular.module('app', [
                 url: 'team',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/team.html'
+                        templateUrl: tpl + 'views/frontend/team.html'
                     }
                 }
             })
@@ -779,7 +779,7 @@ var app = angular.module('app', [
                 url: '/team/hearthstone',
                 views: {
                     team: {
-                        templateUrl: tpl + 'dist/views/frontend/team.hearthstone.html'
+                        templateUrl: tpl + 'views/frontend/team.hearthstone.html'
                     }
                 },
                 seo: { title: 'Hearthstone', description: 'TempoStorm Hearthstone team.', keywords: '' }
@@ -788,7 +788,7 @@ var app = angular.module('app', [
                 url: '/team/hots',
                 views: {
                     team: {
-                        templateUrl: tpl + 'dist/views/frontend/team.hots.html'
+                        templateUrl: tpl + 'views/frontend/team.hots.html'
                     }
                 },
                 seo: { title: 'Heroes of the Storm', description: 'TempoStorm Heroes of the Storm team.', keywords: '' }
@@ -797,7 +797,7 @@ var app = angular.module('app', [
                 url: '/team/csgo',
                 views: {
                     team: {
-                        templateUrl: tpl + 'dist/views/frontend/team.csgo.html'
+                        templateUrl: tpl + 'views/frontend/team.csgo.html'
                     }
                 },
                 seo: { title: 'CS:GO', description: 'TempoStorm Counter Strike: Global Offensive team.', keywords: '' }
@@ -806,7 +806,7 @@ var app = angular.module('app', [
                 url: '/fifa',
                 views: {
                     team: {
-                        templateUrl: tpl + 'dist/views/frontend/team.fifa.html'
+                        templateUrl: tpl + 'views/frontend/team.fifa.html'
                     }
                 },
                 seo: { title: 'FIFA', description: 'TempoStorm FIFA team.', keywords: '' }
@@ -815,7 +815,7 @@ var app = angular.module('app', [
                 url: '/fgc',
                 views: {
                     team: {
-                        templateUrl: tpl + 'dist/views/frontend/team.fgc.html'
+                        templateUrl: tpl + 'views/frontend/team.fgc.html'
                     }
                 },
                 seo: { title: 'FGC', description: 'TempoStorm FGC team.', keywords: '' }
@@ -824,7 +824,7 @@ var app = angular.module('app', [
                 url: 'vote',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/polls.html',
+                        templateUrl: tpl + 'views/frontend/polls.html',
                         controller: 'PollsCtrl',
                         resolve: {
                             dataPollsMain: ['PollService', function(PollService) {
@@ -842,7 +842,7 @@ var app = angular.module('app', [
                 url: 'sponsors',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/sponsors.html'
+                        templateUrl: tpl + 'views/frontend/sponsors.html'
                     }
                 },
                 seo: { title: 'Sponsors', description: 'TempoStorm sponsor page.', keywords: '' }
@@ -851,7 +851,7 @@ var app = angular.module('app', [
                 url: 'premium',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/premium.html',
+                        templateUrl: tpl + 'views/frontend/premium.html',
                         controller: 'PremiumCtrl'
                     }
                 },
@@ -861,7 +861,7 @@ var app = angular.module('app', [
                 url: 'terms',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/terms.html'
+                        templateUrl: tpl + 'views/frontend/terms.html'
                     }
                 },
                 seo: { title: 'Terms and Conditions', description: 'TempoStorm Terms and Conditions', keywords: '' }
@@ -870,7 +870,7 @@ var app = angular.module('app', [
                 url: 'privacy',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/privacy.html'
+                        templateUrl: tpl + 'views/frontend/privacy.html'
                     }
                 },
                 seo: { title: 'Privacy Policy', description: 'TempoStorm Privacy Policy', keywords: '' }
@@ -879,7 +879,7 @@ var app = angular.module('app', [
                 url: 'login',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/login.html',
+                        templateUrl: tpl + 'views/frontend/login.html',
                         controller: 'UserCtrl',
                     }
                 },
@@ -890,7 +890,7 @@ var app = angular.module('app', [
                 url: 'signup',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/signup.html',
+                        templateUrl: tpl + 'views/frontend/signup.html',
                         controller: 'UserCtrl',
                     }
                 },
@@ -901,7 +901,7 @@ var app = angular.module('app', [
                 url: 'verify?email&code',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/verify.html',
+                        templateUrl: tpl + 'views/frontend/verify.html',
                         controller: 'UserVerifyCtrl',
                     }
                 },
@@ -912,7 +912,7 @@ var app = angular.module('app', [
                 url: 'forgot-password',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/forgot-password.html',
+                        templateUrl: tpl + 'views/frontend/forgot-password.html',
                         controller: 'UserCtrl'
                     }
                 },
@@ -923,7 +923,7 @@ var app = angular.module('app', [
                 url: 'forgot-password/reset?email&code',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/reset-password.html',
+                        templateUrl: tpl + 'views/frontend/reset-password.html',
                         controller: 'UserResetPasswordCtrl'
                     }
                 },
@@ -935,7 +935,7 @@ var app = angular.module('app', [
                 url: 'user/:username',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/profile.html',
+                        templateUrl: tpl + 'views/frontend/profile.html',
                         controller: 'ProfileCtrl',
                         resolve: {
                             dataProfile: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
@@ -956,7 +956,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     profile: {
-                        templateUrl: tpl + 'dist/views/frontend/profile.activity.html',
+                        templateUrl: tpl + 'views/frontend/profile.activity.html',
                         controller: 'ProfileActivityCtrl',
                         resolve: {
                             dataActivity: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
@@ -971,7 +971,7 @@ var app = angular.module('app', [
                 url: '/articles',
                 views: {
                     profile: {
-                        templateUrl: tpl + 'dist/views/frontend/profile.articles.html',
+                        templateUrl: tpl + 'views/frontend/profile.articles.html',
                         controller: 'ProfileArticlesCtrl',
                         resolve: {
                             dataArticles: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
@@ -986,7 +986,7 @@ var app = angular.module('app', [
                 url: '/decks',
                 views: {
                     profile: {
-                        templateUrl: tpl + 'dist/views/frontend/profile.decks.html',
+                        templateUrl: tpl + 'views/frontend/profile.decks.html',
                         controller: 'ProfileDecksCtrl',
                         resolve: {
                             dataDecks: ['User', '$stateParams', 'ProfileService', 'AuthenticationService', function (User, $stateParams, ProfileService, AuthenticationService) {
@@ -1006,7 +1006,7 @@ var app = angular.module('app', [
                 url: '/guides',
                 views: {
                     profile: {
-                        templateUrl: tpl + 'dist/views/frontend/profile.guides.html',
+                        templateUrl: tpl + 'views/frontend/profile.guides.html',
                         controller: 'ProfileGuidesCtrl',
                         resolve: {
                             dataGuides: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
@@ -1025,7 +1025,7 @@ var app = angular.module('app', [
                 url: '/posts',
                 views: {
                     profile: {
-                        templateUrl: tpl + 'dist/views/frontend/profile.posts.html',
+                        templateUrl: tpl + 'views/frontend/profile.posts.html',
                         controller: 'ProfilePostsCtrl',
                         resolve: {
                             dataPosts: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
@@ -1040,7 +1040,7 @@ var app = angular.module('app', [
                 url: '/edit',
                 views: {
                     profile: {
-                        templateUrl: tpl + 'dist/views/frontend/profile.edit.html',
+                        templateUrl: tpl + 'views/frontend/profile.edit.html',
                         controller: 'ProfileEditCtrl',
                         resolve: {
                             dataProfileEdit: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
@@ -1056,7 +1056,7 @@ var app = angular.module('app', [
                 url: '/email-change-confirm?code',
                 views: {
                     profile: {
-                        templateUrl: tpl + 'dist/views/frontend/blank.html',
+                        templateUrl: tpl + 'views/frontend/blank.html',
                         controller: 'ProfileEmailChangeCtrl',
                         resolve: {
                             data: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
@@ -1073,7 +1073,7 @@ var app = angular.module('app', [
                 url: '/email-verify?code',
                 views: {
                     profile: {
-                        templateUrl: tpl + 'dist/views/frontend/blank.html',
+                        templateUrl: tpl + 'views/frontend/blank.html',
                         controller: 'ProfileEmailConfirmCtrl',
                         resolve: {
                             data: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
@@ -1089,7 +1089,7 @@ var app = angular.module('app', [
                 url: '/subscription?plan',
                 views: {
                     profile: {
-                        templateUrl: tpl + 'dist/views/frontend/profile.subscription.html',
+                        templateUrl: tpl + 'views/frontend/profile.subscription.html',
                         controller: 'ProfileSubscriptionCtrl',
                         resolve: {
                             dataProfileEdit: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
@@ -1107,7 +1107,7 @@ var app = angular.module('app', [
                 url: 'admin',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/admin/index.html',
+                        templateUrl: tpl + 'views/admin/index.html',
                         resolve: {
                             admin: ['User', function (User) {
                                 return true;
@@ -1122,7 +1122,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     admin: {
-                        templateUrl: tpl + 'dist/views/admin/dashboard.html'
+                        templateUrl: tpl + 'views/admin/dashboard.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1133,7 +1133,7 @@ var app = angular.module('app', [
                 url: '/articles',
                 views: {
                     admin: {
-                        templateUrl: tpl + 'dist/views/admin/articles.html'
+                        templateUrl: tpl + 'views/admin/articles.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1143,7 +1143,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     articles: {
-                        templateUrl: tpl + 'dist/views/admin/articles.list.html',
+                        templateUrl: tpl + 'views/admin/articles.list.html',
                         controller: 'AdminArticleListCtrl',
                         resolve: {
                             data: ['AdminArticleService', function (AdminArticleService) {
@@ -1162,7 +1162,7 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     articles: {
-                        templateUrl: tpl + 'dist/views/admin/articles.add.html',
+                        templateUrl: tpl + 'views/admin/articles.add.html',
                         controller: 'AdminArticleAddCtrl',
                         resolve: {
                             dataDecks: ['AdminDeckService', function (AdminDeckService) {
@@ -1190,7 +1190,7 @@ var app = angular.module('app', [
                 url: '/edit/:articleID',
                 views: {
                     articles: {
-                        templateUrl: tpl + 'dist/views/admin/articles.edit.html',
+                        templateUrl: tpl + 'views/admin/articles.edit.html',
                         controller: 'AdminArticleEditCtrl',
                         resolve: {
                             data: ['$stateParams', 'AdminArticleService', function ($stateParams, AdminArticleService) {
@@ -1223,7 +1223,7 @@ var app = angular.module('app', [
                 url: '/hs',
                 views: {
                     admin: {
-                        templateUrl: tpl + 'dist/views/admin/hearthstone.html'
+                        templateUrl: tpl + 'views/admin/hearthstone.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1234,7 +1234,7 @@ var app = angular.module('app', [
                 url: '/decks',
                 views: {
                     hearthstone: {
-                        templateUrl: tpl + 'dist/views/admin/decks.html'
+                        templateUrl: tpl + 'views/admin/decks.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1244,7 +1244,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     decks: {
-                        templateUrl: tpl + 'dist/views/admin/decks.list.html',
+                        templateUrl: tpl + 'views/admin/decks.list.html',
                         controller: 'AdminDeckListCtrl',
                         resolve: {
                             data: ['AdminDeckService', function (AdminDeckService) {
@@ -1263,7 +1263,7 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     decks: {
-                        templateUrl: tpl + 'dist/views/admin/decks.add.class.html'
+                        templateUrl: tpl + 'views/admin/decks.add.class.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1273,7 +1273,7 @@ var app = angular.module('app', [
                 url: '/add/:playerClass',
                 views: {
                     decks: {
-                        templateUrl: tpl + 'dist/views/admin/decks.add.build.html',
+                        templateUrl: tpl + 'views/admin/decks.add.build.html',
                         controller: 'AdminDeckAddCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
@@ -1290,7 +1290,7 @@ var app = angular.module('app', [
                 url: '/edit/:deckID',
                 views: {
                     decks: {
-                        templateUrl: tpl + 'dist/views/admin/decks.edit.html',
+                        templateUrl: tpl + 'views/admin/decks.edit.html',
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
                             data: ['$stateParams', 'AdminDeckService', function ($stateParams, AdminDeckService) {
@@ -1308,7 +1308,7 @@ var app = angular.module('app', [
                 url: '/cards',
                 views: {
                     hearthstone: {
-                        templateUrl: tpl + 'dist/views/admin/cards.html'
+                        templateUrl: tpl + 'views/admin/cards.html'
                     }
                 },
                 access: { auth: true, admin: true }
@@ -1317,7 +1317,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     cards: {
-                        templateUrl: tpl + 'dist/views/admin/cards.list.html',
+                        templateUrl: tpl + 'views/admin/cards.list.html',
                         controller: 'AdminCardListCtrl',
                         resolve: {
                             data: ['AdminCardService', function (AdminCardService) {
@@ -1333,7 +1333,7 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     cards: {
-                        templateUrl: tpl + 'dist/views/admin/cards.add.html',
+                        templateUrl: tpl + 'views/admin/cards.add.html',
                         controller: 'AdminCardAddCtrl'
                     }
                 },
@@ -1344,7 +1344,7 @@ var app = angular.module('app', [
                 url: '/edit/:cardID',
                 views: {
                     cards: {
-                        templateUrl: tpl + 'dist/views/admin/cards.edit.html',
+                        templateUrl: tpl + 'views/admin/cards.edit.html',
                         controller: 'AdminCardEditCtrl',
                         resolve: {
                             data: ['$stateParams', 'AdminCardService', function ($stateParams, AdminCardService) {
@@ -1362,7 +1362,7 @@ var app = angular.module('app', [
                 url: '/hots',
                 views: {
                     admin: {
-                        templateUrl: tpl + 'dist/views/admin/hots.html'
+                        templateUrl: tpl + 'views/admin/hots.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1373,7 +1373,7 @@ var app = angular.module('app', [
                 url: '/heroes',
                 views: {
                     hots: {
-                        templateUrl: tpl + 'dist/views/admin/hots.heroes.html'
+                        templateUrl: tpl + 'views/admin/hots.heroes.html'
                     }
                 },
                 access: { auth: true, admin: true }
@@ -1382,7 +1382,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     heroes: {
-                        templateUrl: tpl + 'dist/views/admin/hots.heroes.list.html',
+                        templateUrl: tpl + 'views/admin/hots.heroes.list.html',
                         controller: 'AdminHeroListCtrl',
                         resolve: {
                             data: ['AdminHeroService', function (AdminHeroService) {
@@ -1401,7 +1401,7 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     heroes: {
-                        templateUrl: tpl + 'dist/views/admin/hots.heroes.add.html',
+                        templateUrl: tpl + 'views/admin/hots.heroes.add.html',
                         controller: 'AdminHeroAddCtrl'
                     }
                 },
@@ -1412,7 +1412,7 @@ var app = angular.module('app', [
                 url: '/edit/:heroID',
                 views: {
                     heroes: {
-                        templateUrl: tpl + 'dist/views/admin/hots.heroes.edit.html',
+                        templateUrl: tpl + 'views/admin/hots.heroes.edit.html',
                         controller: 'AdminHeroEditCtrl',
                         resolve: {
                             data: ['$stateParams', 'AdminHeroService', function ($stateParams, AdminHeroService) {
@@ -1430,7 +1430,7 @@ var app = angular.module('app', [
                 url: '/maps',
                 views: {
                     hots: {
-                        templateUrl: tpl + 'dist/views/admin/hots.maps.html'
+                        templateUrl: tpl + 'views/admin/hots.maps.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1440,7 +1440,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     maps: {
-                        templateUrl: tpl + 'dist/views/admin/hots.maps.list.html',
+                        templateUrl: tpl + 'views/admin/hots.maps.list.html',
                         controller: 'AdminMapsListCtrl',
                         resolve: {
                             data: ['AdminMapService', function (AdminMapService) {
@@ -1459,7 +1459,7 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     maps: {
-                        templateUrl: tpl + 'dist/views/admin/hots.maps.add.html',
+                        templateUrl: tpl + 'views/admin/hots.maps.add.html',
                         controller: 'AdminMapAddCtrl'
                     }
                 },
@@ -1470,7 +1470,7 @@ var app = angular.module('app', [
                 url: '/edit/:mapID',
                 views: {
                     maps: {
-                        templateUrl: tpl + 'dist/views/admin/hots.maps.edit.html',
+                        templateUrl: tpl + 'views/admin/hots.maps.edit.html',
                         controller: 'AdminMapEditCtrl',
                         resolve: {
                             data: ['$stateParams', 'AdminMapService', function ($stateParams, AdminMapService) {
@@ -1488,7 +1488,7 @@ var app = angular.module('app', [
                 url: '/guides',
                 views: {
                     hots: {
-                        templateUrl: tpl + 'dist/views/admin/hots.guides.html'
+                        templateUrl: tpl + 'views/admin/hots.guides.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1498,7 +1498,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     guides: {
-                        templateUrl: tpl + 'dist/views/admin/hots.guides.list.html',
+                        templateUrl: tpl + 'views/admin/hots.guides.list.html',
                         controller: 'AdminHOTSGuideListCtrl',
                         resolve: {
                             data: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
@@ -1518,7 +1518,7 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     guides: {
-                        templateUrl: tpl + 'dist/views/admin/hots.guides.add.html'
+                        templateUrl: tpl + 'views/admin/hots.guides.add.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1528,7 +1528,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     add: {
-                        templateUrl: tpl + 'dist/views/admin/hots.guides.add.step1.html'
+                        templateUrl: tpl + 'views/admin/hots.guides.add.step1.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1538,7 +1538,7 @@ var app = angular.module('app', [
                 url: '/hero',
                 views: {
                     add: {
-                        templateUrl: tpl + 'dist/views/admin/hots.guides.add.hero.html',
+                        templateUrl: tpl + 'views/admin/hots.guides.add.hero.html',
                         controller: 'AdminHOTSGuideAddHeroCtrl',
                         resolve: {
                             dataHeroes: ['AdminHeroService', function (AdminHeroService) {
@@ -1557,7 +1557,7 @@ var app = angular.module('app', [
                 url: '/map',
                 views: {
                     add: {
-                        templateUrl: tpl + 'dist/views/admin/hots.guides.add.map.html',
+                        templateUrl: tpl + 'views/admin/hots.guides.add.map.html',
                         controller: 'AdminHOTSGuideAddMapCtrl',
                         resolve: {
                             dataHeroes: ['AdminHeroService', function (AdminHeroService) {
@@ -1577,7 +1577,7 @@ var app = angular.module('app', [
                 url: '/edit',
                 views: {
                     guides: {
-                        templateUrl: tpl + 'dist/views/admin/hots.guides.edit.html'
+                        templateUrl: tpl + 'views/admin/hots.guides.edit.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1587,7 +1587,7 @@ var app = angular.module('app', [
                 url: '/:guideID',
                 views: {
                     edit: {
-                        templateUrl: tpl + 'dist/views/admin/hots.guides.edit.step1.html',
+                        templateUrl: tpl + 'views/admin/hots.guides.edit.step1.html',
                         controller: 'AdminHOTSGuideEditStep1Ctrl',
                         resolve: {
                             dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
@@ -1604,7 +1604,7 @@ var app = angular.module('app', [
                 url: '/:guideID/hero',
                 views: {
                     edit: {
-                        templateUrl: tpl + 'dist/views/admin/hots.guides.edit.hero.html',
+                        templateUrl: tpl + 'views/admin/hots.guides.edit.hero.html',
                         controller: 'AdminHOTSGuideEditHeroCtrl',
                         resolve: {
                             dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
@@ -1627,7 +1627,7 @@ var app = angular.module('app', [
                 url: '/:guideID/map',
                 views: {
                     edit: {
-                        templateUrl: tpl + 'dist/views/admin/hots.guides.edit.map.html',
+                        templateUrl: tpl + 'views/admin/hots.guides.edit.map.html',
                         controller: 'AdminHOTSGuideEditMapCtrl',
                         resolve: {
                             dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
@@ -1651,7 +1651,7 @@ var app = angular.module('app', [
                 url: '/forum',
                 views: {
                     admin: {
-                        templateUrl: tpl + 'dist/views/admin/forum.html'
+                        templateUrl: tpl + 'views/admin/forum.html'
                     }
                 },
                 access: { auth: true, admin: true }
@@ -1661,7 +1661,7 @@ var app = angular.module('app', [
                 url: '/structure',
                 views: {
                     forum: {
-                        templateUrl: tpl + 'dist/views/admin/forum.structure.html'
+                        templateUrl: tpl + 'views/admin/forum.structure.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1671,7 +1671,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     categories: {
-                        templateUrl: tpl + 'dist/views/admin/forum.structure.list.html',
+                        templateUrl: tpl + 'views/admin/forum.structure.list.html',
                         controller: 'AdminForumStructureListCtrl',
                         resolve: {
                             data: ['AdminForumService', function (AdminForumService) {
@@ -1687,7 +1687,7 @@ var app = angular.module('app', [
                 url: '/category/add',
                 views: {
                     categories: {
-                        templateUrl: tpl + 'dist/views/admin/forum.categories.add.html',
+                        templateUrl: tpl + 'views/admin/forum.categories.add.html',
                         controller: 'AdminForumCategoryAddCtrl'
                     }
                 },
@@ -1698,7 +1698,7 @@ var app = angular.module('app', [
                 url: '/category/edit/:categoryID',
                 views: {
                     categories: {
-                        templateUrl: tpl + 'dist/views/admin/forum.categories.edit.html',
+                        templateUrl: tpl + 'views/admin/forum.categories.edit.html',
                         controller: 'AdminForumCategoryEditCtrl',
                         resolve: {
                             data: ['$stateParams', 'AdminForumService', function ($stateParams, AdminForumService) {
@@ -1715,7 +1715,7 @@ var app = angular.module('app', [
                 url: '/thread/add',
                 views: {
                     categories: {
-                        templateUrl: tpl + 'dist/views/admin/forum.threads.add.html',
+                        templateUrl: tpl + 'views/admin/forum.threads.add.html',
                         controller: 'AdminForumThreadAddCtrl',
                         resolve: {
                             data: ['AdminForumService', function (AdminForumService) {
@@ -1731,7 +1731,7 @@ var app = angular.module('app', [
                 url: '/thread/edit/:threadID',
                 views: {
                     categories: {
-                        templateUrl: tpl + 'dist/views/admin/forum.threads.edit.html',
+                        templateUrl: tpl + 'views/admin/forum.threads.edit.html',
                         controller: 'AdminForumThreadEditCtrl',
                         resolve: {
                             dataCategories: ['AdminForumService', function (AdminForumService) {
@@ -1751,7 +1751,7 @@ var app = angular.module('app', [
                 url: '/management',
                 views: {
                     admin: {
-                        templateUrl: tpl + 'dist/views/admin/forum.management.html'
+                        templateUrl: tpl + 'views/admin/forum.management.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1762,7 +1762,7 @@ var app = angular.module('app', [
                 url: '/users',
                 views: {
                     admin: {
-                        templateUrl: tpl + 'dist/views/admin/users.html'
+                        templateUrl: tpl + 'views/admin/users.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1772,7 +1772,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     users: {
-                        templateUrl: tpl + 'dist/views/admin/users.list.html',
+                        templateUrl: tpl + 'views/admin/users.list.html',
                         controller: 'AdminUserListCtrl',
                         resolve: {
                             data: ['AdminUserService', function (AdminUserService) {
@@ -1791,7 +1791,7 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     users: {
-                        templateUrl: tpl + 'dist/views/admin/users.add.html',
+                        templateUrl: tpl + 'views/admin/users.add.html',
                         controller: 'AdminUserAddCtrl'
                     }
                 },
@@ -1802,7 +1802,7 @@ var app = angular.module('app', [
                 url: '/edit/:userID',
                 views: {
                     users: {
-                        templateUrl: tpl + 'dist/views/admin/users.edit.html',
+                        templateUrl: tpl + 'views/admin/users.edit.html',
                         controller: 'AdminUserEditCtrl',
                         resolve: {
                             data: ['$stateParams', 'AdminUserService', function ($stateParams, AdminUserService) {
@@ -1820,7 +1820,7 @@ var app = angular.module('app', [
                 url: '/polls',
                 views: {
                     admin: {
-                        templateUrl: tpl + 'dist/views/admin/polls.html'
+                        templateUrl: tpl + 'views/admin/polls.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1830,7 +1830,7 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     polls: {
-                        templateUrl: tpl + 'dist/views/admin/polls.list.html',
+                        templateUrl: tpl + 'views/admin/polls.list.html',
                         controller: 'AdminPollListCtrl',
                         resolve: {
                             data: ['AdminPollService', function (AdminPollService) {
@@ -1849,7 +1849,7 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     polls: {
-                        templateUrl: tpl + 'dist/views/admin/polls.add.html',
+                        templateUrl: tpl + 'views/admin/polls.add.html',
                         controller: 'AdminPollAddCtrl'
                     }
                 },
@@ -1860,7 +1860,7 @@ var app = angular.module('app', [
                 url: '/edit/:pollID',
                 views: {
                     polls: {
-                        templateUrl: tpl + 'dist/views/admin/polls.edit.html',
+                        templateUrl: tpl + 'views/admin/polls.edit.html',
                         controller: 'AdminPollEditCtrl',
                         resolve: {
                             data: ['$stateParams', 'AdminPollService', function($stateParams, AdminPollService){
@@ -1877,7 +1877,7 @@ var app = angular.module('app', [
                 url: '/subscriptions',
                 views: {
                     admin: {
-                        templateUrl: tpl + 'dist/views/admin/subscriptions.html'
+                        templateUrl: tpl + 'views/admin/subscriptions.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1887,7 +1887,7 @@ var app = angular.module('app', [
                 url: '/streams',
                 views: {
                     admin: {
-                        templateUrl: tpl + 'dist/views/admin/streams.html'
+                        templateUrl: tpl + 'views/admin/streams.html'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1897,7 +1897,7 @@ var app = angular.module('app', [
                 url: 'contact',
                 views: {
                     content: {
-                        templateUrl: tpl + 'dist/views/frontend/contact.html',
+                        templateUrl: tpl + 'views/frontend/contact.html',
                         controller: 'ContactCtrl'
                     }
                 },

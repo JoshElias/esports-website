@@ -5,7 +5,7 @@ module.exports = {
         options: {
             accessKeyId: config.AMAZON_KEY,
             secretAccessKey: config.AMAZON_SECRET,
-            bucket: 'staging-cdn.joshelias.ca',
+            bucket: 'staging-cdn.tempostorm.com',
             region: 'us-west-2',
             access: 'public-read',
             uploadConcurrency: 5,
@@ -19,37 +19,37 @@ module.exports = {
                 expand: true,
                 cwd: 'dist/js/',
                 src: ['*.min.*.js'],
-                dest: 'dist/js'
+                dest: 'js'
             },
             {
                 expand: true,
                 cwd: 'dist/js/',
                 src: ['**/*', '!**/*.js'],
-                dest: 'dist/js'
+                dest: 'js'
             },
             {
                 expand: true,
                 cwd: 'dist/css/',
                 src: ['*.min.*.css'],
-                dest: 'dist/css'
+                dest: 'css'
             },
             {
                 expand: true,
                 cwd: 'dist/css/fonts/',
                 src: ['**/*'],
-                dest: 'dist/css/fonts'
+                dest: 'css/fonts'
             },
             {
                 expand: true,
                 cwd: 'dist/views/',
                 src: ['**/*'],
-                dest: 'dist/views'
+                dest: 'views'
             },
             {
                 expand: true,
                 cwd: 'dist/img/',
                 src: ['**/*'],
-                dest: 'dist/img'
+                dest: 'img'
             }
         ]
     },
@@ -72,37 +72,37 @@ module.exports = {
                 expand: true,
                 cwd: 'dist/js/',
                 src: ['*.min.*.js'],
-                dest: 'dist/js'
+                dest: 'js'
             },
             {
                 expand: true,
                 cwd: 'dist/js/',
                 src: ['**/*', '!**/*.js'],
-                dest: 'dist/js'
+                dest: 'js'
             },
             {
                 expand: true,
                 cwd: 'dist/css/',
                 src: ['*.min.*.css'],
-                dest: 'dist/css'
+                dest: 'css'
             },
             {
                 expand: true,
                 cwd: 'dist/css/fonts/',
                 src: ['**/*'],
-                dest: 'dist/css/fonts'
+                dest: 'css/fonts'
             },
             {
                 expand: true,
                 cwd: 'dist/views/',
                 src: ['**/*'],
-                dest: 'dist/views'
+                dest: 'views'
             },
             {
                 expand: true,
                 cwd: 'dist/img/',
                 src: ['**/*'],
-                dest: 'dist/img'
+                dest: 'img'
             }
         ]
     }

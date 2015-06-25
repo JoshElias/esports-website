@@ -12,7 +12,7 @@ angular.module('app.controllers', ['ngCookies'])
         name: 'TempoStorm',
         version: '0.0.1',
         copyright: new Date().getFullYear(),
-        cdn: 'https://s3-us-west-2.amazonaws.com/ts-node2',
+        cdn: (tpl && tpl.length) ? tpl : '.',
         settings: {
             token: $cookies.token || null,
             deck: null,

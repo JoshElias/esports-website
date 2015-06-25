@@ -48,13 +48,13 @@ angular.module('app.directives', ['ui.load'])
 })
 .directive('loginForm', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/login.form.html'
+        templateUrl: tpl + 'views/frontend/login.form.html'
     };
 })
 .directive('datePicker', function(){
     return {
         replace: true,
-        templateUrl: tpl + 'dist/views/admin/date-picker.html',
+        templateUrl: tpl + 'views/admin/date-picker.html',
         scope: {
             ngModel: '=',
             ngDisabled: '=',
@@ -89,7 +89,7 @@ angular.module('app.directives', ['ui.load'])
 }])
 .directive('footer', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/footer.html'
+        templateUrl: tpl + 'views/frontend/footer.html'
     };
 })
 .directive("scroll", ['$window', function ($window) {
@@ -137,57 +137,57 @@ angular.module('app.directives', ['ui.load'])
 }])
 .directive('pollItemAddForm', function () {
     return {
-        templateUrl: tpl + 'dist/views/admin/polls.item.add.html'
+        templateUrl: tpl + 'views/admin/polls.item.add.html'
     };
 })
 .directive('pollItemEditForm', function () {
     return {
-        templateUrl: tpl + 'dist/views/admin/polls.item.edit.html'
+        templateUrl: tpl + 'views/admin/polls.item.edit.html'
     };
 })
 .directive('abilityAddForm', function () {
     return {
-        templateUrl: tpl + 'dist/views/admin/hots.heroes.ability.add.html'
+        templateUrl: tpl + 'views/admin/hots.heroes.ability.add.html'
     };
 })
 .directive('abilityEditForm', function () {
     return {
-        templateUrl: tpl + 'dist/views/admin/hots.heroes.ability.edit.html'
+        templateUrl: tpl + 'views/admin/hots.heroes.ability.edit.html'
     };
 })
 .directive('talentAddForm', function () {
     return {
-        templateUrl: tpl + 'dist/views/admin/hots.heroes.talent.add.html'
+        templateUrl: tpl + 'views/admin/hots.heroes.talent.add.html'
     };
 })
 .directive('talentEditForm', function () {
     return {
-        templateUrl: tpl + 'dist/views/admin/hots.heroes.talent.edit.html'
+        templateUrl: tpl + 'views/admin/hots.heroes.talent.edit.html'
     };
 })
 .directive('charAddForm', function () {
     return {
-        templateUrl: tpl + 'dist/views/admin/hots.heroes.char.add.html'
+        templateUrl: tpl + 'views/admin/hots.heroes.char.add.html'
     };
 })
 .directive('charEditForm', function () {
     return {
-        templateUrl: tpl + 'dist/views/admin/hots.heroes.char.edit.html'
+        templateUrl: tpl + 'views/admin/hots.heroes.char.edit.html'
     };
 })
 .directive('talentModal', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/hots.talent.modal.html'
+        templateUrl: tpl + 'views/frontend/hots.talent.modal.html'
     };
 })
 .directive('heroModal', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/hots.hero.modal.html'
+        templateUrl: tpl + 'views/frontend/hots.hero.modal.html'
     };
 })
 .directive('mapModal', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/hots.map.modal.html'
+        templateUrl: tpl + 'views/frontend/hots.map.modal.html'
     };
 })
 .directive('hotsTalent', ['$compile', function ($compile) {
@@ -244,79 +244,79 @@ angular.module('app.directives', ['ui.load'])
 }])
 .directive('activitySignup', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/activity/activity.signup.html'
+        templateUrl: tpl + 'views/frontend/activity/activity.signup.html'
     };
 })
 .directive('activityArticle', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/activity/activity.article.html'
+        templateUrl: tpl + 'views/frontend/activity/activity.article.html'
     };
 })
 .directive('activityArticleComment', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/activity/activity.article.comment.html'
+        templateUrl: tpl + 'views/frontend/activity/activity.article.comment.html'
     };
 })
 .directive('activityDeck', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/activity/activity.deck.html'
+        templateUrl: tpl + 'views/frontend/activity/activity.deck.html'
     };
 })
 .directive('activityDeckComment', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/activity/activity.deck.comment.html'
+        templateUrl: tpl + 'views/frontend/activity/activity.deck.comment.html'
     };
 })
 .directive('activityForumPost', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/activity/activity.forumPost.html'
+        templateUrl: tpl + 'views/frontend/activity/activity.forumPost.html'
     };
 })
 .directive('activityForumComment', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/activity/activity.forumPost.comment.html'
+        templateUrl: tpl + 'views/frontend/activity/activity.forumPost.comment.html'
     };
 })
 .directive('activityGuide', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/activity/activity.guide.html'
+        templateUrl: tpl + 'views/frontend/activity/activity.guide.html'
     };
 })
 .directive('activityGuideComment', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/activity/activity.guide.comment.html'
+        templateUrl: tpl + 'views/frontend/activity/activity.guide.comment.html'
     };
 })
 .directive('premiumPage', function () {
     return {
-        templateUrl: tpl + 'dist/views/frontend/premiumDirective.html'
+        templateUrl: tpl + 'views/frontend/premiumDirective.html'
     };
 })
 .directive('articleItemAdd', function () {
     return {
-        templateUrl: tpl + 'dist/views/admin/articles.item.add.html',
+        templateUrl: tpl + 'views/admin/articles.item.add.html',
     };
 })
 .directive('hsBuilder', function() {
     return {
-        templateUrl: tpl + 'dist/views/frontend/hs.deckBuilder.directive.html',
+        templateUrl: tpl + 'views/frontend/hs.deckBuilder.directive.html',
     }
 })
 .directive('hotsBuilder', function() {
     return {
-        templateUrl: tpl + 'dist/views/frontend/hots.guideBuilder.directive.html',
+        templateUrl: tpl + 'views/frontend/hots.guideBuilder.directive.html',
     }
 })
 .directive('hotsTc', function() {
     return {
-        templateUrl: tpl + 'dist/views/frontend/hots.tc.directive.html',
+        templateUrl: tpl + 'views/frontend/hots.tc.directive.html',
     }
 })
 .directive('adsSidebar', function () {
     return {
         restrict: 'A',
         replace: true,
-        templateUrl: tpl + 'dist/views/frontend/adsense/ads.sidebar.html',
+        templateUrl: tpl + 'views/frontend/adsense/ads.sidebar.html',
         controller: function (){
             (adsbygoogle = window.adsbygoogle || []).push({});
         }
@@ -368,7 +368,7 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         replace: true,
-        templateUrl: tpl + 'dist/views/frontend/adsense/ads.sidebar.home.html',
+        templateUrl: tpl + 'views/frontend/adsense/ads.sidebar.home.html',
         controller: function () {
             (adsbygoogle = window.adsbygoogle || []).push({});
         }
@@ -378,7 +378,7 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         replace: true,
-        templateUrl: tpl + 'dist/views/frontend/adsense/ads.banner.html',
+        templateUrl: tpl + 'views/frontend/adsense/ads.banner.html',
         controller: function () {
             (adsbygoogle = window.adsbygoogle || []).push({});
         }

@@ -17,7 +17,7 @@
 
             <!-- g2a -->
             <div class="g2a-square">
-                <a href="https://www.g2a.com/r/tempo-storm"><img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/g2a-tempo.png" alt="G2A"></a>
+                <a href="https://www.g2a.com/r/tempo-storm"><img src="{{app.cdn}}/img/g2a-tempo.png" alt="G2A"></a>
             </div>
             <!-- / g2a -->
             
@@ -73,7 +73,7 @@
                         <div class="item-wrapper wrapper-xs">
                             <div class="poll-item-img-wrapper m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-3"  ng-repeat="item in poll.items">
                                 <a href="#" ng-click="bigImg(item.photos.large)">
-                                    <img ng-class="{ 'active' : hasVoted(poll, item) }" ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/polls/{{item.photos.thumb}}" alt="">
+                                    <img ng-class="{ 'active' : hasVoted(poll, item) }" ng-src="{{app.cdn}}/polls/{{item.photos.thumb}}" alt="">
                                     <i class="fa fa-check" ng-class="{ 'active' : hasVoted(poll, item)}"></i>
                                 </a>
                                 <button class="poll-item-img-button btn btn-blue" ng-bind="btnText(poll, item)" ng-class="{ 'active' : hasVoted(poll, item) }" ng-click="toggleItem(poll, item)"></button>
@@ -149,7 +149,7 @@
                                         <h3>{{item.votes}}</h3>
                                         <h4>VOTES</h4>
                                     </div>
-                                    <img ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/polls/{{item.photos.thumb}}" alt="">
+                                    <img ng-src="{{app.cdn}}/polls/{{item.photos.thumb}}" alt="">
                                 </a>
                             </div>
                         </div>

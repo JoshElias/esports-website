@@ -31,9 +31,9 @@
 
       "DB_URL" : "mongodb://localhost:27017/tempostorm",
       "DB_OPTIONS" : {},
-      "CDN_URL" : "https://staging-cdn.joshelias.ca/",
+      "CDN_URL" : "",
 
-      "AMAZON_BUCKET" : "staging-cdn.joshelias.ca"
+      "AMAZON_BUCKET" : "staging-cdn.tempostorm.com"
   },
 
   "staging" : {
@@ -48,9 +48,9 @@
             "readPreference": "ReadPreference.NEAREST"
           }
       },
-      "CDN_URL" : "https://staging-cdn.joshelias.ca/",
+      "CDN_URL" : "https://staging-cdn.tempostorm.com/",
       
-      "AMAZON_BUCKET" : "staging-cdn.joshelias.ca"
+      "AMAZON_BUCKET" : "staging-cdn.tempostorm.com"
   },
 
   "production" : {
