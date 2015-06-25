@@ -3800,11 +3800,13 @@ angular.module('app.controllers', ['ngCookies'])
         ];
         
         $scope.isPremium = function () {
-            var premium = $scope.deck.premium.isPremium;
-            for (var i = 0; i < $scope.premiumTypes.length; i++) {
-                if ($scope.premiumTypes[i].value === premium) {
-                    return $scope.premiumTypes[i].value;
-                }
+            if (!$scope.deck.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date($scope.deck.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
             }
         }
         
