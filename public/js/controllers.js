@@ -2666,7 +2666,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // delete banner
-        $scope.deleteBanner = function (banner) {
+        $scope.deleteBanner = function (page, banner) {
+            console.log(banner._id);
             var box = bootbox.dialog({
                 title: 'Delete banner: ' + banner.title + '?',
                 message: 'Are you sure you want to delete the banner <strong>' + banner.title + '</strong>?',
@@ -2677,9 +2678,11 @@ angular.module('app.controllers', ['ngCookies'])
                         callback: function () {
                             AdminBannerService.deleteBanner(banner._id).then(function (data) {
                                 if (data.success) {
-                                    var index = $scope.banners.indexOf(banner);
+                                    console.log($scope.banners)
+                                    var arr = $scope[page],
+                                        index = arr.indexOf(banner);
                                     if (index !== -1) {
-                                        $scope.banners.splice(index, 1);
+                                        arr.splice(index, 1);
                                     }
                                     $scope.success = {
                                         show: true,

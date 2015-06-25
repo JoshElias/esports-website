@@ -699,7 +699,7 @@ angular.module('app.services', [])
         },
         deleteBanner: function (_id) {
             var d = $q.defer();
-            $http.post('/api/admin/banner/delete', { _id: id }).success(function (data) {
+            $http.post('/api/admin/banner/delete', { _id: _id }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
