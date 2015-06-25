@@ -2780,8 +2780,6 @@ module.exports = {
     bannersOrder: function (Schemas) {
         return function (req, res, next) {
             for (i=0; i < req.body.banners.length; i++) {
-                console.log(req.body.banners[i].title + ': ' + req.body.banners[i].orderNum);
-
                 Schemas.Banner.findByIdAndUpdate(req.body.banners[i]._id, { $set: { orderNum: req.body.banners[i].orderNum }}).exec(function (err, banner) {
                     if (err || !banner) {
                         console.log(err || 'Banner not found');
