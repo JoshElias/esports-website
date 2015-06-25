@@ -1956,9 +1956,11 @@ var app = angular.module('app', [
                 views: {
                     snapshots: {
                         templateUrl: tpl + 'views/admin/snapshots.add.html',
-                        //controller: 'AdminSnapshotAddCtrl',
+                        controller: 'AdminSnapshotAddCtrl',
                     }
-                }
+                },
+                access: {auth: true, admin: true},
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.snapshots.edit', {
                 url: '/:snapshotID',
@@ -1973,7 +1975,9 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                access: {auth: true, admin: true},
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.subscriptions', {
                 url: '/subscriptions',

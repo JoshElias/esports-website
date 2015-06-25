@@ -16,26 +16,117 @@
     </div>
     <div class="panel-body">
         <div class="form-group">
-            <label for="articleType" class="col-sm-2 control-label">Type</label>
-            <div class="col-sm-10">
-                <select id="articleType" name="articleType" size="3" class="form-control" ng-options="articleType.value as articleType.name for articleType in articleTypes" ng-model="article.articleType" multiple required></select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="author" class="col-sm-2 control-label">Author</label>
-            <div class="col-sm-10">
-                <select id="author" name="author" class="form-control" ng-options="provider._id as provider.username for provider in providers" ng-model="article.author"></select>
-            </div>
-        </div>
-        <div class="form-group">
             <label for="title" class="col-sm-2 control-label">Title</label>
-            <div class="col-sm-10">
-                <input type="text" id="title" name="title" class="form-control" ng-model="article.title" ng-keyup="setSlug()" required>
+            <div class="col-sm-10 wrapper-none">
+                <input id="title" name="title" class="form-control" ng-model="snapshot.title" required>
             </div>
         </div>
+        <div class="form-group">
+            <label for="slug" class="col-sm-2 control-label">URL</label>
+            <div class="col-sm-10 wrapper-none">
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-class="{active: snapshot.slug.linked}" ng-click="toggleSlugLink()"><i class="fa" ng-class="{'fa-link': snapshot.slug.linked, 'fa-unlink': !snapshot.slug.linked}"></i></button>
+                    </span>
+                    <input type="text" id="slug" name="slug" class="form-control" ng-model="snapshot.slug.url" required ng-readonly="snapshot.slug.linked">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="author" class="col-sm-2 control-label">Authors</label>
+            <div class="col-sm-10 wrapper-none">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        Hello World!<a class="pull-right" ng-click="removeAuthor()"><i class="fa fa-close"></i></a>
+                    </li>
+                    <li class="list-group-item">
+                        Hello World!<a class="pull-right" ng-click="removeAuthor()"><i class="fa fa-close"></i></a>
+
+                    </li>
+                    <button class="btn btn-green btn-rounded m-t-md m-r-sm" ng-click="addAuthorOpen()"><i class="fa fa-plus"></i> Add Author</button>
+                </ul>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="intro" class="col-sm-2 control-label">Content</label>
+            <div class="panel panel-default wrapper-none col-sm-10">
+                <div class="panel-body">
+                    <label for="intro" class="col-sm-1 control-label">Intro</label>
+                    <div class="col-sm-11">
+                        <textarea class="form-control m-b-sm" name="intro" ng-model="content.intro"></textarea>
+                    </div>
+                    <label for="thoughts" class="col-sm-1 control-label">Thoughts</label>
+                    <div class="col-sm-11">
+                        <textarea class="form-control m-b-sm" name="thoughts" ng-model="content.thoughts"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="intro" class="col-sm-2 control-label">Tiers</label>
+            <div class="col-sm-10 wrapper-none" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default wrapper-none">
+                    <div class="panel-heading clearfix" role="tab" id="headingTier1"><!-- DO ANGULAR -->
+                        <h4 class="panel-title pull-left">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne"> <!-- DO ANGULAR -->
+                                Tier 1 <!-- DO ANGULAR -->
+                            </a>
+                        </h4>
+                        <button class="btn btn-green btn-sm btn-rounded pull-right" ng-click="openAddDeck()"><i class="fa fa-plus"></i> Add Deck</button>
+                    </div>
+
+                    <div id="collapseOne" class="panel-body panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne"> <!-- DO ANGULAR -->
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                HELLO MY NAME IS DECK - Rank '\{\{ANGULAR\}\}'<span class="pull-right"><a class="m-r-sm" role="button" data-toggle="collapse" href="#deckrank1" aria-expanded="false" aria-controls="deckrank1" ng-click="editDeck()"><i class="fa fa-edit"></i></a><a ng-click="removeDeck()"><i class="fa fa-close"></i></a></span> <!-- DO ANGULAR -->
+                                <div class="collapse wrapper-md" id="deckrank1">
+                                    <div class="form-group">
+                                        
+                                        
+                                        <div class="clearfix m-b-md">
+                                            <label for="deck.explanation" class="control-label col-sm-1">Explanation</label>
+                                            <div class="col-sm-10">
+                                                <textarea class="form-control" name="deck.explanation" ng-model="deck.explanation"></textarea>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="clearfix">
+                                            <label for="deck.weeklyNotes" class="control-label col-sm-1">Weekly Notes</label>
+                                            <div class="col-sm-10">
+                                                <textarea class="form-control" name="deck.weeklyNotes" ng-model="deck.weeklyNotes"></textarea>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="clearfix">
+                                            <label for="deck.tech" class="control-label col-sm-1">Tech Decisions</label>
+                                            <div class="col-sm-10">
+                                                
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                HELLO I AM ALSO DECK<span class="pull-right"><a class="m-r-sm" ng-click="editDeck()"><i class="fa fa-edit"></i></a><a ng-click="removeDeck()"><i class="fa fa-close"></i></a></span> <!-- DO ANGULAR -->
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- SECOND PANEL -->
+                
+                <button class="btn btn-green btn-rounded"><i class="fa fa-plus"></i> Add Tier</button>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Active</label>
+            <input type="checkbox">
+        </div>
+        
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="addArticle()">Add Meta Snapshot</button>
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="addSnapshot()">Add Meta Snapshot</button>
         </div>
     </div>
     </form>

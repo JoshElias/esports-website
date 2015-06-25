@@ -587,6 +587,12 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .edit-button-fix { display:block }
 
+/* admin meta snapshot */
+textarea[name=intro],
+textarea[name=thoughts] {
+    resize: vertical;
+}
+
 /* admin poll */
 .poll-item-edit { width:auto; }
 .edit-button-fix .badge {padding: 5px 15px }
@@ -819,6 +825,7 @@ ul.premium-features li i { margin-right: 5px; color: #85c440; }
 .premium-icon.premium-semi { background: url('../img/premium-semi.png') no-repeat; }
 
 /* wrappers */
+.wrapper-none { padding: 0px; }
 .wrapper-xs { padding: 5px; }
 .wrapper-sm { padding: 10px; }
 .wrapper-md { padding: 20px; }

@@ -1984,4 +1984,21 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('markitupSettings', [
+  function() {
+    var factory, markset;
+    markset = [
+      //here goes your usual markItUp layout
+    ];
+    factory = {};
+    factory.create = function(callback) {
+      return {
+        afterInsert: callback,
+        previewParserPath: '',
+        markupSet: markset
+      };
+    };
+    return factory;
+  }
+]);
 ;

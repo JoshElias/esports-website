@@ -1999,9 +1999,11 @@ var app = angular.module('app', [
                 views: {
                     snapshots: {
                         templateUrl: tpl + 'views/admin/snapshots.add.html',
-                        //controller: 'AdminSnapshotAddCtrl',
+                        controller: 'AdminSnapshotAddCtrl',
                     }
-                }
+                },
+                access: {auth: true, admin: true},
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.snapshots.edit', {
                 url: '/:snapshotID',
@@ -2016,7 +2018,9 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                access: {auth: true, admin: true},
+                seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.subscriptions', {
                 url: '/subscriptions',
@@ -3539,6 +3543,20 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             });
             box.modal('show');
+        }
+        
+    }
+])
+.controller('AdminSnapshotAddCtrl', ['$scope', '$compile', 'bootbox',
+    function ($scope, $compile, bootbox) {
+        console.log('fuck');
+        $scope.openAddDeck = function () {
+            deckAddBox = bootbox.dialog({
+                message: $compile('<div snapshot-deck-add></div>')($scope),
+                closeButton: true,
+                animate: true
+            });
+            deckAddBox.modal('show');
         }
         
     }
@@ -9751,6 +9769,29 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
+.directive("markItUp", ["markitupSettings", function(markitupSettings) {
+    return {
+      restrict: "A",
+      scope: {
+        ngModel: "="
+      },
+      link: function(scope, element, attrs) {
+        var settings;
+        settings = markitupSettings.create(function(event) {
+          scope.$apply(function() {
+            scope.ngModel = event.textarea.value;
+          });
+        });
+        angular.element(element).markItUp(settings);
+      }
+    };
+  }
+])
+.directive('snapshotDeckAdd', [function () {
+    return {
+        templateUrl: "views/admin/snapshot.deck.add.html"
+    };
+}])
 ;;'use strict';
 
 angular.module('app.filters', [])
@@ -11775,4 +11816,21 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('markitupSettings', [
+  function() {
+    var factory, markset;
+    markset = [
+      //here goes your usual markItUp layout
+    ];
+    factory = {};
+    factory.create = function(callback) {
+      return {
+        afterInsert: callback,
+        previewParserPath: '',
+        markupSet: markset
+      };
+    };
+    return factory;
+  }
+]);
 ;

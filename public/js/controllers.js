@@ -1479,6 +1479,20 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
+.controller('AdminSnapshotAddCtrl', ['$scope', '$compile', 'bootbox',
+    function ($scope, $compile, bootbox) {
+        console.log('fuck');
+        $scope.openAddDeck = function () {
+            deckAddBox = bootbox.dialog({
+                message: $compile('<div snapshot-deck-add></div>')($scope),
+                closeButton: true,
+                animate: true
+            });
+            deckAddBox.modal('show');
+        }
+        
+    }
+])
 .controller('AdminDeckListCtrl', ['$scope', 'AdminDeckService', 'AlertService', 'Pagination', 'data', 
     function ($scope, AdminDeckService, AlertService, Pagination, data) {
         // grab alerts
