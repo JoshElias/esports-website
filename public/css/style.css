@@ -587,6 +587,15 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .edit-button-fix { display:block }
 
+/* admin banner */
+textarea[name=description] {
+    resize: none;
+}
+label p {
+    font-weight: 500;
+    font-size: 13px;
+}
+
 /* admin poll */
 .poll-item-edit { width:auto; }
 .edit-button-fix .badge {padding: 5px 15px }

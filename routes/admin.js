@@ -2136,81 +2136,6 @@ module.exports = {
             });
         };
     },
-    uploadPoll: function (fs, gm, amazon) {
-        return function(req, res, next) {
-            // check if image file
-            var types = ['image/png', 'image/jpeg', 'image/gif'];
-            if (types.indexOf(req.files.file.type) === -1) {
-                fs.unlink(req.files.file.path, function(err){
-                    if (err) return next(err);
-                    var output = {
-                            success: false,
-                            error: 'Invalid photo uploaded.',
-                        };
-                    return res.json(output);
-                });
-            } else {
-                var arr = req.files.file.name.split('.'),
-                    name = arr.splice(0, arr.length - 1).join('.'),
-                    ext = '.' + arr.pop(),
-                    large = name + '.large' + ext,
-                    thumb = name + '.thumb' + ext,
-                    path = __dirname+'/../photos/polls/';
-                    copyFile(function () {
-                        var files = [];
-                        files.push({
-                            path: path + large,
-                            name: large
-                        });
-                        files.push({
-                            path: path + thumb,
-                            name: thumb
-                        });
-                        amazon.upload(files, 'polls/', function () {
-                            return res.json({
-                                success: true,
-                                large: large,
-                                thumb: thumb,
-                                path: '/photos/polls'
-                            });
-                        });
-                    });
-
-                function copyFile(callback) {
-                    // read file
-                    fs.readFile(req.files.file.path, function(err, data){
-                        if (err) return next(err);
-                        // write file
-                        fs.writeFile(path + large, data, function(err){
-                            if (err) return next(err);
-                            // chmod new file
-                            fs.chmod(path + large, 0777, function(err){
-                                if (err) return next(err);
-                                // delete tmp file
-                                fs.unlink(req.files.file.path, function(err){
-                                    if (err) return next(err);
-                                    // resize
-                                    gm(path + large).quality(100).resize(800, 600, ">").write(path + large, function(err){
-                                        if (err) return next(err);
-                                        gm(path + large).quality(100).resize(140, 140, "^").write(path + thumb, function(err){
-                                            if (err) return next(err);
-                                            gm(path + thumb).quality(100).gravity('Center').crop(140, 140).write(path + thumb, function(err){
-                                                if (err) return next(err);
-                                                fs.chmod(path + thumb, 0777, function(err){
-                                                    if (err) return next(err);
-                                                    return callback();
-                                                });
-                                            });
-                                        });
-                                    });
-                                });
-                            });
-                        });
-                    });
-                }
-            }
-        };
-    },
     uploadCard: function (fs, gm, amazon) {
         return function(req, res, next) {
             // check if image file
@@ -2425,6 +2350,140 @@ module.exports = {
             }
         };
     },
+    uploadPoll: function (fs, gm, amazon) {
+        return function(req, res, next) {
+            // check if image file
+            var types = ['image/png', 'image/jpeg', 'image/gif'];
+            if (types.indexOf(req.files.file.type) === -1) {
+                fs.unlink(req.files.file.path, function(err){
+                    if (err) return next(err);
+                    var output = {
+                            success: false,
+                            error: 'Invalid photo uploaded.',
+                        };
+                    return res.json(output);
+                });
+            } else {
+                var arr = req.files.file.name.split('.'),
+                    name = arr.splice(0, arr.length - 1).join('.'),
+                    ext = '.' + arr.pop(),
+                    large = name + '.large' + ext,
+                    thumb = name + '.thumb' + ext,
+                    path = __dirname+'/../photos/polls/';
+                    copyFile(function () {
+                        var files = [];
+                        files.push({
+                            path: path + large,
+                            name: large
+                        });
+                        files.push({
+                            path: path + thumb,
+                            name: thumb
+                        });
+                        amazon.upload(files, 'polls/', function () {
+                            return res.json({
+                                success: true,
+                                large: large,
+                                thumb: thumb,
+                                path: '/photos/polls'
+                            });
+                        });
+                    });
+
+                function copyFile(callback) {
+                    // read file
+                    fs.readFile(req.files.file.path, function(err, data){
+                        if (err) return next(err);
+                        // write file
+                        fs.writeFile(path + large, data, function(err){
+                            if (err) return next(err);
+                            // chmod new file
+                            fs.chmod(path + large, 0777, function(err){
+                                if (err) return next(err);
+                                // delete tmp file
+                                fs.unlink(req.files.file.path, function(err){
+                                    if (err) return next(err);
+                                    // resize
+                                    gm(path + large).quality(100).resize(800, 600, ">").write(path + large, function(err){
+                                        if (err) return next(err);
+                                        gm(path + large).quality(100).resize(140, 140, "^").write(path + thumb, function(err){
+                                            if (err) return next(err);
+                                            gm(path + thumb).quality(100).gravity('Center').crop(140, 140).write(path + thumb, function(err){
+                                                if (err) return next(err);
+                                                fs.chmod(path + thumb, 0777, function(err){
+                                                    if (err) return next(err);
+                                                    return callback();
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }
+            }
+        };
+    },
+    uploadBanner: function (fs, gm, amazon) {
+        return function(req, res, next) {
+            // check if image file
+            var types = ['image/png', 'image/jpeg', 'image/gif'];
+            if (types.indexOf(req.files.file.type) === -1) {
+                fs.unlink(req.files.file.path, function(err){
+                    if (err) return next(err);
+                    var output = {
+                            success: false,
+                            error: 'Invalid photo uploaded.',
+                        };
+                    return res.json(output);
+                });
+            } else {
+                var arr = req.files.file.name.split('.'),
+                    name = arr.splice(0, arr.length - 1).join('.'),
+                    ext = '.' + arr.pop(),
+                    large = name + ext,
+                    path = __dirname+'/../photos/banners/';
+                    copyFile(function () {
+                        var files = [];
+                        files.push({
+                            path: path + large,
+                            name: large
+                        });
+                        amazon.upload(files, 'banners/', function () {
+                            return res.json({
+                                success: true,
+                                large: large,
+                                path: '/photos/banners'
+                            });
+                        });
+                    });
+                function copyFile(callback) {
+                    // read file
+                    fs.readFile(req.files.file.path, function(err, data){
+                        if (err) return next(err);
+                        // write file
+                        fs.writeFile(path + large, data, function(err){
+                            if (err) return next(err);
+                            // chmod new file
+                            fs.chmod(path + large, 0777, function(err){
+                                if (err) return next(err);
+                                // delete tmp file
+                                fs.unlink(req.files.file.path, function(err){
+                                    if (err) return next(err);
+                                    // resize
+                                    gm(path + large).quality(100).resize(1900, 499, ">").write(path + large, function(err){
+                                        if (err) return next(err);
+                                        return callback();
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }
+            }
+        };
+    },
     polls: function (Schemas) {
         return function (req, res, next) {
             var page = req.body.page || 1,
@@ -2566,60 +2625,6 @@ module.exports = {
             }
         };
     },
-    pollDelete: function (Schemas) {
-        return function (req, res, next) {
-            var _id = req.body._id;
-            Schemas.Poll.findOne({ _id: _id }).remove().exec(function (err) {
-                if (err) {
-                    console.log(err);
-                    return res.json({ success: false,
-                        errors: {
-                            unknown: {
-                                msg: 'An unknown error occurred'
-                            }
-                        }
-                    });
-                }
-                return res.json({ success: true });
-            });
-        };
-    },
-    itemEdit: function (Schemas) {
-        return function (req, res, next) {
-            _id = req.body._id;
-            
-            var errors = req.validationErrors(true);
-            
-            Schemas.Poll.findOne({ _id: _id }).exec(function (err, item) {
-                if (err || !item) {
-                    console.log(err || 'item not found');
-                    return res.json({ success: false,
-                        errors: {
-                            unknown: {
-                                msg: 'An unknown error occurred'
-                            }
-                        }
-                    });
-                }
-
-                item.name = req.body.name || '';
-                item.photos = req.body.photos;
-
-                item.save(function (err) {
-                    if (err) {
-                        console.log(err);
-                        return res.json({ success: false,
-                            errors: {
-                                unknown: {
-                                    msg: 'An unknown error occurred'
-                                }
-                            }
-                        });
-                    }
-                });
-            });
-        };
-    },
     pollEdit: function (Schemas) {
         return function (req, res, next) {
             var _id = req.body._id;
@@ -2689,6 +2694,282 @@ module.exports = {
                 });
             }
         };
+    },
+    pollDelete: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            Schemas.Poll.findOne({ _id: _id }).remove().exec(function (err) {
+                if (err) {
+                    console.log(err);
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+                return res.json({ success: true });
+            });
+        };
+    },
+    itemEdit: function (Schemas) {
+        return function (req, res, next) {
+            _id = req.body._id;
+            
+            var errors = req.validationErrors(true);
+            
+            Schemas.Poll.findOne({ _id: _id }).exec(function (err, item) {
+                if (err || !item) {
+                    console.log(err || 'item not found');
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+
+                item.name = req.body.name || '';
+                item.photos = req.body.photos;
+
+                item.save(function (err) {
+                    if (err) {
+                        console.log(err);
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        };
+    },
+    banners: function (Schemas) {
+        return function (req, res, next) {
+            var total = undefined,
+                tsBanners = [],
+                hsBanners = [],
+                hotsBanners = [];
+
+            function getTotal (callback) {
+                Schemas.Banner.count({})
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            function getBanners (callback) {
+                Schemas.Banner.find({})
+                .sort({ orderNum: 1 })
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    for (i=0; i != results.length; i++) {
+                        var type = results[i].bannerType;
+                        switch (type) {
+                            case 'ts'  : tsBanners.push(results[i]); break;
+                            case 'hs'  : hsBanners.push(results[i]); break;
+                            case 'hots': hotsBanners.push(results[i]); break;
+                        }
+                    }
+                    banners = results;
+                    return callback();
+                });
+                
+                
+            }
+            
+            getTotal(function () {
+                getBanners(function () {
+                    return res.json({
+                        success: true,
+                        tsBanners: tsBanners,
+                        hsBanners: hsBanners,
+                        hotsBanners: hotsBanners,
+                        total: total,
+                    });
+                });
+            });
+        }
+    },
+    bannersOrder: function (Schemas) {
+        return function (req, res, next) {
+            for (i=0; i < req.body.banners.length; i++) {
+                Schemas.Banner.findByIdAndUpdate(req.body.banners[i]._id, { $set: { orderNum: req.body.banners[i].orderNum }}).exec(function (err, banner) {
+                    if (err || !banner) {
+                        console.log(err || 'Banner not found');
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            
+            //console.log(req.body.banners);
+        }
+    },
+    banner: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            
+            Schemas.Banner.findOne({ _id: _id }).exec(function (err, banner) {
+                if (err || !banner) {
+                    console.log(err || 'Banner not found');
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+                return res.json({
+                    success: true,
+                    banner: banner
+                });
+            });
+        }
+    },
+    bannerDelete: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            Schemas.Banner.findOne({ _id: _id }).remove().exec(function (err) {
+                if (err) {
+                    console.log(err);
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+                return res.json({ success: true });
+            });
+        }
+    },
+    bannerAdd: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            
+            req.assert('title', 'Please enter a title').notEmpty();
+            req.assert('description', 'A description is required').notEmpty();
+            
+            var errors = req.validationErrors(true);
+            
+            if (errors) {
+                return res.json({ success: false, errors: errors });
+            } else {
+                var error = false,
+                    errorMsgs = {};
+            
+                function completeNewBanner() {
+                    if (error) {
+                        return res.json({ success: false, errors: errorMsgs });
+                    } else {
+                        var newPoll = new Schemas.Banner({
+                                bannerType: req.body.bannerType,
+                                title: req.body.title,
+                                description: req.body.description,
+                                photo: req.body.photo,
+                                button: {
+                                    hasButton: req.body.button.hasButton,
+                                    buttonText: req.body.button.buttonText || '',
+                                    buttonLink: req.body.button.buttonLink || ''
+                                },
+                                active: req.body.active,
+                            });
+
+                        newPoll.save(function(err, data){
+                            if (err) {
+                                console.log(err);
+                                return res.json({ success: false,
+                                    errors: {
+                                        unknown: {
+                                            msg: 'An unknown error occurred'
+                                        }
+                                    }
+                                });
+                            }
+                            return res.json({ success: true });
+                        });
+                    }
+                }
+                completeNewBanner(function () {
+                    return res.json({ success: true });
+                });
+            }
+            
+        }
+    },
+    bannerEdit: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            
+            req.assert('title', 'Please enter a title').notEmpty();
+            req.assert('description', 'A description is required').notEmpty();
+            
+            var errors = req.validationErrors(true);
+            
+            if (errors) {
+                return res.json({ success: false, errors: errors });
+            } else {
+                var error = false,
+                    errorMsgs = {};
+            
+                function updateBanner(callback) {
+                        Schemas.Banner.findOne({ _id: _id }).exec(function (err, banner) {
+                            if (err || !banner) {
+                                console.log(err || 'Banner not found');
+                                return res.json({ success: false,
+                                    errors: {
+                                        unknown: {
+                                            msg: 'An unknown error occurred'
+                                        }
+                                    }
+                                });
+                            }
+
+                            banner.title = req.body.title || '';
+                            banner.description = req.body.description,
+                            banner.bannerType = req.body.bannerType,
+                            banner.button = {
+                                    hasButton: req.body.button.hasButton,
+                                    buttonText: req.body.button.buttonText || '',
+                                    buttonLink: req.body.button.buttonLink || ''
+                            },
+                            banner.active = req.body.active,
+                            banner.photo = req.body.photo
+                            banner.save(function (err) {
+                                if (err) {
+                                    console.log(err);
+                                    return res.json({ success: false,
+                                        errors: {
+                                            unknown: {
+                                                msg: 'An unknown error occurred'
+                                            }
+                                        }
+                                    });
+                                }
+                                return callback();
+                            });
+                        });
+                    }
+                updateBanner(function () {
+                    return res.json({ success: true });
+                });
+            }
+        }
     },
     getObjectID: function (mongoose) {
         return function (req, res, next) {

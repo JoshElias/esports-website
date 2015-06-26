@@ -1818,6 +1818,61 @@ var app = angular.module('app', [
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
             })
+            .state('app.admin.banners', {
+                abstract: true,
+                url: '/banners',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/banners.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.banners.list', {
+                url: '',
+                views: {
+                    banners: {
+                        templateUrl: tpl + 'views/admin/banners.list.html',
+                        controller: 'AdminBannerListCtrl',
+                        resolve: {
+                            data: ['AdminBannerService', function(AdminBannerService) {
+                                return AdminBannerService.getBanners();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.banners.add', {
+                url: '/add',
+                views: {
+                    banners: {
+                        templateUrl: tpl + 'views/admin/banners.add.html',
+                        controller: 'AdminBannerAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.banners.edit', {
+                url: '/edit/:bannerID',
+                views: {
+                    banners: {
+                        templateUrl: tpl + 'views/admin/banners.edit.html',
+                        controller: 'AdminBannerEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminBannerService', function ($stateParams, AdminBannerService) {
+                                var bannerID = $stateParams.bannerID;
+                                return AdminBannerService.getBanner(bannerID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
             .state('app.admin.polls', {
                 abstract: true,
                 url: '/polls',

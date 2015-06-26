@@ -23,11 +23,11 @@
 <body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
     <div class="app" id="app" ui-view="root"></div>
     <!-- vendor -->
-    <script src="./dist/vendor.min.js"></script>
+    <script src="./dist/vendor.js"></script>
     <!-- angular -->
-    <script src="./dist/angular.min.js"></script>
+    <script src="./dist/angular.js"></script>
     <!-- app -->
-    <script src="./dist/app.min.js"></script>
+    <script src="./dist/app.js"></script>
     <!-- stripe -->
     <script src="https://js.stripe.com/v2/"></script>
     <script>
