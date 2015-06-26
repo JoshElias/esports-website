@@ -1257,13 +1257,13 @@ var app = angular.module('app', [
                         controller: 'AdminArticleAddCtrl',
                         resolve: {
                             dataDecks: ['AdminDeckService', function (AdminDeckService) {
-                                return AdminDeckService.getAllDecks();
+                                return AdminDeckService.getDecks(1, 10, '');
                             }],
                             dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
-                                return AdminHOTSGuideService.getAllGuides();
+                                return AdminHOTSGuideService.getGuides(1, 10, '');
                             }],
                             dataArticles: ['AdminArticleService', function (AdminArticleService) {
-                                return AdminArticleService.getAllArticles();
+                                return AdminArticleService.getArticles(1, 10, '');
                             }],
                             dataProviders: ['AdminUserService', function (AdminUserService) {
                                 return AdminUserService.getProviders();
@@ -1289,7 +1289,10 @@ var app = angular.module('app', [
                                 return AdminArticleService.getArticle(articleID);
                             }],
                             dataDecks: ['AdminDeckService', function (AdminDeckService) {
-                                return AdminDeckService.getAllDecks();
+                                var page = 1,
+                                    perpage = 10,
+                                    search = '';
+                                return AdminDeckService.getDecks(page, perpage, search);
                             }],
                             dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
                                 return AdminHOTSGuideService.getAllGuides();
@@ -1899,6 +1902,61 @@ var app = angular.module('app', [
                             data: ['$stateParams', 'AdminUserService', function ($stateParams, AdminUserService) {
                                 var userID = $stateParams.userID;
                                 return AdminUserService.getUser(userID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.banners', {
+                abstract: true,
+                url: '/banners',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/banners.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.banners.list', {
+                url: '',
+                views: {
+                    banners: {
+                        templateUrl: tpl + 'views/admin/banners.list.html',
+                        controller: 'AdminBannerListCtrl',
+                        resolve: {
+                            data: ['AdminBannerService', function(AdminBannerService) {
+                                return AdminBannerService.getBanners();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.banners.add', {
+                url: '/add',
+                views: {
+                    banners: {
+                        templateUrl: tpl + 'views/admin/banners.add.html',
+                        controller: 'AdminBannerAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.banners.edit', {
+                url: '/edit/:bannerID',
+                views: {
+                    banners: {
+                        templateUrl: tpl + 'views/admin/banners.edit.html',
+                        controller: 'AdminBannerEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminBannerService', function ($stateParams, AdminBannerService) {
+                                var bannerID = $stateParams.bannerID;
+                                return AdminBannerService.getBanner(bannerID);
                             }]
                         }
                     }
@@ -3034,8 +3092,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes', 
-    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
+.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'AdminDeckService', 'AdminHOTSGuideService', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes', 'dataDecks', 
+    function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, AdminDeckService, AdminHOTSGuideService, dataGuides, dataArticles, dataProviders, dataHeroes, dataDecks) {
         // default article
         var d = new Date();
         d.setMonth(d.getMonth()+1);
@@ -3070,14 +3128,52 @@ angular.module('app.controllers', ['ngCookies'])
         deckID,
         itemAddBox;
         
+        $scope.search = '';
+        
+        
+        //search functions
+        function escapeStr( str ) {
+            return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+        
+        
+        //search functions
+        $scope.getDecks = function () {
+            AdminDeckService.getDecks(1, 10, escapeStr($scope.search)).then(function (data) {
+                $scope.decks = data.decks;
+            });
+        } 
+
+        $scope.getArticles = function () {
+            AdminArticleService.getArticles(1, 10, escapeStr($scope.search)).then(function (data) {
+                $scope.articles = data.articles;
+            });
+        }
+
+        $scope.getGuides = function () {
+            AdminHOTSGuideService.getGuides(1, 10, escapeStr($scope.search)).then(function (data) {
+                $scope.guides = data.guides;
+            });
+        }
+        //!search functions
+        
         //open the modal to choose what item to add
         $scope.addItemArticle = function () {
             itemAddBox = bootbox.dialog({
                 message: $compile('<div article-item-add></div>')($scope),
                 closeButton: true,
-                animate: true
+                animate: true,
+                onEscape: function () { //We want to clear the search results when we close the bootbox
+                    $scope.search = '';
+                    $scope.getDecks();
+                    $scope.getGuides();
+                }
             });
             itemAddBox.modal('show');
+            itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                $scope.search = '';
+                $scope.getArticles();
+            });
         }
 
         //change the article item
@@ -3086,18 +3182,60 @@ angular.module('app.controllers', ['ngCookies'])
                 case 'hs': $scope.article.deck = item; break;
                 case 'hots': $scope.article.guide = item; break;
             }
+            $scope.search = '';
             itemAddBox.modal('hide');
         }
         
-        $scope.removeItemArticle = function () {
-            $scope.article.deck = undefined;
+        
+        
+        //this is for the related article modal
+        $scope.addRelatedArticle = function () {
+            itemAddBox = bootbox.dialog({
+                message: $compile('<div article-related-add></div>')($scope),
+                closeButton: false,
+                animate: true,
+            });
+            itemAddBox.modal('show');
+            itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                $scope.search = '';
+                $scope.getArticles();
+            });
         }
+        
+        $scope.isRelated = function (a) {
+            for (var i = 0; i < $scope.article.related.length; i++) {
+                if (a._id == $scope.article.related[i]._id) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        $scope.modifyRelated = function (a) {
+            if ($scope.isRelated(a)) {
+                $scope.removeRelatedArticle(a);
+                return;
+            }
+            $scope.article.related.push(a);
+        }
+        
+        $scope.removeRelatedArticle = function (a) {
+            for (var i = 0; i < $scope.article.related.length; i++) {
+                if (a._id === $scope.article.related[i]._id) {
+                    $scope.article.related.splice(i, 1);
+                }
+            }
+        }
+        
+        $scope.closeBox = function () {
+            itemAddBox.modal('hide');
+        }; 
         
         // load article
         $scope.article = angular.copy(defaultArticle);
         
         // load decks
-        $scope.decks = [{_id: undefined, name: 'No deck'}].concat(dataDecks.decks);
+        $scope.decks = dataDecks.decks;
 
         // load guides
         $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);
@@ -3235,8 +3373,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes',  
-    function ($scope, $state, $window, $upload, $compile, $filter, bootbox, Hearthstone, Util, AlertService, AdminArticleService, data, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
+.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'AdminDeckService', 'AdminHOTSGuideService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes',  
+    function ($scope, $state, $window, $upload, $compile, $filter, bootbox, Hearthstone, Util, AlertService, AdminArticleService, AdminDeckService, AdminHOTSGuideService, data, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
         var itemAddBox,
             deckID;
         
@@ -3247,7 +3385,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.decks = [{_id: undefined, name: 'No deck'}].concat(dataDecks.decks);
 
         // load guides
-        $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);        
+        $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);       
         
         // load articles
         $scope.articles = dataArticles.articles;
@@ -3255,25 +3393,107 @@ angular.module('app.controllers', ['ngCookies'])
         // load providers
         $scope.providers = dataProviders.users;
         
+        $scope.search = '';
+
+        //search functions
+        function escapeStr( str ) {
+            return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+        
+        
+        //search functions
+        $scope.getDecks = function () {
+            AdminDeckService.getDecks(1, 10, escapeStr($scope.search)).then(function (data) {
+                $scope.decks = data.decks;
+            });
+        } 
+
+        $scope.getArticles = function () {
+            AdminArticleService.getArticles(1, 10, escapeStr($scope.search)).then(function (data) {
+                $scope.articles = data.articles;
+            });
+        }
+
+        $scope.getGuides = function () {
+            AdminHOTSGuideService.getGuides(1, 10, escapeStr($scope.search)).then(function (data) {
+                $scope.guides = data.guides;
+            });
+        }
+        //!search functions
         
         //open the modal to choose what item to add
         $scope.addItemArticle = function () {
             itemAddBox = bootbox.dialog({
                 message: $compile('<div article-item-add></div>')($scope),
                 closeButton: true,
-                animate: true
+                animate: true,
+                onEscape: function () { //We want to clear the search results when we close the bootbox
+                    $scope.search = '';
+                    $scope.getDecks();
+                    $scope.getGuides();
+                }
             });
             itemAddBox.modal('show');
+            itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                $scope.search = '';
+                $scope.getArticles();
+            });
         }
 
         //change the article item
         $scope.modifyItem = function (item) {
             switch ($scope.article.articleType.toString()) {
-                case 'hs':  $scope.article.deck = item; break;
+                case 'hs': $scope.article.deck = item; break;
                 case 'hots': $scope.article.guide = item; break;
             }
+            $scope.search = '';
             itemAddBox.modal('hide');
         }
+        
+        
+        
+        //this is for the related article modal
+        $scope.addRelatedArticle = function () {
+            itemAddBox = bootbox.dialog({
+                message: $compile('<div article-related-add></div>')($scope),
+                closeButton: false,
+                animate: true,
+            });
+            itemAddBox.modal('show');
+            itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                $scope.search = '';
+                $scope.getArticles();
+            });
+        }
+        
+        $scope.isRelated = function (a) {
+            for (var i = 0; i < $scope.article.related.length; i++) {
+                if (a._id == $scope.article.related[i]._id) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        $scope.modifyRelated = function (a) {
+            if ($scope.isRelated(a)) {
+                $scope.removeRelatedArticle(a);
+                return;
+            }
+            $scope.article.related.push(a);
+        }
+        
+        $scope.removeRelatedArticle = function (a) {
+            for (var i = 0; i < $scope.article.related.length; i++) {
+                if (a._id === $scope.article.related[i]._id) {
+                    $scope.article.related.splice(i, 1);
+                }
+            }
+        }
+        
+        $scope.closeBox = function () {
+            itemAddBox.modal('hide');
+        }; 
         
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }
@@ -3284,7 +3504,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.article.slug.linked = !$scope.article.slug.linked;
             $scope.setSlug();
         };
-        
         
         
         // photo
@@ -4741,6 +4960,271 @@ angular.module('app.controllers', ['ngCookies'])
                 } else {
                     AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been updated successfully.' });
                     $state.go('app.admin.polls.list');
+                }
+            });
+        };
+    }
+])
+.controller('AdminBannerListCtrl', ['$scope', '$compile', 'bootbox', 'Pagination', 'AlertService', 'AdminBannerService', 'data', 
+    function ($scope, $compile, bootbox, Pagination, AlertService, AdminBannerService, data) {
+        // grab alerts
+        if (AlertService.hasAlert()) {
+            $scope.success = AlertService.getSuccess();
+            AlertService.reset();
+        }
+        
+        $scope.updateDND = function (list, index) {
+            list.splice(index, 1);
+            for (var i = 0; i < list.length; i++) {
+                list[i].orderNum = i + 1;
+            }
+            AdminBannerService.updateOrder(list);
+        };
+        
+        
+        // load banners
+        $scope.tsBanners = data.tsBanners;
+        $scope.hsBanners = data.hsBanners;
+        $scope.hotsBanners = data.hotsBanners;
+        $scope.page = data.page;
+        $scope.perpage = data.perpage;
+        $scope.total = data.total;
+        $scope.search = data.search;
+        
+        $scope.getBanners = function () {
+            AdminBannerService.getBanners($scope.page, $scope.perpage, $scope.search).then(function (data) {
+                $scope.banners = data.banners;
+                $scope.page = data.page;
+                $scope.total = data.total;
+            });
+        }
+        
+        // delete banner
+        $scope.deleteBanner = function (page, banner) {
+            console.log(banner._id);
+            var box = bootbox.dialog({
+                title: 'Delete banner: ' + banner.title + '?',
+                message: 'Are you sure you want to delete the banner <strong>' + banner.title + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            AdminBannerService.deleteBanner(banner._id).then(function (data) {
+                                if (data.success) {
+                                    console.log($scope.banners)
+                                    var arr = $scope[page],
+                                        index = arr.indexOf(banner);
+                                    if (index !== -1) {
+                                        arr.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: banner.title + ' deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        };
+    }
+])
+.controller('AdminBannerAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'AdminBannerService', 'AlertService',
+    function ($scope, $state, $window, $upload, $compile, AdminBannerService, AlertService) {
+        var box,
+            defaultBanner = {
+                title : '',
+                description: '',
+                bannerType: 'ts',
+                active: false,
+                photo: '',
+                button: {
+                    hasButton: false,
+                    buttonText: '',
+                    buttonLink: ''
+                }
+            };
+        $scope.descriptionMax = 250;
+        
+        
+        $scope.hasButton = false;
+        
+        $scope.summerNoteIsFull = function (e) {
+            console.log($scope.maxDescription - $scope.banner.description.length + ' ' + e);
+        }
+        
+        $scope.options = {
+          disableDragAndDrop: true,
+          height: 100,
+          fontNames: ['Open Sans Regular', 'Open Sans Bold'],
+          defaultFontName: 'Open Sans Regular',
+          toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['format', ['hr']],
+            ['misc', ['undo', 'redo', 'codeview']]
+          ]
+        };
+        
+        // load Poll
+        $scope.banner = angular.copy(defaultBanner);
+        $scope.imgPath = '/banners/';
+        
+        $scope.bannerTypes = [
+            { name: 'TempoStorm', value: 'ts' },
+            { name: 'Hearthstone', value: 'hs' },
+            { name: 'Heroes of the Storm', value: 'hots'}
+        ];
+        
+        $scope.bannerActive = [
+            { name: 'Yes', value: 'true'},
+            { name: 'No', value: 'false'}
+        ];
+        
+        $scope.photoUpload = function ($files) {
+            if (!$files.length) return false;
+            var uploadBox = bootbox.dialog({
+                message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                closeButton: false,
+                animate: false
+            });
+            $scope.uploading = 0;
+            uploadBox.modal('show');
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/admin/upload/banners',
+                    method: 'POST',
+                    file: file
+                }).progress(function(evt) {
+                    $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                }).success(function(data, status, headers, config) {
+                    $scope.banner.photo = data.large;
+                    uploadBox.modal('hide');
+                });
+            }
+        };
+
+        
+        $scope.getImage = function () {
+            $scope.imgPath = '/banners/';
+            return ($scope.banner.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.banner.photo;
+        };
+        
+        // add Poll
+        $scope.addBanner = function () {
+            AdminBannerService.addBanner($scope.banner).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    AlertService.setSuccess({ show: true, msg: $scope.banner.title + ' has been added successfully.' });
+                    $state.go('app.admin.banners.list');
+                }
+            });
+        };
+    }
+])
+.controller('AdminBannerEditCtrl', ['$window', '$scope', '$state', '$compile', '$upload', 'AlertService', 'data', 'AdminBannerService', '$q',
+    function($window, $scope, $state, $compile, $upload, AlertService, data, AdminBannerService, $q) {
+        $scope.banner = data.banner;
+        
+        
+        $scope.bannerTypes = [
+            { name: 'TempoStorm', value: 'ts' },
+            { name: 'Hearthstone', value: 'hs' },
+            { name: 'Heroes of the Storm', value: 'hots'}
+        ];
+
+        $scope.bannerActive = [
+            { name: 'Yes', value: 'true'},
+            { name: 'No', value: 'false'}
+        ];
+        $scope.descriptionMax = 250;
+        
+        
+        $scope.summerNoteIsFull = function () {
+            console.log($scope.banner.description.length);
+        }
+        
+        $scope.options = {
+            disableDragAndDrop: true,
+            height: 100,
+            fontNames: ['Open Sans Regular', 'Open Sans Bold'],
+            defaultFontName: 'Open Sans Regular',
+            toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['format', ['hr']],
+            ['misc', ['undo', 'redo', 'codeview']]
+            ]
+        };  
+        
+        //console.log($scope.banner.description);
+        
+        $scope.photoUpload = function ($files) {
+            if (!$files.length) return false;
+            var uploadBox = bootbox.dialog({
+                message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                closeButton: false,
+                animate: false
+            });
+            $scope.uploading = 0;
+            uploadBox.modal('show');
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/admin/upload/banners',
+                    method: 'POST',
+                    file: file
+                }).progress(function(evt) {
+                    $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                }).success(function(data, status, headers, config) {
+                    $scope.banner.photo = data.large;
+                    uploadBox.modal('hide');
+                });
+            }
+        };
+
+        
+        $scope.getImage = function () {
+            $scope.imgPath = '/banners/';
+            return ($scope.banner.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.banner.photo;
+        };
+        
+        
+         $scope.editBanner = function () {
+            $scope.showError = false;
+
+            AdminBannerService.editBanner($scope.banner).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    AlertService.setSuccess({ show: true, msg: $scope.banner.title + ' has been updated successfully.' });
+                    $state.go('app.admin.banners.list');
                 }
             });
         };
@@ -9702,6 +10186,11 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/admin/articles.item.add.html',
     };
 })
+.directive('articleRelatedAdd', function () {
+    return {
+        templateUrl: 'views/admin/articles.related.add.html',
+    };
+})
 .directive('hsBuilder', function() {
     return {
         templateUrl: 'views/frontend/hs.deckBuilder.directive.html',
@@ -10565,7 +11054,7 @@ angular.module('app.services', [])
                 d.resolve(data);
             });
             return d.promise;
-        },
+        }, 
         getSnapshot: function (_id) {
             var d = $q.defer();
             $http.post('/api/admin/snapshot', { _id: _id }).success(function (data) {
@@ -10581,6 +11070,45 @@ angular.module('app.services', [])
         },
         deleteSnapshot: function (snapshot) {
             return $http.post('/api/admin/snapshot/delete', snapshot);
+        }
+    }
+}])
+.factory('AdminBannerService', ['$http', '$q', function($http, $q){
+    return {
+        getBanners: function (page, perpage, search) {
+            var d = $q.defer(),
+                page = page,
+                perpage = perpage,
+                search = search;
+                
+            $http.post('/api/admin/banners', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getBanner: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/banner', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addBanner: function (banner) {
+            return $http.post('api/admin/banner/add', banner);
+        },
+        editBanner: function (banner) {
+            return $http.post('api/admin/banner/edit', banner);
+        },
+        deleteBanner: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/banner/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }, 
+        updateOrder: function (banners) {
+         var d = $q.defer();
+            $http.post('/api/admin/banners/order', {banners: banners});
         }
     }
 }])
