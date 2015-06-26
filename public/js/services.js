@@ -700,7 +700,7 @@ angular.module('app.services', [])
                 d.resolve(data);
             });
             return d.promise;
-        },
+        }, 
         getSnapshot: function (_id) {
             var d = $q.defer();
             $http.post('/api/admin/snapshot', { _id: _id }).success(function (data) {
@@ -716,6 +716,45 @@ angular.module('app.services', [])
         },
         deleteSnapshot: function (snapshot) {
             return $http.post('/api/admin/snapshot/delete', snapshot);
+        }
+    }
+}])
+.factory('AdminBannerService', ['$http', '$q', function($http, $q){
+    return {
+        getBanners: function (page, perpage, search) {
+            var d = $q.defer(),
+                page = page,
+                perpage = perpage,
+                search = search;
+                
+            $http.post('/api/admin/banners', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getBanner: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/banner', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addBanner: function (banner) {
+            return $http.post('api/admin/banner/add', banner);
+        },
+        editBanner: function (banner) {
+            return $http.post('api/admin/banner/edit', banner);
+        },
+        deleteBanner: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/banner/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }, 
+        updateOrder: function (banners) {
+         var d = $q.defer();
+            $http.post('/api/admin/banners/order', {banners: banners});
         }
     }
 }])

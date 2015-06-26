@@ -297,6 +297,11 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/admin/articles.item.add.html',
     };
 })
+.directive('articleRelatedAdd', function () {
+    return {
+        templateUrl: 'views/admin/articles.related.add.html',
+    };
+})
 .directive('hsBuilder', function() {
     return {
         templateUrl: 'views/frontend/hs.deckBuilder.directive.html',

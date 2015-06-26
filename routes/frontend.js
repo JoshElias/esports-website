@@ -1512,7 +1512,7 @@ module.exports = {
                     },
                     {
                         path: 'related',
-                        select: 'title slug.url active -_id',
+                        select: 'title slug.url active -_id createdDate',
                     },
                     {
                         path: 'comments',

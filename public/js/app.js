@@ -1214,13 +1214,13 @@ var app = angular.module('app', [
                         controller: 'AdminArticleAddCtrl',
                         resolve: {
                             dataDecks: ['AdminDeckService', function (AdminDeckService) {
-                                return AdminDeckService.getAllDecks();
+                                return AdminDeckService.getDecks(1, 10, '');
                             }],
                             dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
-                                return AdminHOTSGuideService.getAllGuides();
+                                return AdminHOTSGuideService.getGuides(1, 10, '');
                             }],
                             dataArticles: ['AdminArticleService', function (AdminArticleService) {
-                                return AdminArticleService.getAllArticles();
+                                return AdminArticleService.getArticles(1, 10, '');
                             }],
                             dataProviders: ['AdminUserService', function (AdminUserService) {
                                 return AdminUserService.getProviders();
@@ -1246,7 +1246,10 @@ var app = angular.module('app', [
                                 return AdminArticleService.getArticle(articleID);
                             }],
                             dataDecks: ['AdminDeckService', function (AdminDeckService) {
-                                return AdminDeckService.getAllDecks();
+                                var page = 1,
+                                    perpage = 10,
+                                    search = '';
+                                return AdminDeckService.getDecks(page, perpage, search);
                             }],
                             dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
                                 return AdminHOTSGuideService.getAllGuides();
@@ -1856,6 +1859,61 @@ var app = angular.module('app', [
                             data: ['$stateParams', 'AdminUserService', function ($stateParams, AdminUserService) {
                                 var userID = $stateParams.userID;
                                 return AdminUserService.getUser(userID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.banners', {
+                abstract: true,
+                url: '/banners',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/banners.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.banners.list', {
+                url: '',
+                views: {
+                    banners: {
+                        templateUrl: tpl + 'views/admin/banners.list.html',
+                        controller: 'AdminBannerListCtrl',
+                        resolve: {
+                            data: ['AdminBannerService', function(AdminBannerService) {
+                                return AdminBannerService.getBanners();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.banners.add', {
+                url: '/add',
+                views: {
+                    banners: {
+                        templateUrl: tpl + 'views/admin/banners.add.html',
+                        controller: 'AdminBannerAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.banners.edit', {
+                url: '/edit/:bannerID',
+                views: {
+                    banners: {
+                        templateUrl: tpl + 'views/admin/banners.edit.html',
+                        controller: 'AdminBannerEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminBannerService', function ($stateParams, AdminBannerService) {
+                                var bannerID = $stateParams.bannerID;
+                                return AdminBannerService.getBanner(bannerID);
                             }]
                         }
                     }
