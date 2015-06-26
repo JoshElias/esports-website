@@ -1,1 +1,15 @@
-oh fuc  
+<div class="panel panel-dark m-b-none">   
+    <div class="panel-heading clearfix">
+        <strong class="lh-lg">ADD DECK</strong>
+        <div class="pull-right m-r-sm">
+            <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+        </div>
+    </div>
+
+    <div class="list-group m-b-none">
+        <a href="#" class="list-group-item" ng-click="modifyItem(deck)" ng-repeat="deck in filtered = (decks | filterAll:search | orderBy:'-createdDate' | limitTo:10)">
+            {{deck.name}}
+        </a>
+        <button class="btn btn-blue btn-lg center-text" ng-click="closeDeckBox()">Done</button>
+    </div>
+</div>

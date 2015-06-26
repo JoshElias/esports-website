@@ -1479,20 +1479,51 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminSnapshotAddCtrl', ['$scope', '$compile', 'bootbox',
-    function ($scope, $compile, bootbox) {
+.controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', 'bootbox', 'AdminDeckService', 'AdminSnapshotService',
+    function ($scope, $compile, $timeout, bootbox, AdminDeckService, AdminSnapshotService) {
         
         var deckAddBox = undefined;
         
-        console.log('fuck');
-        $scope.openAddDeck = function () {
-            deckAddBox = bootbox.dialog({
-                message: $compile('<div snapshot-deck-add></div>')($scope),
-                closeButton: true,
-                animate: true
+        $scope.search = "";
+        $scope.decks = [];
+        
+        function getDecks (page, num, search, callback) {
+            AdminDeckService.getDecks(page, num, search).then(function (data) {
+                $timeout(function () {
+                    console.log(data.decks);
+                    $scope.decks = data.decks;
+                    callback();
+                });
             });
-            deckAddBox.modal('show');
         }
+        
+        $scope.openAddDeck = function () {
+            getDecks(1, 10, $scope.search, function () {
+                deckAddBox = bootbox.dialog({
+                    message: $compile('<div snapshot-deck-add></div>')($scope),
+                    animate: true
+                });
+                deckAddBox.modal('show');
+            });
+        }
+        
+        $scope.closeDeckBox = function () {
+            deckAddBox.modal('hide');
+        }
+        
+        $scope.addSnapshot = function () {
+            $scope.showError = false;
+            AdminSnapshotService.addSnapshot($scope.snapshot).success(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    AlertService.setSuccess({ show: true, msg: $scope.snapshot.title + ' has been added successfully.' });
+                    $state.go('app.admin.snapshot.list');
+                }
+            });
+        };
     }
 ])
 .controller('AdminDeckListCtrl', ['$scope', 'AdminDeckService', 'AlertService', 'Pagination', 'data', 
