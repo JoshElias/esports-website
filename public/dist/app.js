@@ -3549,6 +3549,9 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('AdminSnapshotAddCtrl', ['$scope', '$compile', 'bootbox',
     function ($scope, $compile, bootbox) {
+        
+        var deckAddBox = undefined;
+        
         console.log('fuck');
         $scope.openAddDeck = function () {
             deckAddBox = bootbox.dialog({
@@ -3558,7 +3561,6 @@ angular.module('app.controllers', ['ngCookies'])
             });
             deckAddBox.modal('show');
         }
-        
     }
 ])
 .controller('AdminDeckListCtrl', ['$scope', 'AdminDeckService', 'AlertService', 'Pagination', 'data', 
