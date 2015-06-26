@@ -700,8 +700,14 @@ module.exports = {
     },
     articleAdd: function (Schemas) {
         return function (req, res, next) {
-            var articleID;
+            var articleID,
+                relatedID = [];
             // add form validation
+            
+            
+            for (var i = 0; i < req.body.related.length; i++) {
+                relatedID.push(req.body.related[i]._id);
+            }
             
             // insert new article
             function insertArticle(callback) {
@@ -721,7 +727,7 @@ module.exports = {
                         small: req.body.photos.small
                     },
                     deck: (req.body.deck ? req.body.deck._id : undefined),
-                    related: req.body.related || undefined,
+                    related: relatedID || undefined,
                     classTags: req.body.classTags,
                     views: 0,
                     votesCount: 1,
@@ -784,7 +790,12 @@ module.exports = {
     },
     articleEdit: function (Schemas) {
         return function (req, res, next) {
-            var _id = req.body._id;
+            var _id = req.body._id,
+                relatedID = [];
+            
+            for (var i = 0; i < req.body.related.length; i++) {
+                relatedID.push(req.body.related[i]._id);
+            }
             
             function updateActivity (callback) {
                 Schemas.Activity.update({article: _id, activityType: 'createArticle'}, {author: req.body.author, active: req.body.active}).exec(function (err, data) {
@@ -824,7 +835,7 @@ module.exports = {
                         small: req.body.photos.small
                     };
                     article.deck = (req.body.deck ? req.body.deck._id : undefined);
-                    article.related = req.body.related || undefined;
+                    article.related = relatedID || undefined;
                     article.classTags = req.body.classTags || [];
                     article.featured = req.body.featured;
                     article.premium = {

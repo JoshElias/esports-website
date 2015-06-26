@@ -1014,42 +1014,22 @@ angular.module('app.controllers', ['ngCookies'])
         //search functions
         $scope.getDecks = function () {
             AdminDeckService.getDecks(1, 10, escapeStr($scope.search)).then(function (data) {
-                console.log(data);
                 $scope.decks = data.decks;
             });
         } 
-        
-        $scope.searchDecks = function () {
-            console.log($scope.search);
-            $scope.getDecks();
-        }
-        
+
         $scope.getArticles = function () {
             AdminArticleService.getArticles(1, 10, escapeStr($scope.search)).then(function (data) {
-                console.log(data);
                 $scope.articles = data.articles;
             });
         }
-        
-        $scope.searchArticles = function () {
-            console.log($scope.search);
-            $scope.getArticles();
-        }
-        
+
         $scope.getGuides = function () {
             AdminHOTSGuideService.getGuides(1, 10, escapeStr($scope.search)).then(function (data) {
-                console.log(data);
                 $scope.guides = data.guides;
             });
         }
-        
-        $scope.searchGuides = function () {
-            console.log($scope.search);
-            $scope.getGuides();
-        }
         //!search functions
-        
-        
         
         //open the modal to choose what item to add
         $scope.addItemArticle = function () {
@@ -1058,13 +1038,16 @@ angular.module('app.controllers', ['ngCookies'])
                 closeButton: true,
                 animate: true,
                 onEscape: function () { //We want to clear the search results when we close the bootbox
-                    console.log('Dalatin;');
                     $scope.search = '';
-                    $scope.searchDecks();
-                    $scope.searchGuides();
+                    $scope.getDecks();
+                    $scope.getGuides();
                 }
             });
             itemAddBox.modal('show');
+            itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                $scope.search = '';
+                $scope.getArticles();
+            });
         }
 
         //change the article item
@@ -1077,34 +1060,50 @@ angular.module('app.controllers', ['ngCookies'])
             itemAddBox.modal('hide');
         }
         
+        
+        
         //this is for the related article modal
         $scope.addRelatedArticle = function () {
             itemAddBox = bootbox.dialog({
                 message: $compile('<div article-related-add></div>')($scope),
-                closeButton: true,
+                closeButton: false,
                 animate: true,
-                onEscape: function () { //We want to clear the search results when we close the bootbox
-                    console.log('Dalatin;');
-                    $scope.search = '';
-                    $scope.searchArticles;
-                }
             });
             itemAddBox.modal('show');
+            itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                $scope.search = '';
+                $scope.getArticles();
+            });
+        }
+        
+        $scope.isRelated = function (a) {
+            for (var i = 0; i < $scope.article.related.length; i++) {
+                if (a._id == $scope.article.related[i]._id) {
+                    return true;
+                }
+            }
+            return false;
         }
         
         $scope.modifyRelated = function (a) {
+            if ($scope.isRelated(a)) {
+                $scope.removeRelatedArticle(a);
+                return;
+            }
             $scope.article.related.push(a);
-            $scope.articles.splice($scope.articles.indexOf(a), 1);
         }
         
         $scope.removeRelatedArticle = function (a) {
             for (var i = 0; i < $scope.article.related.length; i++) {
-                if (a === $scope.article.related[i]) {
+                if (a._id === $scope.article.related[i]._id) {
                     $scope.article.related.splice(i, 1);
-                    $scope.articles.push(a);
                 }
             }
         }
+        
+        $scope.closeBox = function () {
+            itemAddBox.modal('hide');
+        }; 
         
         // load article
         $scope.article = angular.copy(defaultArticle);
@@ -1256,9 +1255,6 @@ angular.module('app.controllers', ['ngCookies'])
         // load article
         $scope.article = data.article;
         
-        console.log(data.article);
-        console.log(dataDecks);
-        
         // load decks
         $scope.decks = [{_id: undefined, name: 'No deck'}].concat(dataDecks.decks);
 
@@ -1272,53 +1268,32 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.providers = dataProviders.users;
         
         $scope.search = '';
-        
-        
-        
-        
-        
+
         //search functions
         function escapeStr( str ) {
             return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         }
         
+        
+        //search functions
         $scope.getDecks = function () {
             AdminDeckService.getDecks(1, 10, escapeStr($scope.search)).then(function (data) {
-                console.log(data);
                 $scope.decks = data.decks;
             });
         } 
-        
-        $scope.searchDecks = function () {
-            console.log($scope.search);
-            $scope.getDecks();
-        }
-        
+
         $scope.getArticles = function () {
             AdminArticleService.getArticles(1, 10, escapeStr($scope.search)).then(function (data) {
-                console.log(data);
                 $scope.articles = data.articles;
             });
         }
-        
-        $scope.searchArticles = function () {
-            console.log($scope.search);
-            $scope.getArticles();
-        }
-        
+
         $scope.getGuides = function () {
             AdminHOTSGuideService.getGuides(1, 10, escapeStr($scope.search)).then(function (data) {
-                console.log(data);
                 $scope.guides = data.guides;
             });
         }
-        
-        $scope.searchGuides = function () {
-            console.log($scope.search);
-            $scope.getGuides();
-        }
         //!search functions
-
         
         //open the modal to choose what item to add
         $scope.addItemArticle = function () {
@@ -1327,13 +1302,16 @@ angular.module('app.controllers', ['ngCookies'])
                 closeButton: true,
                 animate: true,
                 onEscape: function () { //We want to clear the search results when we close the bootbox
-                    console.log('Dalatin;');
                     $scope.search = '';
-                    $scope.searchDecks();
-                    $scope.searchGuides();
+                    $scope.getDecks();
+                    $scope.getGuides();
                 }
             });
             itemAddBox.modal('show');
+            itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                $scope.search = '';
+                $scope.getArticles();
+            });
         }
 
         //change the article item
@@ -1346,35 +1324,50 @@ angular.module('app.controllers', ['ngCookies'])
             itemAddBox.modal('hide');
         }
         
+        
+        
         //this is for the related article modal
         $scope.addRelatedArticle = function () {
             itemAddBox = bootbox.dialog({
                 message: $compile('<div article-related-add></div>')($scope),
-                closeButton: true,
+                closeButton: false,
                 animate: true,
-                onEscape: function () { //We want to clear the search results when we close the bootbox
-                    console.log('Dalatin;');
-                    $scope.search = '';
-                    $scope.searchArticles;
-                }
             });
             itemAddBox.modal('show');
+            itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                $scope.search = '';
+                $scope.getArticles();
+            });
+        }
+        
+        $scope.isRelated = function (a) {
+            for (var i = 0; i < $scope.article.related.length; i++) {
+                if (a._id == $scope.article.related[i]._id) {
+                    return true;
+                }
+            }
+            return false;
         }
         
         $scope.modifyRelated = function (a) {
+            if ($scope.isRelated(a)) {
+                $scope.removeRelatedArticle(a);
+                return;
+            }
             $scope.article.related.push(a);
-            $scope.articles.splice($scope.articles.indexOf(a), 1);
         }
         
         $scope.removeRelatedArticle = function (a) {
             for (var i = 0; i < $scope.article.related.length; i++) {
-                if (a === $scope.article.related[i]) {
+                if (a._id === $scope.article.related[i]._id) {
                     $scope.article.related.splice(i, 1);
-                    $scope.articles.push(a);
                 }
             }
         }
         
+        $scope.closeBox = function () {
+            itemAddBox.modal('hide');
+        }; 
         
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }

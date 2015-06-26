@@ -2,13 +2,18 @@
     <div class="panel-heading clearfix">
         <strong class="lh-lg">ADD RELATED ARTICLE</strong>
         <div class="pull-right m-r-sm">
-            <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="searchArticles()">
+            <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="getArticles()">
         </div>
     </div>
 
-    <form class="list-group m-b-none">
-        <a class="list-group-item" ng-click="modifyRelated(article)" ng-repeat="article in filtered = (articles | limitTo:10 | orderBy: '-createdDate' | filterAll:search)">
-            {{article.title}}
+    <div class="list-group m-b-none">
+        <a href="#" class="list-group-item" ng-class="{active: isRelated(a)}" ng-click="modifyRelated(a)" ng-repeat="a in filtered = (articles | limitTo:10 | orderBy: '-createdDate' | filterAll:search)">
+            {{a.title}}
         </a>
-    </form>
+        <p class="list-group-item" ng-if="!filtered.length">No items match your search</p>
+        <div class="wrapper-sm list-group-item text-center">
+            <button class="btn btn-blue btn-lg" ng-click="closeBox()">Done</button>
+        </div>
+    </div>
+
 </div>

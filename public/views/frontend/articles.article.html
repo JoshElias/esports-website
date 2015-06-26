@@ -57,7 +57,7 @@
                     </div>
                     <div class="article-section-content" ng-show="show.related">
                         <ul>
-                            <li ng-repeat="item in article.related" ng-if="item.active"><a href="./articles/{{item.slug.url}}">{{item.title}}</a></li>
+                            <li ng-repeat="item in article.related | orderBy: '-createdDate'" ng-if="item.active"><a href="./articles/{{item.slug.url}}">{{item.title}}</a></li>
                         </ul>
                     </div>
                 </div>
