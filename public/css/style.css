@@ -1396,6 +1396,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .ui-datepicker-current-day a { border: 1px solid #0099cc; background: #0099cc !important; color: #FFF; margin: -1px; z-index: 1001; }
 
 /* admin */
+.admin-list-heading span { line-height: 34px; }
+
 .admin-list-item span { line-height: 34px; }
 .admin-list-item:nth-child(odd) { background: #FDFDFD; }
 .list-group-item.admin-list-item:hover { background: #e6f7ff; }
