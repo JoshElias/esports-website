@@ -7,7 +7,7 @@
 <div class="panel panel-default" ng-repeat="category in categories">
     <div class="panel-heading clearfix">
         <div class="row">
-            <div class="col-sm-6 admin-list-item">
+            <div class="col-sm-6 admin-list-heading">
                 <span>{{category.title}}</span>
             </div>
             <div class="col-sm-6">
@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="list-group">
-        <div class="list-group-item admin-list-item clearfix" ng-repeat="thread in category.threads">
+        <div class="list-group-item admin-list-heading clearfix" ng-repeat="thread in category.threads">
             <div class="row">
                 <div class="col-sm-6">
                     <span>{{thread.title}}</span>
