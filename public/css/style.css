@@ -352,9 +352,10 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .twitter-feed .twitter-body img { width: 40px; height: 40px; position: absolute; margin:auto; top: 0; bottom: 0; left: 10;  }
 .twitter-feed .twitter-body .tweet-info { color:white; position: relative; top: 0; bottom: 0; right: 0; }
 .twitter-feed .twitter-body .tweet-info .tweet-info-top { position:relative; }
-.twitter-feed .twitter-body .tweet-info .tweet-info-top h4 { color: #6CADDE; font-size: 14px; margin: 0px; }
+.twitter-feed .twitter-body .tweet-info .tweet-info-top .time h4 {color: #BCBCBC; font-size: 14px; margin: 0px; }
+.twitter-feed .twitter-body .tweet-info .tweet-info-top .name { color: #6CADDE; font-size: 14px; margin: 0px; width: 125px; padding-right:5px; }
 .twitter-feed .twitter-body .tweet-info .tweet-info-top .time { color: #BCBCBC; position:absolute; top: 0; right: 0; }
-.twitter-feed .twitter-body .tweet-info .tweet-info-top .time h4 { color: #BCBCBC }
+
 .twitter-feed .twitter-body .tweet-info .tweet-info-top .time i { color: #BCBCBC; font-size: 14px; height:14px; line-height: .5; margin:0px 5px 0px 0px; text-shadow: none; }
 .twitter-feed .twitter-body .tweet-info .tweet-info-bottom p {color: #BCBCBC;  margin: 0px; width:inherit }
 .twitter-feed .twitter-body .tweet-info .tweet-info-bottom { padding-bottom: 0px; }
@@ -972,7 +973,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .brdr-r-light { border-right: 1px solid rgba(0,0,0,.15); }
 
 /* ELLIPSIS */
-.ell {text-overflow: ellipsis; overflow:hidden; }
+.ell { text-overflow: ellipsis; overflow:hidden; white-space: nowrap }
 
 /* Center text */
 .center-text {
