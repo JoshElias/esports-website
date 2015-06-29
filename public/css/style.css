@@ -2182,13 +2182,6 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .g2a-square a { margin: 0 auto; display: block; max-width: 300px; }
 .g2a-square img { max-width: 100%; height: auto; }
 
-.ad-banner { margin: 20px auto; width: 600px; height: 146px; }
-.ad-banner img { width: 600px; height: 146px; }
-
-.adSenseSidebarHome { height: auto; width: auto; margin-bottom: 20px; }
-.adSenseSidebar { height: 280px; width: auto; } 
-.adSenseBanner { margin-top: 20px; height: 120px; width: auto; }
-
 /* terms / privacy */
 .terms,
 .privacy { margin: 70px auto; }
@@ -6458,7 +6451,6 @@ input[type=range]:focus::-ms-fill-upper {
     /* home */
     .twitch-feed { padding-right: 0px; }
     .twitter-feed { padding-left: 0px; }
-    .adSenseSidebarHome { height: 140px; }
     
     /* forums */
     .forum-post { padding-right: 0px; }
@@ -6495,7 +6487,6 @@ input[type=range]:focus::-ms-fill-upper {
     /* home */
     .twitch-feed { padding-right: 0px; }
     .twitter-feed { padding-left: 0px; }
-    .adSenseSidebarHome { height: 140px; }
     
     /* filters */
     .filter-bar { display: none; }

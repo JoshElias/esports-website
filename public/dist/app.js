@@ -10053,16 +10053,6 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/hots.tc.directive.html',
     }
 })
-.directive('adsSidebar', function () {
-    return {
-        restrict: 'A',
-        replace: true,
-        templateUrl: 'views/frontend/adsense/ads.sidebar.html',
-        controller: function (){
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        }
-    };
-})
 .directive('a', function() {
     return {
         restrict: 'E',
@@ -10105,26 +10095,6 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('adsSidebarHome', function () {
-    return {
-        restrict: 'A',
-        replace: true,
-        templateUrl: 'views/frontend/adsense/ads.sidebar.home.html',
-        controller: function () {
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        }
-    }
-})
-.directive('adsBanner', function () {
-    return {
-        restrict: 'A',
-        replace: true,
-        templateUrl: 'views/frontend/adsense/ads.banner.html',
-        controller: function () {
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        }
-    }
-})
 .directive('spinnerButton', [function() {
     return {
         restrict: 'A',
