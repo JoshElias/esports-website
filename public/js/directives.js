@@ -425,4 +425,9 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: "views/admin/snapshot.deck.add.html"
     };
 }])
+.directive('snapshotAuthorAdd', [function () {
+    return {
+        templateUrl: "views/admin/snapshot.author.add.html"
+    };
+}])
 ;

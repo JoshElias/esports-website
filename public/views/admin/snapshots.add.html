@@ -35,16 +35,12 @@
         <div class="form-group">
             <label for="author" class="col-sm-2 control-label">Authors</label>
             <div class="col-sm-10 wrapper-none">
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        Hello World!<a class="pull-right" ng-click="removeAuthor()"><i class="fa fa-close"></i></a>
+                <ul class="list-group m-b-md" ng-if="snapshot.authors.length!=0">
+                    <li class="list-group-item" ng-repeat="a in snapshot.authors">
+                        {{a.username}}<a href="#" class="pull-right" ng-click="removeAuthor(a)"><i class="fa fa-close"></i></a>
                     </li>
-                    <li class="list-group-item">
-                        Hello World!<a class="pull-right" ng-click="removeAuthor()"><i class="fa fa-close"></i></a>
-
-                    </li>
-                    <button class="btn btn-green btn-rounded m-t-md m-r-sm" ng-click="addAuthorOpen()"><i class="fa fa-plus"></i> Add Author</button>
                 </ul>
+                <button class="btn btn-green btn-rounded m-r-sm" ng-click="addAuthorBox()"><i class="fa fa-plus"></i> Add Author</button>
             </div>
         </div>
         <div class="form-group">
@@ -53,11 +49,11 @@
                 <div class="panel-body">
                     <label for="intro" class="col-sm-1 control-label">Intro</label>
                     <div class="col-sm-11">
-                        <textarea class="form-control m-b-sm" name="intro" ng-model="content.intro"></textarea>
+                        <textarea class="form-control m-b-sm" name="intro" ng-model="snapshot.content.intro"></textarea>
                     </div>
                     <label for="thoughts" class="col-sm-1 control-label">Thoughts</label>
                     <div class="col-sm-11">
-                        <textarea class="form-control m-b-sm" name="thoughts" ng-model="content.thoughts"></textarea>
+                        <textarea class="form-control m-b-sm" name="thoughts" ng-model="snapshot.content.thoughts"></textarea>
                     </div>
                 </div>
             </div>
@@ -65,41 +61,98 @@
         <div class="form-group">
             <label for="intro" class="col-sm-2 control-label">Tiers</label>
             <div class="col-sm-10 wrapper-none" id="accordion" role="tablist" aria-multiselectable="true">
-                <div class="panel panel-default wrapper-none">
-                    <div class="panel-heading clearfix" role="tab" id="headingTier1"><!-- DO ANGULAR -->
+                <div class="panel panel-default wrapper-none" ng-repeat="t in snapshot.tiers track by t.tier" ng-if="snapshot.tiers.length != 0">
+                    <div class="panel-heading clearfix" role="tab" id="headingTier{{t.tier}}"><!-- DO ANGULAR -->
                         <h4 class="panel-title pull-left">
-                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne"> <!-- DO ANGULAR -->
-                                Tier 1 <!-- DO ANGULAR -->
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{t.tier}}" aria-expanded="false" aria-controls="collapse{{t.tier}}"> <!-- DO ANGULAR -->
+                                Tier {{t.tier}} <!-- DO ANGULAR -->
                             </a>
                         </h4>
                         <button class="btn btn-green btn-sm btn-rounded pull-right" ng-click="openAddDeck()"><i class="fa fa-plus"></i> Add Deck</button>
                     </div>
 
-                    <div id="collapseOne" class="panel-body panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne"> <!-- DO ANGULAR -->
+                    <div id="collapse{{t.tier}}" class="panel-body panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{t.tier}}"> <!-- DO ANGULAR -->
                         <ul class="list-group">
-                            <li class="list-group-item">
-                                HELLO MY NAME IS DECK - Rank '\{\{ANGULAR\}\}'<span class="pull-right"><a class="m-r-sm" role="button" data-toggle="collapse" href="#deckrank1" aria-expanded="false" aria-controls="deckrank1" ng-click="editDeck()"><i class="fa fa-edit"></i></a><a ng-click="removeDeck()"><i class="fa fa-close"></i></a></span> <!-- DO ANGULAR -->
-                                <div class="collapse wrapper-md" id="deckrank1">
+                            <li class="list-group-item" ng-repeat="d in t.decks">
+                                {{d.deck.name}}<span class="pull-right"><a class="m-r-sm" role="button" data-toggle="collapse" href="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}" ng-click="editDeck()"><i class="fa fa-edit"></i></a><a ng-click="removeDeck()"><i class="fa fa-close"></i></a></span> <!-- DO ANGULAR -->
+                                <div class="collapse wrapper-md" id="deckrank{{d.rank.current}}">
                                     <div class="form-group">
                                         
                                         
                                         <div class="clearfix m-b-md">
                                             <label for="deck.explanation" class="control-label col-sm-1">Explanation</label>
-                                            <div class="col-sm-10">
-                                                <textarea class="form-control" name="deck.explanation" ng-model="deck.explanation"></textarea>
+                                            <div class="col-sm-9">
+                                                <textarea class="form-control" name="explanation" ng-model="deck.explanation"></textarea>
                                             </div>
                                         </div>
                                         
-                                        <div class="clearfix">
+                                        <div class="clearfix m-b-md">
                                             <label for="deck.weeklyNotes" class="control-label col-sm-1">Weekly Notes</label>
-                                            <div class="col-sm-10">
-                                                <textarea class="form-control" name="deck.weeklyNotes" ng-model="deck.weeklyNotes"></textarea>
+                                            <div class="col-sm-9">
+                                                <textarea class="form-control" name="weeklyNotes" ng-model="deck.weeklyNotes"></textarea>
                                             </div>
                                         </div>
                                         
                                         <div class="clearfix">
                                             <label for="deck.tech" class="control-label col-sm-1">Tech Decisions</label>
-                                            <div class="col-sm-10">
+                                            <a href="#" ng-click="openAddTech()"><i class="fa fa-plus pull-left"></i></a>
+                                            <div class="col-sm-9" ng-repeat="t in d.tech">
+                                                <div class="col-sm-4">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">vs Aggro</div>
+                                                        <ul class="list-group">
+                                                            <li class="list-group-item">
+                                                                test
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                test
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <a href="#" ng-click="removeTech(d.t)"><i></i></a>
+                                                </div>
+                                                
+                                                <div class="col-sm-4">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">vs Aggro</div>
+                                                        <ul class="list-group">
+                                                            <li class="list-group-item">
+                                                                test
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                test
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-sm-4">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">vs Aggro</div>
+                                                        <ul class="list-group">
+                                                            <li class="list-group-item">
+                                                                test
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                test
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-sm-4">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">vs Aggro</div>
+                                                        <ul class="list-group">
+                                                            <li class="list-group-item">
+                                                                test
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                test
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                                 
                                             </div>
                                         </div>
@@ -107,15 +160,12 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class="list-group-item">
-                                HELLO I AM ALSO DECK<span class="pull-right"><a class="m-r-sm" ng-click="editDeck()"><i class="fa fa-edit"></i></a><a ng-click="removeDeck()"><i class="fa fa-close"></i></a></span> <!-- DO ANGULAR -->
-                            </li>
                         </ul>
                     </div>
                 </div>
                 <!-- SECOND PANEL -->
                 
-                <button class="btn btn-green btn-rounded"><i class="fa fa-plus"></i> Add Tier</button>
+                <button ng-click="addTier()" class="btn btn-green btn-rounded"><i class="fa fa-plus"></i> Add Tier</button>
             </div>
         </div>
         

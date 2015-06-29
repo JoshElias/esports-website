@@ -589,9 +589,19 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 
 /* admin meta snapshot */
+.collapse.in {
+    height: auto !important;
+}
+
 textarea[name=intro],
+textarea[name=explanation],
+textarea[name=weeklyNotes],
 textarea[name=thoughts] {
     resize: vertical;
+}
+
+div[id^=headingTier] h4 {
+    line-height: 1.75
 }
 /* admin banner */
 textarea[name=description] {
@@ -600,7 +610,6 @@ textarea[name=description] {
 label p {
     font-weight: 500;
     font-size: 13px;
-
 }
 
 /* admin poll */

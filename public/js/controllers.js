@@ -1640,37 +1640,157 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', 'bootbox', 'AdminDeckService', 'AdminSnapshotService',
-    function ($scope, $compile, $timeout, bootbox, AdminDeckService, AdminSnapshotService) {
+.controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService',
+    function ($scope, $compile, $timeout, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService) {
         
-        var deckAddBox = undefined;
+        var deckAddBox = undefined,
+            authorAddBox = undefined,
+            defaultSnap = {
+            snapNum : 1,
+            title : "",
+            authors : [],
+            slug : {
+                url : "",
+                linked : true,
+            },
+            content : {
+                intro : "",
+                thoughts : ""
+            },
+            tiers: [],
+            active : false
+        },
+        defaultTier = {
+            tier : 1,
+            decks : []
+        },
+        defaultTierDeck = {
+            explanation : "",
+            weeklyNotes : "",
+            deck : undefined,
+            rank : {
+                current : 1,
+                last : 1
+            },
+            tech : [],
+            matches : []
+        },
+        defaultDeckMatch = {
+            deck : undefined,
+            chance : 0
+        },
+        defaultDeckTech = {
+            title : "",
+            cards : [],
+            orderNum : 1
+        },
+        defaultTechCards = {
+            card : undefined,
+            toss : false,
+            orderNum : 1
+        }
+
         
         $scope.search = "";
         $scope.decks = [];
+        $scope.snapshot = angular.copy(defaultSnap);
+        $scope.tier = 
+        $scope.tierDeck = angular.copy(defaultTierDeck);
+        $scope.tierDeckMatch = angular.copy(defaultDeckMatch);
+        $scope.deckTech = angular.copy(defaultDeckTech);
+        $scope.techCards = angular.copy(defaultTechCards);
         
-        function getDecks (page, num, search, callback) {
-            AdminDeckService.getDecks(page, num, search).then(function (data) {
-                $timeout(function () {
-                    console.log(data.decks);
-                    $scope.decks = data.decks;
-                    callback();
+        
+        /* GET METHODS */
+            function getDecks (page, num, search, callback) {
+                AdminDeckService.getDecks(page, num, search).then(function (data) {
+                    $timeout(function () {
+                        console.log(data.decks);
+                        $scope.decks = data.decks;
+                        callback();
+                    });
                 });
-            });
-        }
-        
-        $scope.openAddDeck = function () {
-            getDecks(1, 10, $scope.search, function () {
-                deckAddBox = bootbox.dialog({
-                    message: $compile('<div snapshot-deck-add></div>')($scope),
-                    animate: true
+            }
+
+            function getProviders (page, num, search, callback) {
+                AdminUserService.getProviders(page, num, search).then(function (data) {
+                    $timeout(function () {
+                        console.log(data);
+                        $scope.providers = data.users;
+                        callback();
+                    });
                 });
-                deckAddBox.modal('show');
-            });
-        }
+            }
+        /* GET METHODS */
         
-        $scope.closeDeckBox = function () {
-            deckAddBox.modal('hide');
-        }
+        
+        /* BOOTBOX METHODS */
+            $scope.addAuthorBox = function () {
+                getProviders(1, 10, $scope.search, function (data) {
+                    authorAddBox = bootbox.dialog({
+                        message: $compile('<div snapshot-author-add></div>')($scope),
+                        closeButton: false
+                    });
+                });
+            }
+
+            $scope.addDeckBox = function () {
+                getDecks(1, 10, $scope.search, function () {
+                    deckAddBox = bootbox.dialog({
+                        message: $compile('<div snapshot-deck-add></div>')($scope),
+                        animate: true
+                    });
+                    deckAddBox.modal('show');
+                });
+            }
+            ///////////////////////////////////////
+            $scope.closeAuthorBox = function () {
+                authorAddBox.modal('hide');
+            }
+
+            $scope.closeDeckBox = function () {
+                deckAddBox.modal('hide');
+            }
+        /* BOOTBOX METHODS */
+        
+        /* AUTHOR METHODS */
+            $scope.isAuthor = function (a) {
+                for (var i = 0; i < $scope.snapshot.authors.length; i++) {
+                    if (a._id == $scope.snapshot.authors[i]._id) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            $scope.addAuthor = function (a) {
+                if ($scope.isAuthor(a)) {
+                    $scope.removeAuthor(a);
+                    return;
+                }
+                $scope.snapshot.authors.push(a);
+            }
+            
+            $scope.removeAuthor = function (a) {
+                for (var i = 0; i < $scope.snapshot.authors.length; i++) {
+                    if (a._id === $scope.snapshot.authors[i]._id) {
+                        $scope.snapshot.authors.splice(i, 1);
+                    }
+                }
+            }
+        /* AUTHOR METHODS */
+
+            
+        /* TIERS METHODS */
+            $scope.addTier = function () {
+                var newTier = angular.copy(defaultTier);
+                newTier.tier = $scope.snapshot.tiers.length + 1;
+                console.log(newTier);
+                
+                $scope.snapshot.tiers.push(newTier);
+            }
+        /* TIERS METHODS */
+            
         
         $scope.addSnapshot = function () {
             $scope.showError = false;
