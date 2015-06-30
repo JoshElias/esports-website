@@ -5690,7 +5690,7 @@ angular.module('app.controllers', ['ngCookies'])
         };        
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -5775,8 +5775,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'AdminHOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, AlertService, AdminHOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+.controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'HOTS', 'AdminHOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, AlertService, HOTS, AdminHOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
         $scope.$watch('guide', function(){
@@ -5804,7 +5804,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -5936,7 +5936,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -6036,8 +6036,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'AdminHOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, AlertService, GuideBuilder, AdminHOTSGuideService, dataGuide, dataHeroes, dataMaps) {
+.controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'HOTS', 'GuideBuilder', 'AdminHOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, AlertService, HOTS, GuideBuilder, AdminHOTSGuideService, dataGuide, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = GuideBuilder.new('map', dataGuide.guide);
         
@@ -6062,7 +6062,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -6718,7 +6718,7 @@ angular.module('app.controllers', ['ngCookies'])
         };        
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -6835,8 +6835,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
-    function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
+.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
+    function ($scope, $state, $window, $compile, HOTS, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
         var box;
         
         // create guide
@@ -6866,7 +6866,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -7025,7 +7025,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -7154,8 +7154,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'GuideBuilder', 'HOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, GuideBuilder, HOTSGuideService, dataGuide, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'HOTS', 'GuideBuilder', 'HOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, HOTS, GuideBuilder, HOTSGuideService, dataGuide, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = GuideBuilder.new('map', dataGuide.guide);
         
@@ -7180,7 +7180,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
