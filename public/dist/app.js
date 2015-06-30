@@ -3872,6 +3872,7 @@ angular.module('app.controllers', ['ngCookies'])
                     case 'card' :
                         getCards(function (data) {
                             $scope.boxData = data.cards;
+                            $scope.tech = tier;
                             openBox(data, type);
                         }); 
                     break;
@@ -3884,6 +3885,7 @@ angular.module('app.controllers', ['ngCookies'])
                 switch (t) {
                     case 'author' : $scope.addAuthor(s); break;
                     case  'deck'  : $scope.addDeck(s); break;
+                    case  'card'  : $scope.addCard(s); break;
                 }
             }
             ///////////////////////////////////////
@@ -4007,10 +4009,13 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.searchDecks = function () {
                 getDecks(1, 10, $scope.search, function (data) {
                     $scope.boxData = data.decks;
-                    console.log(data.decks);
                 })
             }
             //////////////////////////////////////////////////////////////////////
+            
+            $scope.addCard = function (c) {
+                console.log(c);
+            }
             
             $scope.addTech = function (d, t) {
                 var deckTech = angular.copy(defaultDeckTech);
