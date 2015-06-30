@@ -708,6 +708,13 @@ angular.module('app.services', [])
             })
             return d.promise;
         },
+        getLatest: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/snapshot/latest', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            })
+            return d.promise;
+        },
         addSnapshot: function (snapshot) {
             return $http.post('/api/admin/snapshot/add', snapshot);
         },

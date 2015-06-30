@@ -3766,11 +3766,10 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService',
-    function ($scope, $compile, $timeout, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService) {
+.controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
+    function ($scope, $compile, $timeout, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
         
-        var deckAddBox = undefined,
-            authorAddBox = undefined,
+        var addBox = undefined,
             defaultSnap = {
             snapNum : 1,
             title : "",
@@ -3820,10 +3819,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.search = "";
         $scope.decks = [];
         $scope.snapshot = angular.copy(defaultSnap);
-        $scope.tier = 
-        $scope.tierDeck = angular.copy(defaultTierDeck);
         $scope.tierDeckMatch = angular.copy(defaultDeckMatch);
-        $scope.deckTech = angular.copy(defaultDeckTech);
         $scope.techCards = angular.copy(defaultTechCards);
         
         
@@ -3831,9 +3827,7 @@ angular.module('app.controllers', ['ngCookies'])
             function getDecks (page, num, search, callback) {
                 AdminDeckService.getDecks(page, num, search).then(function (data) {
                     $timeout(function () {
-                        console.log(data.decks);
-                        $scope.decks = data.decks;
-                        callback();
+                        callback(data);
                     });
                 });
             }
@@ -3841,44 +3835,74 @@ angular.module('app.controllers', ['ngCookies'])
             function getProviders (page, num, search, callback) {
                 AdminUserService.getProviders(page, num, search).then(function (data) {
                     $timeout(function () {
-                        console.log(data);
-                        $scope.providers = data.users;
-                        callback();
+                        callback(data);
                     });
+                });
+            }
+        
+            function getCards (callback) {
+                AdminCardService.getCards().then(function (data) {
+                    $timeout(function () {
+                        callback(data);
+                    })
                 });
             }
         /* GET METHODS */
         
         
         /* BOOTBOX METHODS */
-            $scope.addAuthorBox = function () {
-                getProviders(1, 10, $scope.search, function (data) {
-                    authorAddBox = bootbox.dialog({
-                        message: $compile('<div snapshot-author-add></div>')($scope),
-                        closeButton: false
-                    });
-                });
+            $scope.openAddBox = function (type, tier) {
+                switch (type) {
+                    case 'author' : //this is to display data in the bootbox for authors
+                        getProviders(1, 10, $scope.search, function (data) {
+                            $scope.boxData = data.users;
+                            openBox(data, type);
+                        });
+                    break;
+                        
+                    case 'deck' : //this is to display data in the bootbox for decks
+                        getDecks(1, 10, $scope.search, function (data) {
+                            $scope.boxData = data.decks;
+                            $scope.tier = tier;
+                            $scope.tierAbsolute = (tier-1);
+                            openBox(data, type);
+                        });
+                    break;
+                        
+                    case 'card' :
+                        getCards(function (data) {
+                            $scope.boxData = data.cards;
+                            openBox(data, type);
+                        }); 
+                    break;
+                        
+                    default : console.log('That does not exist!'); break;
+                }
             }
-
-            $scope.addDeckBox = function () {
-                getDecks(1, 10, $scope.search, function () {
-                    deckAddBox = bootbox.dialog({
-                        message: $compile('<div snapshot-deck-add></div>')($scope),
-                        animate: true
-                    });
-                    deckAddBox.modal('show');
-                });
+            
+            $scope.addStuff = function (s, t) {
+                switch (t) {
+                    case 'author' : $scope.addAuthor(s); break;
+                    case  'deck'  : $scope.addDeck(s); break;
+                }
             }
             ///////////////////////////////////////
-            $scope.closeAuthorBox = function () {
-                authorAddBox.modal('hide');
+            function openBox (data, type) {
+                $scope.type = type;
+                addBox = bootbox.dialog({
+                    message: $compile('<div snapshot-add></div>')($scope),
+                    animate: true,
+                    closeButton: false
+                });
+                addBox.modal('show');
             }
-
-            $scope.closeDeckBox = function () {
-                deckAddBox.modal('hide');
+        
+            $scope.closeBox = function () {
+                addBox.modal('hide');
             }
         /* BOOTBOX METHODS */
         
+            
         /* AUTHOR METHODS */
             $scope.isAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
@@ -3911,9 +3935,86 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.addTier = function () {
                 var newTier = angular.copy(defaultTier);
                 newTier.tier = $scope.snapshot.tiers.length + 1;
-                console.log(newTier);
-                
                 $scope.snapshot.tiers.push(newTier);
+            }
+            
+            $scope.removePrompt = function (t) {
+                var alertBox = bootbox.confirm("Are you sure you want to remove tier " + t.tier + "? All the deck data for this tier will be lost!", function (result) {
+                    if (result) {
+                        console.log(result);    
+                        $scope.$apply(function () {
+                            $scope.removeTier(t);
+                        });
+                    }
+                });
+            }
+            
+            $scope.removeTier = function (t) {
+                for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                    if (t.tier === $scope.snapshot.tiers[i].tier) {
+                        $scope.snapshot.tiers.splice(i, 1);
+                        for(var j = 0; j < $scope.snapshot.tiers.length; j++) {
+                            $scope.snapshot.tiers[j].tier = (j + 1);
+                        }
+                    }
+                }
+                
+                console.log($scope.snapshot.tiers.length);
+            }
+            //////////////////////////////////////////////////////////////////////
+            $scope.deckRanks = function () {
+                var curRank = 1;
+                for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                    for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
+                        $scope.snapshot.tiers[i].decks[j].rank.current = curRank++;
+                    }
+                }
+            }
+            
+            $scope.addDeck = function (sel) {
+                var tiers = $scope.snapshot.tiers,
+                    decks = tiers[$scope.tierAbsolute].decks,
+                    tierDeck = angular.copy(defaultTierDeck);
+
+                if (!$scope.isDeck(sel)) {
+                    tierDeck.deck = sel;
+                    decks.push(tierDeck);
+                    $scope.deckRanks();
+                } else {
+                    $scope.removeDeck(sel);
+                }
+            }
+            
+            $scope.isDeck = function (d) {
+                for (var j = 0; j < $scope.snapshot.tiers[$scope.tierAbsolute].decks.length; j++) {
+                    if (d._id == $scope.snapshot.tiers[$scope.tierAbsolute].decks[j].deck._id) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            $scope.removeDeck = function (d) {
+                for (var k = 0; k < $scope.snapshot.tiers[$scope.tierAbsolute].decks.length; k++) {
+                    if (d._id == $scope.snapshot.tiers[$scope.tierAbsolute].decks[k].deck._id) {
+                        $scope.snapshot.tiers[$scope.tierAbsolute].decks.splice(k, 1);
+                    }
+                }
+                $scope.deckRanks();
+            }
+            
+                        
+            $scope.searchDecks = function () {
+                getDecks(1, 10, $scope.search, function (data) {
+                    $scope.boxData = data.decks;
+                    console.log(data.decks);
+                })
+            }
+            //////////////////////////////////////////////////////////////////////
+            
+            $scope.addTech = function (d, t) {
+                var deckTech = angular.copy(defaultDeckTech);
+                console.log($scope.snapshot.tiers[t.tier-1].decks[d.rank.current-1].tech.push(deckTech));
             }
         /* TIERS METHODS */
             
@@ -10429,14 +10530,9 @@ angular.module('app.directives', ['ui.load'])
     };
   }
 ])
-.directive('snapshotDeckAdd', [function () {
+.directive('snapshotAdd', [function () {
     return {
-        templateUrl: "views/admin/snapshot.deck.add.html"
-    };
-}])
-.directive('snapshotAuthorAdd', [function () {
-    return {
-        templateUrl: "views/admin/snapshot.author.add.html"
+        templateUrl: "views/admin/snapshot.add.html"
     };
 }])
 ;;'use strict';
@@ -11183,6 +11279,13 @@ angular.module('app.services', [])
         getSnapshot: function (_id) {
             var d = $q.defer();
             $http.post('/api/admin/snapshot', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            })
+            return d.promise;
+        },
+        getLatest: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/snapshot/latest', { _id: _id }).success(function (data) {
                 d.resolve(data);
             })
             return d.promise;

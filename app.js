@@ -296,6 +296,7 @@ app.post('/api/admin/poll/edit', routes.admin.isAdmin(Schemas), routes.admin.pol
 
 app.post('/api/admin/snapshots', routes.admin.isAdmin(Schemas), routes.admin.snapshots(Schemas));
 app.post('/api/admin/snapshot', routes.admin.isAdmin(Schemas), routes.admin.snapshot(Schemas));
+app.post('/api/admin/snapshot/latest', routes.admin.isAdmin(Schemas), routes.admin.snapshotLatest(Schemas));
 app.post('/api/admin/snapshot/add', routes.admin.isAdmin(Schemas), routes.admin.snapshotAdd(Schemas));
 app.post('/api/admin/snapshot/delete', routes.admin.isAdmin(Schemas), routes.admin.snapshotDelete(Schemas));
 app.post('/api/admin/snapshot/edit', routes.admin.isAdmin(Schemas), routes.admin.snapshotEdit(Schemas));

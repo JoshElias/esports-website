@@ -2996,6 +2996,11 @@ module.exports = {
             return res.json({success: true});
         }
     },
+    snapshotLatest: function (Schemas) {
+        return function (req, res, next) {
+            return res.json({success: true});
+        }
+    },
     getObjectID: function (mongoose) {
         return function (req, res, next) {
             var id = mongoose.Types.ObjectId();

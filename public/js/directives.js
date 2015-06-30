@@ -420,14 +420,9 @@ angular.module('app.directives', ['ui.load'])
     };
   }
 ])
-.directive('snapshotDeckAdd', [function () {
+.directive('snapshotAdd', [function () {
     return {
-        templateUrl: "views/admin/snapshot.deck.add.html"
-    };
-}])
-.directive('snapshotAuthorAdd', [function () {
-    return {
-        templateUrl: "views/admin/snapshot.author.add.html"
+        templateUrl: "views/admin/snapshot.add.html"
     };
 }])
 ;
