@@ -1694,7 +1694,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.decks = [];
         $scope.snapshot = angular.copy(defaultSnap);
         $scope.tierDeckMatch = angular.copy(defaultDeckMatch);
-        $scope.techCards = angular.copy(defaultTechCards);
+        
         
         
         /* GET METHODS */
@@ -1725,7 +1725,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         
         /* BOOTBOX METHODS */
-            $scope.openAddBox = function (type, tier) {
+            $scope.openAddBox = function (type, tier, deck, tech) {
                 switch (type) {
                     case 'author' : //this is to display data in the bootbox for authors
                         getProviders(1, 10, $scope.search, function (data) {
@@ -1746,7 +1746,9 @@ angular.module('app.controllers', ['ngCookies'])
                     case 'card' :
                         getCards(function (data) {
                             $scope.boxData = data.cards;
-                            $scope.tech = tier;
+                            $scope.tier = tier;
+                            $scope.deck = deck;
+                            $scope.tech = tech;
                             openBox(data, type);
                         }); 
                     break;
@@ -1888,12 +1890,21 @@ angular.module('app.controllers', ['ngCookies'])
             //////////////////////////////////////////////////////////////////////
             
             $scope.addCard = function (c) {
-                console.log(c);
+                var tech = $scope.tech,
+                    deck = $scope.deck,
+                    tier = $scope.tier,
+                    techCard = angular.copy(defaultTechCards);
+                
+                console.log(tech);
+                
+                techCard.card = c;
+                $scope.snapshot.tiers[tier.tier-1].decks[deck.rank.current-1].tech[tech.orderNum].cards.push(c);
             }
             
             $scope.addTech = function (d, t) {
                 var deckTech = angular.copy(defaultDeckTech);
-                console.log($scope.snapshot.tiers[t.tier-1].decks[d.rank.current-1].tech.push(deckTech));
+                deckTech.orderNum = $scope.snapshot.tiers[t.tier-1].decks[d.rank.current-1].tech.length;
+                $scope.snapshot.tiers[t.tier-1].decks[d.rank.current-1].tech.push(deckTech);
             }
         /* TIERS METHODS */
             

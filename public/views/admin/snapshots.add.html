@@ -95,21 +95,23 @@
                                         <div class="clearfix">
                                             <label for="deck.tech" class="control-label col-sm-1">Tech Decisions</label>
                                             <a href="#" ng-click="addTech(d,t)"><i class="fa fa-plus pull-left"></i></a>
-                                            <div class="col-sm-9" ng-repeat="t in d.tech">
-                                                
-                                                <div class="col-sm-4">
-                                                    <div class="panel panel-default">
-                                                        <div class="panel-heading">vs <input type="text" class="form-control" ng-model="t.title"></div>
-                                                        <ul class="list-group">
-                                                            <li ng-repeat="c in t.cards" class="list-group-item">
-                                                                c.title
-                                                            </li>
-                                                            <li class="list-group-item">
-                                                                <a href="#" ng-click="openAddBox('card', t)"><i class="fa fa-plus"></i>&nbsp Add Card</a>
-                                                            </li>
-                                                        </ul>
+                                            <div class="col-sm-9">
+                                                <div class="col-sm-4" ng-repeat="tech in d.tech">
+
+                                                    <div class="col-sm-12">
+                                                        <div class="panel panel-default">
+                                                            <div class="panel-heading">vs <input type="text" class="form-control" ng-model="tech.title"></div>
+                                                            <ul class="list-group">
+                                                                <li ng-repeat="c in tech.cards" class="list-group-item">
+                                                                    {{c.name}}
+                                                                </li>
+                                                                <li class="list-group-item">
+                                                                    <a href="#" ng-click="openAddBox('card', t, d, tech)"><i class="fa fa-plus"></i>&nbsp Add Card</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <a href="#" ng-click="removeTech(d.t)"><i></i></a>
                                                     </div>
-                                                    <a href="#" ng-click="removeTech(d.t)"><i></i></a>
                                                 </div>
                                             </div>
                                         </div>
