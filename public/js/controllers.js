@@ -1895,16 +1895,46 @@ angular.module('app.controllers', ['ngCookies'])
                     tier = $scope.tier,
                     techCard = angular.copy(defaultTechCards);
                 
-                console.log(tech);
-                
                 techCard.card = c;
-                $scope.snapshot.tiers[tier.tier-1].decks[deck.rank.current-1].tech[tech.orderNum].cards.push(c);
+                
+                for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                    for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
+                        for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].tech.length; j++) {
+                            if (tech.orderNum == $scope.snapshot.tiers[i].decks[k].tech[j].orderNum) {
+                                $scope.snapshot.tiers[i].decks[k].tech[j].cards.push(c);
+                            }
+                        }
+                    }
+                }
             }
             
             $scope.addTech = function (d, t) {
                 var deckTech = angular.copy(defaultDeckTech);
-                deckTech.orderNum = $scope.snapshot.tiers[t.tier-1].decks[d.rank.current-1].tech.length;
-                $scope.snapshot.tiers[t.tier-1].decks[d.rank.current-1].tech.push(deckTech);
+                var curNum = 0;
+                
+                for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                    for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
+                        if (d.rank.current == $scope.snapshot.tiers[i].decks[k].rank.current) {
+                            $scope.snapshot.tiers[i].decks[k].tech.push(deckTech);
+                        }
+                        for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].tech.length; j++) {
+                            $scope.snapshot.tiers[i].decks[k].tech[j].orderNum = ++curNum;
+                            console.log(curNum);
+                        }
+                    }
+                }
+            }
+            
+            $scope.removeTech = function (t) {
+                for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                    for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
+                        for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].tech.length; j++) {
+                            if (t.orderNum == $scope.snapshot.tiers[i].decks[k].tech[j].orderNum) {
+                                $scope.snapshot.tiers[i].decks[k].tech.splice(j, 1);
+                            }
+                        }
+                    }
+                }
             }
         /* TIERS METHODS */
             
