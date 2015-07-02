@@ -4400,7 +4400,7 @@ p.white { color: #FFF; }
 /* Tier 2 */
 .talents-icon.rehgar.large.feral-heart { background-position: -30px -408px; }
 .talents-icon.rehgar.large.chain-reaction { background-position: -30px 0px; }
-.talents-icon.rehgar.large.focused-attack { background-position: -30px -510px; }
+.talents-icon.rehgar.large.cleanse { background-position: -30px -510px; }
 .talents-icon.rehgar.large.reactive-spark { background-position: -30px -102px; }
 .talents-icon.rehgar.large.farsight { background-position: -30px -612px; }
 /* Tier 3 */
@@ -4436,7 +4436,7 @@ p.white { color: #FFF; }
 .talents-icon.sgthammer.ambush { background-position: 0px -60px; }
 .talents-icon.sgthammer.regeneration-master { background-position: 0px -90px; }
 /* Tier 2 */
-.talents-icon.sgthammer.focused-attack { background-position: 0px -120px; }
+.talents-icon.sgthammer.cleanse { background-position: 0px -120px; }
 .talents-icon.sgthammer.vampiric-assault { background-position: 0px -150px; }
 .talents-icon.sgthammer.maelstrom-shells { background-position: 0px 0px; }
 .talents-icon.sgthammer.excessive-force { background-position: 0px -30px; }
