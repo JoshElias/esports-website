@@ -4823,12 +4823,13 @@ p.white { color: #FFF; }
 .talents-icon.thelostvikings.play-again { background-position: 0px -240px; }
 /* Tier 5 */
 .talents-icon.thelostvikings.hunka-burning-olaf { background-position: 0px 0px; }
-.talents-icon.thelostvikings.speedrun { background-position: 0px -270px; }
+.talents-icon.thelostvikings.executioner { background-position: 0px -270px; }
 .talents-icon.thelostvikings.impatience-is-a-virtue { background-position: 0px -300px; }
 /* Tier 6 */
 .talents-icon.thelostvikings.large-and-in-charge { background-position: 0px 0px; }
 .talents-icon.thelostvikings.sixtyfour-kb-marathon { background-position: 0px -330px; }
 .talents-icon.thelostvikings.norse-force { background-position: 0px -360px; }
+.talents-icon.thelostvikings.nordic-attack-squad { background-position: 0px -450px; }
 /* Tier 7 */
 .talents-icon.thelostvikings.ragnarok-n-roll { background-position: 0px -210px; }
 .talents-icon.thelostvikings.checkpoint-reached { background-position: 0px -240px; }
@@ -4855,12 +4856,13 @@ p.white { color: #FFF; }
 .talents-icon.thelostvikings.large.play-again { background-position: -30px -816px; }
 /* Tier 5 */
 .talents-icon.thelostvikings.large.hunka-burning-olaf { background-position: -30px 0px; }
-.talents-icon.thelostvikings.large.speedrun { background-position: -30px -918px; }
+.talents-icon.thelostvikings.large.executioner { background-position: -30px -918px; }
 .talents-icon.thelostvikings.large.impatience-is-a-virtue { background-position: -30px -1020px; }
 /* Tier 6 */
 .talents-icon.thelostvikings.large.large-and-in-charge { background-position: -30px 0px; }
 .talents-icon.thelostvikings.large.sixtyfour-kb-marathon { background-position: -30px -1122px; }
 .talents-icon.thelostvikings.large.norse-force { background-position: -30px -1224px; }
+.talents-icon.thelostvikings.large.nordic-attack-squad { background-position: -30px -1530px; }
 /* Tier 7 */
 .talents-icon.thelostvikings.large.ragnarok-n-roll { background-position: -30px -714px; }
 .talents-icon.thelostvikings.large.checkpoint-reached { background-position: -30px -816px; }
