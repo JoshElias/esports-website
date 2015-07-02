@@ -1715,7 +1715,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
         
             function getCards (callback) {
-                AdminCardService.getCards().then(function (data) {
+                AdminCardService.getDeckableCards().then(function (data) {
                     $timeout(function () {
                         callback(data);
                     })

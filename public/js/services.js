@@ -323,6 +323,13 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
+        getDeckableCards: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/cards/deckable', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
         getCard: function (_id) {
             var d = $q.defer();
             $http.post('/api/admin/card', { _id: _id }).success(function (data) {

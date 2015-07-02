@@ -3841,7 +3841,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
         
             function getCards (callback) {
-                AdminCardService.getCards().then(function (data) {
+                AdminCardService.getDeckableCards().then(function (data) {
                     $timeout(function () {
                         callback(data);
                     })
@@ -10940,6 +10940,13 @@ angular.module('app.services', [])
         getCards: function () {
             var d = $q.defer();
             $http.post('/api/admin/cards', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getDeckableCards: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/cards/deckable', {}).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

@@ -221,6 +221,7 @@ app.post('/api/contact/send', routes.frontend.sendContact(Mail));
 
 /* admin */
 app.post('/api/admin/cards', routes.admin.isAdmin(Schemas), routes.admin.cards(Schemas));
+app.post('/api/admin/cards/deckable', routes.admin.isAdmin(Schemas), routes.admin.cardsDeckable(Schemas));
 app.post('/api/admin/card', routes.admin.isAdmin(Schemas), routes.admin.card(Schemas));
 app.post('/api/admin/card/add', routes.admin.isAdmin(Schemas), routes.admin.cardAdd(Schemas));
 app.post('/api/admin/card/delete', routes.admin.isAdmin(Schemas), routes.admin.cardDelete(Schemas));

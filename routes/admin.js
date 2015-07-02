@@ -29,6 +29,24 @@ module.exports = {
             });
         };
     },
+    cardsDeckable: function (Schemas) {
+        return function (req, res, next) {
+            Schemas.Card.find({deckable: true}).select('_id name cardType rarity race playerClass expansion mechanics photos').exec(function (err, cards) {
+                if (err) {
+                    console.log(err);
+                    return res.json({
+                        success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+                return res.json({ success: true, cards: cards });
+            });
+        };
+    },
     card: function (Schemas) {
         return function (req, res, next) {
             var _id = req.body._id;

@@ -589,6 +589,16 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 
 /* admin meta snapshot */
+.cardAddList {
+    padding: 5px;
+    padding-right: 0px;
+}
+
+.cardAddList img {
+    margin-top: -5px;
+    height:30px;
+}
+
 textarea[name=intro],
 textarea[name=explanation],
 textarea[name=weeklyNotes],
