@@ -2,6 +2,7 @@
     "jscodehints.detectedExclusions": [
         "C:/Users/codephobia/Documents/GitHub/tempostorm/js/controllers.js",
         "C:/Users/Uther/Documents/GitHub/tempostorm/js/services.js",
-        "C:/Users/Uther/Documents/GitHub/tempostorm/public/js/services.js"
+        "C:/Users/Uther/Documents/GitHub/tempostorm/public/js/services.js",
+        "C:/Users/Uther/Documents/GitHub/tempostorm/public/js/directives.js"
     ]
 }

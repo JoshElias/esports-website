@@ -3769,7 +3769,9 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
     function ($scope, $compile, $timeout, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
         
-        var addBox = undefined,
+        var deckBootBox = undefined,
+            authorBootBox = undefined,
+            cardBootBox = undefined,
             defaultSnap = {
             snapNum : 1,
             title : "",
@@ -3852,57 +3854,75 @@ angular.module('app.controllers', ['ngCookies'])
         
         /* BOOTBOX METHODS */
             $scope.openAddBox = function (type, tier, deck, tech) {
+                $scope.tier = tier;
+                $scope.deck = deck;
+                $scope.tech = tech;
+                
+                console.log(tier, deck, tech);
+                
                 switch (type) {
                     case 'author' : //this is to display data in the bootbox for authors
                         getProviders(1, 10, $scope.search, function (data) {
-                            $scope.boxData = data.users;
-                            openBox(data, type);
+                            $scope.authorData = data.users;
+                            authorBox(data, type);
                         });
                     break;
                         
                     case 'deck' : //this is to display data in the bootbox for decks
                         getDecks(1, 10, $scope.search, function (data) {
-                            $scope.boxData = data.decks;
-                            $scope.tier = tier;
+                            $scope.deckData = data.decks;
                             $scope.tierAbsolute = (tier-1);
-                            openBox(data, type);
+                            deckBox(data, type);
                         });
                     break;
                         
                     case 'card' :
                         getCards(function (data) {
-                            $scope.boxData = data.cards;
-                            $scope.tier = tier;
-                            $scope.deck = deck;
-                            $scope.tech = tech;
-                            openBox(data, type);
+                            $scope.cardData = data.cards;
+                            cardBox(data, type);
                         }); 
                     break;
                         
                     default : console.log('That does not exist!'); break;
                 }
             }
-            
-            $scope.addStuff = function (s, t) {
-                switch (t) {
-                    case 'author' : $scope.addAuthor(s); break;
-                    case  'deck'  : $scope.addDeck(s); break;
-                    case  'card'  : $scope.addCard(s); break;
-                }
-            }
+
             ///////////////////////////////////////
-            function openBox (data, type) {
-                $scope.type = type;
-                addBox = bootbox.dialog({
-                    message: $compile('<div snapshot-add></div>')($scope),
+            function deckBox (data, type) {
+                deckBootBox = bootbox.dialog({
+                    message: $compile('<div snapshot-add-deck></div>')($scope),
                     animate: true,
                     closeButton: false
                 });
-                addBox.modal('show');
+                deckBootBox.modal('show');
+            }
+        
+            function authorBox () {
+                authorBootBox = bootbox.dialog({
+                    message: $compile('<div snapshot-add-author></div>')($scope),
+                    animate: true,
+                    closeButton: false
+                });
+                authorBootBox.modal('show');
+            }
+        
+            function cardBox(data, type) {
+                $scope.type = type;
+                cardBootBox = bootbox.dialog({
+                    message: $compile('<div snapshot-add-card></div>')($scope),
+                    animate: true,
+                    closeButton: false
+                });
+                cardBootBox.modal('show');
+            }
+        
+            $scope.closeCardBox = function () {
+                cardBox.modal('hide');
+                cardBox = undefined;
             }
         
             $scope.closeBox = function () {
-                addBox.modal('hide');
+                bootbox.hideAll();
             }
         /* BOOTBOX METHODS */
         
@@ -3979,7 +3999,6 @@ angular.module('app.controllers', ['ngCookies'])
                 var tiers = $scope.snapshot.tiers,
                     decks = tiers[$scope.tierAbsolute].decks,
                     tierDeck = angular.copy(defaultTierDeck);
-
                 if (!$scope.isDeck(sel)) {
                     tierDeck.deck = sel;
                     decks.push(tierDeck);
@@ -4011,7 +4030,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.searchDecks = function () {
                 getDecks(1, 10, $scope.search, function (data) {
                     $scope.boxData = data.decks;
-                })
+                });
             }
             //////////////////////////////////////////////////////////////////////
             
@@ -4027,10 +4046,28 @@ angular.module('app.controllers', ['ngCookies'])
                     for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
                         for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].tech.length; j++) {
                             if (tech.orderNum == $scope.snapshot.tiers[i].decks[k].tech[j].orderNum) {
-                                $scope.snapshot.tiers[i].decks[k].tech[j].cards.push(c);
+                                if (!$scope.isCard(c)) {
+                                    $scope.snapshot.tiers[i].decks[k].tech[j].cards.push(c);
+                                } else {
+                                    console.log('cant do that fag');
+                                }
                             }
                         }
                     }
+                }
+            }
+            
+            $scope.isCard = function (c) {
+                var tech = $scope.tech;
+                if (tech) {
+                    console.log(c, tech);
+                    for (var i = 0; i < tech.cards.length; i++) {
+                        if (c._id == tech.cards[i]._id) {
+                            console.log(i);
+                            return true;
+                        }
+                    }
+                    return false;
                 }
             }
             
@@ -4045,7 +4082,6 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                         for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].tech.length; j++) {
                             $scope.snapshot.tiers[i].decks[k].tech[j].orderNum = ++curNum;
-                            console.log(curNum);
                         }
                     }
                 }
@@ -10576,9 +10612,19 @@ angular.module('app.directives', ['ui.load'])
     };
   }
 ])
-.directive('snapshotAdd', [function () {
+.directive('snapshotAddAuthor', [function () {
     return {
-        templateUrl: "views/admin/snapshot.add.html"
+        templateUrl: "views/admin/snapshot.add.author.html"
+    };
+}])
+.directive('snapshotAddDeck', [function () {
+    return {
+        templateUrl: "views/admin/snapshot.add.deck.html"
+    }
+}])
+.directive('snapshotAddCard', [function () {
+    return {
+        templateUrl: "views/admin/snapshot.add.card.html"
     };
 }])
 ;;'use strict';
