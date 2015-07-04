@@ -93,29 +93,58 @@
                                         </div>
                                         
                                         <div class="clearfix">
-                                            <label for="deck.tech" class="control-label col-sm-1">Tech Decisions</label>
-                                            <a href="#" ng-click="addTech(d,t)"><i class="fa fa-plus pull-left"></i></a>
+                                            <div class="col-sm-1">
+                                                <label for="deck.tech" class="control-label">Tech Decisions</label>
+                                                <a href="#" ng-click="addTech(d,t)"><i class="fa fa-plus m-t-sm"></i> Add Tech</a>
+                                            </div>
                                             <div class="col-sm-9">
                                                 <div class="col-sm-4" ng-repeat="tech in d.tech">
 
-                                                    <div class="col-sm-12">
-                                                        <div class="panel panel-default">
-                                                            <a href="#" class="pull-right m-r-sm" ng-click="removeTech(tech)"><i class="fa fa-close"></i></a>
-                                                            <div class="panel-heading">vs <input type="text" class="form-control" ng-model="tech.title"></div>
-                                                            <ul class="list-group">
-                                                                <li ng-repeat="c in tech.cards" class="list-group-item">
-                                                                    {{c.name}}
-                                                                </li>
-                                                                <li class="list-group-item">
-                                                                    <a href="#" ng-click="openAddBox('card', t, d, tech)"><i class="fa fa-plus"></i>&nbsp Add Card</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                        <a href="#" ng-click="removeTech(d.t)"><i></i></a>
+                                                    
+                                                    <div class="panel panel-default">
+                                                        <a href="#" class="pull-right m-r-sm" ng-click="removeTech(tech)"><i class="fa fa-close"></i></a>
+                                                        <div class="panel-heading">vs <input type="text" class="form-control" ng-model="tech.title"></div>
+                                                        <ul class="list-group">
+                                                            <li ng-repeat="c in tech.cards" class="list-group-item">
+                                                                {{c.name}}
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                <a href="#" ng-click="openAddBox('card', t, d, tech)"><i class="fa fa-plus"></i>&nbsp Add Card</a>
+                                                            </li>
+                                                        </ul>
                                                     </div>
+                                                    <a href="#" ng-click="removeTech(d.t)"><i></i></a>
+
                                                 </div>
                                             </div>
                                         </div>
+                                        
+                                        <div>
+                                            <label class="control-label col-sm-1">Matches</label>
+                                            <div class="col-sm-9">
+                                            
+                                                <div class="col-sm-6" ng-repeat="m in t.decks"  ng-if="!(m.deck._id == d.deck._id)">
+                                                    <div class="panel panel-default wrapper-none">
+                                                        <div class="panel-heading ell">
+                                                            {{m.deck.name}} vs {{d.deck.name}}
+                                                        </div>
+                                                        
+                                                        <div class="panel-body">
+                                                            <div class="col-sm-12 wrapper-none">
+                                                                <div class="col-sm-11 pull-right">
+                                                                    <input ng-model="m.chance" type="range" min="0" max="100" step="1">
+                                                                </div>
+                                                                <div class="col-sm-1 m-t-sm pull-left">
+                                                                    <p>{{m.chance}}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                        
                                     </div>
                                 </div>
                             </li>
