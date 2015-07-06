@@ -3247,6 +3247,7 @@ angular.module('app.controllers', ['ngCookies'])
         // save deck
         var box;
         $scope.saveDeck = function () {
+            if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
             if (!$scope.app.user.isLogged()) {
                 box = bootbox.dialog({
                     title: 'Login Required',
@@ -3447,6 +3448,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // save deck
         $scope.updateDeck = function () {
+            if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
             DeckBuilder.updateDeck($scope.deck).success(function (data) {
                 if (data.success) {
                     $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
