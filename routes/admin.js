@@ -301,6 +301,7 @@ module.exports = {
                             instructions: results.against.instructions
                         },
                         video: results.video,
+                        arena: results.arena,
                         featured: results.featured,
                         premium: {
                             isPremium: results.premium.isPremium,
