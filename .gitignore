@@ -37,6 +37,3 @@ Thumbs.db
 *.woff
 *.otf
 *.woff2
-
-# Dist folder
-dist
