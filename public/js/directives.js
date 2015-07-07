@@ -317,19 +317,6 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/hots.tc.directive.html',
     }
 })
-<<<<<<< HEAD
-.directive('adsSidebar', function () {
-    return {
-        restrict: 'A',
-        replace: true,
-        templateUrl: tpl + 'views/frontend/adsense/ads.sidebar.html',
-        controller: function (){
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        }
-    };
-})
-=======
->>>>>>> master
 .directive('a', function() {
     return {
         restrict: 'E',
