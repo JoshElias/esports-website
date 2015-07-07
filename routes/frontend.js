@@ -1,8 +1,8 @@
 module.exports = {
     hots: require('./frontend/hots'),
-    index: function (config) {
+    index: function (config, assets) {
         return function (req, res, next) {
-            return res.render(config.APP_INDEX);
+            return res.render(config.APP_INDEX, { cdnUrl: config.CDN_URL, assets: assets });
         };
     },
     login: function(Schemas, jwt, JWT_SECRET) {

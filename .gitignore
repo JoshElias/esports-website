@@ -1,6 +1,8 @@
 # Logs
 logs
 *.log
+*.out
+*.err
 
 # Runtime data
 pids
@@ -31,9 +33,18 @@ photos
 
 # Windows thumb image files
 Thumbs.db
+<<<<<<< HEAD
+=======
 *.eot
 *.ttf
 *.svg
 *.woff
 *.otf
 *.woff2
+>>>>>>> master
+
+# Dist folder
+dist
+
+# Brackets json
+.brackets.json

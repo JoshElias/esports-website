@@ -21,7 +21,7 @@
             </ul>
         </div>
         <div class="banner-slide-wrapper">
-            <div class="banner-slide slide-animation" ng-class="{ active: banner.current == $index }" ng-background="https://s3-us-west-2.amazonaws.com/ts-node2/banners/{{slide.photo}}" ng-repeat="slide in banner.slides">
+            <div class="banner-slide slide-animation" ng-class="{ active: banner.current == $index }" ng-background="{{app.cdn}}/banners/{{slide.photo}}" ng-repeat="slide in banner.slides">
                 <div class="container">
                     <div class="banner-panel" ng-class="{ 'has-button': slide.button.hasButton }">
                         <div>
@@ -97,7 +97,7 @@
                             <a href="./articles/{{article.slug.url}}"></a>
                             <div class="article-premium" ng-if="article.premium.isPremium"></div>
                             <div class="article-theme" ng-class="{overcast:article.theme === 'overcast'}" ng-if="article.theme !== 'none'"><a href="./articles/{{article.slug.url}}"></a></div>
-                            <div class="article-img" ng-background="https://s3-us-west-2.amazonaws.com/ts-node2/articles/{{article.photos.medium}}"></div>
+                            <div class="article-img" ng-background="{{app.cdn}}/articles/{{article.photos.medium}}"></div>
                             <div class="article-content-wrapper">
                                 <div class="article-content flex-col">
                                     <h1>{{article.title}}</h1>

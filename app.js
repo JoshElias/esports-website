@@ -44,9 +44,11 @@ var cluster = require('cluster'),
     util = require('util'),
     twitch = require("./lib/twitch"),
     twitter = require("./lib/twitter")
+    assets = require("./lib/assets");
 
-/* mongoose */
-mongoose.connect(config.DB_URL);
+
+// mongoose 
+mongoose.connect(config.DB_URL, config.DB_OPTIONS);
 
 app.use(express.static(__dirname + '/public'));
 
@@ -55,7 +57,7 @@ app.set('template_engine', 'dust');
 app.set('views', __dirname + '/public/views');
 app.set('view engine', 'dust');
 
-app.use(require('prerender-node').set('prerenderToken', 'XrpCoT3t8wTNledN5pLU'));
+app.use(require('prerender-node').set('prerenderToken', config.PRERENDER_IO_KEY));
 app.use(favicon(path.join(__dirname, 'favicon.ico')));
 app.use(compression({
     threshold: 512
@@ -79,7 +81,7 @@ app.use(session({
     cookie: { expires: new Date(Date.now() + (60 * 60 * 24 * 7 * 1000)) },
     secret: config.SESSION_SECRET,
     store: new MongoStore({
-        url: config.DB_URL
+        mongooseConnection:  mongoose.connection
     })
 }));
 
@@ -107,7 +109,7 @@ passport.use(new BnetStrategy({
   }, routes.frontend.bnet(Schemas) ));
 
 
-/* twitch */
+// twitch 
 app.get('/auth/twitch', passport.authenticate('twitch'));
 app.get('/auth/twitch/callback', passport.authenticate('twitch', { failureRedirect: '/login' }),
   function(req, res) {
@@ -116,7 +118,7 @@ app.get('/auth/twitch/callback', passport.authenticate('twitch', { failureRedire
     res.redirect('/');
 });
 
-/* bnet */
+// bnet 
 app.get('/auth/bnet', passport.authenticate('bnet'));
 app.get('/auth/bnet/callback', passport.authenticate('bnet', { failureRedirect: '/login' }),
   function(req, res) {
@@ -127,11 +129,11 @@ app.get('/auth/bnet/callback', passport.authenticate('bnet', { failureRedirect: 
 
 
 
-/* spa */
-app.get('/', routes.frontend.index(config));
-app.get('*', routes.frontend.index(config));
+// spa 
+app.get('/', routes.frontend.index(config, assets));
+app.get('*', routes.frontend.index(config, assets));
 
-/* frontend */
+// frontend
 app.post('/login', routes.frontend.login(Schemas, jwt, config.JWT_SECRET));
 app.post('/signup', routes.frontend.signup(Schemas, uuid, Mail));
 app.post('/verify', routes.frontend.verifyEmail(Schemas, Mail, jwt, config.JWT_SECRET));
@@ -181,7 +183,7 @@ app.post('/polls/vote', routes.frontend.pollsVote(Schemas));
 
 app.post('/upload', routes.frontend.uploadToImgur(fs, imgur));
 
-/* frontend - requires login */
+// frontend - requires login 
 app.post('/api/verify', routes.frontend.verify(Schemas));
 
 app.post('/api/article/vote', routes.frontend.articleVote(Schemas));
@@ -219,7 +221,7 @@ app.post('/api/subscription/cancel', routes.frontend.subCancel(Schemas, Subscrip
 
 app.post('/api/contact/send', routes.frontend.sendContact(Mail));
 
-/* admin */
+// admin 
 app.post('/api/admin/cards', routes.admin.isAdmin(Schemas), routes.admin.cards(Schemas));
 app.post('/api/admin/cards/deckable', routes.admin.isAdmin(Schemas), routes.admin.cardsDeckable(Schemas));
 app.post('/api/admin/card', routes.admin.isAdmin(Schemas), routes.admin.card(Schemas));
@@ -320,7 +322,7 @@ app.use(function (req, res, next) {
     return;
 });
 
-/* server start */
+// server start 
 var server = http.createServer(app);
 server.listen(config.APP_PORT);
-console.log('Starting server on port: '+config.APP_PORT);
+console.log('Starting server: '+config.APP_URL+":"+config.APP_PORT);

@@ -303,9 +303,10 @@ angular.module('app.services', [])
     return {
         request: function (config) {
             config.headers = config.headers || {};
-            if ($window.sessionStorage.token) {
+            if (config.method == "POST" && $window.sessionStorage.token) {
                 config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
             }
+            console.log(config);
             return config;
         },
  

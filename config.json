@@ -11,27 +11,62 @@
 
       "TWITCH_ID" : "kxjhxkwq4t3egwy3ses7xdpaq314ldm",
       "TWITCH_SECRET" : "17c78usqj6xa2o2jras3coniw13rc7c",
-      "TWITCH_CALLBACK_URL" : "http://tempostorm.com/auth/twitch/callback",
+      "TWITCH_CALLBACK_URL" : "https://tempostorm.com/auth/twitch/callback",
 
       "TWITTER_KEY" : "BEInxp4PzT4vWFiWMtASZiSlS",
       "TWITTER_SECRET" : "hNDEcIeKCl1nq0huhEfq6WAI89c5LrcCd1z7omk0BGaSQqhrp2",
       "TWITTER_TOKEN_KEY" : "184958971-uxQALHEb8vLW7OxPxFccPz5oNP2PoIm9rhxOWd8D",
-      "TWITTER_TOKEN_SECRET" : "vwOFCoLOEwFK3Ykh4Q6N2qflQYjPdBefscapTBsWj7ora"
-  }, 
+      "TWITTER_TOKEN_SECRET" : "vwOFCoLOEwFK3Ykh4Q6N2qflQYjPdBefscapTBsWj7ora",
+      
+      "AMAZON_KEY" : "AKIAI5GMLIWXZP6TQXYQ",
+      "AMAZON_SECRET" : "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",
+      
+      "PRERENDER_IO_KEY" : "XrpCoT3t8wTNledN5pLU"
+  },
 
   "development" : {
       "APP_URL" : "localhost",
       "APP_PORT" : 1337,
       "APP_INDEX" : "dev-index",
 
-      "DB_URL" : "mongodb://localhost:27017/tempostorm"
+      "DB_URL" : "mongodb://localhost:27017/tempostorm",
+      "DB_OPTIONS" : {},
+      "CDN_URL" : "",
+
+      "AMAZON_BUCKET" : "staging-cdn.tempostorm.com"
+  },
+
+  "staging" : {
+      "APP_URL" : "localhost",
+      "APP_PORT" : 8080,
+      "APP_INDEX" : "staging-index",
+
+      "DB_URL" : "mongodb://52.26.156.55:27017,52.11.14.8:27017,52.8.169.246:27017,54.174.103.94:27017,52.28.87.90:27017,54.79.121.240:27017/tempostorm",
+      "DB_OPTIONS" : {
+          "replSet": {
+            "rs_name": "tempostormRepSet",
+            "readPreference": "ReadPreference.NEAREST"
+          }
+      },
+      "CDN_URL" : "https://staging-cdn.tempostorm.com/",
+      
+      "AMAZON_BUCKET" : "staging-cdn.tempostorm.com"
   },
 
   "production" : {
-      "APP_URL": "tempostorm.com",
+      "APP_URL": "joshelias.ca",
       "APP_PORT" : 8080,
       "APP_INDEX" : "pro-index",
 
-      "DB_URL" : "mongodb://104.236.245.160:27017/tempostorm"
+      "DB_URL" : "mongodb://52.26.156.55:27017,52.11.14.8:27017,52.8.169.246:27017,54.174.103.94:27017,52.28.87.90:27017,54.79.121.240:27017/tempostorm",
+      "DB_OPTIONS" : {
+          "replSet": {
+            "rs_name": "tempostormRepSet",
+            "readPreference": "ReadPreference.NEAREST"
+          }
+      },
+      "CDN_URL" : "https://cdn.tempostorm.com/",
+      
+      "AMAZON_BUCKET" : "cdn.tempostorm.com"
   }
 }

@@ -56,7 +56,9 @@ var app = angular.module('app', [
             $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
                 $rootScope.metaservice.setStatusCode(200);
                 //ngProgress.complete();
-                $window.ga('send', 'pageview', $location.path());
+                if ($window.ga) {
+                    $window.ga('send', 'pageview', $location.path());
+                }
 
                 // adsense refresh
                 //if ($window.googletag && $window.googletag.pubads) {
@@ -72,21 +74,14 @@ var app = angular.module('app', [
                 }
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {
-                $state.transitionTo('app.404');
-            });
-            $rootScope.$on("$routeChangeError", function(evt, current, previous, rejection){
-                console.log(3);
-                if(rejection == "invalid_user"){
-                    console.log(previous);
-                    //$state.transitionTo();
-                }
+                //$state.transitionTo('app.404');
             });
         }
     ]
 )
 .config(
-    ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', 
-    function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider) {
+    ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider', 
+    function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider) {
         
         app.controller = $controllerProvider.register;
         app.directive  = $compileProvider.directive;
@@ -97,12 +92,17 @@ var app = angular.module('app', [
         app.value      = $provide.value;
         
         $bootboxProvider.setDefaults({ locale: "en" });
-                
+        
         $locationProvider.html5Mode(true);
         $httpProvider.interceptors.push('TokenInterceptor');
         
-        var production = false,
-            tpl = (production) ? 'https://s3-us-west-2.amazonaws.com/ts-node2' : '';
+        // cdn templates
+        tpl = tpl || '';
+        
+        $sceDelegateProvider.resourceUrlWhitelist([
+            'self',
+            tpl + '**'
+        ]);
         
         $urlRouterProvider.otherwise('404');
         $stateProvider
@@ -286,7 +286,7 @@ var app = angular.module('app', [
                 url: 'hearthstone',
                 views: {
                     content: {
-                        templateUrl: 'views/frontend/hs.html'
+                        templateUrl: tpl + 'views/frontend/hs.html'
                     }
                 }
             })

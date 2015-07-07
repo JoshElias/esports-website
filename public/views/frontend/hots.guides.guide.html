@@ -242,7 +242,7 @@
                                         <div class="comment-add">
                                             <div class="avatar">
                                                 <a href="./user/{{app.user.getUsername()}}" ng-if="app.user.isLogged()"><img gravatar-src="app.user.getUserEmail()" alt="" /></a>
-                                                <a href="#" ng-if="!app.user.isLogged()"><img ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/img/profile.jpg" alt="" /></a>
+                                                <a href="#" ng-if="!app.user.isLogged()"><img ng-src="{{app.cdn}}/img/profile.jpg" alt="" /></a>
                                             </div>
                                             <form class="form-horizontal" name="commentForm" novalidate>
                                                 <div class="input-group">
@@ -273,7 +273,7 @@
 
                 <!-- g2a -->
                 <div class="g2a-square">
-                    <a href="https://www.g2a.com/r/tempo-storm"><img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/g2a-tempo.png" class="img-responsive" alt="G2A"></a>
+                    <a href="https://www.g2a.com/r/tempo-storm"><img src="{{app.cdn}}/img/g2a-tempo.png" class="img-responsive" alt="G2A"></a>
                 </div>
                 <!-- / g2a -->
 
