@@ -58,7 +58,7 @@ module.exports = {
             accessKeyId: config.AMAZON_KEY,
             secretAccessKey: config.AMAZON_SECRET,
             bucket: 'cdn.tempostorm.com',
-            region: 'us-west-1',
+            region: 'us-west-2',
             access: 'public-read',
             uploadConcurrency: 5,
             differential: true
