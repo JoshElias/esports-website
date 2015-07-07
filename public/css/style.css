@@ -609,6 +609,7 @@ textarea[name=thoughts] {
 .tierHeading {
     line-height: 1.75
 }
+
 /* admin banner */
 textarea[name=description] {
     resize: none;
@@ -1000,6 +1001,11 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .center-text {
     text-align: center;
 } 
+
+/* bold text */
+.bold-text {
+    font-weight: bold;
+}
 
 /* buttons */
 .btn-rounded { border-radius: 17px; }
