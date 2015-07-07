@@ -672,6 +672,45 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('AdminBannerService', ['$http', '$q', function($http, $q){
+    return {
+        getBanners: function (page, perpage, search) {
+            var d = $q.defer(),
+                page = page,
+                perpage = perpage,
+                search = search;
+                
+            $http.post('/api/admin/banners', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getBanner: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/banner', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addBanner: function (banner) {
+            return $http.post('api/admin/banner/add', banner);
+        },
+        editBanner: function (banner) {
+            return $http.post('api/admin/banner/edit', banner);
+        },
+        deleteBanner: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/banner/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }, 
+        updateOrder: function (banners) {
+         var d = $q.defer();
+            $http.post('/api/admin/banners/order', {banners: banners});
+        }
+    }
+}])
 .factory('AdminForumService', ['$http', '$q', function ($http, $q) {
     return {
         getCategories: function () {
@@ -857,7 +896,8 @@ angular.module('app.services', [])
     hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Heroic Skill", "Mount"];
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
-    hots.heroRows = [7, 8, 9, 8, 5];
+    hots.heroRows = [7, 8, 9, 8, 7];
+    hots.mapRows = [3,2,3];
     
     hots.genStats = function () {
         var stats = [],
@@ -1345,6 +1385,7 @@ angular.module('app.services', [])
             video: deck.video,
             premium: deck.premium,
             featured: deck.featured,
+            arena: deck.arena,
             public: deck.public
         });
     }
@@ -1366,6 +1407,7 @@ angular.module('app.services', [])
             video: deck.video,
             premium: deck.premium,
             featured: deck.featured,
+            arena: deck.arena,
             public: deck.public
         });
     }

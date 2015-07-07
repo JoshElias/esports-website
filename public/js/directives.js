@@ -297,6 +297,11 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/admin/articles.item.add.html',
     };
 })
+.directive('articleRelatedAdd', function () {
+    return {
+        templateUrl: 'views/admin/articles.related.add.html',
+    };
+})
 .directive('hsBuilder', function() {
     return {
         templateUrl: tpl + 'views/frontend/hs.deckBuilder.directive.html',
@@ -312,6 +317,7 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/hots.tc.directive.html',
     }
 })
+<<<<<<< HEAD
 .directive('adsSidebar', function () {
     return {
         restrict: 'A',
@@ -322,6 +328,8 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 })
+=======
+>>>>>>> master
 .directive('a', function() {
     return {
         restrict: 'E',
@@ -364,26 +372,6 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('adsSidebarHome', function () {
-    return {
-        restrict: 'A',
-        replace: true,
-        templateUrl: tpl + 'views/frontend/adsense/ads.sidebar.home.html',
-        controller: function () {
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        }
-    }
-})
-.directive('adsBanner', function () {
-    return {
-        restrict: 'A',
-        replace: true,
-        templateUrl: tpl + 'views/frontend/adsense/ads.banner.html',
-        controller: function () {
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        }
-    }
-})
 .directive('spinnerButton', [function() {
     return {
         restrict: 'A',

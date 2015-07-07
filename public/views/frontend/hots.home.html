@@ -21,7 +21,7 @@
             </ul>
         </div>
         <div class="banner-slide-wrapper">
-            <div class="banner-slide slide-animation" ng-class="{ active: banner.current == $index }" ng-background="{{app.cdn}}/img/{{slide.photo}}" ng-repeat="slide in banner.slides">
+            <div class="banner-slide slide-animation" ng-class="{ active: banner.current == $index }" ng-background="{{app.cdn}}/banners/{{slide.photo}}" ng-repeat="slide in banner.slides">
                 <div class="container">
                     <div class="banner-panel" ng-class="{ 'has-button': slide.button.hasButton }">
                         <div>
@@ -166,9 +166,6 @@
             </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
-            <div class="adSenseSidebarHome m-b-md clearfix" ng-show="!app.user.isSubscribed()">
-                <div ads-sidebar-home></div>
-            </div>
             <div hots-tc></div>
             <!-- guide builder -->
             <div hots-builder></div>

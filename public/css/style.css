@@ -352,9 +352,10 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .twitter-feed .twitter-body img { width: 40px; height: 40px; position: absolute; margin:auto; top: 0; bottom: 0; left: 10;  }
 .twitter-feed .twitter-body .tweet-info { color:white; position: relative; top: 0; bottom: 0; right: 0; }
 .twitter-feed .twitter-body .tweet-info .tweet-info-top { position:relative; }
-.twitter-feed .twitter-body .tweet-info .tweet-info-top h4 { color: #6CADDE; font-size: 14px; margin: 0px; }
+.twitter-feed .twitter-body .tweet-info .tweet-info-top .time h4 {color: #BCBCBC; font-size: 14px; margin: 0px; }
+.twitter-feed .twitter-body .tweet-info .tweet-info-top .name { color: #6CADDE; font-size: 14px; margin: 0px; width: 125px; padding-right:5px; }
 .twitter-feed .twitter-body .tweet-info .tweet-info-top .time { color: #BCBCBC; position:absolute; top: 0; right: 0; }
-.twitter-feed .twitter-body .tweet-info .tweet-info-top .time h4 { color: #BCBCBC }
+
 .twitter-feed .twitter-body .tweet-info .tweet-info-top .time i { color: #BCBCBC; font-size: 14px; height:14px; line-height: .5; margin:0px 5px 0px 0px; text-shadow: none; }
 .twitter-feed .twitter-body .tweet-info .tweet-info-bottom p {color: #BCBCBC;  margin: 0px; width:inherit }
 .twitter-feed .twitter-body .tweet-info .tweet-info-bottom { padding-bottom: 0px; }
@@ -586,6 +587,15 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 
 .edit-button-fix { display:block }
+
+/* admin banner */
+textarea[name=description] {
+    resize: none;
+}
+label p {
+    font-weight: 500;
+    font-size: 13px;
+}
 
 /* admin poll */
 .poll-item-edit { width:auto; }
@@ -819,6 +829,7 @@ ul.premium-features li i { margin-right: 5px; color: #85c440; }
 .premium-icon.premium-semi { background: url('../img/premium-semi.png') no-repeat; }
 
 /* wrappers */
+.wrapper-none { padding: 0px; }
 .wrapper-xs { padding: 5px; }
 .wrapper-sm { padding: 10px; }
 .wrapper-md { padding: 20px; }
@@ -884,6 +895,14 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .p-r-none { padding-right: 0px; }
 .p-b-none { padding-bottom: 0px; }
 .p-l-none { padding-left: 0px; }
+
+/* vertical center*/
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
 
 /* bs no pad */
 .row.no-pad {
@@ -954,7 +973,12 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .brdr-r-light { border-right: 1px solid rgba(0,0,0,.15); }
 
 /* ELLIPSIS */
-.ell {text-overflow: ellipsis; overflow:hidden; }
+.ell { text-overflow: ellipsis; overflow:hidden; white-space: nowrap }
+
+/* Center text */
+.center-text {
+    text-align: center;
+} 
 
 /* buttons */
 .btn-rounded { border-radius: 17px; }
@@ -1137,6 +1161,10 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .btn-twitch i { position: absolute; left: 15px; top: 13px; font-size: 30px; }
 
 /* admin */
+.admin-article-related-bg {
+    background-color: #F5F5F5;
+}
+
 .admin-side-nav {
     position: fixed;
     top: 50px;
@@ -1369,8 +1397,10 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .ui-datepicker-current-day a { border: 1px solid #0099cc; background: #0099cc !important; color: #FFF; margin: -1px; z-index: 1001; }
 
 /* admin */
+.admin-list-heading span { line-height: 34px; }
+
 .admin-list-item span { line-height: 34px; }
-.admin-list-item:nth-child(even) { background: #FDFDFD; }
+.admin-list-item:nth-child(odd) { background: #FDFDFD; }
 .list-group-item.admin-list-item:hover { background: #e6f7ff; }
 
 .nav > li > a:hover, .nav > li > a:focus { background: inherit; }
@@ -1645,7 +1675,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .db-search,
 .db-mechanics,
-.db-arena,
 .db-mana { float: left; margin-right: 10px; line-height: 30px; margin-top: 15px; margin-bottom: 15px; }
 
 .db-mechanics-btn { height: 30px; padding: 5px 10px; font-size: 12px; }
@@ -2152,13 +2181,6 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .g2a-square a { margin: 0 auto; display: block; max-width: 300px; }
 .g2a-square img { max-width: 100%; height: auto; }
 
-.ad-banner { margin: 20px auto; width: 600px; height: 146px; }
-.ad-banner img { width: 600px; height: 146px; }
-
-.adSenseSidebarHome { height: auto; width: auto; margin-bottom: 20px; }
-.adSenseSidebar { height: 280px; width: auto; } 
-.adSenseBanner { margin-top: 20px; height: 120px; width: auto; }
-
 /* terms / privacy */
 .terms,
 .privacy { margin: 70px auto; }
@@ -2304,6 +2326,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .btn-team-twitter { background: #4099FF; }
 .btn-team-twitch { background: #6441a5; }
 .btn-team-youtube { background: #e52d27; }
+.btn-team-instagram { background: #231F20; }
 .btn-team-esea { background: #0dc503 url('../img/esea.png') no-repeat center center; }
 
 .team-member-toggle { display: table-cell; position: absolute; top: 0px; right: 0px; width: 60px; height: 100%; background: #222; vertical-align: middle; color: #FFF !important; font-size: 30px; -webkit-transition: all .3s ease-in-out; -moz-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
@@ -2422,6 +2445,7 @@ ul[dnd-list] .dndPlaceholder {
 .icon-sylvanas { background: url('../img/hots/heroes/sylvanas-hex.png') no-repeat center center; }
 .icon-kaelthas { background: url('../img/hots/heroes/kaelthas-hex.png') no-repeat center center; }
 .icon-johanna { background: url('../img/hots/heroes/johanna-hex.png') no-repeat center center; }
+.icon-the-butcher { background: url('../img/hots/heroes/the-butcher-hex.png') no-repeat center center; }
 
 .hero-selection .hero .icon-wrap .icon:hover { background-color: rgba(88, 43, 128, 1); }
 .hero-selection .hero .icon-wrap .icon.active { background-color: #2766ad; }
@@ -2451,6 +2475,7 @@ p.white { color: #FFF; }
 .map-selection .map .icon-wrap .icon a.icon-hauntedmines { background: url('../img/hots/maps/mine.png') no-repeat center center; }
 .map-selection .map .icon-wrap .icon a.icon-skytemple { background: url('../img/hots/maps/sky.png') no-repeat center center; }
 .map-selection .map .icon-wrap .icon a.icon-tomb-of-the-spider-queen { background: url('../img/hots/maps/spider.png') no-repeat center center; }
+.map-selection .map .icon-wrap .icon a.icon-battlefield-of-eternity { background: url('../img/hots/maps/bfoe.png') no-repeat center center; }
 
 .map-selection .map .icon-wrap .icon:hover { opacity: .8; }
 .map-selection .map .icon-wrap .icon.active { opacity: 1; }
@@ -2534,6 +2559,7 @@ p.white { color: #FFF; }
 .hero-list li a.sylvanas { background: url('../img/hots/heroes/28x/sylvanas28.png') no-repeat center right; }
 .hero-list li a.kaelthas { background: url('../img/hots/heroes/28x/kaelthas28.png') no-repeat center right; }
 .hero-list li a.johanna { background: url('../img/hots/heroes/28x/johanna28.png') no-repeat center right; }
+.hero-list li a.the-butcher { background: url('../img/hots/heroes/28x/the-butcher28.png') no-repeat center right; }
 
 /* guide steps */
 .gb-steps { margin: 0 0 20px 0; padding: 0 1px; }
@@ -2611,6 +2637,7 @@ p.white { color: #FFF; }
 .talents-title.zeratul { background: url('../img/hots/heroes/60x/zeratul60.png') no-repeat; }
 .talents-title.kaelthas { background: url('../img/hots/heroes/60x/kaelthas60.png') no-repeat; }
 .talents-title.johanna { background: url('../img/hots/heroes/60x/johanna60.png') no-repeat; }
+.talents-title.the-butcher { background: url('../img/hots/heroes/60x/the-butcher60.png') no-repeat; }
 
 /* talents icons */
 .talents-icon { display: block; width: 30px; height: 30px; overflow: hidden; white-space: nowrap; text-indent: -99999px; opacity: .5; transition: opacity .1s linear; }
@@ -2658,6 +2685,75 @@ p.white { color: #FFF; }
 .talents-icon.zeratul { background: url('../img/hots/talents/zeratul.png') no-repeat; }
 .talents-icon.kaelthas { background: url('../img/hots/talents/kaelthas.png') no-repeat; }
 .talents-icon.johanna { background: url('../img/hots/talents/johanna.png') no-repeat; }
+.talents-icon.the-butcher { background: url('../img/hots/talents/the-butcher.png') no-repeat; }
+
+/* talents - the-butcher - small */
+/* Tier 1 */
+.talents-icon.the-butcher.invigoration { background-position: 0px 0px; }
+.talents-icon.the-butcher.block { background-position: 0px -30px; }
+.talents-icon.the-butcher.chop-meat { background-position: 0px 0px; }
+.talents-icon.the-butcher.victuals { background-position: 0px -60px; }
+/* Tier 2 */
+.talents-icon.the-butcher.flail-axe { background-position: 0px 0px; }
+.talents-icon.the-butcher.unrelenting-pursuit { background-position: 0px -90px; }
+.talents-icon.the-butcher.cheap-shot { background-position: 0px 0px; }
+.talents-icon.the-butcher.envenom { background-position: 0px -120px; }
+/* Tier 3 */
+.talents-icon.the-butcher.brutal-strike { background-position: 0px 0px; }
+.talents-icon.the-butcher.insatiable-blade { background-position: 0px -150px; }
+.talents-icon.the-butcher.abattoir { background-position: 0px -60px; }
+.talents-icon.the-butcher.final-assault { background-position: 0px -90px; }
+/* Tier 4 */
+.talents-icon.the-butcher.furnace-blast { background-position: 0px -180px; }
+.talents-icon.the-butcher.lamb-to-the-slaughter { background-position: 0px -210px; }
+/* Tier 5 */
+.talents-icon.the-butcher.burning-rage { background-position: 0px -240px; }
+.talents-icon.the-butcher.savage-charge { background-position: 0px -90px; }
+.talents-icon.the-butcher.crave-flesh { background-position: 0px -150px; }
+.talents-icon.the-butcher.spell-shield { background-position: 0px -270px; }
+/* Tier 6 */
+.talents-icon.the-butcher.crippling-slam { background-position: 0px 0px; }
+.talents-icon.the-butcher.enraged { background-position: 0px -300px; }
+.talents-icon.the-butcher.blood-frenzy { background-position: 0px -60px; }
+/* Tier 7 */
+.talents-icon.the-butcher.fires-of-hell { background-position: 0px -180px; }
+.talents-icon.the-butcher.slaughterhouse { background-position: 0px -210px; }
+.talents-icon.the-butcher.nexus-blades { background-position: 0px -330px; }
+.talents-icon.the-butcher.bolt-of-the-storm { background-position: 0px -360px; }
+
+/* talents - the-butcher - large */
+/* Tier 1 */
+.talents-icon.the-butcher.large.invigoration { background-position: -30px 0px; }
+.talents-icon.the-butcher.large.block { background-position: -30px -102px; }
+.talents-icon.the-butcher.large.chop-meat { background-position: -30px 0px; }
+.talents-icon.the-butcher.large.victuals { background-position: -30px -204px; }
+/* Tier 2 */
+.talents-icon.the-butcher.large.flail-axe { background-position: -30px 0px; }
+.talents-icon.the-butcher.large.unrelenting-pursuit { background-position: -30px -306px; }
+.talents-icon.the-butcher.large.cheap-shot { background-position: -30px 0px; }
+.talents-icon.the-butcher.large.envenom { background-position: -30px -408px; }
+/* Tier 3 */
+.talents-icon.the-butcher.large.brutal-strike { background-position: -30px 0px; }
+.talents-icon.the-butcher.large.insatiable-blade { background-position: -30px -510px; }
+.talents-icon.the-butcher.large.abattoir { background-position: -30px -204px; }
+.talents-icon.the-butcher.large.final-assault { background-position: -30px -306px; }
+/* Tier 4 */
+.talents-icon.the-butcher.large.furnace-blast { background-position: -30px -612px; }
+.talents-icon.the-butcher.large.lamb-to-the-slaughter { background-position: -30px -714px; }
+/* Tier 5 */
+.talents-icon.the-butcher.large.burning-rage { background-position: -30px -816px; }
+.talents-icon.the-butcher.large.savage-charge { background-position: -30px -306px; }
+.talents-icon.the-butcher.large.crave-flesh { background-position: -30px -510px; }
+.talents-icon.the-butcher.large.spell-shield { background-position: -30px -918px; }
+/* Tier 6 */
+.talents-icon.the-butcher.large.crippling-slam { background-position: -30px 0px; }
+.talents-icon.the-butcher.large.enraged { background-position: -30px -1020px; }
+.talents-icon.the-butcher.large.blood-frenzy { background-position: -30px -204px; }
+/* Tier 7 */
+.talents-icon.the-butcher.large.fires-of-hell { background-position: -30px -612px; }
+.talents-icon.the-butcher.large.slaughterhouse { background-position: -30px -714px; }
+.talents-icon.the-butcher.large.nexus-blades { background-position: -30px -1122px; }
+.talents-icon.the-butcher.large.bolt-of-the-storm { background-position: -30px -1224px; }
 
 /* talents - johanna - small */
 /* Tier 1 */
@@ -3829,7 +3925,7 @@ p.white { color: #FFF; }
 .talents-icon.malfurion.shandos-clarity { background-position: 0px -150px; }
 .talents-icon.malfurion.versatile { background-position: 0px -150px; }
 .talents-icon.malfurion.protective-shield { background-position: 0px -180px; }
-.talents-icon.malfurion.healing-ward { background-position: 0px -210px; }
+.talents-icon.malfurion.cleanse { background-position: 0px -210px; }
 /* Tier 3 */
 .talents-icon.malfurion.battle-momentum { background-position: 0px -240px; }
 .talents-icon.malfurion.enduring-growth { background-position: 0px -60px; }
@@ -3867,7 +3963,7 @@ p.white { color: #FFF; }
 .talents-icon.malfurion.large.shandos-clarity { background-position: -30px -510px; }
 .talents-icon.malfurion.large.versatile { background-position: -30px -510px; }
 .talents-icon.malfurion.large.protective-shield { background-position: -30px -612px; }
-.talents-icon.malfurion.large.healing-ward { background-position: -30px -714px; }
+.talents-icon.malfurion.large.cleanse { background-position: -30px -714px; }
 /* Tier 3 */
 .talents-icon.malfurion.large.battle-momentum { background-position: -30px -816px; }
 .talents-icon.malfurion.large.enduring-growth { background-position: -30px -204px; }
@@ -4274,7 +4370,7 @@ p.white { color: #FFF; }
 .talents-icon.rehgar.battle-momentum { background-position: 0px -210px; }
 .talents-icon.rehgar.earth-shield { background-position: 0px -30px; }
 .talents-icon.rehgar.shadow-wolf { background-position: 0px -120px; }
-.talents-icon.rehgar.searing-attack { background-position: 0px -240px; }
+.talents-icon.rehgar.cleanse { background-position: 0px -150px; }
 /* Tier 4 */
 .talents-icon.rehgar.ancestral-healing { background-position: 0px -270px; }
 .talents-icon.rehgar.bloodlust { background-position: 0px -300px; }
@@ -4304,14 +4400,14 @@ p.white { color: #FFF; }
 /* Tier 2 */
 .talents-icon.rehgar.large.feral-heart { background-position: -30px -408px; }
 .talents-icon.rehgar.large.chain-reaction { background-position: -30px 0px; }
-.talents-icon.rehgar.large.focused-attack { background-position: -30px -510px; }
+.talents-icon.rehgar.large.cleanse { background-position: -30px -510px; }
 .talents-icon.rehgar.large.reactive-spark { background-position: -30px -102px; }
 .talents-icon.rehgar.large.farsight { background-position: -30px -612px; }
 /* Tier 3 */
 .talents-icon.rehgar.large.battle-momentum { background-position: -30px -714px; }
 .talents-icon.rehgar.large.earth-shield { background-position: -30px -102px; }
 .talents-icon.rehgar.large.shadow-wolf { background-position: -30px -408px; }
-.talents-icon.rehgar.large.searing-attack { background-position: -30px -816px; }
+.talents-icon.rehgar.large.cleanse { background-position: -30px -510px; }
 /* Tier 4 */
 .talents-icon.rehgar.large.ancestral-healing { background-position: -30px -918px; }
 .talents-icon.rehgar.large.bloodlust { background-position: -30px -1020px; }
@@ -4340,7 +4436,7 @@ p.white { color: #FFF; }
 .talents-icon.sgthammer.ambush { background-position: 0px -60px; }
 .talents-icon.sgthammer.regeneration-master { background-position: 0px -90px; }
 /* Tier 2 */
-.talents-icon.sgthammer.focused-attack { background-position: 0px -120px; }
+.talents-icon.sgthammer.cleanse { background-position: 0px -120px; }
 .talents-icon.sgthammer.vampiric-assault { background-position: 0px -150px; }
 .talents-icon.sgthammer.maelstrom-shells { background-position: 0px 0px; }
 .talents-icon.sgthammer.excessive-force { background-position: 0px -30px; }
@@ -4727,12 +4823,13 @@ p.white { color: #FFF; }
 .talents-icon.thelostvikings.play-again { background-position: 0px -240px; }
 /* Tier 5 */
 .talents-icon.thelostvikings.hunka-burning-olaf { background-position: 0px 0px; }
-.talents-icon.thelostvikings.speedrun { background-position: 0px -270px; }
+.talents-icon.thelostvikings.executioner { background-position: 0px -270px; }
 .talents-icon.thelostvikings.impatience-is-a-virtue { background-position: 0px -300px; }
 /* Tier 6 */
 .talents-icon.thelostvikings.large-and-in-charge { background-position: 0px 0px; }
 .talents-icon.thelostvikings.sixtyfour-kb-marathon { background-position: 0px -330px; }
 .talents-icon.thelostvikings.norse-force { background-position: 0px -360px; }
+.talents-icon.thelostvikings.nordic-attack-squad { background-position: 0px -450px; }
 /* Tier 7 */
 .talents-icon.thelostvikings.ragnarok-n-roll { background-position: 0px -210px; }
 .talents-icon.thelostvikings.checkpoint-reached { background-position: 0px -240px; }
@@ -4759,12 +4856,13 @@ p.white { color: #FFF; }
 .talents-icon.thelostvikings.large.play-again { background-position: -30px -816px; }
 /* Tier 5 */
 .talents-icon.thelostvikings.large.hunka-burning-olaf { background-position: -30px 0px; }
-.talents-icon.thelostvikings.large.speedrun { background-position: -30px -918px; }
+.talents-icon.thelostvikings.large.executioner { background-position: -30px -918px; }
 .talents-icon.thelostvikings.large.impatience-is-a-virtue { background-position: -30px -1020px; }
 /* Tier 6 */
 .talents-icon.thelostvikings.large.large-and-in-charge { background-position: -30px 0px; }
 .talents-icon.thelostvikings.large.sixtyfour-kb-marathon { background-position: -30px -1122px; }
 .talents-icon.thelostvikings.large.norse-force { background-position: -30px -1224px; }
+.talents-icon.thelostvikings.large.nordic-attack-squad { background-position: -30px -1530px; }
 /* Tier 7 */
 .talents-icon.thelostvikings.large.ragnarok-n-roll { background-position: -30px -714px; }
 .talents-icon.thelostvikings.large.checkpoint-reached { background-position: -30px -816px; }
@@ -5421,6 +5519,7 @@ p.white { color: #FFF; }
 .hots-modal .hero.sylvanas { background: url('../img/hots/modal/heroes/sylvanas.png') no-repeat center right; }
 .hots-modal .hero.kaelthas { background: url('../img/hots/modal/heroes/kaelthas.png') no-repeat center right; }
 .hots-modal .hero.johanna { background: url('../img/hots/modal/heroes/johanna.png') no-repeat center right; }
+.hots-modal .hero.the-butcher { background: url('../img/hots/modal/heroes/the-butcher.png') no-repeat center right; }
 
 .hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
 .hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
@@ -5438,6 +5537,7 @@ p.white { color: #FFF; }
 .hots-modal .map.hauntedmines { background: url('../img/hots/maps/modal/mine.jpg') no-repeat center center; }
 .hots-modal .map.skytemple { background: url('../img/hots/maps/modal/temp.jpg') no-repeat center center; }
 .hots-modal .map.tomb-of-the-spider-queen { background: url('../img/hots/maps/modal/spider.jpg') no-repeat center center; }
+.hots-modal .map.battlefield-of-eternity { background: url('../img/hots/maps/modal/bfoe.jpg') no-repeat center center; }
 .hots-modal .map-text { float: right; width: 185px; }
 
 /* hots modal - talents */
@@ -5592,6 +5692,12 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-images .guide-image.guide-images-3.johanna { background: url('../img/hots/heroes/guide-images/3/johanna3.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-4.johanna { background: url('../img/hots/heroes/guide-images/4/johanna4.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-5.johanna { background: url('../img/hots/heroes/guide-images/5/johanna5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.guide-images-1.the-butcher { background: url('../img/hots/heroes/guide-images/1/the-butcher.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-2.the-butcher { background: url('../img/hots/heroes/guide-images/2/the-butcher2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-3.the-butcher { background: url('../img/hots/heroes/guide-images/3/the-butcher3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-4.the-butcher { background: url('../img/hots/heroes/guide-images/4/the-butcher4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-5.the-butcher { background: url('../img/hots/heroes/guide-images/5/the-butcher5.jpg') no-repeat center top; background-size: cover; }
 
 .guide-images .guide-image.guide-images-1.thelostvikings { background: url('../img/hots/heroes/guide-images/1/lostviking.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-2.thelostvikings { background: url('../img/hots/heroes/guide-images/2/lostviking2.jpg') no-repeat center top; background-size: cover; }
@@ -5803,6 +5909,12 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-images .guide-image.side.guide-images-4.johanna { background: url('../img/hots/heroes/guide-images/side/4/johanna4.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-5.johanna { background: url('../img/hots/heroes/guide-images/side/5/johanna5.jpg') no-repeat center top; background-size: cover; }
 
+.guide-images .guide-image.side.guide-images-1.the-butcher { background: url('../img/hots/heroes/guide-images/side/1/the-butcher.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-2.the-butcher { background: url('../img/hots/heroes/guide-images/side/2/the-butcher2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-3.the-butcher { background: url('../img/hots/heroes/guide-images/side/3/the-butcher3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-4.the-butcher { background: url('../img/hots/heroes/guide-images/side/4/the-butcher4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-5.the-butcher { background: url('../img/hots/heroes/guide-images/side/5/the-butcher5.jpg') no-repeat center top; background-size: cover; }
+
 .guide-images .guide-image.side.guide-images-1.kerrigan { background: url('../img/hots/heroes/guide-images/side/1/kerrigan.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-2.kerrigan { background: url('../img/hots/heroes/guide-images/side/2/kerrigan2.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-3.kerrigan { background: url('../img/hots/heroes/guide-images/side/3/kerrigan3.jpg') no-repeat center top; background-size: cover; }
@@ -5948,6 +6060,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-images .guide-image.guide-images-1.hauntedmines { background: url('../img/hots/maps/guides/hm.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-1.skytemple { background: url('../img/hots/maps/guides/st.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-1.tomb-of-the-spider-queen { background: url('../img/hots/maps/guides/sq.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-1.battlefield-of-eternity { background: url('../img/hots/maps/guides/bfoe.jpg') no-repeat center top; background-size: cover; }
 
 /* hots guide list */
 .guides-list { padding: 20px 0 0 0; }
@@ -6058,6 +6171,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-hero-image.sylvanas { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/sylvanas60.png') no-repeat right top; }
 .guide-hero-image.kaelthas { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/kaelthas60.png') no-repeat right top; }
 .guide-hero-image.johanna { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/johanna60.png') no-repeat right top; }
+.guide-hero-image.the-butcher { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/the-butcher60.png') no-repeat right top; }
 
 .guide-heroes-1 { width: 100%; }
 .guide-heroes-2 { width: 50%; }
@@ -6109,6 +6223,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-map.hauntedmines { background: url('../img/hots/maps/mine_small.png') no-repeat center center; }
 .guide-map.skytemple { background: url('../img/hots/maps/sky_small.png') no-repeat center center; }
 .guide-map.tomb-of-the-spider-queen { background: url('../img/hots/maps/spider_small.png') no-repeat center center; }
+.guide-map.battlefield-of-eternity { background: url('../img/hots/maps/bfoe_small.png') no-repeat center center; }
 
 .guide-subscribe > h1 { margin-top: 20px; color: #2766ad; font-family: 'Open Sans Bold'; }
 .guide-subscribe > h2 { margin-bottom: 20px; font-size: 20px; color: #FFF; }
@@ -6265,6 +6380,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .tc-hero.sylvanas { background: url('../img/hots/modal/heroes/sylvanas.png') no-repeat right 120px; }
 .tc-hero.kaelthas { background: url('../img/hots/modal/heroes/kaelthas.png') no-repeat right 120px; }
 .tc-hero.johanna { background: url('../img/hots/modal/heroes/johanna.png') no-repeat right 120px; }
+.tc-hero.the-butcher { background: url('../img/hots/modal/heroes/the-butcher.png') no-repeat right 120px; }
 
 
 /* talent calculator link */
@@ -6428,7 +6544,6 @@ input[type=range]:focus::-ms-fill-upper {
     /* home */
     .twitch-feed { padding-right: 0px; }
     .twitter-feed { padding-left: 0px; }
-    .adSenseSidebarHome { height: 140px; }
     
     /* forums */
     .forum-post { padding-right: 0px; }
@@ -6465,7 +6580,6 @@ input[type=range]:focus::-ms-fill-upper {
     /* home */
     .twitch-feed { padding-right: 0px; }
     .twitter-feed { padding-left: 0px; }
-    .adSenseSidebarHome { height: 140px; }
     
     /* filters */
     .filter-bar { display: none; }
