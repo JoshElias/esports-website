@@ -2326,7 +2326,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .btn-team-twitter { background: #4099FF; }
 .btn-team-twitch { background: #6441a5; }
 .btn-team-youtube { background: #e52d27; }
-.btn-team-instagram { background: #231F20; }
+.btn-team-instagram { background: #2E5E86; }
 .btn-team-esea { background: #0dc503 url('../img/esea.png') no-repeat center center; }
 
 .team-member-toggle { display: table-cell; position: absolute; top: 0px; right: 0px; width: 60px; height: 100%; background: #222; vertical-align: middle; color: #FFF !important; font-size: 30px; -webkit-transition: all .3s ease-in-out; -moz-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }

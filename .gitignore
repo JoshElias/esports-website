@@ -33,6 +33,15 @@ photos
 
 # Windows thumb image files
 Thumbs.db
+<<<<<<< HEAD
+=======
+*.eot
+*.ttf
+*.svg
+*.woff
+*.otf
+*.woff2
+>>>>>>> master
 
 # Dist folder
 dist
