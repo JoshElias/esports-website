@@ -4025,7 +4025,7 @@ angular.module('app.controllers', ['ngCookies'])
                     out = [];
                 
                 for (var i = 0; i < matches.length; i++) {
-                    if (deckID == matches[i].for._id) {
+                    if (deckID == matches[i].for._id || deckID == matches[i].against._id) {
                         out.push(matches[i]);
                     }
                 }
