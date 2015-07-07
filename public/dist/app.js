@@ -867,7 +867,7 @@ var app = angular.module('app', [
                 }
             })
             .state('app.team.hearthstone', {
-                url: '/team/hearthstone',
+                url: '/hearthstone',
                 views: {
                     team: {
                         templateUrl: tpl + 'views/frontend/team.hearthstone.html'
@@ -876,7 +876,7 @@ var app = angular.module('app', [
                 seo: { title: 'Hearthstone', description: 'TempoStorm Hearthstone team.', keywords: '' }
             })
             .state('app.team.heroes', {
-                url: '/team/hots',
+                url: '/hots',
                 views: {
                     team: {
                         templateUrl: tpl + 'views/frontend/team.hots.html'
@@ -885,7 +885,7 @@ var app = angular.module('app', [
                 seo: { title: 'Heroes of the Storm', description: 'TempoStorm Heroes of the Storm team.', keywords: '' }
             })
             .state('app.team.csgo', {
-                url: '/team/csgo',
+                url: '/csgo',
                 views: {
                     team: {
                         templateUrl: tpl + 'views/frontend/team.csgo.html'
@@ -5765,6 +5765,7 @@ angular.module('app.controllers', ['ngCookies'])
         // save deck
         var box;
         $scope.saveDeck = function () {
+            if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
             if (!$scope.app.user.isLogged()) {
                 box = bootbox.dialog({
                     title: 'Login Required',
@@ -5965,6 +5966,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // save deck
         $scope.updateDeck = function () {
+            if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
             DeckBuilder.updateDeck($scope.deck).success(function (data) {
                 if (data.success) {
                     $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
@@ -8208,7 +8210,7 @@ angular.module('app.controllers', ['ngCookies'])
         };        
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -8293,8 +8295,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'AdminHOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, AlertService, AdminHOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+.controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'HOTS', 'AdminHOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, AlertService, HOTS, AdminHOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
         $scope.$watch('guide', function(){
@@ -8322,7 +8324,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -8454,7 +8456,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -8554,8 +8556,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'AdminHOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, AlertService, GuideBuilder, AdminHOTSGuideService, dataGuide, dataHeroes, dataMaps) {
+.controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'HOTS', 'GuideBuilder', 'AdminHOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, AlertService, HOTS, GuideBuilder, AdminHOTSGuideService, dataGuide, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = GuideBuilder.new('map', dataGuide.guide);
         
@@ -8580,7 +8582,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -9236,7 +9238,7 @@ angular.module('app.controllers', ['ngCookies'])
         };        
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -9353,8 +9355,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
-    function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
+.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
+    function ($scope, $state, $window, $compile, HOTS, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
         var box;
         
         // create guide
@@ -9384,7 +9386,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -9543,7 +9545,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -9672,8 +9674,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'GuideBuilder', 'HOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, GuideBuilder, HOTSGuideService, dataGuide, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'HOTS', 'GuideBuilder', 'HOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $window, HOTS, GuideBuilder, HOTSGuideService, dataGuide, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = GuideBuilder.new('map', dataGuide.guide);
         
@@ -9698,7 +9700,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // draw map rows
-        var mapRows = [4,3];
+        var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
         var index = 0;
         for (var row = 0; row < mapRows.length; row++) {
@@ -10551,16 +10553,6 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/hots.tc.directive.html',
     }
 })
-.directive('adsSidebar', function () {
-    return {
-        restrict: 'A',
-        replace: true,
-        templateUrl: 'views/frontend/adsense/ads.sidebar.html',
-        controller: function (){
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        }
-    };
-})
 .directive('a', function() {
     return {
         restrict: 'E',
@@ -10603,26 +10595,6 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('adsSidebarHome', function () {
-    return {
-        restrict: 'A',
-        replace: true,
-        templateUrl: 'views/frontend/adsense/ads.sidebar.home.html',
-        controller: function () {
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        }
-    }
-})
-.directive('adsBanner', function () {
-    return {
-        restrict: 'A',
-        replace: true,
-        templateUrl: 'views/frontend/adsense/ads.banner.html',
-        controller: function () {
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        }
-    }
-})
 .directive('spinnerButton', [function() {
     return {
         restrict: 'A',
@@ -11666,7 +11638,8 @@ angular.module('app.services', [])
     hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Heroic Skill", "Mount"];
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
-    hots.heroRows = [7, 8, 9, 8, 5];
+    hots.heroRows = [7, 8, 9, 8, 7];
+    hots.mapRows = [3,2,3];
     
     hots.genStats = function () {
         var stats = [],
@@ -12154,6 +12127,7 @@ angular.module('app.services', [])
             video: deck.video,
             premium: deck.premium,
             featured: deck.featured,
+            arena: deck.arena,
             public: deck.public
         });
     }
@@ -12175,6 +12149,7 @@ angular.module('app.services', [])
             video: deck.video,
             premium: deck.premium,
             featured: deck.featured,
+            arena: deck.arena,
             public: deck.public
         });
     }

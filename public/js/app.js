@@ -824,7 +824,7 @@ var app = angular.module('app', [
                 }
             })
             .state('app.team.hearthstone', {
-                url: '/team/hearthstone',
+                url: '/hearthstone',
                 views: {
                     team: {
                         templateUrl: tpl + 'views/frontend/team.hearthstone.html'
@@ -833,7 +833,7 @@ var app = angular.module('app', [
                 seo: { title: 'Hearthstone', description: 'TempoStorm Hearthstone team.', keywords: '' }
             })
             .state('app.team.heroes', {
-                url: '/team/hots',
+                url: '/hots',
                 views: {
                     team: {
                         templateUrl: tpl + 'views/frontend/team.hots.html'
@@ -842,7 +842,7 @@ var app = angular.module('app', [
                 seo: { title: 'Heroes of the Storm', description: 'TempoStorm Heroes of the Storm team.', keywords: '' }
             })
             .state('app.team.csgo', {
-                url: '/team/csgo',
+                url: '/csgo',
                 views: {
                     team: {
                         templateUrl: tpl + 'views/frontend/team.csgo.html'

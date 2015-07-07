@@ -319,6 +319,7 @@ module.exports = {
                             instructions: results.against.instructions
                         },
                         video: results.video,
+                        arena: results.arena,
                         featured: results.featured,
                         premium: {
                             isPremium: results.premium.isPremium,
@@ -451,6 +452,7 @@ module.exports = {
                             userID: req.user._id,
                             direction: 1
                         }],
+                        arena: req.body.arena,
                         featured: req.body.featured,
                         allowComments: true,
                         createdDate: new Date().toISOString(),
@@ -567,6 +569,7 @@ module.exports = {
                         isPremium: req.body.premium.isPremium || false,
                         expiryDate: req.body.premium.expiryDate || new Date().toISOString()
                     };
+                    deck.arena = req.body.arena;
                     deck.featured = req.body.featured;
                     
                     deck.save(function(err, data){

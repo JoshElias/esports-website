@@ -1031,6 +1031,7 @@ module.exports = {
                             instructions: results.against.instructions
                         },
                         video: results.video,
+                        arena: results.arena,
                         featured: results.featured,
                         premium: {
                             isPremium: results.premium.isPremium,
@@ -1155,6 +1156,23 @@ module.exports = {
                 });
             }
             
+            function checkDeck (callback) {
+                var total = 0;
+                
+                for (var i = 0; i < req.body.cards.length; i++) {
+                    if (req.body.arena === false && req.body.cards[i].qty > 2) {
+                        return res.json({ success: false, errors: { name: { msg: 'Constructed decks cannot have more than two of the same card.' } } });
+                    }
+                    total += req.body.cards[i].qty;
+                }
+                
+                if (total !== 30) {
+                    return res.json({ success: false, errors: { name: { msg: 'Deck must contain 30 cards.' } } });
+                }
+                
+                return callback();
+            }
+            
             function createDeck(callback) {
                 // setup cards
                 var cards = [];
@@ -1219,6 +1237,7 @@ module.exports = {
                             userID: req.user._id,
                             direction: 1
                         }],
+                        arena: req.body.arena,
                         featured: featured,
                         allowComments: true,
                         createdDate: new Date().toISOString(),
@@ -1262,9 +1281,11 @@ module.exports = {
             checkForm(function () {
                 checkSlug(function () {
                     getUser(function () {
-                        addActivity(function () {
-                            createDeck(function () {
-                                return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                        checkDeck(function () {
+                            addActivity(function () {
+                                createDeck(function () {
+                                    return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                                });
                             });
                         });
                     });
@@ -1320,6 +1341,23 @@ module.exports = {
                 });
             }
             
+            function checkDeck (callback) {
+                var total = 0;
+                
+                for (var i = 0; i < req.body.cards.length; i++) {
+                    if (req.body.arena === false && req.body.cards[i].qty > 2) {
+                        return res.json({ success: false, errors: { name: { msg: 'Constructed decks cannot have more than two of the same card.' } } });
+                    }
+                    total += req.body.cards[i].qty;
+                }
+                
+                if (total !== 30) {
+                    return res.json({ success: false, errors: { name: { msg: 'Deck must contain 30 cards.' } } });
+                }
+                
+                return callback();
+            }
+
             function updateDeck (callback) {
                 // setup cards
                 var cards = [];
@@ -1380,6 +1418,7 @@ module.exports = {
                     };
                     deck.video = req.body.video;
                     deck.premium = premium;
+                    deck.arena = req.body.arena;
                     deck.featured = featured;
                     
                     deck.save(function(err, data){
@@ -1399,9 +1438,11 @@ module.exports = {
             checkForm(function () {
                 checkSlug(function () {
                     getUser(function () {
-                        updateActivities(function () {
-                            updateDeck(function () {
-                                return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                        checkDeck(function () {
+                            updateActivities(function () {
+                                updateDeck(function () {
+                                    return res.json({ success: true, slug: Util.slugify(req.body.name) });
+                                });
                             });
                         });
                     });

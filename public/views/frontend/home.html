@@ -44,9 +44,6 @@
 <!-- content start -->
 <div class="container home-content">
     <div class="row">
-        <div class="adSenseBanner clearfix" ng-if="!app.user.isSubscribed()">
-            <div ads-banner></div>
-        </div>
         <div class="col-xs-12 col-sm-12 col-md-7 col-lg-5" >
             <div class="home-articles">
                 <!-- article -->
@@ -140,7 +137,7 @@
                     <div class="tweet wrapper-sm" ng-repeat="tweet in tweets">
                         <div class="tweet-info">
                             <div class="tweet-info-top">
-                                <a target="_blank" ng-href="{{tweet.authorUrl}}"><h4>@{{tweet.screenName}}</h4></a>
+                                <a target="_blank" ng-href="{{tweet.authorUrl}}"><h4 class="ell name">@{{tweet.screenName}}</h4></a>
                                 <div class="time">
                                     <i class="fa fa-clock-o"></i><h4 am-time-ago="tweet.timestamp" class="pull-right"></h4>
                                 </div>

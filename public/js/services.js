@@ -957,7 +957,8 @@ angular.module('app.services', [])
     hots.abilityTypes = ["Combat Trait", "Ability", "Heroic Ability", "Heroic Skill", "Mount"];
     hots.manaTypes = ['Mana', 'Brew', 'Energy', 'Fury'];
     hots.tiers = [1,4,7,10,13,16,20];
-    hots.heroRows = [7, 8, 9, 8, 5];
+    hots.heroRows = [7, 8, 9, 8, 7];
+    hots.mapRows = [3,2,3];
     
     hots.genStats = function () {
         var stats = [],
@@ -1445,6 +1446,7 @@ angular.module('app.services', [])
             video: deck.video,
             premium: deck.premium,
             featured: deck.featured,
+            arena: deck.arena,
             public: deck.public
         });
     }
@@ -1466,6 +1468,7 @@ angular.module('app.services', [])
             video: deck.video,
             premium: deck.premium,
             featured: deck.featured,
+            arena: deck.arena,
             public: deck.public
         });
     }
