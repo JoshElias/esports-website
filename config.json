@@ -54,7 +54,7 @@
   },
 
   "production" : {
-      "APP_URL": "joshelias.ca",
+      "APP_URL": "tempostorm.com",
       "APP_PORT" : 8080,
       "APP_INDEX" : "pro-index",
 
