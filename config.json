@@ -7,7 +7,7 @@
 
       "BNET_ID" : "n8pr85xujqyrwtpzku3jaf5z8hb6bmds",
       "BNET_SECRET" : "etmCJEh5MSbavZfq92urHHDwfvPwUd4v",
-      "BNET_CALLBACK_URL" : "http://104.236.65.200:8080/auth/bnet/callback",
+      "BNET_CALLBACK_URL" : "https://tempostorm.com/auth/bnet/callback",
 
       "TWITCH_ID" : "kxjhxkwq4t3egwy3ses7xdpaq314ldm",
       "TWITCH_SECRET" : "17c78usqj6xa2o2jras3coniw13rc7c",
@@ -65,7 +65,7 @@
             "readPreference": "ReadPreference.NEAREST"
           }
       },
-      "CDN_URL" : "https://cdn.tempostorm.com/",
+      "CDN_URL" : "https://cdn.tempostorm.com.s3-website-us-west-2.amazonaws.com/",
       
       "AMAZON_BUCKET" : "cdn.tempostorm.com"
   }
