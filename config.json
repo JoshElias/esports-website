@@ -65,7 +65,7 @@
             "readPreference": "ReadPreference.NEAREST"
           }
       },
-      "CDN_URL" : "https://cdn.tempostorm.com.s3-website-us-west-2.amazonaws.com/",
+      "CDN_URL" : "https://s3-us-west-2.amazonaws.com/cdn.tempostorm.com/",
       
       "AMAZON_BUCKET" : "cdn.tempostorm.com"
   }
