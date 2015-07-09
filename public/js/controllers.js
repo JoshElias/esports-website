@@ -3583,7 +3583,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
         
-        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/articles/' + $scope.article.photos.small;
+        var ogImg = $scope.app.cdn + 'articles/' + $scope.article.photos.small;
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/articles/' + data.article.slug.url, $scope.article.title, $scope.article.description, 'article', ogImg);
         
         $scope.getContent = function () {
@@ -3971,7 +3971,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.deck.name + ' - Decks', $scope.deck.description);
         
-        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/decks/' + $scope.deck.playerClass + '.png';
+        var ogImg = $scope.app.cdn + 'img/decks/' + $scope.deck.playerClass + '.png';
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks/' + $scope.deck.slug, $scope.deck.name, $scope.deck.description, 'article', ogImg.toLowerCase());
         
         // classes
@@ -6375,7 +6375,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.guide.name + ' - Guides', $scope.guide.description);
         
-        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/hots/hots-logo.png';
+        var ogImg = $scope.app.cdn + 'img/hots/hots-logo.png';
         $scope.metaservice.setOg('https://tempostorm.com/heroes-of-the-storm/guides/' + data.guide.slug, $scope.guide.name, $scope.guide.description, 'article', ogImg);
         
         // show
@@ -7311,7 +7311,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set(dataHero.hero.name + ' - Talent Calculator', dataHero.hero.description);
         
-        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/img/hots/hots-logo.png';
+        var ogImg = $scope.app.cdn + 'img/hots/hots-logo.png';
         $scope.metaservice.setOg($location.absUrl(), dataHero.hero.name, dataHero.hero.description, 'article', ogImg);
         
         $scope.getCurrentCharacter = function () {
@@ -7658,7 +7658,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.bigImg = function (img, title) {
                 box = bootbox.dialog({
                 title: title,
-                message: $compile('<a ng-click="closeBox()"><img class="img-responsive" ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/polls/' +img+ '" alt=""></a>')($scope),
+                message: $compile('<a ng-click="closeBox()"><img class="img-responsive" ng-src="' + $scope.app.cdn + 'polls/' +img+ '" alt=""></a>')($scope),
                 backdrop: true
             });
             
