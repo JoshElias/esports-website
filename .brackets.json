@@ -1,14 +1,5 @@
 {
     "jscodehints.detectedExclusions": [
-        "C:/Users/codephobia/Documents/GitHub/tempostorm/js/controllers.js",
-        "C:/Users/Uther/Documents/GitHub/tempostorm/js/services.js",
-        "C:/Users/Uther/Documents/GitHub/tempostorm/public/js/services.js",
-<<<<<<< HEAD
-        "C:/Users/Uther/Documents/GitHub/tempostorm/public/js/directives.js"
-=======
-        "C:/Users/codephobia/Documents/GitHub/tempostorm/dist/js/vendor.min.js",
-        "C:/Users/codephobia/Documents/GitHub/tempostorm/dist/js/vendor.min.782ec220.js",
-        "C:/Users/codephobia/Documents/GitHub/tempostorm/grunt/concurrent.js"
->>>>>>> 400a033ebfe4f4f5a534bb9cb431921a80ffe18d
+        "C:/Users/Uther/Documents/GitHub/tempostorm/newrelic.js"
     ]
 }

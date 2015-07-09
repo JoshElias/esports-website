@@ -1995,7 +1995,7 @@ var app = angular.module('app', [
                 views: {
                     snapshots: {
                         templateUrl: tpl + 'views/admin/snapshots.list.html',
-                        //controller: 'AdminSnapshotListCtrl',
+                        controller: 'AdminSnapshotListCtrl',
                         resolve: {
                             data: ['AdminSnapshotService', function (AdminSnapshotService) {
                                 var page = 1,

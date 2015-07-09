@@ -2898,7 +2898,7 @@ module.exports = {
                     if (error) {
                         return res.json({ success: false, errors: errorMsgs });
                     } else {
-                        var newPoll = new Schemas.Banner({
+                        var newBanner = new Schemas.Banner({
                                 bannerType: req.body.bannerType,
                                 title: req.body.title,
                                 description: req.body.description,
@@ -2911,7 +2911,7 @@ module.exports = {
                                 active: req.body.active,
                             });
 
-                        newPoll.save(function(err, data){
+                        newBanner.save(function(err, data){
                             if (err) {
                                 console.log(err);
                                 return res.json({ success: false,
@@ -2994,22 +2994,248 @@ module.exports = {
     },
     snapshots: function (Schemas) {
         return function (req, res, next) {
-            return res.json({success: true});
+            var page = req.body.page || 1,
+                perpage = req.body.perpage || 50,
+                search = req.body.search || '',
+                where = (search.length) ? { title: new RegExp(search, "i") } : {},
+                total, snapshots;
+            
+            
+            function getTotal (callback) {
+                Schemas.Snapshot.count({})
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            function getSnapshots (callback) {
+                Schemas.Snapshot.find({})
+                .where(where)
+                .sort({ title: 1 })
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    snapshots = results;
+                    return callback();
+                });
+            }
+            
+            getTotal(function () {
+                getSnapshots(function () {
+                    return res.json({
+                        success: true,
+                        snapshots: snapshots,
+                        total: total,
+                        page: page,
+                        perpage: perpage,
+                        search: search
+                    });
+                });
+            });
         }
     },
     snapshot: function (Schemas) {
         return function (req, res, next) {
-            return res.json({success: true});
+            var _id = req.body._id;
+            
+            function getSnapshot (callback) {
+                Schemas.Snapshot.findOne({ _id : _id })
+                .populate([
+                    {
+                        path: 'authors',
+                        select: '_id username'
+                        
+                    },
+                    {
+                        path: 'tiers.decks.deck',
+                        select: '_id name'
+                    },
+                    {
+                        path: 'tiers.decks.tech.cards.card',
+                        select: '_id name'
+                    },
+                    {
+                        path: 'matches.for',
+                        select: '_id name'
+                    },
+                    {
+                        path: 'matches.against',
+                        select: '_id name'
+                    }
+                ])
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    snapshot = results;
+                    return callback();
+                });
+            }
+            
+            getSnapshot(function () {
+                return res.json({
+                    snapshot: snapshot,
+                    success: true
+                });
+            });
         }
     },
     snapshotAdd: function (Schemas) {
         return function (req, res, next) {
-            return res.json({success: true});
+            var snapshot = req.body,
+                total;
+            
+            function getTotal (callback) {
+                Schemas.Snapshot.count({})
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            function convertObjs (callback) {
+                for (var i =0; i < snapshot.authors.length; i++) {
+                    snapshot.authors[i] = snapshot.authors[i]._id;
+                }
+                for (var i = 0; i < snapshot.matches.length; i++) {
+                    snapshot.matches[i].for = snapshot.matches[i].for._id;
+                    snapshot.matches[i].against = snapshot.matches[i].against._id;
+                }
+                for (var i = 0; i < snapshot.tiers.length; i++) {
+                    for (var j = 0; j < snapshot.tiers[i].decks.length; j++) {
+                        snapshot.tiers[i].decks[j].deck = snapshot.tiers[i].decks[j].deck._id;
+                        for (var k = 0; k < snapshot.tiers[i].decks[j].tech.length; k++) {
+                            for (var p = 0; p < snapshot.tiers[i].decks[j].tech[k].cards.length; p++) {
+                                snapshot.tiers[i].decks[j].tech[k].cards[p].card = snapshot.tiers[i].decks[j].tech[k].cards[p].card._id;
+                            }
+                        }
+                    }
+                }
+                return callback();
+            }
+            
+            function addNewSnapshot(callback) {
+                var newSnapshot = new Schemas.Snapshot({
+                    
+                        snapNum: total + 18,
+                        title: snapshot.title,
+                        authors: snapshot.authors,
+                        slug: {
+                            url: snapshot.slug.url,
+                            linked: snapshot.slug.linked
+                        },
+                        content: {
+                            intro: snapshot.content.intro,
+                            thoughts: snapshot.content.thoughts
+                        },
+                        tiers: snapshot.tiers,
+                        matches: snapshot.matches,
+                        createdDate: new Date().toISOString(),
+                        active: snapshot.active
+                });
+
+                newSnapshot.save(function(err, data){
+                    if (err) {
+                        console.log(err);
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                    return callback();
+                });
+            }
+            
+            getTotal(function () {
+                convertObjs(function () {
+                    addNewSnapshot(function () {
+                        return res.json({ success: true });
+                    });
+                });
+            });
+//            return res.json({success: true});
         }
     },
     snapshotEdit: function (Schemas) {
         return function (req, res, next) {
-            return res.json({success: true});
+            var snapshot = req.body,
+                _id = snapshot._id;
+            
+            console.log(_id);
+                        
+            function convertObjs (callback) {
+                for (var i = 0; i < snapshot.matches.length; i++) {
+                    snapshot.matches[i].for = snapshot.matches[i].for._id;
+                    snapshot.matches[i].against = snapshot.matches[i].against._id;
+                }
+                for (var i = 0; i < snapshot.tiers.length; i++) {
+                    for (var j = 0; j < snapshot.tiers[i].decks.length; j++) {
+                        snapshot.tiers[i].decks[j].deck = snapshot.tiers[i].decks[j].deck._id;
+                        for (var k = 0; k < snapshot.tiers[i].decks[j].tech.length; k++) {
+                            for (var p = 0; p < snapshot.tiers[i].decks[j].tech[k].cards.length; p++) {
+                                snapshot.tiers[i].decks[j].tech[k].cards[p].card = snapshot.tiers[i].decks[j].tech[k].cards[p].card._id;
+                            }
+                        }
+                    }
+                }
+                return callback();
+            }
+            
+            function editSnapshot (callback) {
+                Schemas.Snapshot.findOne({ _id: _id }).exec(function (err, snap) {
+                    if (err || !snapshot) {
+                        console.log(err || 'Meta Snapshot not found');
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                    
+                    snap.title = snapshot.title;
+                    snap.authors = snapshot.authors;
+                    snap.slug = {
+                        url: snapshot.slug.url,
+                        linked: snapshot.slug.linked
+                    };
+                    snap.content = {
+                        intro: snapshot.content.intro,
+                        thoughts: snapshot.content.thoughts
+                    };
+                    snap.tiers = snapshot.tiers;
+                    snap.matches = snapshot.matches;
+                    snap.createdDate = new Date().toISOString(),
+                    snap.active = snapshot.active;
+                    
+                    snap.save(function (err) {
+                        if (err) {
+                            return res.json({ success: false,
+                                errors: {
+                                    unknown: {
+                                        msg: 'An unknown error occurred'
+                                    }
+                                }
+                            });
+                        }                    
+                        return callback();
+                    }); 
+                });
+            }
+            
+            convertObjs(function () {
+                editSnapshot(function () {
+                    return res.json({success: true});
+                });
+            });
+            
         }
     },
     snapshotDelete: function (Schemas) {

@@ -597,7 +597,15 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .cardAddList img {
     margin-top: -5px;
-    height:30px;
+    height:40px;
+}
+
+.cardToss {
+    background-color: #f2dede;
+}
+
+.cardKeep {
+    background-color: #dff0d8;
 }
 
 textarea[name=intro],
