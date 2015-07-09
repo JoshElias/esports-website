@@ -1,3 +1,4 @@
 tempo.pid
 **/logs/**
 newrelic_agent.log
+**/photos/**
