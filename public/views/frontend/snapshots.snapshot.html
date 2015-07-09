@@ -1,1 +1,31 @@
-HELLO FUK
+<div class="container darkbox">
+    <div class="tiers m-b-md">
+        <div ng-repeat="tier in snapshot.tiers" class="tier">
+            
+            <a role="button" data-toggle="collapse" href="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
+                <div class="tier-heading">
+                    <h2>TIER {{tier.tier}}</h2>
+                </div>
+            </a>
+            
+            <div class="tier-body collapse" id="collapseTier{{tier.tier}}">
+                <div ng-repeat="deck in tier.decks" class="tier-deck tier-deck-{{deck.deck.playerClass}}">
+                    <a role="button" data-toggle="collapse" href="#collapseDeck-{{deck.deck.slug}}" aria-expanded="false" aria-controls="collapseDeck-{{deck.deck.slug}}">
+                        <div class="tier-deck-heading"> 
+                            <h4>{{deck.deck.name}}</h4>
+                            <div class="deck-heading-right">
+                                <div class="deck-img-sm deck-{{deck.deck.playerClass}}-img-sm"></div>
+                                <button class="deck-button">VIEW DECK</button>
+
+                            </div>
+                        </div>
+                    </a>
+                        
+                    <div class="tier-deck-body collapse" id="collapseDeck-{{deck.deck.slug}}">
+                        FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

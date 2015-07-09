@@ -247,16 +247,16 @@ var app = angular.module('app', [
                 views: {
                     snapshots: {
                         templateUrl: tpl + 'views/frontend/snapshots.list.html',
-                        //controller: 'SnapshotsCtrl',
-//                        resolve: {
-//                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
-//                                var page = $stateParams.p || 1,
-//                                    perpage = 10,
-//                                    search = $stateParams.s || '';
-//                                console.log('fuk no');
-//                                return SnapshotService.getSnapshots(page, perpage, search);
-//                            }]
-//                        }
+                        controller: 'SnapshotsCtrl',
+                        resolve: {
+                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
+                                var page = $stateParams.p || 1,
+                                    perpage = 10,
+                                    search = $stateParams.s || '';
+                                console.log(page, perpage, search);
+                                return SnapshotService.getSnapshots(page, perpage, search);
+                            }]
+                        }
                     }
                 }
             })
@@ -265,13 +265,13 @@ var app = angular.module('app', [
                 views: {
                     snapshots: {
                         templateUrl: tpl + 'views/frontend/snapshots.snapshot.html',
-                        //controller: '',
+                        controller: 'SnapshotCtrl',
                         resolve: {
                             data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
                                 var slug = $stateParams.slug;
                                 return SnapshotService.getSnapshot(slug).then(function (result) {
                                     if(result.success === true) {
-                                    return result;
+                                        return result;
                                     } else {
                                         return $q.reject('Unable to find snapshot');
                                     }

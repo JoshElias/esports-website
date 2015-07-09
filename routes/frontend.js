@@ -2638,6 +2638,103 @@ module.exports = {
             });
         }
     },
+    snapshots: function (Schemas) {
+        return function (req, res, next) {
+            var filter = req.body.filter || 'all',
+                page = req.body.page || 1,
+                perpage = req.body.perpage || 5,
+                where = {},
+                search = req.body.search || '',
+                snapshots, total;
+            
+            if (search) {
+                where.$or = [];
+                where.$or.push({ title: new RegExp(search, "i") });
+                where.$or.push({ description: new RegExp(search, "i") });
+                where.$or.push({ content: new RegExp(search, "i") });
+            }
+            
+            // get total articles
+            function getTotal (callback) {
+                Schemas.Snapshot.count({ active: true })
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            function getSnapshots (callback) {
+                Schemas.Snapshot.find({ active: true })
+                .where(where)
+                .sort('-createdDate')
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .exec(function (err, results) {
+                    if (err) { return req.json({ success: false }); }
+                    console.log(results);
+                    snapshots = results;
+                    return callback();
+                });
+            }
+            
+            getTotal(function () {
+                getSnapshots(function () {
+                    return res.json({
+                        success: true, 
+                        snapshots: snapshots,
+                        total: total
+                    });
+                });
+            });
+            
+        }
+    },
+    snapshot: function (Schemas) {
+        return function (req, res, next) {
+            var snapshot,
+                slug = req.body.slug;
+            
+            
+            function getSnapshot (callback) {
+            
+                Schemas.Snapshot.findOne({ "slug.url" : slug })
+                .lean()
+                .populate([
+                    {
+                        path: 'authors',
+                    },
+                    {
+                        path: 'tiers.decks.deck',
+                    },
+                    {
+                        path: 'tiers.decks.tech.cards.card',
+                    },
+                    {
+                        path: 'matches.for',
+                    },
+                    {
+                        path: 'matches.against',
+                    }
+                ])
+                .exec(function (err, results) {
+                    if (err) { return req.json({ success: false }); }
+                    snapshot = results;
+                    return callback();
+                });
+            
+            }
+            
+            getSnapshot(function () {
+                return res.json({
+                    success: true,
+                    snapshot: snapshot
+                });
+            });
+            
+        }
+    },
     sendContact: function (Mail) {
         return function(req, res, next) {
             //TODO: ADD FUNCTIONALITY

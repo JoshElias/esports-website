@@ -12,6 +12,7 @@
             </div>
             <div class="collapse navbar-collapse" id="MegaNavbar">
                 <ul class="nav navbar-nav navbar-left">
+                    <li ng-class="{active:$state.includes('app.snapshots')}"><a ui-sref="app.snapshots.list">WE'RE LOOKIN' AT THE MUTHAFUKKIN SNAPSHOT</a></li>
                     <li ng-class="{active:$state.includes('app.articles')}"><a ui-sref="app.articles.list">Articles</a></li>
                     <li class="dropdown-grid" ng-class="{active:$state.includes('app.hots') || $state.includes('app.hs')}">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Games<span class="caret"></span></a>

@@ -550,6 +550,164 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .section-search { margin: 10px 0; width: 200px; }
 
+/* meta snapshot */
+
+.tier .tier-heading { 
+    background: -webkit-linear-gradient(left, #22274F , #20365F); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, #22274F, #20365F); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, #22274F, #20365F); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, #22274F , #20365F); /* Standard syntax */
+    border: 1px #19171A solid; 
+    height: 50px
+}
+.tier .tier-heading h2 { color: #FEFEFE; margin: auto 0px auto 20px; font-weight: bolder; letter-spacing:7px; line-height:48px }
+
+.tier-body .tier-deck {  }
+.tier-body .tier-deck h4 { margin: auto 0px auto 30px; line-height: 47px; font-weight: bold; color: #F0EFEB }
+
+
+.tier-body .tier-deck-heading { height:50px; border: rgba(0, 0, 0, .5) solid 1px; position: relative; }
+.tier-body .tier-deck-heading .deck-heading-right { position: absolute; right: 0; top: 0; margin: -1px -1px 0px 0px; width: auto; }
+.tier-body .tier-deck-heading .deck-heading-right button { display: block; margin: 12px 100px 0px 0px; background: none; border: 1px white solid; color: white; padding: 2px 25px;  }
+.tier-body .tier-deck-heading .deck-heading-right .deck-img-sm { 
+    background-size: cover;
+    height: 50px;
+    width: 180px;
+    float: right;
+}
+
+.tier-body .tier-deck-heading .deck-button {}
+
+.tier-body .tier-deck .tier-deck-body { max-height: 1219px; }
+
+
+.tier-deck-Druid .tier-deck-heading {
+    background: -webkit-linear-gradient(left, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
+    background: -o-linear-gradient(right, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
+    background: -moz-linear-gradient(right, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
+    background: linear-gradient(to right, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
+}
+.tier-deck-Druid .tier-deck-body { 
+    background-color: rgba(0,0,0,.5);
+    background-image: url(../img/meta-snapshot/deck-backgrounds/druid.jpg);
+    background-blend-mode: multiply;
+}
+.tier-deck-Druid .deck-Druid-img-sm { background-image: url(../img/meta-snapshot/hero-portrait/Druid-sm.png); }
+
+
+
+.tier-deck-Hunter .tier-deck-heading { 
+    background: -webkit-linear-gradient(left, rgba(171, 212, 115, .65), rgba(171, 212, 115, 1));
+    background: -o-linear-gradient(right, rgba(171, 212, 115, .65), rgba(171, 212, 115, 1));
+    background: -moz-linear-gradient(right, rgba(171, 212, 115, .65), rgba(171, 212, 115, 1));
+    background: linear-gradient(to right, rgba(171, 212, 115, .65), rgba(171, 212, 115, 1));
+}
+.tier-deck-Hunter .tier-deck-body { 
+    background-color: rgba(0,0,0,.5);
+    background-image: url(../img/meta-snapshot/deck-backgrounds/hunter.jpg);
+    background-blend-mode: multiply;
+}
+.tier-deck-Hunter .deck-Hunter-img-sm { background-image: url(../img/meta-snapshot/hero-portrait/Hunter-sm.png); }
+
+
+.tier-deck-Mage .tier-deck-heading {
+    background: -webkit-linear-gradient(left, rgba(105, 204, 240, .65), rgba(105, 204, 240, 1)); 
+    background: -o-linear-gradient(right, rgba(105, 204, 240, .65), rgba(105, 204, 240, 1));
+    background: -moz-linear-gradient(right, rgba(105, 204, 240, .65), rgba(105, 204, 240, 1));
+    background: linear-gradient(to right, rgba(105, 204, 240, .65), rgba(105, 204, 240, 1));
+}
+.tier-deck-Mage .tier-deck-body { 
+    background-color: rgba(0,0,0,.5);
+    background-image: url(../img/meta-snapshot/deck-backgrounds/mage.jpg);
+    background-blend-mode: multiply;
+}
+.tier-deck-Mage .deck-Mage-img-sm { background-image: url(../img/meta-snapshot/hero-portrait/Mage-sm.png); }
+
+
+.tier-deck-Paladin .tier-deck-heading { 
+    background: -webkit-linear-gradient(left, rgba(245, 140, 186, .65), rgba(245, 140, 186, 1)); 
+    background: -o-linear-gradient(right, rgba(245, 140, 186, .65), rgba(245, 140, 186, 1));
+    background: -moz-linear-gradient(right, rgba(245, 140, 186, .65), rgba(245, 140, 186, 1));
+    background: linear-gradient(to right, rgba(245, 140, 186, .65), rgba(245, 140, 186, 1));
+}
+.tier-deck-Paladin .tier-deck-body { 
+    background-color: rgba(0,0,0,.5);
+    background-image: url(../img/meta-snapshot/deck-backgrounds/paladin.jpg);
+    background-blend-mode: multiply;
+}
+.tier-deck-Paladin .deck-Paladin-img-sm { background-image: url(../img/meta-snapshot/hero-portrait/Paladin-sm.png); }
+
+
+.tier-deck-Priest .tier-deck-heading { 
+    background: -webkit-linear-gradient(left, rgba(255, 255, 255, .65), rgba(255, 255, 255, 1));
+    background: -o-linear-gradient(right, rgba(255, 255, 255, .65), rgba(255, 255, 255, 1));
+    background: -moz-linear-gradient(right, rgba(255, 255, 255, .65), rgba(255, 255, 255, 1));
+    background: linear-gradient(to right, rgba(255, 255, 255, .65), rgba(255, 255, 255, 1));
+}
+.tier-deck-Priest .tier-deck-body { 
+    background-color: rgba(0,0,0,.5);
+    background-image: url(../img/meta-snapshot/deck-backgrounds/priest.jpg);
+    background-blend-mode: multiply;
+}
+.tier-deck-Priest .deck-Priest-img-sm { background-image: url(../img/meta-snapshot/hero-portrait/Priest-sm.png); }
+
+
+.tier-deck-Rogue .tier-deck-heading { 
+    background: -webkit-linear-gradient(left, rgba(255, 245, 105, .65), rgba(255, 245, 105, 1));
+    background: -o-linear-gradient(right, rgba(255, 245, 105, .65), rgba(255, 245, 105, 1));
+    background: -moz-linear-gradient(right, rgba(255, 245, 105, .65), rgba(255, 245, 105, 1));
+    background: linear-gradient(to right, rgba(255, 245, 105, .65), rgba(255, 245, 105, 1));
+}
+.tier-deck-Rogue .tier-deck-body { 
+    background-color: rgba(0,0,0,.5);
+    background-image: url(../img/meta-snapshot/deck-backgrounds/rogue.jpg);
+    background-blend-mode: multiply;
+}
+.tier-deck-Rogue .deck-Rogue-img-sm { background-image: url(../img/meta-snapshot/hero-portrait/Rogue-sm.png); }
+
+
+.tier-deck-Shaman .tier-deck-heading { 
+    background: -webkit-linear-gradient(left, rgba(0, 112, 222, .65), rgba(0, 112, 222, 1));
+    background: -o-linear-gradient(right, rgba(0, 112, 222, .65), rgba(0, 112, 222, 1));
+    background: -moz-linear-gradient(right, rgba(0, 112, 222, .65), rgba(0, 112, 222, 1));
+    background: linear-gradient(to right, rgba(0, 112, 222, .65), rgba(0, 112, 222, 1));
+}
+.tier-deck-Shaman .tier-deck-body { 
+    background-color: rgba(0,0,0,.5);
+    background-image: url(../img/meta-snapshot/deck-backgrounds/shaman.jpg);
+    background-blend-mode: multiply;
+}
+.tier-deck-Shaman .deck-Shaman-img-sm { background-image: url(../img/meta-snapshot/hero-portrait/Shaman-sm.png); }
+
+
+.tier-deck-Warlock .tier-deck-heading { 
+    background: -webkit-linear-gradient(left, rgba(148, 130, 201, .65), rgba(148, 130, 201, 1));
+    background: -o-linear-gradient(right, rgba(148, 130, 201, .65), rgba(148, 130, 201, 1));
+    background: -moz-linear-gradient(right, rgba(148, 130, 201, .65), rgba(148, 130, 201, 1));
+    background: linear-gradient(to right, rgba(148, 130, 201, .65), rgba(148, 130, 201, 1));
+}
+.tier-deck-Warlock .tier-deck-body { 
+    background-color: rgba(0,0,0,.5);
+    background-image: url(../img/meta-snapshot/deck-backgrounds/warlock.jpg);
+    background-blend-mode: multiply;
+}
+.tier-deck-Warlock .deck-Warlock-img-sm { background-image: url(../img/meta-snapshot/hero-portrait/Warlock-sm.png); }
+
+
+.tier-deck-Warrior .tier-deck-heading { 
+    background: -webkit-linear-gradient(left, rgba(199, 156, 110, .65), rgba(199, 156, 110, 1));
+    background: -o-linear-gradient(right, rgba(199, 156, 110, .65), rgba(199, 156, 110, 1));
+    background: -moz-linear-gradient(right, rgba(199, 156, 110, .65), rgba(199, 156, 110, 1));
+    background: linear-gradient(to right, rgba(199, 156, 110, .65), rgba(199, 156, 110, 1));
+}
+.tier-deck-Warrior .tier-deck-body { 
+    background-color: rgba(0,0,0,.5);
+    background-image: url(../img/meta-snapshot/deck-backgrounds/warrior.jpg);
+    background-blend-mode: multiply;
+}
+.tier-deck-Warrior .deck-Warrior-img-sm { background-image: url(../img/meta-snapshot/hero-portrait/Warrior-sm.png); }
+
+
 /* article */
 .article-photo-banner { height: 300px; border-bottom: 1px solid #083f7d; }
 .article-page { }

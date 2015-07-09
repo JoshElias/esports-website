@@ -4378,6 +4378,76 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
+.controller('SnapshotCtrl', ['$scope', 'SnapshotService', 'data',
+    function ($scope, SnapshotService, data) {
+    
+        $scope.snapshot = data.snapshot;
+        
+    }
+])
+.controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',
+    function ($scope, SnapshotService, data, MetaService) {
+    
+        $scope.snapshots = data.snapshots;
+        $scope.total = data.total;
+        $scope.page = parseInt(data.page);
+        $scope.perpage = data.perpage;
+        $scope.search = data.search;
+        
+        $scope.metaservice = MetaService;
+        
+        $scope.metaservice.setOg('https://tempostorm.com/articles');
+        
+        $scope.pagination = {
+            page: function () {
+                return $scope.page;
+            },
+            perpage: function () {
+                return $scope.perpage;
+            },
+            results: function () {
+                return $scope.total;
+            },
+            setPage: function (page) {
+                $scope.page = page;
+                $scope.getArticles();
+            },
+            pagesArray: function () {
+                var pages = [],
+                    start = 1,
+                    end = this.totalPages();
+                
+                if (this.totalPages() > 5) {
+                    if (this.page() < 3) {
+                        start = 1;
+                        end = start + 4;
+                    } else if (this.page() > this.totalPages() - 2) {
+                        end = this.totalPages();
+                        start = end - 4;
+                    } else {
+                        start = this.page() - 2;
+                        end = this.page() + 2;
+                    }
+                    
+                }
+                
+                for (var i = start; i <= end; i++) {
+                    pages.push(i);
+                }
+                
+                return pages;
+            },
+            isPage: function (page) {
+                return (page === this.page());
+            },
+            totalPages: function (page) {
+                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 1;
+            },
+            
+        };
+        
+    }
+])
 .controller('ArticlesCtrl', ['$scope', '$state', 'ArticleService', 'data', 'MetaService',
     function ($scope, $state, ArticleService, data, MetaService) {
         //if (!data.success) { return $state.transitionTo('app.articles.list'); }
