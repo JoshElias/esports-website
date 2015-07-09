@@ -2907,7 +2907,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // load Poll
         $scope.banner = angular.copy(defaultBanner);
-        $scope.imgPath = '/banners/';
+        $scope.imgPath = 'banners/';
         
         $scope.bannerTypes = [
             { name: 'TempoStorm', value: 'ts' },
@@ -2946,7 +2946,7 @@ angular.module('app.controllers', ['ngCookies'])
 
         
         $scope.getImage = function () {
-            $scope.imgPath = '/banners/';
+            $scope.imgPath = 'banners/';
             return ($scope.banner.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.banner.photo;
         };
         
@@ -3031,7 +3031,7 @@ angular.module('app.controllers', ['ngCookies'])
 
         
         $scope.getImage = function () {
-            $scope.imgPath = '/banners/';
+            $scope.imgPath = 'banners/';
             return ($scope.banner.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.banner.photo;
         };
         
