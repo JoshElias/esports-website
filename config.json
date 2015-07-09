@@ -48,7 +48,7 @@
             "readPreference": "ReadPreference.NEAREST"
           }
       },
-      "CDN_URL" : "https://staging-cdn.tempostorm.com/",
+      "CDN_URL" : "https://staging-cdn-tempostorm.netdna-ssl.com/",
       
       "AMAZON_BUCKET" : "staging-cdn.tempostorm.com"
   },
@@ -65,7 +65,7 @@
             "readPreference": "ReadPreference.NEAREST"
           }
       },
-      "CDN_URL" : "https://s3-us-west-2.amazonaws.com/cdn.tempostorm.com/",
+      "CDN_URL" : "https://cdn-tempostorm.netdna-ssl.com/",
       
       "AMAZON_BUCKET" : "cdn.tempostorm.com"
   }
