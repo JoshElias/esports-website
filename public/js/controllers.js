@@ -2768,7 +2768,6 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
             }
-            //console.log(list);
         };
         
         $scope.getImage = function () {
@@ -2828,7 +2827,6 @@ angular.module('app.controllers', ['ngCookies'])
         
         // delete banner
         $scope.deleteBanner = function (page, banner) {
-            console.log(banner._id);
             var box = bootbox.dialog({
                 title: 'Delete banner: ' + banner.title + '?',
                 message: 'Are you sure you want to delete the banner <strong>' + banner.title + '</strong>?',
@@ -2839,7 +2837,6 @@ angular.module('app.controllers', ['ngCookies'])
                         callback: function () {
                             AdminBannerService.deleteBanner(banner._id).then(function (data) {
                                 if (data.success) {
-                                    console.log($scope.banners)
                                     var arr = $scope[page],
                                         index = arr.indexOf(banner);
                                     if (index !== -1) {
@@ -3007,8 +3004,6 @@ angular.module('app.controllers', ['ngCookies'])
             ['misc', ['undo', 'redo', 'codeview']]
             ]
         };  
-        
-        //console.log($scope.banner.description);
         
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
@@ -4993,8 +4988,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.hero.abilities.push($scope.currentAbility);
             box.modal('hide');
             $scope.currentAbility = false;
-
-            console.log($scope.hero.abilities);
         };
         
         $scope.editAbility = function (ability) {
@@ -5009,8 +5002,6 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < $scope.hero.abilities.length; i++) {
                 $scope.hero.abilities[i].orderNum = i + 1;
             }
-            
-            console.log($scope.hero.abilities);
         };
         
         // talents
@@ -5038,8 +5029,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.hero.talents.push($scope.currentTalent);
             box.modal('hide');
             $scope.currentTalent = false;
-            
-            console.log($scope.hero.talents);
         };
         
         $scope.editTalent = function (talent) {
@@ -5054,13 +5043,10 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < $scope.hero.talents.length; i++) {
                 $scope.hero.talents[i].orderNum = i + 1;
             }
-            
-            console.log($scope.hero.talents);
         };
                 
         // characters
         $scope.charAddWnd = function () {
-            console.log('blah');
             $scope.currentCharacter = angular.copy(defaultCharacter);
             box = bootbox.dialog({
                 title: 'Add Character',
@@ -5212,8 +5198,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.hero.abilities.push($scope.currentAbility);
             box.modal('hide');
             $scope.currentAbility = false;
-
-            console.log($scope.hero.abilities);
         };
         
         $scope.editAbility = function (ability) {
@@ -5228,8 +5212,6 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < $scope.hero.abilities.length; i++) {
                 $scope.hero.abilities[i].orderNum = i + 1;
             }
-            
-            console.log($scope.hero.abilities);
         };
         
         // talents

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-ng-app="app" ng-controller="AppCtrl">
 <head>
+    <meta property="" content=""/>
     <meta charset="utf-8" />
     <base href="/" />
     <title ng-bind="metaservice.metaTitle()">TempoStorm</title>
@@ -17,8 +18,8 @@
     
     <meta name="prerender-status-code" content="{{ metaservice.getStatusCode() }}">
     
-    <link rel="stylesheet" href="{cdnUrl}dist/css/{assets.vendor_min_css}" type="text/css" />
-    <link rel="stylesheet" href="{cdnUrl}dist/css/{assets.style_min_css}" type="text/css" />
+    <link rel="stylesheet" href="{cdnUrl}css/{assets.vendor_min_css}" type="text/css" />
+    <link rel="stylesheet" href="{cdnUrl}css/{assets.style_min_css}" type="text/css" />
 </head>
 <body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
     <div class="app" id="app" ui-view="root"></div>
@@ -26,11 +27,11 @@
         var tpl = '{cdnUrl}';
     </script>
     <!-- vendor -->
-    <script src="{cdnUrl}dist/js/{assets.vendor_min_js}"></script>
+    <script src="{cdnUrl}js/{assets.vendor_min_js}"></script>
     <!-- angular -->
-    <script src="{cdnUrl}dist/js/{assets.angular_min_js}"></script>
+    <script src="{cdnUrl}js/{assets.angular_min_js}"></script>
     <!-- app -->
-    <script src="{cdnUrl}dist/js/{assets.app_min_js}"></script>
+    <script src="{cdnUrl}js/{assets.app_min_js}"></script>
     <!-- stripe -->
     <script src="https://js.stripe.com/v2/"></script>
     <script>
