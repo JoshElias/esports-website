@@ -715,7 +715,7 @@ angular.module('app.controllers', ['ngCookies'])
             active: true
         };
         
-        $scope.cardImg = $scope.deckImg = $scope.app.cdn + '/img/blank.png';
+        $scope.cardImg = $scope.deckImg = $scope.app.cdn + 'img/blank.png';
         
         // load card
         $scope.card = angular.copy(defaultCard);
@@ -827,8 +827,8 @@ angular.module('app.controllers', ['ngCookies'])
             { name: 'No', value: false }
         ];
         
-        $scope.cardImg = ($scope.card.photos.large.length) ? $scope.app.cdn + '/cards/' + $scope.card.photos.large : $scope.app.cdn + '/img/blank.png';
-        $scope.deckImg = ($scope.card.photos.small.length) ? $scope.app.cdn + '/cards/' + $scope.card.photos.small : $scope.app.cdn + '/img/blank.png';
+        $scope.cardImg = ($scope.card.photos.large.length) ? $scope.app.cdn + 'cards/' + $scope.card.photos.large : $scope.app.cdn + 'img/blank.png';
+        $scope.deckImg = ($scope.card.photos.small.length) ? $scope.app.cdn + 'cards/' + $scope.card.photos.small : $scope.app.cdn + 'img/blank.png';
         
         // card upload
         $scope.cardUpload = function ($files) {
@@ -1226,9 +1226,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         
         $scope.getImage = function () {
-            $scope.imgPath = '/articles/';
-            if (!$scope.article) { return '/img/blank.png'; }
-            return ($scope.article.photos && $scope.article.photos.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photos.small;
+            $scope.imgPath = 'articles/';
+            if (!$scope.article) { return 'img/blank.png'; }
+            return ($scope.article.photos && $scope.article.photos.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photos.small;
         };
         
         
@@ -1381,7 +1381,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         
         // photo
-        $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? $scope.app.cdn + '/articles/' + $scope.article.photos.small : $scope.app.cdn + '/img/blank.png';
+        $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? $scope.app.cdn + 'articles/' + $scope.article.photos.small : $scope.app.cdn + 'img/blank.png';
         
         // tags
         $scope.hasTags = function () {
@@ -1481,9 +1481,9 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.getImage = function () {
-            $scope.imgPath = '/articles/';
-            if (!$scope.article) { return '/img/blank.png'; }
-            return ($scope.article.photos && $scope.article.photos.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photos.small;
+            $scope.imgPath = 'articles/';
+            if (!$scope.article) { return 'img/blank.png'; }
+            return ($scope.article.photos && $scope.article.photos.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photos.small;
         };
         
         $scope.editArticle = function () {
@@ -2512,7 +2512,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.poll = angular.copy(defaultPoll);
         $scope.item = angular.copy(defaultItem);
         $scope.currentItem = angular.copy(defaultItem);
-        $scope.imgPath = '/polls/';
+        $scope.imgPath = 'polls/';
         
         $scope.pollType = [
             { name: 'Image', value: 'img' },
@@ -2611,7 +2611,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.getImage = function () {
-            return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
+            return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
         };
         
         // add Poll
@@ -2672,7 +2672,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.poll = data.poll;
         $scope.item = angular.copy(defaultItem);
         $scope.currentItem = angular.copy(defaultItem);
-        $scope.imgPath = '/polls/';
+        $scope.imgPath = 'polls/';
         
         $scope.pollType = [
             { name: 'Image', value: 'img' },
@@ -2771,8 +2771,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.getImage = function () {
-            if (!$scope.currentItem) { return '/img/blank.png'; }
-            return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
+            if (!$scope.currentItem) { return 'img/blank.png'; }
+            return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
         };
         
         $scope.editPoll = function () {
@@ -2947,7 +2947,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.getImage = function () {
             $scope.imgPath = 'banners/';
-            return ($scope.banner.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.banner.photo;
+            return ($scope.banner.photo === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.banner.photo;
         };
         
         // add Poll
@@ -3032,7 +3032,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.getImage = function () {
             $scope.imgPath = 'banners/';
-            return ($scope.banner.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.banner.photo;
+            return ($scope.banner.photo === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.banner.photo;
         };
         
         
