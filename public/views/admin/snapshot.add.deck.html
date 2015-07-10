@@ -10,7 +10,7 @@
             {{d.name}}
         </a>
         <div class="list-group-item center-text">
-            <button class="btn btn-blue btn-lg center-text" ng-click="closeBox()">Done</button>
+            <button class="btn btn-blue btn-lg center-text" ng-click="closeBox()" ng-disabled="matching">{{(matching == true) ? 'Building matches...' : 'Done'}}</button>
         </div>    
     </div>
 </div>

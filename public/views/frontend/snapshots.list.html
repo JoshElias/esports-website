@@ -33,9 +33,12 @@
     
     <!-- articles -->
     <div class="snapshots">
-        
         <div class="darkbox">
-            <div ng-repeat="snaps in snapshots"><a ng-href="./snapshots/{{snaps.slug.url}}">{{snaps.slug.url}}</a></div>
+            <div ng-repeat="snaps in snapshots">
+                <a ng-href="./snapshots/{{snaps.slug.url}}">
+                    {{snaps.slug.url}}
+                </a>
+            </div>
         </div>
         
     </div>

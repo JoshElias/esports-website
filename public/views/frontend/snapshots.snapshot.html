@@ -1,7 +1,19 @@
 <div class="container darkbox">
-    <div class="tiers m-b-md">
+    
+    <div class="col-lg-8">
+        sup
+    </div>
+    
+    <div class="col-lg-4 sideTiers">
+        <div class="sideTier" ng-repeat="tier in snapshot.tiers">
+            <div class="tier{{tier.tier}}">
+                {{tier.tier}}
+            </div>
+        </div>
+    </div>
+    
+    <div class="tiers m-b-md clearfix">
         <div ng-repeat="tier in snapshot.tiers" class="tier">
-            
             <a role="button" data-toggle="collapse" href="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
                 <div class="tier-heading">
                     <h2>TIER {{tier.tier}}</h2>
@@ -9,20 +21,81 @@
             </a>
             
             <div class="tier-body collapse" id="collapseTier{{tier.tier}}">
-                <div ng-repeat="deck in tier.decks" class="tier-deck tier-deck-{{deck.deck.playerClass}}">
+                <div ng-repeat="deck in tier.decks | orderBy : 'rank.current'" class="tier-deck tier-deck-{{deck.deck.playerClass}}">
                     <a role="button" data-toggle="collapse" href="#collapseDeck-{{deck.deck.slug}}" aria-expanded="false" aria-controls="collapseDeck-{{deck.deck.slug}}">
                         <div class="tier-deck-heading"> 
                             <h4>{{deck.deck.name}}</h4>
                             <div class="deck-heading-right">
-                                <div class="deck-img-sm deck-{{deck.deck.playerClass}}-img-sm"></div>
-                                <button class="deck-button">VIEW DECK</button>
-
+                                <div class="deck-img-sm deck-portrait-{{deck.deck.playerClass}}-sm"></div>
+                                <a class="ablock" href="https://tempostorm.com/hearthstone/decks/{{deck.deck.slug}}"><button class="deck-button">VIEW DECK</button></a>
                             </div>
                         </div>
                     </a>
                         
-                    <div class="tier-deck-body collapse" id="collapseDeck-{{deck.deck.slug}}">
-                        FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>FUCK<br>
+                    <div class="tier-deck-body collapse clearfix" id="collapseDeck-{{deck.deck.slug}}">
+                        <div class="tier-deck-body-inner clearfix">
+                            
+                            <div class="m-t-lg">
+                                <div class="col-lg-3">
+                                    <div class="deck-portrait deck-portrait-{{deck.deck.playerClass}}"></div>
+                                    <h3>RANKING</h3>
+                                    <div class="deck-rank m-b-lg">
+                                        <div class="{{(deck.rank.current > 0) ? 'green-back' : 'red-back'}}">
+                                            <div>
+                                                CURRENT
+                                            </div>
+                                            {{deck.rank.current}} {{typefuck(deck.rank.current)}}
+                                        </div>
+                                        <div class="{{(deck.rank.last > 0) ? 'green-back' : 'red-back'}}">
+                                            <div>
+                                                LAST WEEK
+                                            </div>
+                                            {{deck.rank.last}}
+                                        </div>
+                                        <div class="{{(deck.rank.last - deck.rank.current) > 0 ? 'green-back' : 'red-back'}}">
+                                            <div>
+                                                CHANGE
+                                            </div>
+                                            {{deck.rank.last - deck.rank.current}}
+                                        </div>
+                                    </div>
+                                    <div class="deck-techs">
+                                        <h3>TECH DECISION</h3>
+                                        <div class="tech" ng-repeat="tech in deck.tech">
+                                            <div class="tech-heading">
+                                                <span ng-if="tech.title">
+                                                    VERSUS {{tech.title}}
+                                                </span>
+                                                <span ng-if="!tech.title">
+                                                    GENERAL
+                                                </span>
+                                            </div>
+                                            <div class="tech-card" ng-repeat="card in tech.cards">
+                                                <div class="tech-card-body">
+                                                    <div class="pull-left toss" ng-if="!card.toss"><i class="fa fa-plus"></i></div>
+                                                    <div class="pull-left keep" ng-if="card.toss"><i class="fa fa-minus"></i></div>
+                                                    {{card.card.name}}
+                                                    <img class="pull-right" src="https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{card.card.photos.small}}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-9 pull-right">
+                                    <h2>EXPLANATION</h2>
+                                    <p>{{deck.explanation}}</p>
+
+                                    <hr>
+
+                                    <h2>WEEKLY NOTES</h2>
+                                    <p>{{deck.weeklyNotes}}</p>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
                     </div>
                 </div>
             </div>
