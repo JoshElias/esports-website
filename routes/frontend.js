@@ -319,8 +319,7 @@ module.exports = {
     },
     twitch: function (Schemas) {
         return function (accessToken, refreshToken, profile, done) {
-            console.log("Looking for twitch user?");
-
+            
             function findByTwitch (callback) {
                 Schemas.User.findOne({ twitchID: profile.id }).exec(function (err, user) {
                     if (err || !user) { return callback(); }
