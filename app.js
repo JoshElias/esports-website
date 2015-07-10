@@ -113,7 +113,9 @@ passport.use(new BnetStrategy({
 app.get('/auth/twitch', passport.authenticate('twitch'));
 app.get('/auth/twitch/callback', passport.authenticate('twitch', { failureRedirect: '/login' }),
   function(req, res) {
+    console.log("REceiving twitch token");
     var token = jwt.sign({ _id: req.user._id.toString() }, config.JWT_SECRET);
+    console.log(token);
     res.cookie('token', token);
     res.redirect('/');
 });
