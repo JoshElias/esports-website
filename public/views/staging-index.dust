@@ -36,7 +36,5 @@
     <script>
         Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
     </script>
-    <!-- google adSense -->
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </body>
 </html>
