@@ -46,8 +46,7 @@
           "replSet": {
             "rs_name": "tempostormRepSet",
             "readPreference": "ReadPreference.SECONDARY_PREFERRED",
-            "read_preference": "ReadPreference.SECONDARY_PREFERRED",
-            "slaveOk": true
+            "read_preference": "ReadPreference.SECONDARY_PREFERRED"
           }
       },
       "CDN_URL" : "https://staging-cdn-tempostorm.netdna-ssl.com/",
@@ -65,8 +64,7 @@
           "replSet": {
             "rs_name": "tempostormRepSet",
             "readPreference": "ReadPreference.SECONDARY_PREFERRED",
-            "read_preference": "ReadPreference.SECONDARY_PREFERRED",
-            "slaveOk": true
+            "read_preference": "ReadPreference.SECONDARY_PREFERRED"
           }
       },
       "CDN_URL" : "https://cdn-tempostorm.netdna-ssl.com/",
