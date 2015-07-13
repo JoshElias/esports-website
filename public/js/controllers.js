@@ -4093,7 +4093,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.data = [300, 500, 100];
         
         $scope.getVideo = function () {
-            return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.deck.video + '" frameborder="0" height="360" width="100%"></iframe>');
+            return $scope.getContent('<iframe src="//www.youtube.com/v/' + $scope.deck.video + '" frameborder="0" height="360" width="100%" allowfullscreen="true"></iframe>');
         };
         
         $scope.getContent = function (content) {
@@ -6467,7 +6467,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.getVideo = function () {
-            return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.guide.video + '" frameborder="0" height="360" width="100%"></iframe>');
+            return $scope.getContent('<iframe src="//www.youtube.com/v/' + $scope.guide.video + '" frameborder="0" height="360" width="100%" allowfullscreen="true"></iframe>');
         };
         
         $scope.getContent = function (content) {
