@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-ng-app="app" ng-controller="AppCtrl">
 <head>
-    <meta property="" content=""/>
     <meta charset="utf-8" />
     <base href="/" />
     <title ng-bind="metaservice.metaTitle()">TempoStorm</title>
