@@ -28,13 +28,13 @@ angular.module('app.services', [])
        set: function(newTitle, newMetaDescription, newKeywords) {
            metaKeywords = newKeywords;
            metaDescription = newMetaDescription;
-           title = newTitle; 
+           title = newTitle;
        },
        ogMetaType: function() { return ogType; },
        ogMetaUrl: function() { return ogUrl; },
        ogMetaImage: function() { 
            if(!ogImage || ogImage == '') { 
-               return 'https://s3-us-west-2.amazonaws.com/ts-node2/img/100x100tsoglogo.png'
+               return cdnUrl + 'img/100x100tsoglogo.png'
            }
            return ogImage.toLowerCase();
        },
