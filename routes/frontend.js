@@ -2673,7 +2673,6 @@ module.exports = {
                 .limit(perpage)
                 .exec(function (err, results) {
                     if (err) { return req.json({ success: false }); }
-                    console.log(results);
                     snapshots = results;
                     return callback();
                 });

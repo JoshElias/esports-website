@@ -552,6 +552,8 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 /* meta snapshot */
 
+
+
 .sideTiers { height: 800px; }
 
 
@@ -620,6 +622,10 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .toss { background: rgb(17, 153, 71) }
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .keep { background: rgb(170, 30, 33) }
 /* !TECH */
+
+
+.match-graph { height: 300px; }
+
 
 .tier-deck-Druid .tier-deck-heading {
     background: -webkit-linear-gradient(left, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
