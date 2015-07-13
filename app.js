@@ -283,7 +283,7 @@ app.post('/api/admin/user/delete', routes.admin.isAdmin(Schemas), routes.admin.u
 app.post('/api/admin/user/edit', routes.admin.isAdmin(Schemas), routes.admin.userEdit(Schemas));
 app.post('/api/admin/users/providers', routes.admin.isAdmin(Schemas), routes.admin.usersProviders(Schemas));
 
-app.post('/api/admin/upload/article', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadArticle(fs, gm, amazon));
+app.post('/api/admin/upload/article', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadArticle(fs, gm, amazon, Util));
 app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadCard(fs, gm, amazon));
 app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadDeck(fs, gm, amazon));
 app.post('/api/admin/upload/polls', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadPoll(fs, gm, amazon));

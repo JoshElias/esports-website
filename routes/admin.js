@@ -2269,7 +2269,7 @@ module.exports = {
             }
         };
     },
-    uploadArticle: function (fs, gm, amazon) {
+    uploadArticle: function (fs, gm, amazon, Util) {
         return function(req, res, next) {
             // check if image file
             var types = ['image/png', 'image/jpeg', 'image/gif'];
@@ -2286,9 +2286,9 @@ module.exports = {
                 var arr = req.files.file.name.split('.'),
                     name = arr.splice(0, arr.length - 1).join('.'),
                     ext = '.' + arr.pop(),
-                    large = name + '.large' + ext,
-                    medium = name + '.medium' + ext,
-                    small = name + '.small' + ext,
+                    large = Util.slugify(name) + '.large' + ext,
+                    medium = Util.slugify(name) + '.medium' + ext,
+                    small = Util.slugify(name) + '.small' + ext,
                     path = __dirname+'/../photos/articles/';
                     copyFile(function () {
                         var files = [];
