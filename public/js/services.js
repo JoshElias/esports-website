@@ -34,7 +34,7 @@ angular.module('app.services', [])
        ogMetaUrl: function() { return ogUrl; },
        ogMetaImage: function() { 
            if(!ogImage || ogImage == '') { 
-               return cdnUrl + 'img/100x100tsoglogo.png'
+               return tpl + 'img/100x100tsoglogo.png'
            }
            return ogImage.toLowerCase();
        },
