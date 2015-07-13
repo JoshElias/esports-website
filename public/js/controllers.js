@@ -3584,7 +3584,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
         
         var ogImg = $scope.app.cdn + 'articles/' + $scope.article.photos.small;
-        $scope.metaservice.setOg('https://tempostorm.com/hearthstone/articles/' + data.article.slug.url, $scope.article.title, $scope.article.description, 'article', ogImg);
+        $scope.metaservice.setOg('https://tempostorm.com/articles/' + data.article.slug.url, $scope.article.title, $scope.article.description, 'article', ogImg);
         
         $scope.getContent = function () {
             return $sce.trustAsHtml($scope.article.content);
