@@ -45,10 +45,7 @@
       "DB_OPTIONS" : {
           "replSet": {
             "rs_name": "tempostormRepSet",
-            "readPreference": "ReadPreference.NEAREST",
-            "read_preference": "ReadPreference.NEAREST",
-            "w":0,
-            "slaveOk": true
+            "strategy": "ping"
           }
       },
       "CDN_URL" : "https://staging-cdn-tempostorm.netdna-ssl.com/",
@@ -65,10 +62,7 @@
       "DB_OPTIONS" : {
           "replSet": {
             "rs_name": "tempostormRepSet",
-            "readPreference": "ReadPreference.NEAREST",
-            "read_preference": "ReadPreference.NEAREST",
-            "w":0,
-            "slaveOk": true
+            "strategy": "ping"
           }
       },
       "CDN_URL" : "https://cdn-tempostorm.netdna-ssl.com/",
