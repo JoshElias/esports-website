@@ -629,6 +629,19 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .match-graph line { stroke:rgba(255,255,255,.5); }
 
 
+.bar { stroke: rgb(255, 255 ,255); stroke-width: 1px; opacity:.8 }
+
+.bar-Druid { fill: rgb(255, 125, 10) }
+.bar-Hunter { fill: rgb(171, 212, 115) }
+.bar-Mage { fill: rgb(105, 204, 240) }
+.bar-Paladin { fill: rgb(245, 140, 186) }
+.bar-Priest { fill: white }
+.bar-Rogue { fill: rgb(255, 245, 105) }
+.bar-Shaman { fill: rgb(0, 112, 222) }
+.bar-Warlock { fill: rgb(148, 130, 201) }
+.bar-Warrior { fill: rgb(199, 156, 110) }
+
+
 .tier-deck-Druid .tier-deck-heading {
     background: -webkit-linear-gradient(left, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
     background: -o-linear-gradient(right, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));

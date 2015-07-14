@@ -2435,6 +2435,9 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     }
                 }
+                
+                console.log(matches.length);
+                
                 if (callback != undefined) {
                     callback(matches);
                 }
@@ -4425,10 +4428,47 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, SnapshotService, data) {
         
         $scope.snapshot = data.snapshot;
-        $scope.matched = [];
         
-
+        $scope.log = function (t) {
+            console.log(t);
+        }
         
+        var charts = [];
+        
+        function buildCharts () {    
+            var tierLength = data.snapshot.tiers.length,
+                maxTierLength = (tierLength > 2) ? 2 : tierLength;
+            
+            for (var j = 0; j < maxTierLength; j++) {
+                for (var k = 0; k < data.snapshot.tiers[j].decks.length; k++) {
+                    var matches = [];
+                    for (var i = 0; i < data.snapshot.matches.length; i++) {
+                        var newObj = {
+                            against: (data.snapshot.tiers[j].decks[k]._id == data.snapshot.matches[i].for._id) ? data.snapshot.matches[i].for._id : data.snapshot.matches[i].against._id,
+                            chance: (data.snapshot.tiers[j].decks[k]._id == data.snapshot.matches[i].for._id) ? data.snapshot.matches[i].forChance : data.snapshot.matches[i].againstChance,
+                            playerClass: (data.snapshot.tiers[j].decks[k]._id == data.snapshot.matches[i].for._id) ? data.snapshot.matches[i].for.playerClass : data.snapshot.matches[i].against.playerClass
+                        };
+                        matches.push(newObj);
+                    }
+                    console.log(matches);
+                    charts[data.snapshot.tiers[j].decks[k]._id] = matches;
+                }
+            }
+        }
+        
+        buildCharts();
+        
+        $scope.getMatches = function (id) {
+            return charts[id];
+        }
+        
+        function getClass(deck) {
+            return deck.playerClass;
+        }
+        
+        $scope.getMatchClass = function (match, id) {
+            return (match.for._id == id) ? match.against.playerClass : match.for.playerClass;
+        }
     }
 ])
 .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',
