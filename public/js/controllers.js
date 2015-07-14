@@ -4423,8 +4423,11 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('SnapshotCtrl', ['$scope', 'SnapshotService', 'data',
     function ($scope, SnapshotService, data) {
-    
+        
         $scope.snapshot = data.snapshot;
+        $scope.matched = [];
+        
+
         
     }
 ])

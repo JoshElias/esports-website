@@ -625,6 +625,8 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 
 .match-graph { height: 300px; }
+.match-graph svg { overflow: visible }
+.match-graph line { stroke:rgba(255,255,255,.5); }
 
 
 .tier-deck-Druid .tier-deck-heading {

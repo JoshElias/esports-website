@@ -1593,17 +1593,6 @@ module.exports = {
             });
         };
     },
-    snapshots: function (Schemas) {
-        return function (req, res, next) {
-            console.log('snapshots');
-            return res.json({success: true, snapshots: 'fuck you'})
-        };
-    },
-    snapshot: function (Schemas) {
-        return function (req, res, next) {
-            return res.json({success: true, snapshot: 'awwwww shit nigga'});
-        };
-    },
     articleCommentAdd: function (Schemas, mongoose) {
         return function (req, res, next) {
             var articleID = req.body.articleID,
@@ -2712,9 +2701,11 @@ module.exports = {
                     },
                     {
                         path: 'matches.for',
+                        select: 'name playerClass'
                     },
                     {
                         path: 'matches.against',
+                        select: 'name playerClass'
                     }
                 ])
                 .exec(function (err, results) {
