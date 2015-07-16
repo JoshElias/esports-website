@@ -86,7 +86,7 @@ app.use(session({
     clear_interval: 60,
     secret: config.SESSION_SECRET,
     store: new MongoStore({
-        mongooseConnection:  mongoose.connection,
+        url:  config.DB_URL,
         autoRemove: "native",
         ttl: 7 * 24 * 60 * 60 // 7 days 
     })
