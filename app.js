@@ -78,7 +78,7 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(session({
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { 
         expires: new Date(Date.now() + week),
         maxAge: week
