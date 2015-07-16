@@ -83,7 +83,7 @@ app.use(session({
         expires: new Date(Date.now() + week),
         maxAge: week
     },
-    clear_interval: 60,
+    clear_interval: 86400,
     secret: config.SESSION_SECRET,
     store: new MongoStore({
         url:  config.DB_URL,
