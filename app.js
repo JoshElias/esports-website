@@ -81,7 +81,9 @@ app.use(session({
     cookie: { expires: new Date(Date.now() + (60 * 60 * 24 * 7 * 1000)) },
     secret: config.SESSION_SECRET,
     store: new MongoStore({
-        mongooseConnection:  mongoose.connection
+        mongooseConnection:  mongoose.connection,
+        autoRemove: "native",
+        ttl: 7 * 24 * 60 * 60 // 7 days 
     })
 }));
 
