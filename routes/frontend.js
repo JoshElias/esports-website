@@ -1518,6 +1518,7 @@ module.exports = {
             
             function getArticles (callback) {
                 Schemas.Article.find({ active: true })
+                .select("-content -votes")
                 .where(where)
                 .populate({
                     path: 'author',
