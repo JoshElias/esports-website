@@ -71,6 +71,7 @@ app.use(expressValidator({
         }
     }
 }));
+var week = 60 * 60 * 24 * 7 * 1000;
 app.use('/api', expressJwt({secret: config.JWT_SECRET}));
 app.use(methodOverride());
 app.use(cookieParser());
@@ -78,7 +79,10 @@ app.use(passport.initialize());
 app.use(session({
     resave: false,
     saveUninitialized: true,
-    cookie: { expires: new Date(Date.now() + (60 * 60 * 24 * 7 * 1000)) },
+    cookie: { 
+        expires: new Date(Date.now() + week),
+        maxAge: week
+    },
     secret: config.SESSION_SECRET,
     store: new MongoStore({
         mongooseConnection:  mongoose.connection,
