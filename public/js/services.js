@@ -728,8 +728,12 @@ angular.module('app.services', [])
         editSnapshot: function (snapshot) {
             return $http.post('/api/admin/snapshot/edit', snapshot);
         },
-        deleteSnapshot: function (snapshot) {
-            return $http.post('/api/admin/snapshot/delete', snapshot);
+        deleteSnapshot: function (_id) {
+            var d = $q.defer();
+                $http.post('/api/admin/snapshot/delete', { _id: _id }).success(function (data) {
+                    d.resolve(data);
+                });
+            return d.promise;
         }
     }
 }])

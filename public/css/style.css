@@ -552,9 +552,63 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 /* meta snapshot */
 
+.bg-override {
+
+    background-image: url(../img/meta-snapshot/meta-bg.jpg);
+    background-color: #000000;
+    background-repeat: no-repeat;
+}
+
+.heading { position:relative; }
+
+.snapTitle { position: absolute; top: 20px; left: 20px; }
+.snapTitle img { width: 100%; }
+.snapTitle h1 { color: white; font-weight: bolder }
+.snapTitle h3 { color: white; color: #d7effa; font-weight: bold; font-size: 18px; letter-spacing: 1px }
+
+.sideBorders { border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid rgba(255,255,255,.2); }
+
+.meta-container { background: rgba(0,0,0,.8); }
+
+.rightSide,
+.leftSide { height: 800px; color: #d7effa; }
+
+.leftSide .content {
+    background: -webkit-linear-gradient(bottom, rgba(31,38,80,.9), rgba(32,54,95,.9)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(top, rgba(31,38,80,.9), rgba(32,54,95,.9)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(top, rgba(31,38,80,.9), rgba(32,54,95,.9)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to top, rgba(31,38,80,.9) , rgba(32,54,95,.9)); /* Standard syntax */
+}
+
+.leftSide .content h2 { color: white; font-weight: bold; letter-spacing: 4px; font-size: 24px; }
+.leftSide .content .hr { border-top: 1px solid rgba(255,255,255,.5); border-bottom: 2px solid rgba(0,0,0,.4); background: none; width: 225px; }
+.leftSide .content .inner { background: url(../img/meta-snapshot/meta-cloud-overlay.png); border: 1px solid rgba(255,255,255,.4) }
+.leftSide .content p { white-space: pre-wrap; }
 
 
-.sideTiers { height: 800px; }
+.rightSide .sideTier button { border: none; padding: 0px; margin-top: 0px; }
+
+.rightSide .sideTier .sideTierHead { 
+    height: 65px; 
+/*    background-color: rgba(31,38,80,1); */
+/*    border: 1px solid rgba(0,0,0,1) ;*/
+    background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
+}
+.rightSide .sideTier .sideTierHead .inner { position: relative; height: 65px; border-right: 1px solid rgba(255,255,255,.2); border-bottom: 1px solid rgba(255,255,255,.2); border-left: 1px solid black; border-top: 1px solid black; }
+.rightSide .sideTier .sideTierHead .inner i { line-height: 65px; position: absolute; right: 20px; }
+.rightSide .sideTier .sideTierHead .inner h3 { padding:18px; }
+
+.rightSide .sideTier .sideTierBody { -webkit-transition-duration: .2s; transition-duration: .2s; }
+.rightSide .sideTier .sideTierBody .sideTierDeck { background-color: #404759; background-repeat: no-repeat; background-position:right; height:50px; border-bottom: 1px solid black; }
+.rightSide .sideTier .sideTierBody .sideTierDeck:nth-child(even) { background-color: #36455A; }
+.rightSide .sideTier .sideTierBody .sideTierDeck:hover { opacity: .9 }
+.rightSide .sideTier .sideTierBody .sideTierDeck a { display: block; width: 100%; height: 100% }
+.rightSide .sideTier .sideTierBody h4 { font-size: 14px; font-weight: bold; color: white; margin: 0px; line-height: 45px; text-align: center; }
+.rightSide .sideTier .sideTierBody .sideTierDeck .sideTierDeckRank { position: relative; height: 49px; width:50px; border: 1px solid rgba(255,255,255,.2); }
+.rightSide .sideTier .sideTierBody .sideTierDeck .sideTierDeckName { position: relative; height: 50px; max-width: 215px; padding-left: 10px; }
 
 
 .tier h4,
@@ -574,26 +628,30 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     color: #FEFEFE;
 }
 
+.tier .btn-tier-collapse { padding: 0px; border: 0; border-radius: 0px }
 .tier .tier-heading { 
-    background: -webkit-linear-gradient(left, #22274F , #20365F); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(right, #22274F, #20365F); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(right, #22274F, #20365F); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(to right, #22274F , #20365F); /* Standard syntax */
+    background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
     border: 1px #19171A solid; 
     height: 50px
 }
 .tier .tier-heading h2 { color: #FEFEFE; margin: auto 0px auto 20px; font-weight: bolder; letter-spacing:7px; line-height:48px }
 
-.tier-body .tier-deck {  }
+.tier-body { -webkit-transition-duration: .2s; transition-duration: .2s; }
+
+.tier-body .tier-deck { width:100%; height:auto; }
+.tier-body .tier-deck:not(:first-child) { margin-top: -2px; }
 .tier-body .tier-deck h4 { margin: auto 0px auto 30px; line-height: 47px; font-weight: bold; color: #F0EFEB }
 
 
-.tier-body .tier-deck-heading { height:50px; border: rgba(0, 0, 0, .5) solid 1px; position: relative; }
+.tier-body .tier-deck-heading { height:50px; border: rgba(0, 0, 0, .5) solid 1px; position: relative; width:100%; }
 .tier-body .tier-deck-heading .deck-heading-right { position: absolute; right: 0; top: 0; margin: -1px -1px 0px 0px; width: auto; }
 .tier-body .tier-deck-heading .deck-heading-right .ablock { margin: 12px 25px 0px 0px; width: auto; display:inline-block; }
-.tier-body .tier-deck-heading .deck-heading-right a button { display: block;  background: rgba(0, 0, 0, .25); border: 1px rgba(255, 255, 255, .7) solid; color: rgba(255, 255, 255, 1); padding: 2px 25px;  }
-.tier-body .tier-deck-heading .deck-heading-right button:hover { background: rgba(255, 255, 255, .7); border: 1px rgba(0, 0, 0, .7) solid; color: rgba(0, 0, 0, 1);  }
-.tier-body .tier-deck-heading .deck-heading-right .deck-img-sm { 
+.tier-body .tier-deck-heading .deck-heading-right .deck-button { display: block;  background: rgba(0, 0, 0, .25); border: 1px rgba(255, 255, 255, .7) solid; color: rgba(255, 255, 255, 1); padding: 2px 25px;  }
+.tier-body .tier-deck-heading .deck-heading-right .deck-button:hover { background: rgba(255, 255, 255, .7); border: 1px rgba(0, 0, 0, .7) solid; color: rgba(0, 0, 0, 1);  }
+.tier-body .tier-deck-heading .deck-heading-right .deck-img-sm {
     background-size: cover;
     height: 50px;
     width: 180px;
@@ -603,9 +661,9 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .green-back { background-color: rgba(17, 153, 71, .7) }
 .red-back { background-color: rgba(170, 30, 33, .7) }
 
-.tier-body .tier-deck-heading .deck-button {  }
+.tier-body .tier-deck-heading .deck-button {}
 
-.tier-body .tier-deck .tier-deck-body { max-height: 1219px; border: 1px black solid; }
+.tier-body .tier-deck .tier-deck-body { max-height: 1219px; border: 1px black solid; -webkit-transition-duration: .2s; transition-duration: .2s }
 .tier-body .tier-deck .tier-deck-body .deck-rank { height: 88px; width: 252px }
 .tier-body .tier-deck .tier-deck-body .deck-rank div { float: left; height: 84px; width: 84px; text-align: center; border: 1px black solid; font-size: 32px; line-height: 55px; color: white; font-weight: bold; }
 .tier-body .tier-deck .tier-deck-body .deck-rank div:nth-child(2) { border-left: none; border-right: none }
@@ -614,7 +672,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-body .tier-deck .tier-deck-body .deck-portrait { height:345px }
 
 /* TECH */
-.tier-body .tier-deck .tier-deck-body .deck-techs .tech {  }
+.tier-body .tier-deck .tier-deck-body .deck-techs .tech {}
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-heading { background: rgba(128, 128, 128, .5); padding: 4px 0px 4px 10px; color: #FEFEFE; border: 1px solid black; border-top: 0px; height: 30px }
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body { height:27px; border: 1px solid black; border-top: 0px; background: rgb(37, 37, 37); color: #FEFEFE; line-height: 25px; text-shadow: 0px 0px 1px black; }
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .toss, 
@@ -654,7 +712,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Druid .deck-portrait-Druid { background-image: url(../img/meta-snapshot/hero-portrait/Druid.png); }
-.tier-deck-Druid .deck-portrait-Druid-sm { background-image: url(../img/meta-snapshot/hero-portrait/Druid-sm.png); }
+.deck-portrait-Druid-sm { background-image: url(../img/meta-snapshot/hero-portrait/Druid-sm.png); }
 
 
 
@@ -670,7 +728,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Hunter .deck-portrait-Hunter { background-image: url(../img/meta-snapshot/hero-portrait/Hunter.png); }
-.tier-deck-Hunter .deck-portrait-Hunter-sm { background-image: url(../img/meta-snapshot/hero-portrait/Hunter-sm.png); }
+.deck-portrait-Hunter-sm { background-image: url(../img/meta-snapshot/hero-portrait/Hunter-sm.png); }
 
 
 .tier-deck-Mage .tier-deck-heading {
@@ -685,7 +743,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Mage .deck-portrait-Mage { background-image: url(../img/meta-snapshot/hero-portrait/Mage.png); }
-.tier-deck-Mage .deck-portrait-Mage-sm { background-image: url(../img/meta-snapshot/hero-portrait/Mage-sm.png); }
+.deck-portrait-Mage-sm { background-image: url(../img/meta-snapshot/hero-portrait/Mage-sm.png); }
 
 
 .tier-deck-Paladin .tier-deck-heading { 
@@ -700,7 +758,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Paladin .deck-portrait-Paladin { background-image: url(../img/meta-snapshot/hero-portrait/Paladin.png); }
-.tier-deck-Paladin .deck-portrait-Paladin-sm { background-image: url(../img/meta-snapshot/hero-portrait/Paladin-sm.png); }
+.deck-portrait-Paladin-sm { background-image: url(../img/meta-snapshot/hero-portrait/Paladin-sm.png); }
 
 
 .tier-deck-Priest .tier-deck-heading { 
@@ -715,7 +773,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Priest .deck-portrait-Priest { background-image: url(../img/meta-snapshot/hero-portrait/Priest.png); }
-.tier-deck-Priest .deck-portrait-Priest-sm { background-image: url(../img/meta-snapshot/hero-portrait/Priest-sm.png); }
+.deck-portrait-Priest-sm { background-image: url(../img/meta-snapshot/hero-portrait/Priest-sm.png); }
 
 
 .tier-deck-Rogue .tier-deck-heading { 
@@ -730,7 +788,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Rogue .deck-portrait-Rogue { background-image: url(../img/meta-snapshot/hero-portrait/Rogue.png); }
-.tier-deck-Rogue .deck-portrait-Rogue-sm { background-image: url(../img/meta-snapshot/hero-portrait/Rogue-sm.png); }
+.deck-portrait-Rogue-sm { background-image: url(../img/meta-snapshot/hero-portrait/Rogue-sm.png); }
 
 
 .tier-deck-Shaman .tier-deck-heading { 
@@ -745,7 +803,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Shaman .deck-portrait-Shaman { background-image: url(../img/meta-snapshot/hero-portrait/Shaman.png); }
-.tier-deck-Shaman .deck-portrait-Shaman-sm { background-image: url(../img/meta-snapshot/hero-portrait/Shaman-sm.png); }
+.deck-portrait-Shaman-sm { background-image: url(../img/meta-snapshot/hero-portrait/Shaman-sm.png); }
 
 
 .tier-deck-Warlock .tier-deck-heading { 
@@ -760,7 +818,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Warlock .deck-portrait-Warlock { background-image: url(../img/meta-snapshot/hero-portrait/Warlock.png); }
-.tier-deck-Warlock .deck-portrait-Warlock-sm { background-image: url(../img/meta-snapshot/hero-portrait/Warlock-sm.png); }
+.deck-portrait-Warlock-sm { background-image: url(../img/meta-snapshot/hero-portrait/Warlock-sm.png); }
 
 
 .tier-deck-Warrior .tier-deck-heading { 
@@ -775,7 +833,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Warrior .deck-portrait-Warrior { background-image: url(../img/meta-snapshot/hero-portrait/Warrior.png); }
-.tier-deck-Warrior .deck-portrait-Warrior-sm { background-image: url(../img/meta-snapshot/hero-portrait/Warrior-sm.png); }
+.deck-portrait-Warrior-sm { background-image: url(../img/meta-snapshot/hero-portrait/Warrior-sm.png); }
 
 
 /* article */

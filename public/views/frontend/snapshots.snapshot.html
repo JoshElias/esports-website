@@ -1,140 +1,188 @@
-<div class="container darkbox">
+<div class="bg-override container-fluid">
     
-    <div class="col-lg-8">
-        sup
-    </div>
-    
-    <div class="col-lg-4 sideTiers">
-        <div class="sideTier" ng-repeat="tier in snapshot.tiers">
-            <div class="tier{{tier.tier}}">
-                {{tier.tier}}
-            </div>
+    <div class="container wrapper-none heading">
+        <div class="snapTitle">
+            <h1>THE META SNAPSHOT: #{{snapshot.snapNum}}</h1>
+            <h3>{{snapshot.title}}</h3>
         </div>
+        <img class="sideBorders img-responsive" src="../../img/meta-snapshot/warrior-top.jpg" />
     </div>
-    
-    <div class="tiers m-b-md clearfix">
-        <div ng-repeat="tier in snapshot.tiers" class="tier">
-            <a role="button" data-toggle="collapse" href="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
-                <div class="tier-heading">
-                    <h2>TIER {{tier.tier}}</h2>
+    <div class="container meta-container sideBorders">
+        <div class="m-t-md">
+            <div class="col-lg-8 leftSide">
+
+                <div class="content intro m-b-md">
+                    <div class="inner wrapper-md">
+                        <div class="clearfix">
+                            <h2>
+                                INTRODUCTION
+                            </h2>
+                            <hr class="hr pull-left m-b-md m-t-xs">
+                        </div>
+                        <p>{{snapshot.content.intro}}</p>
+                    </div>
                 </div>
-            </a>
-            
-            <div class="tier-body collapse" id="collapseTier{{tier.tier}}">
-                <div ng-repeat="deck in tier.decks | orderBy : 'rank.current'" class="tier-deck tier-deck-{{deck.deck.playerClass}}">
-                    <a role="button" data-toggle="collapse" href="#collapseDeck-{{deck.deck.slug}}" aria-expanded="false" aria-controls="collapseDeck-{{deck.deck.slug}}">
-                        <div class="tier-deck-heading"> 
-                            <h4>{{deck.deck.name}}</h4>
-                            <div class="deck-heading-right">
-                                <div class="deck-img-sm deck-portrait-{{deck.deck.playerClass}}-sm"></div>
-                                <a class="ablock" target="_blank" href="https://tempostorm.com/hearthstone/decks/{{deck.deck.slug}}"><button class="deck-button">VIEW DECK</button></a>
+
+                <div class="content thoughts">
+                    <div class="inner wrapper-md">
+                        <div class="clearfix">
+                            <h2>
+                                THOUGHTS AND OBSERVATIONS
+                            </h2>
+                            <hr class="hr pull-left m-b-md m-t-xs">
+                        </div>
+                        <p>{{snapshot.content.thoughts}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 rightSide clearfix">
+                <div class="sideTier" ng-repeat="tier in snapshot.tiers">
+                    <button ng-click="show[tier.tier] = !show[tier.tier]" class="btn-block sideTier" role="button" data-toggle="collapse" href="#collapseSideTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseSideTier{{tier.tier}}">
+                        <div class="sideTierHead">
+                            <div class="inner">
+                                <h3 class="pull-left m-b-none">Tier {{tier.tier}}</h3>
+                                
+                                <i class="fa" ng-class="{ 'fa-plus' : !show[tier.tier], 'fa-minus' : show[tier.tier] }"></i>
                             </div>
                         </div>
-                    </a>
-                        
-                    <div class="tier-deck-body collapse clearfix" id="collapseDeck-{{deck.deck.slug}}">
-                        <div class="tier-deck-body-inner clearfix">
-                            
-                            <div class="m-t-lg">
-                                <div class="col-lg-3">
-                                    <div class="deck-portrait deck-portrait-{{deck.deck.playerClass}}"></div>
-                                    <h3 class="m-b-lg">RANKING</h3>
-                                    <div class="deck-rank m-b-lg">
-                                        <div class="{{(deck.rank.current > 0) ? 'green-back' : 'red-back'}}">
-                                            <div>
-                                                CURRENT
-                                            </div>
-                                            {{deck.rank.current}} {{typefuck(deck.rank.current)}}
-                                        </div>
-                                        <div class="{{(deck.rank.last > 0) ? 'green-back' : 'red-back'}}">
-                                            <div>
-                                                LAST WEEK
-                                            </div>
-                                            {{deck.rank.last}}
-                                        </div>
-                                        <div class="{{(deck.rank.last - deck.rank.current) > 0 ? 'green-back' : 'red-back'}}">
-                                            <div>
-                                                CHANGE
-                                            </div>
-                                            {{deck.rank.last - deck.rank.current}}
-                                        </div>
-                                    </div>
-                                    <div class="deck-techs">
-                                        <h3 class="m-b-lg">TECH DECISION</h3>
-                                        <div class="tech" ng-repeat="tech in deck.tech">
-                                            <div class="tech-heading">
-                                                <span ng-if="tech.title">
-                                                    VERSUS {{tech.title}}
-                                                </span>
-                                                <span ng-if="!tech.title">
-                                                    GENERAL
-                                                </span>
-                                            </div>
-                                            <div class="tech-card" ng-repeat="card in tech.cards">
-                                                <div class="tech-card-body">
-                                                    <div class="pull-left toss" ng-if="!card.toss"><i class="fa fa-plus"></i></div>
-                                                    <div class="pull-left keep" ng-if="card.toss"><i class="fa fa-minus"></i></div>
-                                                    {{card.card.name}}
-                                                    <img class="pull-right" src="https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{card.card.photos.small}}">
+                    </button>
+                    <div class="sideTierBody collapse" id="collapseSideTier{{tier.tier}}">
+                        <div class="sideTierDeck deck-portrait-{{deck.deck.playerClass}}-sm" ng-repeat="deck in tier.decks">
+                            <a href="#{{deck.rank.current}}" ng-click="findDeck(tier.tier, deck.rank.current)">
+                                <div class="sideTierDeckRank pull-left clearfix">
+                                    <h4>{{deck.rank.current}}</h4>
+                                </div>
+                                <div class="sideTierDeckName pull-left clearfix">
+                                    <h4 class="ell">{{deck.deck.name}}</h4>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tiers m-b-md">
+                <div id="tier{{tier.tier}}" ng-repeat="tier in snapshot.tiers" class="tier clearfix">
+                    <button class="btn btn-block btn-tier-collapse" role="button" data-toggle="collapse" href="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
+                        <div class="tier-heading">
+                            <h2 class="pull-left">TIER {{tier.tier}}</h2>
+                        </div>
+                    </button>
+
+                    <div class="tier-body clearfix collapse" id="collapseTier{{tier.tier}}">
+                        <div id="deck{{deck.rank.current}}" ng-repeat="deck in tier.decks | orderBy : 'rank.current'" class="tier-deck tier-deck-{{deck.deck.playerClass}} clearfix">
+                            <button class="tier-deck-heading clearfix" role="button" data-toggle="collapse" href="#collapseDeck-{{deck.rank.current}}" aria-expanded="false" aria-controls="collapseDeck-{{deck.rank.current}}">
+                                <h4 class="pull-left">{{deck.deck.name}}</h4>
+                                <div class="deck-heading-right">
+                                    <div class="deck-img-sm deck-portrait-{{deck.deck.playerClass}}-sm"></div>
+                                    <a class="ablock" target="_blank" href="https://tempostorm.com/hearthstone/decks/{{deck.deck.slug}}"><div class="deck-button">VIEW DECK</div></a>
+                                </div>
+                            </button>
+                            <div class="tier-deck-body collapse clearfix" id="collapseDeck-{{deck.rank.current}}">
+                                <div class="tier-deck-body-inner clearfix">
+                                    <div class="m-t-lg">
+                                        <div class="col-lg-3">
+                                            <div class="deck-portrait deck-portrait-{{deck.deck.playerClass}}"></div>
+                                            <h3 class="m-b-lg">RANKING</h3>
+                                            <div class="deck-rank m-b-lg">
+                                                <div class="{{(deck.rank.current > 0) ? 'green-back' : 'red-back'}}">
+                                                    <div>
+                                                        CURRENT
+                                                    </div>
+                                                    {{deck.rank.current}}
+                                                </div>
+                                                <div class="{{(deck.rank.last > 0) ? 'green-back' : 'red-back'}}">
+                                                    <div>
+                                                        LAST WEEK
+                                                    </div>
+                                                    {{deck.rank.last}}
+                                                </div>
+                                                <div class="{{(deck.rank.last - deck.rank.current) > 0 ? 'green-back' : 'red-back'}}">
+                                                    <div>
+                                                        CHANGE
+                                                    </div>
+                                                    {{deck.rank.last - deck.rank.current}}
                                                 </div>
                                             </div>
+                                            <div class="deck-techs">
+                                                <h3 class="m-b-lg">TECH DECISION</h3>
+                                                <div class="tech" ng-repeat="tech in deck.tech">
+                                                    <div class="tech-heading">
+                                                        <span ng-if="tech.title">
+                                                            VERSUS {{tech.title}}
+                                                        </span>
+                                                        <span ng-if="!tech.title">
+                                                            GENERAL
+                                                        </span>
+                                                    </div>
+                                                    <div class="tech-card" ng-repeat="card in tech.cards">
+                                                        <div class="tech-card-body">
+                                                            <div class="pull-left toss" ng-if="!card.toss"><i class="fa fa-plus"></i></div>
+                                                            <div class="pull-left keep" ng-if="card.toss"><i class="fa fa-minus"></i></div>
+                                                            {{card.card.name}}
+                                                            <img class="pull-right" src="https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{card.card.photos.small}}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
                                         </div>
 
-                                    </div>
-                                </div>
+                                        <div class="col-lg-9 pull-right">
+                                            <div class="deck-content">
+                                                <h2>EXPLANATION</h2>
+                                                <p>{{deck.explanation}}</p>
 
-                                <div class="col-lg-9 pull-right">
-                                    <div class="deck-content">
-                                        <h2>EXPLANATION</h2>
-                                        <p>{{deck.explanation}}</p>
+                                                <hr class="m-b-lg">
 
-                                        <hr class="m-b-lg">
+                                                <h2>WEEKLY NOTES</h2>
+                                                <p>{{deck.weeklyNotes}}</p>
+                                            </div>
+                                            <hr class="m-b-lg">
 
-                                        <h2>WEEKLY NOTES</h2>
-                                        <p>{{deck.weeklyNotes}}</p>
-                                    </div>
-                                    <hr class="m-b-lg">
-                                    
-                                    <h2 class="m-b-lg">MATCH-UPS</h2>
-                                    
-                                    <div class="match-graph m-t-md m-b-md">
-                                        <svg class="graph-wrapper" height="100%" width="100%">
-                                            <text x="1.5%" y="0%" fill="white">100</text>
-                                            <text x="2.5%" y="10%" fill="white">90</text>
-                                            <text x="2.5%" y="20%" fill="white">80</text>
-                                            <text x="2.5%" y="30%" fill="white">70</text>
-                                            <text x="2.5%" y="40%" fill="white">60</text>
-                                            <text x="2.5%" y="50%" fill="white">50</text>
-                                            <text x="2.5%" y="60%" fill="white">40</text>
-                                            <text x="2.5%" y="70%" fill="white">30</text>
-                                            <text x="2.5%" y="80%" fill="white">20</text>
-                                            <text x="2.5%" y="90%" fill="white">10</text>
-                                            <text x="3.5%" y="100%" fill="white">0</text>
-                                            
-                                            
-                                            <svg class="pull-right" height="100%" width="95%" x="5%">
-                                                <line x1="0" y1="0%"   x2="100%"  y2="0%" />
-                                                <line x1="0" y1="10%"  x2="100%"  y2="10%" />
-                                                <line x1="0" y1="20%"  x2="100%"  y2="20%" />
-                                                <line x1="0" y1="30%"  x2="100%"  y2="30%" />
-                                                <line x1="0" y1="40%"  x2="100%"  y2="40%" />
-                                                <line x1="0" y1="50%"  x2="100%"  y2="50%" />
-                                                <line x1="0" y1="60%"  x2="100%"  y2="60%" />
-                                                <line x1="0" y1="70%"  x2="100%"  y2="70%" />
-                                                <line x1="0" y1="80%"  x2="100%"  y2="80%" />
-                                                <line x1="0" y1="90%"  x2="100%"  y2="90%" />
-                                                <line x1="0" y1="100%" x2="100%"  y2="100%" />
-                                                <line x1="1.1%" y1="100%" x2="1.1%" y2="0" />
-                                                
-                                                <svg height="100%" width="98%" x="1.5%">
-                                                    <rect ng-repeat="match in filtered = (getMatches(deck.deck._id) | orderBy: 'playerClass')" class="bar bar-{{match.playerClass}}" ng-attr-width="{{(765/filtered.length)-10}}" ng-attr-height="{{100-match.chance}}%" ng-attr-x="{{(765/filtered.length)*$index}}" ng-attr-y="{{match.chance}}%" ng-style=""></rect>
+                                            <h2 class="m-b-lg">MATCH-UPS</h2>
+
+                                            <div class="match-graph m-t-md m-b-md">
+                                                <svg class="graph-wrapper" height="100%" width="100%">
+                                                    <text x="1.5%" y="0%" fill="white">100</text>
+                                                    <text x="2.5%" y="10%" fill="white">90</text>
+                                                    <text x="2.5%" y="20%" fill="white">80</text>
+                                                    <text x="2.5%" y="30%" fill="white">70</text>
+                                                    <text x="2.5%" y="40%" fill="white">60</text>
+                                                    <text x="2.5%" y="50%" fill="white">50</text>
+                                                    <text x="2.5%" y="60%" fill="white">40</text>
+                                                    <text x="2.5%" y="70%" fill="white">30</text>
+                                                    <text x="2.5%" y="80%" fill="white">20</text>
+                                                    <text x="2.5%" y="90%" fill="white">10</text>
+                                                    <text x="3.5%" y="100%" fill="white">0</text>
+
+
+                                                    <svg class="pull-right" height="100%" width="95%" x="5%">
+                                                        <line x1="0" y1="0%"   x2="100%"  y2="0%" />
+                                                        <line x1="0" y1="10%"  x2="100%"  y2="10%" />
+                                                        <line x1="0" y1="20%"  x2="100%"  y2="20%" />
+                                                        <line x1="0" y1="30%"  x2="100%"  y2="30%" />
+                                                        <line x1="0" y1="40%"  x2="100%"  y2="40%" />
+                                                        <line x1="0" y1="50%"  x2="100%"  y2="50%" />
+                                                        <line x1="0" y1="60%"  x2="100%"  y2="60%" />
+                                                        <line x1="0" y1="70%"  x2="100%"  y2="70%" />
+                                                        <line x1="0" y1="80%"  x2="100%"  y2="80%" />
+                                                        <line x1="0" y1="90%"  x2="100%"  y2="90%" />
+                                                        <line x1="0" y1="100%" x2="100%"  y2="100%" />
+                                                        <line x1="1.1%" y1="100%" x2="1.1%" y2="0" />
+
+                                                        <svg height="100%" width="98%" x="1.5%">
+                                                            <rect ng-repeat="match in filtered = (getMatches(deck.deck._id) | orderBy: 'playerClass')" class="bar bar-{{match.playerClass}}" ng-attr-width="{{(100/filtered.length)-.8}}%" ng-attr-height="{{100-match.chance}}%" ng-attr-x="{{(100/filtered.length)*$index}}%" ng-attr-y="{{match.chance}}%" ng-style=""></rect>
+                                                        </svg>
+
+                                                    </svg>
+
+
+
                                                 </svg>
-                                                
-                                            </svg>
-                                            
-                                            
-                                            
-                                        </svg>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -142,6 +190,8 @@
                     </div>
                 </div>
             </div>
+
         </div>
+
     </div>
 </div>

@@ -3170,6 +3170,9 @@ module.exports = {
             console.log(_id);
                         
             function convertObjs (callback) {
+                for (var i =0; i < snapshot.authors.length; i++) {
+                    snapshot.authors[i] = snapshot.authors[i]._id;
+                }
                 for (var i = 0; i < snapshot.matches.length; i++) {
                     snapshot.matches[i].for = snapshot.matches[i].for._id;
                     snapshot.matches[i].against = snapshot.matches[i].against._id;
@@ -3231,6 +3234,7 @@ module.exports = {
             }
             
             convertObjs(function () {
+                console.log(snapshot);
                 editSnapshot(function () {
                     return res.json({success: true});
                 });
@@ -3240,8 +3244,21 @@ module.exports = {
     },
     snapshotDelete: function (Schemas) {
         return function (req, res, next) {
-            return res.json({success: true});
-        }
+            var _id = req.body._id;
+            Schemas.Snapshot.findOne({ _id: _id }).remove().exec(function (err) {
+                if (err) {
+                    console.log(err);
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+                return res.json({ success: true });
+            });
+        };
     },
     snapshotLatest: function (Schemas) {
         return function (req, res, next) {

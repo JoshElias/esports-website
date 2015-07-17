@@ -1735,9 +1735,9 @@ angular.module('app.controllers', ['ngCookies'])
                         callback: function () {
                             AdminSnapshotService.deleteSnapshot(snapshot._id).then(function (data) {
                                 if (data.success) {
-                                    var index = $scope.snapshot.indexOf(snapshot);
+                                    var index = $scope.snapshots.indexOf(snapshot);
                                     if (index !== -1) {
-                                        $scope.snapshot.splice(index, 1);
+                                        $scope.snapshots.splice(index, 1);
                                     }
                                     $scope.success = {
                                         show: true,
@@ -1766,9 +1766,6 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $compile, $timeout, $state, data, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
         
         
-        console.log(data.snapshot);
-        
-        
         var deckBootBox = undefined,
             authorBootBox = undefined,
             cardBootBox = undefined;
@@ -1776,7 +1773,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.snapshot = data.snapshot;
         $scope.search = "";
         $scope.decks = [];
-        $scope.matches = [];
+        $scope.matches = data.snapshot.matches;
         
         /* GET METHODS */
             function getDecks (page, num, search, callback) {
@@ -1815,14 +1812,14 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 switch (type) {
                     case 'author' : //this is to display data in the bootbox for authors
-                        getProviders(1, 10, $scope.search, function (data) {
+                        getProviders(function (data) {
                             $scope.authorData = data.users;
                             authorBox(data, type);
                         });
                     break;
                         
                     case 'deck' : //this is to display data in the bootbox for decks
-                        getDecks(1, 10, $scope.search, function (data) {
+                        getDecks(function (data) {
                             $scope.deckData = data.decks;
                             $scope.tierAbsolute = (tier-1);
                             deckBox(data, type);
@@ -1876,6 +1873,14 @@ angular.module('app.controllers', ['ngCookies'])
         
             $scope.closeBox = function () {
                 bootbox.hideAll();
+                $scope.search = "";
+            }
+            
+            $scope.closeDeckBox = function () {
+                $scope.updateMatchesLater(function () {
+                    bootbox.hideAll();
+                    $scope.search = "";
+                });
             }
         /* BOOTBOX METHODS */
         
@@ -1948,6 +1953,8 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     }
                 }
+                $scope.updateMatchesLater();
+                $scope.deckRanks
             }
             ///////////////////////////////////////////////////////////////////////////////////
             $scope.deckRanks = function () {
@@ -1967,15 +1974,25 @@ angular.module('app.controllers', ['ngCookies'])
                 match.againstChance = (100 - match.forChance);
             }
             
-            function updateMatches () {
+            $scope.updateMatchesLater = function (callback) {
+                $scope.matching = true;
+                $timeout(function() {
+                    doUpdateMatches(function(matches) {
+                        $scope.matching = false;
+                        $scope.snapshot.matches = $scope.matches = matches;
+                        callback ? callback() : '';
+                    });
+                }, 50);
+            }            
+            
+            function doUpdateMatches (callback) {
                 var tiers = $scope.snapshot.tiers,
-                    tierLength = $scope.snapshot.tiers.length,
+                    tierLength = tiers.length,
                     maxTierLength = (tierLength > 2) ? 2 : tierLength,
                     defaultMatch = angular.copy(defaultDeckMatch),
                     matches = [];
                 
-                
-            
+                // build tiers
                 for (var i = 0; i < maxTierLength; i++) {
                     for (var j = 0; j < tiers[i].decks.length; j++) {
                         for (var k = j; k < tiers[i].decks.length; k++) {
@@ -1988,13 +2005,31 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     }
                 }
-//                $scope.matches = matches;
-                $scope.snapshot.matches = $scope.matches = matches;
+                
+                // cross tiers
+                if (maxTierLength == 2) {
+                    for (var j = 0; j < tiers[0].decks.length; j++) {
+                        for (var k = 0; k < tiers[1].decks.length; k++) {
+                            matches.push({
+                                'for': tiers[0].decks[j].deck,
+                                'against': tiers[1].decks[k].deck,
+                                'forChance': (tiers[0].decks[j].deck._id === tiers[1].decks[k].deck._id) ? 50 : 0,
+                                'againstChance': (tiers[0].decks[j].deck._id === tiers[1].decks[k].deck._id) ? 50 : 0
+                            });
+                        }
+                    }
+                }
+                
+                if (callback != undefined) {
+                    callback(matches);
+                }
             }
             
             $scope.getMatches = function (deckID) {
                 var matches = $scope.matches,
                     out = [];
+                
+                console.log(deckID);
                 
                 for (var i = 0; i < matches.length; i++) {
                     if (deckID == matches[i].for._id || deckID == matches[i].against._id) {
@@ -2002,6 +2037,14 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
                 return out;
+            }
+            
+            function trimDeck (deck) {                
+                deck.deck = {
+                    _id: deck.deck._id,
+                    name: deck.deck.name
+                }
+                return deck;
             }
 
             $scope.addDeck = function (sel) {
@@ -2013,11 +2056,10 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 if (!$scope.isDeck(sel)) {
                     tierDeck.deck = sel;
-                    decks.push(tierDeck);
+                    decks.push(trimDeck(tierDeck));
                 } else {
                     $scope.removeDeck(sel);
                 }
-                updateMatches();
                 $scope.deckRanks();
             }
             
@@ -2031,6 +2073,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.removeDeck = function (d) {
+                console.log('removing', d);
                 for (var k = 0; k < $scope.snapshot.tiers[$scope.tierAbsolute].decks.length; k++) {
                     if (d._id == $scope.snapshot.tiers[$scope.tierAbsolute].decks[k].deck._id) {
                         $scope.snapshot.tiers[$scope.tierAbsolute].decks.splice(k, 1);
@@ -2041,15 +2084,21 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.snapshot.matches.splice(j,1);
                     }
                 }
+                $scope.deckRanks();
             }
             
-                        
-            $scope.searchDecks = function () {
-                console.log('sup fag');
+            $scope.removeDeckButton = function (d) {
+                $scope.removeDeck(d);
+                $scope.updateMatchesLater();
+            }
+            
+            $scope.searchDecks = function (s) {
+                $scope.search = s;
                 getDecks(function (data) {
-                    $scope.boxData = data.decks;
+                    $scope.deckData = data.decks;
                 });
             }
+            
             //////////////////////////////////////////////////////////////////////
             
             $scope.addCard = function (c, t) {
@@ -2067,9 +2116,7 @@ angular.module('app.controllers', ['ngCookies'])
                             if (tech.orderNum == $scope.snapshot.tiers[i].decks[k].tech[j].orderNum) {
                                 if (!$scope.isCard(c)) {
                                     $scope.snapshot.tiers[i].decks[k].tech[j].cards.push(techCard);
-                                } else {
-                                    console.log('cant do that fag');
-                                }
+                                } 
                             }
                         }
                     }
@@ -2293,6 +2340,11 @@ angular.module('app.controllers', ['ngCookies'])
             }
         
             $scope.closeBox = function () {
+                bootbox.hideAll();
+                $scope.search = "";
+            }
+            
+            $scope.closeDeckBox = function () {
                 $scope.updateMatchesLater(function () {
                     bootbox.hideAll();
                     $scope.search = "";
@@ -4428,9 +4480,10 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, SnapshotService, data) {
         
         $scope.snapshot = data.snapshot;
+        $scope.show = [];
         
-        $scope.log = function (t) {
-            console.log(t);
+        for (var i = 0; i < data.snapshot.tiers.length; i++) {
+            $scope.show[i+1] = false;
         }
         
         var charts = [];
@@ -4443,20 +4496,33 @@ angular.module('app.controllers', ['ngCookies'])
                 for (var k = 0; k < data.snapshot.tiers[j].decks.length; k++) {
                     var matches = [];
                     for (var i = 0; i < data.snapshot.matches.length; i++) {
-                        var newObj = {
-                            against: (data.snapshot.tiers[j].decks[k]._id == data.snapshot.matches[i].for._id) ? data.snapshot.matches[i].for._id : data.snapshot.matches[i].against._id,
-                            chance: (data.snapshot.tiers[j].decks[k]._id == data.snapshot.matches[i].for._id) ? data.snapshot.matches[i].forChance : data.snapshot.matches[i].againstChance,
-                            playerClass: (data.snapshot.tiers[j].decks[k]._id == data.snapshot.matches[i].for._id) ? data.snapshot.matches[i].for.playerClass : data.snapshot.matches[i].against.playerClass
-                        };
-                        matches.push(newObj);
+                        if(data.snapshot.tiers[j].decks[k].deck._id == data.snapshot.matches[i].for._id || data.snapshot.tiers[j].decks[k].deck._id == data.snapshot.matches[i].against._id) {
+                            var newObj = {
+                                against: (data.snapshot.tiers[j].decks[k].deck._id == data.snapshot.matches[i].against._id) ? data.snapshot.matches[i].for._id : data.snapshot.matches[i].against._id,
+                                chance: (data.snapshot.tiers[j].decks[k].deck._id == data.snapshot.matches[i].against._id) ? data.snapshot.matches[i].forChance : data.snapshot.matches[i].againstChance,
+                                playerClass: (data.snapshot.tiers[j].decks[k].deck._id == data.snapshot.matches[i].against._id) ? data.snapshot.matches[i].for.playerClass : data.snapshot.matches[i].against.playerClass
+                            };
+                            matches.push(newObj);
+                        }
                     }
-                    console.log(matches);
-                    charts[data.snapshot.tiers[j].decks[k]._id] = matches;
+                    charts[data.snapshot.tiers[j].decks[k].deck._id] = matches;
                 }
             }
         }
         
-        buildCharts();
+        $scope.scrollToDeck = function (deck) {
+            $('html, body').animate({
+                scrollTop: (deck.offset().top - 100)
+            }, 400);
+        }
+        
+        $scope.findDeck = function (tier, deck) {
+            var t = $('#collapseTier' + tier),
+                d = $('#collapseDeck-' + deck);
+            t.collapse('show');   
+            d.collapse('show');
+            $scope.scrollToDeck(d);  
+        }
         
         $scope.getMatches = function (id) {
             return charts[id];
@@ -4469,6 +4535,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getMatchClass = function (match, id) {
             return (match.for._id == id) ? match.against.playerClass : match.for.playerClass;
         }
+        
+        buildCharts();
     }
 ])
 .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',
