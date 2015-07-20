@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-ng-app="app" ng-controller="AppCtrl">
 <head>
-    <meta property="" content=""/>
+    <meta name="google-site-verification" content="2LQpZjJv45yhwG9Fgy2m9ufoMlMov6aIKebfUxGmecI" />
     <meta charset="utf-8" />
     <base href="/" />
     <title ng-bind="metaservice.metaTitle()">TempoStorm</title>

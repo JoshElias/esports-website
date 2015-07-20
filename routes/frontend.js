@@ -1518,6 +1518,7 @@ module.exports = {
             
             function getArticles (callback) {
                 Schemas.Article.find({ active: true })
+                .select("-content -votes")
                 .where(where)
                 .populate({
                     path: 'author',
@@ -1545,7 +1546,7 @@ module.exports = {
             var slug = req.body.slug;
             
             function getArticle (callback) {
-                Schemas.Article.findOneAndUpdate({ 'slug.url': slug }, { $inc: { views: 1 } })
+                Schemas.Article.findOne({ 'slug.url': slug })
                 .lean()
                 .populate([{
                         path: 'author',
@@ -1926,7 +1927,7 @@ module.exports = {
     deck: function (Schemas) {
         return function (req, res, next) {
             var slug = req.body.slug;
-            Schemas.Deck.findOneAndUpdate({ slug: slug }, { $inc: { views: 1 } })
+            Schemas.Deck.findOne({ slug: slug })
             .lean()
             .populate([{
                     path: 'author',
@@ -2202,7 +2203,7 @@ module.exports = {
             }
             
             function getPost (callback) {
-                Schemas.ForumPost.findOneAndUpdate({ 'slug.url': postSlug, thread: thread._id }, { $inc: { views: 1 } })
+                Schemas.ForumPost.findOne({ 'slug.url': postSlug, thread: thread._id })
                 .populate([
                     {
                         path: 'author',

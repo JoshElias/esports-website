@@ -703,6 +703,7 @@ module.exports = {
         return function (req, res, next) {
             function getHeroes (callback) {
                 Schemas.Hero.find({ active: true })
+                .select("-abilities")
                 .sort({ name: 1 })
                 .exec(function (err, results) {
                     if (err || !results) { return res.json({ success: false }); }
