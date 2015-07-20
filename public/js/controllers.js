@@ -984,7 +984,8 @@ angular.module('app.controllers', ['ngCookies'])
             photos: {
                 large: '',
                 medium: '',
-                small: ''
+                small: '',
+                square: ''
             },
             deck: undefined,
             guide: undefined,
@@ -1216,7 +1217,8 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.article.photos = {
                         large: data.large,
                         medium: data.medium,
-                        small: data.small
+                        small: data.small,
+                        square: data.square
                     };
                     $scope.cardImg = $scope.app.cdn + data.path + data.small;
                     box.modal('hide');
@@ -1472,7 +1474,8 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.article.photos = {
                         large: data.large,
                         medium: data.medium,
-                        small: data.small
+                        small: data.small,
+                        square: data.square
                     };
                     $scope.cardImg = $scope.app.cdn + data.path + data.small;
                     box.modal('hide');
@@ -3583,7 +3586,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
         
-        var ogImg = $scope.app.cdn + 'articles/' + $scope.article.photos.large;
+        var ogImg = ($scope.article.photos.square != undefined) ? $scope.app.cdn + 'articles/' + $scope.article.photos.square : $scope.app.cdn + 'articles/' + $scope.article.photos.large;
         $scope.metaservice.setOg('https://tempostorm.com/articles/' + data.article.slug.url, $scope.article.title, $scope.article.description, 'article', ogImg);
         
         $scope.getContent = function () {

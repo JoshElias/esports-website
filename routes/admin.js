@@ -727,7 +727,8 @@ module.exports = {
                     photos: {
                         large: req.body.photos.large,
                         medium: req.body.photos.medium,
-                        small: req.body.photos.small
+                        small: req.body.photos.small,
+                        square: req.body.photos.square
                     },
                     deck: (req.body.deck ? req.body.deck._id : undefined),
                     related: relatedID || undefined,
@@ -835,7 +836,8 @@ module.exports = {
                     article.photos = {
                         large: req.body.photos.large,
                         medium: req.body.photos.medium,
-                        small: req.body.photos.small
+                        small: req.body.photos.small,
+                        square: req.body.photos.square
                     };
                     article.deck = (req.body.deck ? req.body.deck._id : undefined);
                     article.related = relatedID || undefined;
@@ -2289,6 +2291,7 @@ module.exports = {
                     large = Util.slugify(name) + '.large' + ext,
                     medium = Util.slugify(name) + '.medium' + ext,
                     small = Util.slugify(name) + '.small' + ext,
+                    square = Util.slugify(name) + '.square' + ext,
                     path = __dirname+'/../photos/articles/';
                     copyFile(function () {
                         var files = [];
@@ -2304,12 +2307,17 @@ module.exports = {
                             path: path + small,
                             name: small
                         });
+                        files.push({
+                            path: path + square,
+                            name: square
+                        });
                         amazon.upload(files, 'articles/', function () {
                             return res.json({
                                 success: true,
                                 large: large,
                                 medium: medium,
                                 small: small,
+                                square: square,
                                 path: './photos/articles/'
                             });
                         });
@@ -2331,15 +2339,21 @@ module.exports = {
                                     // resize
                                     gm(path + large).quality(100).gravity('Center').crop(1920, 480, 0, 0).write(path + large, function(err){
                                         if (err) return next(err);
-                                        gm(path + large).quality(100).resize(800, 200, "!").write(path + medium, function(err){
+                                        gm(path + large).quality(100).resize(null, 200).write(path + square, function(err) {
                                             if (err) return next(err);
-                                            fs.chmod(path + medium, 0777, function(err){
+                                            gm(path + square).quality(100).gravity('Center').crop(200, 200, 0, 0).write(path + square, function(err) {
                                                 if (err) return next(err);
-                                                gm(path + large).quality(100).resize(400, 100, "!").write(path + small, function(err){
+                                                gm(path + large).quality(100).resize(800, 200, "!").write(path + medium, function(err){
                                                     if (err) return next(err);
-                                                    fs.chmod(path + small, 0777, function(err){
+                                                    fs.chmod(path + medium, 0777, function(err){
                                                         if (err) return next(err);
-                                                        return callback();
+                                                        gm(path + large).quality(100).resize(400, 100, "!").write(path + small, function(err){
+                                                            if (err) return next(err);
+                                                            fs.chmod(path + small, 0777, function(err){
+                                                                if (err) return next(err);
+                                                                return callback();
+                                                            });
+                                                        });
                                                     });
                                                 });
                                             });
