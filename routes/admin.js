@@ -3118,6 +3118,7 @@ module.exports = {
             }
             
             function addNewSnapshot(callback) {
+                console.log(snapshot.active);
                 var newSnapshot = new Schemas.Snapshot({
                     
                         snapNum: total + 18,

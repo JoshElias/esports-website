@@ -1768,7 +1768,37 @@ angular.module('app.controllers', ['ngCookies'])
         
         var deckBootBox = undefined,
             authorBootBox = undefined,
-            cardBootBox = undefined;
+            cardBootBox = undefined,
+            defaultTier = {
+                tier : 1,
+                decks : []
+            },
+            defaultTierDeck = {
+                explanation : "",
+                weeklyNotes : "",
+                deck : undefined,
+                rank : {
+                    current : 1,
+                    last : 1
+                },
+                tech : []
+            },
+            defaultDeckMatch = {
+                for : undefined,
+                against : undefined,
+                forChance : 0,
+                againstChance : 0
+            },
+            defaultDeckTech = {
+                title : "",
+                cards : [],
+                orderNum : 1
+            },
+            defaultTechCards = {
+                card : undefined,
+                toss : false,
+                orderNum : 1
+            };
 
         $scope.snapshot = data.snapshot;
         $scope.search = "";
@@ -1812,14 +1842,14 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 switch (type) {
                     case 'author' : //this is to display data in the bootbox for authors
-                        getProviders(function (data) {
+                        getProviders(1, 10, $scope.search, function (data) {
                             $scope.authorData = data.users;
                             authorBox(data, type);
                         });
                     break;
                         
                     case 'deck' : //this is to display data in the bootbox for decks
-                        getDecks(function (data) {
+                        getDecks(1, 10, $scope.search, function (data) {
                             $scope.deckData = data.decks;
                             $scope.tierAbsolute = (tier-1);
                             deckBox(data, type);
@@ -1978,18 +2008,30 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.matching = true;
                 $timeout(function() {
                     doUpdateMatches(function(matches) {
+                        populateMatches(matches);
                         $scope.matching = false;
                         $scope.snapshot.matches = $scope.matches = matches;
                         callback ? callback() : '';
                     });
                 }, 50);
-            }            
+            }      
+            
+            function populateMatches (matches) {
+                console.log($scope.matches, matches);
+                
+                for (var i = 0; i < $scope.matches.length; i++) {
+                    matches[i].forChance = $scope.snapshot.matches[i].forChance;
+//                    $scope.changeAgainstChance(matches[i]);
+//                    matches[i].againstChance = $scope.matches[i].againstChance;
+                    console.log(i, matches[i]);
+                }
+//                console.log(matches);
+            }
             
             function doUpdateMatches (callback) {
                 var tiers = $scope.snapshot.tiers,
                     tierLength = tiers.length,
                     maxTierLength = (tierLength > 2) ? 2 : tierLength,
-                    defaultMatch = angular.copy(defaultDeckMatch),
                     matches = [];
                 
                 // build tiers
@@ -2028,8 +2070,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getMatches = function (deckID) {
                 var matches = $scope.matches,
                     out = [];
-                
-                console.log(deckID);
                 
                 for (var i = 0; i < matches.length; i++) {
                     if (deckID == matches[i].for._id || deckID == matches[i].against._id) {
