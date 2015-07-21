@@ -75,7 +75,7 @@
                         <ul class="list-group m-b-none">
                             <li class="list-group-item" ng-if="t.decks == 0">There are no decks selected yet!</li>
                             <li class="list-group-item" ng-repeat="d in t.decks" ng-if="t.decks.length != 0">
-                                <span class="badge pull-left">{{d.rank.current}}</span>&nbsp;{{d.deck.name}}<span class="pull-right"><a class="m-r-sm" role="button" data-toggle="collapse" href="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}" ng-click="editDeck()"><i class="fa fa-edit"></i></a><a href="#" ng-click="removeDeckButton(d.deck)"><i class="fa fa-close"></i></a></span> <!-- DO ANGULAR -->
+                                <span class="badge pull-left">{{d.rank.current}}</span>&nbsp;{{d.deck.name}}<span class="pull-right"><a class="m-r-sm" role="button" data-toggle="collapse" href="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}" ng-click="editDeck()"><i class="fa fa-edit"></i></a><a href="#" ng-click="removeDeck(d.deck)"><i class="fa fa-close"></i></a></span> <!-- DO ANGULAR -->
                                 <div class="collapse wrapper-md" id="deckrank{{d.rank.current}}">
                                     <div class="form-group">
                                         <div class="clearfix m-b-md">
@@ -187,7 +187,6 @@
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
             <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="addSnapshot()">Add Meta Snapshot</button>
-            <button ng-click="showthisshit()">Show this sh it</button>
         </div>
     </div>
     </form>

@@ -12,7 +12,6 @@
             </div>
             <div class="collapse navbar-collapse" id="MegaNavbar">
                 <ul class="nav navbar-nav navbar-left">
-                    <li ng-class="{active:$state.includes('app.snapshots')}"><a ui-sref="app.snapshots.list">WE'RE LOOKIN' AT THE MUTHAFUKKIN SNAPSHOT</a></li>
                     <li ng-class="{active:$state.includes('app.articles')}"><a ui-sref="app.articles.list">Articles</a></li>
                     <li class="dropdown-grid" ng-class="{active:$state.includes('app.hots') || $state.includes('app.hs')}">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Games<span class="caret"></span></a>
@@ -22,6 +21,7 @@
                                     <ul class="col-xs-12 col-sm-6">
                                         <a class="gameHeadLink" ui-sref="app.hs.home" ng-class="{active:$state.includes('app.hs.home')}" class="dropdown-header">Hearthstone</a>
                                         <li>
+                                            <a ui-sref="app.snapshots.list" ng-class="{active:$state.includes('app.snapshots')}">Meta Snapshot</a>
                                             <a ui-sref="app.hs.decks.list" ng-class="{active:$state.includes('app.hs.decks')}">Decks</a>
                                             <a ui-sref="app.hs.deckBuilder.class" class="hidden-xs" ng-class="{active:$state.includes('app.hs.deckBuilder')}">Deck Builder</a>
                                         </li>

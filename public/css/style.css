@@ -557,6 +557,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-image: url(../img/meta-snapshot/meta-bg.jpg);
     background-color: #000000;
     background-repeat: no-repeat;
+    background-size: 100%, auto;
 }
 
 .heading { position:relative; }
@@ -571,7 +572,9 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .meta-container { background: rgba(0,0,0,.8); }
 
 .rightSide,
-.leftSide { height: 800px; color: #d7effa; }
+.leftSide { height: auto; color: #d7effa; }
+
+.leftSide { padding-left: 0; }
 
 .leftSide .content {
     background: -webkit-linear-gradient(bottom, rgba(31,38,80,.9), rgba(32,54,95,.9)); /* For Safari 5.1 to 6.0 */
@@ -582,11 +585,13 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .leftSide .content h2 { color: white; font-weight: bold; letter-spacing: 4px; font-size: 24px; }
 .leftSide .content .hr { border-top: 1px solid rgba(255,255,255,.5); border-bottom: 2px solid rgba(0,0,0,.4); background: none; width: 225px; }
-.leftSide .content .inner { background: url(../img/meta-snapshot/meta-cloud-overlay.png); border: 1px solid rgba(255,255,255,.4) }
+.leftSide .content .inner { background: url(../img/meta-snapshot/meta-cloud-overlay.png); border: 1px solid rgba(255,255,255,.2) }
 .leftSide .content p { white-space: pre-wrap; }
 
 
-.rightSide .sideTier button { border: none; padding: 0px; margin-top: 0px; }
+.rightSide { padding-right: 0px; padding-left:0px; border: 1px solid rgba(255,255,255,.2) }
+
+.rightSide .sideTier button { border: none; padding: 0px; margin-top: 0px; outline: none; }
 
 .rightSide .sideTier .sideTierHead { 
     height: 65px; 
@@ -597,7 +602,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
     background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
 }
-.rightSide .sideTier .sideTierHead .inner { position: relative; height: 65px; border-right: 1px solid rgba(255,255,255,.2); border-bottom: 1px solid rgba(255,255,255,.2); border-left: 1px solid black; border-top: 1px solid black; }
+.rightSide .sideTier .sideTierHead .inner { position: relative; height: 65px; border-bottom: 1px solid rgba(255,255,255,.2);  }
 .rightSide .sideTier .sideTierHead .inner i { line-height: 65px; position: absolute; right: 20px; }
 .rightSide .sideTier .sideTierHead .inner h3 { padding:18px; }
 
@@ -628,14 +633,16 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     color: #FEFEFE;
 }
 
-.tier .btn-tier-collapse { padding: 0px; border: 0; border-radius: 0px }
+.tier .btn-tier-collapse { padding: 0px; border: 0; border-radius: 0px; outline: none; }
+.tier .btn-tier-collapse:active { outline: none; }
 .tier .tier-heading { 
     background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
     background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
     border: 1px #19171A solid; 
-    height: 50px
+    height: 50px;
+    outline: none;
 }
 .tier .tier-heading h2 { color: #FEFEFE; margin: auto 0px auto 20px; font-weight: bolder; letter-spacing:7px; line-height:48px }
 
@@ -646,7 +653,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-body .tier-deck h4 { margin: auto 0px auto 30px; line-height: 47px; font-weight: bold; color: #F0EFEB }
 
 
-.tier-body .tier-deck-heading { height:50px; border: rgba(0, 0, 0, .5) solid 1px; position: relative; width:100%; }
+.tier-body .tier-deck-heading { height:50px; border: rgba(0, 0, 0, .5) solid 1px; position: relative; width:100%; outline: none; }
 .tier-body .tier-deck-heading .deck-heading-right { position: absolute; right: 0; top: 0; margin: -1px -1px 0px 0px; width: auto; }
 .tier-body .tier-deck-heading .deck-heading-right .ablock { margin: 12px 25px 0px 0px; width: auto; display:inline-block; }
 .tier-body .tier-deck-heading .deck-heading-right .deck-button { display: block;  background: rgba(0, 0, 0, .25); border: 1px rgba(255, 255, 255, .7) solid; color: rgba(255, 255, 255, 1); padding: 2px 25px;  }
@@ -663,7 +670,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .tier-body .tier-deck-heading .deck-button {}
 
-.tier-body .tier-deck .tier-deck-body { max-height: 1219px; border: 1px black solid; -webkit-transition-duration: .2s; transition-duration: .2s }
+.tier-body .tier-deck .tier-deck-body { max-height: 1219px; margin-top: -5px; border: 1px black solid; -webkit-transition-duration: .2s; transition-duration: .2s }
 .tier-body .tier-deck .tier-deck-body .deck-rank { height: 88px; width: 252px }
 .tier-body .tier-deck .tier-deck-body .deck-rank div { float: left; height: 84px; width: 84px; text-align: center; border: 1px black solid; font-size: 32px; line-height: 55px; color: white; font-weight: bold; }
 .tier-body .tier-deck .tier-deck-body .deck-rank div:nth-child(2) { border-left: none; border-right: none }
@@ -674,7 +681,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 /* TECH */
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech {}
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-heading { background: rgba(128, 128, 128, .5); padding: 4px 0px 4px 10px; color: #FEFEFE; border: 1px solid black; border-top: 0px; height: 30px }
-.tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body { height:27px; border: 1px solid black; border-top: 0px; background: rgb(37, 37, 37); color: #FEFEFE; line-height: 25px; text-shadow: 0px 0px 1px black; }
+.tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body { height:27px; border: 1px solid black; border-top: 0px; background: rgb(37, 37, 37); color: #FEFEFE; line-height: 25px; text-shadow: 0px 0px 1px black; background-repeat: no-repeat; background-position: right }
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .toss, 
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .keep { width: 27px; height: 27px; text-align: center; border-bottom: 1px solid black; border-right: 1px solid black; margin-right: 5px; }
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .toss { background: rgb(17, 153, 71) }

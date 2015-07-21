@@ -9,59 +9,63 @@
     </div>
     <div class="container meta-container sideBorders">
         <div class="m-t-md">
-            <div class="col-lg-8 leftSide">
-
-                <div class="content intro m-b-md">
-                    <div class="inner wrapper-md">
-                        <div class="clearfix">
-                            <h2>
-                                INTRODUCTION
-                            </h2>
-                            <hr class="hr pull-left m-b-md m-t-xs">
+            
+            <div class="m-b-md clearfix">
+                <div class="col-lg-8 leftSide">
+                    <div class="content intro m-b-md">
+                        <div class="inner wrapper-md">
+                            <div class="clearfix">
+                                <h2>
+                                    INTRODUCTION
+                                </h2>
+                                <hr class="hr pull-left m-b-md m-t-xs">
+                            </div>
+                            <p>{{snapshot.content.intro}}</p>
                         </div>
-                        <p>{{snapshot.content.intro}}</p>
+                    </div>
+
+                    <div class="content thoughts">
+                        <div class="inner wrapper-md">
+                            <div class="clearfix">
+                                <h2>
+                                    THOUGHTS AND OBSERVATIONS
+                                </h2>
+                                <hr class="hr pull-left m-b-md m-t-xs">
+                            </div>
+                            <p>{{snapshot.content.thoughts}}</p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="content thoughts">
-                    <div class="inner wrapper-md">
-                        <div class="clearfix">
-                            <h2>
-                                THOUGHTS AND OBSERVATIONS
-                            </h2>
-                            <hr class="hr pull-left m-b-md m-t-xs">
-                        </div>
-                        <p>{{snapshot.content.thoughts}}</p>
-                    </div>
-                </div>
-            </div>
+                <div class="col-lg-4 rightSide clearfix">
+                    <div class="sideTier" ng-repeat="tier in snapshot.tiers">
+                        <button ng-click="show[tier.tier] = !show[tier.tier]" class="btn-block sideTier" role="button" data-toggle="collapse" href="#collapseSideTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseSideTier{{tier.tier}}">
+                            <div class="sideTierHead">
+                                <div class="inner">
+                                    <h3 class="pull-left m-b-none">Tier {{tier.tier}}</h3>
 
-            <div class="col-lg-4 rightSide clearfix">
-                <div class="sideTier" ng-repeat="tier in snapshot.tiers">
-                    <button ng-click="show[tier.tier] = !show[tier.tier]" class="btn-block sideTier" role="button" data-toggle="collapse" href="#collapseSideTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseSideTier{{tier.tier}}">
-                        <div class="sideTierHead">
-                            <div class="inner">
-                                <h3 class="pull-left m-b-none">Tier {{tier.tier}}</h3>
-                                
-                                <i class="fa" ng-class="{ 'fa-plus' : !show[tier.tier], 'fa-minus' : show[tier.tier] }"></i>
+                                    <i class="fa" ng-class="{ 'fa-plus' : !show[tier.tier], 'fa-minus' : show[tier.tier] }"></i>
+                                </div>
+                            </div>
+                        </button>
+                        <div class="sideTierBody collapse" id="collapseSideTier{{tier.tier}}">
+                            <div class="sideTierDeck deck-portrait-{{deck.deck.playerClass}}-sm" ng-repeat="deck in tier.decks">
+                                <a href="#{{deck.rank.current}}" ng-click="findDeck(tier.tier, deck.rank.current)">
+                                    <div class="sideTierDeckRank pull-left clearfix">
+                                        <h4>{{deck.rank.current}}</h4>
+                                    </div>
+                                    <div class="sideTierDeckName pull-left clearfix">
+                                        <h4 class="ell">{{deck.deck.name}}</h4>
+                                    </div>
+                                </a>
                             </div>
                         </div>
-                    </button>
-                    <div class="sideTierBody collapse" id="collapseSideTier{{tier.tier}}">
-                        <div class="sideTierDeck deck-portrait-{{deck.deck.playerClass}}-sm" ng-repeat="deck in tier.decks">
-                            <a href="#{{deck.rank.current}}" ng-click="findDeck(tier.tier, deck.rank.current)">
-                                <div class="sideTierDeckRank pull-left clearfix">
-                                    <h4>{{deck.rank.current}}</h4>
-                                </div>
-                                <div class="sideTierDeckName pull-left clearfix">
-                                    <h4 class="ell">{{deck.deck.name}}</h4>
-                                </div>
-                            </a>
-                        </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
+            
+            
             <div class="tiers m-b-md">
                 <div id="tier{{tier.tier}}" ng-repeat="tier in snapshot.tiers" class="tier clearfix">
                     <button class="btn btn-block btn-tier-collapse" role="button" data-toggle="collapse" href="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
@@ -82,7 +86,7 @@
                             <div class="tier-deck-body collapse clearfix" id="collapseDeck-{{deck.rank.current}}">
                                 <div class="tier-deck-body-inner clearfix">
                                     <div class="m-t-lg">
-                                        <div class="col-lg-3">
+                                        <div class="col-lg-3 m-b-md">
                                             <div class="deck-portrait deck-portrait-{{deck.deck.playerClass}}"></div>
                                             <h3 class="m-b-lg">RANKING</h3>
                                             <div class="deck-rank m-b-lg">
@@ -117,11 +121,10 @@
                                                         </span>
                                                     </div>
                                                     <div class="tech-card" ng-repeat="card in tech.cards">
-                                                        <div class="tech-card-body">
+                                                        <div class="tech-card-body" style="background-image: url('https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{card.card.photos.small}}')">
                                                             <div class="pull-left toss" ng-if="!card.toss"><i class="fa fa-plus"></i></div>
                                                             <div class="pull-left keep" ng-if="card.toss"><i class="fa fa-minus"></i></div>
                                                             {{card.card.name}}
-                                                            <img class="pull-right" src="https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{card.card.photos.small}}">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -129,7 +132,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-lg-9 pull-right">
+                                        <div class="col-lg-9 pull-right m-b-md">
                                             <div class="deck-content">
                                                 <h2>EXPLANATION</h2>
                                                 <p>{{deck.explanation}}</p>
