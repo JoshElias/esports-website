@@ -2015,6 +2015,11 @@ var app = angular.module('app', [
                     snapshots: {
                         templateUrl: tpl + 'views/admin/snapshots.add.html',
                         controller: 'AdminSnapshotAddCtrl',
+                        resolve: { 
+                            dataPrevious: ['AdminSnapshotService', function (AdminSnapshotService){
+                                return AdminSnapshotService.getLatest();
+                            }]
+                        }
                     }
                 },
                 access: {auth: true, admin: true},

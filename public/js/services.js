@@ -717,7 +717,7 @@ angular.module('app.services', [])
         },
         getLatest: function () {
             var d = $q.defer();
-            $http.post('/api/admin/snapshot/latest', { _id: _id }).success(function (data) {
+            $http.post('/api/admin/snapshot/latest', {}).success(function (data) {
                 d.resolve(data);
             })
             return d.promise;

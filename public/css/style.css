@@ -883,6 +883,15 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 
 /* admin meta snapshot */
+.button-block {}
+.button-block button {
+    padding: 0;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+
 .cardAddList {
     padding: 5px;
     padding-right: 0px;

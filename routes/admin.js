@@ -695,7 +695,6 @@ module.exports = {
         return function (req, res, next) {
             var _id = req.body._id;
             Schemas.Article.findOne({ _id: _id })
-            //.populate('deck', '_id name')
             .populate([
                 {
                     path: 'deck',
@@ -3085,7 +3084,8 @@ module.exports = {
     snapshotAdd: function (Schemas) {
         return function (req, res, next) {
             var snapshot = req.body,
-                total;
+                total,
+                latest;
             
             function getTotal (callback) {
                 Schemas.Snapshot.count({})
@@ -3095,6 +3095,37 @@ module.exports = {
                     return callback();
                 });
             }
+            
+            function populateLast (callback) {
+                Schemas.Snapshot.find({})
+                .sort({createdDate:-1})
+                .limit(1)
+                .populate([
+                    {
+                        path: 'tiers.decks.deck',
+                        select: '_id name'
+                    }
+                ])
+                .exec(function (err, data) {
+                    if (err) { return res.json({ success: false }) }
+                    data = data[0];
+                    console.log('exec');
+                    if (data != undefined) {
+                        for (var i = 0; i < snapshot.tiers.length; i++) {
+                            for (var j = 0; j < snapshot.tiers[i].decks.length; j++) {
+                                for (var k = 0; k < data.tiers.length; k++) {
+                                    for (var l = 0; l < data.tiers[k].decks.length; l++) {
+                                        (snapshot.tiers[i].decks[j].deck._id == data.tiers[k].decks[l].deck._id) ? snapshot.tiers[i].decks[j].rank.last = data.tiers[i].decks[j].rank.current : false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return callback();
+                });
+            }
+            
+            
             
             function convertObjs (callback) {
                 for (var i =0; i < snapshot.authors.length; i++) {
@@ -3116,9 +3147,8 @@ module.exports = {
                 }
                 return callback();
             }
-            
+                        
             function addNewSnapshot(callback) {
-                console.log(snapshot.active);
                 var newSnapshot = new Schemas.Snapshot({
                     
                         snapNum: total + 18,
@@ -3153,10 +3183,12 @@ module.exports = {
                 });
             }
             
-            getTotal(function () {
-                convertObjs(function () {
-                    addNewSnapshot(function () {
-                        return res.json({ success: true });
+            populateLast(function () {
+                getTotal(function () {
+                    convertObjs(function () {
+                        addNewSnapshot(function () {
+                            return res.json({ success: true });
+                        });
                     });
                 });
             });
@@ -3263,7 +3295,48 @@ module.exports = {
     },
     snapshotLatest: function (Schemas) {
         return function (req, res, next) {
-            return res.json({success: true});
+            var _id = req.body._id;
+            
+            function getSnapshot (callback) {
+                Schemas.Snapshot.findOne()
+                .sort({createdDate:-1})
+                .limit(1)
+                .populate([
+                    {
+                        path: 'authors',
+                        select: '_id username'
+                        
+                    },
+                    {
+                        path: 'tiers.decks.deck',
+                        select: '_id name'
+                    },
+                    {
+                        path: 'tiers.decks.tech.cards.card',
+                        select: '_id name'
+                    },
+                    {
+                        path: 'matches.for',
+                        select: '_id name'
+                    },
+                    {
+                        path: 'matches.against',
+                        select: '_id name'
+                    }
+                ])
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    snapshot = results;
+                    return callback();
+                });
+            }
+            
+            getSnapshot(function () {
+                return res.json({
+                    snapshot: snapshot,
+                    success: true
+                });
+            });
         }
     },
     getObjectID: function (mongoose) {
