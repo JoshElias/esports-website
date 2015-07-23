@@ -1779,7 +1779,7 @@ angular.module('app.controllers', ['ngCookies'])
                 deck : undefined,
                 rank : {
                     current : 1,
-                    last : 1
+                    last : []
                 },
                 tech : []
             },
@@ -2261,6 +2261,11 @@ angular.module('app.controllers', ['ngCookies'])
                     c.both = false;
                 }
             }
+            
+        $scope.trendsLength = 12;
+        $scope.trends = function(num) {
+            return new Array(num);
+        }
         /* TIERS METHODS */
 
         $scope.editSnapshot = function () {
@@ -2310,7 +2315,7 @@ angular.module('app.controllers', ['ngCookies'])
                 deck : undefined,
                 rank : {
                     current : 1,
-                    last : 1
+                    last : []
                 },
                 tech : []
             },
@@ -2784,6 +2789,11 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
             
+            
+        $scope.trendsLength = 12;
+        $scope.trends = function(num) {
+            return new Array(num);
+        }
         /* TIERS METHODS */
             
     
@@ -2794,10 +2804,18 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.showError = true;
                 } else {
                     $scope.snapshot = data.snapshot;
+                    $scope.snapshot.snapNum++;
                     $scope.matches = [];
                     for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                         for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
                             $scope.matches.push($scope.snapshot.tiers[i].decks[k]);
+                        }
+                    }
+
+                    for (var a = 0; a < $scope.snapshot.tiers.length; a++) {
+                        for (var b = 0; b < $scope.snapshot.tiers[a].decks.length; b++) {
+                            $scope.snapshot.tiers[a].decks[b].rank.last.unshift(data.snapshot.tiers[a].decks[b].rank.current);
+                            $scope.snapshot.tiers[a].decks[b].rank.last.pop();
                         }
                     }
                 }
@@ -4645,10 +4663,15 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('SnapshotCtrl', ['$scope', 'SnapshotService', 'data',
     function ($scope, SnapshotService, data) {
 
-        console.log(data);
+        $scope.log = function (a) {
+            console.log(a);
+        }
         
         $scope.snapshot = data;
         $scope.show = [];
+        
+        
+        $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
         
 //        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/articles/' + $scope.article.photos.small;
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article');
@@ -4671,7 +4694,8 @@ angular.module('app.controllers', ['ngCookies'])
                             var newObj = {
                                 against: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for._id : $scope.snapshot.matches[i].against._id,
                                 chance: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].forChance : $scope.snapshot.matches[i].againstChance,
-                                playerClass: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.playerClass : $scope.snapshot.matches[i].against.playerClass
+                                playerClass: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.playerClass : $scope.snapshot.matches[i].against.playerClass,
+                                name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.name : $scope.snapshot.matches[i].against.name
                             };
                             matches.push(newObj);
                         }
@@ -4696,6 +4720,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.getMatches = function (id) {
+            console.log(charts[id]);
             return charts[id];
         }
         

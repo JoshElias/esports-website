@@ -3096,34 +3096,34 @@ module.exports = {
                 });
             }
             
-            function populateLast (callback) {
-                Schemas.Snapshot.find({})
-                .sort({createdDate:-1})
-                .limit(1)
-                .populate([
-                    {
-                        path: 'tiers.decks.deck',
-                        select: '_id name'
-                    }
-                ])
-                .exec(function (err, data) {
-                    if (err) { return res.json({ success: false }) }
-                    data = data[0];
-                    console.log('exec');
-                    if (data != undefined) {
-                        for (var i = 0; i < snapshot.tiers.length; i++) {
-                            for (var j = 0; j < snapshot.tiers[i].decks.length; j++) {
-                                for (var k = 0; k < data.tiers.length; k++) {
-                                    for (var l = 0; l < data.tiers[k].decks.length; l++) {
-                                        (snapshot.tiers[i].decks[j].deck._id == data.tiers[k].decks[l].deck._id) ?  snapshot.tiers[i].decks[j].rank.last = data.tiers[k].decks[l].rank.current : false;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return callback();
-                });
-            }
+//            function populateLast (callback) {
+//                Schemas.Snapshot.find({})
+//                .sort({createdDate:-1})
+//                .limit(1)
+//                .populate([
+//                    {
+//                        path: 'tiers.decks.deck',
+//                        select: '_id name'
+//                    }
+//                ])
+//                .exec(function (err, data) {
+//                    if (err) { return res.json({ success: false }) }
+//                    data = data[0];
+//                    console.log('exec');
+//                    if (data != undefined) {
+////                        for (var i = 0; i < snapshot.tiers.length; i++) {
+////                            for (var j = 0; j < snapshot.tiers[i].decks.length; j++) {
+////                                for (var k = 0; k < data.tiers.length; k++) {
+////                                    for (var l = 0; l < data.tiers[k].decks.length; l++) {
+////                                        (snapshot.tiers[i].decks[j].deck._id == data.tiers[k].decks[l].deck._id) ?  snapshot.tiers[i].decks[j].rank.last = data.tiers[k].decks[l].rank.current : false;
+////                                    }
+////                                }
+////                            }
+////                        }
+//                    }
+//                    return callback();
+//                });
+//            }
             
             
             
@@ -3167,7 +3167,7 @@ module.exports = {
                         createdDate: new Date().toISOString(),
                         active: snapshot.active
                 });
-
+                
                 newSnapshot.save(function(err, data){
                     if (err) {
                         console.log(err);
@@ -3183,15 +3183,16 @@ module.exports = {
                 });
             }
             
-            populateLast(function () {
+//            populateLast(function () {
                 getTotal(function () {
                     convertObjs(function () {
                         addNewSnapshot(function () {
+                            console.log(snapshot.tiers[0].decks[0].rank);
                             return res.json({ success: true });
                         });
                     });
                 });
-            });
+//            });
 //            return res.json({success: true});
         }
     },

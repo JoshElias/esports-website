@@ -90,23 +90,23 @@
                                             <div class="deck-portrait deck-portrait-{{deck.deck.playerClass}}"></div>
                                             <h3 class="m-b-lg">RANKING</h3>
                                             <div class="deck-rank m-b-lg">
-                                                <div class="{{(deck.rank.current > 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{(deck.rank.current <= deck.rank.last[0]) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         CURRENT
                                                     </div>
                                                     {{deck.rank.current}}
                                                 </div>
-                                                <div class="{{(deck.rank.last > 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{(deck.rank.last[0] >= deck.rank.current) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         LAST WEEK
                                                     </div>
-                                                    {{deck.rank.last}}
+                                                    {{deck.rank.last[0]}}
                                                 </div>
-                                                <div class="{{(deck.rank.last - deck.rank.current) > 0 ? 'green-back' : 'red-back'}}">
+                                                <div class="{{(deck.rank.last[0] - deck.rank.current) >= 0 ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         CHANGE
                                                     </div>
-                                                    {{deck.rank.last - deck.rank.current}}
+                                                    {{deck.rank.last[0] - deck.rank.current}}
                                                 </div>
                                             </div>
                                             <div class="deck-techs" ng-if="deck.tech.length">
