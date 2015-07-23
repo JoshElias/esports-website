@@ -2725,6 +2725,48 @@ module.exports = {
             
         }
     },
+    getLatestSnapshot: function (Schemas) {
+        return function (req, res, next) {
+            var snapshot;
+            
+            function getSnapshot (callback) {
+                Schemas.Snapshot.find({active:true})
+                .sort({createdDate:-1})
+                .limit(1)
+                .populate([
+                    {
+                        path: 'authors',
+                    },
+                    {
+                        path: 'tiers.decks.deck',
+                    },
+                    {
+                        path: 'tiers.decks.tech.cards.card',
+                    },
+                    {
+                        path: 'matches.for',
+                        select: 'name playerClass'
+                    },
+                    {
+                        path: 'matches.against',
+                        select: 'name playerClass'
+                    }
+                ])
+                .lean()
+                .exec(function (err, results) {
+                    if (err) { return req.json({ success: false }); }
+                    snapshot = results;
+                    return callback();
+                });
+            }
+            getSnapshot(function () {
+                return res.json({
+                    success: true,
+                    snapshot: snapshot
+                })
+            })
+        }
+    },
     sendContact: function (Mail) {
         return function(req, res, next) {
             //TODO: ADD FUNCTIONALITY

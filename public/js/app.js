@@ -74,7 +74,7 @@ var app = angular.module('app', [
                 }
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {
-                //$state.transitionTo('app.404');
+                $state.transitionTo('app.404');
             });
         }
     ]
@@ -233,45 +233,19 @@ var app = angular.module('app', [
                     }
                 }
             })
-            .state('app.snapshots', {
+            .state('app.snapshot', {
                 abstract: 'true',
-                url: 'snapshots',
+                url: 'hearthstone/meta-snapshot',
                 views: {
                     content: {
-                        templateUrl: tpl + 'views/frontend/snapshots.html',
-                    }
-                }
-            })
-            .state('app.snapshots.list', {
-                url: '?s&p',
-                views: {
-                    snapshots: {
-                        templateUrl: tpl + 'views/frontend/snapshots.list.html',
-                        controller: 'SnapshotsCtrl',
-                        resolve: {
-                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
-                                var page = $stateParams.p || 1,
-                                    perpage = 10,
-                                    search = $stateParams.s || '';
-                                console.log(page, perpage, search);
-                                return SnapshotService.getSnapshots(page, perpage, search);
-                            }]
-                        }
-                    }
-                }
-            })
-            .state('app.snapshots.snapshot', {
-                url: '/:slug',
-                views: {
-                    snapshots: {
                         templateUrl: tpl + 'views/frontend/snapshots.snapshot.html',
                         controller: 'SnapshotCtrl',
                         resolve: {
                             data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
                                 var slug = $stateParams.slug;
-                                return SnapshotService.getSnapshot(slug).then(function (result) {
+                                return SnapshotService.getLatest().then(function (result) {
                                     if(result.success === true) {
-                                        return result;
+                                        return result.snapshot[0];
                                     } else {
                                         return $q.reject('Unable to find snapshot');
                                     }
@@ -280,6 +254,27 @@ var app = angular.module('app', [
                         }
                     }
                 }
+            })
+            .state('app.snapshot.redirect', {
+                url: '',
+                resolve: {
+                    data: ['SnapshotService', '$q', function (SnapshotService, $q) {
+                        return SnapshotService.getLatest().then(function (result) {
+                            if (result.success === true) {
+                                return result;
+                            } else {
+                                return $q.reject('unable to find snapshot');
+                            }
+                        });
+                    }],
+                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
+                        $state.go('app.snapshot.snapshot', { slug: data.snapshot[0].slug.url, num: data.snapshot[0].snapNum });
+                        return $q.reject();
+                    }]
+                }
+            })    
+            .state('app.snapshot.snapshot', {
+                url: '/meta-snapshot-:num-:slug'
             })
             .state('app.hs', {
                 abstract: true,
@@ -677,7 +672,7 @@ var app = angular.module('app', [
                         controller: 'HOTSTalentCalculatorCtrl',
                         resolve: {
                             dataHeroesList: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroesList();
+                                return HeroService.getHeroesList();2
                             }]
                         }
                     }
@@ -688,12 +683,12 @@ var app = angular.module('app', [
                 resolve: {
                     dataHeroesList: ['HeroService', '$q', function (HeroService, $q) {
                         return HeroService.getHeroesList().then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find hero');
-                                    }
-                                 });
+                            if (result.success === true) {
+                                return result;
+                            } else {
+                                return $q.reject('unable to find hero');
+                            }
+                        });
                     }],
                     redirect: ['$q', '$state', 'dataHeroesList', function ($q, $state, dataHeroesList) {
                         $state.go('app.hots.talentCalculator.hero', { hero: dataHeroesList.heroes[0].className });
@@ -717,7 +712,7 @@ var app = angular.module('app', [
                                     } else {
                                         return $q.reject('unable to find hero');
                                     }
-                                 });
+                                });
                             }]
                         }
                     }

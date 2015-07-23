@@ -205,6 +205,14 @@ angular.module('app.services', [])
             });
             
             return d.promise;
+        },
+        getLatest: function () {
+            var d = $q.defer();
+            $http.post('/getLatestSnapshot', {}).success(function (data) {
+                d.resolve(data);
+            });
+            
+            return d.promise;
         }
     }
 }])

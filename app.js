@@ -154,6 +154,7 @@ app.post('/article', routes.frontend.article(Schemas));
 
 app.post('/snapshots', routes.frontend.snapshots(Schemas));
 app.post('/snapshot', routes.frontend.snapshot(Schemas));
+app.post('/getLatestSnapshot', routes.frontend.getLatestSnapshot(Schemas));
 
 app.post('/decks', routes.frontend.decks(Schemas));
 app.post('/decks/community', routes.frontend.decksCommunity(Schemas));

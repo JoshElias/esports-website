@@ -6,7 +6,7 @@
         </div>
     </div>
     <div class="list-group m-b-none">
-        <a href="#" class="list-group-item" ng-class="{active: isDeck(d)}" ng-click="addDeck(d)" ng-repeat="d in filtered = (deckData | filterAll:search | limitTo:10)">
+        <a href="#" class="list-group-item add-deck-item" ng-class="{ active : isDeck(d) || isSelected(d) }" ng-click="addDeck(d)" ng-repeat="d in filtered = (deckData | filterAll:search | limitTo:10)">
             {{d.name}}
         </a>
         <div class="list-group-item center-text">

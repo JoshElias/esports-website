@@ -5,7 +5,7 @@
             <h1>THE META SNAPSHOT: #{{snapshot.snapNum}}</h1>
             <h3>{{snapshot.title}}</h3>
         </div>
-        <img class="sideBorders img-responsive" src="../../img/meta-snapshot/warrior-top.jpg" />
+        <img class="sideBorders img-responsive head-img" src="../../img/meta-snapshot/warrior-top.jpg" />
     </div>
     <div class="container meta-container sideBorders">
         <div class="m-t-md">
@@ -109,7 +109,7 @@
                                                     {{deck.rank.last - deck.rank.current}}
                                                 </div>
                                             </div>
-                                            <div class="deck-techs">
+                                            <div class="deck-techs" ng-if="deck.tech.length">
                                                 <h3 class="m-b-lg">TECH DECISION</h3>
                                                 <div class="tech" ng-repeat="tech in deck.tech">
                                                     <div class="tech-heading">
@@ -121,10 +121,13 @@
                                                         </span>
                                                     </div>
                                                     <div class="tech-card" ng-repeat="card in tech.cards">
-                                                        <div class="tech-card-body" style="background-image: url('https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{card.card.photos.small}}')">
+                                                        <div class="tech-card-body" ng-class="{ 'multi' : card.both }" style="background-image: url('https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{card.card.photos.small}}')">
                                                             <div class="pull-left toss" ng-if="!card.toss"><i class="fa fa-plus"></i></div>
                                                             <div class="pull-left keep" ng-if="card.toss"><i class="fa fa-minus"></i></div>
                                                             {{card.card.name}}
+                                                        </div>
+                                                        <div ng-if="card.both" class="both-token">
+                                                            2
                                                         </div>
                                                     </div>
                                                 </div>
@@ -142,49 +145,49 @@
                                                 <h2>WEEKLY NOTES</h2>
                                                 <p>{{deck.weeklyNotes}}</p>
                                             </div>
+                                            <span ng-if="tier.tier < 3">
                                             <hr class="m-b-lg">
-
-                                            <h2 class="m-b-lg">MATCH-UPS</h2>
-
-                                            <div class="match-graph m-t-md m-b-md">
-                                                <svg class="graph-wrapper" height="100%" width="100%">
-                                                    <text x="1.5%" y="0%" fill="white">100</text>
-                                                    <text x="2.5%" y="10%" fill="white">90</text>
-                                                    <text x="2.5%" y="20%" fill="white">80</text>
-                                                    <text x="2.5%" y="30%" fill="white">70</text>
-                                                    <text x="2.5%" y="40%" fill="white">60</text>
-                                                    <text x="2.5%" y="50%" fill="white">50</text>
-                                                    <text x="2.5%" y="60%" fill="white">40</text>
-                                                    <text x="2.5%" y="70%" fill="white">30</text>
-                                                    <text x="2.5%" y="80%" fill="white">20</text>
-                                                    <text x="2.5%" y="90%" fill="white">10</text>
-                                                    <text x="3.5%" y="100%" fill="white">0</text>
+                                                <h2 class="m-b-lg">MATCH-UPS</h2>
+                                                <div class="match-graph m-t-md m-b-md">
+                                                    <svg class="graph-wrapper" height="100%" width="100%">
+                                                        <text x="1.5%" y="0%" fill="white">100</text>
+                                                        <text x="2.5%" y="10%" fill="white">90</text>
+                                                        <text x="2.5%" y="20%" fill="white">80</text>
+                                                        <text x="2.5%" y="30%" fill="white">70</text>
+                                                        <text x="2.5%" y="40%" fill="white">60</text>
+                                                        <text x="2.5%" y="50%" fill="white">50</text>
+                                                        <text x="2.5%" y="60%" fill="white">40</text>
+                                                        <text x="2.5%" y="70%" fill="white">30</text>
+                                                        <text x="2.5%" y="80%" fill="white">20</text>
+                                                        <text x="2.5%" y="90%" fill="white">10</text>
+                                                        <text x="3.5%" y="100%" fill="white">0</text>
 
 
-                                                    <svg class="pull-right" height="100%" width="95%" x="5%">
-                                                        <line x1="0" y1="0%"   x2="100%"  y2="0%" />
-                                                        <line x1="0" y1="10%"  x2="100%"  y2="10%" />
-                                                        <line x1="0" y1="20%"  x2="100%"  y2="20%" />
-                                                        <line x1="0" y1="30%"  x2="100%"  y2="30%" />
-                                                        <line x1="0" y1="40%"  x2="100%"  y2="40%" />
-                                                        <line x1="0" y1="50%"  x2="100%"  y2="50%" />
-                                                        <line x1="0" y1="60%"  x2="100%"  y2="60%" />
-                                                        <line x1="0" y1="70%"  x2="100%"  y2="70%" />
-                                                        <line x1="0" y1="80%"  x2="100%"  y2="80%" />
-                                                        <line x1="0" y1="90%"  x2="100%"  y2="90%" />
-                                                        <line x1="0" y1="100%" x2="100%"  y2="100%" />
-                                                        <line x1="1.1%" y1="100%" x2="1.1%" y2="0" />
+                                                        <svg class="pull-right" height="100%" width="95%" x="5%">
+                                                            <line x1="0" y1="0%"   x2="100%"  y2="0%" />
+                                                            <line x1="0" y1="10%"  x2="100%"  y2="10%" />
+                                                            <line x1="0" y1="20%"  x2="100%"  y2="20%" />
+                                                            <line x1="0" y1="30%"  x2="100%"  y2="30%" />
+                                                            <line x1="0" y1="40%"  x2="100%"  y2="40%" />
+                                                            <line x1="0" y1="50%"  x2="100%"  y2="50%" style="stroke:rgba(255,0,0,.3)"/>
+                                                            <line x1="0" y1="60%"  x2="100%"  y2="60%" />
+                                                            <line x1="0" y1="70%"  x2="100%"  y2="70%" />
+                                                            <line x1="0" y1="80%"  x2="100%"  y2="80%" />
+                                                            <line x1="0" y1="90%"  x2="100%"  y2="90%" />
+                                                            <line x1="0" y1="100%" x2="100%"  y2="100%" />
+                                                            <line x1="1.1%" y1="100%" x2="1.1%" y2="0" />
 
-                                                        <svg height="100%" width="98%" x="1.5%">
-                                                            <rect ng-repeat="match in filtered = (getMatches(deck.deck._id) | orderBy: 'playerClass')" class="bar bar-{{match.playerClass}}" ng-attr-width="{{(100/filtered.length)-.8}}%" ng-attr-height="{{100-match.chance}}%" ng-attr-x="{{(100/filtered.length)*$index}}%" ng-attr-y="{{match.chance}}%" ng-style=""></rect>
+                                                            <svg height="100%" width="98%" x="1.5%">
+                                                                <rect ng-repeat="match in filtered = (getMatches(deck.deck._id) | orderBy: 'playerClass')" class="bar bar-{{match.playerClass}}" ng-attr-width="{{(100/filtered.length)-.8}}%" ng-attr-height="{{100-match.chance}}%" ng-attr-x="{{(100/filtered.length)*$index}}%" ng-attr-y="{{match.chance}}%" ng-style=""></rect>
+                                                            </svg>
+
                                                         </svg>
 
+
+
                                                     </svg>
-
-
-
-                                                </svg>
-                                            </div>
+                                                </div>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

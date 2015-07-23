@@ -11,8 +11,8 @@
 </div>
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
-    <div class="panel-heading">
-        Add a Meta Snapshot
+    <div class="panel-heading clearfix">
+        <h1 class="pull-left">Meta Snapshot #<input class="form-control snap-num" type="text" ng-model="snapshot.snapNum"></h1>
         <button type="button" ng-click="loadLatest()" class="btn btn-green btn-rounded btn-sm pull-right">Load Previous</button>
     </div>
     <div class="panel-body">
@@ -63,21 +63,21 @@
             <label for="intro" class="col-sm-2 control-label">Tiers</label>
             <div class="col-sm-10 wrapper-none">
                 <div class="panel panel-default wrapper-none" ng-repeat="t in snapshot.tiers track by t.tier" ng-if="snapshot.tiers.length != 0">
-                    <div class="panel-heading clearfix"><!-- DO ANGULAR -->
+                    <div class="panel-heading clearfix">
                         <h4 class="panel-title pull-left">
-                            <a class="tierHeading" role="button" data-toggle="collapse" href="#collapse{{t.tier}}" aria-expanded="false" aria-controls="collapse{{t.tier}}"><i class="fa fa-caret-down"></i> <!-- DO ANGULAR -->
-                                Tier {{t.tier}} <!-- DO ANGULAR -->
+                            <a class="tierHeading" role="button" data-toggle="collapse" href="#collapse{{t.tier}}" aria-expanded="false" aria-controls="collapse{{t.tier}}"><i class="fa fa-caret-down"></i> 
+                                Tier {{t.tier}} 
                             </a>
                         </h4>
                         <button class="btn btn-danger btn-sm btn-rounded pull-right" ng-click="removePrompt(t)"><i class="fa fa-close"></i> Remove Tier</button>
                     </div>
 
-                    <div id="collapse{{t.tier}}" class="panel-body collapse wrapper-none"> <!-- DO ANGULAR -->
+                    <div id="collapse{{t.tier}}" class="panel-body collapse wrapper-none"> 
                         <ul class="list-group m-b-none" dnd-list="t.decks">
                             <li class="list-group-item" ng-if="t.decks == 0">There are no decks selected yet!</li>
 <!--                            -->
                             <li class="list-group-item" ng-repeat="d in t.decks" ng-if="t.decks.length != 0" >
-                                <span class="badge pull-left">{{d.rank.current}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index)" dnd-disable-if="t.decks.length < 2">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeck(d.deck)"><i class="fa fa-close"></i></button></span> <!-- DO ANGULAR -->
+                                <span class="badge pull-left">{{d.rank.current}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index)" dnd-disable-if="t.decks.length < 2">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeck(d.deck)"><i class="fa fa-close"></i></button></span> 
                                 <div class="collapse wrapper-md" id="deckrank{{d.rank.current}}">
                                     <div class="form-group">
                                         <div class="clearfix m-b-md">
@@ -109,6 +109,8 @@
                                                         <ul class="list-group">
                                                             <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cards | orderBy : c.card._id" class="list-group-item">
                                                                 {{c.card.name}}
+                                                                <button class="pull-right cardBtnStrip cardBtn" ng-click="removeTechCard(c)"><i class="fa fa-close"></i></button>
+                                                                <button class="pull-right btn btn-small cardBtn" ng-class="{ 'btn-green' : c.both }" ng-click="setBoth(c)">2</button>
                                                             </li>
                                                             <li class="list-group-item">
                                                                 <a href="#" ng-click="openAddBox('card', t, d, tech)"><i class="fa fa-plus"></i>&nbsp Add Card</a>
@@ -121,7 +123,7 @@
                                             </div>
                                         </div>
                                         
-                                        <div>
+                                        <div ng-if="t.tier < 3">
                                             <label class="control-label col-sm-1">Matches</label>
                                             <div class="col-sm-9">
                                                 <div class="col-sm-6" ng-repeat="match in getMatches(d.deck._id) track by $index"> 

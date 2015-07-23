@@ -3115,7 +3115,7 @@ module.exports = {
                             for (var j = 0; j < snapshot.tiers[i].decks.length; j++) {
                                 for (var k = 0; k < data.tiers.length; k++) {
                                     for (var l = 0; l < data.tiers[k].decks.length; l++) {
-                                        (snapshot.tiers[i].decks[j].deck._id == data.tiers[k].decks[l].deck._id) ? snapshot.tiers[i].decks[j].rank.last = data.tiers[i].decks[j].rank.current : false;
+                                        (snapshot.tiers[i].decks[j].deck._id == data.tiers[k].decks[l].deck._id) ?  snapshot.tiers[i].decks[j].rank.last = data.tiers[k].decks[l].rank.current : false;
                                     }
                                 }
                             }
@@ -3151,7 +3151,7 @@ module.exports = {
             function addNewSnapshot(callback) {
                 var newSnapshot = new Schemas.Snapshot({
                     
-                        snapNum: total + 18,
+                        snapNum: snapshot.snapNum,
                         title: snapshot.title,
                         authors: snapshot.authors,
                         slug: {
@@ -3235,7 +3235,7 @@ module.exports = {
                             }
                         });
                     }
-                    
+                    snap.snapNum = snapshot.snapNum;
                     snap.title = snapshot.title;
                     snap.authors = snapshot.authors;
                     snap.slug = {
