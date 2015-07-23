@@ -578,7 +578,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .rightSide,
 .leftSide { height: auto; color: #d7effa; }
 
-.leftSide { padding-left: 0; }
+.leftSide { padding-right: 20px !important; }
 
 .leftSide .content {
     background: -webkit-linear-gradient(bottom, rgba(31,38,80,.9), rgba(32,54,95,.9)); /* For Safari 5.1 to 6.0 */
@@ -589,26 +589,27 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .leftSide .content h2 { color: white; font-weight: bold; letter-spacing: 4px; font-size: 24px; }
 .leftSide .content .hr { border-top: 1px solid rgba(255,255,255,.5); border-bottom: 2px solid rgba(0,0,0,.4); background: none; width: 225px; }
-.leftSide .content .inner { background: url(../img/meta-snapshot/meta-cloud-overlay.png); border: 1px solid rgba(255,255,255,.2) }
+.leftSide .content .inner { background: url(../img/meta-snapshot/meta-cloud-overlay.png); border: 1px solid rgba(255,255,255,.2); }
 .leftSide .content p { white-space: pre-wrap; }
 
 
-.rightSide { padding-right: 0px; padding-left:0px; border: 1px solid rgba(255,255,255,.2) }
+.rightSide { }
 
 .rightSide .sideTier button { border: none; padding: 0px; margin-top: 0px; outline: none; }
 
 .rightSide .sideTier .sideTierHead { 
     height: 65px; 
-/*    background-color: rgba(31,38,80,1); */
-/*    border: 1px solid rgba(0,0,0,1) ;*/
     background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
     background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
 }
-.rightSide .sideTier .sideTierHead .inner { position: relative; height: 65px; border-bottom: 1px solid rgba(255,255,255,.2);  }
+.rightSide .sideTier .sideTierHead .inner { position: relative; height: 65px; border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid rgba(255,255,255,.2); }
 .rightSide .sideTier .sideTierHead .inner i { line-height: 65px; position: absolute; right: 20px; }
 .rightSide .sideTier .sideTierHead .inner h3 { padding:18px; }
+
+.rightSide .sideTier .sideTierHead:first-child .inner { border-top: 1px solid rgba(255,255,255,.2); }
+.rightSide .sideTier .sideTierHead:last-child .inner { border-bottom: 1px solid rgba(255,255,255,.2); }
 
 .rightSide .sideTier .sideTierBody { -webkit-transition-duration: .2s; transition-duration: .2s; }
 .rightSide .sideTier .sideTierBody .sideTierDeck { background-color: #404759; background-repeat: no-repeat; background-position:right; height:50px; border-bottom: 1px solid black; }
@@ -637,48 +638,37 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     color: #FEFEFE;
 }
 
-.tier .btn-tier-collapse { padding: 0px; border: 0; border-radius: 0px; outline: none; }
+.tier .btn-tier-collapse { padding: 0px; border: 0; border-radius: 0px; outline: none; height: 65px; }
 .tier .btn-tier-collapse:active { outline: none; }
 .tier .tier-heading { 
     background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
     background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
-    border: 1px #19171A solid; 
-    height: 50px;
+    border: 1px solid rgba(255,255,255,.2);
+    height: 65px;
     outline: none;
 }
-.tier .tier-heading h2 { color: #FEFEFE; margin: auto 0px auto 20px; font-weight: bolder; letter-spacing:7px; line-height:48px }
+.tier .tier-heading h2 { color: #FEFEFE; margin: auto 0px auto 20px; font-weight: bolder; letter-spacing:7px; line-height:63px }
 
 .tier-body { -webkit-transition-duration: .2s; transition-duration: .2s; }
 
-.tier-body .tier-deck { width:100%; height:auto; }
-.tier-body .tier-deck:not(:first-child) { margin-top: -2px; }
-.tier-body .tier-deck h4 { margin: auto 0px auto 30px; line-height: 47px; font-weight: bold; color: #F0EFEB }
+.tier-body .tier-deck { height: auto; }
+.tier-body .tier-deck h4 { margin: 0; text-indent: 30px; line-height: 48px; font-weight: bold; color: #F0EFEB; text-shadow: 1px 1px 0px rgba(0,0,0,.7); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
 
-.tier-body .tier-deck-heading { height:50px; border: rgba(0, 0, 0, .5) solid 1px; position: relative; width:100%; outline: none; }
-.tier-body .tier-deck-heading .deck-heading-right { position: absolute; right: 0; top: 0; margin: -1px -1px 0px 0px; width: auto; }
-.tier-body .tier-deck-heading .deck-heading-right .ablock { margin: 12px 25px 0px 0px; width: auto; display:inline-block; }
-.tier-body .tier-deck-heading .deck-heading-right .deck-button { display: block;  background: rgba(0, 0, 0, .25); border: 1px rgba(255, 255, 255, .7) solid; color: rgba(255, 255, 255, 1); padding: 2px 25px;  }
-.tier-body .tier-deck-heading .deck-heading-right .deck-button:hover { background: rgba(255, 255, 255, .7); border: 1px rgba(0, 0, 0, .7) solid; color: rgba(0, 0, 0, 1);  }
-.tier-body .tier-deck-heading .deck-heading-right .deck-img-sm {
-    background-size: cover;
-    height: 50px;
-    width: 180px;
-    float: right;
-}
+.tier-body .tier-deck-heading { height: 50px !important; border: 1px solid rgba(255, 255, 255, .2); position: relative; width:100%; outline: none; -webkit-appearance: none; -moz-appearance: none; appearance: none; cursor: pointer; }
+.tier-body .tier-deck-heading .deck-button { margin: 12px 150px 0 0; display: block; background: rgba(0, 0, 0, .25); border: 1px rgba(255, 255, 255, .7) solid; color: rgba(255, 255, 255, 1); padding: 2px 25px;  }
+.tier-body .tier-deck-heading .deck-button:hover { background: rgba(255, 255, 255, .7); border: 1px rgba(0, 0, 0, .7) solid; color: rgba(0, 0, 0, 1);  }
 
 .green-back { background-color: rgba(17, 153, 71, .7) }
 .red-back { background-color: rgba(170, 30, 33, .7) }
 
-.tier-body .tier-deck-heading .deck-button {}
-
-.tier-body .tier-deck .tier-deck-body { max-height: 1219px; margin-top: -5px; border: 1px black solid; -webkit-transition-duration: .2s; transition-duration: .2s }
-.tier-body .tier-deck .tier-deck-body .deck-rank { height: 88px; width: 252px }
-.tier-body .tier-deck .tier-deck-body .deck-rank div { float: left; height: 84px; width: 84px; text-align: center; border: 1px black solid; font-size: 32px; line-height: 55px; color: white; font-weight: bold; }
+.tier-body .tier-deck .tier-deck-body { border: 1px black solid; -webkit-transition-duration: .2s; transition-duration: .2s }
+.tier-body .tier-deck .tier-deck-body .deck-rank { height: 88px; }
+.tier-body .tier-deck .tier-deck-body .deck-rank > div { float: left; height: 84px; width: 33.33%; text-align: center; border: 1px black solid; font-size: 32px; line-height: 55px; color: white; font-weight: bold; }
 .tier-body .tier-deck .tier-deck-body .deck-rank div:nth-child(2) { border-left: none; border-right: none }
-.tier-body .tier-deck .tier-deck-body .deck-rank div div { height: 20px; width: 84px; background-color: rgba(0, 0, 0, .5); font-size: 12px; font-weight: bold; border: none; color: white; line-height: 18px; }
+.tier-body .tier-deck .tier-deck-body .deck-rank div div { height: 20px; background-color: rgba(0, 0, 0, .5); font-size: 12px; font-weight: bold; border: none; color: white; line-height: 18px; }
 .tier-body .tier-deck .tier-deck-body .tier-deck-body-inner { border: rgba(255, 255, 255, .1) 1px solid; border-top: 0px; }
 .tier-body .tier-deck .tier-deck-body .deck-portrait { height:345px }
 
@@ -716,7 +706,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .bar-Warrior { fill: rgb(199, 156, 110) }
 
 
-.tier-deck-Druid .tier-deck-heading {
+.tier-deck-Druid {
     background: -webkit-linear-gradient(left, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
     background: -o-linear-gradient(right, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
     background: -moz-linear-gradient(right, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
@@ -725,14 +715,15 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-deck-Druid .tier-deck-body { 
     background-color: rgba(0,0,0,.5);
     background-image: url(../img/meta-snapshot/deck-backgrounds/druid.jpg);
+    background-size: cover;
     background-blend-mode: multiply;
 }
-.tier-deck-Druid .deck-portrait-Druid { background-image: url(../img/meta-snapshot/hero-portrait/Druid.png); }
-.deck-portrait-Druid-sm { background-image: url(../img/meta-snapshot/hero-portrait/Druid-sm.png); }
+.tier-deck-Druid .deck-portrait-Druid { background: url(../img/meta-snapshot/hero-portrait/Druid.png) no-repeat top center; }
+.deck-portrait-Druid-sm { background: url(../img/meta-snapshot/hero-portrait/Druid-sm.png) no-repeat top right; }
 
 
 
-.tier-deck-Hunter .tier-deck-heading { 
+.tier-deck-Hunter { 
     background: -webkit-linear-gradient(left, rgba(171, 212, 115, .65), rgba(171, 212, 115, 1));
     background: -o-linear-gradient(right, rgba(171, 212, 115, .65), rgba(171, 212, 115, 1));
     background: -moz-linear-gradient(right, rgba(171, 212, 115, .65), rgba(171, 212, 115, 1));
@@ -741,13 +732,14 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-deck-Hunter .tier-deck-body { 
     background-color: rgba(0,0,0,.5);
     background-image: url(../img/meta-snapshot/deck-backgrounds/hunter.jpg);
+    background-size: cover;
     background-blend-mode: multiply;
 }
-.tier-deck-Hunter .deck-portrait-Hunter { background-image: url(../img/meta-snapshot/hero-portrait/Hunter.png); }
-.deck-portrait-Hunter-sm { background-image: url(../img/meta-snapshot/hero-portrait/Hunter-sm.png); }
+.tier-deck-Hunter .deck-portrait-Hunter { background: url(../img/meta-snapshot/hero-portrait/Hunter.png) no-repeat top center; }
+.deck-portrait-Hunter-sm { background: url(../img/meta-snapshot/hero-portrait/Hunter-sm.png) no-repeat top right; }
 
 
-.tier-deck-Mage .tier-deck-heading {
+.tier-deck-Mage {
     background: -webkit-linear-gradient(left, rgba(105, 204, 240, .65), rgba(105, 204, 240, 1)); 
     background: -o-linear-gradient(right, rgba(105, 204, 240, .65), rgba(105, 204, 240, 1));
     background: -moz-linear-gradient(right, rgba(105, 204, 240, .65), rgba(105, 204, 240, 1));
@@ -756,13 +748,14 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-deck-Mage .tier-deck-body { 
     background-color: rgba(0,0,0,.5);
     background-image: url(../img/meta-snapshot/deck-backgrounds/mage.jpg);
+    background-size: cover;
     background-blend-mode: multiply;
 }
-.tier-deck-Mage .deck-portrait-Mage { background-image: url(../img/meta-snapshot/hero-portrait/Mage.png); }
-.deck-portrait-Mage-sm { background-image: url(../img/meta-snapshot/hero-portrait/Mage-sm.png); }
+.tier-deck-Mage .deck-portrait-Mage { background: url(../img/meta-snapshot/hero-portrait/Mage.png) no-repeat top center; }
+.deck-portrait-Mage-sm { background: url(../img/meta-snapshot/hero-portrait/Mage-sm.png) no-repeat top right; }
 
 
-.tier-deck-Paladin .tier-deck-heading { 
+.tier-deck-Paladin { 
     background: -webkit-linear-gradient(left, rgba(245, 140, 186, .65), rgba(245, 140, 186, 1)); 
     background: -o-linear-gradient(right, rgba(245, 140, 186, .65), rgba(245, 140, 186, 1));
     background: -moz-linear-gradient(right, rgba(245, 140, 186, .65), rgba(245, 140, 186, 1));
@@ -771,13 +764,14 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-deck-Paladin .tier-deck-body { 
     background-color: rgba(0,0,0,.5);
     background-image: url(../img/meta-snapshot/deck-backgrounds/paladin.jpg);
+    background-size: cover;
     background-blend-mode: multiply;
 }
-.tier-deck-Paladin .deck-portrait-Paladin { background-image: url(../img/meta-snapshot/hero-portrait/Paladin.png); }
-.deck-portrait-Paladin-sm { background-image: url(../img/meta-snapshot/hero-portrait/Paladin-sm.png); }
+.tier-deck-Paladin .deck-portrait-Paladin { background: url(../img/meta-snapshot/hero-portrait/Paladin.png) no-repeat top center; }
+.deck-portrait-Paladin-sm { background: url(../img/meta-snapshot/hero-portrait/Paladin-sm.png) no-repeat top right; }
 
 
-.tier-deck-Priest .tier-deck-heading { 
+.tier-deck-Priest { 
     background: -webkit-linear-gradient(left, rgba(255, 255, 255, .65), rgba(255, 255, 255, 1));
     background: -o-linear-gradient(right, rgba(255, 255, 255, .65), rgba(255, 255, 255, 1));
     background: -moz-linear-gradient(right, rgba(255, 255, 255, .65), rgba(255, 255, 255, 1));
@@ -786,13 +780,14 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-deck-Priest .tier-deck-body { 
     background-color: rgba(0,0,0,.5);
     background-image: url(../img/meta-snapshot/deck-backgrounds/priest.jpg);
+    background-size: cover;
     background-blend-mode: multiply;
 }
-.tier-deck-Priest .deck-portrait-Priest { background-image: url(../img/meta-snapshot/hero-portrait/Priest.png); }
-.deck-portrait-Priest-sm { background-image: url(../img/meta-snapshot/hero-portrait/Priest-sm.png); }
+.tier-deck-Priest .deck-portrait-Priest { background: url(../img/meta-snapshot/hero-portrait/Priest.png) no-repeat top center; }
+.deck-portrait-Priest-sm { background: url(../img/meta-snapshot/hero-portrait/Priest-sm.png) no-repeat top right; }
 
 
-.tier-deck-Rogue .tier-deck-heading { 
+.tier-deck-Rogue { 
     background: -webkit-linear-gradient(left, rgba(255, 245, 105, .65), rgba(255, 245, 105, 1));
     background: -o-linear-gradient(right, rgba(255, 245, 105, .65), rgba(255, 245, 105, 1));
     background: -moz-linear-gradient(right, rgba(255, 245, 105, .65), rgba(255, 245, 105, 1));
@@ -801,13 +796,14 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-deck-Rogue .tier-deck-body { 
     background-color: rgba(0,0,0,.5);
     background-image: url(../img/meta-snapshot/deck-backgrounds/rogue.jpg);
+    background-size: cover;
     background-blend-mode: multiply;
 }
-.tier-deck-Rogue .deck-portrait-Rogue { background-image: url(../img/meta-snapshot/hero-portrait/Rogue.png); }
-.deck-portrait-Rogue-sm { background-image: url(../img/meta-snapshot/hero-portrait/Rogue-sm.png); }
+.tier-deck-Rogue .deck-portrait-Rogue { background: url(../img/meta-snapshot/hero-portrait/Rogue.png) no-repeat top center; }
+.deck-portrait-Rogue-sm { background: url(../img/meta-snapshot/hero-portrait/Rogue-sm.png) no-repeat top right; }
 
 
-.tier-deck-Shaman .tier-deck-heading { 
+.tier-deck-Shaman { 
     background: -webkit-linear-gradient(left, rgba(0, 112, 222, .65), rgba(0, 112, 222, 1));
     background: -o-linear-gradient(right, rgba(0, 112, 222, .65), rgba(0, 112, 222, 1));
     background: -moz-linear-gradient(right, rgba(0, 112, 222, .65), rgba(0, 112, 222, 1));
@@ -816,13 +812,14 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-deck-Shaman .tier-deck-body { 
     background-color: rgba(0,0,0,.5);
     background-image: url(../img/meta-snapshot/deck-backgrounds/shaman.jpg);
+    background-size: cover;
     background-blend-mode: multiply;
 }
-.tier-deck-Shaman .deck-portrait-Shaman { background-image: url(../img/meta-snapshot/hero-portrait/Shaman.png); }
-.deck-portrait-Shaman-sm { background-image: url(../img/meta-snapshot/hero-portrait/Shaman-sm.png); }
+.tier-deck-Shaman .deck-portrait-Shaman { background: url(../img/meta-snapshot/hero-portrait/Shaman.png) no-repeat top center; }
+.deck-portrait-Shaman-sm { background: url(../img/meta-snapshot/hero-portrait/Shaman-sm.png) no-repeat top right; }
 
 
-.tier-deck-Warlock .tier-deck-heading { 
+.tier-deck-Warlock { 
     background: -webkit-linear-gradient(left, rgba(148, 130, 201, .65), rgba(148, 130, 201, 1));
     background: -o-linear-gradient(right, rgba(148, 130, 201, .65), rgba(148, 130, 201, 1));
     background: -moz-linear-gradient(right, rgba(148, 130, 201, .65), rgba(148, 130, 201, 1));
@@ -831,13 +828,14 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-deck-Warlock .tier-deck-body { 
     background-color: rgba(0,0,0,.5);
     background-image: url(../img/meta-snapshot/deck-backgrounds/warlock.jpg);
+    background-size: cover;
     background-blend-mode: multiply;
 }
-.tier-deck-Warlock .deck-portrait-Warlock { background-image: url(../img/meta-snapshot/hero-portrait/Warlock.png); }
-.deck-portrait-Warlock-sm { background-image: url(../img/meta-snapshot/hero-portrait/Warlock-sm.png); }
+.tier-deck-Warlock .deck-portrait-Warlock { background: url(../img/meta-snapshot/hero-portrait/Warlock.png) no-repeat top center; }
+.deck-portrait-Warlock-sm { background: url(../img/meta-snapshot/hero-portrait/Warlock-sm.png) no-repeat top right; }
 
 
-.tier-deck-Warrior .tier-deck-heading { 
+.tier-deck-Warrior { 
     background: -webkit-linear-gradient(left, rgba(199, 156, 110, .65), rgba(199, 156, 110, 1));
     background: -o-linear-gradient(right, rgba(199, 156, 110, .65), rgba(199, 156, 110, 1));
     background: -moz-linear-gradient(right, rgba(199, 156, 110, .65), rgba(199, 156, 110, 1));
@@ -846,10 +844,11 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-deck-Warrior .tier-deck-body { 
     background-color: rgba(0,0,0,.5);
     background-image: url(../img/meta-snapshot/deck-backgrounds/warrior.jpg);
+    background-size: cover;
     background-blend-mode: multiply;
 }
-.tier-deck-Warrior .deck-portrait-Warrior { background-image: url(../img/meta-snapshot/hero-portrait/Warrior.png); }
-.deck-portrait-Warrior-sm { background-image: url(../img/meta-snapshot/hero-portrait/Warrior-sm.png); }
+.tier-deck-Warrior .deck-portrait-Warrior { background: url(../img/meta-snapshot/hero-portrait/Warrior.png) no-repeat top center; }
+.deck-portrait-Warrior-sm { background: url(../img/meta-snapshot/hero-portrait/Warrior-sm.png) no-repeat top right; }
 
 
 /* article */
@@ -5195,21 +5194,13 @@ p.white { color: #FFF; }
 .talents-icon.thelostvikings.play-again { background-position: 0px -240px; }
 /* Tier 5 */
 .talents-icon.thelostvikings.hunka-burning-olaf { background-position: 0px 0px; }
-<<<<<<< HEAD
-.talents-icon.thelostvikings.nordic-attack-squad { background-position: 0px -270px; }
-=======
 .talents-icon.thelostvikings.executioner { background-position: 0px -270px; }
->>>>>>> a72b662445289184c532e71c3602644da44448bd
 .talents-icon.thelostvikings.impatience-is-a-virtue { background-position: 0px -300px; }
 /* Tier 6 */
 .talents-icon.thelostvikings.large-and-in-charge { background-position: 0px 0px; }
 .talents-icon.thelostvikings.sixtyfour-kb-marathon { background-position: 0px -330px; }
 .talents-icon.thelostvikings.norse-force { background-position: 0px -360px; }
-<<<<<<< HEAD
-.talents-icon.thelostvikings.executioner { background-position: 0px -450px; }
-=======
 .talents-icon.thelostvikings.nordic-attack-squad { background-position: 0px -450px; }
->>>>>>> a72b662445289184c532e71c3602644da44448bd
 /* Tier 7 */
 .talents-icon.thelostvikings.ragnarok-n-roll { background-position: 0px -210px; }
 .talents-icon.thelostvikings.checkpoint-reached { background-position: 0px -240px; }
@@ -5236,21 +5227,13 @@ p.white { color: #FFF; }
 .talents-icon.thelostvikings.large.play-again { background-position: -30px -816px; }
 /* Tier 5 */
 .talents-icon.thelostvikings.large.hunka-burning-olaf { background-position: -30px 0px; }
-<<<<<<< HEAD
-.talents-icon.thelostvikings.large.nordic-attack-squad { background-position: -30px -918px; }
-=======
 .talents-icon.thelostvikings.large.executioner { background-position: -30px -918px; }
->>>>>>> a72b662445289184c532e71c3602644da44448bd
 .talents-icon.thelostvikings.large.impatience-is-a-virtue { background-position: -30px -1020px; }
 /* Tier 6 */
 .talents-icon.thelostvikings.large.large-and-in-charge { background-position: -30px 0px; }
 .talents-icon.thelostvikings.large.sixtyfour-kb-marathon { background-position: -30px -1122px; }
 .talents-icon.thelostvikings.large.norse-force { background-position: -30px -1224px; }
-<<<<<<< HEAD
-.talents-icon.thelostvikings.executioner { background-position: -30px -1530px; }
-=======
 .talents-icon.thelostvikings.large.nordic-attack-squad { background-position: -30px -1530px; }
->>>>>>> a72b662445289184c532e71c3602644da44448bd
 /* Tier 7 */
 .talents-icon.thelostvikings.large.ragnarok-n-roll { background-position: -30px -714px; }
 .talents-icon.thelostvikings.large.checkpoint-reached { background-position: -30px -816px; }
