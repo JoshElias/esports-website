@@ -4720,7 +4720,6 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.getMatches = function (id) {
-            console.log(charts[id]);
             return charts[id];
         }
         

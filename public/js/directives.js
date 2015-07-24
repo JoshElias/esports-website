@@ -405,4 +405,34 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: "views/admin/snapshot.add.card.html"
     };
 }])
+.directive("fbLikeButton", [function () {
+    return {
+        restrict: "A",
+        replace: true,
+        scope: {
+            url: "=url"
+        },
+        templateUrl: 'views/frontend/socialmedia/fblikebutton.html'
+    }
+}])
+.directive("tweetButton", [function () {
+    return {
+        restrict: "A",
+        replace: true,
+        scope: {
+            url: "=url"
+        },
+        templateUrl: 'views/frontend/socialmedia/tweetbutton.html'
+    }
+}])
+.directive("redditButton", [function () {
+    return {
+        restrict: "A",
+        replace: true,
+        scope: {
+            url: "=url"
+        },
+        templateUrl: 'views/frontend/socialmedia/redditbutton.html'
+    }
+}])
 ;
