@@ -557,7 +557,6 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 }
 
 .bg-override {
-
     background-image: url(../img/meta-snapshot/meta-bg.jpg);
     background-color: #000000;
     background-repeat: no-repeat;
@@ -566,10 +565,15 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .heading { position:relative; }
 
-.snapTitle { position: absolute; top: 20px; left: 20px; }
+.snapTitle { position: absolute; top: 20px; left: 20px; text-shadow: 1px 1px 0px rgba(0,0,0,.7); }
 .snapTitle img { width: 100%; }
 .snapTitle h1 { color: white; font-weight: bolder }
 .snapTitle h3 { color: white; color: #d7effa; font-weight: bold; font-size: 18px; letter-spacing: 1px }
+
+@media (max-width: 767px) {
+    .snapTitle h1,
+    .snapTitle h3 { font-size: 14px; }
+}
 
 .sideBorders { border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid rgba(255,255,255,.2); }
 
@@ -579,6 +583,10 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .leftSide { height: auto; color: #d7effa; }
 
 .leftSide { padding-right: 20px !important; }
+
+@media (max-width: 1199px) {
+    .leftSide { padding-right: 0px !important; }
+}
 
 .leftSide .content {
     background: -webkit-linear-gradient(bottom, rgba(31,38,80,.9), rgba(32,54,95,.9)); /* For Safari 5.1 to 6.0 */
@@ -592,11 +600,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .leftSide .content .inner { background: url(../img/meta-snapshot/meta-cloud-overlay.png); border: 1px solid rgba(255,255,255,.2); }
 .leftSide .content p { white-space: pre-wrap; }
 
-
-.rightSide { }
-
 .rightSide .sideTier button { border: none; padding: 0px; margin-top: 0px; outline: none; }
-
 .rightSide .sideTier .sideTierHead { 
     height: 65px; 
     background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
@@ -654,12 +658,18 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-body { -webkit-transition-duration: .2s; transition-duration: .2s; }
 
 .tier-body .tier-deck { height: auto; }
-.tier-body .tier-deck h4 { margin: 0; text-indent: 30px; line-height: 48px; font-weight: bold; color: #F0EFEB; text-shadow: 1px 1px 0px rgba(0,0,0,.7); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.tier-body .tier-deck h4 { padding-right: 200px; text-indent: 30px; line-height: 48px; font-weight: bold; color: #F0EFEB; text-shadow: 1px 1px 0px rgba(0,0,0,.7); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
 
 .tier-body .tier-deck-heading { height: 50px !important; border: 1px solid rgba(255, 255, 255, .2); position: relative; width:100%; outline: none; -webkit-appearance: none; -moz-appearance: none; appearance: none; cursor: pointer; }
-.tier-body .tier-deck-heading .deck-button { margin: 12px 150px 0 0; display: block; background: rgba(0, 0, 0, .25); border: 1px rgba(255, 255, 255, .7) solid; color: rgba(255, 255, 255, 1); padding: 2px 25px;  }
+.tier-body .tier-deck-heading .deck-button { position: absolute; top: 12px; right: 150px; display: block; background: rgba(0, 0, 0, .25); border: 1px rgba(255, 255, 255, .7) solid; color: rgba(255, 255, 255, 1); padding: 2px 25px;  }
 .tier-body .tier-deck-heading .deck-button:hover { background: rgba(255, 255, 255, .7); border: 1px rgba(0, 0, 0, .7) solid; color: rgba(0, 0, 0, 1);  }
+
+@media (max-width: 767px) {
+    .tier-body .tier-deck h4 { padding-right: 120px; }
+    .tier-body .tier-deck-heading .deck-button { right: 20px; }
+    .tier-body .tier-deck-heading { background: none !important; }
+}
 
 .green-back { background-color: rgba(17, 153, 71, .7) }
 .red-back { background-color: rgba(170, 30, 33, .7) }
