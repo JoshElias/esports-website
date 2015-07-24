@@ -711,6 +711,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .match-graph svg { overflow: visible }
 .match-graph line { stroke:rgba(255,255,255,.5); }
 
+.svg-tooltip { stroke: rgb(255,255,255); fill: #2268AE; }
 
 .bar { stroke: rgb(255, 255 ,255); stroke-width: 1px; opacity:.8 }
 
@@ -934,6 +935,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     border: none;
     outline: none;
     padding: 2px 8px;
+    color: white;
 }
 
 .cardBtn.danger {
@@ -941,6 +943,8 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     border: none;
     outline: none;
     padding: 2px 8px;
+    color: white;
+
 }
 
 .cardAddList {

@@ -2138,16 +2138,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.deckRanks();
             }
             
-            function doRemoveDeck (d) {
-                for (var j = 0; j < $scope.snapshot.tiers.length; j++) {
-                    for (var i = 0; i < $scope.snapshot.tiers[j].decks.length; i++) {
-                        if (d._id == $scope.snapshot.tiers[j].decks[i].deck._id) {
-                            $scope.snapshot.tiers[j].decks.splice(i,1);
-                        }
-                    }
-                }
-            }
-            
             $scope.isDeck = function (d) {
                 for (var j = 0; j < $scope.matches.length; j++) {
                     if (d._id == $scope.matches[j].deck._id) {
@@ -2164,6 +2154,16 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
                 return false;
+            }
+            
+            $scope.removeDeckPrompt = function (d) {
+                var alertBox = bootbox.confirm("Are you sure you want to remove deck " + d.name + "? All the data for this deck will be lost!", function (result) {
+                    if (result) {
+                        $scope.$apply(function () {
+                            $scope.removeDeck(d);
+                        });
+                    }
+                });
             }
             
             $scope.removeDeck = function (d) {
@@ -2376,6 +2376,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.selectedDecks = [];
         $scope.removedDecks = [];
         $scope.lockDND = true;
+        $scope.loaded = false;
         
         $scope.updateDND = function (list, index) {
             list.splice(index, 1);
@@ -2706,16 +2707,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.deckRanks();
             }
             
-            function doRemoveDeck (d) {
-                for (var j = 0; j < $scope.snapshot.tiers.length; j++) {
-                    for (var i = 0; i < $scope.snapshot.tiers[j].decks.length; i++) {
-                        if (d._id == $scope.snapshot.tiers[j].decks[i].deck._id) {
-                            $scope.snapshot.tiers[j].decks.splice(i,1);
-                        }
-                    }
-                }
-            }
-            
             $scope.isDeck = function (d) {
                 for (var j = 0; j < $scope.matches.length; j++) {
                     if (d._id == $scope.matches[j].deck._id) {
@@ -2732,6 +2723,16 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
                 return false;
+            }
+            
+            $scope.removeDeckPrompt = function (d) {
+                var alertBox = bootbox.confirm("Are you sure you want to remove deck " + d.name + "? All the data for this deck will be lost!", function (result) {
+                    if (result) {
+                        $scope.$apply(function () {
+                            $scope.removeDeck(d);
+                        });
+                    }
+                });
             }
             
             $scope.removeDeck = function (d) {
@@ -2869,6 +2870,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.errors = data.errors;
                     $scope.showError = true;
                 } else {
+                    $scope.loaded = true;
                     $scope.snapshot = data.snapshot;
                     $scope.snapshot.snapNum++;
                     $scope.matches = [];

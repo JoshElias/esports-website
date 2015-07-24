@@ -12,9 +12,15 @@
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading">
-        <h1>Meta Snapshot #<input class="form-control snap-num" type="text" ng-model="snapshot.snapNum"></h1>
+        <h3>Edit a Meta Snapshot</h3>
     </div>
     <div class="panel-body">
+        <div class="form-group">
+            <label for="title" class="col-sm-2 control-label">Meta Snapshot #</label>
+            <div class="col-sm-10 wrapper-none">
+                <input class="form-control snap-num" type="text" ng-model="snapshot.snapNum">
+            </div>
+        </div>
         <div class="form-group">
             <label for="title" class="col-sm-2 control-label">Title</label>
             <div class="col-sm-10 wrapper-none">
@@ -75,7 +81,7 @@
                         <ul class="list-group m-b-none" dnd-list="t.decks">
                             <li class="list-group-item" ng-if="t.decks == 0">There are no decks selected yet!</li>
                             <li class="list-group-item" ng-repeat="d in t.decks" ng-if="t.decks.length != 0">
-                                <span class="badge pull-left">{{d.rank.current}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index)" dnd-disable-if="t.decks.length < 2">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeck(d.deck)"><i class="fa fa-close"></i></button></span> 
+                                <span class="badge pull-left">{{d.rank.current}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index)" dnd-disable-if="t.decks.length < 2">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeckPrompt(d.deck)"><i class="fa fa-close"></i></button></span> 
                                 <div class="collapse" id="deckrank{{d.rank.current}}">
                                     <div class="form-group wrapper-md">
                                         <div class="clearfix m-b-md">
@@ -121,6 +127,7 @@
                                                         </div>
                                                         <ul class="list-group">
                                                             <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cards | orderBy : c.card._id" class="list-group-item">
+                                                                 <button class="cardBtn" ng-click="( c.toss == false ) ? c.toss = true : c.toss = false"><i class="fa" ng-class="{ 'fa-minus' : c.toss == true, 'fa-plus' : c.toss == false }"></i></button>
                                                                 {{c.card.name}}
                                                                 <button class="pull-right cardBtn" ng-click="removeTechCard(c)"><i class="fa fa-close"></i></button>
                                                                 <button class="pull-right btn btn-small cardBtn" ng-class="{ 'btn-green' : c.both }" ng-click="setBoth(c)">2</button>
