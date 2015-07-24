@@ -1779,7 +1779,7 @@ angular.module('app.controllers', ['ngCookies'])
                 deck : undefined,
                 rank : {
                     current : 1,
-                    last : 1
+                    last : []
                 },
                 tech : []
             },
@@ -2256,6 +2256,11 @@ angular.module('app.controllers', ['ngCookies'])
                     c.both = false;
                 }
             }
+            
+        $scope.trendsLength = 12;
+        $scope.trends = function(num) {
+            return new Array(num);
+        }
         /* TIERS METHODS */
 
         $scope.editSnapshot = function () {
@@ -2305,7 +2310,7 @@ angular.module('app.controllers', ['ngCookies'])
                 deck : undefined,
                 rank : {
                     current : 1,
-                    last : 1
+                    last : []
                 },
                 tech : []
             },
@@ -2777,6 +2782,11 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
             
+            
+        $scope.trendsLength = 12;
+        $scope.trends = function(num) {
+            return new Array(num);
+        }
         /* TIERS METHODS */
             
     
@@ -2787,10 +2797,18 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.showError = true;
                 } else {
                     $scope.snapshot = data.snapshot;
+                    $scope.snapshot.snapNum++;
                     $scope.matches = [];
                     for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                         for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
                             $scope.matches.push($scope.snapshot.tiers[i].decks[k]);
+                        }
+                    }
+
+                    for (var a = 0; a < $scope.snapshot.tiers.length; a++) {
+                        for (var b = 0; b < $scope.snapshot.tiers[a].decks.length; b++) {
+                            $scope.snapshot.tiers[a].decks[b].rank.last.unshift(data.snapshot.tiers[a].decks[b].rank.current);
+                            $scope.snapshot.tiers[a].decks[b].rank.last.pop();
                         }
                     }
                 }
@@ -4640,6 +4658,9 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.snapshot = data;
         $scope.show = [];
+        
+        
+        $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
         
 //        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/articles/' + $scope.article.photos.small;
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article');

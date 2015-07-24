@@ -4,6 +4,9 @@
         <div class="snapTitle">
             <h1>THE META SNAPSHOT: #{{snapshot.snapNum}}</h1>
             <h3>{{snapshot.title}}</h3>
+            <div fb-like-button url="'https://tempostorm.com/hearthstone/meta-snapshot/meta-snapshot-' + snapshot.snapNum + '-' + snapshot.slug.url"></div>
+            <div tweet-button url="'https://tempostorm.com/hearthstone/meta-snapshot/meta-snapshot-' + snapshot.snapNum + '-' + snapshot.slug.url"></div>
+<!--            <div reddit-button url="'https://tempostorm.com/hearthstone/meta-snapshot/meta-snapshot-' + snapshot.snapNum + '-' + snapshot.slug.url"></div>-->
         </div>
         <img class="sideBorders img-responsive head-img" src="../../img/meta-snapshot/warrior-top.jpg" />
     </div>
@@ -148,25 +151,25 @@
                                                 <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
                                                     <h3 class="m-b-lg">RANKING</h3>
                                                     <div class="deck-rank m-b-lg">
-                                                        <div class="{{(deck.rank.current > 0) ? 'green-back' : 'red-back'}}">
-                                                            <div>
-                                                                CURRENT
-                                                            </div>
-                                                            {{deck.rank.current}}
-                                                        </div>
-                                                        <div class="{{(deck.rank.last > 0) ? 'green-back' : 'red-back'}}">
-                                                            <div>
-                                                                LAST WEEK
-                                                            </div>
-                                                            {{deck.rank.last}}
-                                                        </div>
-                                                        <div class="{{(deck.rank.last - deck.rank.current) > 0 ? 'green-back' : 'red-back'}}">
-                                                            <div>
-                                                                CHANGE
-                                                            </div>
-                                                            {{deck.rank.last - deck.rank.current}}
-                                                        </div>
+                                                <div class="{{(deck.rank.current <= deck.rank.last[0]) ? 'green-back' : 'red-back'}}">
+                                                    <div>
+                                                        CURRENT
                                                     </div>
+                                                    {{deck.rank.current}}
+                                                </div>
+                                                <div class="{{(deck.rank.last[0] >= deck.rank.current) ? 'green-back' : 'red-back'}}">
+                                                    <div>
+                                                        LAST WEEK
+                                                    </div>
+                                                    {{deck.rank.last[0]}}
+                                                </div>
+                                                <div class="{{(deck.rank.last[0] - deck.rank.current) >= 0 ? 'green-back' : 'red-back'}}">
+                                                    <div>
+                                                        CHANGE
+                                                    </div>
+                                                    {{deck.rank.last[0] - deck.rank.current}}
+                                                </div>
+                                            </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
                                                     <div class="deck-techs" ng-if="deck.tech.length">
