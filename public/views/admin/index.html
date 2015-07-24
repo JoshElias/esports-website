@@ -13,6 +13,13 @@
                 <span>Articles</span>
             </a>
         </li>
+        <!-- Snapshots -->
+        <li ng-class="{active:$state.includes('app.admin.snapshots')}">
+            <a ui-sref="app.admin.snapshots.list">
+                <i class="fa fa-camera m-r-sm"></i>
+                <span>Snapshots</span>
+            </a>
+        </li>
         <!-- hearthstone -->
         <li ng-class="{active:$state.includes('app.admin.hearthstone')}" class="nav-drop">
             <a href="#" class="nav-drop-btn">

@@ -1,0 +1,21 @@
+<div class="panel panel-dark m-b-none">   
+    <div class="panel-heading clearfix">
+        <strong class="lh-lg">ADD CARD</strong>
+        <div class="pull-right m-r-sm">
+            <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+        </div>
+    </div>
+    <div class="list-group m-b-none">
+        <!--<a href="#" class="list-group-item cardAddList" ng-class="{active: type == 'card' && isCard(c)}" ng-click="addCard(c)" ng-repeat="c in filtered = (cardData | filterAll:search | limitTo:20)">-->
+        <a href="#" class="list-group-item cardAddList" ng-repeat="c in filtered = (cardData | filterAll:search | limitTo:15)">
+            
+            <button class="btn btn-sm btn-green" ng-click="addCard(c, false)">Add</button>
+            <button class="btn btn-sm btn-danger" ng-click="addCard(c, true)">Toss</button>
+            {{c.name}}
+            <img class="pull-right" ng-src="https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{c.photos.small}}">
+        </a>
+        <div class="list-group-item center-text">
+            <button class="btn btn-blue btn-lg center-text" ng-click="closeBox()">Done</button>
+        </div>
+    </div>
+</div>

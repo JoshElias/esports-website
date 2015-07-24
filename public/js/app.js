@@ -74,7 +74,7 @@ var app = angular.module('app', [
                 }
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {
-                //$state.transitionTo('app.404');
+                $state.transitionTo('app.404');
             });
         }
     ]
@@ -232,6 +232,57 @@ var app = angular.module('app', [
                         }
                     }
                 }
+            })
+            .state('app.snapshot', {
+                abstract: 'true',
+                url: 'hearthstone/meta-snapshot',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/snapshots.html'
+                    }
+                }
+            })
+            .state('app.snapshot.redirect', {
+                url: '',
+                resolve: {
+                    data: ['SnapshotService', '$q', function (SnapshotService, $q) {
+                        return SnapshotService.getLatest().then(function (result) {
+                            if (result.success === true) {
+                                console.log(result);
+                                return result;
+                            } else {
+                                return $q.reject('unable to find snapshot');
+                            }
+                        });
+                    }],
+                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
+                        $state.go('app.snapshot.snapshot', { slug: data.snapshot[0].slug.url });
+                        return $q.reject();
+                    }]
+                }
+            })    
+            .state('app.snapshot.snapshot', {
+                url: '/:slug',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/frontend/snapshots.snapshot.html',
+                        controller: 'SnapshotCtrl',
+                        resolve: {
+                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
+                                var slug = $stateParams.slug;
+                                return SnapshotService.getSnapshot(slug).then(function (result) {
+                                    if(result.success === true) {
+                                        return result.snapshot;
+                                    } else {
+                                        return $q.reject('Unable to find snapshot');
+                                    }
+                                });
+                            }]
+                        }
+                    }
+                }
+
+                
             })
             .state('app.hs', {
                 abstract: true,
@@ -629,7 +680,7 @@ var app = angular.module('app', [
                         controller: 'HOTSTalentCalculatorCtrl',
                         resolve: {
                             dataHeroesList: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroesList();
+                                return HeroService.getHeroesList();2
                             }]
                         }
                     }
@@ -640,12 +691,12 @@ var app = angular.module('app', [
                 resolve: {
                     dataHeroesList: ['HeroService', '$q', function (HeroService, $q) {
                         return HeroService.getHeroesList().then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find hero');
-                                    }
-                                 });
+                            if (result.success === true) {
+                                return result;
+                            } else {
+                                return $q.reject('unable to find hero');
+                            }
+                        });
                     }],
                     redirect: ['$q', '$state', 'dataHeroesList', function ($q, $state, dataHeroesList) {
                         $state.go('app.hots.talentCalculator.hero', { hero: dataHeroesList.heroes[0].className });
@@ -669,7 +720,7 @@ var app = angular.module('app', [
                                     } else {
                                         return $q.reject('unable to find hero');
                                     }
-                                 });
+                                });
                             }]
                         }
                     }
@@ -1929,6 +1980,69 @@ var app = angular.module('app', [
                     }
                 },
                 access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.snapshots', {
+                abstract: true,
+                url: '/snapshots',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/snapshots.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.snapshots.list', {
+                url: '',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/snapshots.list.html',
+                        controller: 'AdminSnapshotListCtrl',
+                        resolve: {
+                            data: ['AdminSnapshotService', function (AdminSnapshotService) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                return AdminSnapshotService.getSnapshots(page, perpage, search);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.snapshots.add', {
+                url: '/add',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/snapshots.add.html',
+                        controller: 'AdminSnapshotAddCtrl',
+                        resolve: { 
+                            dataPrevious: ['AdminSnapshotService', function (AdminSnapshotService){
+                                return AdminSnapshotService.getLatest();
+                            }]
+                        }
+                    }
+                },
+                access: {auth: true, admin: true},
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.snapshots.edit', {
+                url: '/:snapshotID',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/admin/snapshots.edit.html',
+                        controller: 'AdminSnapshotEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminSnapshotService', function ($stateParams, AdminSnapshotService) {
+                                var snapshotID = $stateParams.snapshotID;
+                                return AdminSnapshotService.getSnapshot(snapshotID);
+                            }]
+                        }
+                    }
+                },
+                access: {auth: true, admin: true},
                 seo: { title: 'Admin', description: '', keywords: '' }
             })
             .state('app.admin.subscriptions', {

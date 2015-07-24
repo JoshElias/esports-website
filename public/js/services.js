@@ -184,6 +184,38 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory ('SnapshotService', ['$http', '$q', function ($http, $q) {
+    return {
+        getSnapshots: function (page, perpage, search) {
+            var d = $q.defer(),
+                page = page || 1,
+                perpage = perpage || 10,
+                search = search || '';
+            
+            $http.post('/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            
+            return d.promise;
+        },
+        getSnapshot: function (slug) {
+            var d = $q.defer();
+            $http.post('/snapshot', {slug: slug}).success(function (data) {
+                d.resolve(data);
+            });
+            
+            return d.promise;
+        },
+        getLatest: function () {
+            var d = $q.defer();
+            $http.post('/getLatestSnapshot', {}).success(function (data) {
+                d.resolve(data);
+            });
+            
+            return d.promise;
+        }
+    }
+}])
 .factory('ProfileService', ['$http', '$q', function ($http, $q) {
     return {
         getUserProfile: function (username) {
@@ -295,6 +327,13 @@ angular.module('app.services', [])
         getCards: function () {
             var d = $q.defer();
             $http.post('/api/admin/cards', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getDeckableCards: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/cards/deckable', {}).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
@@ -632,13 +671,6 @@ angular.module('app.services', [])
 }])
 .factory('AdminPollService', ['$http', '$q', function ($http, $q) {
     return {
-        getProviders: function () {
-            var d = $q.defer();
-            $http.post('/api/admin/polls/providers', {}).success(function (data) {
-                d.resolve(data);
-            });
-           return d.promise;
-        },
         getPolls: function (page, perpage, search) {
             var page = page || 1,
                 perpage = perpage || 50,
@@ -670,6 +702,48 @@ angular.module('app.services', [])
             return d.promise;
         }
     };
+}])
+.factory('AdminSnapshotService', ['$http', '$q', function($http, $q) {
+    return {
+        getSnapshots: function (page, perpage, search) {
+            var page = page || 1,
+                perpage = perpage || 10,
+                search = search || '';
+            
+            var d = $q.defer();
+            $http.post('/api/admin/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }, 
+        getSnapshot: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/snapshot', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            })
+            return d.promise;
+        },
+        getLatest: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/snapshot/latest', {}).success(function (data) {
+                d.resolve(data);
+            })
+            return d.promise;
+        },
+        addSnapshot: function (snapshot) {
+            return $http.post('/api/admin/snapshot/add', snapshot);
+        },
+        editSnapshot: function (snapshot) {
+            return $http.post('/api/admin/snapshot/edit', snapshot);
+        },
+        deleteSnapshot: function (_id) {
+            var d = $q.defer();
+                $http.post('/api/admin/snapshot/delete', { _id: _id }).success(function (data) {
+                    d.resolve(data);
+                });
+            return d.promise;
+        }
+    }
 }])
 .factory('AdminBannerService', ['$http', '$q', function($http, $q){
     return {
@@ -1976,4 +2050,21 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('markitupSettings', [
+  function() {
+    var factory, markset;
+    markset = [
+      //here goes your usual markItUp layout
+    ];
+    factory = {};
+    factory.create = function(callback) {
+      return {
+        afterInsert: callback,
+        previewParserPath: '',
+        markupSet: markset
+      };
+    };
+    return factory;
+  }
+]);
 ;

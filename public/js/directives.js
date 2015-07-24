@@ -60,7 +60,7 @@ angular.module('app.directives', ['ui.load'])
             ngDisabled: '=',
             dateOptions: '='
         },
-        link: function($scope, $element, $attrs, $controller){
+        link: function($scope, $element, $attrs, $controller) {
             var id = $attrs.id || 'datePicker',
                 name = $attrs.name || 'datePicker',
                 $button = $element.find('button'),
@@ -371,5 +371,68 @@ angular.module('app.directives', ['ui.load'])
             });
         }
     };
+}])
+.directive("markItUp", ["markitupSettings", function(markitupSettings) {
+    return {
+      restrict: "A",
+      scope: {
+        ngModel: "="
+      },
+      link: function(scope, element, attrs) {
+        var settings;
+        settings = markitupSettings.create(function(event) {
+          scope.$apply(function() {
+            scope.ngModel = event.textarea.value;
+          });
+        });
+        angular.element(element).markItUp(settings);
+      }
+    };
+  }
+])
+.directive('snapshotAddAuthor', [function () {
+    return {
+        templateUrl: "views/admin/snapshot.add.author.html"
+    };
+}])
+.directive('snapshotAddDeck', [function () {
+    return {
+        templateUrl: "views/admin/snapshot.add.deck.html"
+    }
+}])
+.directive('snapshotAddCard', [function () {
+    return {
+        templateUrl: "views/admin/snapshot.add.card.html"
+    };
+}])
+.directive("fbLikeButton", [function () {
+    return {
+        restrict: "A",
+        replace: true,
+        scope: {
+            url: "=url"
+        },
+        templateUrl: 'views/frontend/socialmedia/fblikebutton.html'
+    }
+}])
+.directive("tweetButton", [function () {
+    return {
+        restrict: "A",
+        replace: true,
+        scope: {
+            url: "=url"
+        },
+        templateUrl: 'views/frontend/socialmedia/tweetbutton.html'
+    }
+}])
+.directive("redditButton", [function () {
+    return {
+        restrict: "A",
+        replace: true,
+        scope: {
+            url: "=url"
+        },
+        templateUrl: 'views/frontend/socialmedia/redditbutton.html'
+    }
 }])
 ;

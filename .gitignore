@@ -45,3 +45,6 @@ Thumbs.db
 
 # Dist folder
 dist
+
+# Brackets json
+.brackets.json
