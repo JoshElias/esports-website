@@ -1808,8 +1808,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.selectedDecks = [];
         $scope.removedDecks = [];
         
-        console.log(populateMatches());
-        
         function populateMatches () {
             var out = [];
             for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
@@ -1994,7 +1992,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.removePrompt = function (t) {
                 var alertBox = bootbox.confirm("Are you sure you want to remove tier " + t.tier + "? All the deck data for this tier will be lost!", function (result) {
                     if (result) {
-                        console.log(result);    
                         $scope.$apply(function () {
                             $scope.removeTier(t);
                         });
@@ -2088,7 +2085,6 @@ angular.module('app.controllers', ['ngCookies'])
                     tierDeck = angular.copy(defaultTierDeck);
                 
                 if (!$scope.isDeck(sel) && !$scope.isSelected(sel)) {
-                    console.log($scope.removedDecks);
                     for (var l = 0; l < $scope.removedDecks.length; l++) {
                         if (sel._id == $scope.removedDecks[l]._id) {
                             $scope.removedDecks.splice(l,1);
@@ -2187,7 +2183,6 @@ angular.module('app.controllers', ['ngCookies'])
                         for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].tech.length; j++) {
                             if (tech.orderNum == $scope.snapshot.tiers[i].decks[k].tech[j].orderNum) {
                                 if (!$scope.isCard(c)) {
-                                    console.log($scope.snapshot.tiers[i].decks[k].tech[j].cards.length);
                                     techCard.orderNum = $scope.snapshot.tiers[i].decks[k].tech[j].cards.length;
                                     $scope.snapshot.tiers[i].decks[k].tech[j].cards.push(techCard);
                                 } 
@@ -2385,8 +2380,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.tier = tier;
                 $scope.deck = deck;
                 $scope.tech = tech;
-                
-                console.log(tier, deck, tech);
                 
                 switch (type) {
                     case 'author' : //this is to display data in the bootbox for authors
@@ -4642,11 +4635,9 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('SnapshotCtrl', ['$scope', 'SnapshotService', 'data',
-    function ($scope, SnapshotService, data) {
+.controller('SnapshotCtrl', ['$scope', '$state', 'SnapshotService', 'data',
+    function ($scope, $state, SnapshotService, data) {
 
-        console.log(data);
-        
         $scope.snapshot = data;
         $scope.show = [];
         
@@ -4709,6 +4700,12 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         buildCharts();
+        
+        $scope.goToDeck = function ($event, slug) {
+            $event.stopPropagation();
+            var url = $state.href('app.hs.decks.deck', { slug: slug });
+            window.open(url,'_blank');
+        };
     }
 ])
 .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',
@@ -6305,8 +6302,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.hero.abilities.push($scope.currentAbility);
             box.modal('hide');
             $scope.currentAbility = false;
-
-            console.log($scope.hero.abilities);
         };
         
         $scope.editAbility = function (ability) {
@@ -6321,8 +6316,6 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < $scope.hero.abilities.length; i++) {
                 $scope.hero.abilities[i].orderNum = i + 1;
             }
-            
-            console.log($scope.hero.abilities);
         };
         
         // talents
@@ -6350,8 +6343,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.hero.talents.push($scope.currentTalent);
             box.modal('hide');
             $scope.currentTalent = false;
-            
-            console.log($scope.hero.talents);
         };
         
         $scope.editTalent = function (talent) {
@@ -6366,13 +6357,10 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < $scope.hero.talents.length; i++) {
                 $scope.hero.talents[i].orderNum = i + 1;
             }
-            
-            console.log($scope.hero.talents);
         };
                 
         // characters
         $scope.charAddWnd = function () {
-            console.log('blah');
             $scope.currentCharacter = angular.copy(defaultCharacter);
             box = bootbox.dialog({
                 title: 'Add Character',
@@ -6524,8 +6512,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.hero.abilities.push($scope.currentAbility);
             box.modal('hide');
             $scope.currentAbility = false;
-
-            console.log($scope.hero.abilities);
         };
         
         $scope.editAbility = function (ability) {
@@ -6540,8 +6526,6 @@ angular.module('app.controllers', ['ngCookies'])
             for (var i = 0; i < $scope.hero.abilities.length; i++) {
                 $scope.hero.abilities[i].orderNum = i + 1;
             }
-            
-            console.log($scope.hero.abilities);
         };
         
         // talents
