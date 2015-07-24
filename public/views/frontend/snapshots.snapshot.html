@@ -4,9 +4,10 @@
         <div class="snapTitle">
             <h1>THE META SNAPSHOT: #{{snapshot.snapNum}}</h1>
             <h3>{{snapshot.title}}</h3>
+<!--
             <div fb-like-button url="'https://tempostorm.com/hearthstone/meta-snapshot/meta-snapshot-' + snapshot.snapNum + '-' + snapshot.slug.url"></div>
             <div tweet-button url="'https://tempostorm.com/hearthstone/meta-snapshot/meta-snapshot-' + snapshot.snapNum + '-' + snapshot.slug.url"></div>
-<!--            <div reddit-button url="'https://tempostorm.com/hearthstone/meta-snapshot/meta-snapshot-' + snapshot.snapNum + '-' + snapshot.slug.url"></div>-->
+            <div reddit-button url="'https://tempostorm.com/hearthstone/meta-snapshot/meta-snapshot-' + snapshot.snapNum + '-' + snapshot.slug.url"></div>-->
         </div>
         <img class="sideBorders img-responsive head-img" src="../../img/meta-snapshot/warrior-top.jpg" />
     </div>
@@ -69,6 +70,19 @@
                 
             </div>
             
+            <div class="row no-pad m-b-md">
+                <div class="col-lg-12 trends-wrapper">
+                    <svg class="trends">
+                        <svg class="trend-view" height="350" width="80%" x="10%" y="75">
+                            <svg ng-repeat="tier in snapshot.tiers" width="100%" ng-attr-height="350" ng-attr-y="{{350*$index}}">
+                                <svg ng-repeat="deck in tier.decks" width="100%" ng-attr-height="{{100/tier.decks.length}}%">
+                                    <text x="0" ng-attr-y="{{50*$index}}">{{deck.rank.current}}</text>
+                                </svg>
+                            </svg>
+                        </svg>
+                    </svg>
+                </div>
+            </div>
             
             <div class="tiers m-b-md">
                 <div id="tier{{tier.tier}}" ng-repeat="tier in snapshot.tiers" class="tier clearfix">

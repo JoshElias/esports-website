@@ -291,6 +291,7 @@ app.post('/api/admin/upload/card', routes.admin.isAdmin(Schemas), multipartMiddl
 app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadDeck(fs, gm, amazon));
 app.post('/api/admin/upload/polls', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadPoll(fs, gm, amazon));
 app.post('/api/admin/upload/banners', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadBanner(fs, gm, amazon));
+app.post('/api/admin/upload/snapshot', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadSnapshot(fs, gm, amazon, Util));
 
 app.post('/api/admin/polls', routes.admin.isAdmin(Schemas), routes.admin.polls(Schemas));
 app.post('/api/admin/poll', routes.admin.isAdmin(Schemas), routes.admin.poll(Schemas));
@@ -301,9 +302,9 @@ app.post('/api/admin/poll/edit', routes.admin.isAdmin(Schemas), routes.admin.pol
 app.post('/api/admin/snapshots', routes.admin.isAdmin(Schemas), routes.admin.snapshots(Schemas));
 app.post('/api/admin/snapshot', routes.admin.isAdmin(Schemas), routes.admin.snapshot(Schemas));
 app.post('/api/admin/snapshot/latest', routes.admin.isAdmin(Schemas), routes.admin.snapshotLatest(Schemas));
-app.post('/api/admin/snapshot/add', routes.admin.isAdmin(Schemas), routes.admin.snapshotAdd(Schemas));
+app.post('/api/admin/snapshot/add', routes.admin.isAdmin(Schemas), routes.admin.snapshotAdd(Schemas, Util));
 app.post('/api/admin/snapshot/delete', routes.admin.isAdmin(Schemas), routes.admin.snapshotDelete(Schemas));
-app.post('/api/admin/snapshot/edit', routes.admin.isAdmin(Schemas), routes.admin.snapshotEdit(Schemas));
+app.post('/api/admin/snapshot/edit', routes.admin.isAdmin(Schemas), routes.admin.snapshotEdit(Schemas, Util));
 
 app.post('/api/admin/banners', routes.admin.isAdmin(Schemas), routes.admin.banners(Schemas));
 app.post('/api/admin/banners/order', routes.admin.isAdmin(Schemas), routes.admin.bannersOrder(Schemas));

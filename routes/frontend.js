@@ -2709,7 +2709,7 @@ module.exports = {
                     }
                 ])
                 .exec(function (err, results) {
-                    if (err) { return req.json({ success: false }); }
+                    if (err || !results) { return res.json({ success: false }); }
                     snapshot = results;
                     return callback();
                 });
@@ -2730,7 +2730,7 @@ module.exports = {
             var snapshot;
             
             function getSnapshot (callback) {
-                Schemas.Snapshot.find({active:true})
+                Schemas.Snapshot.find()
                 .sort({createdDate:-1})
                 .limit(1)
                 .populate([

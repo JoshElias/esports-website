@@ -2504,6 +2504,102 @@ module.exports = {
             }
         };
     },
+    uploadSnapshot: function (fs, gm, amazon, Util) {
+        return function(req, res, next) {
+            // check if image file
+            var types = ['image/png', 'image/jpeg', 'image/gif'];
+            if (types.indexOf(req.files.file.type) === -1) {
+                fs.unlink(req.files.file.path, function(err){
+                    if (err) return next(err);
+                    var output = {
+                            success: false,
+                            error: 'Invalid photo uploaded.',
+                        };
+                    return res.json(output);
+                });
+            } else {
+                var arr = req.files.file.name.split('.'),
+                    name = arr.splice(0, arr.length - 1).join('.'),
+                    ext = '.' + arr.pop(),
+                    large = Util.slugify(name) + '.large' + ext,
+                    medium = Util.slugify(name) + '.medium' + ext,
+                    small = Util.slugify(name) + '.small' + ext,
+                    square = Util.slugify(name) + '.square' + ext,
+                    path = __dirname+'/../photos/snapshots/';
+                    copyFile(function () {
+                        var files = [];
+                        files.push({
+                            path: path + large,
+                            name: large
+                        });
+                        files.push({
+                            path: path + medium,
+                            name: medium
+                        });
+                        files.push({
+                            path: path + small,
+                            name: small
+                        });
+                        files.push({
+                            path: path + square,
+                            name: square
+                        });
+                        amazon.upload(files, 'snapshots/', function () {
+                            return res.json({
+                                success: true,
+                                large: large,
+                                medium: medium,
+                                small: small,
+                                square: square,
+                                path: './photos/snapshots/'
+                            });
+                        });
+                    });
+
+                function copyFile(callback) {
+                    // read file
+                    fs.readFile(req.files.file.path, function(err, data){
+                        if (err) return next(err);
+                        // write file
+                        fs.writeFile(path + large, data, function(err){
+                            if (err) return next(err);
+                            // chmod new file
+                            fs.chmod(path + large, 0777, function(err){
+                                if (err) return next(err);
+                                // delete tmp file
+                                fs.unlink(req.files.file.path, function(err){
+                                    if (err) return next(err);
+                                    // resize
+                                    gm(path + large).quality(100).gravity('Center').crop(1920, 480, 0, 0).write(path + large, function(err){
+                                        if (err) return next(err);
+                                        gm(path + large).quality(100).resize(null, 200).write(path + square, function(err) {
+                                            if (err) return next(err);
+                                            gm(path + square).quality(100).gravity('Center').crop(200, 200, 0, 0).write(path + square, function(err) {
+                                                if (err) return next(err);
+                                                gm(path + large).quality(100).resize(800, 200, "!").write(path + medium, function(err){
+                                                    if (err) return next(err);
+                                                    fs.chmod(path + medium, 0777, function(err){
+                                                        if (err) return next(err);
+                                                        gm(path + large).quality(100).resize(400, 100, "!").write(path + small, function(err){
+                                                            if (err) return next(err);
+                                                            fs.chmod(path + small, 0777, function(err){
+                                                                if (err) return next(err);
+                                                                return callback();
+                                                            });
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }
+            }
+        };
+    },
     polls: function (Schemas) {
         return function (req, res, next) {
             var page = req.body.page || 1,
@@ -3081,7 +3177,7 @@ module.exports = {
             });
         }
     },
-    snapshotAdd: function (Schemas) {
+    snapshotAdd: function (Schemas, Util) {
         return function (req, res, next) {
             var snapshot = req.body,
                 total,
@@ -3155,7 +3251,7 @@ module.exports = {
                         title: snapshot.title,
                         authors: snapshot.authors,
                         slug: {
-                            url: snapshot.slug.url,
+                            url: "meta-snapshot-" + snapshot.snapNum + "-" + Util.slugify(snapshot.title),
                             linked: snapshot.slug.linked
                         },
                         content: {
@@ -3165,6 +3261,7 @@ module.exports = {
                         tiers: snapshot.tiers,
                         matches: snapshot.matches,
                         createdDate: new Date().toISOString(),
+                        photos: snapshot.photos,
                         active: snapshot.active
                 });
                 
@@ -3187,7 +3284,6 @@ module.exports = {
                 getTotal(function () {
                     convertObjs(function () {
                         addNewSnapshot(function () {
-                            console.log(snapshot.tiers[0].decks[0].rank);
                             return res.json({ success: true });
                         });
                     });
@@ -3196,7 +3292,7 @@ module.exports = {
 //            return res.json({success: true});
         }
     },
-    snapshotEdit: function (Schemas) {
+    snapshotEdit: function (Schemas, Util) {
         return function (req, res, next) {
             var snapshot = req.body,
                 _id = snapshot._id;
@@ -3240,7 +3336,7 @@ module.exports = {
                     snap.title = snapshot.title;
                     snap.authors = snapshot.authors;
                     snap.slug = {
-                        url: snapshot.slug.url,
+                        url: "meta-snapshot-" + snapshot.snapNum + "-" + Util.slugify(snapshot.title),
                         linked: snapshot.slug.linked
                     };
                     snap.content = {
@@ -3249,7 +3345,8 @@ module.exports = {
                     };
                     snap.tiers = snapshot.tiers;
                     snap.matches = snapshot.matches;
-                    snap.createdDate = new Date().toISOString(),
+                    snap.createdDate = new Date().toISOString();
+                    snap.photos = snapshot.photos;
                     snap.active = snapshot.active;
                     
                     snap.save(function (err) {
@@ -3268,7 +3365,6 @@ module.exports = {
             }
             
             convertObjs(function () {
-                console.log(snapshot);
                 editSnapshot(function () {
                     return res.json({success: true});
                 });
