@@ -1808,6 +1808,36 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.selectedDecks = [];
         $scope.removedDecks = [];
         
+        // photo upload
+        $scope.photoUpload = function ($files) {
+            if (!$files.length) return false;
+            var box = bootbox.dialog({
+                message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                closeButton: false,
+                animate: false
+            });
+            $scope.uploading = 0;
+            box.modal('show');
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/admin/upload/snapshot',
+                    method: 'POST',
+                    file: file
+                }).progress(function(evt) {
+                    $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                }).success(function(data, status, headers, config) {
+                    $scope.snapshot.photos = {
+                        large: data.large,
+                        medium: data.medium,
+                        small: data.small,
+                        square: data.square
+                    };
+                    $scope.cardImg = $scope.app.cdn + data.path + data.small;
+                    box.modal('hide');
+                });
+            }
+        }
         function populateMatches () {
             var out = [];
             for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
@@ -2278,8 +2308,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', 'dataPrevious', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
-    function ($scope, $compile, $timeout, dataPrevious, $state, $window, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
+.controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', '$upload', 'dataPrevious', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
+    function ($scope, $compile, $timeout, $upload, dataPrevious, $state, $window, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
         
         var deckBootBox = undefined,
             authorBootBox = undefined,
@@ -2298,6 +2328,12 @@ angular.module('app.controllers', ['ngCookies'])
                 },
                 matches : [],
                 tiers: [],
+                photos: {
+                    large: "",
+                    medium: "",
+                    small: "",
+                    square: ""
+                },
                 active : false
             },
             defaultTier = {
@@ -2347,6 +2383,43 @@ angular.module('app.controllers', ['ngCookies'])
                 list[i].orderNum = i + 1;
             }
             $scope.deckRanks();
+        };
+        
+        // photo upload
+        $scope.photoUpload = function ($files) {
+            if (!$files.length) return false;
+            var box = bootbox.dialog({
+                message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                closeButton: false,
+                animate: false
+            });
+            $scope.uploading = 0;
+            box.modal('show');
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/admin/upload/snapshot',
+                    method: 'POST',
+                    file: file
+                }).progress(function(evt) {
+                    $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                }).success(function(data, status, headers, config) {
+                    $scope.snapshot.photos = {
+                        large: data.large,
+                        medium: data.medium,
+                        small: data.small,
+                        square: data.square
+                    };
+                    $scope.cardImg = $scope.app.cdn + data.path + data.small;
+                    box.modal('hide');
+                });
+            }
+        };
+        
+        $scope.getImage = function () {
+            $scope.imgPath = '/snapshots/';
+            if (!$scope.snapshot) { return '/img/blank.png'; }
+            return ($scope.snapshot.photos && $scope.snapshot.photos.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photos.small;
         };
         
         function escapeStr( str ) {
@@ -4662,7 +4735,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
         
-//        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/articles/' + $scope.article.photos.small;
+//        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/snapshot/' + $scope.snapshot.photos.square;
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article');
         
         for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
@@ -4674,6 +4747,10 @@ angular.module('app.controllers', ['ngCookies'])
         function buildCharts () {    
             var tierLength = $scope.snapshot.tiers.length,
                 maxTierLength = (tierLength > 2) ? 2 : tierLength;
+            
+//            for (var a = 0; a < $scope.snapshot.tiers.length; a++) {
+//                for ()
+//            }
             
             for (var j = 0; j < maxTierLength; j++) {
                 for (var k = 0; k < $scope.snapshot.tiers[j].decks.length; k++) {

@@ -238,20 +238,7 @@ var app = angular.module('app', [
                 url: 'hearthstone/meta-snapshot',
                 views: {
                     content: {
-                        templateUrl: tpl + 'views/frontend/snapshots.snapshot.html',
-                        controller: 'SnapshotCtrl',
-                        resolve: {
-                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
-                                var slug = $stateParams.slug;
-                                return SnapshotService.getLatest().then(function (result) {
-                                    if(result.success === true) {
-                                        return result.snapshot[0];
-                                    } else {
-                                        return $q.reject('Unable to find snapshot');
-                                    }
-                                });
-                            }]
-                        }
+                        templateUrl: tpl + 'views/frontend/snapshots.html'
                     }
                 }
             })
@@ -261,6 +248,7 @@ var app = angular.module('app', [
                     data: ['SnapshotService', '$q', function (SnapshotService, $q) {
                         return SnapshotService.getLatest().then(function (result) {
                             if (result.success === true) {
+                                console.log(result);
                                 return result;
                             } else {
                                 return $q.reject('unable to find snapshot');
@@ -268,13 +256,33 @@ var app = angular.module('app', [
                         });
                     }],
                     redirect: ['$q', '$state', 'data', function ($q, $state, data) {
-                        $state.go('app.snapshot.snapshot', { slug: data.snapshot[0].slug.url, num: data.snapshot[0].snapNum });
+                        $state.go('app.snapshot.snapshot', { slug: data.snapshot[0].slug.url });
                         return $q.reject();
                     }]
                 }
             })    
             .state('app.snapshot.snapshot', {
-                url: '/meta-snapshot-:num-:slug'
+                url: '/:slug',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/frontend/snapshots.snapshot.html',
+                        controller: 'SnapshotCtrl',
+                        resolve: {
+                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
+                                var slug = $stateParams.slug;
+                                return SnapshotService.getSnapshot(slug).then(function (result) {
+                                    if(result.success === true) {
+                                        return result.snapshot;
+                                    } else {
+                                        return $q.reject('Unable to find snapshot');
+                                    }
+                                });
+                            }]
+                        }
+                    }
+                }
+
+                
             })
             .state('app.hs', {
                 abstract: true,

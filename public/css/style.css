@@ -625,6 +625,15 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .rightSide .sideTier .sideTierBody .sideTierDeck .sideTierDeckName { position: relative; height: 50px; max-width: 215px; padding-left: 10px; }
 
 
+/* TRENDS */
+
+.trends-wrapper { height: 500px; background-image: url('../img/meta-snapshot/trends-bg.jpg') }
+
+.trends { width: 100%; height: 100%; }
+
+/* /TRENDS */
+
+
 .tier h4,
 .tier h3,
 .tier h2 {
@@ -910,16 +919,25 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 }
 
 .snap-num {
-    width:100px;
-    height:50px;
-    line-height: 1;
-    display: inline-block;
-    font-size: 36px;
-    
+    width:50px;
 }
 
 .cardBtn {
     background: none;
+    border: none;
+    outline: none;
+    padding: 2px 8px;
+}
+
+.cardBtn.green {
+    background: #5CB85C;
+    border: none;
+    outline: none;
+    padding: 2px 8px;
+}
+
+.cardBtn.danger {
+    background: #D9534F;
     border: none;
     outline: none;
     padding: 2px 8px;
