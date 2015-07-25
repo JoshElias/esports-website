@@ -624,7 +624,6 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .rightSide .sideTier .sideTierBody .sideTierDeck .sideTierDeckRank { position: relative; height: 49px; width:50px; border: 1px solid rgba(255,255,255,.2); }
 .rightSide .sideTier .sideTierBody .sideTierDeck .sideTierDeckName { position: relative; height: 50px; max-width: 215px; padding-left: 10px; }
 
-
 /* TRENDS */
 
 .trends-wrapper { height: 500px; background-image: url('../img/meta-snapshot/trends-bg.jpg') }
@@ -713,7 +712,9 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .svg-tooltip { stroke: rgb(255,255,255); fill: #2268AE; }
 
-.bar { stroke: rgb(255, 255 ,255); stroke-width: 1px; opacity:.8 }
+.no-mouse { opacity: .5; -webkit-transition-duration: .2s; transition-duration: .2s; }
+.bar-wrap { -webkit-transition-duration: .2s; transition-duration: .2s; }
+.bar { stroke: rgb(255, 255 ,255); stroke-width: 1px; opacity:.8; }
 
 .bar-Druid { fill: rgb(255, 125, 10) }
 .bar-Hunter { fill: rgb(171, 212, 115) }

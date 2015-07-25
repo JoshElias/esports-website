@@ -4731,6 +4731,18 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.snapshot = data;
         $scope.show = [];
+        var mouseOver = [];
+        $scope.matchupName = [];
+        
+        
+        $scope.getMouseOver = function (deckID) {
+            return mouseOver[deckID] || false;
+        }
+        
+        $scope.setMouseOver = function (deckID, isOver, deckName) {
+            mouseOver[deckID] = isOver;
+            $scope.matchupName[deckID] = deckName || false;
+        }
         
         
         $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);

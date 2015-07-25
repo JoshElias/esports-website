@@ -9,7 +9,7 @@
             <div tweet-button url="'https://tempostorm.com/hearthstone/meta-snapshot/meta-snapshot-' + snapshot.snapNum + '-' + snapshot.slug.url"></div>
             <div reddit-button url="'https://tempostorm.com/hearthstone/meta-snapshot/meta-snapshot-' + snapshot.snapNum + '-' + snapshot.slug.url"></div>-->
         </div>
-        <img class="sideBorders img-responsive head-img" src="../../img/meta-snapshot/warrior-top.jpg" />
+        <img class="sideBorders img-responsive head-img" ng-src="{{app.cdn}}snapshots/{{snapshot.photos.large}}" />
     </div>
     <div class="container meta-container sideBorders">
         <div class="m-t-md">
@@ -116,7 +116,7 @@
                                             </div>
                                             <span ng-if="tier.tier < 3">
                                             <hr class="m-b-lg">
-                                                <h2 class="m-b-lg">MATCH-UPS</h2>
+                                                <h2 class="m-b-lg">MATCH-UPS<span ng-if="matchupName[deck.deck._id]"> - {{matchupName[deck.deck._id]}}</span></h2>
                                                 <div class="match-graph m-t-md m-b-md">
                                                     <svg class="graph-wrapper" height="100%" width="100%">
                                                         <text x="1.5%" y="0%" fill="white">100</text>
@@ -147,7 +147,7 @@
                                                             <line x1="1.1%" y1="100%" x2="1.1%" y2="0" />
 
                                                             <svg height="100%" width="98%" x="1.5%">
-                                                                <svg ng-repeat="match in filtered = (getMatches(deck.deck._id) | orderBy: 'playerClass')">
+                                                                <svg class="bar-wrap" ng-repeat="match in filtered = (getMatches(deck.deck._id) | orderBy: 'playerClass')" ng-mouseover="setMouseOver(deck.deck._id, match.against, match.name)" ng-mouseleave="setMouseOver(deck.deck._id, false)" ng-class="{ 'no-mouse' : getMouseOver(deck.deck._id) != false && getMouseOver(deck.deck._id) != match.against }">
                                                                     <rect class="bar bar-{{match.playerClass}}" ng-attr-width="{{(100/filtered.length)-.8}}%" ng-attr-height="{{100-match.chance}}%" ng-attr-x="{{(100/filtered.length)*$index}}%" ng-attr-y="{{match.chance}}%">
                                                                     <text x="0" y="0" width="150" height="40" fill="red">{{match.name}}</text>
                                                                 </svg>

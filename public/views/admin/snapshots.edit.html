@@ -130,7 +130,7 @@
                                                                  <button class="cardBtn" ng-click="( c.toss == false ) ? c.toss = true : c.toss = false"><i class="fa" ng-class="{ 'fa-minus' : c.toss == true, 'fa-plus' : c.toss == false }"></i></button>
                                                                 {{c.card.name}}
                                                                 <button class="pull-right cardBtn" ng-click="removeTechCard(c)"><i class="fa fa-close"></i></button>
-                                                                <button class="pull-right btn btn-small cardBtn" ng-class="{ 'btn-green' : c.both }" ng-click="setBoth(c)">2</button>
+                                                                <button class="pull-right btn btn-small cardBtn" ng-class="{ 'green' : c.both && !c.toss, 'danger' : c.both && c.toss }" ng-click="setBoth(c)">2</button>
                                                             </li>
                                                             <li class="list-group-item">
                                                                 <a href="#" ng-click="openAddBox('card', t, d, tech)"><i class="fa fa-plus"></i>&nbsp Add Card</a>
