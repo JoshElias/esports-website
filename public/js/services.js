@@ -208,11 +208,14 @@ angular.module('app.services', [])
         },
         getLatest: function () {
             var d = $q.defer();
-            $http.post('/getLatestSnapshot', {}).success(function (data) {
+            $http.post('/snapshot/latest', {}).success(function (data) {
                 d.resolve(data);
             });
             
             return d.promise;
+        },
+        addComment: function (snapshot, comment) {
+            return $http.post('/api/snapshot/comment/add', {});
         }
     }
 }])

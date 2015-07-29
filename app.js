@@ -161,7 +161,8 @@ app.post('/article', routes.frontend.article(Schemas));
 
 app.post('/snapshots', routes.frontend.snapshots(Schemas));
 app.post('/snapshot', routes.frontend.snapshot(Schemas));
-app.post('/getLatestSnapshot', routes.frontend.getLatestSnapshot(Schemas));
+app.post('/snapshot/comment/add', routes.frontend.snapshotCommentAdd(Schemas, mongoose));
+app.post('/snapshot/latest', routes.frontend.getLatestSnapshot(Schemas));
 
 app.post('/decks', routes.frontend.decks(Schemas));
 app.post('/decks/community', routes.frontend.decksCommunity(Schemas));
@@ -203,6 +204,8 @@ app.post('/api/deck/update', routes.frontend.deckUpdate(Schemas, Util));
 app.post('/api/deck/delete', routes.frontend.deckDelete(Schemas));
 app.post('/api/deck/vote', routes.frontend.deckVote(Schemas));
 app.post('/api/deck/comment/add', routes.frontend.deckCommentAdd(Schemas, mongoose));
+
+app.post('/api/snapshot/comment/add', routes.frontend.snapshotCommentAdd(Schemas, mongoose));
 
 app.post('/api/hots/guide', routes.frontend.hots.guideEdit(Schemas));
 app.post('/api/hots/guide/add', routes.frontend.hots.guideAdd(Schemas, Util, mongoose));

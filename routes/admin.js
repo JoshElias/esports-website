@@ -3195,12 +3195,6 @@ module.exports = {
     snapshotAdd: function (Schemas, Util) {
         return function (req, res, next) {
             
-            
-            for (var i = 0; i < req.body.tiers[0].decks.length; i++) {
-                console.log(req.body.tiers[0].decks[i].rank.last);
-            }
-            
-            
             var snapshot = req.body,
                 total,
                 latest;
@@ -3253,6 +3247,7 @@ module.exports = {
                         matches: snapshot.matches,
                         createdDate: new Date().toISOString(),
                         photos: snapshot.photos,
+                        comments: snapshot.comments,
                         active: snapshot.active
                 });
                 
@@ -3282,12 +3277,6 @@ module.exports = {
     },
     snapshotEdit: function (Schemas, Util) {
         return function (req, res, next) {
-            
-            
-            for (var i = 0; i < req.body.tiers[0].decks.length; i++) {
-                console.log(req.body.tiers[0].decks[0].rank.last);
-            }
-            
             
             var snapshot = req.body,
                 _id = snapshot._id;
@@ -3339,6 +3328,7 @@ module.exports = {
                     snap.matches = snapshot.matches;
                     snap.createdDate = new Date().toISOString();
                     snap.photos = snapshot.photos;
+                    snap.comments = snapshot.comments;
                     snap.active = snapshot.active;
                     
                     snap.save(function (err) {

@@ -73,14 +73,21 @@
 <!--
             <div class="row no-pad m-b-md">
                 <div class="col-lg-12 trends-wrapper">
+                    
+                
+                    
+                    
                     <svg class="trends">
                         <svg class="trend-view" height="350" width="95%" x="2.5%" y="75" style="overflow: hidden">
-                            <svg id="animateChart" class="trend-wrapper" height="100%" width="100%" ng-attr-y="{{getView()}}">
-                                <svg ng-repeat="trend in trends" width="100%" height="100%" ng-attr-y="{{-(350*$index)}}">
-                                    <svg ng-repeat="rank in trend" width="100%" ng-attr-height="{{100/trend.length}}%" ng-attr-y="{{(100/trend.length)*$index}}%">
+                            <svg id="animateChart" class="trend-wrapper" height="100%" width="100%" ng-attr-y="{{getView()+5}}">
+                                <svg ng-repeat="tier in sortedDecks" width="100%" height="100%" ng-attr-y="{{-(350*$index)}}">
+                                    <svg ng-repeat="deck in tier" width="100%" ng-attr-height="{{100/tier.length}}%" ng-attr-y="{{(100/tier.length)*$index}}%">
+                                        
+                                        {{log(sortedDecks)}}
+                                        <circle ng-repeat="plot in deck.rank.last track by $index" class="dot-{{deck.deck.playerClass}}" ng-attr-cy="{{(100/tier.length)}}%" ng-attr-cx="{{100*($index+1)}}" r="5" stroke-width="3" fill="none"></circle>
                                         <line x1="2.5%" y1="5" x2="100%"  y2="5" style="stroke:rgba(255,255,255,.5)"/>
                                         <text height="15" x="10" y="10" fill="white">{{($index+1)}}</text>
-                                        <circle ng-repeat="" ng-attr-cx="{{8.334*$index}}%" cy="0" r="5" stroke="red" stroke-width="3" fill="none" />
+                                        <circle ng-repeat="deck in trends[$parent.$index] track by $index" ng-attr-cx="{{7.92*($index+1)}}%" cy="5" r="5" class="dot-{{deck.deck.playerClass}}" stroke-width="3" fill="none"></circle>
                                     </svg>
                                 </svg>
                             </svg>
@@ -253,7 +260,7 @@
             
             <!-- AUTHORS -->
             <div class="row m-l-none m-r-none m-b-md">
-                <div class="author col-lg-12" ng-repeat="author in snapshot.authors" >
+                <div class="meta-author col-lg-12" ng-repeat="author in snapshot.authors" >
                     <button type="button" data-toggle="collapse" data-target="#{{author.user._id}}" aria-expanded="false" aria-controls="{{author.user._id}}">
                         <div class="pull-left">
                             <div class="author-img-wrapper pull-left">
@@ -291,8 +298,67 @@
             <!-- /AUTHORS -->
             
             
-            
-            
+            <!-- comments -->
+            <div class="row">
+                <div class="snapshot-section col-lg-12">
+                    <div class="snapshot-section-title clearfix">
+                        <a href="#" ng-click="show.comments = !show.comments"><h3 class="pull-left">COMMENTS</h3></a>
+                        <div class="m-l-md m-r-md pull-right">
+                            <a href="#" ng-click="show.comments = !show.comments">
+                                <i class="fa" ng-class="{ 'fa-angle-down': !show.comments, 'fa-angle-up': show.comments }"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="snapshot-section-content" ng-show="show.comments">
+                        <div class="snapshot-comments">
+                            <div class="comments">
+                                <p class="no-comments" ng-if="!snapshot.comments || !snapshot.comments.length">There are currently no comments on this Meta Snapshot.</p>
+                                <div class="comment" ng-repeat="comment in snapshot.comments">
+                                    <div class="avatar">
+                                        <a href="./user/{{comment.author.username}}"><img gravatar-src-once="comment.author.email" alt="" /></a>
+                                    </div>
+                                    <div class="panel">
+                                        <div class="panel-heading pos-rl clearfix">
+                                            <span class="arrow left"></span>
+                                            <a href="./user/{{comment.author.username}}">@{{comment.author.username}}</a>
+                                            <div class="pull-right">
+                                                <div class="comment-votes m-l-sm pull-right clearfix">
+                                                    <div class="vote-count vote-small m-l-xs pull-right"><span><em ng-show="comment.votesCount > 0">+</em>{{comment.votesCount}}</span></div>
+                                                    <div class="vote-count-btns vote-small pull-left">
+                                                        <a href="#" class="btn-vote-up vote-small" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-plus-square"></i></a>
+                                                        <a href="#" class="btn-vote-down vote-small" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-minus-square"></i></a>
+                                                    </div>
+                                                </div>
+                                                <div class="comment-ago hidden-xs">
+                                                    <span class="fa fa-clock-o"></span>
+                                                    <span am-time-ago="comment.createdDate"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">{{comment.comment}}</div>
+                                    </div>
+                                </div>
+                                <div class="comment-add">
+                                    <div class="avatar">
+                                        <a href="./user/{{app.user.getUsername()}}" ng-if="app.user.isLogged()"><img gravatar-src="app.user.getUserEmail()" alt="" /></a>
+                                        <a href="#" ng-if="!app.user.isLogged()"><img ng-src="{{app.cdn}}img/profile.jpg" alt="" /></a>
+                                    </div>
+                                    <form class="form-horizontal" name="commentForm" novalidate>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control input-dark" ng-model="comment.comment" placeholder="ADD A COMMENT" required>
+                                            <span class="input-group-btn">
+                                                <button type="submit" class="btn btn-default input-dark" ng-disabled="commentForm.$invalid" ng-click="commentPost()">POST</button>
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- / commments -->
+
             
         </div>
 

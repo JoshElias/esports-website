@@ -711,7 +711,7 @@ svg:not(:root) { overflow: auto }
 /* !TECH */
 
 
-.author {
+.meta-author {
     
     background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
@@ -728,10 +728,10 @@ svg:not(:root) { overflow: auto }
     margin-bottom: 1px;
 }
 
-.author button { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; }
+.meta-author button { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; }
 
-.author h2 { color: white; letter-spacing: 4px; font-size: 24px; font-weight: bold; text-indent: 30px; text-align: left;}
-.author h3 { color: #F6981E; letter-spacing: 4px; font-size: 14px; text-indent: 30px; text-align: left; }
+.meta-author h2 { color: white; letter-spacing: 4px; font-size: 24px; font-weight: bold; text-indent: 30px; text-align: left;}
+.meta-author h3 { color: #F6981E; letter-spacing: 4px; font-size: 14px; text-indent: 30px; text-align: left; }
 
 
 .author-img-wrapper { position: relative; height: 60px; width: 70px; }
@@ -770,6 +770,53 @@ svg:not(:root) { overflow: auto }
 .bar-Shaman { fill: rgb(0, 112, 222) }
 .bar-Warlock { fill: rgb(148, 130, 201) }
 .bar-Warrior { fill: rgb(199, 156, 110) }
+
+.dot-Druid { stroke: rgb(255, 125, 10) }
+.dot-Hunter { stroke: rgb(171, 212, 115) }
+.dot-Mage { stroke: rgb(105, 204, 240) }
+.dot-Paladin { stroke: rgb(245, 140, 186) }
+.dot-Priest { stroke: white }
+.dot-Rogue { stroke: rgb(255, 245, 105) }
+.dot-Shaman { stroke: rgb(0, 112, 222) }
+.dot-Warlock { stroke: rgb(148, 130, 201) }
+.dot-Warrior { stroke: rgb(199, 156, 110) }
+
+
+
+#snapshot-chart {
+    width:800px;
+}
+
+#snapshot-chart g {
+    fill: white;
+}
+#snapshot-chart line {
+    fill: white;
+    stroke: white;
+}
+#snapshot-chart .domain {
+    stroke: white;
+}
+.c3-circle {
+    stroke-width: 2px;
+    fill: none;
+}
+
+
+
+#meta-graph-Rogue {
+    color: yellow
+}
+
+
+.snapshot-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
+.snapshot-section-title { font-size: 20px; line-height: 60px; min-height: 60px; color: #FFF; background: rgba(0,0,0,.3); }
+.snapshot-section-title a { color: #FFF; }
+.snapshot-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; }
+.snapshot-section-content { padding: 20px; border-top: 1px solid #000; }
+.snapshot-section-content.unpadded { padding: 0px; }
+.snapshot-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
+.snapshot-section-content p { color: #FFF; }
 
 
 .tier-deck-Druid {

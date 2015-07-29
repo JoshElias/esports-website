@@ -2901,8 +2901,11 @@ angular.module('app.controllers', ['ngCookies'])
 
                     for (var a = 0; a < $scope.snapshot.tiers.length; a++) {
                         for (var b = 0; b < $scope.snapshot.tiers[a].decks.length; b++) {
-                            $scope.snapshot.tiers[a].decks[b].rank.last.unshift(data.snapshot.tiers[a].decks[b].rank.current);
-                            $scope.snapshot.tiers[a].decks[b].rank.last.pop();
+                            console.log($scope.snapshot.tiers[a].decks[b].rank.last);
+                            $scope.snapshot.tiers[a].decks[b].rank.last.splice(0,0,data.snapshot.tiers[a].decks[b].rank.current);
+                            if ($scope.snapshot.tiers[a].decks[b].rank.last.length == 12) {
+                                $scope.snapshot.tiers[a].decks[b].rank.last.pop();
+                            }
                         }
                     }
                 }
@@ -4742,13 +4745,15 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('SnapshotCtrl', ['$scope', '$state', 'SnapshotService', 'data',
-    function ($scope, $state, SnapshotService, data) {
-
+.controller('SnapshotCtrl', ['$scope', '$state', '$compile', 'SnapshotService', 'data',
+    function ($scope, $state, $compile, SnapshotService, data) {
+        
         $scope.snapshot = data;
         $scope.show = [];
         $scope.matchupName = [];
+        $scope.sortedDecks = [];
         $scope.trends = [];
+        $scope.deckNames = [];
         
         var mouseOver = [],
             charts = [],
@@ -4789,22 +4794,22 @@ angular.module('app.controllers', ['ngCookies'])
             var tierLength = $scope.snapshot.tiers.length,
                 maxTierLength = (tierLength > 2) ? 2 : tierLength,
                 decks = [],
-                out = [];
+                out = [],
+                decksOut = [];
             /******************************************* BUILD TREND CHART *******************************************/
           
-            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
-                    decks.push($scope.snapshot.tiers[i].decks[j]);
-                }
-            }
             
-            for (var a = 0; a < decks.length; a++) {
-                for (var b = 0; b < decks[a].rank.last.length; b++) {
-                    (out[decks[a].rank.last[b]] == undefined && decks[a].rank.last[b] != undefined) ? out.splice(decks[a].rank.last[b], 0, new Array()) : false;
-                    console.log(out[decks[a].rank.last[b]]);
+            
+            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                var decksOut = [];
+                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
+                    decksOut.push($scope.snapshot.tiers[i].decks[j]);
+                    decks.push($scope.snapshot.tiers[i].decks[j]);
+                    $scope.deckNames.push($scope.snapshot.tiers[i].decks[j].deck.playerName)
                 }
+                $scope.sortedDecks.push(decksOut);
             }
-            console.log(out);
+            $scope.trends = decks;
             
             /******************************************* BUILD TIER MATCHES *******************************************/
             for (var j = 0; j < maxTierLength; j++) {
@@ -4835,6 +4840,73 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
+        
+        
+        /******************************************* COMMENTS *******************************************/
+        var defaultComment = {
+            comment: ''
+        };
+        $scope.comment = angular.copy(defaultComment);
+        
+        $scope.commentPost = function () {
+            if (!$scope.app.user.isLogged()) {
+                var box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                var callback = function () {
+                    $scope.commentPost();
+                };
+            } else {
+                SnapshotService.addComment($scope.snapshot, $scope.comment).success(function (data) {
+                    if (data.success) {
+                        $scope.snapshot.comments.push(data.comment);
+                        $scope.comment.comment = '';
+                    }
+                });
+            }
+        };
+                
+        updateCommentVotes();
+        function updateCommentVotes() {
+            $scope.snapshot.comments.forEach(checkVotes);
+            
+            function checkVotes (comment) {
+                var vote = comment.votes.filter(function (vote) {
+                    return ($scope.app.user.getUserID() === vote.userID);
+                })[0];
+                
+                if (vote) {
+                    comment.voted = vote.direction;
+                }
+            }
+        }
+                
+        $scope.voteComment = function (direction, comment) {
+            if (!$scope.app.user.isLogged()) {
+                var box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                var callback = function () {
+                    $scope.voteComment(direction, snapshot);
+                };
+            } else {
+                if (comment.author._id === $scope.app.user.getUserID()) {
+                    bootbox.alert("You can't vote for your own content.");
+                    return false;
+                }
+                VoteService.voteComment(direction, comment).then(function (data) {
+                    if (data.success) {
+                        comment.voted = direction;
+                        comment.votesCount = data.votesCount;
+                    }
+                });
+            }
+        };
+        
         
         $scope.scrollToDeck = function (deck) {
             $('html, body').animate({
