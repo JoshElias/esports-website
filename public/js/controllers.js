@@ -1765,8 +1765,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', 'data', 'AlertService', 'Util', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
-    function ($scope, $compile, $timeout, $state, data, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
+.controller('AdminSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'data', 'AlertService', 'Util', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
+    function ($scope, $compile, $timeout, $state, $window, data, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
         
         
         var deckBootBox = undefined,
@@ -1785,6 +1785,11 @@ angular.module('app.controllers', ['ngCookies'])
                     last : []
                 },
                 tech : []
+            },
+            defaultAuthor = {
+                user: undefined, 
+                description: "",
+                klass: []
             },
             defaultDeckMatch = {
                 for : undefined,
@@ -1990,7 +1995,7 @@ angular.module('app.controllers', ['ngCookies'])
         /* AUTHOR METHODS */
             $scope.isAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
-                    if (a._id == $scope.snapshot.authors[i]._id) {
+                    if (a._id == $scope.snapshot.authors[i].user._id) {
                         return true;
                     }
                 }
@@ -2002,12 +2007,15 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.removeAuthor(a);
                     return;
                 }
-                $scope.snapshot.authors.push(a);
+                var dauthor = angular.copy(defaultAuthor);
+                dauthor.user = a;
+                console.log(dauthor);
+                $scope.snapshot.authors.push(dauthor);
             }
             
             $scope.removeAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
-                    if (a._id === $scope.snapshot.authors[i]._id) {
+                    if (a._id === $scope.snapshot.authors[i].user._id) {
                         $scope.snapshot.authors.splice(i, 1);
                     }
                 }
@@ -2339,6 +2347,11 @@ angular.module('app.controllers', ['ngCookies'])
                 },
                 active : false
             },
+            defaultAuthor = {
+                user: undefined, 
+                description: "",
+                klass: []
+            },
             defaultTier = {
                 tier : 1,
                 decks : []
@@ -2557,7 +2570,7 @@ angular.module('app.controllers', ['ngCookies'])
         /* AUTHOR METHODS */
             $scope.isAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
-                    if (a._id == $scope.snapshot.authors[i]._id) {
+                    if (a._id == $scope.snapshot.authors[i].user._id) {
                         return true;
                     }
                 }
@@ -2569,12 +2582,15 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.removeAuthor(a);
                     return;
                 }
-                $scope.snapshot.authors.push(a);
+                var dauthor = angular.copy(defaultAuthor);
+                dauthor.user = a;
+                console.log(dauthor);
+                $scope.snapshot.authors.push(dauthor);
             }
             
             $scope.removeAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
-                    if (a._id === $scope.snapshot.authors[i]._id) {
+                    if (a._id === $scope.snapshot.authors[i].user._id) {
                         $scope.snapshot.authors.splice(i, 1);
                     }
                 }
@@ -4731,8 +4747,12 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.snapshot = data;
         $scope.show = [];
-        var mouseOver = [];
         $scope.matchupName = [];
+        $scope.trends = [];
+        
+        var mouseOver = [],
+            charts = [],
+            viewHeight = 0;   
         
         
         $scope.getMouseOver = function (deckID) {
@@ -4744,7 +4764,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.matchupName[deckID] = deckName || false;
         }
         
-        
         $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
         
 //        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/snapshot/' + $scope.snapshot.photos.square;
@@ -4754,16 +4773,40 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.show[i+1] = false;
         }
         
-        var charts = [];
+        $scope.log = function (a) {
+            console.log(a);
+        }
         
-        function buildCharts () {    
+        $scope.setView = function (height) {
+            viewHeight = height*350;
+        }
+        
+        $scope.getView = function () {
+            return viewHeight;
+        }
+        
+        function init () {    
             var tierLength = $scope.snapshot.tiers.length,
-                maxTierLength = (tierLength > 2) ? 2 : tierLength;
+                maxTierLength = (tierLength > 2) ? 2 : tierLength,
+                decks = [],
+                out = [];
+            /******************************************* BUILD TREND CHART *******************************************/
+          
+            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
+                    decks.push($scope.snapshot.tiers[i].decks[j]);
+                }
+            }
             
-//            for (var a = 0; a < $scope.snapshot.tiers.length; a++) {
-//                for ()
-//            }
+            for (var a = 0; a < decks.length; a++) {
+                for (var b = 0; b < decks[a].rank.last.length; b++) {
+                    (out[decks[a].rank.last[b]] == undefined && decks[a].rank.last[b] != undefined) ? out.splice(decks[a].rank.last[b], 0, new Array()) : false;
+                    console.log(out[decks[a].rank.last[b]]);
+                }
+            }
+            console.log(out);
             
+            /******************************************* BUILD TIER MATCHES *******************************************/
             for (var j = 0; j < maxTierLength; j++) {
                 for (var k = 0; k < $scope.snapshot.tiers[j].decks.length; k++) {
                     var matches = [];
@@ -4779,6 +4822,16 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     }
                     charts[$scope.snapshot.tiers[j].decks[k].deck._id] = matches;
+                }
+            }
+            
+            
+            
+            /******************************************* AUTHOR CAPS *******************************************/
+            if ($scope.snapshot.authors.length > 0) {
+                for (var i = 0; i < $scope.snapshot.authors.length; i++) {
+                    var auth = $scope.snapshot.authors[i].user;
+                    $scope.snapshot.authors[i].username = auth.username.toUpperCase();
                 }
             }
         }
@@ -4809,7 +4862,7 @@ angular.module('app.controllers', ['ngCookies'])
             return (match.for._id == id) ? match.against.playerClass : match.for.playerClass;
         }
         
-        buildCharts();
+        init();
         
         $scope.goToDeck = function ($event, slug) {
             $event.stopPropagation();

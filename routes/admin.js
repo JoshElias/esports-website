@@ -3155,7 +3155,7 @@ module.exports = {
                 Schemas.Snapshot.findOne({ _id : _id })
                 .populate([
                     {
-                        path: 'authors',
+                        path: 'authors.user',
                         select: '_id username'
                         
                     },
@@ -3179,6 +3179,7 @@ module.exports = {
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
                     snapshot = results;
+                    console.log(results._id);
                     return callback();
                 });
             }
@@ -3193,6 +3194,13 @@ module.exports = {
     },
     snapshotAdd: function (Schemas, Util) {
         return function (req, res, next) {
+            
+            
+            for (var i = 0; i < req.body.tiers[0].decks.length; i++) {
+                console.log(req.body.tiers[0].decks[i].rank.last);
+            }
+            
+            
             var snapshot = req.body,
                 total,
                 latest;
@@ -3206,40 +3214,9 @@ module.exports = {
                 });
             }
             
-//            function populateLast (callback) {
-//                Schemas.Snapshot.find({})
-//                .sort({createdDate:-1})
-//                .limit(1)
-//                .populate([
-//                    {
-//                        path: 'tiers.decks.deck',
-//                        select: '_id name'
-//                    }
-//                ])
-//                .exec(function (err, data) {
-//                    if (err) { return res.json({ success: false }) }
-//                    data = data[0];
-//                    console.log('exec');
-//                    if (data != undefined) {
-////                        for (var i = 0; i < snapshot.tiers.length; i++) {
-////                            for (var j = 0; j < snapshot.tiers[i].decks.length; j++) {
-////                                for (var k = 0; k < data.tiers.length; k++) {
-////                                    for (var l = 0; l < data.tiers[k].decks.length; l++) {
-////                                        (snapshot.tiers[i].decks[j].deck._id == data.tiers[k].decks[l].deck._id) ?  snapshot.tiers[i].decks[j].rank.last = data.tiers[k].decks[l].rank.current : false;
-////                                    }
-////                                }
-////                            }
-////                        }
-//                    }
-//                    return callback();
-//                });
-//            }
-            
-            
-            
             function convertObjs (callback) {
                 for (var i =0; i < snapshot.authors.length; i++) {
-                    snapshot.authors[i] = snapshot.authors[i]._id;
+                    snapshot.authors[i].user = snapshot.authors[i].user._id;
                 }
                 for (var i = 0; i < snapshot.matches.length; i++) {
                     snapshot.matches[i].for = snapshot.matches[i].for._id;
@@ -3294,28 +3271,29 @@ module.exports = {
                 });
             }
             
-//            populateLast(function () {
-                getTotal(function () {
-                    convertObjs(function () {
-                        addNewSnapshot(function () {
-                            return res.json({ success: true });
-                        });
+            getTotal(function () {
+                convertObjs(function () {
+                    addNewSnapshot(function () {
+                        return res.json({ success: true });
                     });
                 });
-//            });
-//            return res.json({success: true});
+            });
         }
     },
     snapshotEdit: function (Schemas, Util) {
         return function (req, res, next) {
+            
+            
+            for (var i = 0; i < req.body.tiers[0].decks.length; i++) {
+                console.log(req.body.tiers[0].decks[0].rank.last);
+            }
+            
+            
             var snapshot = req.body,
                 _id = snapshot._id;
-            
-            console.log(_id);
-                        
             function convertObjs (callback) {
-                for (var i =0; i < snapshot.authors.length; i++) {
-                    snapshot.authors[i] = snapshot.authors[i]._id;
+                for (var i = 0; i < snapshot.authors.length; i++) {
+                    snapshot.authors[i].user = snapshot.authors[i].user._id;
                 }
                 for (var i = 0; i < snapshot.matches.length; i++) {
                     snapshot.matches[i].for = snapshot.matches[i].for._id;
@@ -3365,6 +3343,7 @@ module.exports = {
                     
                     snap.save(function (err) {
                         if (err) {
+                            console.log(err);
                             return res.json({ success: false,
                                 errors: {
                                     unknown: {
@@ -3414,7 +3393,7 @@ module.exports = {
                 .limit(1)
                 .populate([
                     {
-                        path: 'authors',
+                        path: 'authors.user',
                         select: '_id username'
                         
                     },

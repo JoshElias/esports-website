@@ -42,8 +42,32 @@
             <label for="author" class="col-sm-2 control-label">Authors</label>
             <div class="col-sm-10 wrapper-none">
                 <ul class="list-group m-b-md" ng-if="snapshot.authors.length!=0">
-                    <li class="list-group-item" ng-repeat="a in snapshot.authors">
-                        {{a.username}}<a href="#" class="pull-right" ng-click="removeAuthor(a)"><i class="fa fa-close"></i></a>
+                    <li ng-repeat="a in snapshot.authors" class="list-group-item">
+                        {{a.user.username}}<span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#{{a.user._id}}" aria-expanded="false" aria-controls="{{a.user._id}}"><i class="fa fa-edit"></i></button><button ng-click="removeAuthor(a.user)"><i class="fa fa-close"></i></button></span>
+                        <div class="collapse clearfix" id="{{a.user._id}}">
+                            <div class="form-group m-t-md">
+                                <label for="authorDescription_{{a.user.username}}" class="col-sm-1 control-label">Description</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" name="authorDescription_{{a.user.username}}" ng-model="a.description"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="authorClasses_{{a.user.username}}" class="col-sm-1 control-label">Class(es) of Expertise</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="authorClasses{{a.user.username}}" ng-model="a.klass" multiple>
+                                      <option value="DRUID">Druid</option>
+                                      <option value="HUNTER">Hunter</option>
+                                      <option value="MAGE">Mage</option>
+                                      <option value="PALADIN">Paladin</option>
+                                      <option value="PRIEST">Priest</option>
+                                      <option value="ROGUE">Rogue</option>
+                                      <option value="SHAMAN">Shaman</option>
+                                      <option value="WARLOCK">Warlock</option>
+                                      <option value="WARRIOR">Warrior</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 </ul>
                 <button class="btn btn-green btn-rounded m-r-sm" ng-click="openAddBox('author')"><i class="fa fa-plus"></i> Add Author</button>

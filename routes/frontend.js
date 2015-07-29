@@ -2692,7 +2692,7 @@ module.exports = {
                 .lean()
                 .populate([
                     {
-                        path: 'authors',
+                        path: 'authors.user',
                     },
                     {
                         path: 'tiers.decks.deck',
@@ -2736,7 +2736,7 @@ module.exports = {
                 .limit(1)
                 .populate([
                     {
-                        path: 'authors',
+                        path: 'authors.user',
                     },
                     {
                         path: 'tiers.decks.deck',
