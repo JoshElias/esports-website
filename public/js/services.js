@@ -215,7 +215,7 @@ angular.module('app.services', [])
             return d.promise;
         },
         addComment: function (snapshot, comment) {
-            return $http.post('/api/snapshot/comment/add', {});
+            return $http.post('/api/snapshot/comment/add', { snapshotID: snapshot._id, comment: comment });
         }
     }
 }])

@@ -3236,7 +3236,7 @@ module.exports = {
                         title: snapshot.title,
                         authors: snapshot.authors,
                         slug: {
-                            url: "meta-snapshot-" + snapshot.snapNum + "-" + Util.slugify(snapshot.title),
+                            url: snapshot.slug.url,
                             linked: snapshot.slug.linked
                         },
                         content: {
@@ -3317,7 +3317,7 @@ module.exports = {
                     snap.title = snapshot.title;
                     snap.authors = snapshot.authors;
                     snap.slug = {
-                        url: "meta-snapshot-" + snapshot.snapNum + "-" + Util.slugify(snapshot.title),
+                        url: snapshot.slug.url,
                         linked: snapshot.slug.linked
                     };
                     snap.content = {
@@ -3406,6 +3406,27 @@ module.exports = {
                 ])
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
+                    
+                    var fault = false;
+                    for (var i = 0; i < results.tiers.length; i++) {
+                        for (var j = 0; j < results.tiers[i].decks.length; j++) {
+                            if (results.tiers[i].decks[j].deck === null) {
+                                results.tiers[i].decks.splice(j,1);
+                                fault = true;
+                                j--;
+                            }
+                        }
+                    }
+                    
+                    if (fault) {
+                        for (var i = 0; i < results.matches.length; i++) {
+                            if (results.matches[i].for === null || results.matches[i].against == null) {
+                                results.matches.splice(i,1);
+                                i--;
+                            }
+                        }
+                    }
+                    
                     snapshot = results;
                     return callback();
                 });

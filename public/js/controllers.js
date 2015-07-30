@@ -1982,7 +1982,7 @@ angular.module('app.controllers', ['ngCookies'])
         
             $scope.setSlug = function () {
                 if (!$scope.snapshot.slug.linked) { return false; }
-                $scope.snapshot.slug.url = Util.slugify($scope.snapshot.title);
+                $scope.snapshot.slug.url = "meta-snapshot-" + $scope.snapshot.snapNum + "-" + Util.slugify($scope.snapshot.title);
             };
 
             $scope.toggleSlugLink = function () {
@@ -2557,7 +2557,7 @@ angular.module('app.controllers', ['ngCookies'])
         
             $scope.setSlug = function () {
                 if (!$scope.snapshot.slug.linked) { return false; }
-                $scope.snapshot.slug.url = Util.slugify($scope.snapshot.title);
+                $scope.snapshot.slug.url = "meta-snapshot-" + $scope.snapshot.snapNum + "-" + Util.slugify($scope.snapshot.title);
             };
 
             $scope.toggleSlugLink = function () {
@@ -2896,18 +2896,14 @@ angular.module('app.controllers', ['ngCookies'])
                     for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                         for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
                             $scope.matches.push($scope.snapshot.tiers[i].decks[k]);
-                        }
-                    }
-
-                    for (var a = 0; a < $scope.snapshot.tiers.length; a++) {
-                        for (var b = 0; b < $scope.snapshot.tiers[a].decks.length; b++) {
-                            console.log($scope.snapshot.tiers[a].decks[b].rank.last);
-                            $scope.snapshot.tiers[a].decks[b].rank.last.splice(0,0,data.snapshot.tiers[a].decks[b].rank.current);
-                            if ($scope.snapshot.tiers[a].decks[b].rank.last.length == 12) {
-                                $scope.snapshot.tiers[a].decks[b].rank.last.pop();
+                            $scope.snapshot.tiers[i].decks[k].rank.last.splice(0,0,data.snapshot.tiers[i].decks[k].rank.current);
+                            if ($scope.snapshot.tiers[i].decks[k].rank.last.length == 12) {
+                                $scope.snapshot.tiers[i].decks[k].rank.last.pop();
                             }
                         }
                     }
+                    $scope.deckRanks();
+                    $scope.setSlug();
                 }
             });
         }
@@ -4745,8 +4741,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('SnapshotCtrl', ['$scope', '$state', '$compile', 'SnapshotService', 'data',
-    function ($scope, $state, $compile, SnapshotService, data) {
+.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'data', 'AuthenticationService', 'UserService', 'SubscriptionService',
+    function ($scope, $state, $compile, $window, SnapshotService, data, AuthenticationService, UserService, SubscriptionService) {
         
         $scope.snapshot = data;
         $scope.show = [];
@@ -4757,7 +4753,8 @@ angular.module('app.controllers', ['ngCookies'])
         
         var mouseOver = [],
             charts = [],
-            viewHeight = 0;   
+            viewHeight = 0,
+            box = undefined;
         
         
         $scope.getMouseOver = function (deckID) {
@@ -4850,7 +4847,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
-                var box = bootbox.dialog({
+                box = bootbox.dialog({
                     title: 'Login Required',
                     message: $compile('<div login-form></div>')($scope)
                 });
@@ -4885,7 +4882,7 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                var box = bootbox.dialog({
+                box = bootbox.dialog({
                     title: 'Login Required',
                     message: $compile('<div login-form></div>')($scope)
                 });
@@ -4941,6 +4938,33 @@ angular.module('app.controllers', ['ngCookies'])
             var url = $state.href('app.hs.decks.deck', { slug: slug });
             window.open(url,'_blank');
         };
+        
+        
+        // login for modal
+        $scope.login = function login(email, password) {
+            if (email !== undefined && password !== undefined) {
+                UserService.login(email, password).success(function(data) {
+                    AuthenticationService.setLogged(true);
+                    AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
+                    $window.sessionStorage.userID = data.userID;
+                    $window.sessionStorage.username = data.username;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+                    box.modal('hide');
+                    updateVotes();
+                    updateCommentVotes();
+                    callback();
+                }).error(function() {
+                    $scope.showError = true;
+                });
+            }
+        }
     }
 ])
 .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',

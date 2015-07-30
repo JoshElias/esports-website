@@ -764,6 +764,10 @@ module.exports = {
                         path: 'guide',
                         select: '_id name slug public',
                         match: { public: true }
+                    },
+                    {
+                        path: 'snapshot',
+                        select: '_id title slug'
                     }
                 ])
                 .exec(function (err, activities) {
@@ -2705,6 +2709,10 @@ module.exports = {
                         select: 'name playerClass'
                     },
                     {
+                        path: 'comments',
+                        select: '_id author comment createdDate votesCount votes'
+                    },
+                    {
                         path: 'matches.against',
                         select: 'name playerClass'
                     }
@@ -2834,6 +2842,10 @@ module.exports = {
                     {
                         path: 'matches.for',
                         select: 'name playerClass'
+                    },
+                    {
+                        path: 'comments',
+                        select: '_id author comment createdDate votesCount votes'
                     },
                     {
                         path: 'matches.against',
