@@ -4786,6 +4786,100 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getView = function () {
             return viewHeight;
         }
+
+        // trends
+        $scope.currentTier = 1;
+        $scope.currentDeck = false;
+        $scope.tierRange = [];
+        
+        $scope.snapshotTimeline = function () {
+            var out = [];
+            for (var i = $scope.snapshot.snapNum; i > $scope.snapshot.snapNum - 13; i--) {
+                out.push(i);
+            }
+            return out;
+        }
+        
+        $scope.getTier = function (tier) {
+            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                if ($scope.snapshot.tiers[i].tier == tier) {
+                    return $scope.snapshot.tiers[i];
+                }
+            }
+            return false;
+        }
+        
+        function getTierRange (tierNum) {
+            var tier = $scope.getTier(tierNum),
+                out = [],
+                highestRank = 0,
+                lowestRank = 0;
+            
+            // find highest and lowest in tier
+            for (var i = 0; i < tier.decks.length; i++) {
+                var history = tier.decks[i].rank.last;
+                history.unshift(tier.decks[i].rank.current);
+                
+                for (var j = 0; j < history.length; j++) {
+                    if (history[j] > highestRank) { highestRank = history[j]; }
+                    if (history[j] < lowestRank || lowestRank == 0) { lowestRank = history[j]; }
+                }
+            }
+            
+            // generate range
+            for (var i = lowestRank; i <= highestRank; i++) {
+                out.push(i);
+            }
+            
+            return out;
+        };
+        
+        // init tier ranges
+        for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+            var tierNum = $scope.snapshot.tiers[i].tier;
+            $scope.tierRange[tierNum] = getTierRange(tierNum);
+        }
+        
+        $scope.toggleCurrentDeck = function (deckNum) {
+            $scope.currentDeck = ($scope.currentDeck == deckNum) ? false : deckNum;
+        };
+        
+        $scope.hasDeckSelected = function () {
+            return $scope.currentDeck;
+        };
+        
+        $scope.setCurrentTier = function (tierNum) {
+            $scope.currentTier = tierNum;
+            $scope.toggleCurrentDeck(false);
+        };
+        
+        $scope.getPositionY = function (tierNum, deckIndex, height, padding) {
+            var size = $scope.tierRange[tierNum].length;
+            return Math.round(((height - padding)/size*deckIndex) + padding, 2);
+        }
+        
+        $scope.getPositionX = function (index, padding) {
+            return Math.round(100 - padding - ((100 - padding)/12*index) + (padding / 2), 2);
+        }
+        
+        $scope.getRanks = function (deck) {
+            var ranks = deck.rank.last;
+            ranks.unshift(deck.rank.current);
+            return ranks;
+        };
+        
+        $scope.getRankIndex = function (tierNum, rank) {
+            var range = $scope.tierRange[tierNum];
+            return range.indexOf(rank);
+        };
+        
+        $scope.getNextRank = function (deck, index) {
+            return deck.rank.last[index + 1];
+        };
+        
+        $scope.hasNextRank = function (deck, index) {
+            return (deck.rank.last[index + 1]);
+        };
         
         function init () {    
             var tierLength = $scope.snapshot.tiers.length,
@@ -4793,21 +4887,6 @@ angular.module('app.controllers', ['ngCookies'])
                 decks = [],
                 out = [],
                 decksOut = [];
-            /******************************************* BUILD TREND CHART *******************************************/
-          
-            
-            
-            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-                var decksOut = [];
-                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
-                    decksOut.push($scope.snapshot.tiers[i].decks[j]);
-                    decks.push($scope.snapshot.tiers[i].decks[j]);
-                    $scope.deckNames.push($scope.snapshot.tiers[i].decks[j].deck.playerName)
-                }
-                $scope.sortedDecks.push(decksOut);
-            }
-            $scope.trends = decks;
-            
             /******************************************* BUILD TIER MATCHES *******************************************/
             for (var j = 0; j < maxTierLength; j++) {
                 for (var k = 0; k < $scope.snapshot.tiers[j].decks.length; k++) {
@@ -4827,15 +4906,6 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
             
-            
-            
-            /******************************************* AUTHOR CAPS *******************************************/
-            if ($scope.snapshot.authors.length > 0) {
-                for (var i = 0; i < $scope.snapshot.authors.length; i++) {
-                    var auth = $scope.snapshot.authors[i].user;
-                    $scope.snapshot.authors[i].username = auth.username.toUpperCase();
-                }
-            }
         }
         
         
