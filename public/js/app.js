@@ -459,7 +459,7 @@ var app = angular.module('app', [
                             dataArticles: ['ArticleService', function (ArticleService) {
                                 var hero = 'all',
                                     page = 1,
-                                    perpage = 9;
+                                    perpage = 4;
                                 return ArticleService.getArticles('hots', hero, page, perpage);
                             }],
                             dataGuidesCommunity: ['HOTSGuideService', function (HOTSGuideService) {
@@ -468,8 +468,11 @@ var app = angular.module('app', [
                             dataGuidesFeatured: ['HOTSGuideService', function (HOTSGuideService) {
                                 return HOTSGuideService.getGuidesFeatured();
                             }],
-                            dataBanners: ['BannerService', function (BannerService) {
-                                return BannerService.getBanners('hots');
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroesList();
+                            }],
+                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getMaps();
                             }]
                         }
                     }

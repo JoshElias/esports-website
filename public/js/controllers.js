@@ -12,7 +12,7 @@ angular.module('app.controllers', ['ngCookies'])
         name: 'TempoStorm',
         version: '0.0.1',
         copyright: new Date().getFullYear(),
-        cdn: (tpl && tpl.length) ? tpl : '.',
+        cdn: (tpl && tpl.length) ? tpl : './',
         settings: {
             token: $cookies.token || null,
             deck: null,
@@ -7553,62 +7553,180 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSHomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 
-    function ($scope, dataBanners, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService) {
+.controller('HOTSHomeCtrl', ['$scope', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 'TwitchService', 
+    function ($scope, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService, TwitchService) {
         // data
+        $scope.maps = dataMaps.maps;
         $scope.articles = dataArticles.articles;
         $scope.guidesCommunity = dataGuidesCommunity.guides;
         $scope.guidesFeatured = dataGuidesFeatured.guides;
-        $scope.loading = {
-            articles: false,
-            community: false,
-            featured: false
+        
+        console.log(dataGuidesCommunity);
+        
+        // filters
+        $scope.filters = {
+            roles: [],
+            universes: [],
+            search: '',
+            heroes: [],
+            map: false
         };
         
-        // banner
-        $scope.banner = {
-            current: 0,
-            direction: 'left',
-            slides: dataBanners.banners,
-            setCurrent: function (current) {
-                this.direction = 'right';
-                this.current = current;
-            },
-            next: function () {
-                this.direction = 'right';
-                this.current = (this.current < (this.slides.length - 1)) ? ++this.current : 0;
-            },
-            prev: function () {
-                this.direction = 'left';
-                this.current = (this.current > 0) ? --this.current : this.slides.length - 1;
+        $scope.toggleFilterRole = function (role) {
+            var index = $scope.filters.roles.indexOf(role);
+            if (index === -1) {
+                $scope.filters.roles.push(role);
+            } else {
+                $scope.filters.roles.splice(index, 1);
             }
         };
         
-        // content
-        $scope.hero = 'all';
-        $scope.setHero = function (hero) {
-            $scope.hero = hero;
-            $scope.loading = {
-                articles: true,
-                community: true,
-                featured: true
-            };
-            
-            ArticleService.getArticles('hots', hero, 1, 9).then(function (data) {
-                $scope.articles = data.articles;
-                $scope.loading.articles = false;
-            });
-
-            HOTSGuideService.getGuidesCommunity(hero, 1, 10).then(function (data) {
-                $scope.guidesCommunity = data.guides;
-                $scope.loading.community = false;
-            });
-            
-            HOTSGuideService.getGuidesFeatured(hero, 1, 10).then(function (data) {
-                $scope.guidesFeatured = data.guides;
-                $scope.loading.featured = false;
-            });
+        $scope.hasFilterRole = function (role) {
+            for (var i = 0; i < $scope.filters.roles.length; i++) {
+                if ($scope.filters.roles[i] == role) {
+                    return true;
+                }
+            }
+            return false;
         };
+
+        $scope.toggleFilterUniverse = function (universe) {
+            var index = $scope.filters.universes.indexOf(universe);
+            if (index === -1) {
+                $scope.filters.universes.push(universe);
+            } else {
+                $scope.filters.universes.splice(index, 1);
+            }
+        };
+        
+        $scope.hasFilterUniverse = function (universe) {
+            for (var i = 0; i < $scope.filters.universes.length; i++) {
+                if ($scope.filters.universes[i] == universe) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        $scope.toggleFilterHero = function (hero) {
+            var index = $scope.filters.heroes.indexOf(hero);
+            if (index === -1) {
+                $scope.filters.heroes.push(hero);
+            } else {
+                $scope.filters.heroes.splice(index, 1);
+            }
+        };
+        
+        $scope.hasFilterHero = function (hero) {
+            return ($scope.filters.heroes.indexOf(hero) !== -1);
+        };
+        
+        $scope.hasAnyFilter = function () {
+            return ($scope.filters.roles.length ||
+                    $scope.filters.universes.length ||
+                    $scope.filters.search.length ||
+                    $scope.filters.heroes.length);
+        };
+        
+        $scope.hasAnyFilterHero = function () {
+            return ($scope.filters.heroes.length);
+        };
+        
+        $scope.hasFilterMap = function (map) {
+            return ($scope.filters.map === map);
+        };
+        
+        $scope.hasAnyFilterMap = function () {
+            return ($scope.filters.map !== false);
+        };
+        
+        $scope.toggleFilterMap = function (map) {
+            $scope.filters.map = ($scope.filters.map == map) ? false : map;
+        };
+        
+        $scope.currentMapBack = function () {
+            return ($scope.filters.map) ? $scope.filters.map.className : 'default';
+        };
+        
+        // setup hero filters
+        $scope.heroDots = [{}];
+        for (var i = 0; i < 55; i++) {
+            if (dataHeroes.heroes[i]) {
+                $scope.heroDots.push(dataHeroes.heroes[i]);
+            } else {
+                $scope.heroDots.push({});
+            }
+        }
+        
+        // latest hero
+        $scope.hero = function () {
+            if ($scope.filters.heroes.length) {
+                return $scope.filters.heroes[$scope.filters.heroes.length - 1];
+            } else {
+                return {
+                    name: '\u00A0',
+                    title: '\u00A0',
+                    className: 'default'
+                };
+            }
+        };
+        
+        // guides
+        $scope.getGuideCurrentHero = function (guide) {
+            return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
+        };
+        
+        $scope.getGuideClass = function (guide) {
+            return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
+        };
+        
+        $scope.guidePrevHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+            
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
+            }
+            
+            guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
+        };
+
+        $scope.guideNextHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+            
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
+            }
+            
+            guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
+        };
+        
+        // load twitch streams
+        TwitchService.getStreams().then(function(data) {
+            for (var i = 0; i < data.data.length; i++) {
+                var log = data.data[i].logoUrl;
+                var sub = log.substr(4);
+                var im = "https" + sub;
+                data.data[i].logoUrl = im;
+            }
+            $scope.streamWheel = true;
+            $scope.streams = data.data;
+        });
     }
 ])
 .controller('HOTSGuidesListCtrl', ['$scope', '$state', 'data', 'dataHeroes', 'dataMaps', 

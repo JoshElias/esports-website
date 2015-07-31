@@ -178,8 +178,9 @@ module.exports = {
                 perpage = req.body.perpage || 10,
                 where = {},
                 guides, total,
+                talents = [],
                 now = new Date().getTime(),
-                weekAgo = new Date(now - (60*60*24*7*1000));
+                weekAgo = new Date(now - (60*60*24*14*1000));
             
             if (hero !== 'all') {
                 where.heroes = hero;
@@ -201,6 +202,7 @@ module.exports = {
             // get guides
             function getGuides (callback) {
                 Schemas.Guide.find({ public: true, featured: false })
+                .lean()
                 .where(where)
                 .select('premium heroes guideType maps slug name description author createdDate comments votesCount')
                 .populate([{
@@ -223,9 +225,62 @@ module.exports = {
                 });
             }
             
+            // get talents
+            function getTalents (callback) {
+                var heroIDs = [];
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        if (heroIDs.indexOf() === -1) {
+                            heroIDs.push(guides[i].heroes[j].hero._id);
+                        }
+                    }
+                }
+                
+                if (!heroIDs.length) { return callback(); }
+                Schemas.Hero.find({ active: true, _id: { $in: heroIDs } })
+                .select('talents')
+                .exec(function (err, results) {
+                    if (err || !results) { return res.json({ success: false }); }
+                    
+                    for(var i = 0; i < results.length; i++) {
+                        for(var j = 0; j < results[i].talents.length; j++) {
+                            talents.push(results[i].talents[j]);
+                        }
+                    }
+                    return callback();
+                });
+            }
+            
+            function assignTalents (callback) {
+                if (!talents.length) { return callback(); }
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        for(var key in guides[i].heroes[j].talents) {
+                            for(var l = 0; l < talents.length; l++) {
+                                if (guides[i].heroes[j].talents[key].toString() === talents[l]._id.toString()) {
+                                    guides[i].heroes[j].talents[key] = {
+                                        _id: talents[l]._id,
+                                        name: talents[l].name,
+                                        className: talents[l].className
+                                    };
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return callback();
+            }
+            
             getGuides(function () {
-                getTotal(function () {
-                    return res.json({ success: true, guides: guides, total: total, hero: hero, page: page, perpage: perpage });
+                getTalents(function () {
+                    assignTalents(function () {
+                        getTotal(function () {
+                            return res.json({ success: true, guides: guides, total: total, hero: hero, page: page, perpage: perpage });
+                        });
+                    });
                 });
             });
         };
@@ -236,7 +291,8 @@ module.exports = {
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
                 where = (hero === 'all') ? {} : { 'heroes': hero },
-                guides, total;
+                guides, total,
+                talents = [];
             
             // get total guides
             function getTotal (callback) {
@@ -252,6 +308,7 @@ module.exports = {
             // get guides
             function getGuides (callback) {
                 Schemas.Guide.find({ featured: true })
+                .lean()
                 .where(where)
                 .select('premium heroes guideType maps slug name description author createdDate comments votesCount')
                 .populate([{
@@ -264,7 +321,7 @@ module.exports = {
                         path: 'maps',
                         select: 'className'
                 }])
-                .sort({ votesCount: -1, createdDate: -1 })
+                .sort({ createdDate: -1 })
                 .skip((perpage * page) - perpage)
                 .limit(perpage)
                 .exec(function (err, results) {
@@ -274,9 +331,62 @@ module.exports = {
                 });
             }
             
+            // get talents
+            function getTalents (callback) {
+                var heroIDs = [];
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        if (heroIDs.indexOf() === -1) {
+                            heroIDs.push(guides[i].heroes[j].hero._id);
+                        }
+                    }
+                }
+                
+                if (!heroIDs.length) { return callback(); }
+                Schemas.Hero.find({ active: true, _id: { $in: heroIDs } })
+                .select('talents')
+                .exec(function (err, results) {
+                    if (err || !results) { return res.json({ success: false }); }
+                    
+                    for(var i = 0; i < results.length; i++) {
+                        for(var j = 0; j < results[i].talents.length; j++) {
+                            talents.push(results[i].talents[j]);
+                        }
+                    }
+                    return callback();
+                });
+            }
+            
+            function assignTalents (callback) {
+                if (!talents.length) { return callback(); }
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        for(var key in guides[i].heroes[j].talents) {
+                            for(var l = 0; l < talents.length; l++) {
+                                if (guides[i].heroes[j].talents[key].toString() === talents[l]._id.toString()) {
+                                    guides[i].heroes[j].talents[key] = {
+                                        _id: talents[l]._id,
+                                        name: talents[l].name,
+                                        className: talents[l].className
+                                    };
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return callback();
+            }
+            
             getGuides(function () {
-                getTotal(function () {
-                    return res.json({ success: true, guides: guides, total: total, hero: hero, page: page, perpage: perpage });
+                getTalents(function () {
+                    assignTalents(function () {
+                        getTotal(function () {
+                            return res.json({ success: true, guides: guides, total: total, hero: hero, page: page, perpage: perpage });
+                        });
+                    });
                 });
             });
         };

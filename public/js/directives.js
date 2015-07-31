@@ -104,6 +104,18 @@ angular.module('app.directives', ['ui.load'])
         });
     };
 }])
+.directive("subNav", ['$window', function ($window) {
+    return function(scope, element, attrs) {
+        angular.element($window).bind("scroll", function() {
+             if (this.pageYOffset >= 278) {
+                 element.addClass('sticky');
+             } else {
+                 element.removeClass('sticky');
+             }
+            scope.$apply();
+        });
+    };
+}])
 .directive('ngBackground', function(){
     return function(scope, element, attrs){
         var url = attrs.ngBackground;
