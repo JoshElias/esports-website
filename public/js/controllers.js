@@ -4763,7 +4763,7 @@ angular.module('app.controllers', ['ngCookies'])
             box = undefined;
         
         $scope.getImage = function () {
-            return ($scope.snapshot.photos.large == "") ? $scope.app.cdn + 'snapshot/default-banner.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photos.large;
+            return ($scope.snapshot.photos.large == "") ? $scope.app.cdn + 'snapshots/default-banner.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photos.large;
         }
         
         $scope.getMouseOver = function (deckID) {
@@ -4777,7 +4777,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
         
-        var ogImg = ($scope.snapshot.photos.square == "") ? $scope.app.cdn + 'snapshot/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photos.square;
+        var ogImg = ($scope.snapshot.photos.square == "") ? $scope.app.cdn + 'snapshots/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photos.square;
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article', ogImg);
         
         for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
