@@ -627,7 +627,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 /* TRENDS */
 
 .trends-wrapper { background: url('../img/meta-snapshot/trends-bg.jpg') no-repeat center top; background-size: cover; }
-.trends-wrapper .inner { border: 1px solid rgba(255,255,255,.2); }
+.trends-wrapper .inner { border: 1px solid rgba(255,255,255,.2); padding: 20px; }
 .trends-wrapper h2 { color: white; font-weight: bold; letter-spacing: 4px; font-size: 24px; text-align: center; }
 .trends-wrapper .hr { margin: 0 auto; border-top: 1px solid rgba(255,255,255,.5); border-bottom: 2px solid rgba(0,0,0,.4); background: none; width: 225px; }
 
@@ -657,6 +657,11 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .snapshot-trends-tiers li a { position: relative; font-family: 'Open Sans Bold'; font-size: 30px; color: rgba(255,255,255,.8); letter-spacing: 2px; z-index: 3; }
 .snapshot-trends-tiers li a:hover { color: rgba(255,255,255,1); }
 .snapshot-trends-tiers li a.active { color: rgba(255,255,255,1); border-bottom: 2px solid #FFF; }
+
+@media (max-width: 767px) {
+    .trends-wrapper .inner { padding: 10px; }
+    .snapshot-trends-tiers li a { font-size: 12px; }
+}
 
 /* /TRENDS */
 
@@ -750,7 +755,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .meta-author button { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; }
 
-.meta-author h2 { color: white; letter-spacing: 4px; font-size: 24px; font-weight: bold; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.meta-author h2 { color: white; letter-spacing: 4px; font-size: 24px; font-weight: bold; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-transform: uppercase; }
 .meta-author h3 { color: #F6981E; letter-spacing: 4px; font-size: 14px; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
 .author-img-wrapper { position: relative; height: 60px; width: 70px; }

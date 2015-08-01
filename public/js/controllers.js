@@ -4817,12 +4817,13 @@ angular.module('app.controllers', ['ngCookies'])
             
             // find highest and lowest in tier
             for (var i = 0; i < tier.decks.length; i++) {
-                var history = tier.decks[i].rank.last;
-                history.unshift(tier.decks[i].rank.current);
+                var history = tier.decks[i].rank.all;
+                
+                console.log(history);
                 
                 for (var j = 0; j < history.length; j++) {
-                    if (history[j] > highestRank) { highestRank = history[j]; }
-                    if (history[j] < lowestRank || lowestRank == 0) { lowestRank = history[j]; }
+                    if (history[j] > highestRank && history[j] != 0) { highestRank = history[j]; }
+                    if ((history[j] < lowestRank && history[j] != 0) || lowestRank == 0) { lowestRank = history[j]; }
                 }
             }
             
@@ -4863,8 +4864,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.getRanks = function (deck) {
-            var ranks = deck.rank.last;
-            ranks.unshift(deck.rank.current);
+            var ranks = deck.rank.all;
             return ranks;
         };
         
@@ -4874,11 +4874,11 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.getNextRank = function (deck, index) {
-            return deck.rank.last[index + 1];
+            return deck.rank.all[index + 1];
         };
         
         $scope.hasNextRank = function (deck, index) {
-            return (deck.rank.last[index + 1]);
+            return (deck.rank.all[index + 1]);
         };
         
         function init () {    

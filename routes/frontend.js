@@ -2725,10 +2725,22 @@ module.exports = {
             
             }
             
+            function fixTrends (callback) {
+                for (var i = 0; i < snapshot.tiers.length; i++) {
+                    for (var j = 0; j < snapshot.tiers[i].decks.length; j++) {
+                        snapshot.tiers[i].decks[j].rank.all = snapshot.tiers[i].decks[j].rank.last;
+                        snapshot.tiers[i].decks[j].rank.all.unshift(snapshot.tiers[i].decks[j].rank.current);
+                    }
+                }
+                return callback();
+            }
+            
             getSnapshot(function () {
-                return res.json({
-                    success: true,
-                    snapshot: snapshot
+                fixTrends(function () {
+                    return res.json({
+                        success: true,
+                        snapshot: snapshot
+                    });
                 });
             });
             

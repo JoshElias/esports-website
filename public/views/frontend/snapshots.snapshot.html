@@ -73,7 +73,7 @@
             <div class="row no-pad m-b-md">
                 <div class="col-xs-12">
                     <div class="trends-wrapper pos-rl">
-                        <div class="inner wrapper-md">
+                        <div class="inner">
                             <h2>DECK TRENDS</h2>
                             <hr class="hr m-b-md m-t-xs">
 
@@ -89,7 +89,7 @@
                                     <text height="15" ng-attr-x="{{getPositionX($index, 10)}}%" y="425" fill="white" text-anchor="middle" ng-repeat="moment in snapshotTimeline() track by $index">{{moment}}</text>
 
                                     <g ng-repeat="deck in getTier(currentTier).decks track by $index" class="deck" ng-class="{ 'not-selected': hasDeckSelected() && currentDeck != deck.rank.current }">
-                                        <g ng-repeat="rank in deck.rank.last track by $index" ng-if="rank > 0">
+                                        <g ng-repeat="rank in deck.rank.all track by $index" ng-if="rank > 0">
                                             <circle class="dot-{{deck.deck.playerClass}}" ng-attr-cx="{{getPositionX($index, 10)}}%" ng-attr-cy="{{getPositionY(currentTier, getRankIndex(currentTier, rank), 410, 20)}}" r="5" stroke-width="2" fill="transparent" ng-if="rank > 0"/>
                                             <line class="dot-{{deck.deck.playerClass}}" ng-attr-x1="{{getPositionX($index, 10)}}%" ng-attr-y1="{{getPositionY(currentTier, getRankIndex(currentTier, rank), 410, 20)}}" ng-attr-x2="{{getPositionX($index + 1, 10)}}%" ng-attr-y2="{{getPositionY(currentTier, getRankIndex(currentTier, getNextRank(deck, $index)), 410, 20)}}" stroke-width="2" ng-if="hasNextRank(deck, $index)" />
                                         </g>
@@ -260,7 +260,7 @@
                                 </span>
                             </div>
                             <div class="author-text-wrapper">
-                                <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.klass.length > 0 } ">{{author.username}}</h2>
+                                <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.klass.length > 0 } ">{{author.user.username}}</h2>
                                 <span ng-if="author.klass.length === 1">
                                     <h3>{{author.klass[0]}} EXPERT</h3>
                                 </span>
