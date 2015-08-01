@@ -270,7 +270,7 @@
                             <div class="author-text-wrapper">
                                 <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.klass.length > 0 } ">{{author.user.username}}</h2>
                                 <span ng-if="author.klass.length === 1">
-                                    <h3>{{author.klass[0]}} EXPERT</h3>
+                                    <h3 class="classExpert">{{author.klass[0]}} EXPERT</h3>
                                 </span>
                                 <h3 ng-if="author.klass.length > 1">
                                     <span ng-repeat="klass in author.klass">
