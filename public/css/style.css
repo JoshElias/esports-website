@@ -859,7 +859,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Druid .deck-portrait-Druid { background: url(../img/meta-snapshot/hero-portrait/Druid.png) no-repeat top center; }
-.deck-portrait-Druid-sm { background: url(../img/meta-snapshot/hero-portrait/Druid-sm.png) no-repeat top right; }
+.deck-portrait-Druid-sm { background: url(../img/meta-snapshot/hero-portrait/druid-sm.png) no-repeat top right; }
 
 
 
@@ -876,7 +876,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Hunter .deck-portrait-Hunter { background: url(../img/meta-snapshot/hero-portrait/Hunter.png) no-repeat top center; }
-.deck-portrait-Hunter-sm { background: url(../img/meta-snapshot/hero-portrait/Hunter-sm.png) no-repeat top right; }
+.deck-portrait-Hunter-sm { background: url(../img/meta-snapshot/hero-portrait/hunter-sm.png) no-repeat top right; }
 
 
 .tier-deck-Mage {
@@ -892,7 +892,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Mage .deck-portrait-Mage { background: url(../img/meta-snapshot/hero-portrait/Mage.png) no-repeat top center; }
-.deck-portrait-Mage-sm { background: url(../img/meta-snapshot/hero-portrait/Mage-sm.png) no-repeat top right; }
+.deck-portrait-Mage-sm { background: url(../img/meta-snapshot/hero-portrait/mage-sm.png) no-repeat top right; }
 
 
 .tier-deck-Paladin { 
@@ -908,7 +908,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Paladin .deck-portrait-Paladin { background: url(../img/meta-snapshot/hero-portrait/Paladin.png) no-repeat top center; }
-.deck-portrait-Paladin-sm { background: url(../img/meta-snapshot/hero-portrait/Paladin-sm.png) no-repeat top right; }
+.deck-portrait-Paladin-sm { background: url(../img/meta-snapshot/hero-portrait/paladin-sm.png) no-repeat top right; }
 
 
 .tier-deck-Priest { 
@@ -924,7 +924,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Priest .deck-portrait-Priest { background: url(../img/meta-snapshot/hero-portrait/Priest.png) no-repeat top center; }
-.deck-portrait-Priest-sm { background: url(../img/meta-snapshot/hero-portrait/Priest-sm.png) no-repeat top right; }
+.deck-portrait-Priest-sm { background: url(../img/meta-snapshot/hero-portrait/priest-sm.png) no-repeat top right; }
 
 
 .tier-deck-Rogue { 
@@ -940,7 +940,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Rogue .deck-portrait-Rogue { background: url(../img/meta-snapshot/hero-portrait/Rogue.png) no-repeat top center; }
-.deck-portrait-Rogue-sm { background: url(../img/meta-snapshot/hero-portrait/Rogue-sm.png) no-repeat top right; }
+.deck-portrait-Rogue-sm { background: url(../img/meta-snapshot/hero-portrait/rogue-sm.png) no-repeat top right; }
 
 
 .tier-deck-Shaman { 
@@ -956,7 +956,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Shaman .deck-portrait-Shaman { background: url(../img/meta-snapshot/hero-portrait/Shaman.png) no-repeat top center; }
-.deck-portrait-Shaman-sm { background: url(../img/meta-snapshot/hero-portrait/Shaman-sm.png) no-repeat top right; }
+.deck-portrait-Shaman-sm { background: url(../img/meta-snapshot/hero-portrait/shaman-sm.png) no-repeat top right; }
 
 
 .tier-deck-Warlock { 
@@ -972,7 +972,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Warlock .deck-portrait-Warlock { background: url(../img/meta-snapshot/hero-portrait/Warlock.png) no-repeat top center; }
-.deck-portrait-Warlock-sm { background: url(../img/meta-snapshot/hero-portrait/Warlock-sm.png) no-repeat top right; }
+.deck-portrait-Warlock-sm { background: url(../img/meta-snapshot/hero-portrait/warlock-sm.png) no-repeat top right; }
 
 
 .tier-deck-Warrior { 
@@ -988,7 +988,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Warrior .deck-portrait-Warrior { background: url(../img/meta-snapshot/hero-portrait/Warrior.png) no-repeat top center; }
-.deck-portrait-Warrior-sm { background: url(../img/meta-snapshot/hero-portrait/Warrior-sm.png) no-repeat top right; }
+.deck-portrait-Warrior-sm { background: url(../img/meta-snapshot/hero-portrait/warrior-sm.png) no-repeat top right; }
 
 
 /* article */
