@@ -2693,6 +2693,7 @@ module.exports = {
             function getSnapshot (callback) {
             
                 Schemas.Snapshot.findOne({ "slug.url" : slug })
+                .lean()
                 .populate([
                     {
                         path: 'authors.user',
@@ -2730,10 +2731,22 @@ module.exports = {
             
             }
             
-            getSnapshot(function (results) {
-                return res.json({
-                    success: true,
-                    snapshot: results
+            function fixTrends (snapshot, callback) {
+                for (var i = 0; i < snapshot.tiers.length; i++) {
+                    for (var j = 0; j < snapshot.tiers[i].decks.length; j++) {
+                        snapshot.tiers[i].decks[j].rank.all = snapshot.tiers[i].decks[j].rank.last;
+                        snapshot.tiers[i].decks[j].rank.all.unshift(snapshot.tiers[i].decks[j].rank.current);
+                    }
+                }
+                return callback(snapshot);
+            }
+            
+            getSnapshot(function (snapshot) {
+                fixTrends(snapshot, function (snapshot) {
+                    return res.json({
+                        success: true,
+                        snapshot: snapshot
+                    });
                 });
             });
             
@@ -2742,12 +2755,10 @@ module.exports = {
     snapshotVote: function (Schemas) {
         return function (req, res, next) {
             var snapshot = req.body.snapshot;
-            console.log(req.body.snapshot);
             function vote (callback) {
                 Schemas.Snapshot.findOne({ _id: snapshot }).select('votesCount votes').exec(function (err, snapshot) {
                     if (err || !snapshot) { return res.json({ success: false }); }
                     snapshot.votes.push(req.user._id);
-                    console.log(snapshot.votes);
                     snapshot.votesCount++;
                     snapshot.save(function (err) {
                         if (err) { return res.json({ success: false }); console.log(err); }
@@ -2761,6 +2772,7 @@ module.exports = {
             vote(function () {
                 return res.json({
                     success: true
+
                 });
             });
             

@@ -633,19 +633,44 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 /* TRENDS */
 
-svg:not(:root) { overflow: auto }
-.trends-wrapper { height: 500px; background-image: url('../img/meta-snapshot/trends-bg.jpg'); }
-.trend-wrapper { -webkit-transition-property: y; transition-property: y; -webkit-transition-duration: 1s; transition-duration: 1s; }
-.trends { width: 100%; height: 100%; }
+.trends-wrapper { background: url('../img/meta-snapshot/trends-bg.jpg') no-repeat center top; background-size: cover; }
+.trends-wrapper .inner { border: 1px solid rgba(255,255,255,.2); padding: 20px; }
+.trends-wrapper h2 { color: white; font-weight: bold; letter-spacing: 4px; font-size: 24px; text-align: center; }
+.trends-wrapper .hr { margin: 0 auto; border-top: 1px solid rgba(255,255,255,.5); border-bottom: 2px solid rgba(0,0,0,.4); background: none; width: 225px; }
 
-@keyframes slideChart {
-    from {
-        y: 
-    }
+.trends { width: 100%; height: 450px; }
+.trends g.deck { opacity: 1; transition: opacity .25s ease-in-out; }
+.trends g.deck.not-selected { opacity: .2; }
+
+.snapshot-trends-keys { margin: 0px 5% 20px; }
+.snapshot-trends-keys a { margin: 5px 10px; position: relative; display: block; color: rgba(255,255,255,.8); z-index: 3; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.snapshot-trends-keys a:hover { color: rgba(255,255,255,1); }
+.snapshot-trends-keys a.active { color: rgba(255,255,255,1); }
+.snapshot-trends-keys .trends-key { margin: 4px 5px 0 0; display: inline-block; width: 10px; height: 10px; border: 1px solid rgba(255,255,255,.2); }
+
+.snapshot-trends-keys .trends-key.Druid { background: rgb(255, 125, 10); }
+.snapshot-trends-keys .trends-key.Hunter { background: rgb(171, 212, 115); }
+.snapshot-trends-keys .trends-key.Mage { background: rgb(105, 204, 240); }
+.snapshot-trends-keys .trends-key.Paladin { background: rgb(245, 140, 186); }
+.snapshot-trends-keys .trends-key.Priest { background: rgb(255,255,255); }
+.snapshot-trends-keys .trends-key.Rogue { background: rgb(255, 245, 105); }
+.snapshot-trends-keys .trends-key.Shaman { background: rgb(0, 112, 222); }
+.snapshot-trends-keys .trends-key.Warlock { background: rgb(148, 130, 201); }
+.snapshot-trends-keys .trends-key.Warrior { background: rgb(199, 156, 110); }
+
+.snapshot-trends-tiers { margin: 20px 0px 20px 0px; padding: 0; text-align: center; }
+.snapshot-trends-tiers li { list-style: none; display: inline-block; margin-right: 20px; }
+.snapshot-trends-tiers li:last-child { margin-right: 0px; }
+.snapshot-trends-tiers li a { position: relative; font-family: 'Open Sans Bold'; font-size: 30px; color: rgba(255,255,255,.8); letter-spacing: 2px; z-index: 3; }
+.snapshot-trends-tiers li a:hover { color: rgba(255,255,255,1); }
+.snapshot-trends-tiers li a.active { color: rgba(255,255,255,1); border-bottom: 2px solid #FFF; }
+
+@media (max-width: 767px) {
+    .trends-wrapper .inner { padding: 10px; }
+    .snapshot-trends-tiers li a { font-size: 12px; }
 }
 
 /* /TRENDS */
-
 
 .tier h4,
 .tier h3,
@@ -738,13 +763,12 @@ svg:not(:root) { overflow: auto }
 
 .meta-author button { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; }
 
-.meta-author h2 { color: white; letter-spacing: 4px; font-size: 24px; font-weight: bold; text-indent: 30px; text-align: left;}
-.meta-author h3 { color: #F6981E; letter-spacing: 4px; font-size: 14px; text-indent: 30px; text-align: left; }
-
+.meta-author h2 { color: white; letter-spacing: 4px; font-size: 24px; font-weight: bold; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-transform: uppercase; }
+.meta-author h3 { color: #F6981E; letter-spacing: 4px; font-size: 14px; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
 .author-img-wrapper { position: relative; height: 60px; width: 70px; }
 .author-class-icon { position: absolute; top: 0; left: 0; display: block; }
-.author-text-wrapper { width: 600px; }
+.author-text-wrapper {  }
 .author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; padding: 0;  }
 .author-collapse p { color: white; padding: 0px 75px 20px 105px; font-size: 14px; }
 
@@ -758,12 +782,16 @@ svg:not(:root) { overflow: auto }
 .soc-btn.disable { opacity: .3 }
 .soc-btn i { font-size: 28px; color: white; line-height:1.35 }
 
+@media (max-width: 767px) {
+    .meta-author h2 { text-indent: 0px; }
+    .meta-author h3 { text-indent: 0px; }
+    .author-collapse p { padding: 0px 20px 20px; }
+    .soc-btns { position: relative; top: 0px; left: 0px; padding-left: 20px; }
+}
 
 .match-graph { height: 300px; }
 .match-graph svg { overflow: visible }
 .match-graph line { stroke:rgba(255,255,255,.5); }
-
-.svg-tooltip { stroke: rgb(255,255,255); fill: #2268AE; }
 
 .no-mouse { opacity: .5; -webkit-transition-duration: .2s; transition-duration: .2s; }
 .bar-wrap { -webkit-transition-duration: .2s; transition-duration: .2s; }
@@ -779,17 +807,15 @@ svg:not(:root) { overflow: auto }
 .bar-Warlock { fill: rgb(148, 130, 201) }
 .bar-Warrior { fill: rgb(199, 156, 110) }
 
-.dot-Druid { stroke: rgb(255, 125, 10) }
-.dot-Hunter { stroke: rgb(171, 212, 115) }
-.dot-Mage { stroke: rgb(105, 204, 240) }
-.dot-Paladin { stroke: rgb(245, 140, 186) }
-.dot-Priest { stroke: white }
-.dot-Rogue { stroke: rgb(255, 245, 105) }
-.dot-Shaman { stroke: rgb(0, 112, 222) }
-.dot-Warlock { stroke: rgb(148, 130, 201) }
-.dot-Warrior { stroke: rgb(199, 156, 110) }
-
-
+.dot-Druid { stroke: rgb(255, 125, 10); fill: rgb(255, 125, 10); }
+.dot-Hunter { stroke: rgb(171, 212, 115); fill: rgb(171, 212, 115); }
+.dot-Mage { stroke: rgb(105, 204, 240); fill: rgb(105, 204, 240); }
+.dot-Paladin { stroke: rgb(245, 140, 186); fill: rgb(245, 140, 186); }
+.dot-Priest { stroke: rgb(255,255,255); fill: rgb(255,255,255); }
+.dot-Rogue { stroke: rgb(255, 245, 105); fill: rgb(255, 245, 105); }
+.dot-Shaman { stroke: rgb(0, 112, 222); fill: rgb(0, 112, 222); }
+.dot-Warlock { stroke: rgb(148, 130, 201); fill: rgb(148, 130, 201); }
+.dot-Warrior { stroke: rgb(199, 156, 110); fill: rgb(199, 156, 110); }
 
 #snapshot-chart {
     width:800px;
@@ -805,17 +831,10 @@ svg:not(:root) { overflow: auto }
 #snapshot-chart .domain {
     stroke: white;
 }
-.c3-circle {
-    stroke-width: 2px;
-    fill: none;
-}
-
-
 
 #meta-graph-Rogue {
     color: yellow
 }
-
 
 .snapshot-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
 .snapshot-section-title { font-size: 20px; line-height: 60px; min-height: 60px; color: #FFF; background: rgba(0,0,0,.3); }

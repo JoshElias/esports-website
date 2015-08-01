@@ -79,52 +79,42 @@
             </div>
             
             <div class="row no-pad m-b-md">
-            <div class="col-lg-12 trends-wrapper">
-                    
-                
-            <trend-chart snapshot="snapshot" />
-                    
-<!--
-                    <svg class="trends">
-                        <svg class="trend-view" height="350" width="95%" x="2.5%" y="75" style="overflow: hidden">
-                            <svg id="animateChart" class="trend-wrapper" height="100%" width="100%" ng-attr-y="{{getView()+5}}">
-                                <svg ng-repeat="tier in sortedDecks" width="100%" height="100%" ng-attr-y="{{-(350*$index)}}">
-                                    <svg ng-repeat="deck in tier" width="100%" ng-attr-height="{{100/tier.length}}%" ng-attr-y="{{(100/tier.length)*$index}}%">
-                                        
-                                        {{log(sortedDecks)}}
-                                        <circle ng-repeat="plot in deck.rank.last track by $index" class="dot-{{deck.deck.playerClass}}" ng-attr-cy="{{(100/tier.length)}}%" ng-attr-cx="{{100*($index+1)}}" r="5" stroke-width="3" fill="none"></circle>
-                                        <line x1="2.5%" y1="5" x2="100%"  y2="5" style="stroke:rgba(255,255,255,.5)"/>
-                                        <text height="15" x="10" y="10" fill="white">{{($index+1)}}</text>
-                                        <circle ng-repeat="deck in trends[$parent.$index] track by $index" ng-attr-cx="{{7.92*($index+1)}}%" cy="5" r="5" class="dot-{{deck.deck.playerClass}}" stroke-width="3" fill="none"></circle>
-                                    </svg>
+                <div class="col-xs-12">
+                    <div class="trends-wrapper pos-rl">
+                        <div class="inner">
+                            <h2>DECK TRENDS</h2>
+                            <hr class="hr m-b-md m-t-xs">
+
+                            <svg class="trends">
+                                <svg width="90%" height="100%" x="5%" y="5%">
+                                    <g ng-repeat="num in tierRange[currentTier] track by $index">
+                                        <text height="15" x="4%" ng-attr-y="{{getPositionY(currentTier, $index, 410, 20) + 4}}" fill="white" text-anchor="end">{{num}}</text>
+                                        <line ng-attr-x1="{{getPositionX(0, 10)}}%" ng-attr-y1="{{getPositionY(currentTier, $index, 410, 20)}}" ng-attr-x2="{{getPositionX(12, 10)}}%"  ng-attr-y2="{{getPositionY(currentTier, $index, 410, 20)}}" style="stroke:rgba(255,255,255,.4)"/>
+                                    </g>
+
+                                    <line ng-attr-x1="{{getPositionX($index, 10)}}%" y1="0" ng-attr-x2="{{getPositionX($index, 10)}}%" y2="410" style="stroke:rgba(255,255,255,.4)" ng-repeat="moment in snapshotTimeline() track by $index"/>
+                                    <line x1="5%" y1="410" x2="95%" y2="410" style="stroke:rgba(255,255,255,.4)"/>
+                                    <text height="15" ng-attr-x="{{getPositionX($index, 10)}}%" y="425" fill="white" text-anchor="middle" ng-repeat="moment in snapshotTimeline() track by $index">{{moment}}</text>
+
+                                    <g ng-repeat="deck in getTier(currentTier).decks track by $index" class="deck" ng-class="{ 'not-selected': hasDeckSelected() && currentDeck != deck.rank.current }">
+                                        <g ng-repeat="rank in deck.rank.all track by $index" ng-if="rank > 0">
+                                            <circle class="dot-{{deck.deck.playerClass}}" ng-attr-cx="{{getPositionX($index, 10)}}%" ng-attr-cy="{{getPositionY(currentTier, getRankIndex(currentTier, rank), 410, 20)}}" r="5" stroke-width="2" fill="transparent" ng-if="rank > 0"/>
+                                            <line class="dot-{{deck.deck.playerClass}}" ng-attr-x1="{{getPositionX($index, 10)}}%" ng-attr-y1="{{getPositionY(currentTier, getRankIndex(currentTier, rank), 410, 20)}}" ng-attr-x2="{{getPositionX($index + 1, 10)}}%" ng-attr-y2="{{getPositionY(currentTier, getRankIndex(currentTier, getNextRank(deck, $index)), 410, 20)}}" stroke-width="2" ng-if="hasNextRank(deck, $index)" />
+                                        </g>
+                                    </g>
                                 </svg>
                             </svg>
-                            
-                            <svg>
-                                <line x1="0" y1="0%"   x2="100%"  y2="0%" style="stroke:rgba(255,0,0,.3)"/>
-                                <line x1="0" y1="10%"  x2="100%"  y2="10%" style="stroke:rgba(255,0,0,.3)"/>
-                                <line x1="0" y1="20%"  x2="100%"  y2="20%" style="stroke:rgba(255,0,0,.3)"/>
-                                <line x1="0" y1="30%"  x2="100%"  y2="30%" style="stroke:rgba(255,0,0,.3)"/>
-                                <line x1="0" y1="40%"  x2="100%"  y2="40%" style="stroke:rgba(255,0,0,.3)"/>
-                                <line x1="0" y1="50%"  x2="100%"  y2="50%" style="stroke:rgba(255,0,0,.3)"/>
-                                <line x1="0" y1="60%"  x2="100%"  y2="60%" style="stroke:rgba(255,0,0,.3)"/>
-                                <line x1="0" y1="70%"  x2="100%"  y2="70%" style="stroke:rgba(255,0,0,.3)"/>
-                                <line x1="0" y1="80%"  x2="100%"  y2="80%" style="stroke:rgba(255,0,0,.3)"/>
-                                <line x1="0" y1="90%"  x2="100%"  y2="90%" style="stroke:rgba(255,0,0,.3)"/>
-                                <line x1="0" y1="100%" x2="100%"  y2="100%" />
-                                <line x1="1.1%" y1="100%" x2="1.1%" y2="0" />
-                            </svg>
-                            
-                        </svg>
-                        
-                        
-                            
-                            
-                        <svg y="100">
-                            <g ng-repeat="tier in snapshot.tiers" ng-click="setView(tier.tier-1)" cursor="pointer"><text height="30" x="30" ng-attr-y="{{30*$index}}" fill="red">{{tier.tier}}</text></g>
-                        </svg>
-                    </svg>
--->
+
+                            <ul class="snapshot-trends-tiers">
+                                <li ng-repeat="tier in snapshot.tiers"><a href="#" ng-class="{ 'active': tier.tier == currentTier }" ng-click="setCurrentTier(tier.tier)">TIER {{tier.tier}}</a></li>
+                            </ul>
+
+                            <div class="row snapshot-trends-keys">
+                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" ng-repeat="deck in getTier(currentTier).decks track by $index"><a href="#" ng-class="{ 'active': deck.rank.current == currentDeck }" ng-click="toggleCurrentDeck(deck.rank.current)"><span class="trends-key {{deck.deck.playerClass}} m-r-sm"></span>{{deck.deck.name}}</a></div>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -270,15 +260,15 @@
             <div class="row m-l-none m-r-none m-b-md">
                 <div class="meta-author col-lg-12" ng-repeat="author in snapshot.authors" >
                     <button type="button" data-toggle="collapse" data-target="#{{author.user._id}}" aria-expanded="false" aria-controls="{{author.user._id}}">
-                        <div class="pull-left">
-                            <div class="author-img-wrapper pull-left">
+                        <div>
+                            <div class="author-img-wrapper pull-left hidden-xs">
                                 <img ng-if="author.klass.length === 1" class="author-class-icon m-l-sm" ng-src="../../img/meta-snapshot/class-icons/{{author.klass[0]}}.png" />
                                 <span ng-if="author.klass.length > 1">
                                     <img class="author-class-icon" ng-repeat="ico in author.klass" src="../../img/meta-snapshot/class-icons/{{ico}}.png" style="left: {{((author.klass.length-1)*23)-(23*$index)}}px;" />
                                 </span>
                             </div>
                             <div class="author-text-wrapper">
-                                <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.klass.length > 0 } ">{{author.username}}</h2>
+                                <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.klass.length > 0 } ">{{author.user.username}}</h2>
                                 <span ng-if="author.klass.length === 1">
                                     <h3>{{author.klass[0]}} EXPERT</h3>
                                 </span>
@@ -289,17 +279,23 @@
                                     EXPERT
                                 </h3>
                             </div>
+                            <div class="soc-btns pull-right m-r-lg hidden-xs">
+                                <a ng-if="author.user.social.twitch != ''" class="btn twitch-btn soc-btn" href="http://www.twitch.tv/{{author.user.social.twitch}}" target="_blank"><i class="fa fa-twitch"></i></a>
+                                <a ng-if="author.user.social.twitch === ''" class="btn twitch-btn soc-btn disable" target="_blank" disabled><i class="fa fa-twitch"></i></a>
+                                <a ng-if="author.user.social.twitter != ''" class="btn twitter-btn soc-btn" href="https://twitter.com/{{author.user.social.twitter}}" target="_blank"><i class="fa fa-twitter"></i></a>
+                                <a ng-if="author.user.social.twitter === ''" class="btn twitter-btn soc-btn disable" target="_blank" disabled><i class="fa fa-twitter"></i></a>
+                            </div>
                         </div>
-                        <span class="soc-btns pull-right m-r-lg">
-                            <a ng-if="author.user.social.twitch != ''" class="btn twitch-btn soc-btn" href="http://{{author.user.social.twitch}}" target="_blank"><i class="fa fa-twitch"></i></a>
-                            <a ng-if="author.user.social.twitch === ''" class="btn twitch-btn soc-btn disable" target="_blank" disabled><i class="fa fa-twitch"></i></a>
-                            <a ng-if="author.user.social.twitter != ''" class="btn twitter-btn soc-btn" href="https://twitter.com/{{author.user.social.twitter}}" target="_blank"><i class="fa fa-twitter"></i></a>
-                            <a ng-if="author.user.social.twitter === ''" class="btn twitter-btn soc-btn disable" target="_blank" disabled><i class="fa fa-twitter"></i></a>
-                        </span>
                     </button>
                     
                     <div class="author-collapse collapse" id="{{author.user._id}}">
                         <p> {{author.description}} </p>
+                        <div class="soc-btns m-t-md m-b-md hidden-sm hidden-md hidden-lg">
+                            <a ng-if="author.user.social.twitch != ''" class="btn twitch-btn soc-btn" href="http://www.twitch.tv/{{author.user.social.twitch}}" target="_blank"><i class="fa fa-twitch"></i></a>
+                            <a ng-if="author.user.social.twitch === ''" class="btn twitch-btn soc-btn disable" target="_blank" disabled><i class="fa fa-twitch"></i></a>
+                            <a ng-if="author.user.social.twitter != ''" class="btn twitter-btn soc-btn" href="https://twitter.com/{{author.user.social.twitter}}" target="_blank"><i class="fa fa-twitter"></i></a>
+                            <a ng-if="author.user.social.twitter === ''" class="btn twitter-btn soc-btn disable" target="_blank" disabled><i class="fa fa-twitter"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
