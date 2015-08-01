@@ -4895,7 +4895,19 @@ angular.module('app.controllers', ['ngCookies'])
             SnapshotService.vote($scope.snapshot._id);
         }
         
-        function init () {    
+        // check for custom deck name or load normal name
+        function getDeckName (deckID) {
+            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
+                    if ($scope.snapshot.tiers[i].decks[j].deck._id == deckID) {
+                        return ($scope.snapshot.tiers[i].decks[j].name.length) ? $scope.snapshot.tiers[i].decks[j].name : $scope.snapshot.tiers[i].decks[j].deck.name;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        function init () {
             var tierLength = $scope.snapshot.tiers.length,
                 maxTierLength = (tierLength > 2) ? 2 : tierLength;
             
@@ -4916,7 +4928,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 against: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for._id : $scope.snapshot.matches[i].against._id,
                                 chance: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].forChance : $scope.snapshot.matches[i].againstChance,
                                 playerClass: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.playerClass : $scope.snapshot.matches[i].against.playerClass,
-                                name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.name : $scope.snapshot.matches[i].against.name
+                                //name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.name : $scope.snapshot.matches[i].against.name
+                                name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? getDeckName($scope.snapshot.matches[i].for._id) : getDeckName($scope.snapshot.matches[i].against._id)
                             };
                             matches.push(newObj);
                         }
