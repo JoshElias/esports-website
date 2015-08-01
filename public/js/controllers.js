@@ -1777,6 +1777,7 @@ angular.module('app.controllers', ['ngCookies'])
                 decks : []
             },
             defaultTierDeck = {
+                name: "",
                 explanation : "",
                 weeklyNotes : "",
                 deck : undefined,
@@ -2365,6 +2366,7 @@ angular.module('app.controllers', ['ngCookies'])
                 decks : []
             },
             defaultTierDeck = {
+                name: "",
                 explanation : "",
                 weeklyNotes : "",
                 deck : undefined,
@@ -2708,7 +2710,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var tiers = $scope.snapshot.tiers,
                     decks = $scope.selectedDecks,
                     tierDeck = angular.copy(defaultTierDeck);
-                
+                    tierDeck.name = sel.name;
                 if (!$scope.isDeck(sel) && !$scope.isSelected(sel)) {
                     console.log($scope.removedDecks);
                     for (var l = 0; l < $scope.removedDecks.length; l++) {

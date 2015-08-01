@@ -3178,6 +3178,24 @@ module.exports = {
                 ])
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
+                    
+                    
+                    
+                    for (var i = 0; i < results.tiers.length; i++) {
+                        for (var j = 0; j < results.tiers[i].decks.length; j++) {
+                            if (results.tiers[i].decks[j].deck === null) {
+                                results.tiers[i].decks.splice(j,1);
+                                fault = true;
+                                j--;
+                            }
+                            
+                            if (results.tiers[i].decks[j].name == undefined || results.tiers[i].decks[j].name == "") {
+                                results.tiers[i].decks[j].name = results.tiers[i].decks[j].deck.name;
+                            }
+                            
+                        }
+                    }
+                    
                     snapshot = results;
                     return callback();
                 });
@@ -3230,7 +3248,6 @@ module.exports = {
                         
             function addNewSnapshot(callback) {
                 var newSnapshot = new Schemas.Snapshot({
-                    
                         snapNum: snapshot.snapNum,
                         title: snapshot.title,
                         authors: snapshot.authors,
@@ -3249,7 +3266,6 @@ module.exports = {
                         comments: snapshot.comments,
                         active: snapshot.active
                 });
-                
                 newSnapshot.save(function(err, data){
                     if (err) {
                         console.log(err);
@@ -3413,6 +3429,9 @@ module.exports = {
                                 results.tiers[i].decks.splice(j,1);
                                 fault = true;
                                 j--;
+                            }
+                            if (results.tiers[i].decks[j].name == undefined || results.tiers[i].decks[j].name == "") {
+                                results.tiers[i].decks[j].name = results.tiers[i].decks[j].deck.name;
                             }
                         }
                     }

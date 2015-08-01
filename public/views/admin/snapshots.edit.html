@@ -131,6 +131,14 @@
                                 <span class="badge pull-left">{{d.rank.current}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index)" dnd-disable-if="t.decks.length < 2">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeckPrompt(d.deck)"><i class="fa fa-close"></i></button></span> 
                                 <div class="collapse" id="deckrank{{d.rank.current}}">
                                     <div class="form-group wrapper-md">
+                                        
+                                        <div class="clearfix m-b-md">
+                                            <label for="deck.name" class="control-label col-sm-1">Deck Name</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="dname" ng-model="d.name"></input>
+                                            </div>
+                                        </div>
+                                        
                                         <div class="clearfix m-b-md">
                                             <label for="deck.explanation" class="control-label col-sm-1">Explanation</label>
                                             <div class="col-sm-9">
