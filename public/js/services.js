@@ -184,7 +184,7 @@ angular.module('app.services', [])
         }
     };
 }])
-.factory ('SnapshotService', ['$http', '$q', function ($http, $q) {
+.factory ('SnapshotService', ['$http', '$q', '$localStorage', function ($http, $q, $localStorage) {
     return {
         getSnapshots: function (page, perpage, search) {
             var d = $q.defer(),
@@ -216,6 +216,10 @@ angular.module('app.services', [])
         },
         addComment: function (snapshot, comment) {
             return $http.post('/api/snapshot/comment/add', { snapshotID: snapshot._id, comment: comment });
+        },
+        vote: function (snapshot) {
+            console.log(snapshot);
+            return $http.post('/api/snapshot/vote', { snapshot: snapshot });
         }
     }
 }])
@@ -1938,6 +1942,13 @@ angular.module('app.services', [])
         voteArticle: function (direction, article) {
             var d = $q.defer();
             $http.post('/api/article/vote', { _id: article._id, direction: direction }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        voteSnapshot: function (direction, snapshot) {
+            var d = $q.defer();
+            $http.post('/api/snapshot/vote', { _id: snapshot._id, direction: direction }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

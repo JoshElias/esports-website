@@ -1,2 +1,2 @@
-<span ng-if="activity.snapshot">commented on a Meta Snapshot! <a href="./hearthstone/meta-snapshot/{{activity.snapshot.slug.url}}">{{activity.snapshot.title}}</a></span>
+<span ng-if="activity.snapshot">commented on <a href="./hearthstone/meta-snapshot/{{activity.snapshot.slug.url}}">Meta Snapshot {{activity.snapshot.snapNum}} - {{activity.snapshot.title}}</a></span>
 <span ng-if="!activity.snapshot">commented on a Meta Snapshot that had been deleted.</span>

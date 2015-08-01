@@ -767,7 +767,7 @@ module.exports = {
                     },
                     {
                         path: 'snapshot',
-                        select: '_id title slug'
+                        select: '_id title slug snapNum'
                     }
                 ])
                 .exec(function (err, activities) {
@@ -2686,14 +2686,13 @@ module.exports = {
     },
     snapshot: function (Schemas) {
         return function (req, res, next) {
-            var snapshot,
-                slug = req.body.slug;
+            var slug = req.body.slug,
+                snapshot = undefined;
             
             
             function getSnapshot (callback) {
             
                 Schemas.Snapshot.findOne({ "slug.url" : slug })
-                .lean()
                 .populate([
                     {
                         path: 'authors.user',
@@ -2719,16 +2718,49 @@ module.exports = {
                 ])
                 .exec(function (err, results) {
                     if (err || !results) { return res.json({ success: false }); }
-                    snapshot = results;
-                    return callback();
+                    Schemas.Comment.populate(results.comments, {
+                        path: 'author',
+                        select: 'username email'
+                    }, function (err, c) {
+                        results.comments = c;
+                        return callback(results);
+                    });
+                    
                 });
             
             }
             
-            getSnapshot(function () {
+            getSnapshot(function (results) {
                 return res.json({
                     success: true,
-                    snapshot: snapshot
+                    snapshot: results
+                });
+            });
+            
+        }
+    },
+    snapshotVote: function (Schemas) {
+        return function (req, res, next) {
+            var snapshot = req.body.snapshot;
+            console.log(req.body.snapshot);
+            function vote (callback) {
+                Schemas.Snapshot.findOne({ _id: snapshot }).select('votesCount votes').exec(function (err, snapshot) {
+                    if (err || !snapshot) { return res.json({ success: false }); }
+                    snapshot.votes.push(req.user._id);
+                    console.log(snapshot.votes);
+                    snapshot.votesCount++;
+                    snapshot.save(function (err) {
+                        if (err) { return res.json({ success: false }); console.log(err); }
+                        return res.json({
+                            success: true,
+                            votesCount: snapshot.votesCount
+                        });
+                    });
+                });
+            }
+            vote(function () {
+                return res.json({
+                    success: true
                 });
             });
             
@@ -2855,6 +2887,13 @@ module.exports = {
                 .lean()
                 .exec(function (err, results) {
                     if (err) { return req.json({ success: false }); }
+//                    Schemas.Comment.populate(results.comments, {
+//                        path: 'author',
+//                        select: 'username email'
+//                    }, function (err, comments) {
+//                        if (err || !comments) { return res.json({ success: false }); }
+//                        results.comments = comments;
+//                    });
                     snapshot = results;
                     return callback();
                 });

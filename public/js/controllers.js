@@ -1765,8 +1765,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'data', 'AlertService', 'Util', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
-    function ($scope, $compile, $timeout, $state, $window, data, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
+.controller('AdminSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', '$upload', 'data', 'AlertService', 'Util', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
+    function ($scope, $compile, $timeout, $state, $window, $upload, data, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
         
         
         var deckBootBox = undefined,
@@ -1782,7 +1782,7 @@ angular.module('app.controllers', ['ngCookies'])
                 deck : undefined,
                 rank : {
                     current : 1,
-                    last : []
+                    last : [0,0,0,0,0,0,0,0,0,0,0,0]
                 },
                 tech : []
             },
@@ -1846,6 +1846,13 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         }
+        
+        $scope.getImage = function () {
+            $scope.imgPath = 'snapshots/';
+            if (!$scope.snapshot) { return '/img/blank.png'; }
+            return ($scope.snapshot.photos && $scope.snapshot.photos.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photos.small;
+        };
+        
         function populateMatches () {
             var out = [];
             for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
@@ -2345,6 +2352,7 @@ angular.module('app.controllers', ['ngCookies'])
                     small: "",
                     square: ""
                 },
+                votes: 0,
                 active : false
             },
             defaultAuthor = {
@@ -2362,7 +2370,7 @@ angular.module('app.controllers', ['ngCookies'])
                 deck : undefined,
                 rank : {
                     current : 1,
-                    last : []
+                    last : [0,0,0,0,0,0,0,0,0,0,0,0]
                 },
                 tech : []
             },
@@ -2897,7 +2905,7 @@ angular.module('app.controllers', ['ngCookies'])
                         for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
                             $scope.matches.push($scope.snapshot.tiers[i].decks[k]);
                             $scope.snapshot.tiers[i].decks[k].rank.last.splice(0,0,data.snapshot.tiers[i].decks[k].rank.current);
-                            if ($scope.snapshot.tiers[i].decks[k].rank.last.length == 12) {
+                            if ($scope.snapshot.tiers[i].decks[k].rank.last.length > 12) {
                                 $scope.snapshot.tiers[i].decks[k].rank.last.pop();
                             }
                         }
@@ -4747,15 +4755,16 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.snapshot = data;
         $scope.show = [];
         $scope.matchupName = [];
-        $scope.sortedDecks = [];
-        $scope.trends = [];
-        $scope.deckNames = [];
+        $scope.hasVoted = false;
         
         var mouseOver = [],
             charts = [],
             viewHeight = 0,
             box = undefined;
         
+        $scope.getImage = function () {
+            return ($scope.snapshot.photos.large == "") ? $scope.app.cdn + 'snapshot/default-banner.jpg' : $scope.app.cdn + 'snapshot/' + $scope.snapshot.photos.large;
+        }
         
         $scope.getMouseOver = function (deckID) {
             return mouseOver[deckID] || false;
@@ -4768,8 +4777,8 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
         
-//        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/snapshot/' + $scope.snapshot.photos.square;
-        $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article');
+        var ogImg = ($scope.snapshot.photos.square == "") ? $scope.app.cdn + 'snapshot/default-banner-square.jpg' : $scope.app.cdn + 'snapshot/' + $scope.snapshot.photos.square;
+        $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article', ogImg);
         
         for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
             $scope.show[i+1] = false;
@@ -4787,26 +4796,23 @@ angular.module('app.controllers', ['ngCookies'])
             return viewHeight;
         }
         
+        $scope.voteSnapshot = function () {
+            $scope.hasVoted = true;
+            $scope.snapshot.votesCount++;
+            SnapshotService.vote($scope.snapshot._id);
+        }
+        
         function init () {    
             var tierLength = $scope.snapshot.tiers.length,
-                maxTierLength = (tierLength > 2) ? 2 : tierLength,
-                decks = [],
-                out = [],
-                decksOut = [];
-            /******************************************* BUILD TREND CHART *******************************************/
-          
+                maxTierLength = (tierLength > 2) ? 2 : tierLength;
             
-            
-            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-                var decksOut = [];
-                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
-                    decksOut.push($scope.snapshot.tiers[i].decks[j]);
-                    decks.push($scope.snapshot.tiers[i].decks[j]);
-                    $scope.deckNames.push($scope.snapshot.tiers[i].decks[j].deck.playerName)
-                }
-                $scope.sortedDecks.push(decksOut);
+            /******************************************* HAS VOTED *******************************************/
+
+            for (var i = 0; i < $scope.snapshot.votes.length; i++) {
+                $scope.snapshot.votes[i] == $scope.app.user.getUserID();
+                $scope.hasVoted = true;
             }
-            $scope.trends = decks;
+            
             
             /******************************************* BUILD TIER MATCHES *******************************************/
             for (var j = 0; j < maxTierLength; j++) {
@@ -4957,9 +4963,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $window.sessionStorage.email = data.email;
                     $scope.app.settings.token = $window.sessionStorage.token = data.token;
                     box.modal('hide');
-                    updateVotes();
                     updateCommentVotes();
-                    callback();
                 }).error(function() {
                     $scope.showError = true;
                 });

@@ -205,6 +205,7 @@ app.post('/api/deck/delete', routes.frontend.deckDelete(Schemas));
 app.post('/api/deck/vote', routes.frontend.deckVote(Schemas));
 app.post('/api/deck/comment/add', routes.frontend.deckCommentAdd(Schemas, mongoose));
 
+app.post('/api/snapshot/vote', routes.frontend.snapshotVote(Schemas));
 app.post('/api/snapshot/comment/add', routes.frontend.snapshotCommentAdd(Schemas, mongoose));
 
 app.post('/api/hots/guide', routes.frontend.hots.guideEdit(Schemas));

@@ -3179,7 +3179,6 @@ module.exports = {
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
                     snapshot = results;
-                    console.log(results._id);
                     return callback();
                 });
             }

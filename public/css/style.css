@@ -556,6 +556,13 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     border-bottom: 1px solid rgba(255,255,255,.2);
 }
 
+.snapshot-votes { position: absolute; right: 20px; top: 20px; }
+.snapshot-votes .snapVoteWrap { position: relative; text-align: center; }
+.snapshot-votes .snapVoteWrap a { cursor: pointer; background:  }
+.snapshot-votes .snapVoteWrap i { margin-top: 10px; font-size: 24px }
+
+
+
 .bg-override {
     background-image: url(../img/meta-snapshot/meta-bg.jpg);
     background-color: #000000;
@@ -695,6 +702,7 @@ svg:not(:root) { overflow: auto }
 .tier-body .tier-deck .tier-deck-body .deck-rank div:nth-child(2) { border-left: none; border-right: none }
 .tier-body .tier-deck .tier-deck-body .deck-rank div div { height: 20px; background-color: rgba(0, 0, 0, .5); font-size: 12px; font-weight: bold; border: none; color: white; line-height: 18px; }
 .tier-body .tier-deck .tier-deck-body .tier-deck-body-inner { border: rgba(255, 255, 255, .1) 1px solid; border-top: 0px; }
+.tier-body .tier-deck .tier-deck-body .tier-deck-body-inner-inner { padding-top: 30px; }
 .tier-body .tier-deck .tier-deck-body .deck-portrait { height:345px }
 
 /* TECH */

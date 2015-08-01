@@ -4,12 +4,20 @@
         <div class="snapTitle">
             <h1>THE META SNAPSHOT: #{{snapshot.snapNum}}</h1>
             <h3>{{snapshot.title}}</h3>
-<!--
-            <div fb-like-button url="'https://tempostorm.com/hearthstone/meta-snapshot/meta-snapshot-' + snapshot.snapNum + '-' + snapshot.slug.url"></div>
-            <div tweet-button url="'https://tempostorm.com/hearthstone/meta-snapshot/meta-snapshot-' + snapshot.snapNum + '-' + snapshot.slug.url"></div>
-            <div reddit-button url="'https://tempostorm.com/hearthstone/meta-snapshot/meta-snapshot-' + snapshot.snapNum + '-' + snapshot.slug.url"></div>-->
+
+            
+            
         </div>
-        <img class="sideBorders img-responsive head-img" ng-src="{{app.cdn}}snapshots/{{snapshot.photos.large}}" />
+        <div class="snapshot-votes pull-right clearfix"> 
+                
+                <span class="snapVoteWrap">
+                    <div class="vote-count vote-large m-l-sm pull-right">
+                        {{snapshot.votesCount}}
+                    </div>
+                    <a ng-if="app.user.isLogged() && !hasVoted" class="btn-vote-up vote-large" ng-click="voteSnapshot()"><p><i class="fa fa-thumbs-up"></i></p></a>
+                </span>
+            </div>
+        <img class="sideBorders img-responsive head-img" src="../../img/meta-snapshot/generic-meta.jpg" />
     </div>
     <div class="container meta-container sideBorders">
         <div class="m-t-md">
@@ -70,13 +78,13 @@
                 
             </div>
             
-<!--
             <div class="row no-pad m-b-md">
-                <div class="col-lg-12 trends-wrapper">
+            <div class="col-lg-12 trends-wrapper">
                     
                 
+            <trend-chart snapshot="snapshot" />
                     
-                    
+<!--
                     <svg class="trends">
                         <svg class="trend-view" height="350" width="95%" x="2.5%" y="75" style="overflow: hidden">
                             <svg id="animateChart" class="trend-wrapper" height="100%" width="100%" ng-attr-y="{{getView()+5}}">
@@ -116,9 +124,9 @@
                             <g ng-repeat="tier in snapshot.tiers" ng-click="setView(tier.tier-1)" cursor="pointer"><text height="30" x="30" ng-attr-y="{{30*$index}}" fill="red">{{tier.tier}}</text></g>
                         </svg>
                     </svg>
+-->
                 </div>
             </div>
--->
             
             
             <!-- TIERS -->
@@ -138,7 +146,7 @@
                             </div>
                             <div class="tier-deck-body collapse" id="collapseDeck-{{deck.rank.current}}">
                                 <div class="tier-deck-body-inner">
-                                    <div class="row m-t-lg m-l-none m-r-none">
+                                    <div class="row tier-deck-body-inner-inner m-l-none m-r-none">
 
                                         <div class="col-xs-12 col-md-push-4 col-md-8 col-lg-push-3 col-lg-9 m-b-md">
                                             <div class="deck-content">
@@ -283,9 +291,9 @@
                             </div>
                         </div>
                         <span class="soc-btns pull-right m-r-lg">
-                            <a ng-if="author.user.social.twitch != ''" class="btn twitch-btn soc-btn" href="http://www.twitch.tv/{{author.social.twitch}}" target="_blank"><i class="fa fa-twitch"></i></a>
+                            <a ng-if="author.user.social.twitch != ''" class="btn twitch-btn soc-btn" href="http://{{author.user.social.twitch}}" target="_blank"><i class="fa fa-twitch"></i></a>
                             <a ng-if="author.user.social.twitch === ''" class="btn twitch-btn soc-btn disable" target="_blank" disabled><i class="fa fa-twitch"></i></a>
-                            <a ng-if="author.user.social.twitter != ''" class="btn twitter-btn soc-btn" href="https://twitter.com/{{author.social.twitter}}" target="_blank"><i class="fa fa-twitter"></i></a>
+                            <a ng-if="author.user.social.twitter != ''" class="btn twitter-btn soc-btn" href="https://twitter.com/{{author.user.social.twitter}}" target="_blank"><i class="fa fa-twitter"></i></a>
                             <a ng-if="author.user.social.twitter === ''" class="btn twitter-btn soc-btn disable" target="_blank" disabled><i class="fa fa-twitter"></i></a>
                         </span>
                     </button>

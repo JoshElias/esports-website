@@ -156,7 +156,7 @@
                                             <label for="deck.weeklyTrend" class="control-label col-sm-1">Weekly Trend</label>
                                             <div class="col-sm-9">
                                                 <div class="col-sm-1" ng-repeat="trend in trends(trendsLength) track by $index">
-                                                    <input class="form-control wrapper-none" type="number" ng-model="d.rank.last[$index]">
+                                                    <input class="form-control wrapper-none" type="number" min="0" ng-model="d.rank.last[$index]">
                                                     <span># {{snapshot.snapNum - (1+$index)}}</span>
                                                 </div>
                                             </div>
