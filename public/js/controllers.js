@@ -4914,8 +4914,9 @@ angular.module('app.controllers', ['ngCookies'])
             /******************************************* HAS VOTED *******************************************/
 
             for (var i = 0; i < $scope.snapshot.votes.length; i++) {
-                $scope.snapshot.votes[i] == $scope.app.user.getUserID();
-                $scope.hasVoted = true;
+                if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
+                    $scope.hasVoted = true;
+                }
             }
 
             /******************************************* BUILD TIER MATCHES *******************************************/
