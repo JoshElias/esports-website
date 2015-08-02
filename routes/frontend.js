@@ -2734,8 +2734,7 @@ module.exports = {
             function fixTrends (snapshot, callback) {
                 for (var i = 0; i < snapshot.tiers.length; i++) {
                     for (var j = 0; j < snapshot.tiers[i].decks.length; j++) {
-                        snapshot.tiers[i].decks[j].rank.all = snapshot.tiers[i].decks[j].rank.last;
-                        snapshot.tiers[i].decks[j].rank.all.unshift(snapshot.tiers[i].decks[j].rank.current);
+                        snapshot.tiers[i].decks[j].rank.all = [snapshot.tiers[i].decks[j].rank.current].concat(snapshot.tiers[i].decks[j].rank.last);
                     }
                 }
                 return callback(snapshot);
