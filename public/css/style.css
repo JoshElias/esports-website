@@ -769,7 +769,8 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .author-img-wrapper { position: relative; height: 60px; width: 70px; }
 .author-class-icon { position: absolute; top: 0; left: 0; display: block; }
 .author-text-wrapper .classExpert { text-transform: uppercase; }
-.author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; padding: 0;  }
+.author-text-wrapper h3 { text-transform: uppercase; }
+author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; padding: 0;  }
 .author-collapse p { color: white; padding: 0px 75px 20px 105px; font-size: 14px; }
 
 .twitch-btn { background: #6441A5 }
