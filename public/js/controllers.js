@@ -4751,8 +4751,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'data', 'AuthenticationService', 'UserService', 'SubscriptionService',
-    function ($scope, $state, $compile, $window, SnapshotService, data, AuthenticationService, UserService, SubscriptionService) {
+.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'data', 'AuthenticationService', 'UserService', 'SubscriptionService', 'VoteService',
+    function ($scope, $state, $compile, $window, SnapshotService, data, AuthenticationService, UserService, SubscriptionService, VoteService) {
         
         $scope.snapshot = data;
         $scope.show = [];
