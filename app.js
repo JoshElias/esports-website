@@ -317,6 +317,12 @@ app.post('/api/admin/snapshot/add', routes.admin.isAdmin(Schemas), routes.admin.
 app.post('/api/admin/snapshot/delete', routes.admin.isAdmin(Schemas), routes.admin.snapshotDelete(Schemas));
 app.post('/api/admin/snapshot/edit', routes.admin.isAdmin(Schemas), routes.admin.snapshotEdit(Schemas, Util));
 
+app.post('/api/admin/teamMembers', routes.admin.isAdmin(Schemas), routes.admin.teamMembers(Schemas));
+app.post('/api/admin/teamMember', routes.admin.isAdmin(Schemas), routes.admin.teamMember(Schemas));
+app.post('/api/admin/teamMember/add', routes.admin.isAdmin(Schemas), routes.admin.addTeamMember(Schemas));
+app.post('/api/admin/teamMember/edit', routes.admin.isAdmin(Schemas), routes.admin.editTeamMember(Schemas));
+app.post('/api/admin/teamMember/remove', routes.admin.isAdmin(Schemas), routes.admin.removeTeamMember(Schemas));
+
 app.post('/api/admin/banners', routes.admin.isAdmin(Schemas), routes.admin.banners(Schemas));
 app.post('/api/admin/banners/order', routes.admin.isAdmin(Schemas), routes.admin.bannersOrder(Schemas));
 app.post('/api/admin/banner', routes.admin.isAdmin(Schemas), routes.admin.banner(Schemas));

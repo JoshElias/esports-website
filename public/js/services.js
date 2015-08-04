@@ -184,6 +184,48 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('AdminSnapshotService', ['$http', '$q', function($http, $q) {
+    return {
+        getSnapshots: function (page, perpage, search) {
+            var page = page || 1,
+                perpage = perpage || 10,
+                search = search || '';
+            
+            var d = $q.defer();
+            $http.post('/api/admin/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }, 
+        getSnapshot: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/snapshot', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            })
+            return d.promise;
+        },
+        getLatest: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/snapshot/latest', {}).success(function (data) {
+                d.resolve(data);
+            })
+            return d.promise;
+        },
+        addSnapshot: function (snapshot) {
+            return $http.post('/api/admin/snapshot/add', snapshot);
+        },
+        editSnapshot: function (snapshot) {
+            return $http.post('/api/admin/snapshot/edit', snapshot);
+        },
+        deleteSnapshot: function (_id) {
+            var d = $q.defer();
+                $http.post('/api/admin/snapshot/delete', { _id: _id }).success(function (data) {
+                    d.resolve(data);
+                });
+            return d.promise;
+        }
+    }
+}])
 .factory ('SnapshotService', ['$http', '$q', '$localStorage', function ($http, $q, $localStorage) {
     return {
         getSnapshots: function (page, perpage, search) {
@@ -226,6 +268,33 @@ angular.module('app.services', [])
         },
         getStorage: function () {
             return $localStorage['metaCom-'];
+        }
+    }
+}])
+.factory('AdminTeamService', ['$http', '$q', function ($http, $q) {
+    return {
+        getTeamMembers: function () {
+            var d = $q.defer();
+            $http.post('/api/teamMembers').success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getTeamMember: function (id) {
+            var d = $q.defer();
+            $http.post('/api/teamMember', { _id: id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addTeamMember: function (member) {
+            $http.post('/api/teamMember/add', member);
+        },
+        editTeamMember: function (member) {
+            $http.post('/api/teamMember/edit', member);
+        },
+        removeTeamMember: function (member) {
+            $http.post('/api/teamMember/remove', member);
         }
     }
 }])
@@ -715,48 +784,6 @@ angular.module('app.services', [])
             return d.promise;
         }
     };
-}])
-.factory('AdminSnapshotService', ['$http', '$q', function($http, $q) {
-    return {
-        getSnapshots: function (page, perpage, search) {
-            var page = page || 1,
-                perpage = perpage || 10,
-                search = search || '';
-            
-            var d = $q.defer();
-            $http.post('/api/admin/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
-                d.resolve(data);
-            });
-            return d.promise;
-        }, 
-        getSnapshot: function (_id) {
-            var d = $q.defer();
-            $http.post('/api/admin/snapshot', { _id: _id }).success(function (data) {
-                d.resolve(data);
-            })
-            return d.promise;
-        },
-        getLatest: function () {
-            var d = $q.defer();
-            $http.post('/api/admin/snapshot/latest', {}).success(function (data) {
-                d.resolve(data);
-            })
-            return d.promise;
-        },
-        addSnapshot: function (snapshot) {
-            return $http.post('/api/admin/snapshot/add', snapshot);
-        },
-        editSnapshot: function (snapshot) {
-            return $http.post('/api/admin/snapshot/edit', snapshot);
-        },
-        deleteSnapshot: function (_id) {
-            var d = $q.defer();
-                $http.post('/api/admin/snapshot/delete', { _id: _id }).success(function (data) {
-                    d.resolve(data);
-                });
-            return d.promise;
-        }
-    }
 }])
 .factory('AdminBannerService', ['$http', '$q', function($http, $q){
     return {

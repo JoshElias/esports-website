@@ -3458,6 +3458,31 @@ module.exports = {
             });
         }
     },
+    teamMembers: function (Schemas) {
+        return function (req, res, next) {
+            console.log("teamMembers");
+        }
+    },
+    teamMember: function (Schemas) {
+        return function (req, res, next) {
+            console.log("teamMember");
+        }
+    },
+    addTeamMember: function (Schemas) {
+        return function (req, res, next) {
+            console.log("addTeamMember");
+        }
+    },
+    editTeamMember: function (Schemas) {
+        return function (req, res, next) {
+            console.log("editTeamMember");
+        }
+    },
+    removeTeamMember: function (Schemas) {
+        return function (req, res, next) {
+            console.log("removeTeamMember");
+        }
+    },
     getObjectID: function (mongoose) {
         return function (req, res, next) {
             var id = mongoose.Types.ObjectId();
