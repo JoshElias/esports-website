@@ -220,6 +220,12 @@ angular.module('app.services', [])
         vote: function (snapshot) {
             console.log(snapshot);
             return $http.post('/api/snapshot/vote', { snapshot: snapshot });
+        },
+        setStorage: function (isOpen) {
+            return $localStorage['metaCom-'] = isOpen;
+        },
+        getStorage: function () {
+            return $localStorage['metaCom-'];
         }
     }
 }])

@@ -4758,6 +4758,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.show = [];
         $scope.matchupName = [];
         $scope.hasVoted = false;
+        $scope.show.comments = SnapshotService.getStorage();
+
         
         var mouseOver = [],
             charts = [],
@@ -5042,6 +5044,14 @@ angular.module('app.controllers', ['ngCookies'])
             window.open(url,'_blank');
         };
         
+        $scope.toggleComments = function () {
+            if (!SnapshotService.getStorage()) {
+                SnapshotService.setStorage(true);
+            } else {
+                SnapshotService.setStorage(false);
+            }
+            $scope.show.comments = SnapshotService.getStorage();
+        }
         
         // login for modal
         $scope.login = function login(email, password) {
