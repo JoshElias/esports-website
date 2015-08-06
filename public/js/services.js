@@ -273,28 +273,43 @@ angular.module('app.services', [])
 }])
 .factory('AdminTeamService', ['$http', '$q', function ($http, $q) {
     return {
-        getTeamMembers: function () {
+        getMembers: function () {
             var d = $q.defer();
-            $http.post('/api/teamMembers').success(function (data) {
+            $http.post('/api/admin/teams').success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
         },
-        getTeamMember: function (id) {
+        getMember: function (id) {
             var d = $q.defer();
-            $http.post('/api/teamMember', { _id: id }).success(function (data) {
+            $http.post('/api/admin/team', { _id: id }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
         },
-        addTeamMember: function (member) {
-            $http.post('/api/teamMember/add', member);
+        addMember: function (member) {
+            var d = $q.defer();
+            $http.post('/api/admin/team/add', { member: member }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
         },
-        editTeamMember: function (member) {
-            $http.post('/api/teamMember/edit', member);
+        editMember: function (member) {
+            var d = $q.defer();
+            $http.post('/api/admin/team/edit', { member: member }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
         },
-        removeTeamMember: function (member) {
-            $http.post('/api/teamMember/remove', member);
+        deleteMember: function (member) {
+            var d = $q.defer();
+            $http.post('/api/admin/team/remove', { member: member }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        updateOrder: function (arr) {
+            $http.post('/api/admin/team/order', { members: arr })
         }
     }
 }])
@@ -2096,6 +2111,17 @@ angular.module('app.services', [])
             return $http.post('/api/contact/send', { contact: contact });
         }
     };
+}])
+.factory('TeamService', ['$http', '$q', function ($http, $q) {
+    return {
+        getMembers: function (gm) {
+            var d = $q.defer();
+            return $http.post('/team', {gm: gm}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    }
 }])
 .factory('markitupSettings', [
   function() {

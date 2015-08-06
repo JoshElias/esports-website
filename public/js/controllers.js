@@ -2934,6 +2934,188 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+.controller('AdminTeamListCtrl', ['$scope', 'data', 'AdminTeamService', 'AlertService',
+    function ($scope, data, AdminTeamService, AlertService) {
+        
+        $scope.members = data.members;
+        $scope.hsMembers = data.hsMembers;
+        $scope.hotsMembers = data.hotsMembers;
+        $scope.csMembers = data.csMembers;
+        $scope.fifaMembers = data.fifaMembers;
+        $scope.fgcMembers = data.fgcMembers;
+        
+        
+        // grab alerts
+        if (AlertService.hasAlert()) {
+            $scope.success = AlertService.getSuccess();
+            AlertService.reset();
+        }
+        
+        $scope.updateDND = function (list, index) {
+            console.log(list, list.length, index);
+            
+            list.splice(index, 1);
+            console.log(list, list.length, index);
+
+            for (var i = 0; i < list.length; i++) {
+                list[i].orderNum = i + 1;
+            }
+            console.log(list, list.length, index);
+            AdminTeamService.updateOrder(list);
+        };
+        
+        // delete member
+        $scope.deleteMember = function deleteMember(member, arr) {
+            console.log(member);
+            var box = bootbox.dialog({
+                title: 'Delete member: ' + member.screenName + ' - ' + member.fullName + '?',
+                message: 'Are you sure you want to delete the member <strong>' + member.screenName + ' - ' + member.fullName + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            AdminTeamService.deleteMember(member._id).then(function (data) {
+                                if (data.success) {
+                                    var index = arr.indexOf(member);
+                                    if (index !== -1) {
+                                        arr.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: member.screenName + ' - ' + member.fullName + ' deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
+    }
+])
+.controller('TeamPageCtrl', ['$scope', 'data',
+    function ($scope, data) {
+        console.log(data);
+    }
+])
+.controller('AdminTeamAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'AdminTeamService', 'AlertService',
+    function ($scope, $state, $window, $upload, $compile, AdminTeamService, AlertService) {
+    
+        var defaultMember = {
+            game: '',
+            screenName: '',
+            fullName: '',
+            description: '',
+            social: {
+                twitter: '',
+                twitch: '',
+                youtube: '',
+                facebook: '',
+                instagram: '',
+                esea: ''
+            },
+            photo: '',
+            active: true
+        }
+        
+        $scope.member = angular.copy(defaultMember);
+        
+        // photo upload
+        $scope.photoUpload = function ($files) {
+            if (!$files.length) return false;
+            var box = bootbox.dialog({
+                message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                closeButton: false,
+                animate: false
+            });
+            $scope.uploading = 0;
+            box.modal('show');
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/admin/upload/team',
+                    method: 'POST',
+                    file: file
+                }).progress(function(evt) {
+                    $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                }).success(function(data, status, headers, config) {
+                    $scope.member.photo = data.photo;
+                    $scope.cardImg = $scope.app.cdn + data.path + data.photo;
+                    box.modal('hide');
+                });
+            }
+        };
+        
+        // save member
+        $scope.saveMember = function () {
+            AdminTeamService.addMember($scope.member).then(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' - ' + $scope.member.fullName + ' has been added successfully.' });
+                    $state.go('app.admin.teams.list');
+                }
+            });
+        };
+    }
+])
+.controller('AdminTeamEditCtrl', ['$scope', '$state', '$window', 'data', 'AdminTeamService', 'AlertService',
+    function ($scope, $state, $window, data, AdminTeamService, AlertService) {
+        
+        $scope.member = data.member;
+        
+        // photo upload
+        $scope.photoUpload = function ($files) {
+            if (!$files.length) return false;
+            var box = bootbox.dialog({
+                message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                closeButton: false,
+                animate: false
+            });
+            $scope.uploading = 0;
+            box.modal('show');
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/admin/upload/team',
+                    method: 'POST',
+                    file: file
+                }).progress(function(evt) {
+                    $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                }).success(function(data, status, headers, config) {
+                    $scope.member.photo = data.photo;
+                    $scope.cardImg = $scope.app.cdn + data.path + data.photo;
+                    box.modal('hide');
+                });
+            }
+        };
+        
+        // save member
+        $scope.saveMember = function () {
+            AdminTeamService.editMember($scope.member).then(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' - ' + $scope.member.fullName + ' has been added successfully.' });
+                    $state.go('app.admin.teams.list');
+                }
+            });
+        };
+    }
+])
 .controller('AdminDeckListCtrl', ['$scope', 'AdminDeckService', 'AlertService', 'Pagination', 'data', 
     function ($scope, AdminDeckService, AlertService, Pagination, data) {
         // grab alerts

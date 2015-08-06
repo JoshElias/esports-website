@@ -1031,6 +1031,17 @@ author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; pa
 .edit-button-fix { display:block }
 
 
+/* admin team */
+
+.social-addon-group {
+    width: 100%;
+}
+
+.social-addon {
+    width: 10%;
+    text-align: right;
+}
+
 /* admin meta snapshot */
 .button-block {}
 .button-block button {

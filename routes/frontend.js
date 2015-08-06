@@ -2917,6 +2917,12 @@ module.exports = {
             })
         }
     },
+    team: function (Schemas) {
+        return function (req, res, next) {
+            console.log(req.body.gm);
+            return res.json({ success: true });
+        }
+    },
     sendContact: function (Mail) {
         return function(req, res, next) {
             //TODO: ADD FUNCTIONALITY
