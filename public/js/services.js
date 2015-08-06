@@ -2114,14 +2114,15 @@ angular.module('app.services', [])
 }])
 .factory('TeamService', ['$http', '$q', function ($http, $q) {
     return {
+        
         getMembers: function (gm) {
             var d = $q.defer();
-            return $http.post('/team', {gm: gm}).success(function (data) {
+            $http.post('/team', {gm: gm}).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
         }
-    }
+    };
 }])
 .factory('markitupSettings', [
   function() {

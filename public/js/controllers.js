@@ -2952,15 +2952,11 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.updateDND = function (list, index) {
-            console.log(list, list.length, index);
-            
             list.splice(index, 1);
-            console.log(list, list.length, index);
-
             for (var i = 0; i < list.length; i++) {
+                console.log(list[i].screenName, list[i].orderNum, i);
                 list[i].orderNum = i + 1;
             }
-            console.log(list, list.length, index);
             AdminTeamService.updateOrder(list);
         };
         
@@ -3002,9 +2998,22 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('TeamPageCtrl', ['$scope', 'data',
-    function ($scope, data) {
-        console.log(data);
+.controller('TeamPageCtrl', ['$scope', '$sce', 'data',
+    function ($scope, $sce, data) {
+        $scope.members = data.members;
+        
+        
+        $scope.getDescription = function (i) {
+            return $sce.trustAsHtml($scope.members[i].description);
+        }
+        
+        
+        
+//        for (var i = 0; i < $scope.members.length; i++) {
+//            var str = $scope.members[i].description;
+//            str.replace(/(?:\r\n|\r|\n)/g, '<br />');
+//            $scope.members[i].description = str;
+//        }
     }
 ])
 .controller('AdminTeamAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'AdminTeamService', 'AlertService',
@@ -3070,10 +3079,12 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminTeamEditCtrl', ['$scope', '$state', '$window', 'data', 'AdminTeamService', 'AlertService',
-    function ($scope, $state, $window, data, AdminTeamService, AlertService) {
+.controller('AdminTeamEditCtrl', ['$scope', '$state', '$window', '$compile', '$upload', 'data', 'AdminTeamService', 'AlertService',
+    function ($scope, $state, $window, $compile, $upload, data, AdminTeamService, AlertService) {
         
         $scope.member = data.member;
+        
+        console.log($scope.member);
         
         // photo upload
         $scope.photoUpload = function ($files) {

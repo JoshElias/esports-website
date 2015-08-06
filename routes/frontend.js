@@ -2919,8 +2919,23 @@ module.exports = {
     },
     team: function (Schemas) {
         return function (req, res, next) {
-            console.log(req.body.gm);
-            return res.json({ success: true });
+            var gm = req.body.gm;
+            
+            function getMembers (callback) {
+                Schemas.TeamMember.find({ game: gm})
+                .sort({ orderNum:1 })
+                .exec(function (err, results) {
+                    if (err) { return req.json({ success: false }); }
+                    return callback(results);
+                });
+            }
+            
+            getMembers(function (gm) {
+                return res.json({ 
+                    members: gm,
+                    success: true
+                });
+            });
         }
     },
     sendContact: function (Mail) {

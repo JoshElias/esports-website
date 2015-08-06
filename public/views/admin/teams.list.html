@@ -9,7 +9,7 @@
         <h3 class="panel-heading m-b-none">Hearthstone Members</h1>
     </div>
     <ul dnd-list="hsMembers" class="list-group">
-        <li class="list-group-item admin-list-item clearfix" ng-repeat="member in hsMembers | orderBy : 'orderNum'" 
+        <li class="list-group-item admin-list-item clearfix" ng-repeat="member in hsMembers" 
                     dnd-draggable="member"
                     dnd-moved="updateDND(hsMembers, $index)"
                     dnd-disable-if="hsMembers.length < 2">

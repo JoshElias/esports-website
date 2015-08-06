@@ -3526,6 +3526,7 @@ module.exports = {
 
             function getMembers(callback) {
                 Schemas.TeamMember.find()
+                .sort({ orderNum:1 })
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
                     for (i=0; i != results.length; i++) {
@@ -3579,6 +3580,8 @@ module.exports = {
     addTeamMember: function (Schemas) {
         return function (req, res, next) {
             var member = req.body.member;
+            member.description = member.description.replace(/(\n)+/g, '<br />');
+
             
             function countMem (callback) {
                 Schemas.TeamMember.find()
@@ -3587,6 +3590,9 @@ module.exports = {
                     return callback(count);
                 })
             }
+            
+            
+            
             
             function addNewMember(c, callback) {
                 var newMember = new Schemas.TeamMember({
@@ -3607,6 +3613,7 @@ module.exports = {
                     active: member.active
                 });
                 newMember.save(function(err, data) {
+                    console.log(data);
                     if (err) {
                         console.log(err);
                         return res.json({ success: false,
@@ -3633,6 +3640,8 @@ module.exports = {
     editTeamMember: function (Schemas) {
         return function (req, res, next) {
             var member = req.body.member;
+            member.description = member.description.replace(/(?:\r\n|\r|\n)/g, '<br />');
+
             
             function editMember(callback) {
                 Schemas.TeamMember.findOne({ _id: member._id }).exec(function(err, results) {
@@ -3715,7 +3724,9 @@ module.exports = {
             }
             
             orderDo(function () {
-                console.log('done');
+                return res.json({
+                    success: true
+                });
             })
             
         }

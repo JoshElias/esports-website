@@ -85,10 +85,15 @@
                             <h2>DECK TRENDS</h2>
                             <hr class="hr m-b-md m-t-xs">
 
-                            <svg class="trends">
-                                <svg width="90%" height="100%" x="5%" y="5%">
+                            <svg class="trends" style="overflow: visible">
+                                <svg width="90%" height="100%" x="5%" y="5%" style="overflow: visible">
+                                    <text transform="rotate(270, 0, 210)" x="0" y="200" fill="white" text-anchor="end">Rank</text>
+                                    <text x="50%" y="100%" fill="white" text-anchor="middle">Meta Snapshot #</text>
                                     <g ng-repeat="num in tierRange[currentTier] track by $index">
-                                        <text height="15" x="4%" ng-attr-y="{{getPositionY(currentTier, $index, 410, 20) + 4}}" fill="white" text-anchor="end">{{num}}</text>
+                                        
+                                        <text ng-if="(tierRange[currentTier].length > 20) ? ($index%2 == 0) : true;" height="15" x="4%" ng-attr-y="{{getPositionY(currentTier, $index, 410, 20) + 4}}" fill="white" text-anchor="end">{{num}}</text>                                
+                                        
+
                                         <line ng-attr-x1="{{getPositionX(0, 10)}}%" ng-attr-y1="{{getPositionY(currentTier, $index, 410, 20)}}" ng-attr-x2="{{getPositionX(12, 10)}}%"  ng-attr-y2="{{getPositionY(currentTier, $index, 410, 20)}}" style="stroke:rgba(255,255,255,.4)"/>
                                     </g>
 
@@ -102,9 +107,10 @@
                                             <line class="dot-{{deck.deck.playerClass}}" ng-attr-x1="{{getPositionX($index, 10)}}%" ng-attr-y1="{{getPositionY(currentTier, getRankIndex(currentTier, rank), 410, 20)}}" ng-attr-x2="{{getPositionX($index + 1, 10)}}%" ng-attr-y2="{{getPositionY(currentTier, getRankIndex(currentTier, getNextRank(deck, $index)), 410, 20)}}" stroke-width="2" ng-if="hasNextRank(deck, $index)" />
                                         </g>
                                     </g>
+                                    
                                 </svg>
+                                
                             </svg>
-
                             <ul class="snapshot-trends-tiers">
                                 <li ng-repeat="tier in snapshot.tiers"><a href="#" ng-class="{ 'active': tier.tier == currentTier }" ng-click="setCurrentTier(tier.tier)">TIER {{tier.tier}}</a></li>
                             </ul>
