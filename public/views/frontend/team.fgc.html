@@ -2,75 +2,24 @@
     <img src="./img/team/fgc-logo.png" class="img-responsive" alt="fgc">
 </div>
 
-<div class="container team-page">
-    <div class="m-t-lg m-b-md">
-        <div class="team-member" ng-class="{active: chrisg}">
-            <a href="#" class="team-member-photo" ng-click="chrisg = !chrisg"><img src="{{app.cdn}}img/team/chrisg.jpg" class="img-responsive img-circle"></a>
+<div class="container team-page">  
+    <div class="m-t-lg m-b-md" ng-repeat="member in members">
+        <div class="team-member" ng-class="{active: !member.orderNum}">
+            <a href="#" class="team-member-photo" ng-click="member.orderNum = !member.orderNum"><img src="{{app.cdn}}team/{{member.photo}}" class="img-responsive img-circle"></a>
             <div class="team-member-content">
-                <h1>ChrisG</h1>
-                <h3>Christopher Gonzalez</h3>
-                    <p>Chris G is arguably one of the most storied Fighting Game players in the U.S., if not the world. His prowess as a FG player is unquestioned and features a list of major tournament wins that is too long to count. Described as one of the best Ultimate Marvel vs Capcom 3 (UMVC3) players in the world, Chris is well known for his ability to take an impossible situation and turn it into a win.   <br/>
-<br/>
-Currently Chris is playing Ultimate Marvel Vs. Capcom 3, Ultra Street Fighter 4, Mortal Kombat X, and many others.</p>
+                <h1>{{member.screenName}}</h1>
+                <h3>{{member.fullName}}</h3>
+                <p ng-bind-html="getDescription($index)"></p>
                 <div class="team-member-buttons clearfix">
-                    <a href="https://www.facebook.com/christopher.gonzalez.5477" target="_blank" class="btn btn-team btn-team-facebook"><i class="fa fa-facebook"></i></a>
-                    <a href="https://twitter.com/nychrisg" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="https://www.youtube.com/user/NYChrisG" target="_blank" class="btn btn-team btn-team-youtube"><i class="fa fa-youtube"></i></a>
-                    <a href="http://www.twitch.tv/nychrisg" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
+                    <a ng-if="member.social.twitter" href="https://www.twitter.com/{{member.social.twitter}}" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
+                    <a ng-if="member.social.twitch" href="http://www.twitch.tv/{{member.social.twitch}}" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
+                    <a ng-if="member.social.youtube" href="https://www.youtube.com/user/{{member.social.youtube}}" target="_blank" class="btn btn-team btn-team-youtube"><i class="fa fa-youtube-play"></i></a>
+                    <a ng-if="member.social.esea" href="http://play.esea.net/users/{{member.social.esea}}" target="_blank" class="btn btn-team btn-team-esea"></a>
+                    <a ng-if="member.social.instagram" href="https://instagram.com/{{member.social.instagram}}" target="_blank" class="btn btn-team btn-team-instagram"><i class="fa fa-instagram"></i></a>
+                    <a ng-if="member.social.facebook" href="https://www.facebook.com/{{member.social.facebook}}" target="_blank" class="btn btn-team btn-team-facebook"><i class="fa fa-facebook"></i></a>
                 </div>
             </div>
-            <a href="#" class="team-member-toggle" ng-click="chrisg = !chrisg"><i class="fa" ng-class="{'fa-angle-down': !chrisg, 'fa-angle-up': chrisg}"></i></a>
+            <a href="#" class="team-member-toggle" ng-click="member.orderNum = !member.orderNum"><i class="fa" ng-class="{'fa-angle-down': member.orderNum, 'fa-angle-up': !member.orderNum}"></i></a>
         </div>
     </div>
-    
-    <div class="m-t-lg m-b-md">
-        <div class="team-member" ng-class="{active: axe}">
-            <a href="#" class="team-member-photo" ng-click="axe = !axe"><img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/team/axe.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>Axe</h1>
-                <h3>Jeffrey Williamson</h3>
-                    <p>Jeffrey “Axe” Williamson is arguably a pioneer in Super Smash Bros. Melee. Widely regarded as one of the top Super Smash Bros. Melee players in the world. His fast/aggressive playstyle with Pikachu brought the once underused character to massive competitive success earning him recognition as the best Pikachu player in the world. </p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://twitter.com/TempoAxe" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/az_axe" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="axe = !axe"><i class="fa" ng-class="{'fa-angle-down': !axe, 'fa-angle-up': axe}"></i></a>
-        </div>
-    </div>
-    
-    <div class="m-t-lg m-b-md">
-        <div class="team-member" ng-class="{active: westballz}">
-            <a href="#" class="team-member-photo" ng-click="westballz = !westballz"><img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/team/westballz.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>WestBallz</h1>
-                <h3>Weston Dennis</h3>
-                    <p>Weston “Westballz” Dennis has been a prominent member of the Super Smash Bros. Melee community since 2010 and over the course of 2014 took his rightful place among the top 10 players in the game.  Westballz’s skill with Falco is acknowledge throughout the scene and his reputation has continued to grow since his strong 2014 showing. 
-</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://twitter.com/TempoWestBallz" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/westballz" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="westballz = !westballz"><i class="fa" ng-class="{'fa-angle-down': !westballz, 'fa-angle-up': westballz}"></i></a>
-        </div>
-    </div>
-    
-    <div class="m-t-lg m-b-md">
-        <div class="team-member" ng-class="{active: reepal}">
-            <a href="#" class="team-member-photo" ng-click="reepal = !reepal"><img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/team/reepal.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>Rip</h1>
-                <h3>Reepal Parbhoo</h3>
-                    <p>Reepal “Rip” Parbhoo has been a prominent member of the Fighting Game Community since the late 90’s as a competitive player and caster.  Rip is no stranger to the competitive scene and boasts Three Top Three finishes at Evolution for Tekken 6.  His casting experience is just as extensive as his competitive success. Tekken, Injustice, and Killer Instinct are just a few of the games he has casted over the years for MLG and Evolution events.  In addition to casting, Rip has dabbled in writing by partnering with Prima Games to produce strategy guides for such games as Tekken Tag 2, Killer Instinct, and Smash 4.
-</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://twitter.com/reepal" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/levelupyourgame" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="reepal = !reepal"><i class="fa" ng-class="{'fa-angle-down': !reepal, 'fa-angle-up': reepal}"></i></a>
-        </div>
-    </div>
-    
 </div>

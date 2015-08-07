@@ -23,10 +23,10 @@
         </div>
     </div>
     <div class="list-group">
-        <div class="list-group-item admin-list-item clearfix" ng-repeat="snapshot in snapshots">
+        <div class="list-group-item admin-list-item clearfix" ng-repeat="snapshot in snapshots | orderBy : '-snapNum'">
             <div class="row">
                 <div class="col-sm-6">
-                    <span>Snapshot {{snapshot.snapNum}} - {{snapshot.title}}</span>
+                    <span>Meta Snapshot {{snapshot.snapNum}} - {{snapshot.title}}</span>
                 </div>
                 <div class="col-sm-6">
                     <div class="pull-right btn-toolbar">

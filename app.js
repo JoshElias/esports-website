@@ -161,7 +161,8 @@ app.post('/article', routes.frontend.article(Schemas));
 
 app.post('/snapshots', routes.frontend.snapshots(Schemas));
 app.post('/snapshot', routes.frontend.snapshot(Schemas));
-app.post('/getLatestSnapshot', routes.frontend.getLatestSnapshot(Schemas));
+app.post('/snapshot/comment/add', routes.frontend.snapshotCommentAdd(Schemas, mongoose));
+app.post('/snapshot/latest', routes.frontend.getLatestSnapshot(Schemas));
 
 app.post('/decks', routes.frontend.decks(Schemas));
 app.post('/decks/community', routes.frontend.decksCommunity(Schemas));
@@ -185,6 +186,8 @@ app.post('/forum', routes.frontend.forum(Schemas, async));
 app.post('/forum/thread', routes.frontend.forumThread(Schemas));
 app.post('/forum/post', routes.frontend.forumPost(Schemas));
 
+app.post('/team', routes.frontend.team(Schemas));
+
 app.post('/banners', routes.frontend.getBanners(Schemas));
 app.post('/polls', routes.frontend.pollsPage(Schemas, async));
 app.post('/polls/vote', routes.frontend.pollsVote(Schemas));
@@ -203,6 +206,9 @@ app.post('/api/deck/update', routes.frontend.deckUpdate(Schemas, Util));
 app.post('/api/deck/delete', routes.frontend.deckDelete(Schemas));
 app.post('/api/deck/vote', routes.frontend.deckVote(Schemas));
 app.post('/api/deck/comment/add', routes.frontend.deckCommentAdd(Schemas, mongoose));
+
+app.post('/api/snapshot/vote', routes.frontend.snapshotVote(Schemas));
+app.post('/api/snapshot/comment/add', routes.frontend.snapshotCommentAdd(Schemas, mongoose));
 
 app.post('/api/hots/guide', routes.frontend.hots.guideEdit(Schemas));
 app.post('/api/hots/guide/add', routes.frontend.hots.guideAdd(Schemas, Util, mongoose));
@@ -299,6 +305,7 @@ app.post('/api/admin/upload/deck', routes.admin.isAdmin(Schemas), multipartMiddl
 app.post('/api/admin/upload/polls', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadPoll(fs, gm, amazon));
 app.post('/api/admin/upload/banners', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadBanner(fs, gm, amazon));
 app.post('/api/admin/upload/snapshot', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadSnapshot(fs, gm, amazon, Util));
+app.post('/api/admin/upload/team', routes.admin.isAdmin(Schemas), multipartMiddleware, routes.admin.uploadTeam(fs, gm, amazon, Util));
 
 app.post('/api/admin/polls', routes.admin.isAdmin(Schemas), routes.admin.polls(Schemas));
 app.post('/api/admin/poll', routes.admin.isAdmin(Schemas), routes.admin.poll(Schemas));
@@ -312,6 +319,13 @@ app.post('/api/admin/snapshot/latest', routes.admin.isAdmin(Schemas), routes.adm
 app.post('/api/admin/snapshot/add', routes.admin.isAdmin(Schemas), routes.admin.snapshotAdd(Schemas, Util));
 app.post('/api/admin/snapshot/delete', routes.admin.isAdmin(Schemas), routes.admin.snapshotDelete(Schemas));
 app.post('/api/admin/snapshot/edit', routes.admin.isAdmin(Schemas), routes.admin.snapshotEdit(Schemas, Util));
+
+app.post('/api/admin/teams', routes.admin.isAdmin(Schemas), routes.admin.teamMembers(Schemas));
+app.post('/api/admin/team', routes.admin.isAdmin(Schemas), routes.admin.teamMember(Schemas));
+app.post('/api/admin/team/add', routes.admin.isAdmin(Schemas), routes.admin.addTeamMember(Schemas));
+app.post('/api/admin/team/edit', routes.admin.isAdmin(Schemas), routes.admin.editTeamMember(Schemas));
+app.post('/api/admin/team/remove', routes.admin.isAdmin(Schemas), routes.admin.removeTeamMember(Schemas));
+app.post('/api/admin/team/order', routes.admin.isAdmin(Schemas), routes.admin.teamMemberOrder(Schemas));
 
 app.post('/api/admin/banners', routes.admin.isAdmin(Schemas), routes.admin.banners(Schemas));
 app.post('/api/admin/banners/order', routes.admin.isAdmin(Schemas), routes.admin.bannersOrder(Schemas));

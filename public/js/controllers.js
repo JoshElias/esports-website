@@ -1765,8 +1765,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('AdminSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', 'data', 'AlertService', 'Util', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
-    function ($scope, $compile, $timeout, $state, data, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
+.controller('AdminSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', '$upload', 'data', 'AlertService', 'Util', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
+    function ($scope, $compile, $timeout, $state, $window, $upload, data, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
         
         
         var deckBootBox = undefined,
@@ -1777,14 +1777,20 @@ angular.module('app.controllers', ['ngCookies'])
                 decks : []
             },
             defaultTierDeck = {
+                name: "",
                 explanation : "",
                 weeklyNotes : "",
                 deck : undefined,
                 rank : {
                     current : 1,
-                    last : []
+                    last : [0,0,0,0,0,0,0,0,0,0,0,0]
                 },
                 tech : []
+            },
+            defaultAuthor = {
+                user: undefined, 
+                description: "",
+                klass: []
             },
             defaultDeckMatch = {
                 for : undefined,
@@ -1841,6 +1847,13 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         }
+        
+        $scope.getImage = function () {
+            $scope.imgPath = 'snapshots/';
+            if (!$scope.snapshot) { return '/img/blank.png'; }
+            return ($scope.snapshot.photos && $scope.snapshot.photos.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photos.small;
+        };
+        
         function populateMatches () {
             var out = [];
             for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
@@ -1977,7 +1990,7 @@ angular.module('app.controllers', ['ngCookies'])
         
             $scope.setSlug = function () {
                 if (!$scope.snapshot.slug.linked) { return false; }
-                $scope.snapshot.slug.url = Util.slugify($scope.snapshot.title);
+                $scope.snapshot.slug.url = "meta-snapshot-" + $scope.snapshot.snapNum + "-" + Util.slugify($scope.snapshot.title);
             };
 
             $scope.toggleSlugLink = function () {
@@ -1990,7 +2003,7 @@ angular.module('app.controllers', ['ngCookies'])
         /* AUTHOR METHODS */
             $scope.isAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
-                    if (a._id == $scope.snapshot.authors[i]._id) {
+                    if (a._id == $scope.snapshot.authors[i].user._id) {
                         return true;
                     }
                 }
@@ -2002,12 +2015,15 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.removeAuthor(a);
                     return;
                 }
-                $scope.snapshot.authors.push(a);
+                var dauthor = angular.copy(defaultAuthor);
+                dauthor.user = a;
+                console.log(dauthor);
+                $scope.snapshot.authors.push(dauthor);
             }
             
             $scope.removeAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
-                    if (a._id === $scope.snapshot.authors[i]._id) {
+                    if (a._id === $scope.snapshot.authors[i].user._id) {
                         $scope.snapshot.authors.splice(i, 1);
                     }
                 }
@@ -2337,19 +2353,26 @@ angular.module('app.controllers', ['ngCookies'])
                     small: "",
                     square: ""
                 },
+                votes: 0,
                 active : false
+            },
+            defaultAuthor = {
+                user: undefined, 
+                description: "",
+                klass: []
             },
             defaultTier = {
                 tier : 1,
                 decks : []
             },
             defaultTierDeck = {
+                name: "",
                 explanation : "",
                 weeklyNotes : "",
                 deck : undefined,
                 rank : {
                     current : 1,
-                    last : []
+                    last : [0,0,0,0,0,0,0,0,0,0,0,0]
                 },
                 tech : []
             },
@@ -2544,7 +2567,7 @@ angular.module('app.controllers', ['ngCookies'])
         
             $scope.setSlug = function () {
                 if (!$scope.snapshot.slug.linked) { return false; }
-                $scope.snapshot.slug.url = Util.slugify($scope.snapshot.title);
+                $scope.snapshot.slug.url = "meta-snapshot-" + $scope.snapshot.snapNum + "-" + Util.slugify($scope.snapshot.title);
             };
 
             $scope.toggleSlugLink = function () {
@@ -2557,7 +2580,7 @@ angular.module('app.controllers', ['ngCookies'])
         /* AUTHOR METHODS */
             $scope.isAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
-                    if (a._id == $scope.snapshot.authors[i]._id) {
+                    if (a._id == $scope.snapshot.authors[i].user._id) {
                         return true;
                     }
                 }
@@ -2569,12 +2592,15 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.removeAuthor(a);
                     return;
                 }
-                $scope.snapshot.authors.push(a);
+                var dauthor = angular.copy(defaultAuthor);
+                dauthor.user = a;
+                console.log(dauthor);
+                $scope.snapshot.authors.push(dauthor);
             }
             
             $scope.removeAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
-                    if (a._id === $scope.snapshot.authors[i]._id) {
+                    if (a._id === $scope.snapshot.authors[i].user._id) {
                         $scope.snapshot.authors.splice(i, 1);
                     }
                 }
@@ -2684,7 +2710,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var tiers = $scope.snapshot.tiers,
                     decks = $scope.selectedDecks,
                     tierDeck = angular.copy(defaultTierDeck);
-                
+                    tierDeck.name = sel.name;
                 if (!$scope.isDeck(sel) && !$scope.isSelected(sel)) {
                     console.log($scope.removedDecks);
                     for (var l = 0; l < $scope.removedDecks.length; l++) {
@@ -2880,15 +2906,14 @@ angular.module('app.controllers', ['ngCookies'])
                     for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                         for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
                             $scope.matches.push($scope.snapshot.tiers[i].decks[k]);
+                            $scope.snapshot.tiers[i].decks[k].rank.last.splice(0,0,data.snapshot.tiers[i].decks[k].rank.current);
+                            if ($scope.snapshot.tiers[i].decks[k].rank.last.length > 12) {
+                                $scope.snapshot.tiers[i].decks[k].rank.last.pop();
+                            }
                         }
                     }
-
-                    for (var a = 0; a < $scope.snapshot.tiers.length; a++) {
-                        for (var b = 0; b < $scope.snapshot.tiers[a].decks.length; b++) {
-                            $scope.snapshot.tiers[a].decks[b].rank.last.unshift(data.snapshot.tiers[a].decks[b].rank.current);
-                            $scope.snapshot.tiers[a].decks[b].rank.last.pop();
-                        }
-                    }
+                    $scope.deckRanks();
+                    $scope.setSlug();
                 }
             });
         }
@@ -2904,6 +2929,215 @@ angular.module('app.controllers', ['ngCookies'])
                 } else {
                     AlertService.setSuccess({ show: true, msg: $scope.snapshot.title + ' has been added successfully.' });
                     $state.go('app.admin.snapshots.list');
+                }
+            });
+        };
+    }
+])
+.controller('AdminTeamListCtrl', ['$scope', 'data', 'AdminTeamService', 'AlertService',
+    function ($scope, data, AdminTeamService, AlertService) {
+        
+        $scope.members = data.members;
+        $scope.hsMembers = data.hsMembers;
+        $scope.hotsMembers = data.hotsMembers;
+        $scope.csMembers = data.csMembers;
+        $scope.fifaMembers = data.fifaMembers;
+        $scope.fgcMembers = data.fgcMembers;
+        
+        
+        // grab alerts
+        if (AlertService.hasAlert()) {
+            $scope.success = AlertService.getSuccess();
+            AlertService.reset();
+        }
+        
+        $scope.updateDND = function (list, index) {
+            list.splice(index, 1);
+            for (var i = 0; i < list.length; i++) {
+                console.log(list[i].screenName, list[i].orderNum, i);
+                list[i].orderNum = i + 1;
+            }
+            AdminTeamService.updateOrder(list);
+        };
+        
+        // delete member
+        $scope.deleteMember = function deleteMember(member, arr) {
+            console.log(member);
+            var box = bootbox.dialog({
+                title: 'Delete member: ' + member.screenName + ' - ' + member.fullName + '?',
+                message: 'Are you sure you want to delete the member <strong>' + member.screenName + ' - ' + member.fullName + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            AdminTeamService.deleteMember(member._id).then(function (data) {
+                                if (data.success) {
+                                    var index = arr.indexOf(member);
+                                    if (index !== -1) {
+                                        arr.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: member.screenName + ' - ' + member.fullName + ' deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
+    }
+])
+.controller('TeamPageCtrl', ['$scope', '$sce', 'data',
+    function ($scope, $sce, data) {
+        $scope.members = data.members;
+        
+        for(var i = 0; i < $scope.members.length; i++) {
+            $scope.members[i].description = $scope.members[i].description.replace(/(?:\r\n|\r|\n)/g, '<br />');
+;
+        }
+        
+        $scope.getDescription = function (i) {
+            return $sce.trustAsHtml($scope.members[i].description);
+        }
+        
+        
+        
+//        for (var i = 0; i < $scope.members.length; i++) {
+//            var str = $scope.members[i].description;
+//            str.replace(/(?:\r\n|\r|\n)/g, '<br />');
+//            $scope.members[i].description = str;
+//        }
+    }
+])
+.controller('AdminTeamAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'AdminTeamService', 'AlertService',
+    function ($scope, $state, $window, $upload, $compile, AdminTeamService, AlertService) {
+    
+        var defaultMember = {
+            game: '',
+            screenName: '',
+            fullName: '',
+            description: '',
+            social: {
+                twitter: '',
+                twitch: '',
+                youtube: '',
+                facebook: '',
+                instagram: '',
+                esea: ''
+            },
+            photo: '',
+            active: true
+        }
+        
+        $scope.member = angular.copy(defaultMember);
+        
+        // photo upload
+        $scope.photoUpload = function ($files) {
+            if (!$files.length) return false;
+            var box = bootbox.dialog({
+                message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                closeButton: false,
+                animate: false
+            });
+            $scope.uploading = 0;
+            box.modal('show');
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/admin/upload/team',
+                    method: 'POST',
+                    file: file
+                }).progress(function(evt) {
+                    $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                }).success(function(data, status, headers, config) {
+                    $scope.member.photo = data.photo;
+                    $scope.cardImg = $scope.app.cdn + data.path + data.photo;
+                    box.modal('hide');
+                });
+            }
+        };
+        
+        $scope.getImage = function () {
+            $scope.imgPath = '/team/';
+            if (!$scope.member) { return '/img/blank.png'; }
+            return ($scope.member.photo && $scope.member.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.member.photo;
+        };
+        
+        // save member
+        $scope.saveMember = function () {
+            AdminTeamService.addMember($scope.member).then(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' - ' + $scope.member.fullName + ' has been added successfully.' });
+                    $state.go('app.admin.teams.list');
+                }
+            });
+        };
+    }
+])
+.controller('AdminTeamEditCtrl', ['$scope', '$state', '$window', '$compile', '$upload', 'data', 'AdminTeamService', 'AlertService',
+    function ($scope, $state, $window, $compile, $upload, data, AdminTeamService, AlertService) {
+        
+        $scope.member = data.member;
+        
+        console.log($scope.member);
+        
+        // photo upload
+        $scope.photoUpload = function ($files) {
+            if (!$files.length) return false;
+            var box = bootbox.dialog({
+                message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                closeButton: false,
+                animate: false
+            });
+            $scope.uploading = 0;
+            box.modal('show');
+            for (var i = 0; i < $files.length; i++) {
+                var file = $files[i];
+                $scope.upload = $upload.upload({
+                    url: '/api/admin/upload/team',
+                    method: 'POST',
+                    file: file
+                }).progress(function(evt) {
+                    $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                }).success(function(data, status, headers, config) {
+                    $scope.member.photo = data.photo;
+                    $scope.cardImg = $scope.app.cdn + data.path + data.photo;
+                    box.modal('hide');
+                });
+            }
+        };
+        
+        $scope.getImage = function () {
+            $scope.imgPath = '/team/';
+            if (!$scope.team) { return '/img/blank.png'; }
+            return ($scope.snapshot.photo && $scope.snapshot.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photo;
+        };
+        
+        // save member
+        $scope.saveMember = function () {
+            AdminTeamService.editMember($scope.member).then(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                } else {
+                    AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' - ' + $scope.member.fullName + ' has been added successfully.' });
+                    $state.go('app.admin.teams.list');
                 }
             });
         };
@@ -4726,14 +4960,24 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('SnapshotCtrl', ['$scope', '$state', 'SnapshotService', 'data',
-    function ($scope, $state, SnapshotService, data) {
-
+.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'data', 'AuthenticationService', 'UserService', 'SubscriptionService', 'VoteService',
+    function ($scope, $state, $compile, $window, SnapshotService, data, AuthenticationService, UserService, SubscriptionService, VoteService) {
+        
         $scope.snapshot = data;
         $scope.show = [];
-        var mouseOver = [];
         $scope.matchupName = [];
+        $scope.hasVoted = false;
+        $scope.show.comments = SnapshotService.getStorage();
+
         
+        var mouseOver = [],
+            charts = [],
+            viewHeight = 0,
+            box = undefined;
+        
+        $scope.getImage = function () {
+            return ($scope.snapshot.photos.large == "") ? $scope.app.cdn + 'snapshots/default-banner.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photos.large;
+        }
         
         $scope.getMouseOver = function (deckID) {
             return mouseOver[deckID] || false;
@@ -4744,26 +4988,149 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.matchupName[deckID] = deckName || false;
         }
         
-        
         $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
         
-//        var ogImg = 'https://s3-us-west-2.amazonaws.com/ts-node2/snapshot/' + $scope.snapshot.photos.square;
-        $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article');
+        var ogImg = ($scope.snapshot.photos.square == "") ? $scope.app.cdn + 'snapshots/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photos.square;
+        $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article', ogImg);
         
         for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
             $scope.show[i+1] = false;
         }
         
-        var charts = [];
+        $scope.log = function (a) {
+            console.log(a);
+        }
         
-        function buildCharts () {    
+        $scope.setView = function (height) {
+            viewHeight = height*350;
+        }
+        
+        $scope.getView = function () {
+            return viewHeight;
+        }
+
+        // trends
+        $scope.currentTier = 1;
+        $scope.currentDeck = false;
+        $scope.tierRange = [];
+        
+        $scope.snapshotTimeline = function () {
+            var out = [];
+            for (var i = $scope.snapshot.snapNum; i > $scope.snapshot.snapNum - 13; i--) {
+                out.push(i);
+            }
+            return out;
+        }
+        
+        $scope.getTier = function (tier) {
+            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                if ($scope.snapshot.tiers[i].tier == tier) {
+                    return $scope.snapshot.tiers[i];
+                }
+            }
+            return false;
+        }
+        
+        function getTierRange (tierNum) {
+            var tier = $scope.getTier(tierNum),
+                out = [],
+                highestRank = 0,
+                lowestRank = 0;
+            
+            // find highest and lowest in tier
+            for (var i = 0; i < tier.decks.length; i++) {
+                var history = tier.decks[i].rank.all;
+                for (var j = 0; j < history.length; j++) {
+                    if (history[j] > highestRank && history[j] != 0) { highestRank = history[j]; }
+                    if ((history[j] < lowestRank && history[j] != 0) || lowestRank == 0) { lowestRank = history[j]; }
+                }
+            }
+            
+            // generate range
+            for (var i = lowestRank; i <= highestRank; i++) {
+                out.push(i);
+            }
+            
+            return out;
+        };
+        
+        // init tier ranges
+        for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+            var tierNum = $scope.snapshot.tiers[i].tier;
+            $scope.tierRange[tierNum] = getTierRange(tierNum);
+        }
+        
+        $scope.toggleCurrentDeck = function (deckNum) {
+            $scope.currentDeck = ($scope.currentDeck == deckNum) ? false : deckNum;
+        };
+        
+        $scope.hasDeckSelected = function () {
+            return $scope.currentDeck;
+        };
+        
+        $scope.setCurrentTier = function (tierNum) {
+            $scope.currentTier = tierNum;
+            $scope.toggleCurrentDeck(false);
+        };
+        
+        $scope.getPositionY = function (tierNum, deckIndex, height, padding) {
+            var size = $scope.tierRange[tierNum].length;
+            return Math.round(((height - padding)/size*deckIndex) + padding, 2);
+        }
+        
+        $scope.getPositionX = function (index, padding) {
+            return Math.round(100 - padding - ((100 - padding)/12*index) + (padding / 2), 2);
+        }
+        
+        $scope.getRanks = function (deck) {
+            var ranks = deck.rank.all;
+            return ranks;
+        };
+        
+        $scope.getRankIndex = function (tierNum, rank) {
+            var range = $scope.tierRange[tierNum];
+            return range.indexOf(rank);
+        };
+        
+        $scope.getNextRank = function (deck, index) {
+            return deck.rank.all[index + 1];
+        };
+        
+        $scope.hasNextRank = function (deck, index) {
+            return (deck.rank.all[index + 1]);
+        };
+        
+        $scope.voteSnapshot = function () {
+            $scope.hasVoted = true;
+            $scope.snapshot.votesCount++;
+            SnapshotService.vote($scope.snapshot._id);
+        }
+        
+        // check for custom deck name or load normal name
+        function getDeckName (deckID) {
+            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
+                    if ($scope.snapshot.tiers[i].decks[j].deck._id == deckID) {
+                        return ($scope.snapshot.tiers[i].decks[j].name.length) ? $scope.snapshot.tiers[i].decks[j].name : $scope.snapshot.tiers[i].decks[j].deck.name;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        function init () {
             var tierLength = $scope.snapshot.tiers.length,
                 maxTierLength = (tierLength > 2) ? 2 : tierLength;
             
-//            for (var a = 0; a < $scope.snapshot.tiers.length; a++) {
-//                for ()
-//            }
-            
+            /******************************************* HAS VOTED *******************************************/
+
+            for (var i = 0; i < $scope.snapshot.votes.length; i++) {
+                if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
+                    $scope.hasVoted = true;
+                }
+            }
+
+            /******************************************* BUILD TIER MATCHES *******************************************/
             for (var j = 0; j < maxTierLength; j++) {
                 for (var k = 0; k < $scope.snapshot.tiers[j].decks.length; k++) {
                     var matches = [];
@@ -4773,7 +5140,8 @@ angular.module('app.controllers', ['ngCookies'])
                                 against: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for._id : $scope.snapshot.matches[i].against._id,
                                 chance: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].forChance : $scope.snapshot.matches[i].againstChance,
                                 playerClass: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.playerClass : $scope.snapshot.matches[i].against.playerClass,
-                                name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.name : $scope.snapshot.matches[i].against.name
+                                //name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.name : $scope.snapshot.matches[i].against.name
+                                name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? getDeckName($scope.snapshot.matches[i].for._id) : getDeckName($scope.snapshot.matches[i].against._id)
                             };
                             matches.push(newObj);
                         }
@@ -4781,7 +5149,75 @@ angular.module('app.controllers', ['ngCookies'])
                     charts[$scope.snapshot.tiers[j].decks[k].deck._id] = matches;
                 }
             }
+            
         }
+        
+        
+        /******************************************* COMMENTS *******************************************/
+        var defaultComment = {
+            comment: ''
+        };
+        $scope.comment = angular.copy(defaultComment);
+        
+        $scope.commentPost = function () {
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                var callback = function () {
+                    $scope.commentPost();
+                };
+            } else {
+                SnapshotService.addComment($scope.snapshot, $scope.comment).success(function (data) {
+                    if (data.success) {
+                        $scope.snapshot.comments.push(data.comment);
+                        $scope.comment.comment = '';
+                    }
+                });
+            }
+        };
+                
+        updateCommentVotes();
+        function updateCommentVotes() {
+            $scope.snapshot.comments.forEach(checkVotes);
+            
+            function checkVotes (comment) {
+                var vote = comment.votes.filter(function (vote) {
+                    return ($scope.app.user.getUserID() === vote.userID);
+                })[0];
+                
+                if (vote) {
+                    comment.voted = vote.direction;
+                }
+            }
+        }
+                
+        $scope.voteComment = function (direction, comment) {
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                var callback = function () {
+                    $scope.voteComment(direction, snapshot);
+                };
+            } else {
+                if (comment.author._id === $scope.app.user.getUserID()) {
+                    bootbox.alert("You can't vote for your own content.");
+                    return false;
+                }
+                VoteService.voteComment(direction, comment).then(function (data) {
+                    if (data.success) {
+                        comment.voted = direction;
+                        comment.votesCount = data.votesCount;
+                    }
+                });
+            }
+        };
+        
         
         $scope.scrollToDeck = function (deck) {
             $('html, body').animate({
@@ -4809,13 +5245,46 @@ angular.module('app.controllers', ['ngCookies'])
             return (match.for._id == id) ? match.against.playerClass : match.for.playerClass;
         }
         
-        buildCharts();
+        init();
         
         $scope.goToDeck = function ($event, slug) {
             $event.stopPropagation();
             var url = $state.href('app.hs.decks.deck', { slug: slug });
             window.open(url,'_blank');
         };
+        
+        $scope.toggleComments = function () {
+            if (!SnapshotService.getStorage()) {
+                SnapshotService.setStorage(true);
+            } else {
+                SnapshotService.setStorage(false);
+            }
+            $scope.show.comments = SnapshotService.getStorage();
+        }
+        
+        // login for modal
+        $scope.login = function login(email, password) {
+            if (email !== undefined && password !== undefined) {
+                UserService.login(email, password).success(function(data) {
+                    AuthenticationService.setLogged(true);
+                    AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
+                    $window.sessionStorage.userID = data.userID;
+                    $window.sessionStorage.username = data.username;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+                    box.modal('hide');
+                    updateCommentVotes();
+                }).error(function() {
+                    $scope.showError = true;
+                });
+            }
+        }
     }
 ])
 .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',

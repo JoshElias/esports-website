@@ -556,6 +556,13 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     border-bottom: 1px solid rgba(255,255,255,.2);
 }
 
+.snapshot-votes { position: absolute; right: 20px; top: 20px; }
+.snapshot-votes .snapVoteWrap { position: relative; text-align: center; }
+.snapshot-votes .snapVoteWrap a { cursor: pointer; background:  }
+.snapshot-votes .snapVoteWrap i { margin-top: 10px; font-size: 24px }
+
+
+
 .bg-override {
     background-image: url(../img/meta-snapshot/meta-bg.jpg);
     background-color: #000000;
@@ -567,8 +574,8 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .snapTitle { position: absolute; top: 20px; left: 20px; text-shadow: 1px 1px 0px rgba(0,0,0,.7); }
 .snapTitle img { width: 100%; }
-.snapTitle h1 { color: white; font-weight: bolder }
-.snapTitle h3 { color: white; color: #d7effa; font-weight: bold; font-size: 18px; letter-spacing: 1px }
+.snapTitle h1 { color: white; font-weight: bolder; padding-right: 100px; }
+.snapTitle h3 { color: white; color: #d7effa; font-weight: bold; font-size: 18px; letter-spacing: 1px; padding-right: 100px; }
 
 @media (max-width: 767px) {
     .snapTitle h1,
@@ -626,12 +633,44 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 /* TRENDS */
 
-.trends-wrapper { height: 500px; background-image: url('../img/meta-snapshot/trends-bg.jpg') }
+.trends-wrapper { background: url('../img/meta-snapshot/trends-bg.jpg') no-repeat center top; background-size: cover; }
+.trends-wrapper .inner { border: 1px solid rgba(255,255,255,.2); padding: 20px; }
+.trends-wrapper h2 { color: white; font-weight: bold; letter-spacing: 4px; font-size: 24px; text-align: center; }
+.trends-wrapper .hr { margin: 0 auto; border-top: 1px solid rgba(255,255,255,.5); border-bottom: 2px solid rgba(0,0,0,.4); background: none; width: 225px; }
 
-.trends { width: 100%; height: 100%; }
+.trends { width: 100%; height: 450px; }
+.trends g.deck { opacity: 1; transition: opacity .25s ease-in-out; }
+.trends g.deck.not-selected { opacity: .2; }
+
+.snapshot-trends-keys { margin: 0px 5% 20px; }
+.snapshot-trends-keys a { margin: 5px 10px; position: relative; display: block; color: rgba(255,255,255,.8); z-index: 3; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.snapshot-trends-keys a:hover { color: rgba(255,255,255,1); }
+.snapshot-trends-keys a.active { color: rgba(255,255,255,1); }
+.snapshot-trends-keys .trends-key { margin: 4px 5px 0 0; display: inline-block; width: 10px; height: 10px; border: 1px solid rgba(255,255,255,.2); }
+
+.snapshot-trends-keys .trends-key.Druid { background: rgb(255, 125, 10); }
+.snapshot-trends-keys .trends-key.Hunter { background: rgb(171, 212, 115); }
+.snapshot-trends-keys .trends-key.Mage { background: rgb(105, 204, 240); }
+.snapshot-trends-keys .trends-key.Paladin { background: rgb(245, 140, 186); }
+.snapshot-trends-keys .trends-key.Priest { background: rgb(255,255,255); }
+.snapshot-trends-keys .trends-key.Rogue { background: rgb(255, 245, 105); }
+.snapshot-trends-keys .trends-key.Shaman { background: rgb(0, 112, 222); }
+.snapshot-trends-keys .trends-key.Warlock { background: rgb(148, 130, 201); }
+.snapshot-trends-keys .trends-key.Warrior { background: rgb(199, 156, 110); }
+
+.snapshot-trends-tiers { margin: 20px 0px 20px 0px; padding: 0; text-align: center; }
+.snapshot-trends-tiers li { list-style: none; display: inline-block; margin-right: 20px; }
+.snapshot-trends-tiers li:last-child { margin-right: 0px; }
+.snapshot-trends-tiers li a { position: relative; font-family: 'Open Sans Bold'; font-size: 30px; color: rgba(255,255,255,.8); letter-spacing: 2px; z-index: 3; }
+.snapshot-trends-tiers li a:hover { color: rgba(255,255,255,1); }
+.snapshot-trends-tiers li a.active { color: rgba(255,255,255,1); border-bottom: 2px solid #FFF; }
+
+@media (max-width: 767px) {
+    .trends-wrapper .inner { padding: 10px; }
+    .snapshot-trends-tiers li a { font-size: 12px; }
+}
 
 /* /TRENDS */
-
 
 .tier h4,
 .tier h3,
@@ -688,6 +727,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-body .tier-deck .tier-deck-body .deck-rank div:nth-child(2) { border-left: none; border-right: none }
 .tier-body .tier-deck .tier-deck-body .deck-rank div div { height: 20px; background-color: rgba(0, 0, 0, .5); font-size: 12px; font-weight: bold; border: none; color: white; line-height: 18px; }
 .tier-body .tier-deck .tier-deck-body .tier-deck-body-inner { border: rgba(255, 255, 255, .1) 1px solid; border-top: 0px; }
+.tier-body .tier-deck .tier-deck-body .tier-deck-body-inner-inner { padding-top: 30px; }
 .tier-body .tier-deck .tier-deck-body .deck-portrait { height:345px }
 
 /* TECH */
@@ -701,16 +741,58 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .keep { width: 27px; height: 27px; text-align: center; border-bottom: 1px solid black; border-right: 1px solid black; margin-right: 5px; }
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .toss { background: rgb(17, 153, 71) }
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .keep { background: rgb(170, 30, 33) }
-
-
 /* !TECH */
 
+
+.meta-author {
+    
+    background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
+    
+    border-left: 1px solid rgba(255,255,255,.2);
+    border-right: 1px solid rgba(255,255,255,.2);
+    border-top: 1px solid rgba(255,255,255,.2);
+    border-bottom: 1px solid rgba(255,255,255,.2);
+    
+
+    
+    margin-bottom: 1px;
+}
+
+.meta-author button { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; }
+
+.meta-author h2 { color: white; letter-spacing: 4px; font-size: 24px; font-weight: bold; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-transform: uppercase; }
+.meta-author h3 { color: #F6981E; letter-spacing: 4px; font-size: 14px; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+.author-img-wrapper { position: relative; height: 60px; width: 70px; }
+.author-class-icon { position: absolute; top: 0; left: 0; display: block; }
+.author-text-wrapper .classExpert { text-transform: uppercase; }
+.author-text-wrapper h3 { text-transform: uppercase; }
+author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; padding: 0;  }
+.author-collapse p { color: white; padding: 0px 75px 20px 105px; font-size: 14px; }
+
+.twitch-btn { background: #6441A5 }
+.twitch-btn:hover { background: #6441A5 }
+.twitch-btn i { margin-left: -2px }
+.twitter-btn { background: #55acee }
+
+.soc-btns { position: absolute; z-index: 1; top: 25px; right: 0}
+.soc-btn { height: 50px; width: 50px; border-radius: 100%; right: 25px;  }
+.soc-btn.disable { opacity: .3 }
+.soc-btn i { font-size: 28px; color: white; line-height:1.35 }
+
+@media (max-width: 767px) {
+    .meta-author h2 { text-indent: 0px; }
+    .meta-author h3 { text-indent: 0px; }
+    .author-collapse p { padding: 0px 20px 20px; }
+    .soc-btns { position: relative; top: 0px; left: 0px; padding-left: 20px; }
+}
 
 .match-graph { height: 300px; }
 .match-graph svg { overflow: visible }
 .match-graph line { stroke:rgba(255,255,255,.5); }
-
-.svg-tooltip { stroke: rgb(255,255,255); fill: #2268AE; }
 
 .no-mouse { opacity: .5; -webkit-transition-duration: .2s; transition-duration: .2s; }
 .bar-wrap { -webkit-transition-duration: .2s; transition-duration: .2s; }
@@ -726,6 +808,44 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .bar-Warlock { fill: rgb(148, 130, 201) }
 .bar-Warrior { fill: rgb(199, 156, 110) }
 
+.dot-Druid { stroke: rgb(255, 125, 10); fill: rgb(255, 125, 10); }
+.dot-Hunter { stroke: rgb(171, 212, 115); fill: rgb(171, 212, 115); }
+.dot-Mage { stroke: rgb(105, 204, 240); fill: rgb(105, 204, 240); }
+.dot-Paladin { stroke: rgb(245, 140, 186); fill: rgb(245, 140, 186); }
+.dot-Priest { stroke: rgb(255,255,255); fill: rgb(255,255,255); }
+.dot-Rogue { stroke: rgb(255, 245, 105); fill: rgb(255, 245, 105); }
+.dot-Shaman { stroke: rgb(0, 112, 222); fill: rgb(0, 112, 222); }
+.dot-Warlock { stroke: rgb(148, 130, 201); fill: rgb(148, 130, 201); }
+.dot-Warrior { stroke: rgb(199, 156, 110); fill: rgb(199, 156, 110); }
+
+#snapshot-chart {
+    width:800px;
+}
+
+#snapshot-chart g {
+    fill: white;
+}
+#snapshot-chart line {
+    fill: white;
+    stroke: white;
+}
+#snapshot-chart .domain {
+    stroke: white;
+}
+
+#meta-graph-Rogue {
+    color: yellow
+}
+
+.snapshot-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
+.snapshot-section-title { font-size: 20px; line-height: 60px; min-height: 60px; color: #FFF; background: rgba(0,0,0,.3); }
+.snapshot-section-title a { color: #FFF; }
+.snapshot-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; }
+.snapshot-section-content { padding: 20px; border-top: 1px solid #000; }
+.snapshot-section-content.unpadded { padding: 0px; }
+.snapshot-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
+.snapshot-section-content p { color: #FFF; }
+
 
 .tier-deck-Druid {
     background: -webkit-linear-gradient(left, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
@@ -740,7 +860,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Druid .deck-portrait-Druid { background: url(../img/meta-snapshot/hero-portrait/Druid.png) no-repeat top center; }
-.deck-portrait-Druid-sm { background: url(../img/meta-snapshot/hero-portrait/Druid-sm.png) no-repeat top right; }
+.deck-portrait-Druid-sm { background: url(../img/meta-snapshot/hero-portrait/druid-sm.png) no-repeat top right; }
 
 
 
@@ -757,7 +877,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Hunter .deck-portrait-Hunter { background: url(../img/meta-snapshot/hero-portrait/Hunter.png) no-repeat top center; }
-.deck-portrait-Hunter-sm { background: url(../img/meta-snapshot/hero-portrait/Hunter-sm.png) no-repeat top right; }
+.deck-portrait-Hunter-sm { background: url(../img/meta-snapshot/hero-portrait/hunter-sm.png) no-repeat top right; }
 
 
 .tier-deck-Mage {
@@ -773,7 +893,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Mage .deck-portrait-Mage { background: url(../img/meta-snapshot/hero-portrait/Mage.png) no-repeat top center; }
-.deck-portrait-Mage-sm { background: url(../img/meta-snapshot/hero-portrait/Mage-sm.png) no-repeat top right; }
+.deck-portrait-Mage-sm { background: url(../img/meta-snapshot/hero-portrait/mage-sm.png) no-repeat top right; }
 
 
 .tier-deck-Paladin { 
@@ -789,7 +909,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Paladin .deck-portrait-Paladin { background: url(../img/meta-snapshot/hero-portrait/Paladin.png) no-repeat top center; }
-.deck-portrait-Paladin-sm { background: url(../img/meta-snapshot/hero-portrait/Paladin-sm.png) no-repeat top right; }
+.deck-portrait-Paladin-sm { background: url(../img/meta-snapshot/hero-portrait/paladin-sm.png) no-repeat top right; }
 
 
 .tier-deck-Priest { 
@@ -805,7 +925,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Priest .deck-portrait-Priest { background: url(../img/meta-snapshot/hero-portrait/Priest.png) no-repeat top center; }
-.deck-portrait-Priest-sm { background: url(../img/meta-snapshot/hero-portrait/Priest-sm.png) no-repeat top right; }
+.deck-portrait-Priest-sm { background: url(../img/meta-snapshot/hero-portrait/priest-sm.png) no-repeat top right; }
 
 
 .tier-deck-Rogue { 
@@ -821,7 +941,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Rogue .deck-portrait-Rogue { background: url(../img/meta-snapshot/hero-portrait/Rogue.png) no-repeat top center; }
-.deck-portrait-Rogue-sm { background: url(../img/meta-snapshot/hero-portrait/Rogue-sm.png) no-repeat top right; }
+.deck-portrait-Rogue-sm { background: url(../img/meta-snapshot/hero-portrait/rogue-sm.png) no-repeat top right; }
 
 
 .tier-deck-Shaman { 
@@ -837,7 +957,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Shaman .deck-portrait-Shaman { background: url(../img/meta-snapshot/hero-portrait/Shaman.png) no-repeat top center; }
-.deck-portrait-Shaman-sm { background: url(../img/meta-snapshot/hero-portrait/Shaman-sm.png) no-repeat top right; }
+.deck-portrait-Shaman-sm { background: url(../img/meta-snapshot/hero-portrait/shaman-sm.png) no-repeat top right; }
 
 
 .tier-deck-Warlock { 
@@ -853,7 +973,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Warlock .deck-portrait-Warlock { background: url(../img/meta-snapshot/hero-portrait/Warlock.png) no-repeat top center; }
-.deck-portrait-Warlock-sm { background: url(../img/meta-snapshot/hero-portrait/Warlock-sm.png) no-repeat top right; }
+.deck-portrait-Warlock-sm { background: url(../img/meta-snapshot/hero-portrait/warlock-sm.png) no-repeat top right; }
 
 
 .tier-deck-Warrior { 
@@ -869,7 +989,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Warrior .deck-portrait-Warrior { background: url(../img/meta-snapshot/hero-portrait/Warrior.png) no-repeat top center; }
-.deck-portrait-Warrior-sm { background: url(../img/meta-snapshot/hero-portrait/Warrior-sm.png) no-repeat top right; }
+.deck-portrait-Warrior-sm { background: url(../img/meta-snapshot/hero-portrait/warrior-sm.png) no-repeat top right; }
 
 
 /* article */
@@ -910,6 +1030,26 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .edit-button-fix { display:block }
 
+
+/* admin team */
+
+.upload-drop-team {
+    height: 188px !important;
+    width: 188px !important;
+}
+
+
+.photo-input .upload-drop { border-radius: 4px; border: 1px dashed #ccc; text-align: center; color: #666; }
+.photo-input .upload-drop.active { border: 1px dashed #66afe9; color: #357ebd; background: #e6f7ff; }
+
+.social-addon-group {
+    width: 100%;
+}
+
+.social-addon {
+    width: 10%;
+    text-align: right;
+}
 
 /* admin meta snapshot */
 .button-block {}
@@ -1851,6 +1991,19 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .upload-thumbnail.upload-thumbnail-article img {
     width: 240px;
     height: 60px;
+}
+.upload-thumbnail.upload-thumbnail-team {
+    width: 188px;
+    height: 188px;
+}
+.upload-thumbnail.upload-thumbnail-team .upload-drop {
+    width: 188px;
+    height: 188px;
+    line-height: 60px;
+}
+.upload-thumbnail.upload-thumbnail-team img {
+    width: 188px;
+    height: 188px;
 }
 .upload-thumbnail.upload-thumbnail-poll {
     width: 140px;

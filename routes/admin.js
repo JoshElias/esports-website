@@ -2614,6 +2614,64 @@ module.exports = {
             }
         };
     },
+    uploadTeam: function (fs, gm, amazon, Util) {
+        return function(req, res, next) {
+            // check if image file
+            var types = ['image/png', 'image/jpeg', 'image/gif'];
+            if (types.indexOf(req.files.file.type) === -1) {
+                fs.unlink(req.files.file.path, function(err){
+                    if (err) return next(err);
+                    var output = {
+                            success: false,
+                            error: 'Invalid photo uploaded.',
+                        };
+                    return res.json(output);
+                });
+            } else {
+                var arr = req.files.file.name.split('.'),
+                    name = arr.splice(0, arr.length - 1).join('.'),
+                    ext = '.' + arr.pop(),
+                    photo = Util.slugify(name) + ext,
+                    path = __dirname+'/../photos/team/';
+                    copyFile(function () {
+                        var files = [];
+                        files.push({
+                            path: path + photo,
+                            name: photo
+                        });
+                        amazon.upload(files, 'team/', function () {
+                            return res.json({
+                                success: true,
+                                photo: photo,
+                                path: './photos/team/'
+                            });
+                        });
+                    });
+                function copyFile(callback) {
+                    // read file
+                    fs.readFile(req.files.file.path, function(err, data) {
+                        if (err) return next(err);
+                        // write file
+                        fs.writeFile(path + photo, data, function(err) {
+                            if (err) return next(err);
+                            // delete tmp file
+                            fs.unlink(req.files.file.path, function(err) {
+                                if (err) return next(err);
+                                // resize
+                                gm(path + photo).quality(100).resize(188, 188, "^").write(path + photo, function(err) {
+                                    if (err) return next(err);
+                                    fs.chmod(path + photo, 0777, function(err) {
+                                        if (err) return next(err);
+                                        return callback();
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }
+            }
+        };
+    },
     polls: function (Schemas) {
         return function (req, res, next) {
             var page = req.body.page || 1,
@@ -3155,7 +3213,7 @@ module.exports = {
                 Schemas.Snapshot.findOne({ _id : _id })
                 .populate([
                     {
-                        path: 'authors',
+                        path: 'authors.user',
                         select: '_id username'
                         
                     },
@@ -3178,6 +3236,24 @@ module.exports = {
                 ])
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
+                    
+                    
+                    
+                    for (var i = 0; i < results.tiers.length; i++) {
+                        for (var j = 0; j < results.tiers[i].decks.length; j++) {
+                            if (results.tiers[i].decks[j].deck === null) {
+                                results.tiers[i].decks.splice(j,1);
+                                fault = true;
+                                j--;
+                            }
+                            
+                            if (results.tiers[i].decks[j].name == undefined || results.tiers[i].decks[j].name == "") {
+                                results.tiers[i].decks[j].name = results.tiers[i].decks[j].deck.name;
+                            }
+                            
+                        }
+                    }
+                    
                     snapshot = results;
                     return callback();
                 });
@@ -3193,6 +3269,7 @@ module.exports = {
     },
     snapshotAdd: function (Schemas, Util) {
         return function (req, res, next) {
+            
             var snapshot = req.body,
                 total,
                 latest;
@@ -3206,40 +3283,9 @@ module.exports = {
                 });
             }
             
-//            function populateLast (callback) {
-//                Schemas.Snapshot.find({})
-//                .sort({createdDate:-1})
-//                .limit(1)
-//                .populate([
-//                    {
-//                        path: 'tiers.decks.deck',
-//                        select: '_id name'
-//                    }
-//                ])
-//                .exec(function (err, data) {
-//                    if (err) { return res.json({ success: false }) }
-//                    data = data[0];
-//                    console.log('exec');
-//                    if (data != undefined) {
-////                        for (var i = 0; i < snapshot.tiers.length; i++) {
-////                            for (var j = 0; j < snapshot.tiers[i].decks.length; j++) {
-////                                for (var k = 0; k < data.tiers.length; k++) {
-////                                    for (var l = 0; l < data.tiers[k].decks.length; l++) {
-////                                        (snapshot.tiers[i].decks[j].deck._id == data.tiers[k].decks[l].deck._id) ?  snapshot.tiers[i].decks[j].rank.last = data.tiers[k].decks[l].rank.current : false;
-////                                    }
-////                                }
-////                            }
-////                        }
-//                    }
-//                    return callback();
-//                });
-//            }
-            
-            
-            
             function convertObjs (callback) {
                 for (var i =0; i < snapshot.authors.length; i++) {
-                    snapshot.authors[i] = snapshot.authors[i]._id;
+                    snapshot.authors[i].user = snapshot.authors[i].user._id;
                 }
                 for (var i = 0; i < snapshot.matches.length; i++) {
                     snapshot.matches[i].for = snapshot.matches[i].for._id;
@@ -3260,12 +3306,11 @@ module.exports = {
                         
             function addNewSnapshot(callback) {
                 var newSnapshot = new Schemas.Snapshot({
-                    
                         snapNum: snapshot.snapNum,
                         title: snapshot.title,
                         authors: snapshot.authors,
                         slug: {
-                            url: "meta-snapshot-" + snapshot.snapNum + "-" + Util.slugify(snapshot.title),
+                            url: snapshot.slug.url,
                             linked: snapshot.slug.linked
                         },
                         content: {
@@ -3276,9 +3321,9 @@ module.exports = {
                         matches: snapshot.matches,
                         createdDate: new Date().toISOString(),
                         photos: snapshot.photos,
+                        comments: snapshot.comments,
                         active: snapshot.active
                 });
-                
                 newSnapshot.save(function(err, data){
                     if (err) {
                         console.log(err);
@@ -3294,28 +3339,23 @@ module.exports = {
                 });
             }
             
-//            populateLast(function () {
-                getTotal(function () {
-                    convertObjs(function () {
-                        addNewSnapshot(function () {
-                            return res.json({ success: true });
-                        });
+            getTotal(function () {
+                convertObjs(function () {
+                    addNewSnapshot(function () {
+                        return res.json({ success: true });
                     });
                 });
-//            });
-//            return res.json({success: true});
+            });
         }
     },
     snapshotEdit: function (Schemas, Util) {
         return function (req, res, next) {
+            
             var snapshot = req.body,
                 _id = snapshot._id;
-            
-            console.log(_id);
-                        
             function convertObjs (callback) {
-                for (var i =0; i < snapshot.authors.length; i++) {
-                    snapshot.authors[i] = snapshot.authors[i]._id;
+                for (var i = 0; i < snapshot.authors.length; i++) {
+                    snapshot.authors[i].user = snapshot.authors[i].user._id;
                 }
                 for (var i = 0; i < snapshot.matches.length; i++) {
                     snapshot.matches[i].for = snapshot.matches[i].for._id;
@@ -3350,7 +3390,7 @@ module.exports = {
                     snap.title = snapshot.title;
                     snap.authors = snapshot.authors;
                     snap.slug = {
-                        url: "meta-snapshot-" + snapshot.snapNum + "-" + Util.slugify(snapshot.title),
+                        url: snapshot.slug.url,
                         linked: snapshot.slug.linked
                     };
                     snap.content = {
@@ -3361,10 +3401,12 @@ module.exports = {
                     snap.matches = snapshot.matches;
                     snap.createdDate = new Date().toISOString();
                     snap.photos = snapshot.photos;
+                    snap.comments = snapshot.comments;
                     snap.active = snapshot.active;
                     
                     snap.save(function (err) {
                         if (err) {
+                            console.log(err);
                             return res.json({ success: false,
                                 errors: {
                                     unknown: {
@@ -3414,7 +3456,7 @@ module.exports = {
                 .limit(1)
                 .populate([
                     {
-                        path: 'authors',
+                        path: 'authors.user',
                         select: '_id username'
                         
                     },
@@ -3437,6 +3479,30 @@ module.exports = {
                 ])
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
+                    
+                    var fault = false;
+                    for (var i = 0; i < results.tiers.length; i++) {
+                        for (var j = 0; j < results.tiers[i].decks.length; j++) {
+                            if (results.tiers[i].decks[j].deck === null) {
+                                results.tiers[i].decks.splice(j,1);
+                                fault = true;
+                                j--;
+                            }
+                            if (results.tiers[i].decks[j].name == undefined || results.tiers[i].decks[j].name == "") {
+                                results.tiers[i].decks[j].name = results.tiers[i].decks[j].deck.name;
+                            }
+                        }
+                    }
+                    
+                    if (fault) {
+                        for (var i = 0; i < results.matches.length; i++) {
+                            if (results.matches[i].for === null || results.matches[i].against == null) {
+                                results.matches.splice(i,1);
+                                i--;
+                            }
+                        }
+                    }
+                    
                     snapshot = results;
                     return callback();
                 });
@@ -3448,6 +3514,217 @@ module.exports = {
                     success: true
                 });
             });
+        }
+    },
+    teamMembers: function (Schemas) {
+        return function (req, res, next) {
+            var hsMembers = [],
+                hotsMembers = [],
+                csMembers = [],
+                fifaMembers = [],
+                fgcMembers = [];
+
+            function getMembers(callback) {
+                Schemas.TeamMember.find()
+                .sort({ orderNum:1 })
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    for (i=0; i != results.length; i++) {
+                        var type = results[i].game;
+                        switch (type) {
+                            case 'hs' : hsMembers.push(results[i]); break;
+                            case 'hots' : hotsMembers.push(results[i]); break;
+                            case 'cs' : csMembers.push(results[i]); break;
+                            case 'fifa' : fifaMembers.push(results[i]); break;
+                            case 'fgc' : fgcMembers.push(results[i]); break;
+                        }
+                    }
+                    return callback(results);
+                });
+            }
+            
+            getMembers(function(members) {
+                return res.json({
+                    members: members,
+                    hsMembers: hsMembers,
+                    hotsMembers: hotsMembers,
+                    csMembers: csMembers,
+                    fifaMembers: fifaMembers,
+                    fgcMembers: fgcMembers,
+                    success: true
+                });
+            });
+        }
+    },
+    teamMember: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id
+            
+            function getMember(callback) {
+                Schemas.TeamMember.findOne({ _id: _id })
+                .exec(function(err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    return callback(results);
+                })
+            }
+            
+            getMember(function (member) {
+                return res.json({
+                    member: member,
+                    success: true
+                });
+            });
+            
+        }
+    },
+    addTeamMember: function (Schemas) {
+        return function (req, res, next) {
+            var member = req.body.member;
+            
+            function countMem (callback) {
+                Schemas.TeamMember.find()
+                .count()
+                .exec(function (err, count) {
+                    return callback(count);
+                })
+            }
+            
+            
+            
+            
+            function addNewMember(c, callback) {
+                var newMember = new Schemas.TeamMember({
+                    game: member.game,
+                    screenName: member.screenName,
+                    fullName: member.fullName,
+                    description: member.description,
+                    social: {
+                        twitter: member.social.twitter,
+                        twitch: member.social.twitch,
+                        youtube: member.social.youtube,
+                        facebook: member.social.facebook,
+                        instagram: member.social.instagram,
+                        esea: member.social.esea
+                    },
+                    orderNum: c + 1,
+                    photo: member.photo,
+                    active: member.active
+                });
+                newMember.save(function(err, data) {
+                    console.log(data);
+                    if (err) {
+                        console.log(err);
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                    return callback();
+                });
+            }
+            
+            countMem(function (c) {
+                addNewMember(c, function() {
+                    return res.json({
+                        success: true
+                    });
+                });
+            });
+        }
+    },
+    editTeamMember: function (Schemas) {
+        return function (req, res, next) {
+            var member = req.body.member;
+            
+            function editMember(callback) {
+                Schemas.TeamMember.findOne({ _id: member._id }).exec(function(err, results) {
+                    if (err || !results) {
+                        console.log(err || 'Member not found');
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                    results.game = member.game;
+                    results.screenName = member.screenName;
+                    results.fullName = member.fullName;
+                    results.description = member.description;
+                    results.social = member.social;
+                    results.photo = member.photo;
+                    results.active = member.active;
+                    
+                    results.save(function (err) {
+                        if (err || !results) {
+                            console.log(err || 'Member not found');
+                            return res.json({ success: false,
+                                errors: {
+                                    unknown: {
+                                        msg: 'An unknown error occurred'
+                                    }
+                                }
+                            });
+                        }
+                        return callback();
+                    });
+                })
+            }
+            editMember(function () {
+                return res.json({
+                    success: true
+                });
+            });
+        }
+    },
+    removeTeamMember: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body.member;
+            Schemas.TeamMember.findOne({ _id: _id }).remove().exec(function (err) {
+                if (err) {
+                    console.log(err);
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+                return res.json({ success: true });
+            });
+        }
+    },
+    teamMemberOrder: function (Schemas) {
+        return function (req, res, next) {
+            function orderDo (callback) {
+                for (i=0; i < req.body.members.length; i++) {
+                    Schemas.TeamMember.findByIdAndUpdate(req.body.members[i]._id, { $set: { orderNum: req.body.members[i].orderNum }}).exec(function (err, member) {
+                        if (err || !member) {
+                            console.log(err || 'Member not found');
+                            return res.json({ success: false,
+                                errors: {
+                                    unknown: {
+                                        msg: 'An unknown error occurred'
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+                return callback();
+            }
+            
+            orderDo(function () {
+                return res.json({
+                    success: true
+                });
+            })
+            
         }
     },
     getObjectID: function (mongoose) {

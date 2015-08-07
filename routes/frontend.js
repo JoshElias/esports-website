@@ -764,6 +764,10 @@ module.exports = {
                         path: 'guide',
                         select: '_id name slug public',
                         match: { public: true }
+                    },
+                    {
+                        path: 'snapshot',
+                        select: '_id title slug snapNum'
                     }
                 ])
                 .exec(function (err, activities) {
@@ -2682,8 +2686,8 @@ module.exports = {
     },
     snapshot: function (Schemas) {
         return function (req, res, next) {
-            var snapshot,
-                slug = req.body.slug;
+            var slug = req.body.slug,
+                snapshot = undefined;
             
             
             function getSnapshot (callback) {
@@ -2692,7 +2696,7 @@ module.exports = {
                 .lean()
                 .populate([
                     {
-                        path: 'authors',
+                        path: 'authors.user',
                     },
                     {
                         path: 'tiers.decks.deck',
@@ -2703,6 +2707,10 @@ module.exports = {
                     {
                         path: 'matches.for',
                         select: 'name playerClass'
+                    },
+                    {
+                        path: 'comments',
+                        select: '_id author comment createdDate votesCount votes'
                     },
                     {
                         path: 'matches.against',
@@ -2711,19 +2719,149 @@ module.exports = {
                 ])
                 .exec(function (err, results) {
                     if (err || !results) { return res.json({ success: false }); }
-                    snapshot = results;
-                    return callback();
+                    Schemas.Comment.populate(results.comments, {
+                        path: 'author',
+                        select: 'username email'
+                    }, function (err, c) {
+                        results.comments = c;
+                        return callback(results);
+                    });
+                    
                 });
             
             }
             
-            getSnapshot(function () {
-                return res.json({
-                    success: true,
-                    snapshot: snapshot
+            function fixTrends (snapshot, callback) {
+                for (var i = 0; i < snapshot.tiers.length; i++) {
+                    for (var j = 0; j < snapshot.tiers[i].decks.length; j++) {
+                        snapshot.tiers[i].decks[j].rank.all = [snapshot.tiers[i].decks[j].rank.current].concat(snapshot.tiers[i].decks[j].rank.last);
+                    }
+                }
+                return callback(snapshot);
+            }
+            
+            getSnapshot(function (snapshot) {
+                fixTrends(snapshot, function (snapshot) {
+                    return res.json({
+                        success: true,
+                        snapshot: snapshot
+                    });
                 });
             });
             
+        }
+    },
+    snapshotVote: function (Schemas) {
+        return function (req, res, next) {
+            var snapshot = req.body.snapshot;
+            function vote (callback) {
+                Schemas.Snapshot.findOne({ _id: snapshot }).select('votesCount votes').exec(function (err, snapshot) {
+                    if (err || !snapshot) { return res.json({ success: false }); }
+                    snapshot.votes.push(req.user._id);
+                    snapshot.votesCount++;
+                    snapshot.save(function (err) {
+                        if (err) { return res.json({ success: false }); console.log(err); }
+                        return res.json({
+                            success: true,
+                            votesCount: snapshot.votesCount
+                        });
+                    });
+                });
+            }
+            vote(function () {
+                return res.json({
+                    success: true
+
+                });
+            });
+            
+        }
+    },
+    snapshotCommentAdd: function (Schemas, mongoose) {
+        return function (req, res, next) {
+            var snapshotID = req.body.snapshotID,
+                userID = req.user._id,
+                comment = req.body.comment,
+                newCommentID = mongoose.Types.ObjectId();
+            req.assert('comment.comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
+            
+            var errors = req.validationErrors();
+            if (errors) {
+                return res.json({ success: false, errors: errors });
+            }
+            
+            // new comment
+            var newComment = {
+                _id: newCommentID,
+                author: userID,
+                comment: comment.comment,
+                votesCount: 1,
+                votes: [{
+                    userID: userID,
+                    direction: 1
+                }],
+                replies: [],
+                createdDate: new Date().toISOString()
+            };
+            
+            // create
+            function createComment (callback) {
+                var newCmt = new Schemas.Comment(newComment);
+                newCmt.save(function (err, data) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    return callback();
+                });
+            }
+            
+            // add to snapshot
+            function addComment (callback) {
+                Schemas.Snapshot.update({ _id: snapshotID }, { $push: { comments: newCommentID } }, function (err) {
+                    if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
+                    return callback();
+                });
+            }
+            
+            // get new comment
+            function getComment (callback) {
+                Schemas.Comment.populate(newComment, {
+                    path: 'author',
+                    select: 'username email'
+                }, function (err, comment) {
+                    if (err || !comment) { return res.json({ success: false }); }
+                        return callback(comment);
+                });
+            }
+            
+            function addActivity(callback) {
+                var activity = new Schemas.Activity({
+                    author: userID,
+                    activityType: "snapshotComment",
+                    snapshot: snapshotID,
+                    createdDate: new Date().toISOString()
+                });
+                activity.save(function(err, data) {
+                    if (err) {
+                        return res.json({ 
+                            success: false, errors: { unknown: { msg: "An unknown error has occurred" }}
+                        });
+                    }
+                });
+                return callback();
+            }
+            
+            // actions
+            createComment(function () {
+                addComment(function () {
+                    addActivity(function() {
+                        getComment(function (comment) {
+                            return res.json({
+                                success: true,
+                                comment: comment
+                            });
+                        });
+                    });
+                });
+            });
         }
     },
     getLatestSnapshot: function (Schemas) {
@@ -2731,12 +2869,12 @@ module.exports = {
             var snapshot;
             
             function getSnapshot (callback) {
-                Schemas.Snapshot.find()
+                Schemas.Snapshot.find({ active: true })
                 .sort({createdDate:-1})
                 .limit(1)
                 .populate([
                     {
-                        path: 'authors',
+                        path: 'authors.user',
                     },
                     {
                         path: 'tiers.decks.deck',
@@ -2747,6 +2885,10 @@ module.exports = {
                     {
                         path: 'matches.for',
                         select: 'name playerClass'
+                    },
+                    {
+                        path: 'comments',
+                        select: '_id author comment createdDate votesCount votes'
                     },
                     {
                         path: 'matches.against',
@@ -2756,6 +2898,13 @@ module.exports = {
                 .lean()
                 .exec(function (err, results) {
                     if (err) { return req.json({ success: false }); }
+//                    Schemas.Comment.populate(results.comments, {
+//                        path: 'author',
+//                        select: 'username email'
+//                    }, function (err, comments) {
+//                        if (err || !comments) { return res.json({ success: false }); }
+//                        results.comments = comments;
+//                    });
                     snapshot = results;
                     return callback();
                 });
@@ -2766,6 +2915,27 @@ module.exports = {
                     snapshot: snapshot
                 })
             })
+        }
+    },
+    team: function (Schemas) {
+        return function (req, res, next) {
+            var gm = req.body.gm;
+            
+            function getMembers (callback) {
+                Schemas.TeamMember.find({ game: gm})
+                .sort({ orderNum:1 })
+                .exec(function (err, results) {
+                    if (err) { return req.json({ success: false }); }
+                    return callback(results);
+                });
+            }
+            
+            getMembers(function (gm) {
+                return res.json({ 
+                    members: gm,
+                    success: true
+                });
+            });
         }
     },
     sendContact: function (Mail) {

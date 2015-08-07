@@ -3,96 +3,23 @@
 </div>
 
 <div class="container team-page">  
-    <div class="m-t-lg m-b-md">
-        <div class="team-member" ng-class="{active: dreadnaught}">
-            <a href="#" class="team-member-photo" ng-click="dreadnaught = !dreadnaught"><img src="{{app.cdn}}img/team/dreadnaught.jpg" class="img-responsive img-circle"></a>
+    <div class="m-t-lg m-b-md" ng-repeat="member in members">
+        <div class="team-member" ng-class="{active: !member.orderNum}">
+            <a href="#" class="team-member-photo" ng-click="member.orderNum = !member.orderNum"><img src="{{app.cdn}}team/{{member.photo}}" class="img-responsive img-circle"></a>
             <div class="team-member-content">
-                <h1>Dreadnaught -  Captain/Support</h1>
-                <h3>Wade Penfold</h3>
-                <p>Wade "Dreadnaught" Penfold is 21 years old and from Wyoming. He first started playing Nintendo games when he was around 4 years old. Some of his favorites were Super Mario Brothers and Paperboy. He later received a N64 and loved games like Banjo Kazooie and Super Smash Brothers. Wade moved to a campground for a summer where he played copious amounts of Tekken 2 and moved on to first truly realize competitive games when he moved on to Halo 2. From there he progressed to WoW, from Wrath to Cataclysm and secured an exceptional arena rating. He also achieved diamond league in Starcraft 2 despite not even playing it often. Wade started League of Legends around the time the champion "Vayne" came out and got to platinum for both seasons 2 and 3. He now joins Heroes of the Storm as a deadly support and one of the team's fiercest competitors.</p>
+                <h1>{{member.screenName}}</h1>
+                <h3>{{member.fullName}}</h3>
+                <p ng-bind-html="getDescription($index)"></p>
                 <div class="team-member-buttons clearfix">
-                    <a href="https://twitter.com/tempoDread" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/dreadnaught_heroes" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
+                    <a ng-if="member.social.twitter" href="https://www.twitter.com/{{member.social.twitter}}" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
+                    <a ng-if="member.social.twitch" href="http://www.twitch.tv/{{member.social.twitch}}" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
+                    <a ng-if="member.social.youtube" href="https://www.youtube.com/user/{{member.social.youtube}}" target="_blank" class="btn btn-team btn-team-youtube"><i class="fa fa-youtube-play"></i></a>
+                    <a ng-if="member.social.esea" href="http://play.esea.net/users/{{member.social.esea}}" target="_blank" class="btn btn-team btn-team-esea"></a>
+                    <a ng-if="member.social.instagram" href="https://instagram.com/{{member.social.instagram}}" target="_blank" class="btn btn-team btn-team-instagram"><i class="fa fa-instagram"></i></a>
+                    <a ng-if="member.social.facebook" href="https://www.facebook.com/{{member.social.facebook}}" target="_blank" class="btn btn-team btn-team-facebook"><i class="fa fa-facebook"></i></a>
                 </div>
             </div>
-            <a href="#" class="team-member-toggle" ng-click="dreadnaught = !dreadnaught"><i class="fa" ng-class="{'fa-angle-down': !dreadnaught, 'fa-angle-up': dreadnaught}"></i></a>
-        </div>
-    </div>
-    <div class="m-t-md m-b-md">
-        <div class="team-member" ng-class="{active: arthelon}">
-            <a href="#" class="team-member-photo" ng-click="arthelon = !arthelon"><img src="{{app.cdn}}img/team/arthelon.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>Arthelon - Carry</h1>
-                <h3>Taylor Eder</h3>
-                <p>Taylor "Arthelon" Eder is a true veteran in the moba genre beginning with the ever-popular League of Legends in which he achieved Platinum rank during season 1 which was the highest rank at the time. From there he continued to season 2 and ranked top 3 on the North American ranked ladder, convincingly proving his merit. He competed in the Challenger League in Seasons 3 and 4 and his team took 1st place at MLG Anaheim 2013. Taylor has found a new passion in Heroes due to its refreshing take on the genre. For Arthelon, Heroes has blown League out of the water.</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://www.twitter.com/tempoArthelon" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/arthelon" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="arthelon = !arthelon"><i class="fa" ng-class="{'fa-angle-down': !arthelon, 'fa-angle-up': arthelon}"></i></a>
-        </div>
-    </div>
-    <div class="m-t-md m-b-md">
-        <div class="team-member" ng-class="{active: soldier}">
-            <a href="#" class="team-member-photo" ng-click="soldier = !soldier"><img src="{{app.cdn}}img/team/so1dier.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>So1dier - Flex</h1>
-                <h3>Josh Miller</h3>
-                <p>Josh "So1dier" Miller started his esports career way back in the Halo 2 days where he took top 10 in the 1v1 leaderboards. He would go on to take 1st place in multiple tournaments, both local and state-wide, for Halo 1 and 2. Josh competed in the MLG circuit for a brief time when Shadowrun for Xbox 360 was on the circuit taking 3nd and 4th place. After swapping to League of Legends, he was a part of the top ranked 5's team, Rev Gaming, getting Diamond rank in solo queue, 3's, and 5's queue in season 2. He has grown to be one of the most respected players in the heroes scene with his impressively versatile hero pool and informative stream.</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://www.twitter.com/tempoSo1dier" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/so1dier" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="soldier = !soldier"><i class="fa" ng-class="{'fa-angle-down': !soldier, 'fa-angle-up': soldier}"></i></a>
-        </div>
-    </div>
-    <div class="m-t-md m-b-md">
-        <div class="team-member" ng-class="{active: kaeyoh}">
-            <a href="#" class="team-member-photo" ng-click="kaeyoh = !kaeyoh"><img src="{{app.cdn}}img/team/kaeyoh.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>Kaeyoh - Carry</h1>
-                <h3>Kurt Ocher</h3>
-                <p>Kurt "Kaeyoh" Ocher has a lot of experience when it comes to... the less normal mobas. He played competitive Smite for many different rosters including Curse, Denial Esports, and Cognitive Gaming. He was also able to compete at multiple lans including Pax and RTX. Kaeyoh’s ability to adapt has made him one of the most consistent players in Heroes. His calm head and quick decision making have led to him making amazing plays time and time again for his team.</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://www.twitter.com/tempoKaeyoh" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/kaeyoh" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="kaeyoh = !kaeyoh"><i class="fa" ng-class="{'fa-angle-down': !kaeyoh, 'fa-angle-up': kaeyoh}"></i></a>
-        </div>
-    </div>
-    
-    <div class="m-t-md m-b-md">
-        <div class="team-member" ng-class="{active: zuna}">
-            <a href="#" class="team-member-photo" ng-click="zuna = !zuna"><img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/team/zuna.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>Zuna</h1>
-                <h3>Christopher Buechter</h3>
-                <p>Christopher “Zuna” Buechter has deep roots in the moba community.  Zuna began his esports career in the League of Legends LCS where he was a part of Team XDG.  His versatility and play making abilities allowed him not only to excel at ADC, but to switch roles when his team needed him the most while in the LCS.  Zuna’s versatility and game sense carried over to Heroes and has so far been a pivotal aspect of his strength on Tempo Storm.  His expertise with Zeratul, let alone any hero, has made him a player to be feared in the nexus and demonstrates his ability to take advantage of complex game situations.</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://twitter.com/zuna_chris" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/gosuzuna" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="zuna = !zuna"><i class="fa" ng-class="{'fa-angle-down': !zuna, 'fa-angle-up': zuna}"></i></a>
-        </div>
-    </div>
-    
-    <div class="m-t-md m-b-lg">
-        <div class="team-member" ng-class="{active: zoia}">
-            <a href="#" class="team-member-photo" ng-click="zoia = !zoia"><img src="{{app.cdn}}img/team/zoia.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>Zoia - Manager/Coach/Content Producer</h1>
-                <h3>Jared Eggleston</h3>
-                <p>Jared "Zoia" Eggleston is a longtime blizzard esports member. He started his casting career in 2010 with Starcraft 2 and since then he has covered multiple Dreamhacks, Asus Rog, MLGs, and more. While his heroes career started out as a caster and cohost of Town Hall Heroes he now has new goals in the heroes scene. He hopes to help Tempo Storm achieve new pinnacles of success with his role as coach and manager.</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://www.twitter.com/TempoZoia" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/zoiatv" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="zoia = !zoia"><i class="fa" ng-class="{'fa-angle-down': !zoia, 'fa-angle-up': zoia}"></i></a>
+            <a href="#" class="team-member-toggle" ng-click="member.orderNum = !member.orderNum"><i class="fa" ng-class="{'fa-angle-down': member.orderNum, 'fa-angle-up': !member.orderNum}"></i></a>
         </div>
     </div>
 </div>
