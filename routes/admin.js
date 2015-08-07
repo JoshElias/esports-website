@@ -3580,8 +3580,6 @@ module.exports = {
     addTeamMember: function (Schemas) {
         return function (req, res, next) {
             var member = req.body.member;
-            member.description = member.description.replace(/(\n)+/g, '<br />');
-
             
             function countMem (callback) {
                 Schemas.TeamMember.find()
@@ -3640,8 +3638,6 @@ module.exports = {
     editTeamMember: function (Schemas) {
         return function (req, res, next) {
             var member = req.body.member;
-            member.description = member.description.replace(/(?:\r\n|\r|\n)/g, '<br />');
-
             
             function editMember(callback) {
                 Schemas.TeamMember.findOne({ _id: member._id }).exec(function(err, results) {

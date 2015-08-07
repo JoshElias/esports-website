@@ -3002,6 +3002,10 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $sce, data) {
         $scope.members = data.members;
         
+        for(var i = 0; i < $scope.members.length; i++) {
+            $scope.members[i].description = $scope.members[i].description.replace(/(?:\r\n|\r|\n)/g, '<br />');
+;
+        }
         
         $scope.getDescription = function (i) {
             return $sce.trustAsHtml($scope.members[i].description);

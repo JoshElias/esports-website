@@ -85,7 +85,7 @@
                             <h2>DECK TRENDS</h2>
                             <hr class="hr m-b-md m-t-xs">
 
-                            <svg class="trends" style="overflow: visible">
+                            <svg class="trends m-b-md" style="overflow: visible">
                                 <svg width="90%" height="100%" x="5%" y="5%" style="overflow: visible">
                                     <text transform="rotate(270, 0, 210)" x="0" y="200" fill="white" text-anchor="end">Rank</text>
                                     <text x="50%" y="100%" fill="white" text-anchor="middle">Meta Snapshot #</text>
@@ -111,7 +111,7 @@
                                 </svg>
                                 
                             </svg>
-                            <ul class="snapshot-trends-tiers">
+                            <ul class="snapshot-trends-tiers m-t-lg">
                                 <li ng-repeat="tier in snapshot.tiers"><a href="#" ng-class="{ 'active': tier.tier == currentTier }" ng-click="setCurrentTier(tier.tier)">TIER {{tier.tier}}</a></li>
                             </ul>
 
