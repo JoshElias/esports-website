@@ -104,7 +104,7 @@
             <div class="col-sm-10">
                 <input type="hidden" id="memberPhoto" name="memberPhoto" value="" ng-model="member.photo">
                 <div class="photo-input">
-                    <div class="upload-thumbnail upload-thumbnail-article">
+                    <div class="upload-thumbnail upload-thumbnail-team">
                         <div class="upload-drop" ng-show="member.photo === ''" ng-file-drop="photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
                         <img src="{{getImage()}}" alt="" ng-show="member.photo !== ''">
                     </div>

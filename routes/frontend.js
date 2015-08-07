@@ -2869,7 +2869,7 @@ module.exports = {
             var snapshot;
             
             function getSnapshot (callback) {
-                Schemas.Snapshot.find()
+                Schemas.Snapshot.find({ active: true })
                 .sort({createdDate:-1})
                 .limit(1)
                 .populate([

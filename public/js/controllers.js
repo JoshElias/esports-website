@@ -3068,6 +3068,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
         };
         
+        $scope.getImage = function () {
+            $scope.imgPath = '/team/';
+            if (!$scope.member) { return '/img/blank.png'; }
+            return ($scope.member.photo && $scope.member.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.member.photo;
+        };
+        
         // save member
         $scope.saveMember = function () {
             AdminTeamService.addMember($scope.member).then(function (data) {
@@ -3114,6 +3120,12 @@ angular.module('app.controllers', ['ngCookies'])
                     box.modal('hide');
                 });
             }
+        };
+        
+        $scope.getImage = function () {
+            $scope.imgPath = '/team/';
+            if (!$scope.team) { return '/img/blank.png'; }
+            return ($scope.snapshot.photo && $scope.snapshot.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photo;
         };
         
         // save member
