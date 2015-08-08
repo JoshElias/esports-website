@@ -818,119 +818,25 @@ var app = angular.module('app', [
                 },
                 og: true
             })
-            .state('app.team', {
-                abstract: true,
-                url: 'team',
+            .state('app.teams', {
+                url: 'teams',
                 views: {
                     content: {
-                        templateUrl: tpl + 'views/frontend/team.html'
+                        controller: 'TeamPageCtrl',
+                        templateUrl: tpl + 'views/frontend/teams.html',
+                        resolve: {
+                            data: ['TeamService', '$q', function (TeamService, $q) {
+                                return TeamService.getMembers().then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('Unable to find members');
+                                    }
+                                });
+                            }]
+                        }
                     }
                 }
-            })
-            .state('app.team.hearthstone', {
-                url: '/hearthstone',
-                views: {
-                    team: {
-                        controller: 'TeamPageCtrl',
-                        templateUrl: tpl + 'views/frontend/team.hearthstone.html',
-                        resolve: {
-                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
-                                return TeamService.getMembers('hs').then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find post');
-                                    }
-                                });
-                            }]
-                        }
-                    }
-                },
-                seo: { title: 'Hearthstone', description: 'TempoStorm Hearthstone team.', keywords: '' }
-            })
-            .state('app.team.heroes', {
-                url: '/hots',
-                views: {
-                    team: {
-                        controller: 'TeamPageCtrl',
-                        templateUrl: tpl + 'views/frontend/team.hots.html',
-                        resolve: {
-                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
-                                return TeamService.getMembers('hots').then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find post');
-                                    }
-                                });
-                            }]
-                        }
-                    }
-                },
-                seo: { title: 'Heroes of the Storm', description: 'TempoStorm Heroes of the Storm team.', keywords: '' }
-            })
-            .state('app.team.csgo', {
-                url: '/csgo',
-                views: {
-                    team: {
-                        controller: 'TeamPageCtrl',
-                        templateUrl: tpl + 'views/frontend/team.csgo.html',
-                        resolve: {
-                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
-                                return TeamService.getMembers('cs').then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find post');
-                                    }
-                                });
-                            }]
-                        }
-                    }
-                },
-                seo: { title: 'CS:GO', description: 'TempoStorm Counter Strike: Global Offensive team.', keywords: '' }
-            })
-            .state('app.team.fifa', {
-                url: '/fifa',
-                views: {
-                    team: {
-                        controller: 'TeamPageCtrl',
-                        templateUrl: tpl + 'views/frontend/team.fifa.html',
-                        resolve: {
-                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
-                                return TeamService.getMembers('fifa').then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find post');
-                                    }
-                                });
-                            }]
-                        }
-                    }
-                },
-                seo: { title: 'FIFA', description: 'TempoStorm FIFA team.', keywords: '' }
-            })
-            .state('app.team.fgc', {
-                url: '/fgc',
-                views: {
-                    team: {
-                        controller: 'TeamPageCtrl',
-                        templateUrl: tpl + 'views/frontend/team.fgc.html',
-                        resolve: {
-                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
-                                return TeamService.getMembers('fgc').then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find post');
-                                    }
-                                });
-                            }]
-                        }
-                    }
-                },
-                seo: { title: 'FGC', description: 'TempoStorm FGC team.', keywords: '' }
             })
             .state('app.polls', {
                 url: 'vote',

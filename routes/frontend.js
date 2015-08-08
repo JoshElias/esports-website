@@ -2919,13 +2919,28 @@ module.exports = {
     },
     team: function (Schemas) {
         return function (req, res, next) {
-            var gm = req.body.gm;
+            var hsMembers = [],
+                hotsMembers = [],
+                csMembers = [],
+                fgcMembers = [],
+                fifaMembers = [];
             
             function getMembers (callback) {
-                Schemas.TeamMember.find({ game: gm})
+                Schemas.TeamMember.find()
                 .sort({ orderNum:1 })
                 .exec(function (err, results) {
+                    console.log(err, results);
                     if (err) { return req.json({ success: false }); }
+                    for (i=0; i != results.length; i++) {
+                        var type = results[i].game;
+                        switch (type) {
+                            case 'hs' : hsMembers.push(results[i]); break;
+                            case 'hots' : hotsMembers.push(results[i]); break;
+                            case 'cs' : csMembers.push(results[i]); break;
+                            case 'fifa' : fifaMembers.push(results[i]); break;
+                            case 'fgc' : fgcMembers.push(results[i]); break;
+                        }
+                    }
                     return callback(results);
                 });
             }
@@ -2933,6 +2948,11 @@ module.exports = {
             getMembers(function (gm) {
                 return res.json({ 
                     members: gm,
+                    hsMembers: hsMembers,
+                    hotsMembers: hotsMembers,
+                    csMembers: csMembers,
+                    fgcMembers: fgcMembers,
+                    fifaMembers: fifaMembers,
                     success: true
                 });
             });

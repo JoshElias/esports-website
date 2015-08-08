@@ -49,18 +49,7 @@
                             </ul>
                         </div>
                     </li>
-                    <li class="dropdown-short" ng-class="{active:$state.includes('app.team')}">
-                        <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Team<span class="caret"></span></a>
-                        <ul class="dropdown-menu no-border-radius no-padding">
-                            <li>
-                                <a ui-sref="app.team.hearthstone" ng-class="{active:$state.includes('app.team.hearthstone')}">Hearthstone</a>
-                                <a ui-sref="app.team.heroes" ng-class="{active:$state.includes('app.team.heroes')}">Heroes of the Storm</a>
-                                <a ui-sref="app.team.csgo" ng-class="{active:$state.includes('app.team.csgo')}">CS:GO</a>
-                                <a ui-sref="app.team.fifa" ng-class="{active:$state.includes('app.team.fifa')}">FIFA</a>
-                                <a ui-sref="app.team.fgc" ng-class="{active:$state.includes('app.team.fgc')}">FGC</a>
-                            </li>
-                        </ul>
-                    </li>
+                    <li class="dropdown-short" ng-class="{active:$state.includes('app.teams')}"><a ui-sref="app.teams">Teams</a></li>
                     <li ng-class="{active:$state.includes('app.forum')}"><a ui-sref="app.forum.home">Forum</a></li>
                     <li ng-class="{active:$state.includes('app.sponsors')}"><a ui-sref="app.sponsors">Sponsors</a></li>
                     <li ng-class="{active:$state.includes('app.polls')}"><a ui-sref="app.polls">Vote</a></li>

@@ -3002,13 +3002,19 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $sce, data) {
         $scope.members = data.members;
         
+        $scope.hsMembers = data.hsMembers;
+        $scope.hotsMembers = data.hotsMembers;
+        $scope.csMembers = data.csMembers;
+        $scope.fgcMembers = data.fgcMembers;
+        $scope.fifaMembers = data.fifaMembers;
+        
         for(var i = 0; i < $scope.members.length; i++) {
             $scope.members[i].description = $scope.members[i].description.replace(/(?:\r\n|\r|\n)/g, '<br />');
 ;
         }
         
         $scope.getDescription = function (i) {
-            return $sce.trustAsHtml($scope.members[i].description);
+            return $sce.trustAsHtml(i);
         }
         
         
