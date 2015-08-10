@@ -5233,6 +5233,18 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.scrollToDeck(d);  
         }
         
+        $scope.goToTwitch = function ($event, usr) {
+            $event.stopPropagation();
+            var url = 'http://twitch.tv/' + usr
+            window.open(url, '_blank');
+        }
+        
+        $scope.goToTwitter = function ($event, usr) {
+            $event.stopPropagation();
+            var url = 'http://twitter.com/' + usr;
+            window.open(url, '_blank');
+        }
+        
         $scope.getMatches = function (id) {
             return charts[id];
         }
