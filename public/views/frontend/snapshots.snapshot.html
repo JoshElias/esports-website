@@ -99,7 +99,7 @@
 
                                     <line ng-attr-x1="{{getPositionX($index, 10)}}%" y1="0" ng-attr-x2="{{getPositionX($index, 10)}}%" y2="410" style="stroke:rgba(255,255,255,.4)" ng-repeat="moment in snapshotTimeline() track by $index"/>
                                     <line x1="5%" y1="410" x2="95%" y2="410" style="stroke:rgba(255,255,255,.4)"/>
-                                    <text height="15" ng-attr-x="{{getPositionX($index, 10)}}%" y="425" fill="white" text-anchor="middle" ng-repeat="moment in snapshotTimeline() track by $index">{{moment}}</text>
+                                    <text height="15" ng-attr-x="{{getPositionX($index, 10)}}%" y="425" fill="white" text-anchor="middle" ng-class="{ 'hidden-xs' : $index%2 == 1 }" ng-repeat="moment in snapshotTimeline() track by $index">{{moment}}</text>
 
                                     <g ng-repeat="deck in getTier(currentTier).decks track by $index" class="deck" ng-class="{ 'not-selected': hasDeckSelected() && currentDeck != deck.rank.current }">
                                         <g ng-repeat="rank in deck.rank.all track by $index" ng-if="rank > 0">
@@ -263,42 +263,40 @@
             <!-- AUTHORS -->
             <div class="row m-l-none m-r-none m-b-md">
                 <div class="meta-author col-lg-12" ng-repeat="author in snapshot.authors" >
-                    <button type="button" data-toggle="collapse" data-target="#{{author.user._id}}" aria-expanded="false" aria-controls="{{author.user._id}}">
-                        <div>
-                            <div class="author-img-wrapper pull-left hidden-xs">
-                                <img ng-if="author.klass.length === 1" class="author-class-icon m-l-sm" ng-src="../../img/meta-snapshot/class-icons/{{author.klass[0]}}.png" />
-                                <span ng-if="author.klass.length > 1">
-                                    <img class="author-class-icon" ng-repeat="ico in author.klass" src="../../img/meta-snapshot/class-icons/{{ico}}.png" style="left: {{((author.klass.length-1)*23)-(23*$index)}}px;" />
+                    <button class="meta-author-collapser" type="button" data-toggle="collapse" data-target="#{{author.user._id}}" aria-expanded="false" aria-controls="{{author.user._id}}">
+                        <div class="author-img-wrapper pull-left hidden-xs">
+                            <img ng-if="author.klass.length === 1" class="author-class-icon m-l-sm" ng-src="../../img/meta-snapshot/class-icons/{{author.klass[0]}}.png" />
+                            <span ng-if="author.klass.length > 1">
+                                <img class="author-class-icon" ng-repeat="ico in author.klass" src="../../img/meta-snapshot/class-icons/{{ico}}.png" style="left: {{((author.klass.length-1)*23)-(23*$index)}}px;" />
+                            </span>
+                        </div>
+                        <div class="author-text-wrapper">
+                            <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.klass.length > 0 } ">{{author.user.username}}</h2>
+                            <span ng-if="author.klass.length === 1">
+                                <h3 class="classExpert">{{author.klass[0]}} EXPERT</h3>
+                            </span>
+                            <h3 ng-if="author.klass.length > 1">
+                                <span ng-repeat="klass in author.klass">
+                                    <span ng-if="$index > 0">&nbsp;AND</span> {{klass}}
                                 </span>
-                            </div>
-                            <div class="author-text-wrapper">
-                                <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.klass.length > 0 } ">{{author.user.username}}</h2>
-                                <span ng-if="author.klass.length === 1">
-                                    <h3 class="classExpert">{{author.klass[0]}} EXPERT</h3>
-                                </span>
-                                <h3 ng-if="author.klass.length > 1">
-                                    <span ng-repeat="klass in author.klass">
-                                        <span ng-if="$index > 0">&nbsp;AND</span> {{klass}}
-                                    </span>
-                                    EXPERT
-                                </h3>
-                            </div>
-                            <div class="soc-btns pull-right m-r-lg hidden-xs">
-                                <a ng-if="author.user.social.twitch != ''" class="btn twitch-btn soc-btn" href="http://www.twitch.tv/{{author.user.social.twitch}}" target="_blank"><i class="fa fa-twitch"></i></a>
-                                <a ng-if="author.user.social.twitch === ''" class="btn twitch-btn soc-btn disable" target="_blank" disabled><i class="fa fa-twitch"></i></a>
-                                <a ng-if="author.user.social.twitter != ''" class="btn twitter-btn soc-btn" href="https://twitter.com/{{author.user.social.twitter}}" target="_blank"><i class="fa fa-twitter"></i></a>
-                                <a ng-if="author.user.social.twitter === ''" class="btn twitter-btn soc-btn disable" target="_blank" disabled><i class="fa fa-twitter"></i></a>
-                            </div>
+                                EXPERT
+                            </h3>
+                        </div>
+                        <div class="soc-btns pull-right m-r-lg hidden-xs">
+                            <a ng-if="author.user.social.twitch" class="btn twitch-btn soc-btn" ng-click="goToTwitch($event, author.user.social.twitch)"><i class="fa fa-twitch"></i></a>
+                            <a ng-if="!author.user.social.twitch" class="btn twitch-btn soc-btn disable" disabled><i class="fa fa-twitch"></i></a>
+                            <a ng-if="author.user.social.twitter" class="btn twitter-btn soc-btn" ng-click="goToTwitter($event, author.user.social.twitter)"><i class="fa fa-twitter"></i></a>
+                            <a ng-if="!author.user.social.twitter" class="btn twitter-btn soc-btn disable" disabled><i class="fa fa-twitter"></i></a>
                         </div>
                     </button>
                     
                     <div class="author-collapse collapse" id="{{author.user._id}}">
                         <p> {{author.description}} </p>
                         <div class="soc-btns m-t-md m-b-md hidden-sm hidden-md hidden-lg">
-                            <a ng-if="author.user.social.twitch != ''" class="btn twitch-btn soc-btn" href="http://www.twitch.tv/{{author.user.social.twitch}}" target="_blank"><i class="fa fa-twitch"></i></a>
-                            <a ng-if="author.user.social.twitch === ''" class="btn twitch-btn soc-btn disable" target="_blank" disabled><i class="fa fa-twitch"></i></a>
-                            <a ng-if="author.user.social.twitter != ''" class="btn twitter-btn soc-btn" href="https://twitter.com/{{author.user.social.twitter}}" target="_blank"><i class="fa fa-twitter"></i></a>
-                            <a ng-if="author.user.social.twitter === ''" class="btn twitter-btn soc-btn disable" target="_blank" disabled><i class="fa fa-twitter"></i></a>
+                            <a ng-if="author.user.social.twitch != '' && author.user.social.twitch != undefined" class="btn twitch-btn soc-btn" ng-click="goToTwitch($event, author.user.social.twitch)"><i class="fa fa-twitch"></i></a>
+                            <a ng-if="author.user.social.twitch === '' || author.user.social.twitch === undefined" class="btn twitch-btn soc-btn disable" disabled><i class="fa fa-twitch"></i></a>
+                            <a ng-if="author.user.social.twitter != '' && author.user.social.twitter != undefined" class="btn twitter-btn soc-btn" ng-click="goToTwitter($event, author.user.social.twitter)"><i class="fa fa-twitter"></i></a>
+                            <a ng-if="author.user.social.twitter === '' || author.user.social.twitter === undefined" class="btn twitter-btn soc-btn disable" disabled><i class="fa fa-twitter"></i></a>
                         </div>
                     </div>
                 </div>

@@ -766,7 +766,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     margin-bottom: 1px;
 }
 
-.meta-author button { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; }
+.meta-author .meta-author-collapser { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; }
 
 .meta-author h2 { color: white; letter-spacing: 4px; font-size: 24px; font-weight: bold; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-transform: uppercase; }
 .meta-author h3 { color: #F6981E; letter-spacing: 4px; font-size: 14px; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
@@ -775,7 +775,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .author-class-icon { position: absolute; top: 0; left: 0; display: block; }
 .author-text-wrapper .classExpert { text-transform: uppercase; }
 .author-text-wrapper h3 { text-transform: uppercase; }
-author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; padding: 0;  }
+.author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; padding: 0;  }
 .author-collapse p { color: white; padding: 0px 75px 20px 105px; font-size: 14px; }
 
 .twitch-btn { background: #6441A5 }
@@ -783,7 +783,7 @@ author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; pa
 .twitch-btn i { margin-left: -2px }
 .twitter-btn { background: #55acee }
 
-.soc-btns { position: absolute; z-index: 1; top: 25px; right: 0}
+.soc-btns { position: absolute; z-index: 1; top: 25px; right: 0; width: 110px;}
 .soc-btn { height: 50px; width: 50px; border-radius: 100%; right: 25px;  }
 .soc-btn.disable { opacity: .3 }
 .soc-btn i { font-size: 28px; color: white; line-height:1.35 }

@@ -5259,6 +5259,18 @@ angular.module('app.controllers', ['ngCookies'])
             window.open(url,'_blank');
         };
         
+        $scope.goToTwitch = function ($event, usr) {
+            $event.stopPropagation();
+            var url = 'http://twitch.tv/' + usr
+            window.open(url, '_blank');
+        }
+        
+        $scope.goToTwitter = function ($event, usr) {
+            $event.stopPropagation();
+            var url = 'http://twitter.com/' + usr;
+            window.open(url, '_blank');
+        }
+        
         $scope.toggleComments = function () {
             if (!SnapshotService.getStorage()) {
                 SnapshotService.setStorage(true);
