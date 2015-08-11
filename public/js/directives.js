@@ -452,4 +452,35 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/socialmedia/redditbutton.html'
     }
 }])
+.directive('homeArticles', [function () {
+    return {
+        restrict: 'A',
+        scope: {
+            viewable: '=',
+            offset: '=',
+            size: '='
+        },
+        link: function(scope, element, attrs) {
+            console.log('offset: ', scope.offset);
+            console.log('size: ', scope.size);
+            
+            function updateWidth () {
+                $(element).find('.home-articles-inner').css('width', ((100 / scope.viewable) * scope.size) + '%');
+            }
+            
+            function updateOffset () {
+                $(element).find('.home-articles-inner').css('left', ((100 / scope.viewable) * scope.offset * -1) + '%');
+            }
+            
+            scope.$watch('offset', function(value){
+                console.log('offset: ', value);
+                updateOffset();
+            });
+            scope.$watch('size', function(value){
+                console.log('size: ', value);
+                updateWidth();
+            });
+        }
+    };
+}])
 ;

@@ -169,9 +169,9 @@ var app = angular.module('app', [
                         resolve: {
                             dataArticles: ['ArticleService', function (ArticleService) {
                                 var klass = 'all',
-                                    page = 1,
-                                    perpage = 3;
-                                return ArticleService.getArticles('ts', klass, page, perpage);
+                                    offset = 0,
+                                    num = 6;
+                                return ArticleService.getArticles('all', klass, offset, num);
                             }],
                             dataBanners: ['BannerService', function (BannerService) {
                                  return BannerService.getBanners('ts');

@@ -220,15 +220,22 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', '$sce', 'dataBanners', 'dataArticles', 'TwitchService', 'TwitterService',
-    function ($scope, $sce, dataBanners, dataArticles, TwitchService, TwitterService) {
+.controller('HomeCtrl', ['$scope', '$sce', 'dataBanners', 'dataArticles', 'ArticleService', 'TwitchService', 'TwitterService',
+    function ($scope, $sce, dataBanners, dataArticles, ArticleService, TwitchService, TwitterService) {
         // data
-        $scope.articles = dataArticles.articles;
+        $scope.articles = {
+            loading: false,
+            viewable: 6,
+            perpage: 3,
+            offset: 0,
+            total: dataArticles.total,
+            data: dataArticles.articles
+        };
+        
         $scope.streamWheel = false;
         $scope.twitWheel = false;
         $scope.streams = undefined;
         $scope.tweets = undefined;
-        
         
         TwitchService.getStreams().then(function(data) {
             for (var i = 0; i < data.data.length; i++) {
@@ -248,25 +255,46 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.getContent = function (c) {
             return $sce.trustAsHtml(c);
-        }
+        };
         
-        // banner
+        // articles
+        $scope.getArticleDesc = function (desc, limit) {
+            var words = desc.split(' ');
+            return (words.length > limit) ? words.slice(0, limit).join(' ') + '...' : words.join(' ');
+        };
         
-        $scope.banner = {
-            current: 0,
-            direction: 'left',
-            slides: dataBanners.banners,
-            setCurrent: function (current) {
-                this.direction = 'right';
-                this.current = current;
-            },
-            next: function () {
-                this.direction = 'right';
-                this.current = (this.current < (this.slides.length - 1)) ? ++this.current : 0;
-            },
-            prev: function () {
-                this.direction = 'left';
-                this.current = (this.current > 0) ? --this.current : this.slides.length - 1;
+        $scope.isArticleActive = function (index) {
+            if ($scope.articles.offset == 0 && index == 0) { return true; }
+            if (index >= ($scope.articles.offset + 1) && index <= ($scope.articles.offset + $scope.articles.viewable - 2)) { return true; }
+            return false;
+        };
+        
+        $scope.canArticlePrev = function () {
+            return ($scope.articles.offset > 0);
+        };
+        
+        $scope.canArticleNext = function () {
+            return ($scope.articles.data.length < $scope.articles.total);
+        };
+        
+        $scope.prevArticles = function () {
+            $scope.articles.offset = ($scope.articles.offset - $scope.articles.perpage >= 0) ? $scope.articles.offset - $scope.articles.perpage : 0;
+        };
+        
+        $scope.nextArticles = function () {
+            if ($scope.articles.offset + $scope.articles.viewable + $scope.articles.perpage <= $scope.articles.data.length) {
+                $scope.articles.offset += $scope.articles.perpage;
+            } else {
+                var num = ($scope.articles.data.length + $scope.articles.perpage <= $scope.articles.total) ? $scope.articles.perpage : $scope.articles.total - $scope.articles.data.length;
+                if (num > 0) {
+                    $scope.articles.loading = 'next';
+                    
+                    ArticleService.getArticles('all', 'all', $scope.articles.data.length, num).then(function (data) {
+                        $scope.articles.data = $scope.articles.data.concat(data.articles);
+                        $scope.articles.offset += num;
+                        $scope.articles.loading = false;
+                    });
+                }
             }
         };
     }
