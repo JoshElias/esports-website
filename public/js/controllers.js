@@ -3030,13 +3030,19 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $sce, data) {
         $scope.members = data.members;
         
+        $scope.hsMembers = data.hsMembers;
+        $scope.hotsMembers = data.hotsMembers;
+        $scope.csMembers = data.csMembers;
+        $scope.fgcMembers = data.fgcMembers;
+        $scope.fifaMembers = data.fifaMembers;
+        
         for(var i = 0; i < $scope.members.length; i++) {
             $scope.members[i].description = $scope.members[i].description.replace(/(?:\r\n|\r|\n)/g, '<br />');
 ;
         }
         
         $scope.getDescription = function (i) {
-            return $sce.trustAsHtml($scope.members[i].description);
+            return $sce.trustAsHtml(i);
         }
         
         
@@ -5280,6 +5286,18 @@ angular.module('app.controllers', ['ngCookies'])
             var url = $state.href('app.hs.decks.deck', { slug: slug });
             window.open(url,'_blank');
         };
+        
+        $scope.goToTwitch = function ($event, usr) {
+            $event.stopPropagation();
+            var url = 'http://twitch.tv/' + usr
+            window.open(url, '_blank');
+        }
+        
+        $scope.goToTwitter = function ($event, usr) {
+            $event.stopPropagation();
+            var url = 'http://twitter.com/' + usr;
+            window.open(url, '_blank');
+        }
         
         $scope.toggleComments = function () {
             if (!SnapshotService.getStorage()) {

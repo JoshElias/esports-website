@@ -55,6 +55,11 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 
 .footer-sponsors { height: 70px; background: url('../img/sponsorbanner.png') center center repeat-x; }
 
+.container-fluid-max {
+    max-width: 1448px;
+    margin: 0 auto;
+}
+
 /* scrollbars */
 ::-webkit-scrollbar {  
     width: 12px;  
@@ -785,7 +790,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     margin-bottom: 1px;
 }
 
-.meta-author button { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; }
+.meta-author .meta-author-collapser { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; }
 
 .meta-author h2 { color: white; letter-spacing: 4px; font-size: 24px; font-weight: bold; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-transform: uppercase; }
 .meta-author h3 { color: #F6981E; letter-spacing: 4px; font-size: 14px; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
@@ -794,7 +799,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .author-class-icon { position: absolute; top: 0; left: 0; display: block; }
 .author-text-wrapper .classExpert { text-transform: uppercase; }
 .author-text-wrapper h3 { text-transform: uppercase; }
-author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; padding: 0;  }
+.author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; padding: 0;  }
 .author-collapse p { color: white; padding: 0px 75px 20px 105px; font-size: 14px; }
 
 .twitch-btn { background: #6441A5 }
@@ -802,7 +807,7 @@ author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; pa
 .twitch-btn i { margin-left: -2px }
 .twitter-btn { background: #55acee }
 
-.soc-btns { position: absolute; z-index: 1; top: 25px; right: 0}
+.soc-btns { position: absolute; z-index: 1; top: 25px; right: 0; width: 110px;}
 .soc-btn { height: 50px; width: 50px; border-radius: 100%; right: 25px;  }
 .soc-btn.disable { opacity: .3 }
 .soc-btn i { font-size: 28px; color: white; line-height:1.35 }
@@ -2891,6 +2896,56 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .sponsor-page a:hover { opacity: 1; }
 
 /* team pages */
+.teams { margin-top: 50px; }
+.teams h1 {
+    color: white;
+    font-weight: bold;
+    text-shadow: 2px 2px 2px black;
+    letter-spacing: 3px;
+}
+
+.teams .team {
+    z-index:1;
+}
+
+
+.teams .member {
+    height: 450px;
+}
+.teams .member img {
+    height: 200px;
+    width: 100%;
+}
+.teams .member .outer {
+    border: 1px solid black;
+    height: 100%;
+}
+.teams .member .inner {
+    border: 1px solid rgba(255,255,255,.2);
+    height: 100%;
+    background-color: rgba(29,29,29,.7);
+}
+.teams .member .inner h1 {
+    text-shadow: none;
+    color: #D27A2A;
+    font-size: 20px;
+    text-transform: uppercase;
+}
+.teams .member .inner h3,
+.teams .member .inner p {
+    color: #BABABA;
+    font-size: 16px;
+    white-space: normal;
+    text-overflow: ellipsis;
+}
+.teams .member .content-wrapper { position: relative; }
+
+.btn-team-wrapper { position: absolute; top: 20px; right: 20px; }
+.btn-team { width: 30px; height: 30px; border-radius: 30px; display: block; float: left; text-align: center; line-height: 1.35; border: 1px solid white; text-decoration: none; color: rgba(29,29,29,1); font-size: 18px; }
+.btn-team-inner { width: 24px; height: 24px; border-radius: 24px; background-color: rgba(255,255,255,1); margin: 2px; }
+.btn-team-esea { background: url('../img/esea.png') no-repeat center center; color: #0dc503 }
+
+/*
 .team-member { margin-left: 100px; min-height: 200px; max-height: 200px; position: relative; background: #181919; -webkit-transition: all .5s ease-in-out; -moz-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
 .team-member-content { padding: 20px 90px 20px 132px; max-height: 160px; overflow: hidden; -webkit-transition: all .3s ease-in-out; -moz-transition: all .5s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
 .team-member-content h1 { color: #FFF; font-family: 'Open Sans Bold'; font-size: 26px; }
@@ -2908,7 +2963,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .btn-team-twitch { background: #6441a5; }
 .btn-team-youtube { background: #e52d27; }
 .btn-team-instagram { background: #2E5E86; }
-.btn-team-esea { background: #0dc503 url('../img/esea.png') no-repeat center center; }
+
 
 .team-member-toggle { display: table-cell; position: absolute; top: 0px; right: 0px; width: 60px; height: 100%; background: #222; vertical-align: middle; color: #FFF !important; font-size: 30px; -webkit-transition: all .3s ease-in-out; -moz-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
 .team-member-toggle i { margin: -15px 0 0 -10px; position: absolute; top: 50%; left: 50%; }
@@ -2929,6 +2984,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .team-banner-fgc { background: url('../img/team/fgc-banner.jpg') center center; background-size: cover; }
 
 .team-banner img { margin: 30px auto; width: 553px; height: auto; }
+*/
 
 /* dnd lists */
 ul[dnd-list] > li {
