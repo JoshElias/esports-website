@@ -19,7 +19,7 @@
         <div class="form-group">
             <label for="title" class="col-sm-2 control-label">Meta Snapshot #</label>
             <div class="col-sm-10 wrapper-none">
-                <input class="form-control snap-num" type="text" ng-model="snapshot.snapNum">
+                <input class="form-control snap-num" type="text" ng-model="snapshot.snapNum" ng-keyup="setSlug()">
             </div>
         </div>
         <div class="form-group">
@@ -43,8 +43,32 @@
             <label for="author" class="col-sm-2 control-label">Authors</label>
             <div class="col-sm-10 wrapper-none">
                 <ul class="list-group m-b-md" ng-if="snapshot.authors.length!=0">
-                    <li class="list-group-item" ng-repeat="a in snapshot.authors">
-                        {{a.username}}<a href="#" class="pull-right" ng-click="removeAuthor(a)"><i class="fa fa-close"></i></a>
+                    <li ng-repeat="a in snapshot.authors" class="list-group-item">
+                        {{a.user.username}}<span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#{{a.user._id}}" aria-expanded="false" aria-controls="{{a.user._id}}"><i class="fa fa-edit"></i></button><button ng-click="removeAuthor(a.user)"><i class="fa fa-close"></i></button></span>
+                    <div class="collapse clearfix" id="{{a.user._id}}">
+                        <div class="form-group m-t-md">
+                            <label for="authorDescription_{{a.user.username}}" class="col-sm-1 control-label">Description</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" name="authorDescription_{{a.user.username}}" ng-model="a.description"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="authorClasses_{{a.user.username}}" class="col-sm-1 control-label">Class(es) of Expertise</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" name="authorClasses{{a.user.username}}" ng-model="a.klass" multiple>
+                                  <option value="druid">Druid</option>
+                                  <option value="hunter">Hunter</option>
+                                  <option value="mage">Mage</option>
+                                  <option value="paladin">Paladin</option>
+                                  <option value="priest">Priest</option>
+                                  <option value="rogue">Rogue</option>
+                                  <option value="shaman">Shaman</option>
+                                  <option value="warlock">Warlock</option>
+                                  <option value="warrior">Warrior</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                     </li>
                 </ul>
                 <button class="btn btn-green btn-rounded m-r-sm" ng-click="openAddBox('author')"><i class="fa fa-plus"></i> Add Author</button>
@@ -106,9 +130,17 @@
                             <li class="list-group-item" ng-if="t.decks == 0">There are no decks selected yet!</li>
 <!--                            -->
                             <li class="list-group-item" ng-repeat="d in t.decks" ng-if="t.decks.length != 0" >
-                                <span class="badge pull-left">{{d.rank.current}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index)" dnd-disable-if="t.decks.length < 2">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeckPrompt(d.deck)"><i class="fa fa-close"></i></button></span> 
+                                <span class="badge pull-left">{{d.rank.current}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index)" dnd-disable-if="t.decks.length < 1">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeckPrompt(d.deck)"><i class="fa fa-close"></i></button></span> 
                                 <div class="collapse" id="deckrank{{d.rank.current}}">
                                     <div class="form-group wrapper-md">
+                                        
+                                        <div class="clearfix m-b-md">
+                                            <label for="deck.name" class="control-label col-sm-1">Deck Name</label>
+                                            <div class="col-sm-9">
+                                                <input class="form-control" name="dname" ng-model="d.name"></input>
+                                            </div>
+                                        </div>
+                                        
                                         <div class="clearfix m-b-md">
                                             <label for="deck.explanation" class="control-label col-sm-1">Explanation</label>
                                             <div class="col-sm-9">
@@ -127,7 +159,7 @@
                                             <label for="deck.weeklyTrend" class="control-label col-sm-1">Weekly Trend</label>
                                             <div class="col-sm-9">
                                                 <div class="col-sm-1" ng-repeat="trend in trends(trendsLength) track by $index">
-                                                    <input class="form-control wrapper-none" type="number" ng-model="d.rank.last[$index]">
+                                                    <input class="form-control wrapper-none" type="number" min="0" ng-model="d.rank.last[$index]">
                                                     <span># {{snapshot.snapNum - (1+$index)}}</span>
                                                 </div>
                                             </div>

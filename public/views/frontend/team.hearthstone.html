@@ -1,123 +1,25 @@
 <div class="container-fluid team-banner team-banner-hs">
-    <img src="{{app.cdn}}/img/team/hs-logo.png" class="img-responsive" alt="Hearthstone">
+    <img src="{{app.cdn}}img/team/hs-logo.png" class="img-responsive" alt="Hearthstone">
 </div>
 
-<div class="container team-page">
-    <div class="m-t-lg m-b-md">
-        <div class="team-member" ng-class="{active: reynad}">
-            <a href="#" class="team-member-photo" ng-click="reynad = !reynad"><img src="{{app.cdn}}/img/team/reynad.jpg" class="img-responsive img-circle"></a>
+<div class="container team-page">  
+    <div class="m-t-lg m-b-md" ng-repeat="member in members">
+        <div class="team-member" ng-class="{active: !member.orderNum}">
+            <a href="#" class="team-member-photo" ng-click="member.orderNum = !member.orderNum"><img src="{{app.cdn}}team/{{member.photo}}" class="img-responsive img-circle"></a>
             <div class="team-member-content">
-                <h1>Reynad</h1>
-                <h3>Andrey Yanyuk</h3>
-                <p>Perhaps the most influential and controversial person in Hearthstone’s short competitive history, Reynad is often touted jokingly as “the creator of all Hearthstone decks” due to the nature of his incredible deck building prowess and salty demeanor. Known as the father of infamous decks such as Zoolock, Mad Scientist Hunter, and the free-to-play Burn Warrior, there is little doubt the meta-game would be in a much different place without his innovation.<br><br>Despite having a reputation as one of the unluckiest tournament players, Reynad is still a well-accomplished player placing top 4 in Dreamhack and winning multiple online tournaments such as Battle of the Best. When he is not competing, he is often seen streaming to tens of thousands of fans, working on Tempo Storm, and moonlighting as a manager of a contemporary jazz band, Ritzy Who.</p>
+                <h1>{{member.screenName}}</h1>
+                <h3>{{member.fullName}}</h3>
+                <p ng-bind-html="getDescription($index)"></p>
                 <div class="team-member-buttons clearfix">
-                    <a href="https://www.twitter.com/TempoReynad" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="https://www.youtube.com/user/reynad27" target="_blank" class="btn btn-team btn-team-youtube"><i class="fa fa-youtube-play"></i></a>
-                    <a href="http://www.twitch.tv/reynad27" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
+                    <a ng-if="member.social.twitter" href="https://www.twitter.com/{{member.social.twitter}}" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
+                    <a ng-if="member.social.twitch" href="http://www.twitch.tv/{{member.social.twitch}}" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
+                    <a ng-if="member.social.youtube" href="https://www.youtube.com/user/{{member.social.youtube}}" target="_blank" class="btn btn-team btn-team-youtube"><i class="fa fa-youtube-play"></i></a>
+                    <a ng-if="member.social.esea" href="http://play.esea.net/users/{{member.social.esea}}" target="_blank" class="btn btn-team btn-team-esea"></a>
+                    <a ng-if="member.social.instagram" href="https://instagram.com/{{member.social.instagram}}" target="_blank" class="btn btn-team btn-team-instagram"><i class="fa fa-instagram"></i></a>
+                    <a ng-if="member.social.facebook" href="https://www.facebook.com/{{member.social.facebook}}" target="_blank" class="btn btn-team btn-team-facebook"><i class="fa fa-facebook"></i></a>
                 </div>
             </div>
-            <a href="#" class="team-member-toggle" ng-click="reynad = !reynad"><i class="fa" ng-class="{'fa-angle-down': !reynad, 'fa-angle-up': reynad}"></i></a>
-        </div>
-    </div>
-    <div class="m-t-md m-b-md">
-        <div class="team-member" ng-class="{active: gaara}">
-            <a href="#" class="team-member-photo" ng-click="gaara = !gaara"><img src="{{app.cdn}}/img/team/gaara.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>Gaara</h1>
-                <h3>Petar Stevanovic</h3>
-                <p>Hailing from Bosnia, Gaara is one of the most accomplished and respected tournament players in all of competitive Hearthstone. Scouted as promising talent prior to Hearthstone's full release, Gaara exploded onto the tournament scene by winning Dreamhack Bucharest with Ramp Druid at a time when Hunters were thought to be the best deck by a far margin.<br><br>Gaara is known for his strong tournament play, friendly demeanor, and challenging the meta game with unique card choices. He finished 2014 as one of the top 5 earners in Hearthstone with multiple online cup wins, two Dreamhack finals, and a Bronze finish at WCA. Through the good times and bad, his favorite class since beta has always been Priest, but don’t be surprised to see him whip out another surprise class for an event!</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://twitter.com/tempogaara" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/gaarabestshaman" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="gaara = !gaara"><i class="fa" ng-class="{'fa-angle-down': !gaara, 'fa-angle-up': gaara}"></i></a>
-        </div>
-    </div>
-    <div class="m-t-md m-b-md">
-        <div class="team-member" ng-class="{active: hyped}">
-            <a href="#" class="team-member-photo" ng-click="hyped = !hyped"><img src="{{app.cdn}}/img/team/hyped.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>Hyped</h1>
-                <h3>George Maganzini</h3>
-                <p>Hyped was an unknown prospect heading in the summer of 2014 before having a breakout ladder performance topping the season at #2 and #3 respectively with two different accounts. Since then, he has been respected as a ladder deity, always pushing the top ranks effortlessly with his iconic decks which has defined the meta-game time and time again.<br><br>Considered one of the premier Rogue and Mage players, Hyped is well known for making strong plays thinking four or five steps in advance. He has yet to have a true tournament breakout performance, but most players agree -- he is one of the most feared opponents to match up against in any competitive arena.</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://twitter.com/tempohyped" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/hyp3d" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="hyped = !hyped"><i class="fa" ng-class="{'fa-angle-down': !hyped, 'fa-angle-up': hyped}"></i></a>
-        </div>
-    </div>
-    <div class="m-t-md m-b-md">
-        <div class="team-member" ng-class="{active: ratsmah}">
-            <a href="#" class="team-member-photo" ng-click="ratsmah = !ratsmah"><img src="{{app.cdn}}/img/team/ratsmah.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>Ratsmah</h1>
-                <h3>Johnnie Lee</h3>
-                <p>Hey guys, my name is Ratsmah. I'm originally from Phoenix, AZ and I love strategy games. I grew up playing Magic The Gathering and now  I primarily focus all my energies into perfecting my game and strategy as it pertains to The Arena in Hearthstone.  When I'm live streaming I am usually trying unorthodox draft or play strategies to see which is strongest in the current meta. Look forward to experiencing the game with you all!</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://twitter.com/TempoRatsmah" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="https://www.youtube.com/user/ratsmahtv" target="_blank" class="btn btn-team btn-team-youtube"><i class="fa fa-youtube-play"></i></a>
-                    <a href="http://www.twitch.tv/ratsmah" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="ratsmah = !ratsmah"><i class="fa" ng-class="{'fa-angle-down': !ratsmah, 'fa-angle-up': ratsmah}"></i></a>
-        </div>
-    </div>
-    
-    <div class="m-t-md m-b-lg">
-        <div class="team-member" ng-class="{active: eloise}">
-            <a href="#" class="team-member-photo" ng-click="eloise = !eloise"><img src="https://s3-us-west-2.amazonaws.com/ts-node2/img/team/eloise.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>Eloise</h1>
-                <h3>Haiyun “Eloise” Tang</h3>
-                <p>Hailing from China, Eloise is arguably one of the most successful female players in the competitive Hearthstone scene today. Her result in the 2014 Blizzcon qualifier tournament was equivalent to many other exemplary players such as Tempo Storm’s Hyped, Cloud 9’s TidesofTime, and Nihilum’s Thijs. In addition to being a skilled Hearthstone player Eloise was once part of the world renowned World of Warcraft guild “STARS”, and was famous for her skills in the game. 
-While relatively new to the Western Hearthstone scene, Eloise has already begun to make a name for herself with her unique playstyle and sense of humor. It won’t be long before she leaves her mark on the Hearthstone Community.<br><br>
-
-                    <a href="http://wiki.teamliquid.net/hearthstone/2P.com_NA_vs_CN_Hearthstone_Championship">Top 4 in NA vs CN</a><br>
-<a href="http://www.hearthstone.com.cn/articles/115/3922">5th - Gold League 2014</a><br>
-<a href="http://www.hearthstone.com.cn/articles/115/3049">5th - China BlizzCon Regionals</a>
-</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://twitter.com/tempoeloise" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/eloise_ailv" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                    <a href="https://instagram.com/tempoeloise/" target="_blank" class="btn btn-team btn-team-instagram"><i class="fa fa-instagram"></i></a>
-                    <a href="https://www.facebook.com/Eloise0000" target="_blank" class="btn btn-team btn-team-facebook"><i class="fa fa-facebook"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="eloise = !eloise"><i class="fa" ng-class="{'fa-angle-down': !eloise, 'fa-angle-up': eloise}"></i></a>
-        </div>
-    </div>
-    
-    <div class="m-t-md m-b-lg">
-        <div class="team-member" ng-class="{active: reckful}">
-            <a href="#" class="team-member-photo" ng-click="reckful = !reckful"><img src="{{app.cdn}}/img/team/reckful.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>Reckful</h1>
-                <h3>Byron Bernstein</h3>
-                <p>I'm Reckful. I originally got popular as a professional World of Warcraft player where I won the MLG Championship in 2010 for 3v3 arena. I started playing hearthstone when it first came out, prior to which I hadn't played a card game with the exception of a little pokemon when I was 10.  At first I was terrible (missed lethal at blizzcon!), but within a few months I was consistently top 50 legend, sometimes top 5.<br><br>At this point I think everyone is too good at the game, making it mostly come down to RNG (random number generation), and I'm hopeful Blizzard will add a blitz mode - limiting players to a maxiumum of 15 seconds per turn - in order to add some variety to the game and give something to separate the better players from the pack.</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://twitter.com/byronbernstein" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/reckful" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="reckful = !reckful"><i class="fa" ng-class="{'fa-angle-down': !reckful, 'fa-angle-up': reckful}"></i></a>
-        </div>
-    </div>
-    <div class="m-t-md m-b-lg">
-        <div class="team-member" ng-class="{active: frodan}">
-            <a href="#" class="team-member-photo" ng-click="frodan = !frodan"><img src="{{app.cdn}}/img/team/frodan.jpg" class="img-responsive img-circle"></a>
-            <div class="team-member-content">
-                <h1>Frodan</h1>
-                <h3>Dan Chou</h3>
-                <p>A former competitive FPS player, Frodan is recognized as one of the top broadcasters and hosts in the Hearthstone scene. He is also largely responsible for creating and producing for well known events such as the team showmatch series ESGN Fight Night and the ESL Legendary Series, two of the best shows Hearthstone has seen to date.<br><br>Frodan joined Tempo Storm in June 2014 originally as the Hearthstone team manager. He has since transitioned into the primary management of operations of the entire organization, working closely with Reynad on all things Tempo Storm.</p>
-                <div class="team-member-buttons clearfix">
-                    <a href="https://twitter.com/Frodan" target="_blank" class="btn btn-team btn-team-twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="http://www.twitch.tv/frodan" target="_blank" class="btn btn-team btn-team-twitch"><i class="fa fa-twitch"></i></a>
-                </div>
-            </div>
-            <a href="#" class="team-member-toggle" ng-click="frodan = !frodan"><i class="fa" ng-class="{'fa-angle-down': !frodan, 'fa-angle-up': frodan}"></i></a>
+            <a href="#" class="team-member-toggle" ng-click="member.orderNum = !member.orderNum"><i class="fa" ng-class="{'fa-angle-down': member.orderNum, 'fa-angle-up': !member.orderNum}"></i></a>
         </div>
     </div>
 </div>

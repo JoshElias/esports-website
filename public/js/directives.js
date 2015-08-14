@@ -287,6 +287,11 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/activity/activity.guide.comment.html'
     };
 })
+.directive('activitySnapshotComment', function () {
+    return {
+        templateUrl: tpl + 'views/frontend/activity/activity.snapshot.comment.html'
+    };
+})
 .directive('premiumPage', function () {
     return {
         templateUrl: tpl + 'views/frontend/premiumDirective.html'

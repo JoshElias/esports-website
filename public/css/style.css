@@ -556,6 +556,13 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     border-bottom: 1px solid rgba(255,255,255,.2);
 }
 
+.snapshot-votes { position: absolute; right: 20px; top: 20px; }
+.snapshot-votes .snapVoteWrap { position: relative; text-align: center; }
+.snapshot-votes .snapVoteWrap a { cursor: pointer; background:  }
+.snapshot-votes .snapVoteWrap i { margin-top: 10px; font-size: 24px }
+
+
+
 .bg-override {
     background-image: url(../img/meta-snapshot/meta-bg.jpg);
     background-color: #000000;
@@ -567,8 +574,8 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .snapTitle { position: absolute; top: 20px; left: 20px; text-shadow: 1px 1px 0px rgba(0,0,0,.7); }
 .snapTitle img { width: 100%; }
-.snapTitle h1 { color: white; font-weight: bolder }
-.snapTitle h3 { color: white; color: #d7effa; font-weight: bold; font-size: 18px; letter-spacing: 1px }
+.snapTitle h1 { color: white; font-weight: bolder; padding-right: 100px; }
+.snapTitle h3 { color: white; color: #d7effa; font-weight: bold; font-size: 18px; letter-spacing: 1px; padding-right: 100px; }
 
 @media (max-width: 767px) {
     .snapTitle h1,
@@ -624,15 +631,46 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .rightSide .sideTier .sideTierBody .sideTierDeck .sideTierDeckRank { position: relative; height: 49px; width:50px; border: 1px solid rgba(255,255,255,.2); }
 .rightSide .sideTier .sideTierBody .sideTierDeck .sideTierDeckName { position: relative; height: 50px; max-width: 215px; padding-left: 10px; }
 
-
 /* TRENDS */
 
-.trends-wrapper { height: 500px; background-image: url('../img/meta-snapshot/trends-bg.jpg') }
+.trends-wrapper { background: url('../img/meta-snapshot/trends-bg.jpg') no-repeat center top; background-size: cover; }
+.trends-wrapper .inner { border: 1px solid rgba(255,255,255,.2); padding: 20px; }
+.trends-wrapper h2 { color: white; font-weight: bold; letter-spacing: 4px; font-size: 24px; text-align: center; }
+.trends-wrapper .hr { margin: 0 auto; border-top: 1px solid rgba(255,255,255,.5); border-bottom: 2px solid rgba(0,0,0,.4); background: none; width: 225px; }
 
-.trends { width: 100%; height: 100%; }
+.trends { width: 100%; height: 450px; }
+.trends g.deck { opacity: 1; transition: opacity .25s ease-in-out; }
+.trends g.deck.not-selected { opacity: .2; }
+
+.snapshot-trends-keys { margin: 0px 5% 20px; }
+.snapshot-trends-keys a { margin: 5px 10px; position: relative; display: block; color: rgba(255,255,255,.8); z-index: 3; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.snapshot-trends-keys a:hover { color: rgba(255,255,255,1); }
+.snapshot-trends-keys a.active { color: rgba(255,255,255,1); }
+.snapshot-trends-keys .trends-key { margin: 4px 5px 0 0; display: inline-block; width: 10px; height: 10px; border: 1px solid rgba(255,255,255,.2); }
+
+.snapshot-trends-keys .trends-key.Druid { background: rgb(255, 125, 10); }
+.snapshot-trends-keys .trends-key.Hunter { background: rgb(171, 212, 115); }
+.snapshot-trends-keys .trends-key.Mage { background: rgb(105, 204, 240); }
+.snapshot-trends-keys .trends-key.Paladin { background: rgb(245, 140, 186); }
+.snapshot-trends-keys .trends-key.Priest { background: rgb(255,255,255); }
+.snapshot-trends-keys .trends-key.Rogue { background: rgb(255, 245, 105); }
+.snapshot-trends-keys .trends-key.Shaman { background: rgb(0, 112, 222); }
+.snapshot-trends-keys .trends-key.Warlock { background: rgb(148, 130, 201); }
+.snapshot-trends-keys .trends-key.Warrior { background: rgb(199, 156, 110); }
+
+.snapshot-trends-tiers { margin: 20px 0px 20px 0px; padding: 0; text-align: center; }
+.snapshot-trends-tiers li { list-style: none; display: inline-block; margin-right: 20px; }
+.snapshot-trends-tiers li:last-child { margin-right: 0px; }
+.snapshot-trends-tiers li a { position: relative; font-family: 'Open Sans Bold'; font-size: 30px; color: rgba(255,255,255,.8); letter-spacing: 2px; z-index: 3; }
+.snapshot-trends-tiers li a:hover { color: rgba(255,255,255,1); }
+.snapshot-trends-tiers li a.active { color: rgba(255,255,255,1); border-bottom: 2px solid #FFF; }
+
+@media (max-width: 767px) {
+    .trends-wrapper .inner { padding: 10px; }
+    .snapshot-trends-tiers li a { font-size: 12px; }
+}
 
 /* /TRENDS */
-
 
 .tier h4,
 .tier h3,
@@ -689,6 +727,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-body .tier-deck .tier-deck-body .deck-rank div:nth-child(2) { border-left: none; border-right: none }
 .tier-body .tier-deck .tier-deck-body .deck-rank div div { height: 20px; background-color: rgba(0, 0, 0, .5); font-size: 12px; font-weight: bold; border: none; color: white; line-height: 18px; }
 .tier-body .tier-deck .tier-deck-body .tier-deck-body-inner { border: rgba(255, 255, 255, .1) 1px solid; border-top: 0px; }
+.tier-body .tier-deck .tier-deck-body .tier-deck-body-inner-inner { padding-top: 30px; }
 .tier-body .tier-deck .tier-deck-body .deck-portrait { height:345px }
 
 /* TECH */
@@ -702,18 +741,62 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .keep { width: 27px; height: 27px; text-align: center; border-bottom: 1px solid black; border-right: 1px solid black; margin-right: 5px; }
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .toss { background: rgb(17, 153, 71) }
 .tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .keep { background: rgb(170, 30, 33) }
-
-
 /* !TECH */
 
+
+.meta-author {
+    
+    background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
+    
+    border-left: 1px solid rgba(255,255,255,.2);
+    border-right: 1px solid rgba(255,255,255,.2);
+    border-top: 1px solid rgba(255,255,255,.2);
+    border-bottom: 1px solid rgba(255,255,255,.2);
+    
+
+    
+    margin-bottom: 1px;
+}
+
+.meta-author button { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; }
+
+.meta-author h2 { color: white; letter-spacing: 4px; font-size: 24px; font-weight: bold; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-transform: uppercase; }
+.meta-author h3 { color: #F6981E; letter-spacing: 4px; font-size: 14px; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+.author-img-wrapper { position: relative; height: 60px; width: 70px; }
+.author-class-icon { position: absolute; top: 0; left: 0; display: block; }
+.author-text-wrapper .classExpert { text-transform: uppercase; }
+.author-text-wrapper h3 { text-transform: uppercase; }
+author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; padding: 0;  }
+.author-collapse p { color: white; padding: 0px 75px 20px 105px; font-size: 14px; }
+
+.twitch-btn { background: #6441A5 }
+.twitch-btn:hover { background: #6441A5 }
+.twitch-btn i { margin-left: -2px }
+.twitter-btn { background: #55acee }
+
+.soc-btns { position: absolute; z-index: 1; top: 25px; right: 0}
+.soc-btn { height: 50px; width: 50px; border-radius: 100%; right: 25px;  }
+.soc-btn.disable { opacity: .3 }
+.soc-btn i { font-size: 28px; color: white; line-height:1.35 }
+
+@media (max-width: 767px) {
+    .meta-author h2 { text-indent: 0px; }
+    .meta-author h3 { text-indent: 0px; }
+    .author-collapse p { padding: 0px 20px 20px; }
+    .soc-btns { position: relative; top: 0px; left: 0px; padding-left: 20px; }
+}
 
 .match-graph { height: 300px; }
 .match-graph svg { overflow: visible }
 .match-graph line { stroke:rgba(255,255,255,.5); }
 
-.svg-tooltip { stroke: rgb(255,255,255); fill: #2268AE; }
-
-.bar { stroke: rgb(255, 255 ,255); stroke-width: 1px; opacity:.8 }
+.no-mouse { opacity: .5; -webkit-transition-duration: .2s; transition-duration: .2s; }
+.bar-wrap { -webkit-transition-duration: .2s; transition-duration: .2s; }
+.bar { stroke: rgb(255, 255 ,255); stroke-width: 1px; opacity:.8; }
 
 .bar-Druid { fill: rgb(255, 125, 10) }
 .bar-Hunter { fill: rgb(171, 212, 115) }
@@ -724,6 +807,44 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .bar-Shaman { fill: rgb(0, 112, 222) }
 .bar-Warlock { fill: rgb(148, 130, 201) }
 .bar-Warrior { fill: rgb(199, 156, 110) }
+
+.dot-Druid { stroke: rgb(255, 125, 10); fill: rgb(255, 125, 10); }
+.dot-Hunter { stroke: rgb(171, 212, 115); fill: rgb(171, 212, 115); }
+.dot-Mage { stroke: rgb(105, 204, 240); fill: rgb(105, 204, 240); }
+.dot-Paladin { stroke: rgb(245, 140, 186); fill: rgb(245, 140, 186); }
+.dot-Priest { stroke: rgb(255,255,255); fill: rgb(255,255,255); }
+.dot-Rogue { stroke: rgb(255, 245, 105); fill: rgb(255, 245, 105); }
+.dot-Shaman { stroke: rgb(0, 112, 222); fill: rgb(0, 112, 222); }
+.dot-Warlock { stroke: rgb(148, 130, 201); fill: rgb(148, 130, 201); }
+.dot-Warrior { stroke: rgb(199, 156, 110); fill: rgb(199, 156, 110); }
+
+#snapshot-chart {
+    width:800px;
+}
+
+#snapshot-chart g {
+    fill: white;
+}
+#snapshot-chart line {
+    fill: white;
+    stroke: white;
+}
+#snapshot-chart .domain {
+    stroke: white;
+}
+
+#meta-graph-Rogue {
+    color: yellow
+}
+
+.snapshot-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
+.snapshot-section-title { font-size: 20px; line-height: 60px; min-height: 60px; color: #FFF; background: rgba(0,0,0,.3); }
+.snapshot-section-title a { color: #FFF; }
+.snapshot-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; }
+.snapshot-section-content { padding: 20px; border-top: 1px solid #000; }
+.snapshot-section-content.unpadded { padding: 0px; }
+.snapshot-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
+.snapshot-section-content p { color: #FFF; }
 
 
 .tier-deck-Druid {
@@ -739,7 +860,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Druid .deck-portrait-Druid { background: url(../img/meta-snapshot/hero-portrait/Druid.png) no-repeat top center; }
-.deck-portrait-Druid-sm { background: url(../img/meta-snapshot/hero-portrait/Druid-sm.png) no-repeat top right; }
+.deck-portrait-Druid-sm { background: url(../img/meta-snapshot/hero-portrait/druid-sm.png) no-repeat top right; }
 
 
 
@@ -756,7 +877,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Hunter .deck-portrait-Hunter { background: url(../img/meta-snapshot/hero-portrait/Hunter.png) no-repeat top center; }
-.deck-portrait-Hunter-sm { background: url(../img/meta-snapshot/hero-portrait/Hunter-sm.png) no-repeat top right; }
+.deck-portrait-Hunter-sm { background: url(../img/meta-snapshot/hero-portrait/hunter-sm.png) no-repeat top right; }
 
 
 .tier-deck-Mage {
@@ -772,7 +893,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Mage .deck-portrait-Mage { background: url(../img/meta-snapshot/hero-portrait/Mage.png) no-repeat top center; }
-.deck-portrait-Mage-sm { background: url(../img/meta-snapshot/hero-portrait/Mage-sm.png) no-repeat top right; }
+.deck-portrait-Mage-sm { background: url(../img/meta-snapshot/hero-portrait/mage-sm.png) no-repeat top right; }
 
 
 .tier-deck-Paladin { 
@@ -788,7 +909,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Paladin .deck-portrait-Paladin { background: url(../img/meta-snapshot/hero-portrait/Paladin.png) no-repeat top center; }
-.deck-portrait-Paladin-sm { background: url(../img/meta-snapshot/hero-portrait/Paladin-sm.png) no-repeat top right; }
+.deck-portrait-Paladin-sm { background: url(../img/meta-snapshot/hero-portrait/paladin-sm.png) no-repeat top right; }
 
 
 .tier-deck-Priest { 
@@ -804,7 +925,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Priest .deck-portrait-Priest { background: url(../img/meta-snapshot/hero-portrait/Priest.png) no-repeat top center; }
-.deck-portrait-Priest-sm { background: url(../img/meta-snapshot/hero-portrait/Priest-sm.png) no-repeat top right; }
+.deck-portrait-Priest-sm { background: url(../img/meta-snapshot/hero-portrait/priest-sm.png) no-repeat top right; }
 
 
 .tier-deck-Rogue { 
@@ -820,7 +941,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Rogue .deck-portrait-Rogue { background: url(../img/meta-snapshot/hero-portrait/Rogue.png) no-repeat top center; }
-.deck-portrait-Rogue-sm { background: url(../img/meta-snapshot/hero-portrait/Rogue-sm.png) no-repeat top right; }
+.deck-portrait-Rogue-sm { background: url(../img/meta-snapshot/hero-portrait/rogue-sm.png) no-repeat top right; }
 
 
 .tier-deck-Shaman { 
@@ -836,7 +957,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Shaman .deck-portrait-Shaman { background: url(../img/meta-snapshot/hero-portrait/Shaman.png) no-repeat top center; }
-.deck-portrait-Shaman-sm { background: url(../img/meta-snapshot/hero-portrait/Shaman-sm.png) no-repeat top right; }
+.deck-portrait-Shaman-sm { background: url(../img/meta-snapshot/hero-portrait/shaman-sm.png) no-repeat top right; }
 
 
 .tier-deck-Warlock { 
@@ -852,7 +973,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Warlock .deck-portrait-Warlock { background: url(../img/meta-snapshot/hero-portrait/Warlock.png) no-repeat top center; }
-.deck-portrait-Warlock-sm { background: url(../img/meta-snapshot/hero-portrait/Warlock-sm.png) no-repeat top right; }
+.deck-portrait-Warlock-sm { background: url(../img/meta-snapshot/hero-portrait/warlock-sm.png) no-repeat top right; }
 
 
 .tier-deck-Warrior { 
@@ -868,7 +989,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-blend-mode: multiply;
 }
 .tier-deck-Warrior .deck-portrait-Warrior { background: url(../img/meta-snapshot/hero-portrait/Warrior.png) no-repeat top center; }
-.deck-portrait-Warrior-sm { background: url(../img/meta-snapshot/hero-portrait/Warrior-sm.png) no-repeat top right; }
+.deck-portrait-Warrior-sm { background: url(../img/meta-snapshot/hero-portrait/warrior-sm.png) no-repeat top right; }
 
 
 /* article */
@@ -909,6 +1030,26 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .edit-button-fix { display:block }
 
+
+/* admin team */
+
+.upload-drop-team {
+    height: 188px !important;
+    width: 188px !important;
+}
+
+
+.photo-input .upload-drop { border-radius: 4px; border: 1px dashed #ccc; text-align: center; color: #666; }
+.photo-input .upload-drop.active { border: 1px dashed #66afe9; color: #357ebd; background: #e6f7ff; }
+
+.social-addon-group {
+    width: 100%;
+}
+
+.social-addon {
+    width: 10%;
+    text-align: right;
+}
 
 /* admin meta snapshot */
 .button-block {}
@@ -1850,6 +1991,19 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .upload-thumbnail.upload-thumbnail-article img {
     width: 240px;
     height: 60px;
+}
+.upload-thumbnail.upload-thumbnail-team {
+    width: 188px;
+    height: 188px;
+}
+.upload-thumbnail.upload-thumbnail-team .upload-drop {
+    width: 188px;
+    height: 188px;
+    line-height: 60px;
+}
+.upload-thumbnail.upload-thumbnail-team img {
+    width: 188px;
+    height: 188px;
 }
 .upload-thumbnail.upload-thumbnail-poll {
     width: 140px;
@@ -2849,6 +3003,7 @@ ul[dnd-list] .dndPlaceholder {
 .icon-kaelthas { background: url('../img/hots/heroes/kaelthas-hex.png') no-repeat center center; }
 .icon-johanna { background: url('../img/hots/heroes/johanna-hex.png') no-repeat center center; }
 .icon-the-butcher { background: url('../img/hots/heroes/the-butcher-hex.png') no-repeat center center; }
+.icon-leoric { background: url('../img/hots/heroes/leoric-hex.png') no-repeat center center; }
 
 .hero-selection .hero .icon-wrap .icon:hover { background-color: rgba(88, 43, 128, 1); }
 .hero-selection .hero .icon-wrap .icon.active { background-color: #2766ad; }
@@ -2963,6 +3118,7 @@ p.white { color: #FFF; }
 .hero-list li a.kaelthas { background: url('../img/hots/heroes/28x/kaelthas28.png') no-repeat center right; }
 .hero-list li a.johanna { background: url('../img/hots/heroes/28x/johanna28.png') no-repeat center right; }
 .hero-list li a.the-butcher { background: url('../img/hots/heroes/28x/the-butcher28.png') no-repeat center right; }
+.hero-list li a.leoric { background: url('../img/hots/heroes/28x/leoric28.png') no-repeat center right; }
 
 /* guide steps */
 .gb-steps { margin: 0 0 20px 0; padding: 0 1px; }
@@ -3041,6 +3197,7 @@ p.white { color: #FFF; }
 .talents-title.kaelthas { background: url('../img/hots/heroes/60x/kaelthas60.png') no-repeat; }
 .talents-title.johanna { background: url('../img/hots/heroes/60x/johanna60.png') no-repeat; }
 .talents-title.the-butcher { background: url('../img/hots/heroes/60x/the-butcher60.png') no-repeat; }
+.talents-title.leoric { background: url('../img/hots/heroes/60x/leoric60.png') no-repeat; }
 
 /* talents icons */
 .talents-icon { display: block; width: 30px; height: 30px; overflow: hidden; white-space: nowrap; text-indent: -99999px; opacity: .5; transition: opacity .1s linear; }
@@ -3089,6 +3246,7 @@ p.white { color: #FFF; }
 .talents-icon.kaelthas { background: url('../img/hots/talents/kaelthas.png') no-repeat; }
 .talents-icon.johanna { background: url('../img/hots/talents/johanna.png') no-repeat; }
 .talents-icon.the-butcher { background: url('../img/hots/talents/the-butcher.png') no-repeat; }
+.talents-icon.leoric { background: url('../img/hots/talents/leoric.png') no-repeat; }
 
 /* talents - the-butcher - small */
 /* Tier 1 */
@@ -4316,6 +4474,76 @@ p.white { color: #FFF; }
 .talents-icon.kerrigan.large.torrasque { background-position: -30px -1122px; }
 .talents-icon.kerrigan.large.nexus-blades { background-position: -30px -1734px; }
 .talents-icon.kerrigan.large.bolt-of-the-storm { background-position: -30px -1836px; }
+
+/* talents - Leoric - small */
+/* Tier 1 */
+.talents-icon.leoric.mana-thirst { background-position: 0px -90px; }
+.talents-icon.leoric.hopelessness { background-position: 0px -60px; }
+.talents-icon.leoric.block { background-position: 0px 0px; }
+.talents-icon.leoric.reanimation { background-position: 0px -30px; }
+/* Tier 2 */
+.talents-icon.leoric.fealty-unto-death { background-position: 0px -150px; }
+.talents-icon.leoric.willing-vessel { background-position: 0px -60px; }
+.talents-icon.leoric.hardened-bones { background-position: 0px -120px; }
+.talents-icon.leoric.royal-focus { background-position: 0px -120px; }
+/* Tier 3 */
+.talents-icon.leoric.ghastly-reach { background-position: 0px -90px; }
+.talents-icon.leoric.lingering-apparition { background-position: 0px -120px; }
+.talents-icon.leoric.paralyzing-rage { background-position: 0px -90px; }
+.talents-icon.leoric.ossein-renewal { background-position: 0px -180px; }
+/* Tier 4 */
+.talents-icon.leoric.entomb { background-position: 0px -210px; }
+.talents-icon.leoric.march-of-the-black-king { background-position: 0px -240px; }
+/* Tier 5 */
+.talents-icon.leoric.burning-rage { background-position: 0px -270px; }
+.talents-icon.leoric.crushing-hope { background-position: 0px -60px; }
+.talents-icon.leoric.drain-momentum { background-position: 0px -60px; }
+.talents-icon.leoric.spell-shield { background-position: 0px -300px; }
+/* Tier 6 */
+.talents-icon.leoric.renewed-swing { background-position: 0px -90px; }
+.talents-icon.leoric.consume-vitality { background-position: 0px -90px; }
+.talents-icon.leoric.unyielding-despair { background-position: 0px -60px; }
+.talents-icon.leoric.imposing-presence { background-position: 0px -330px; }
+/* Tier 7 */
+.talents-icon.leoric.buried-alive { background-position: 0px -210px; }
+.talents-icon.leoric.death-march { background-position: 0px -240px; }
+.talents-icon.leoric.spectral-leech { background-position: 0px -390px; }
+.talents-icon.leoric.hardened-shield { background-position: 0px -360px; }
+
+/* talents - Leoric - large */
+/* Tier 1 */
+.talents-icon.leoric.large.mana-thirst { background-position: -30px -306px; }
+.talents-icon.leoric.large.hopelessness { background-position: -30px -204px; }
+.talents-icon.leoric.large.block { background-position: -30px 0px; }
+.talents-icon.leoric.large.reanimation { background-position: -30px -102px; }
+/* Tier 2 */
+.talents-icon.leoric.large.fealty-unto-death { background-position: -30px -510px; }
+.talents-icon.leoric.large.willing-vessel { background-position: -30px -204px; }
+.talents-icon.leoric.large.hardened-bones { background-position: -30px -408px; }
+.talents-icon.leoric.large.royal-focus { background-position: -30px -408px; }
+/* Tier 3 */
+.talents-icon.leoric.large.ghastly-reach { background-position: -30px -306px; }
+.talents-icon.leoric.large.lingering-apparition { background-position: -30px -408px; }
+.talents-icon.leoric.large.paralyzing-rage { background-position: -30px -306px; }
+.talents-icon.leoric.large.ossein-renewal { background-position: -30px -612px; }
+/* Tier 4 */
+.talents-icon.leoric.large.entomb { background-position: -30px -714px; }
+.talents-icon.leoric.large.march-of-the-black-king { background-position: -30px -816px; }
+/* Tier 5 */
+.talents-icon.leoric.large.burning-rage { background-position: -30px -918px; }
+.talents-icon.leoric.large.crushing-hope { background-position: -30px -204px; }
+.talents-icon.leoric.large.drain-momentum { background-position: -30px -204px; }
+.talents-icon.leoric.large.spell-shield { background-position: -30px -1020px; }
+/* Tier 6 */
+.talents-icon.leoric.large.renewed-swing { background-position: -30px -306px; }
+.talents-icon.leoric.large.consume-vitality { background-position: -30px -306px; }
+.talents-icon.leoric.large.unyielding-despair { background-position: -30px -204px; }
+.talents-icon.leoric.large.imposing-presence { background-position: -30px -1122px; }
+/* Tier 7 */
+.talents-icon.leoric.large.buried-alive { background-position: -30px -714px; }
+.talents-icon.leoric.large.death-march { background-position: -30px -816px; }
+.talents-icon.leoric.large.spectral-leech { background-position: -30px -1326px; }
+.talents-icon.leoric.large.hardened-shield { background-position: -30px -1224px; }
 
 /* talents - malfurion - small */
 /* Tier 1 */
@@ -5923,6 +6151,7 @@ p.white { color: #FFF; }
 .hots-modal .hero.kaelthas { background: url('../img/hots/modal/heroes/kaelthas.png') no-repeat center right; }
 .hots-modal .hero.johanna { background: url('../img/hots/modal/heroes/johanna.png') no-repeat center right; }
 .hots-modal .hero.the-butcher { background: url('../img/hots/modal/heroes/the-butcher.png') no-repeat center right; }
+.hots-modal .hero.leoric { background: url('../img/hots/modal/heroes/leoric.png') no-repeat center right; }
 
 .hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
 .hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
@@ -6101,6 +6330,12 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-images .guide-image.guide-images-3.the-butcher { background: url('../img/hots/heroes/guide-images/3/the-butcher3.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-4.the-butcher { background: url('../img/hots/heroes/guide-images/4/the-butcher4.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-5.the-butcher { background: url('../img/hots/heroes/guide-images/5/the-butcher5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.guide-images-1.leoric { background: url('../img/hots/heroes/guide-images/1/leoric.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-2.leoric { background: url('../img/hots/heroes/guide-images/2/leoric2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-3.leoric { background: url('../img/hots/heroes/guide-images/3/leoric3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-4.leoric { background: url('../img/hots/heroes/guide-images/4/leoric4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-5.leoric { background: url('../img/hots/heroes/guide-images/5/leoric5.jpg') no-repeat center top; background-size: cover; }
 
 .guide-images .guide-image.guide-images-1.thelostvikings { background: url('../img/hots/heroes/guide-images/1/lostviking.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-2.thelostvikings { background: url('../img/hots/heroes/guide-images/2/lostviking2.jpg') no-repeat center top; background-size: cover; }
@@ -6317,6 +6552,12 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-images .guide-image.side.guide-images-3.the-butcher { background: url('../img/hots/heroes/guide-images/side/3/the-butcher3.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-4.the-butcher { background: url('../img/hots/heroes/guide-images/side/4/the-butcher4.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-5.the-butcher { background: url('../img/hots/heroes/guide-images/side/5/the-butcher5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.side.guide-images-1.leoric { background: url('../img/hots/heroes/guide-images/side/1/leoric.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-2.leoric { background: url('../img/hots/heroes/guide-images/side/2/leoric2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-3.leoric { background: url('../img/hots/heroes/guide-images/side/3/leoric3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-4.leoric { background: url('../img/hots/heroes/guide-images/side/4/leoric4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-5.leoric { background: url('../img/hots/heroes/guide-images/side/5/leoric5.jpg') no-repeat center top; background-size: cover; }
 
 .guide-images .guide-image.side.guide-images-1.kerrigan { background: url('../img/hots/heroes/guide-images/side/1/kerrigan.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-2.kerrigan { background: url('../img/hots/heroes/guide-images/side/2/kerrigan2.jpg') no-repeat center top; background-size: cover; }
@@ -6575,6 +6816,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-hero-image.kaelthas { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/kaelthas60.png') no-repeat right top; }
 .guide-hero-image.johanna { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/johanna60.png') no-repeat right top; }
 .guide-hero-image.the-butcher { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/the-butcher60.png') no-repeat right top; }
+.guide-hero-image.leoric { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/leoric60.png') no-repeat right top; }
 
 .guide-heroes-1 { width: 100%; }
 .guide-heroes-2 { width: 50%; }
@@ -6784,6 +7026,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .tc-hero.kaelthas { background: url('../img/hots/modal/heroes/kaelthas.png') no-repeat right 120px; }
 .tc-hero.johanna { background: url('../img/hots/modal/heroes/johanna.png') no-repeat right 120px; }
 .tc-hero.the-butcher { background: url('../img/hots/modal/heroes/the-butcher.png') no-repeat right 120px; }
+.tc-hero.leoric { background: url('../img/hots/modal/heroes/leoric.png') no-repeat right 120px; }
 
 
 /* talent calculator link */

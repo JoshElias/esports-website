@@ -28,13 +28,13 @@ angular.module('app.services', [])
        set: function(newTitle, newMetaDescription, newKeywords) {
            metaKeywords = newKeywords;
            metaDescription = newMetaDescription;
-           title = newTitle; 
+           title = newTitle;
        },
        ogMetaType: function() { return ogType; },
        ogMetaUrl: function() { return ogUrl; },
        ogMetaImage: function() { 
            if(!ogImage || ogImage == '') { 
-               return 'https://s3-us-west-2.amazonaws.com/ts-node2/img/100x100tsoglogo.png'
+               return tpl + 'img/100x100tsoglogo.png'
            }
            return ogImage.toLowerCase();
        },
@@ -184,7 +184,49 @@ angular.module('app.services', [])
         }
     };
 }])
-.factory ('SnapshotService', ['$http', '$q', function ($http, $q) {
+.factory('AdminSnapshotService', ['$http', '$q', function($http, $q) {
+    return {
+        getSnapshots: function (page, perpage, search) {
+            var page = page || 1,
+                perpage = perpage || 10,
+                search = search || '';
+            
+            var d = $q.defer();
+            $http.post('/api/admin/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }, 
+        getSnapshot: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/snapshot', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            })
+            return d.promise;
+        },
+        getLatest: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/snapshot/latest', {}).success(function (data) {
+                d.resolve(data);
+            })
+            return d.promise;
+        },
+        addSnapshot: function (snapshot) {
+            return $http.post('/api/admin/snapshot/add', snapshot);
+        },
+        editSnapshot: function (snapshot) {
+            return $http.post('/api/admin/snapshot/edit', snapshot);
+        },
+        deleteSnapshot: function (_id) {
+            var d = $q.defer();
+                $http.post('/api/admin/snapshot/delete', { _id: _id }).success(function (data) {
+                    d.resolve(data);
+                });
+            return d.promise;
+        }
+    }
+}])
+.factory ('SnapshotService', ['$http', '$q', '$localStorage', function ($http, $q, $localStorage) {
     return {
         getSnapshots: function (page, perpage, search) {
             var d = $q.defer(),
@@ -208,11 +250,66 @@ angular.module('app.services', [])
         },
         getLatest: function () {
             var d = $q.defer();
-            $http.post('/getLatestSnapshot', {}).success(function (data) {
+            $http.post('/snapshot/latest', {}).success(function (data) {
                 d.resolve(data);
             });
             
             return d.promise;
+        },
+        addComment: function (snapshot, comment) {
+            return $http.post('/api/snapshot/comment/add', { snapshotID: snapshot._id, comment: comment });
+        },
+        vote: function (snapshot) {
+            console.log(snapshot);
+            return $http.post('/api/snapshot/vote', { snapshot: snapshot });
+        },
+        setStorage: function (isOpen) {
+            return $localStorage['metaCom-'] = isOpen;
+        },
+        getStorage: function () {
+            return $localStorage['metaCom-'];
+        }
+    }
+}])
+.factory('AdminTeamService', ['$http', '$q', function ($http, $q) {
+    return {
+        getMembers: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/teams').success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getMember: function (id) {
+            var d = $q.defer();
+            $http.post('/api/admin/team', { _id: id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        addMember: function (member) {
+            var d = $q.defer();
+            $http.post('/api/admin/team/add', { member: member }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        editMember: function (member) {
+            var d = $q.defer();
+            $http.post('/api/admin/team/edit', { member: member }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        deleteMember: function (member) {
+            var d = $q.defer();
+            $http.post('/api/admin/team/remove', { member: member }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        updateOrder: function (arr) {
+            $http.post('/api/admin/team/order', { members: arr })
         }
     }
 }])
@@ -702,48 +799,6 @@ angular.module('app.services', [])
             return d.promise;
         }
     };
-}])
-.factory('AdminSnapshotService', ['$http', '$q', function($http, $q) {
-    return {
-        getSnapshots: function (page, perpage, search) {
-            var page = page || 1,
-                perpage = perpage || 10,
-                search = search || '';
-            
-            var d = $q.defer();
-            $http.post('/api/admin/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
-                d.resolve(data);
-            });
-            return d.promise;
-        }, 
-        getSnapshot: function (_id) {
-            var d = $q.defer();
-            $http.post('/api/admin/snapshot', { _id: _id }).success(function (data) {
-                d.resolve(data);
-            })
-            return d.promise;
-        },
-        getLatest: function () {
-            var d = $q.defer();
-            $http.post('/api/admin/snapshot/latest', {}).success(function (data) {
-                d.resolve(data);
-            })
-            return d.promise;
-        },
-        addSnapshot: function (snapshot) {
-            return $http.post('/api/admin/snapshot/add', snapshot);
-        },
-        editSnapshot: function (snapshot) {
-            return $http.post('/api/admin/snapshot/edit', snapshot);
-        },
-        deleteSnapshot: function (_id) {
-            var d = $q.defer();
-                $http.post('/api/admin/snapshot/delete', { _id: _id }).success(function (data) {
-                    d.resolve(data);
-                });
-            return d.promise;
-        }
-    }
 }])
 .factory('AdminBannerService', ['$http', '$q', function($http, $q){
     return {
@@ -1939,6 +1994,13 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
+        voteSnapshot: function (direction, snapshot) {
+            var d = $q.defer();
+            $http.post('/api/snapshot/vote', { _id: snapshot._id, direction: direction }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
         voteDeck: function (direction, deck) {
             var d = $q.defer();
             $http.post('/api/deck/vote', { _id: deck._id, direction: direction }).success(function (data) {
@@ -2047,6 +2109,18 @@ angular.module('app.services', [])
     return {
         sendContact: function (contact) {
             return $http.post('/api/contact/send', { contact: contact });
+        }
+    };
+}])
+.factory('TeamService', ['$http', '$q', function ($http, $q) {
+    return {
+        
+        getMembers: function (gm) {
+            var d = $q.defer();
+            $http.post('/team', {gm: gm}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
         }
     };
 }])

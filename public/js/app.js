@@ -281,8 +281,6 @@ var app = angular.module('app', [
                         }
                     }
                 }
-
-                
             })
             .state('app.hs', {
                 abstract: true,
@@ -830,7 +828,19 @@ var app = angular.module('app', [
                 url: '/hearthstone',
                 views: {
                     team: {
-                        templateUrl: tpl + 'views/frontend/team.hearthstone.html'
+                        controller: 'TeamPageCtrl',
+                        templateUrl: tpl + 'views/frontend/team.hearthstone.html',
+                        resolve: {
+                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
+                                return TeamService.getMembers('hs').then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('unable to find post');
+                                    }
+                                });
+                            }]
+                        }
                     }
                 },
                 seo: { title: 'Hearthstone', description: 'TempoStorm Hearthstone team.', keywords: '' }
@@ -839,25 +849,40 @@ var app = angular.module('app', [
                 url: '/hots',
                 views: {
                     team: {
-                        templateUrl: tpl + 'views/frontend/team.hots.html'
+                        controller: 'TeamPageCtrl',
+                        templateUrl: tpl + 'views/frontend/team.hots.html',
+                        resolve: {
+                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
+                                return TeamService.getMembers('hots').then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('unable to find post');
+                                    }
+                                });
+                            }]
+                        }
                     }
                 },
                 seo: { title: 'Heroes of the Storm', description: 'TempoStorm Heroes of the Storm team.', keywords: '' }
-            })
-            .state('app.team.csgo', {
-                url: '/csgo',
-                views: {
-                    team: {
-                        templateUrl: tpl + 'views/frontend/team.csgo.html'
-                    }
-                },
-                seo: { title: 'CS:GO', description: 'TempoStorm Counter Strike: Global Offensive team.', keywords: '' }
             })
             .state('app.team.fifa', {
                 url: '/fifa',
                 views: {
                     team: {
-                        templateUrl: tpl + 'views/frontend/team.fifa.html'
+                        controller: 'TeamPageCtrl',
+                        templateUrl: tpl + 'views/frontend/team.fifa.html',
+                        resolve: {
+                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
+                                return TeamService.getMembers('fifa').then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('unable to find post');
+                                    }
+                                });
+                            }]
+                        }
                     }
                 },
                 seo: { title: 'FIFA', description: 'TempoStorm FIFA team.', keywords: '' }
@@ -866,7 +891,19 @@ var app = angular.module('app', [
                 url: '/fgc',
                 views: {
                     team: {
-                        templateUrl: tpl + 'views/frontend/team.fgc.html'
+                        controller: 'TeamPageCtrl',
+                        templateUrl: tpl + 'views/frontend/team.fgc.html',
+                        resolve: {
+                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
+                                return TeamService.getMembers('fgc').then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('unable to find post');
+                                    }
+                                });
+                            }]
+                        }
                     }
                 },
                 seo: { title: 'FGC', description: 'TempoStorm FGC team.', keywords: '' }
@@ -2044,6 +2081,53 @@ var app = angular.module('app', [
                 },
                 access: {auth: true, admin: true},
                 seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.teams', {
+                abstract: true,
+                url: '/team',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/teams.html'
+                    }
+                }
+            })
+            .state('app.admin.teams.list', {
+                url: '',
+                views: {
+                    teamMembers: {
+                        templateUrl: tpl + 'views/admin/teams.list.html',
+                        controller: 'AdminTeamListCtrl',
+                        resolve: {
+                            data: ['AdminTeamService', function (AdminTeamService) {
+                                return AdminTeamService.getMembers();
+                            }]
+                        }
+                    }
+                }
+            })
+            .state('app.admin.teams.add', {
+                url: '/add',
+                views: {
+                    teamMembers: {
+                        templateUrl: tpl + 'views/admin/teams.add.html',
+                        controller: 'AdminTeamAddCtrl'
+                    }
+                }
+            })
+            .state('app.admin.teams.edit', {
+                url: '/:memberID',
+                views: {
+                    teamMembers: {
+                        templateUrl: tpl + 'views/admin/teams.edit.html',
+                        controller: 'AdminTeamEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminTeamService', function ($stateParams, AdminTeamService) {
+                                var memberID = $stateParams.memberID;
+                                return AdminTeamService.getMember(memberID);
+                            }]
+                        }
+                    }
+                }
             })
             .state('app.admin.subscriptions', {
                 url: '/subscriptions',
