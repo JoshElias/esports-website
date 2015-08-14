@@ -1458,7 +1458,6 @@ angular.module('app.services', [])
             video: deck.video,
             premium: deck.premium,
             featured: deck.featured,
-            arena: deck.arena,
             public: deck.public
         });
     }
@@ -1480,7 +1479,6 @@ angular.module('app.services', [])
             video: deck.video,
             premium: deck.premium,
             featured: deck.featured,
-            arena: deck.arena,
             public: deck.public
         });
     }
