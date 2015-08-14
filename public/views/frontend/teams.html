@@ -1,27 +1,26 @@
-
-    <div class="sub-nav-wrapper">
-        <div class="container-fluid sub-nav" sub-nav>
-            <div class="sub-nav-links">
-                <ul>
-                    <li><a ui-sref="#hs">HEARTHSTONE</a></li>
-                    <li><a ui-sref="#hots">HEROES OF THE STORM</a></li>
-                    <li><a ui-sref="#cs">COUNTER STRIKE: GO</a></li>
-                    <li><a ui-sref="#fgc">FGC</a></li>
-                    <li><a ui-sref="#fifa">FIFA</a></li>
-                </ul>
-            </div>
+<div class="sub-nav-wrapper">
+    <div class="container-fluid sub-nav" sub-nav>
+        <div class="sub-nav-links">
+            <ul>
+                <li><a ui-sref="#hs">HEARTHSTONE</a></li>
+                <li><a ui-sref="#hots">HEROES OF THE STORM</a></li>
+                <li><a ui-sref="#cs">COUNTER STRIKE: GO</a></li>
+                <li><a ui-sref="#fgc">FGC</a></li>
+                <li><a ui-sref="#fifa">FIFA</a></li>
+            </ul>
         </div>
     </div>
+</div>
 <div class="bg-override container-fluid">
     <div class="container-fluid-max">
         <div class="teams">
             <h1>HEARTHSTONE</h1>
-            <div id="hs" class="team row">
+            <div id="hs" class="team row flex-row">
                 <div class="member m-b-lg col-lg-3" ng-repeat="member in hsMembers">
                     <div class="outer">
                         <div class="inner">
                             <img src="../../img/team/{{member.photo}}" />
-                            <div class="wrapper-md content-wrapper">
+                            <div class="wrapper-md content-wrapper ">
                                 <h1 class="m-b-xs">{{member.screenName}}</h1>
                                 <span class="btn-team-wrapper">
                                     <a ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>

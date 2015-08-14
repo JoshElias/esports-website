@@ -1796,6 +1796,7 @@ module.exports = {
                                 verified: true,
                                 isAdmin: req.body.isAdmin,
                                 isProvider: req.body.isProvider,
+                                providerDescription: req.body.providerDescription,
                                 active: req.body.active,
                                 createdDate: new Date().toISOString()
                             });
@@ -1915,6 +1916,7 @@ module.exports = {
                         user.isAdmin = req.body.isAdmin || false;
                         user.active = req.body.active;
                         user.isProvider = req.body.isProvider || false;
+                        user.providerDescription = req.body.providerDescription;
 
                         user.save(function (err) {
                             if (err) {

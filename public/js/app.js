@@ -25,11 +25,13 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage",
-        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies, $localStorage) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage", "LoginModalService",
+        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies, $localStorage, LoginModalService) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
+            $rootScope.UserService = UserService;
+            $rootScope.LoginModalService = LoginModalService;
             
             
             // handle state changes
@@ -822,7 +824,7 @@ var app = angular.module('app', [
                 url: 'teams',
                 views: {
                     content: {
-                        controller: 'TeamPageCtrl',
+                        controller: 'TeamCtrl',
                         templateUrl: tpl + 'views/frontend/teams.html',
                         resolve: {
                             data: ['TeamService', '$q', function (TeamService, $q) {

@@ -1554,16 +1554,17 @@ module.exports = {
                 .lean()
                 .populate([{
                         path: 'author',
-                        select: 'username -_id'
+                        select: 'username -_id email providerDescription social'
                     },
                     {
                         path: 'related',
-                        select: 'title slug.url active -_id createdDate',
+                        select: 'title slug.url active -_id author votesCount photos.small articleType',
                     },
                     {
                         path: 'comments',
                         select: '_id author comment createdDate votesCount votes'
-                }])
+                    }
+                ])
                 .exec(function (err, article) {
                     if (err || !article) { return res.json({ success: false }); }
                     
@@ -1573,9 +1574,16 @@ module.exports = {
                     }, function (err, comments) {
                         if (err || !comments) { return res.json({ success: false }); }
                         article.comments = comments;
-                        return getDeck(article, callback);
                     });
                     
+                    Schemas.Article.populate(article.related, {
+                        path: 'author',
+                        select: 'username'
+                    }, function (err, related) {
+                        if (err || !related) { return res.json({ success: false }); }
+                        article.related = related;
+                        return getDeck(article, callback);
+                    })
                 });
             }
             
@@ -1687,31 +1695,14 @@ module.exports = {
     },
     articleVote: function (Schemas) {
         return function (req, res, next) {
-            var id = req.body._id,
-                direction = req.body.direction;
+            var id = req.body._id;
             
             Schemas.Article.findOne({ _id: id }).select('author votesCount votes').exec(function (err, article) {
-                if (err || !article || article.author.toString() === req.user._id) { return res.json({ success: false }); }
-                var vote = article.votes.filter(function (vote) {
-                    if (vote.userID.toString() === req.user._id) {
-                        return vote;
-                    }
-                })[0];
-                if (vote) {
-                    if (vote.direction !== direction) {
-                        vote.direction = direction;
-                        article.votesCount = (direction === 1) ? article.votesCount + 2 : article.votesCount - 2;
-                    }
-                } else {
-                    article.votes.push({
-                        userID: req.user._id,
-                        direction: direction
-                    });
-                    article.votesCount += direction;
-                }
-                
+                if (err || !article) { return res.json({ success: false }); }
+                article.votes.push(req.user._id);
+                article.votesCount++;
                 article.save(function (err) {
-                    if (err) { return res.json({ success: false }); }
+                    if (err) { return res.json({ success: false }); console.log(err); }
                     return res.json({
                         success: true,
                         votesCount: article.votesCount
@@ -2774,7 +2765,6 @@ module.exports = {
 
                 });
             });
-            
         }
     },
     snapshotCommentAdd: function (Schemas, mongoose) {
