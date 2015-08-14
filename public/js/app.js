@@ -866,27 +866,6 @@ var app = angular.module('app', [
                 },
                 seo: { title: 'Heroes of the Storm', description: 'TempoStorm Heroes of the Storm team.', keywords: '' }
             })
-            .state('app.team.csgo', {
-                url: '/csgo',
-                views: {
-                    team: {
-                        controller: 'TeamPageCtrl',
-                        templateUrl: tpl + 'views/frontend/team.csgo.html',
-                        resolve: {
-                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
-                                return TeamService.getMembers('cs').then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find post');
-                                    }
-                                });
-                            }]
-                        }
-                    }
-                },
-                seo: { title: 'CS:GO', description: 'TempoStorm Counter Strike: Global Offensive team.', keywords: '' }
-            })
             .state('app.team.fifa', {
                 url: '/fifa',
                 views: {
