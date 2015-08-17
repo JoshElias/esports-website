@@ -225,13 +225,37 @@ angular.module('app.controllers', ['ngCookies'])
         // data
         $scope.articles = {
             loading: false,
-            viewable: 6,
-            perpage: 3,
+            viewable: function () {
+                switch ($scope.app.bootstrapWidth) {
+                    case 'xs':
+                        return 1;
+                    case 'sm':
+                        return 3;
+                    case 'md':
+                        return 4;
+                    case 'lg':
+                    case 'default':
+                        return 6;
+                }
+            },
+            perpage: function () {
+                switch ($scope.app.bootstrapWidth) {
+                    case 'xs':
+                        return 1;
+                    case 'sm':
+                        return 3;
+                    case 'md':
+                        return 4;
+                    case 'lg':
+                    case 'default':
+                        return 6;
+                }
+            },
             offset: 0,
             total: dataArticles.total,
             data: dataArticles.articles
         };
-        
+                
         $scope.streamWheel = false;
         $scope.twitWheel = false;
         $scope.streams = undefined;
@@ -264,9 +288,12 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.isArticleActive = function (index) {
-            if ($scope.articles.offset == 0 && index == 0) { return true; }
-            if (index >= ($scope.articles.offset + 1) && index <= ($scope.articles.offset + $scope.articles.viewable - 2)) { return true; }
-            return false;
+            //if ($scope.articles.offset == 0 && index == 0) { return true; }
+            //if ($scope.articles.viewable() == 1 && index == $scope.articles.offset) { return true; } 
+            //if ($scope.viewable() == 6) {
+            //    if (index >= ($scope.articles.offset + 1) && index <= ($scope.articles.offset + $scope.articles.viewable() - 2)) { return true; }
+            //}
+            return true;
         };
         
         $scope.canArticlePrev = function () {
@@ -278,14 +305,14 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.prevArticles = function () {
-            $scope.articles.offset = ($scope.articles.offset - $scope.articles.perpage >= 0) ? $scope.articles.offset - $scope.articles.perpage : 0;
+            $scope.articles.offset = ($scope.articles.offset - $scope.articles.perpage() >= 0) ? $scope.articles.offset - $scope.articles.perpage() : 0;
         };
         
         $scope.nextArticles = function () {
-            if ($scope.articles.offset + $scope.articles.viewable + $scope.articles.perpage <= $scope.articles.data.length) {
-                $scope.articles.offset += $scope.articles.perpage;
+            if ($scope.articles.offset + $scope.articles.viewable() + $scope.articles.perpage() <= $scope.articles.data.length) {
+                $scope.articles.offset += $scope.articles.perpage();
             } else {
-                var num = ($scope.articles.data.length + $scope.articles.perpage <= $scope.articles.total) ? $scope.articles.perpage : $scope.articles.total - $scope.articles.data.length;
+                var num = ($scope.articles.data.length + $scope.articles.perpage() <= $scope.articles.total) ? $scope.articles.perpage() : $scope.articles.total - $scope.articles.data.length;
                 if (num > 0) {
                     $scope.articles.loading = 'next';
                     

@@ -477,20 +477,19 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-dark { background-color: #121111; }
 .home-img-back { background: url('../img/worgenbg.jpg') top center no-repeat; }
 
-.home-articles { position:relative; padding: 0px 20px; background: rgba(36,104,171,.3); }
+.home-articles { position:relative; background: rgba(36,104,171,.3); }
 
-.home-articles-wrapper { position: relative; padding: 40px 0px; overflow: hidden; }
-.home-articles-all, .home-articles-all > div[class*='col-'] { display: -webkit-box; display: -moz-box; display: -ms-flexbox; display: -webkit-flex; display: flex; }
+.home-articles-wrapper { position: relative; margin: 0 10px; padding: 40px 0px; height: 400px; overflow: hidden; }
+.home-articles-inner { position: relative; top: 0px; left: 0px; height: 320px; transition: left 1s ease-in-out; }
 
-.home-articles-inner { position: relative; top: 0px; left: 0px; transition: left 1s ease-in-out; }
+.home-article-wrapper { display: inline-block; padding: 0 10px; height: 400px; vertical-align: top; }
 
-.home-article { position: relative; top: 0px; left: 0px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); opacity: .3; transition: top .25s ease-in-out, opacity 1s ease-in-out, transform 1s ease-in-out, box-shadow .25s ease-in-out; display: flex; flex: 1 100%; flex-flow: column nowrap; }
+.home-article { position: relative; top: 0px; left: 0px; display: block; height: 320px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out; overflow: hidden; }
 .home-article.active:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
 
-.home-article.active { opacity: 1; }
-
 .home-article .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 2; }
-.home-article .home-article-content { margin: -1px 1px 0px 1px; padding: 15px 20px 20px 20px; border-top: 1px solid rgba(255,255,255,.2); }
+.home-article img { width: 100%; height: auto; }
+.home-article .home-article-content { position: relative; bottom: 0px; margin: -1px 1px 0px 1px; padding: 15px 20px 20px 20px; border-top: 1px solid rgba(255,255,255,.2); z-index: 2; overflow: hidden; }
 .home-article .home-article-content h1 { margin-bottom: 20px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; }
 .home-article .home-article-content h1.ts { color: #67a0d6; }
 .home-article .home-article-content h1.hs { color: #d07828; }
@@ -502,8 +501,8 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-articles-prev:hover,
 .home-articles-next:hover { color: rgba(255,255,255,1); }
 
-.home-articles-prev { left: 50px; }
-.home-articles-next { right: 50px; }
+.home-articles-prev { left: 20px; }
+.home-articles-next { right: 20px; }
 
 .home-content { padding: 40px 20px; }
 .home-content h1.title { font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
@@ -511,6 +510,8 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 
 .home-resource { display: block; position: relative; top: 0px; left: 0px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }
 .home-resource:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); background: #2766ad; }
+
+.home-resource img { width: 100%; height: auto; }
 .home-resource .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 2; }
 .home-resource .home-resource-content { margin: -1px 1px 0px 1px; padding: 50px 20px 50px 20px; position: relative; border-top: 1px solid rgba(255,255,255,.2); }
 .home-resource .home-resource-content h1 { margin-bottom: 5px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; color: #f7ef22; text-align: center; text-shadow: 1px 1px 0px rgba(0,0,0,1); }
@@ -6516,7 +6517,7 @@ p.white { color: #FFF; }
 .hots-article:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
 .hots-article .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 2; }
 .hots-article .hots-article-content { margin: -1px 1px 0px 1px; padding: 15px 20px 20px 20px; border-top: 1px solid rgba(255,255,255,.2); }
-.hots-article .hots-article-content h1 { margin-bottom: 20px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; color: #d07828; }
+.hots-article .hots-article-content h1 { margin-bottom: 20px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; color: #8968ad; }
 .hots-article .hots-article-content p { margin-bottom: 0px; color: #bababa; }
 
 /* hots - home guides list */
@@ -6548,6 +6549,10 @@ p.white { color: #FFF; }
 .tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content h3 { font-size: 10px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content .streamer { position: absolute; bottom: 10px; left: 15px; font-size: 16px; color: #67a0d6; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
 .tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content .viewers { position: absolute; bottom: 10px; right: 15px; font-size: 16px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
+
+@media (max-width: 767px) {
+    .tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content { margin-left: 0px; }
+}
 
 /* guide images */
 .hots-guide.large.abathur { background: url('../img/hots/heroes/guide-images/1/abathur.jpg') no-repeat center top; background-size: cover; }

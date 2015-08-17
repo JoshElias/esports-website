@@ -1,13 +1,13 @@
 <!-- game buttons -->
 <div class="container-fluid padding-none">
     <div class="row no-pad games-btns">
-        <div class="col-xs-6">
+        <div class="col-xs-12 col-sm-6">
             <a ui-sref="app.hs.home" class="games-btn games-btn-hs">
                 <div class="games-btn-back"></div>
                 <div class="games-btn-logo"></div>
             </a>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-12 col-sm-6">
             <a ui-sref="app.hots.home" class="games-btn games-btn-hots">
                 <div class="games-btn-back"></div>
                 <div class="games-btn-logo"></div>
@@ -18,7 +18,7 @@
 <!-- / game buttons -->
 
 <!-- sub nav -->
-<div class="sub-nav-wrapper">
+<div class="sub-nav-wrapper hidden-xs">
     <div class="container-fluid sub-nav" sub-nav>
         <div class="now-streaming pull-left">
             
@@ -43,19 +43,17 @@
         <button class="home-articles-prev" ng-class="{ 'hidden': !canArticlePrev() }" ng-click="prevArticles()"><span class="fa fa-angle-left"></span></button>
         <button class="home-articles-next" ng-class="{ 'hidden': !canArticleNext() }" ng-click="nextArticles()"><span class="fa" ng-class="{ 'fa-angle-right': articles.loading != 'next', 'fa-refresh fa-spin': articles.loading == 'next' }"></span></button>
         
-        <div class="home-articles-wrapper" home-articles data-viewable="articles.viewable" data-offset="articles.offset" data-size="articles.data.length">
+        <div class="home-articles-wrapper" home-articles data-viewable="articles.viewable()" data-offset="articles.offset" data-size="articles.data.length">
             <div class="home-articles-inner">
-                <div class="home-articles-all">
-                    <div class="col-xs-2 pos-rl" ng-repeat="article in articles.data track by $index">
-                        <a ui-sref="app.articles.article({ slug: article.slug.url })" class="home-article" ng-class="{ 'active': isArticleActive($index) }">
-                            <div class="inner"></div>
-                            <img ng-src="http://cdn.tempostorm.com/articles/{{article.photos.small}}" class="img-responsive">
-                            <div class="home-article-content">
-                                <h1 class="{{article.articleType.join(' ')}}">{{article.title}}</h1>
-                                <p>{{getArticleDesc(article.description, 40)}}</p>
-                            </div>
-                        </a>
-                    </div>
+                <div class="home-article-wrapper" ng-repeat="article in articles.data track by $index">
+                    <a ui-sref="app.articles.article({ slug: article.slug.url })" class="home-article" ng-class="{ 'active': isArticleActive($index) }">
+                        <div class="inner"></div>
+                        <img ng-src="//cdn-tempostorm.netdna-ssl.com/articles/{{article.photos.small}}" class="img-responsive">
+                        <div class="home-article-content">
+                            <h1 class="{{article.articleType.join(' ')}}">{{article.title}}</h1>
+                            <p>{{getArticleDesc(article.description, 30)}}</p>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -64,61 +62,67 @@
     
     <div class="home-content">
         <div class="row">
-            <div class="col-xs-8">
+            <div class="col-xs-12 col-lg-8">
                 <h1 class="title">TEMPOSTORM RESOURCES</h1>
                 <h3 class="sub-title m-b-md">Amazing tools to help you up your game</h3>
                 <div class="row">
-                    <div class="col-xs-3">
-                        <a ui-sref="app.snapshot.redirect" target="_blank" class="home-resource">
-                            <div class="inner"></div>
-                            <img ng-src="{{app.cdn}}img/metasnapshot.jpg" class="img-responsive">
-                            <div class="home-resource-content">
-                                <h1>THE META SNAPSHOT</h1>
-                                <p>GET AHEAD OF THE META WITH TEMPOSTORM</p>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 m-b-md">
+                                <a ui-sref="app.snapshot.redirect" target="_blank" class="home-resource">
+                                    <div class="inner"></div>
+                                    <img ng-src="{{app.cdn}}img/metasnapshot.jpg" class="img-responsive">
+                                    <div class="home-resource-content">
+                                        <h1>THE META SNAPSHOT</h1>
+                                        <p>GET AHEAD OF THE META WITH TEMPOSTORM</p>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-3">
-                        <a ui-sref="app.hs.deckBuilder.class" target="_blank" class="home-resource">
-                            <div class="inner"></div>
-                            <img ng-src="{{app.cdn}}img/deckbuilder.jpg" class="img-responsive">
-                            <div class="home-resource-content">
-                                <h1>DECK BUILDER</h1>
-                                <p>START CONTRIBUTING DECKS TODAY</p>
+                            <div class="col-xs-12 col-sm-6 m-b-md">
+                                <a ui-sref="app.hs.deckBuilder.class" target="_blank" class="home-resource">
+                                    <div class="inner"></div>
+                                    <img ng-src="{{app.cdn}}img/deckbuilder.jpg" class="img-responsive">
+                                    <div class="home-resource-content">
+                                        <h1>DECK BUILDER</h1>
+                                        <p>START CONTRIBUTING DECKS TODAY</p>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-3">
-                        <a ui-sref="app.hots.talentCalculator.redirect" target="_blank" class="home-resource">
-                            <div class="inner"></div>
-                            <img ng-src="{{app.cdn}}img/talentcalculator.jpg" class="img-responsive">
-                            <div class="home-resource-content">
-                                <h1>TALENT CALCULATOR</h1>
-                                <p>GET AHEAD OF THE META WITH TEMPOSTORM</p>
+                            <div class="col-xs-12 m-b-md">
+                                <a ui-sref="app.hs.decks.list" class="btn btn-hots"><div class="inner">VIEW ALL HEARTHSTONE DECKS</div></a>
                             </div>
-                        </a>
+                        </div>
                     </div>
-                    <div class="col-xs-3">
-                        <a ui-sref="app.hots.guideBuilder.step1" target="_blank" class="home-resource">
-                            <div class="inner"></div>
-                            <img ng-src="{{app.cdn}}img/heroguide.jpg" class="img-responsive">
-                            <div class="home-resource-content">
-                                <h1>GUIDE BUILDER</h1>
-                                <p>ADD YOUR GUIDE TO THE COMMUNITY</p>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 m-b-md">
+                                <a ui-sref="app.hots.talentCalculator.redirect" target="_blank" class="home-resource">
+                                    <div class="inner"></div>
+                                    <img ng-src="{{app.cdn}}img/talentcalculator.jpg" class="img-responsive">
+                                    <div class="home-resource-content">
+                                        <h1>TALENT CALCULATOR</h1>
+                                        <p>GET AHEAD OF THE META WITH TEMPOSTORM</p>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="row m-t-md">
-                    <div class="col-xs-6">
-                        <a ui-sref="app.hs.decks.list" class="btn btn-hots"><div class="inner">VIEW ALL DECKS</div></a>
-                    </div>
-                    <div class="col-xs-6">
-                        <a ui-sref="app.hots.guides.list" class="btn btn-hots"><div class="inner">VIEW ALL GUIDES</div></a>
+                            <div class="col-xs-12 col-sm-6 m-b-md">
+                                <a ui-sref="app.hots.guideBuilder.step1" target="_blank" class="home-resource">
+                                    <div class="inner"></div>
+                                    <img ng-src="{{app.cdn}}img/heroguide.jpg" class="img-responsive">
+                                    <div class="home-resource-content">
+                                        <h1>GUIDE BUILDER</h1>
+                                        <p>ADD YOUR GUIDE TO THE COMMUNITY</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xs-12 m-b-md">
+                                <a ui-sref="app.hots.guides.list" class="btn btn-hots"><div class="inner">VIEW ALL HEROES GUIDES</div></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-12 col-lg-4 m-b-md">
                 <h1 class="title">TEMPOSTORM TV</h1>
                 <h3 class="sub-title m-b-md">Check out who is streaming right now</h3>
                 <ul class="tempostorm-tv">
@@ -126,7 +130,7 @@
                         <a ng-href="{{stream.channelUrl}}" target="_blank" class="tempostorm-tv-stream">
                             <div class="inner"></div>
                             <div class="tempostorm-tv-wrapper clearfix">
-                                <img ng-src="{{stream.screenshotUrl}}" class="pull-left img-responsive">
+                                <img ng-src="{{stream.screenshotUrl}}" class="pull-left img-responsive hidden-xs">
                                 <div class="tempostorm-tv-content pos-rl">
                                     <h1>{{stream.title}}</h1>
                                     <h3>PLAYING: {{stream.gameName}}</h3>
@@ -142,119 +146,3 @@
     </div>
 </div>
 <!-- / content -->
-
-<!-- content start -->
-<div class="container home-content">
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-7 col-lg-5" >
-            <div class="home-articles">
-                <!-- article -->
-                <div class="article-wrapper" ng-repeat="article in articles">
-                    <div class="article" ng-class="{ premium: article.premium.isPremium }">
-                        <a href="./articles/{{article.slug.url}}"></a>
-                        <div class="article-premium" ng-if="article.premium.isPremium"></div>
-                        <div class="article-theme" ng-class="{overcast:article.theme === 'overcast'}" ng-if="article.theme !== 'none'"><a href="./articles/{{article.slug.url}}"></a></div>
-                        <div class="article-img" ng-background="{{app.cdn}}articles/{{article.photos.medium}}"></div>
-                        <div class="article-content-wrapper">
-                            <div class="article-content flex-col">
-                                <h1>{{article.title}}</h1>
-                                <p class="flex-grow">{{article.description}}</p>
-                                <div class="article-info">
-                                    <div class="author pull-left m-r-sm">
-                                        <span>by <a href="./user/{{article.author.username}}">@{{article.author.username}}</a></span>
-                                    </div>
-                                    <div class="pull-right">
-                                        <div class="pull-left m-r-sm">
-                                            <span class="fa fa-clock-o"></span>
-                                            <span>{{article.createdDate | date : 'mediumDate'}}</span>
-                                        </div>
-                                        <div class="pull-left m-r-sm">
-                                            <span class="fa fa-comment-o"></span>
-                                            <a href="./articles/{{article.slug.url}}">{{article.comments.length}} Comment<span ng-if="article.comments.length === 1">s</span></a>
-                                        </div>
-                                        <div class="pull-left">
-                                            <span class="fa fa-thumbs-o-up"></span>
-                                            <span><span ng-if="article.votesCount > 0">+</span>{{article.votesCount}}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- / article -->
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
-            <!-- talent calc -->
-            <div hots-tc></div>
-            <!-- /talent calc -->
-            <!-- deck builder -->
-            <div hs-builder></div>
-            <!-- / deck builder -->
-            <!-- guide builder -->
-            <div hots-builder></div>
-            <!-- / guide builder -->
-        </div>
-        
-        <div class="col-md-12 col-lg-3">
-            <div class="twitch-feed clearfix m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-12">
-                <div class="twitch-head wrapper-sm">
-                    <div>
-                        <i class="fa" ng-class="{ 'fa-twitch': streamWheel, 'fa-cog': !streamWheel, 'fa-spin': !streamWheel }"></i>
-                        <h3>TEMPO STREAMS</h3>
-                    </div>
-                </div>
-                <div ng-if="streams.length > 0" class="twitch-body" ng-show="streams">
-                    <div class="stream wrapper-xs" ng-repeat="stream in streams | orderBy:-viewerCount">
-                        <a target="_blank" ng-href="{{stream.channelUrl}}">
-                            <div class="stream-img-wrapper">
-                                <img ng-src="{{stream.logoUrl}}">
-                            </div>
-                            <div class="stream-info">
-                                <div class="stream-info-top">
-                                    <h4>{{stream.displayName}}</h4>
-                                    <div class="views">
-                                        <h4 class="pull-right">{{stream.viewerCount}}</h4><i class="fa fa-eye pull-right"></i>
-                                    </div>
-                                </div>
-                                <div class="stream-info-bottom clearfix">
-                                    <p>{{stream.gameName}}</p>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="darkbox nostream wrapper-md" ng-if="streams.length < 1 && streamWheel"><p class="m-b-none">Sorry, there are currently no streams available.</p></div>
-            </div>
-            
-            <div class="twitter-feed clearfix m-b-md col-xs-12 col-sm-12 col-md-6 col-lg-12">
-                <div class="twitter-head wrapper-sm">
-                    <div>
-                        <i class="fa" ng-class="{ 'fa-twitter': twitWheel, 'fa-cog': !twitWheel, 'fa-spin': !twitWheel }"></i>
-                        <h3>TEMPO FEED</h3>
-                    </div>
-                </div>
-                <div class="twitter-body" ng-show="tweets">
-                    <div class="tweet wrapper-sm" ng-repeat="tweet in tweets">
-                        <div class="tweet-info">
-                            <div class="tweet-info-top">
-                                <a target="_blank" ng-href="{{tweet.authorUrl}}"><h4 class="ell name">@{{tweet.screenName}}</h4></a>
-                                <div class="time">
-                                    <i class="fa fa-clock-o"></i><h4 am-time-ago="tweet.timestamp" class="pull-right"></h4>
-                                </div>
-                            </div>
-                            <div class="tweet-info-bottom wrapper-sm clearfix">
-                                <p ng-bind-html="getContent(tweet.text)"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="darkbox nofeed wrapper-md" ng-show="!tweets && twitWheel"><p class="m-b-none">Sorry, there are currently no tweets available.</p></div>
-            </div>
-            
-        </div>
-        
-    </div>
-</div>
-<!-- content end -->

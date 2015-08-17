@@ -452,26 +452,43 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/socialmedia/redditbutton.html'
     }
 }])
-.directive('homeArticles', [function () {
+.directive('homeArticles', ['$window', function ($window) {
     return {
         restrict: 'A',
         scope: {
-            viewable: '=',
+            viewable: '&',
             offset: '=',
             size: '='
         },
         link: function(scope, element, attrs) {
+            console.log('viewable: ', scope.viewable());
             console.log('offset: ', scope.offset);
             console.log('size: ', scope.size);
+            console.log('width: ', $('body').innerWidth());
             
             function updateWidth () {
-                $(element).find('.home-articles-inner').css('width', ((100 / scope.viewable) * scope.size) + '%');
+                var newWidth = (((100 / scope.viewable()) * scope.size) / 100 * ($('body').innerWidth() - 20));
+                console.log('width: ', $window.innerWidth);
+                console.log('newWidth: ', newWidth);
+                $(element).find('.home-articles-inner').css('width', newWidth + 'px');
+                $(element).find('.home-article-wrapper').css('width', Math.floor(newWidth / scope.size, 2) + 'px');
             }
             
             function updateOffset () {
-                $(element).find('.home-articles-inner').css('left', ((100 / scope.viewable) * scope.offset * -1) + '%');
+                var newWidth = (((100 / scope.viewable()) * scope.size) / 100 * ($('body').innerWidth() - 20));
+                var offset = (scope.offset + scope.viewable() > scope.size) ? scope.size - scope.viewable() : scope.offset;
+                $(element).find('.home-articles-inner').css('left', (Math.floor(newWidth / scope.size) * offset * -1) + 'px');
             }
             
+            scope.$watch(
+                function ($scope) {
+                    return $scope.viewable();
+                },
+                function(newValue){
+                    console.log('viewable: ', newValue);
+                    updateWidth();
+                    updateOffset();
+            });
             scope.$watch('offset', function(value){
                 console.log('offset: ', value);
                 updateOffset();
@@ -479,6 +496,37 @@ angular.module('app.directives', ['ui.load'])
             scope.$watch('size', function(value){
                 console.log('size: ', value);
                 updateWidth();
+            });
+            angular.element($window).bind("resize", function() {
+                updateWidth();
+                updateOffset();
+            });
+        }
+    };
+}])
+.directive('bootstrapWidth', ['$window', '$timeout', function ($window, $timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            function updateBootstrapWidth () {
+                var width = $('body').innerWidth();
+                
+                if (width < 768) {
+                    scope.app.bootstrapWidth = 'xs';
+                } else if (width < 993) {
+                    scope.app.bootstrapWidth = 'sm';
+                } else if (width < 1199) {
+                    scope.app.bootstrapWidth = 'md';
+                } else {
+                    scope.app.bootstrapWidth = 'lg';
+                }
+                $timeout(function () {
+                    scope.$apply();
+                });
+            }
+            updateBootstrapWidth();
+            angular.element($window).bind("resize", function() {
+                updateBootstrapWidth();
             });
         }
     };
