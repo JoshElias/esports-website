@@ -32,7 +32,7 @@
     font-style: normal;
 }
 
-body { background: #323232 url('../img/tsbg.png'); font-family: 'Open Sans Regular'; overflow-x: hidden; }
+body { background: #121111; font-family: 'Open Sans Regular'; overflow-x: hidden; }
 body.admin {  }
 body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center top; }
 
