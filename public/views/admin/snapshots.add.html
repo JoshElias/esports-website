@@ -130,7 +130,7 @@
                             <li class="list-group-item" ng-if="t.decks == 0">There are no decks selected yet!</li>
 <!--                            -->
                             <li class="list-group-item" ng-repeat="d in t.decks" ng-if="t.decks.length != 0" >
-                                <span class="badge pull-left">{{d.rank.current}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index)" dnd-disable-if="t.decks.length < 1">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeckPrompt(d.deck)"><i class="fa fa-close"></i></button></span> 
+                                <span class="badge pull-left">{{d.rank.current}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index, d)" dnd-disable-if="t.decks.length < 1">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeckPrompt(d.deck)"><i class="fa fa-close"></i></button></span> 
                                 <div class="collapse" id="deckrank{{d.rank.current}}">
                                     <div class="form-group wrapper-md">
                                         
