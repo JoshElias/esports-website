@@ -100,7 +100,12 @@ angular.module('app.controllers', ['ngCookies'])
           return (/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/).test(ua);
       }
 
-  }])
+}])
+.controller('RootCtrl', ['$scope', 'LoginModalService', function ($scope, LoginModalService) {
+    $scope.loginModal = function () {
+        LoginModalService.showModal();
+    }
+}])
 .controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
     MetaService.setStatusCode(404);
 }])
@@ -220,7 +225,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', '$sce', 'dataBanners', 'dataArticles', 'TwitchService', 'TwitterService',
+.controller('HomeCtrl', ['$scope', '$sce', 'dataBanners', 'dataArticles', 'TwitchService', 'TwitterService', 
     function ($scope, $sce, dataBanners, dataArticles, TwitchService, TwitterService) {
         // data
         $scope.articles = dataArticles.articles;
@@ -380,7 +385,27 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 
     function ($scope, dataProfile, MetaService) {
         $scope.user = dataProfile.user;
+        $scope.postCount = dataProfile.postCount;
+        $scope.deckCount = dataProfile.deckCount;
+        $scope.guideCount = dataProfile.guideCount;
+        $scope.activities = dataProfile.activities;
         
+        $scope.activityType = function(act) {
+            switch(act.activityType) {
+                case 'articleComment': 
+                case 'snapshotComment': 
+                case 'forumPost': 
+                case 'forumComment': 
+                case 'deckComment':
+                case 'guideComment': return 'comm'; break;
+                    
+                case 'createArticle': return 'comm'; break; //does this need to be changed?
+                case 'createDeck': return 'hsCreate'; break;
+                case 'createGuide': return 'hotsCreate'; break;
+                case 'signup': return 'signup'; break; //does this need to be changed?
+            }
+        }
+
         function isMyProfile() {
             if($scope.app.user.getUsername() == $scope.user.username) {
                 return 'My Profile';
@@ -391,14 +416,18 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set(isMyProfile());
         
-        $scope.socialExists = function () {
-            if (!$scope.user.social) { return false; }
-            return ($scope.user.social.twitter && $scope.user.social.twitter.length) || 
-            ($scope.user.social.facebook && $scope.user.social.facebook.length) || 
-            ($scope.user.social.twitch && $scope.user.social.twitch.length) || 
-            ($scope.user.social.instagram && $scope.user.social.instagram.length) || 
-            ($scope.user.social.youtube && $scope.user.social.youtube.length);
-        };
+        
+        
+        
+        
+//        $scope.socialExists = function () {
+//            if (!$scope.user.social) { return false; }
+//            return ($scope.user.social.twitter && $scope.user.social.twitter.length) || 
+//            ($scope.user.social.facebook && $scope.user.social.facebook.length) || 
+//            ($scope.user.social.twitch && $scope.user.social.twitch.length) || 
+//            ($scope.user.social.instagram && $scope.user.social.instagram.length) || 
+//            ($scope.user.social.youtube && $scope.user.social.youtube.length);
+//        };
     }
 ])
 .controller('ProfileEditCtrl', ['$scope', '$state', 'ProfileService', 'AlertService', 'dataProfileEdit',  
@@ -583,17 +612,6 @@ angular.module('app.controllers', ['ngCookies'])
             });
         }
 
-    }
-])
-.controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity',  
-    function ($scope, $sce, dataActivity) {
-        $scope.activities = dataActivity.activities;
-        
-        $scope.activities.forEach(function (activity) {
-            activity.getActivity = function () {
-                return $sce.trustAsHtml(activity.activity);
-            };
-        });
     }
 ])
 .controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',  
@@ -4974,7 +4992,13 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.matchupName = [];
         $scope.hasVoted = false;
         $scope.show.comments = SnapshotService.getStorage();
-
+        $scope.$watch('app.user.isLogged()', function() {
+            for (var i = 0; i < $scope.snapshot.votes.length; i++) {
+                if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
+                    $scope.hasVoted = true;
+                }
+            }
+        });
         
         var mouseOver = [],
             charts = [],
@@ -5130,11 +5154,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             /******************************************* HAS VOTED *******************************************/
 
-            for (var i = 0; i < $scope.snapshot.votes.length; i++) {
-                if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
-                    $scope.hasVoted = true;
-                }
-            }
+            
 
             /******************************************* BUILD TIER MATCHES *******************************************/
             for (var j = 0; j < maxTierLength; j++) {
@@ -5477,12 +5497,18 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'UserService', 'ArticleService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'MetaService', 'LoginModalService',
-    function ($scope, $parse, $sce, data, $state, $compile, $window, bootbox, UserService, ArticleService, AuthenticationService, VoteService, SubscriptionService, MetaService, LoginModalService) {
+.controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'ArticleService', 'VoteService', 'MetaService', 'LoginModalService',
+    function ($scope, $parse, $sce, data, $state, $compile, $window, bootbox, ArticleService, VoteService, MetaService, LoginModalService) {
         
         $scope.article = data.article;
         $scope.authorEmail = data.article.author.email;
-        
+        $scope.$watch('app.user.isLogged()', function() {
+            for (var i = 0; i < $scope.article.votes.length; i++) {
+                if ($scope.article.votes[i] == $scope.app.user.getUserID()) {
+                    checkVotes();
+                }
+            }
+        });
         
         $scope.isPremium = function () {
             if (!$scope.article.premium.isPremium) { return false; }
@@ -5633,7 +5659,7 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                UserService.loginModal(function () {
+                LoginModalService.showModal(function () {
                     $scope.voteComment(direction, deck);
                 });
             } else {

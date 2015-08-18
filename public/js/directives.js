@@ -49,13 +49,15 @@ angular.module('app.directives', ['ui.load'])
 })
 .directive('loginForm', ['$window', 'AuthenticationService', 'LoginModalService', 'UserService', 'SubscriptionService', function ($window, AuthenticationService, LoginModalService, UserService, SubscriptionService) {
     return {
-        templateUrl: tpl + 'views/frontend/login.form.html',
+        templateUrl: tpl + 'views/frontend/directives/login.form.html',
         scope: {
             callback: '&'
         },
         link: function (scope, el, attr) {
             
-            console.log(scope);
+            scope.closeModal = function () {
+                LoginModalService.hideModal();
+            }
             
             scope.login = function login(email, password) {
                 if (email !== undefined && password !== undefined) {
@@ -73,8 +75,6 @@ angular.module('app.directives', ['ui.load'])
                         $window.sessionStorage.email = data.email;
                         $window.sessionStorage.token = data.token;
                         LoginModalService.hideModal();
-                        
-                        console.log(scope.callback);
                         
                         scope.callback();
                     }).error(function() {

@@ -491,13 +491,102 @@ module.exports = {
             }
         };
     },
-    profile: function (Schemas) {
+    profile: function (Schemas, async) {
         return function (req, res, next) {
-            var username = req.params.username;
+            var username = req.params.username,
+                usr = undefined,
+                postCount = 0,
+                deckCount = 0,
+                guideCount = 0,
+                activities = [];
             
-            Schemas.User.findOne({ username: username, active: true }).select('username email firstName lastName photos social about subscription.isSubscribed').exec(function (err, user) {
-                if (err || !user) { return res.json({ success: false }); }
-                return res.json({ success: true, user: user });
+            function getUser(callback) {
+                Schemas.User.findOne({ username: username, active: true }).select('username email firstName lastName photos social about subscription.isSubscribed').exec(function (err, user) {
+                    if (err || !user) { return res.json({ success: false }); }
+                    usr = user;
+                    return callback();
+                });
+            };
+            
+            function countPosts(callback) {
+                Schemas.ForumPost.count({ author:usr._id }).exec(function (err, count) {
+                    postCount = count;
+                    return callback();
+                });
+            }
+            
+            function countDecks(callback) {
+                Schemas.Deck.count({ author:usr._id }).exec(function (err, count) {
+                    deckCount = count;
+                    return callback();
+                })
+            };
+            
+            function countGuides(callback) {
+                Schemas.Guide.count({ author:usr._id }).exec(function (err, count) {
+                    guideCount = count;
+                    return callback();
+                });
+            };
+            
+            function getActivity (callback) {
+                
+                var iterAct = function (activity, callback) {
+                    if (activity.forumPost) {
+                        Schemas.ForumThread.populate(activity.forumPost, {
+                            path: 'thread',
+                            select: 'slug.url'
+                        }, callback);
+                    } else {
+                        return callback();
+                    }
+                };
+                
+                Schemas.Activity.find({ author: usr._id, active: true })
+                .sort('-createdDate')
+                .populate([
+                    {
+                        path: 'article',
+                        select: '_id title slug active'
+                    },
+                    {
+                        path: 'deck',
+                        select: '_id name slug public',
+                        match: { public: true }
+                    },
+                    {
+                        path: 'forumPost',
+                        select: '_id title slug thread'
+                    },
+                    {
+                        path: 'guide',
+                        select: '_id name slug public',
+                        match: { public: true }
+                    },
+                    {
+                        path: 'snapshot',
+                        select: '_id title slug snapNum'
+                    }
+                ])
+                .exec(function (err, activities) {
+                    if (err) { return req.json({ success: false }); }
+                    async.each(activities, iterAct, function (err) {
+                        if (err) { return res.json({ success: false }); }
+                        return callback(activities);
+                    });
+                });
+            }
+            
+            getUser(function() {
+                countPosts(function() {
+                    countDecks(function() {
+                        countGuides(function() {
+                            getActivity(function(activities) {
+                                return res.json({ success: true, user: usr, postCount: postCount, deckCount: deckCount, guideCount: guideCount, activities: activities });
+                            });
+                        });
+                    });
+                });
             });
         };
     },
