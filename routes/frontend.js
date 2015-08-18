@@ -544,14 +544,15 @@ module.exports = {
                 
                 Schemas.Activity.find({ author: usr._id, active: true })
                 .sort('-createdDate')
+                .lean()
                 .populate([
                     {
                         path: 'article',
-                        select: '_id title slug active'
+                        select: '_id title slug active comments description'
                     },
                     {
                         path: 'deck',
-                        select: '_id name slug public',
+                        select: '_id name slug public comments description',
                         match: { public: true }
                     },
                     {
@@ -560,12 +561,12 @@ module.exports = {
                     },
                     {
                         path: 'guide',
-                        select: '_id name slug public guideType description',
+                        select: '_id name slug public guideType description comments',
                         match: { public: true }
                     },
                     {
                         path: 'snapshot',
-                        select: '_id title slug snapNum'
+                        select: '_id title slug snapNum comments'
                     }
                 ])
                 .exec(function (err, activities) {
