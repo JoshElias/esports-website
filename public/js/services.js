@@ -176,15 +176,15 @@ angular.module('app.services', [])
 }])
 .factory('ArticleService', ['$http', '$q', function ($http, $q) {
     return {
-        getArticles: function (articleType, filter, page, perpage, search) {
+        getArticles: function (articleType, filter, offset, num, search) {
             var d = $q.defer(),
                 articleType = articleType || 'all',
                 filter = filter || 'all',
-                page = page || 1,
-                perpage = perpage || 20,
+                offset = offset || 0,
+                num = num || 20,
                 search = search || '';
             
-            $http.post('/articles', { articleType: articleType, filter: filter, page: page, perpage: perpage, search: search }).success(function (data) {
+            $http.post('/articles', { articleType: articleType, filter: filter, offset: offset, num: num, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

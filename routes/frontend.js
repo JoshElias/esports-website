@@ -1575,8 +1575,8 @@ module.exports = {
         return function (req, res, next) {
             var articleType = req.body.articleType || 'all',
                 filter = req.body.filter || 'all',
-                page = req.body.page || 1,
-                perpage = req.body.perpage || 5,
+                offset = req.body.offset || 0,
+                num = req.body.num || 5,
                 where = {},
                 search = req.body.search || '',
                 articles, total;
@@ -1618,8 +1618,8 @@ module.exports = {
                     select: 'username -_id'
                 })
                 .sort('-createdDate')
-                .skip((perpage * page) - perpage)
-                .limit(perpage)
+                .skip(offset)
+                .limit(num)
                 .exec(function (err, results) {
                     if (err) { return req.json({ success: false }); }
                     articles = results;
@@ -1629,7 +1629,7 @@ module.exports = {
             
             getArticles(function () {
                 getTotal(function () {
-                    return res.json({ success: true, articles: articles, total: total, articleType: articleType, filter: filter, page: page, perpage: perpage, search: search });
+                    return res.json({ success: true, articles: articles, total: total, articleType: articleType, filter: filter, offset: offset, num: num, search: search });
                 });
             });
         };
