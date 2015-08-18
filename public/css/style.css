@@ -5297,7 +5297,7 @@ p.white { color: #FFF; }
 .talents-icon.sonya.large.focused-attack { background-position: -30px -408px; }
 .talents-icon.sonya.large.boon-of-the-ancients { background-position: -30px -510px; }
 .talents-icon.sonya.large.furious-blow { background-position: -30px -612px; }
-.talents-icon.sonya.large.follow-through { background-position: 0px -1632px; }
+.talents-icon.sonya.large.follow-through { background-position: -30px -1632px; }
 /* Tier 3 */
 .talents-icon.sonya.large.poisoned-spear { background-position: -30px -510px; }
 .talents-icon.sonya.large.shattered-ground { background-position: -30px -612px; }
