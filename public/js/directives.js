@@ -141,7 +141,7 @@ angular.module('app.directives', ['ui.load'])
 .directive("subNav", ['$window', function ($window) {
     return function(scope, element, attrs) {
         angular.element($window).bind("scroll", function() {
-             if (this.pageYOffset >= 278) {
+             if (this.pageYOffset >= (element.parent().offset().top - 50)) {
                  element.addClass('sticky');
              } else {
                  element.removeClass('sticky');
@@ -504,6 +504,7 @@ angular.module('app.directives', ['ui.load'])
         },
         templateUrl: 'views/frontend/directives/db.deck.html'
     }
+}])
 .directive('homeArticles', ['$window', function ($window) {
     return {
         restrict: 'A',

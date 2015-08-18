@@ -437,29 +437,17 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 
-    function ($scope, dataProfile, MetaService) {
+.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 'HOTSGuideService',
+    function ($scope, dataProfile, MetaService, HOTSGuideService) {
         $scope.user = dataProfile.user;
         $scope.postCount = dataProfile.postCount;
         $scope.deckCount = dataProfile.deckCount;
         $scope.guideCount = dataProfile.guideCount;
         $scope.activities = dataProfile.activities;
         
-        $scope.activityType = function(act) {
-            switch(act.activityType) {
-                case 'articleComment': 
-                case 'snapshotComment': 
-                case 'forumPost': 
-                case 'forumComment': 
-                case 'deckComment':
-                case 'guideComment': return 'comm'; break;
-                    
-                case 'createArticle': return 'comm'; break; //does this need to be changed?
-                case 'createDeck': return 'hsCreate'; break;
-                case 'createGuide': return 'hotsCreate'; break;
-                case 'signup': return 'signup'; break; //does this need to be changed?
-            }
-        }
+
+        
+
 
         function isMyProfile() {
             if($scope.app.user.getUsername() == $scope.user.username) {
@@ -471,8 +459,42 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set(isMyProfile());
         
-        
-        
+        // delete guide
+        $scope.deleteGuide = function deleteGuide(guide) {
+            console.log('fuqui');
+            var box = bootbox.dialog({
+                title: 'Delete guide: ' + guide.name + '?',
+                message: 'Are you sure you want to delete the guide <strong>' + guide.name + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            HOTSGuideService.guideDelete(guide._id).success(function (data) {
+                                if (data.success) {
+                                    var index = $scope.guides.indexOf(guide);
+                                    if (index !== -1) {
+                                        $scope.guides.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: 'guide "' + guide.name + '" deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
         
         
 //        $scope.socialExists = function () {
@@ -717,42 +739,7 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('ProfileGuidesCtrl', ['$scope', 'bootbox', 'HOTSGuideService', 'dataGuides',  
     function ($scope, bootbox, HOTSGuideService, dataGuides) {
-        $scope.guides = dataGuides.guides;
-        // delete guide
-        $scope.guideDelete = function deleteGuide(guide) {
-            var box = bootbox.dialog({
-                title: 'Delete guide: ' + guide.name + '?',
-                message: 'Are you sure you want to delete the guide <strong>' + guide.name + '</strong>?',
-                buttons: {
-                    delete: {
-                        label: 'Delete',
-                        className: 'btn-danger',
-                        callback: function () {
-                            HOTSGuideService.guideDelete(guide._id).success(function (data) {
-                                if (data.success) {
-                                    var index = $scope.guides.indexOf(guide);
-                                    if (index !== -1) {
-                                        $scope.guides.splice(index, 1);
-                                    }
-                                    $scope.success = {
-                                        show: true,
-                                        msg: 'guide "' + guide.name + '" deleted successfully.'
-                                    };
-                                }
-                            });
-                        }
-                    },
-                    cancel: {
-                        label: 'Cancel',
-                        className: 'btn-default pull-left',
-                        callback: function () {
-                            box.modal('hide');
-                        }
-                    }
-                }
-            });
-            box.modal('show');
-        }
+
     }
 ])
 .controller('ProfilePostsCtrl', ['$scope', 'dataPosts',  
@@ -5748,10 +5735,6 @@ angular.module('app.controllers', ['ngCookies'])
                 };
             }
         }
-        
-        // login for modal
-        console.log('do not forget the callbacks ');
-
     }
 ])
 .controller('DecksCtrl', ['$scope', '$state', 'Hearthstone', 'DeckService', 'data', 

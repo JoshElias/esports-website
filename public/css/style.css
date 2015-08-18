@@ -1992,13 +1992,19 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-page .activity-list .activity .activity-left { height: 100% }
 .profile-page .activity-list .activity .activity-left .activity-img { width: 60px; height: 60px; border-radius: 50%; background-color: rgb(255,255,255); padding: 2px; }
 .profile-page .activity-list .activity .activity-left .activity-img img { width: 100%; }
-/*.profile-page .activity-list .activity .activity-left .activity-btn-wrapper { opacity: 0; transition: .4s }*/
+.profile-page .activity-list .activity .activity-left .activity-btn-wrapper { opacity: 0; transition: .4s }
 .profile-page .activity-list .activity:hover .activity-left .activity-btn-wrapper { opacity: 1; }
-.profile-page .activity-list .activity .activity-left .activity-btn-wrapper .activity-btn { display: inline-block; width:20px; }
+.profile-page .activity-list .activity .activity-left .activity-btn-wrapper .activity-btn { display: inline-block; width:25px; height: 25px; text-align: center; background-color: rgba(255,255,255,.75); border-radius: 50%; line-height: 1.75; padding-left: 2px; }
 
-.profile-page .activity-list .activity .activity-right { padding-left: 25px; }
+.profile-page .activity-list .activity .activity-right { padding-left: 25px; color: white; width: 100%; }
+.profile-page .activity-list .activity .activity-right .activity-content .activity-header { font-weight: bold; }
 
-.profile-page .activity-list .comm {
+.profile-page .activity-list .articleComment,
+.profile-page .activity-list .snapshotComment,
+.profile-page .activity-list .forumPost,
+.profile-page .activity-list .forumComment,
+.profile-page .activity-list .deckComment,
+.profile-page .activity-list .guideComment {
     background: #007ec3; /* Old browsers */
     background: -moz-linear-gradient(left,  rgba(0,126,195,.75) 0%, rgba(19,68,118,.75) 75%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(0,126,195,.75)), color-stop(75%,rgba(19,68,118,.75))); /* Chrome,Safari4+ */
@@ -2009,7 +2015,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#007ec3', endColorstr='#134476',GradientType=0 ); /* IE6-9 */
 }
 .profile-page .activity-list .create { background-color: green; }
-.profile-page .activity-list .hsCreate { 
+.profile-page .activity-list .createDeck { 
     background: #faa519; /* Old browsers */
     background: -moz-linear-gradient(left,  rgba(250,165,25,.75) 0%, rgba(187,80,24,.75) 75%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(250,165,25,.75)), color-stop(75%,rgba(187,80,24,.75))); /* Chrome,Safari4+ */
@@ -2019,7 +2025,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     background: linear-gradient(to right,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#faa519', endColorstr='#bb5018',GradientType=0 ); /* IE6-9 */ 
 }
-.profile-page .activity-list .hotsCreate { 
+.profile-page .activity-list .createGuide { 
     background-color: background: #461d6d; /* Old browsers */
     background: -moz-linear-gradient(left,  rgba(70,29,109,.75) 0%, rgba(27,29,107,.75) 75%); /* FF3.6+ */
     background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(70,29,109,.75)), color-stop(75%,rgba(27,29,107,.75))); /* Chrome,Safari4+ */

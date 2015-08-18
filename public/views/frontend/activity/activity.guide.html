@@ -1,5 +1,6 @@
 <span ng-if="!activity.exists">deleted a guide.</span>
-<span ng-if="activity.exists">
-    <span ng-if="activity.guide.public">created a new guide! <a href="./heroes-of-the-storm/guides/{{activity.guide.slug}}">{{activity.guide.name}}</a></span>
-    <span ng-if="!activity.guide.public">created a private guide!</span>
+<span ng-if="activity.exists" class="activity-content">
+    <div class="activity-header">{{activity.guide.name}}</span><span class="pull-right" am-time-ago="activity.createdDate"></div>
+    <div class="activity-body m-t-md">{{activity.guide.description}}</div>
+    <div class="activity-foot m-t-md">{{activity.guide.description}}</div>
 </span>

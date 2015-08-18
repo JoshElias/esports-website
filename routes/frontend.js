@@ -560,7 +560,7 @@ module.exports = {
                     },
                     {
                         path: 'guide',
-                        select: '_id name slug public',
+                        select: '_id name slug public guideType description',
                         match: { public: true }
                     },
                     {
