@@ -1658,7 +1658,8 @@ module.exports = {
                     author: userID,
                     activityType: "articleComment",
                     article: articleID,
-                    createdDate: new Date().toISOString()
+                    createdDate: new Date().toISOString(),
+                    comment: newCommentID
                 });
                 activity.save(function(err, data) {
                     if (err) {
@@ -2080,7 +2081,8 @@ module.exports = {
                     author: userID,
                     activityType: "deckComment",
                     deck: deckID,
-                    createdDate: new Date().toISOString()
+                    createdDate: new Date().toISOString(),
+                    comment: newCommentID
                 });
                 activity.save(function(err, data) {
                     if (err) {
