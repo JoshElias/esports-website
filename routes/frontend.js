@@ -2412,7 +2412,8 @@ module.exports = {
                     author: req.user._id,
                     activityType: "forumComment",
                     forumPost: postID,
-                    createdDate: new Date().toISOString()
+                    createdDate: new Date().toISOString(),
+                    comment: _id
                 });
                 activity.save(function(err, data) {
                     if (err) {
@@ -2839,7 +2840,8 @@ module.exports = {
                     author: userID,
                     activityType: "snapshotComment",
                     snapshot: snapshotID,
-                    createdDate: new Date().toISOString()
+                    createdDate: new Date().toISOString(),
+                    comment: newCommentID
                 });
                 activity.save(function(err, data) {
                     if (err) {
