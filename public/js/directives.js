@@ -1,4 +1,5 @@
 'use strict';
+var Z;
 
 angular.module('app.directives', ['ui.load'])
 .directive('uiModule', ['MODULE_CONFIG','uiLoad', '$compile', function(MODULE_CONFIG, uiLoad, $compile) {
@@ -46,12 +47,45 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 })
-.directive('loginForm', function () {
+.directive('loginForm', ['$window', 'AuthenticationService', 'LoginModalService', 'UserService', 'SubscriptionService', function ($window, AuthenticationService, LoginModalService, UserService, SubscriptionService) {
     return {
-        templateUrl: tpl + 'views/frontend/login.form.html'
-    };
-})
-.directive('datePicker', function(){
+        templateUrl: tpl + 'views/frontend/directives/login.form.html',
+        scope: {
+            callback: '&'
+        },
+        link: function (scope, el, attr) {
+            
+            scope.closeModal = function () {
+                LoginModalService.hideModal();
+            }
+            
+            scope.login = function login(email, password) {
+                if (email !== undefined && password !== undefined) {
+                    UserService.login(email, password).success(function(data) {
+                        AuthenticationService.setLogged(true);
+                        AuthenticationService.setAdmin(data.isAdmin);
+                        AuthenticationService.setProvider(data.isProvider);
+
+                        SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                        SubscriptionService.setTsPlan(data.subscription.plan);
+                        SubscriptionService.setExpiry(data.subscription.expiry);
+
+                        $window.sessionStorage.userID = data.userID;
+                        $window.sessionStorage.username = data.username;
+                        $window.sessionStorage.email = data.email;
+                        $window.sessionStorage.token = data.token;
+                        LoginModalService.hideModal();
+                        
+                        scope.callback();
+                    }).error(function() {
+                        scope.showError = true;
+                    });
+                }
+            }
+        }
+    }
+}])
+.directive('datePicker', function (){
     return {
         replace: true,
         templateUrl: tpl + 'views/admin/date-picker.html',
@@ -450,6 +484,25 @@ angular.module('app.directives', ['ui.load'])
             url: "=url"
         },
         templateUrl: 'views/frontend/socialmedia/redditbutton.html'
+    }
+}])
+.directive("dbDeck", [function () {
+    return {
+        restrict: "A",
+        replace: true,
+        scope: {
+            deck: "=deck"
+        },
+        link: function (scope,elem,attr) {
+            scope.getDust = function () {
+                var dust = 0;
+                for (var i = 0; i < scope.deck.cards.length; i++) {
+                    dust += scope.deck.cards[i].qty * scope.deck.cards[i].card.dust;
+                }
+                return dust;
+            };
+        },
+        templateUrl: 'views/frontend/directives/db.deck.html'
     }
 }])
 .directive('homeArticles', ['$window', function ($window) {

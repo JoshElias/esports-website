@@ -116,7 +116,7 @@ angular.module('app.services', [])
         }
     };
 }])
-.factory('UserService', ['$http', function($http) {
+.factory('UserService', ['$http', '$compile', function($http, $compile) {
     return {
         login: function (email, password) {
             return $http.post('/login', {email: email, password: password});
@@ -154,6 +154,23 @@ angular.module('app.services', [])
         logout: function () {
             username = '';
             profileImg = '';
+        }
+    }
+}])
+.factory('LoginModalService', ['$rootScope', '$compile', function ($rootScope, $compile) {
+    var box = undefined;
+    return {
+        showModal: function (callback) {
+            $rootScope.LoginModalService.callback = callback;
+            box = bootbox.dialog({
+                title: 'USER LOGIN',
+                className: 'login-modal',
+                message: $compile('<login-form callback="LoginModalService.callback()"></login-form>')($rootScope)
+            });
+            box.modal('show');
+        },
+        hideModal: function () {
+            box.modal('hide');
         }
     }
 }])
@@ -1987,9 +2004,9 @@ angular.module('app.services', [])
 }])
 .factory('VoteService', ['$http', '$q', function ($http, $q) {
     return {
-        voteArticle: function (direction, article) {
+        voteArticle: function (article) {
             var d = $q.defer();
-            $http.post('/api/article/vote', { _id: article._id, direction: direction }).success(function (data) {
+            $http.post('/api/article/vote', { _id: article._id }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

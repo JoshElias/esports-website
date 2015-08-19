@@ -25,11 +25,13 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage",
-        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies, $localStorage) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage", "LoginModalService",
+        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies, $localStorage, LoginModalService) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
+            $rootScope.UserService = UserService;
+            $rootScope.LoginModalService = LoginModalService;
             
             
             // handle state changes
@@ -111,7 +113,8 @@ var app = angular.module('app', [
                 url: '/',
                 views: {
                     root: {
-                        templateUrl: tpl + 'views/frontend/index.html'
+                        templateUrl: tpl + 'views/frontend/index.html',
+                        controller: 'RootCtrl'
                     }
                 },
                 resolve: {
@@ -248,7 +251,6 @@ var app = angular.module('app', [
                     data: ['SnapshotService', '$q', function (SnapshotService, $q) {
                         return SnapshotService.getLatest().then(function (result) {
                             if (result.success === true) {
-                                console.log(result);
                                 return result;
                             } else {
                                 return $q.reject('unable to find snapshot');
@@ -822,7 +824,7 @@ var app = angular.module('app', [
                 url: 'teams',
                 views: {
                     content: {
-                        controller: 'TeamPageCtrl',
+                        controller: 'TeamCtrl',
                         templateUrl: tpl + 'views/frontend/teams.html',
                         resolve: {
                             data: ['TeamService', '$q', function (TeamService, $q) {
@@ -949,7 +951,6 @@ var app = angular.module('app', [
                 seo: { title: 'Reset your Password', description: '', keywords: '' }
             })
             .state('app.profile', {
-                abstract: true,
                 url: 'user/:username',
                 views: {
                     content: {
@@ -965,90 +966,6 @@ var app = angular.module('app', [
                                         return $q.reject('Unable to find profile');
                                     }
                                  });
-                            }]
-                        }
-                    }
-                }
-            })
-            .state('app.profile.activity', {
-                url: '',
-                views: {
-                    profile: {
-                        templateUrl: tpl + 'views/frontend/profile.activity.html',
-                        controller: 'ProfileActivityCtrl',
-                        resolve: {
-                            dataActivity: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getActivity(username);
-                            }]
-                        }
-                    }
-                }
-            })
-            .state('app.profile.articles', {
-                url: '/articles',
-                views: {
-                    profile: {
-                        templateUrl: tpl + 'views/frontend/profile.articles.html',
-                        controller: 'ProfileArticlesCtrl',
-                        resolve: {
-                            dataArticles: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getArticles(username);
-                            }]
-                        }
-                    }
-                }
-            })
-            .state('app.profile.decks', {
-                url: '/decks',
-                views: {
-                    profile: {
-                        templateUrl: tpl + 'views/frontend/profile.decks.html',
-                        controller: 'ProfileDecksCtrl',
-                        resolve: {
-                            dataDecks: ['User', '$stateParams', 'ProfileService', 'AuthenticationService', function (User, $stateParams, ProfileService, AuthenticationService) {
-                                var username = $stateParams.username;
-                                console.log(AuthenticationService.isLogged());
-                                if (AuthenticationService.isLogged()) {
-                                    return ProfileService.getDecksLoggedIn(username);
-                                } else {
-                                    return ProfileService.getDecks(username);
-                                }
-                            }]
-                        }
-                    }
-                }
-            })
-            .state('app.profile.guides', {
-                url: '/guides',
-                views: {
-                    profile: {
-                        templateUrl: tpl + 'views/frontend/profile.guides.html',
-                        controller: 'ProfileGuidesCtrl',
-                        resolve: {
-                            dataGuides: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
-                                var username = $stateParams.username;
-                                if (AuthenticationService.isLogged()) {
-                                    return ProfileService.getGuidesLoggedIn(username);
-                                } else {
-                                    return ProfileService.getGuides(username);
-                                }
-                            }]
-                        }
-                    }
-                }
-            })
-            .state('app.profile.posts', {
-                url: '/posts',
-                views: {
-                    profile: {
-                        templateUrl: tpl + 'views/frontend/profile.posts.html',
-                        controller: 'ProfilePostsCtrl',
-                        resolve: {
-                            dataPosts: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getProfile(username);
                             }]
                         }
                     }

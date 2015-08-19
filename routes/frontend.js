@@ -491,13 +491,103 @@ module.exports = {
             }
         };
     },
-    profile: function (Schemas) {
+    profile: function (Schemas, async) {
         return function (req, res, next) {
-            var username = req.params.username;
+            var username = req.params.username,
+                usr = undefined,
+                postCount = 0,
+                deckCount = 0,
+                guideCount = 0,
+                activities = [];
             
-            Schemas.User.findOne({ username: username, active: true }).select('username email firstName lastName photos social about subscription.isSubscribed').exec(function (err, user) {
-                if (err || !user) { return res.json({ success: false }); }
-                return res.json({ success: true, user: user });
+            function getUser(callback) {
+                Schemas.User.findOne({ username: username, active: true }).select('username email firstName lastName photos social about subscription.isSubscribed').exec(function (err, user) {
+                    if (err || !user) { return res.json({ success: false }); }
+                    usr = user;
+                    return callback();
+                });
+            };
+            
+            function countPosts(callback) {
+                Schemas.ForumPost.count({ author:usr._id }).exec(function (err, count) {
+                    postCount = count;
+                    return callback();
+                });
+            }
+            
+            function countDecks(callback) {
+                Schemas.Deck.count({ author:usr._id }).exec(function (err, count) {
+                    deckCount = count;
+                    return callback();
+                })
+            };
+            
+            function countGuides(callback) {
+                Schemas.Guide.count({ author:usr._id }).exec(function (err, count) {
+                    guideCount = count;
+                    return callback();
+                });
+            };
+            
+            function getActivity (callback) {
+                
+                var iterAct = function (activity, callback) {
+                    if (activity.forumPost) {
+                        Schemas.ForumThread.populate(activity.forumPost, {
+                            path: 'thread',
+                            select: 'slug.url'
+                        }, callback);
+                    } else {
+                        return callback();
+                    }
+                };
+                
+                Schemas.Activity.find({ author: usr._id, active: true })
+                .sort('-createdDate')
+                .lean()
+                .populate([
+                    {
+                        path: 'article',
+                        select: '_id title slug active comments description'
+                    },
+                    {
+                        path: 'deck',
+                        select: '_id name slug public comments description',
+                        match: { public: true }
+                    },
+                    {
+                        path: 'forumPost',
+                        select: '_id title slug thread'
+                    },
+                    {
+                        path: 'guide',
+                        select: '_id name slug public guideType description comments',
+                        match: { public: true }
+                    },
+                    {
+                        path: 'snapshot',
+                        select: '_id title slug snapNum comments'
+                    }
+                ])
+                .exec(function (err, activities) {
+                    if (err) { return req.json({ success: false }); }
+                    async.each(activities, iterAct, function (err) {
+                        if (err) { return res.json({ success: false }); }
+                        return callback(activities);
+                    });
+                });
+            }
+            
+            getUser(function() {
+                countPosts(function() {
+                    countDecks(function() {
+                        countGuides(function() {
+                            getActivity(function(activities) {
+                                return res.json({ success: true, user: usr, postCount: postCount, deckCount: deckCount, guideCount: guideCount, activities: activities });
+                            });
+                        });
+                    });
+                });
             });
         };
     },
@@ -1554,16 +1644,17 @@ module.exports = {
                 .lean()
                 .populate([{
                         path: 'author',
-                        select: 'username -_id'
+                        select: 'username -_id email providerDescription social'
                     },
                     {
                         path: 'related',
-                        select: 'title slug.url active -_id createdDate',
+                        select: 'title slug.url active -_id author votesCount photos.small articleType',
                     },
                     {
                         path: 'comments',
                         select: '_id author comment createdDate votesCount votes'
-                }])
+                    }
+                ])
                 .exec(function (err, article) {
                     if (err || !article) { return res.json({ success: false }); }
                     
@@ -1573,9 +1664,16 @@ module.exports = {
                     }, function (err, comments) {
                         if (err || !comments) { return res.json({ success: false }); }
                         article.comments = comments;
-                        return getDeck(article, callback);
                     });
                     
+                    Schemas.Article.populate(article.related, {
+                        path: 'author',
+                        select: 'username'
+                    }, function (err, related) {
+                        if (err || !related) { return res.json({ success: false }); }
+                        article.related = related;
+                        return getDeck(article, callback);
+                    })
                 });
             }
             
@@ -1687,31 +1785,14 @@ module.exports = {
     },
     articleVote: function (Schemas) {
         return function (req, res, next) {
-            var id = req.body._id,
-                direction = req.body.direction;
+            var id = req.body._id;
             
             Schemas.Article.findOne({ _id: id }).select('author votesCount votes').exec(function (err, article) {
-                if (err || !article || article.author.toString() === req.user._id) { return res.json({ success: false }); }
-                var vote = article.votes.filter(function (vote) {
-                    if (vote.userID.toString() === req.user._id) {
-                        return vote;
-                    }
-                })[0];
-                if (vote) {
-                    if (vote.direction !== direction) {
-                        vote.direction = direction;
-                        article.votesCount = (direction === 1) ? article.votesCount + 2 : article.votesCount - 2;
-                    }
-                } else {
-                    article.votes.push({
-                        userID: req.user._id,
-                        direction: direction
-                    });
-                    article.votesCount += direction;
-                }
-                
+                if (err || !article) { return res.json({ success: false }); }
+                article.votes.push(req.user._id);
+                article.votesCount++;
                 article.save(function (err) {
-                    if (err) { return res.json({ success: false }); }
+                    if (err) { return res.json({ success: false }); console.log(err); }
                     return res.json({
                         success: true,
                         votesCount: article.votesCount
@@ -2774,7 +2855,6 @@ module.exports = {
 
                 });
             });
-            
         }
     },
     snapshotCommentAdd: function (Schemas, mongoose) {

@@ -1,53 +1,85 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-xs-12 padding-none">
-            <div class="profile-banner wrapper-lg">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            
-                            <a href="./user/{{user.username}}" class="profile-avatar profile-avatar-lg pull-left">
-                                <img gravatar-src-once="user.email" class="img-circle">
-                            </a>
-                            <div class="profile-bio">
-                                <div class="m-l-sm">
-                                    <h3>
-                                        @{{user.username}}
-                                        <small>{{user.firstName}}&nbsp;{{user.lastName}}</small>
-                                    </h3>
-                                    <p class="profile-social" ng-show="user.social && socialExists()">
-                                        <a target="_blank" ng-show="user.social.twitter && user.social.twitter.length" href="https://www.twitter.com/{{user.social.twitter}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-twitter"></i></a>
-                                        <a target="_blank" ng-show="user.social.facebook && user.social.facebook.length" href="https://www.facebook.com/{{user.social.facebook}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-facebook"></i></a>
-                                        <a target="_blank" ng-show="user.social.twitch && user.social.twitch.length" href="http://www.twitch.tv/{{user.social.twitch}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-twitch"></i></a>
-                                        <a target="_blank" ng-show="user.social.instagram && user.social.instagram.length" href="https://www.instagram.com/{{user.social.instagram}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-instagram"></i></a>
-                                        <a target="_blank" ng-show="user.social.youtube && user.social.youtube.length" href="https://www.youtube.com/{{user.social.youtube}}" class="btn btn-sm btn-rounded btn-icon btn-ts-white"><i class="fa fa-youtube"></i></a>
-                                    </p>
-                                    <p>{{user.about}}</p>
+<div class="profile-page">
+    <div class="profile-bg-override">
+        <div class="container-fluid-max">
+            <div class="row">
+                <div class="col-lg-3 profile-info">
+                    <div class="profile-col-header"></div>
+                    <div class="profile-img">
+                        <img gravatar-src-once="user.email" class="img-circle">
+                    </div>
+                    <div class="profile-info-body m-t-sm">
+                        <h1>@{{user.username}}
+                           <small class="m-t-xs">{{user.firstName}}&nbsp;{{user.lastName}}</small>
+                        </h1>
+                        
+                        <div class="profile-social">
+                            <a target="_blank" href="http://twitter.com/{{user.social.twitter}}" ng-if="user.social.twitter"><i class="fa fa-twitter"></i></a>
+                            <a target="_blank" href="http://twitch.tv/{{user.social.twitch}}" ng-if="user.social.twitch"><i class="fa fa-twitch"></i></a>
+                            <a target="_blank" href="http://youtube.com/{{user.social.youtube}}" ng-if="user.social.youtube"><i class="fa fa-youtube"></i></a>
+                            <a target="_blank" href="http://facebook.com/{{user.social.facebook}}" ng-if="user.social.facebook"><i class="fa fa-facebook"></i></a>
+                            <a target="_blank" href="http://instagram.com/{{user.social.instagram}}" ng-if="user.social.instagram"><i class="fa fa-instagram"></i></a>
+                            <a target="_blank" href="http://esea.com/{{user.social.esea}}" ng-if="user.social.esea"><i class="btn-team-esea"></i></a>
+                        </div>
+                        
+                        <div class="counts">
+                            <h2>{{postCount}}<small class="m-t-sm">POSTS</small></h2>
+                            <h2>{{deckCount}}<small class="m-t-sm">DECKS</small></h2>
+                            <h2>{{guideCount}}<small class="m-t-sm">GUIDES</small></h2>
+                        </div>
+                        
+                        <div class="description">
+                            <p>{{user.about}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="profile-col-header"><h2>POSTS AND COMMENTS</h2></div>
+                    <div class="activity-list">
+                        <!-- activity -->
+                        <div class="activity {{activity.activityType}} m-b-md" ng-repeat="activity in activities">
+                            <div class="activity-left">
+                                <div class="activity-img">
+                                    <img gravatar-src-once="user.email" class="img-circle">
+                                </div>
+                                <div class="m-t-sm" ng-if="app.user.getUserID() == user._id">
+                                    
+                                    <div ng-if="activity.activityType == 'createDeck' && activity.exists" class="activity-btn-wrapper m-l-xs">
+                                        <a class="activity-btn" href="#"><i class="fa fa-pencil"></i></a>
+                                        <a class="activity-btn" href="#"><i class="fa fa-close"></i></a>
+                                    </div>
+                                    
+                                    
+                                    
+                                    <div ng-if="activity.activityType == 'createGuide' && activity.exists" class="activity-btn-wrapper m-l-xs">
+                                        <a class="activity-btn" ui-sref="app.hots.guideBuilder.edit.hero({ slug: activity.guide.slug })" ng-if="activity.guide.guideType == 'hero'"><i class="fa fa-pencil"></i></a>
+                                        <a class="activity-btn" ui-sref="app.hots.guideBuilder.edit.map({ slug: activity.guide.slug })" ng-if="activity.guide.guideType == 'map'"><i class="fa fa-pencil"></i></a>
+                                        <a class="activity-btn" ng-click="deleteGuide(activity.guide)" href="#"><i class="fa fa-close"></i></a>
+                                    </div>
                                 </div>
                             </div>
+                            
+                            <div class="activity-right">
+                                <span activity-article ng-if="activity.activityType == 'createArticle'"></span>
+                                <span activity-signup ng-if="activity.activityType == 'signup'"></span>
+                                <span activity-article-comment ng-if="activity.activityType == 'articleComment'"></span>
+                                <span activity-deck ng-if="activity.activityType == 'createDeck'"></span>
+                                <span activity-deck-comment ng-if="activity.activityType == 'deckComment'"></span>
+                                <span activity-forum-post ng-if="activity.activityType == 'forumPost'"></span>
+                                <span activity-forum-post-comment ng-if="activity.activityType == 'forumComment'"></span>
+                                <span activity-guide ng-if="activity.activityType == 'createGuide'"></span>
+                                <span activity-guide-comment ng-if="activity.activityType == 'guideComment'"></span>
+                                <span activity-snapshot-comment ng-if="activity.activityType == 'snapshotComment'"></span>
+                            </div>
                         </div>
-                        <div class="col-sm-6">
-                            <a href="./user/{{user.username}}/edit" class="btn btn-white pull-right" ng-if="user._id === app.user.getUserID()">Edit Profile</a>
-                        </div>
+                        <!-- / activity -->
                     </div>
                 </div>
-            </div>
-            <div class="profile-tabs wrapper-xs">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <ul class="nav nav-pills nav-sm">
-                                <li ng-class="{active:$state.includes('app.profile.activity')}"><a ui-sref="app.profile.activity">Activity</a></li>
-                                <li ng-class="{active:$state.includes('app.profile.articles')}"><a ui-sref="app.profile.articles">Articles</a></li>
-                                <li ng-class="{active:$state.includes('app.profile.decks')}"><a ui-sref="app.profile.decks">Decks</a></li>
-                                <li ng-class="{active:$state.includes('app.profile.guides')}"><a ui-sref="app.profile.guides">Guides</a></li>
-                                <li ng-if="false" ng-class="{active:$state.includes('app.profile.posts')}"><a ui-sref="app.profile.posts">Forum Posts</a></li>
-                            </ul>
-                        </div>
-                    </div>
+<!--
+                <div class="col-lg-3">
+                    <div class="profile-col-header"><h2>GUIDES</h2></div>
                 </div>
+-->
             </div>
-            <div ui-view="profile"></div>
         </div>
     </div>
 </div>

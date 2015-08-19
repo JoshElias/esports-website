@@ -100,7 +100,12 @@ angular.module('app.controllers', ['ngCookies'])
           return (/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/).test(ua);
       }
 
-  }])
+}])
+.controller('RootCtrl', ['$scope', 'LoginModalService', function ($scope, LoginModalService) {
+    $scope.loginModal = function () {
+        LoginModalService.showModal();
+    }
+}])
 .controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
     MetaService.setStatusCode(404);
 }])
@@ -432,10 +437,18 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 
-    function ($scope, dataProfile, MetaService) {
+.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 'HOTSGuideService',
+    function ($scope, dataProfile, MetaService, HOTSGuideService) {
         $scope.user = dataProfile.user;
+        $scope.postCount = dataProfile.postCount;
+        $scope.deckCount = dataProfile.deckCount;
+        $scope.guideCount = dataProfile.guideCount;
+        $scope.activities = dataProfile.activities;
         
+
+        
+
+
         function isMyProfile() {
             if($scope.app.user.getUsername() == $scope.user.username) {
                 return 'My Profile';
@@ -446,14 +459,52 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set(isMyProfile());
         
-        $scope.socialExists = function () {
-            if (!$scope.user.social) { return false; }
-            return ($scope.user.social.twitter && $scope.user.social.twitter.length) || 
-            ($scope.user.social.facebook && $scope.user.social.facebook.length) || 
-            ($scope.user.social.twitch && $scope.user.social.twitch.length) || 
-            ($scope.user.social.instagram && $scope.user.social.instagram.length) || 
-            ($scope.user.social.youtube && $scope.user.social.youtube.length);
-        };
+        // delete guide
+        $scope.deleteGuide = function deleteGuide(guide) {
+            console.log('fuqui');
+            var box = bootbox.dialog({
+                title: 'Delete guide: ' + guide.name + '?',
+                message: 'Are you sure you want to delete the guide <strong>' + guide.name + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            HOTSGuideService.guideDelete(guide._id).success(function (data) {
+                                if (data.success) {
+                                    var index = $scope.guides.indexOf(guide);
+                                    if (index !== -1) {
+                                        $scope.guides.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: 'guide "' + guide.name + '" deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
+        
+        
+//        $scope.socialExists = function () {
+//            if (!$scope.user.social) { return false; }
+//            return ($scope.user.social.twitter && $scope.user.social.twitter.length) || 
+//            ($scope.user.social.facebook && $scope.user.social.facebook.length) || 
+//            ($scope.user.social.twitch && $scope.user.social.twitch.length) || 
+//            ($scope.user.social.instagram && $scope.user.social.instagram.length) || 
+//            ($scope.user.social.youtube && $scope.user.social.youtube.length);
+//        };
     }
 ])
 .controller('ProfileEditCtrl', ['$scope', '$state', 'ProfileService', 'AlertService', 'dataProfileEdit',  
@@ -640,17 +691,6 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity',  
-    function ($scope, $sce, dataActivity) {
-        $scope.activities = dataActivity.activities;
-        
-        $scope.activities.forEach(function (activity) {
-            activity.getActivity = function () {
-                return $sce.trustAsHtml(activity.activity);
-            };
-        });
-    }
-])
 .controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',  
     function ($scope, dataArticles) {
         $scope.articles = dataArticles.articles;
@@ -699,42 +739,7 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('ProfileGuidesCtrl', ['$scope', 'bootbox', 'HOTSGuideService', 'dataGuides',  
     function ($scope, bootbox, HOTSGuideService, dataGuides) {
-        $scope.guides = dataGuides.guides;
-        // delete guide
-        $scope.guideDelete = function deleteGuide(guide) {
-            var box = bootbox.dialog({
-                title: 'Delete guide: ' + guide.name + '?',
-                message: 'Are you sure you want to delete the guide <strong>' + guide.name + '</strong>?',
-                buttons: {
-                    delete: {
-                        label: 'Delete',
-                        className: 'btn-danger',
-                        callback: function () {
-                            HOTSGuideService.guideDelete(guide._id).success(function (data) {
-                                if (data.success) {
-                                    var index = $scope.guides.indexOf(guide);
-                                    if (index !== -1) {
-                                        $scope.guides.splice(index, 1);
-                                    }
-                                    $scope.success = {
-                                        show: true,
-                                        msg: 'guide "' + guide.name + '" deleted successfully.'
-                                    };
-                                }
-                            });
-                        }
-                    },
-                    cancel: {
-                        label: 'Cancel',
-                        className: 'btn-default pull-left',
-                        callback: function () {
-                            box.modal('hide');
-                        }
-                    }
-                }
-            });
-            box.modal('show');
-        }
+
     }
 ])
 .controller('ProfilePostsCtrl', ['$scope', 'dataPosts',  
@@ -3053,7 +3058,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('TeamPageCtrl', ['$scope', '$sce', 'data',
+.controller('TeamCtrl', ['$scope', '$sce', 'data',
     function ($scope, $sce, data) {
         $scope.members = data.members;
         
@@ -3065,7 +3070,6 @@ angular.module('app.controllers', ['ngCookies'])
         
         for(var i = 0; i < $scope.members.length; i++) {
             $scope.members[i].description = $scope.members[i].description.replace(/(?:\r\n|\r|\n)/g, '<br />');
-;
         }
         
         $scope.getDescription = function (i) {
@@ -3844,6 +3848,7 @@ angular.module('app.controllers', ['ngCookies'])
                 expiryDate: d
             },
             isProvider: false,
+            providerDescription: '',
             isAdmin: false,
             active: true
         };
@@ -5029,7 +5034,13 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.matchupName = [];
         $scope.hasVoted = false;
         $scope.show.comments = SnapshotService.getStorage();
-
+        $scope.$watch('app.user.isLogged()', function() {
+            for (var i = 0; i < $scope.snapshot.votes.length; i++) {
+                if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
+                    $scope.hasVoted = true;
+                }
+            }
+        });
         
         var mouseOver = [],
             charts = [],
@@ -5185,11 +5196,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             /******************************************* HAS VOTED *******************************************/
 
-            for (var i = 0; i < $scope.snapshot.votes.length; i++) {
-                if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
-                    $scope.hasVoted = true;
-                }
-            }
+            
 
             /******************************************* BUILD TIER MATCHES *******************************************/
             for (var j = 0; j < maxTierLength; j++) {
@@ -5306,8 +5313,6 @@ angular.module('app.controllers', ['ngCookies'])
             return (match.for._id == id) ? match.against.playerClass : match.for.playerClass;
         }
         
-        init();
-        
         $scope.goToDeck = function ($event, slug) {
             $event.stopPropagation();
             var url = $state.href('app.hs.decks.deck', { slug: slug });
@@ -5358,6 +5363,9 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         }
+        
+        init();
+        
     }
 ])
 .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',
@@ -5531,9 +5539,18 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ArticleCtrl', ['$scope', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'UserService', 'ArticleService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'MetaService', 
-    function ($scope, $sce, data, $state, $compile, $window, bootbox, UserService, ArticleService, AuthenticationService, VoteService, SubscriptionService, MetaService) {
+.controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'ArticleService', 'VoteService', 'MetaService', 'LoginModalService',
+    function ($scope, $parse, $sce, data, $state, $compile, $window, bootbox, ArticleService, VoteService, MetaService, LoginModalService) {
+        
         $scope.article = data.article;
+        $scope.authorEmail = data.article.author.email;
+        $scope.$watch('app.user.isLogged()', function() {
+            for (var i = 0; i < $scope.article.votes.length; i++) {
+                if ($scope.article.votes[i] == $scope.app.user.getUserID()) {
+                    checkVotes();
+                }
+            }
+        });
         
         $scope.isPremium = function () {
             if (!$scope.article.premium.isPremium) { return false; }
@@ -5545,6 +5562,12 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
+        
+        function init () {
+            /******************************************* HAS VOTED *******************************************/
+            checkVotes();
+        }
+        init();
         
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
@@ -5566,14 +5589,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.show = $scope.app.settings.show.article;
         $scope.$watch('show', function(){ $scope.app.settings.show.article = $scope.show; }, true);
         
-        // deck dust
-        $scope.getDust = function () {
-            var dust = 0;
-            for (var i = 0; i < $scope.article.deck.cards.length; i++) {
-                dust += $scope.article.deck.cards[i].qty * $scope.article.deck.cards[i].card.dust;
-            }
-            return dust;
-        };
         
         // related
         $scope.relatedActive = function () {
@@ -5585,57 +5600,58 @@ angular.module('app.controllers', ['ngCookies'])
             return false;
         };
         
-        // voting
-        $scope.voteDown = function (article) {
-            vote(-1, article);
-        };
-        
-        $scope.voteUp = function (article) {
-            vote(1, article)       
-        };
-        
-        var box,
-            callback;
-        
-        if ($scope.app.user.isLogged()) {
-            updateVotes();
-        }
-            
-        function updateVotes() {
-            checkVotes($scope.article);
-
-            function checkVotes (article) {
-                var vote = article.votes.filter(function (vote) {
-                    return ($scope.app.user.getUserID() === vote.userID);
-                })[0];
-
-                if (vote) {
-                    article.voted = vote.direction;
+        $scope.getType = function (item) {
+            if (!item.articleType[1]) {
+                switch (item.articleType[0]) {
+                    case 'hs' : return 'hearthstone'; break;
+                    case 'ts' : return 'tempostorm'; break;
+                    case 'hots' : return 'heroes'; break;
                 }
+            } else {
+                return 'tempostorm';
             }
         }
         
-        function vote(direction, article) {
-            if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
-                    vote(direction, article);
-                };
-            } else {
-                if (article.author._id === $scope.app.user.getUserID()) {
-                    bootbox.alert("You can't vote for your own content.");
-                    return false;
-                }
-                VoteService.voteArticle(direction, article).then(function (data) {
-                    if (data.success) {
-                        article.voted = direction;
-                        article.votesCount = data.votesCount;
+        //vote
+        var box,
+            callback;
+        
+        function checkVotes () {
+            for (var i = 0; i < $scope.article.votes.length; i++) {
+                if (typeof($scope.article.votes[i]) === 'object') {
+                    if ($scope.article.votes[i].userID == $scope.app.user.getUserID()) {
+                        $scope.hasVoted = true;
+                        break;
                     }
+                } else {
+                    if ($scope.article.votes[i] == $scope.app.user.getUserID()) {
+                        $scope.hasVoted = true;
+                        break;
+                    }
+                }
+            }
+            return $scope.hasVoted
+        }
+        
+        $scope.voteArticle = function (article) {
+            vote(article);       
+        };
+        
+        function vote(article) {
+            if (!$scope.app.user.isLogged()) {
+                LoginModalService.showModal(function() {
+                    checkVotes();
+                    updateCommentVotes();
                 });
+            } else {
+                if (!$scope.hasVoted) {
+                    VoteService.voteArticle(article).then(function (data) {
+                        if (data.success) {
+                            $scope.hasVoted = true;
+                            article.votesCount = data.votesCount;
+                        }
+                    });
+                }
             }
         };
         
@@ -5685,14 +5701,9 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal(function () {
                     $scope.voteComment(direction, deck);
-                };
+                });
             } else {
                 if (comment.author._id === $scope.app.user.getUserID()) {
                     bootbox.alert("You can't vote for your own content.");
@@ -5716,38 +5727,12 @@ angular.module('app.controllers', ['ngCookies'])
             } else {
                 box = bootbox.dialog({
                     title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
+                    message: $compile('<login-form TODO></login-form>')($scope)
                 });
                 box.modal('show');
                 callback = function () {
                     $scope.getPremium(plan);
                 };
-            }
-        }
-        
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    updateVotes();
-                    updateCommentVotes();
-                    callback();
-                }).error(function() {
-                    $scope.showError = true;
-                });
             }
         }
     }
@@ -9778,11 +9763,6 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('twitchCtrl', ['$scope', 'dataTwitch',
     function($scope, dataTwitch) {
         $scope.streams = dataTwitch.stuff;
-    }
-])
-.controller('TeamCtrl', ['$scope',
-    function ($scope) {
-        
     }
 ])
 ;
