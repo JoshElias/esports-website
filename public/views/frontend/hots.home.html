@@ -5,7 +5,7 @@
 <!-- /title -->
 
 <!-- sub nav -->
-<div class="sub-nav-wrapper">
+<div class="sub-nav-wrapper hidden-xs">
     <div class="container-fluid sub-nav" sub-nav>
         <div class="now-streaming pull-left">
             
@@ -30,21 +30,25 @@
     </div>
     <div class="container">
         <div class="row no-pad">
-            <div class="col-xs-6 m-b-md filters">
-                <ul class="hero-roles clearfix">
-                    <li><button class="hero-role warrior" ng-class="{ 'active': !hasFilterRole('Warrior') }" ng-click="toggleFilterRole('Warrior')" ng-tooltip title="Warrior"></button></li>
-                    <li><button class="hero-role assassin" ng-class="{ 'active': !hasFilterRole('Assassin') }" ng-click="toggleFilterRole('Assassin')" ng-tooltip title="Assassin"></button></li>
-                    <li><button class="hero-role support" ng-class="{ 'active': !hasFilterRole('Support') }" ng-click="toggleFilterRole('Support')" ng-tooltip title="Support"></button></li>
-                    <li><button class="hero-role specialist" ng-class="{ 'active': !hasFilterRole('Specialist') }" ng-click="toggleFilterRole('Specialist')" ng-tooltip title="Specialist"></button></li>
-                </ul>
-                <ul class="hero-universes clearfix">
-                    <li><button class="hero-universe warcraft" ng-class="{ 'active': !hasFilterUniverse('Warcraft') }" ng-click="toggleFilterUniverse('Warcraft')" ng-tooltip title="Warcraft"></button></li>
-                    <li><button class="hero-universe starcraft" ng-class="{ 'active': !hasFilterUniverse('Starcraft') }" ng-click="toggleFilterUniverse('Starcraft')" ng-tooltip title="Starcraft"></button></li>
-                    <li><button class="hero-universe diablo" ng-class="{ 'active': !hasFilterUniverse('Diablo') }" ng-click="toggleFilterUniverse('Diablo')" ng-tooltip title="Diablo"></button></li>
-                    <li><button class="hero-universe retro" ng-class="{ 'active': !hasFilterUniverse('Blizzard') }" ng-click="toggleFilterUniverse('Blizzard')" ng-tooltip title="Retro"></button></li>
-                </ul>
+            <div class="col-xs-12 col-sm-8 m-b-md">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <ul class="hero-roles clearfix">
+                            <li><button class="hero-role warrior" ng-class="{ 'active': !hasFilterRole('Warrior') }" ng-click="toggleFilterRole('Warrior')" ng-tooltip title="Warrior"></button></li>
+                            <li><button class="hero-role assassin" ng-class="{ 'active': !hasFilterRole('Assassin') }" ng-click="toggleFilterRole('Assassin')" ng-tooltip title="Assassin"></button></li>
+                            <li><button class="hero-role support" ng-class="{ 'active': !hasFilterRole('Support') }" ng-click="toggleFilterRole('Support')" ng-tooltip title="Support"></button></li>
+                            <li><button class="hero-role specialist" ng-class="{ 'active': !hasFilterRole('Specialist') }" ng-click="toggleFilterRole('Specialist')" ng-tooltip title="Specialist"></button></li>
+                        </ul>
+                        <ul class="hero-universes clearfix">
+                            <li><button class="hero-universe warcraft" ng-class="{ 'active': !hasFilterUniverse('Warcraft') }" ng-click="toggleFilterUniverse('Warcraft')" ng-tooltip title="Warcraft"></button></li>
+                            <li><button class="hero-universe starcraft" ng-class="{ 'active': !hasFilterUniverse('Starcraft') }" ng-click="toggleFilterUniverse('Starcraft')" ng-tooltip title="Starcraft"></button></li>
+                            <li><button class="hero-universe diablo" ng-class="{ 'active': !hasFilterUniverse('Diablo') }" ng-click="toggleFilterUniverse('Diablo')" ng-tooltip title="Diablo"></button></li>
+                            <li><button class="hero-universe retro" ng-class="{ 'active': !hasFilterUniverse('Blizzard') }" ng-click="toggleFilterUniverse('Blizzard')" ng-tooltip title="Retro"></button></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="col-xs-3 col-xs-offset-3 m-b-md search">
+            <div class="col-xs-12 col-sm-4 m-b-md hots-filters-search">
                 <form>
                     <div class="input-group">
                         <input type="text" class="form-control input-dark" ng-model="filters.search">
@@ -59,21 +63,21 @@
     <div class="container-fluid hero-back {{hero().className}}">
         <ul class="hero-filters clearfix">
             <li ng-repeat="hero in heroDots">
-                <button class="{{hero.className}}" ng-class="{ 'active': hasFilterHero(hero), 'not-selected': !hasFilterHero(hero) && hasAnyFilterHero(),  'filtered': !hasFilterHero(hero) && (hasFilterRole(hero.role) || hasFilterUniverse(hero.universe)) }" ng-if="hero.className" ng-click="toggleFilterHero(hero)" ng-tooltip title="{{hero.name}}">{{hero.name}}</button>
+                <button class="{{hero.className}}" ng-class="{ 'active': hasFilterHero(hero), 'not-selected': !hasFilterHero(hero) && hasAnyFilterHero(),  'filtered': !hasFilterHero(hero) && (hasFilterRole(hero.role) || hasFilterUniverse(hero.universe) || hasFilterSearch(hero)) }" ng-if="hero.className" ng-click="toggleFilterHero(hero)" ng-tooltip title="{{hero.name}}">{{hero.name}}</button>
                 <button class="empty" ng-class="{ 'filtered': hasAnyFilter() }" ng-if="!hero.className"></button>
             </li>
         </ul>
     </div>
-    <div class="container m-b-lg">
+    <div class="container m-b-sm">
         <div class="filters-maps">
             <ul class="text-center">
-                <li ng-repeat="map in maps"><button class="{{map.className}}" ng-class="{ 'active': hasFilterMap(map), 'not-selected': !hasFilterMap(map) && hasAnyFilterMap() }" ng-click="toggleFilterMap(map)" ng-tooltip title="{{map.name}}">{{map.name}}</button></li>
+                <li class="m-b-md" ng-repeat="map in maps"><button class="{{map.className}}" ng-class="{ 'active': hasFilterMap(map), 'not-selected': !hasFilterMap(map) && hasAnyFilterMap() }" ng-click="toggleFilterMap(map)" ng-tooltip title="{{map.name}}">{{map.name}}</button></li>
             </ul>
         </div>
     </div>
-    <div class="container m-b-lg text-center">
-        <a ui-sref="app.hots.guideBuilder.step1" class="btn btn-hots m-r-md"><div class="inner">CREATE A GUIDE</div></a>
-        <a ui-sref="app.hots.guides.list" class="btn btn-hots"><div class="inner">FIND A GUIDE</div></a>
+    <div class="container text-center">
+        <a ui-sref="app.hots.guideBuilder.step1" class="btn btn-hots m-r-md m-b-lg"><div class="inner">CREATE A GUIDE</div></a>
+        <a ui-sref="app.hots.guides.list" class="btn btn-hots m-b-lg"><div class="inner">FIND A GUIDE</div></a>
     </div>
 </div>
 <!-- /filtering -->
@@ -81,11 +85,11 @@
 <!-- content start -->
 <div class="container-fluid hots-content hots-dark">
     <div class="row">
-        <div class="col-xs-6">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
             <h1 class="title">HEROES OF THE STORM ARTICLES</h1>
             <h3 class="sub-title m-b-md">The latest articles on all things Heroes of the Storm</h3>
             <div class="row row-flex row-flex-wrap">
-                <div class="col-xs-6 pos-rl" ng-repeat="article in articles">
+                <div class="col-xs-12 col-sm-6 pos-rl" ng-repeat="article in articles">
                     <a ui-sref="app.articles.article({ slug: article.slug.url })" class="hots-article flex-col m-b-lg">
                         <div class="inner"></div>
                         <img ng-src="//cdn-tempostorm.netdna-ssl.com/articles/{{article.photos.small}}" class="img-responsive">
@@ -97,9 +101,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
             <div class="row">
-                <div class="col-xs-6">
+                <div class="col-xs-12 col-sm-6">
                     <h1 class="title">TEMPOSTORM GUIDES</h1>
                     <h3 class="sub-title m-b-md">Guides from Team Tempo Storm</h3>
                     <ul class="hots-guides">
@@ -127,7 +131,7 @@
                         </li>
                     </ul>
                 </div>
-                <div class="col-xs-6">
+                <div class="col-xs-12 col-sm-6">
                     <h1 class="title">COMMUNITY GUIDES</h1>
                     <h3 class="sub-title m-b-md">Guides from the Community</h3>
                     <ul class="hots-guides">
@@ -164,12 +168,12 @@
 <!-- content footer -->
 <div class="container-fluid hots-content hots-dark">
     <div class="row">
-        <div class="col-xs-6">
+        <div class="col-xs-12 col-sm-6">
             <h1 class="title">VIDEO OF THE DAY</h1>
             <h3 class="sub-title m-b-md">Subheading goes in here</h3>
             
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-12 col-sm-6">
             <h1 class="title">TEMPOSTORM TV</h1>
             <h3 class="sub-title m-b-md">Check out who is streaming right now</h3>
             <ul class="tempostorm-tv">
@@ -177,7 +181,7 @@
                     <a ng-href="{{stream.channelUrl}}" target="_blank" class="tempostorm-tv-stream">
                         <div class="inner"></div>
                         <div class="tempostorm-tv-wrapper clearfix">
-                            <img ng-src="{{stream.screenshotUrl}}" class="pull-left img-responsive">
+                            <img ng-src="{{stream.screenshotUrl}}" class="pull-left img-responsive hidden-xs">
                             <div class="tempostorm-tv-content pos-rl">
                                 <h1>{{stream.title}}</h1>
                                 <h3>PLAYING: {{stream.gameName}}</h3>

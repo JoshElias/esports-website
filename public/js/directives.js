@@ -107,11 +107,11 @@ angular.module('app.directives', ['ui.load'])
 .directive("subNav", ['$window', function ($window) {
     return function(scope, element, attrs) {
         angular.element($window).bind("scroll", function() {
-             if (this.pageYOffset >= 278) {
-                 element.addClass('sticky');
-             } else {
-                 element.removeClass('sticky');
-             }
+            if (this.pageYOffset >= (element.parent().offset().top - 50)) {
+                element.addClass('sticky');
+            } else {
+                element.removeClass('sticky');
+            }
             scope.$apply();
         });
     };

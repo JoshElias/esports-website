@@ -8095,15 +8095,13 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSHomeCtrl', ['$scope', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 'TwitchService', 
-    function ($scope, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService, TwitchService) {
+.controller('HOTSHomeCtrl', ['$scope', '$filter', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 'TwitchService', 
+    function ($scope, $filter, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService, TwitchService) {
         // data
         $scope.maps = dataMaps.maps;
         $scope.articles = dataArticles.articles;
         $scope.guidesCommunity = dataGuidesCommunity.guides;
         $scope.guidesFeatured = dataGuidesFeatured.guides;
-        
-        console.log(dataGuidesCommunity);
         
         // filters
         $scope.filters = {
@@ -8162,6 +8160,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.hasFilterHero = function (hero) {
             return ($scope.filters.heroes.indexOf(hero) !== -1);
         };
+        
+        $scope.hasFilterSearch = function (hero) {
+            var filtered = ($scope.filters.search && $scope.filters.search.length) ? $filter('filter')(dataHeroes.heroes, { name: $scope.filters.search }) : dataHeroes.heroes;
+            return (filtered.indexOf(hero) === -1);
+        }
         
         $scope.hasAnyFilter = function () {
             return ($scope.filters.roles.length ||

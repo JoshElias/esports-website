@@ -6291,14 +6291,19 @@ p.white { color: #FFF; }
 .btn-hots .inner { width: 198px; padding: 15px 0px; border: 1px solid rgba(255,255,255,.2); }
 .btn-hots:hover { color: rgba(255,255,255,1); box-shadow: 0px 0px 20px rgba(255,255,255,.5); }
 
+@media (max-width: 767px) {
+    .btn-hots { margin-right: none !important; width: 100%; }
+    .btn-hots .inner { width: 100%; }
+}
+
 /* hots - home filters */
 .hero-name { margin-bottom: -10px; font-family: 'Open Sans Bold'; font-size: 60px; color: #FFF; text-shadow: 0px 0px 20px rgba(255,255,255,.6); text-transform: uppercase; }
 .hero-description { font-family: 'Open Sans Bold'; font-size: 20px; color: #d3eefa; letter-spacing: 2px; text-transform: uppercase; }
 
 .hero-roles,
-.hero-universes { margin: 0; padding: 0; float: left; }
+.hero-universes { width: 172px; padding: 0; float: left; }
 
-.hero-roles { margin-right: 40px; }
+.hero-roles { margin: 0 10px 0 0; }
 
 .hero-roles li,
 .hero-universes li { list-style: none; float: left; width: 43px; height: 49px; }
@@ -6327,7 +6332,7 @@ p.white { color: #FFF; }
 .hero-universes li button.retro.active { background-position: -129px -147px; }
 
 
-.hero-filters { position: relative; margin: 0 200px; height: 510px; }
+.hero-filters { position: relative; margin: 0 auto; max-width: 1448px; height: 510px; padding: 0; }
 .hero-filters li { list-style: none; position: absolute; }
 
 .hero-filters li:nth-child(1) { top: 0px; left: 129px; }
@@ -6398,6 +6403,100 @@ p.white { color: #FFF; }
 .hero-filters li:nth-child(55) { top: 400px; right: 172px; }
 .hero-filters li:nth-child(56) { top: 400px; right: 86px; }
 
+@media (min-width: 980px) and (max-width: 1199px) {
+    .hero-filters { margin-top: -30px; height: 460px; }
+    
+    .hero-filters li { transform: scale(.8,.8); backface-visibility: hidden; }
+    .hero-filters li:nth-child(1) { top: 30px; left: 69px; }
+    .hero-filters li:nth-child(2) { top: 30px; left: 145px; }
+    .hero-filters li:nth-child(3) { top: 30px; left: 221px; }
+    .hero-filters li:nth-child(4) { top: 30px; left: 297px; }
+    .hero-filters li:nth-child(5) { top: 30px; left: 373px; }
+
+    .hero-filters li:nth-child(6) { top: 30px; right: 373px; }
+    .hero-filters li:nth-child(7) { top: 30px; right: 297px; }
+    .hero-filters li:nth-child(8) { top: 30px; right: 221px; }
+    .hero-filters li:nth-child(9) { top: 30px; right: 145px; }
+    .hero-filters li:nth-child(10) { top: 30px; right: 69px; }
+
+    .hero-filters li:nth-child(11) { top: 100px; left: 46px; }
+    .hero-filters li:nth-child(12) { top: 100px; left: 122px; }
+    .hero-filters li:nth-child(13) { top: 100px; left: 198px; }
+    .hero-filters li:nth-child(14) { top: 100px; left: 274px; }
+    .hero-filters li:nth-child(15) { top: 100px; left: 350px; }
+
+    .hero-filters li:nth-child(16) { top: 100px; right: 350px; }
+    .hero-filters li:nth-child(17) { top: 100px; right: 274px; }
+    .hero-filters li:nth-child(18) { top: 100px; right: 198px; }
+    .hero-filters li:nth-child(19) { top: 100px; right: 122px; }
+    .hero-filters li:nth-child(20) { top: 100px; right: 46px; }
+
+    .hero-filters li:nth-child(21) { top: 170px; left: 23px; }
+    .hero-filters li:nth-child(22) { top: 170px; left: 99px; }
+    .hero-filters li:nth-child(23) { top: 170px; left: 175px; }
+    .hero-filters li:nth-child(24) { top: 170px; left: 251px; }
+    .hero-filters li:nth-child(25) { top: 170px; left: 327px; }
+
+    .hero-filters li:nth-child(26) { top: 170px; right: 327px; }
+    .hero-filters li:nth-child(27) { top: 170px; right: 251px; }
+    .hero-filters li:nth-child(28) { top: 170px; right: 175px; }
+    .hero-filters li:nth-child(29) { top: 170px; right: 99px; }
+    .hero-filters li:nth-child(30) { top: 170px; right: 23px; }
+
+    .hero-filters li:nth-child(31) { top: 240px; left: 0px; }
+    .hero-filters li:nth-child(32) { top: 240px; left: 76px; }
+    .hero-filters li:nth-child(33) { top: 240px; left: 152px; }
+    .hero-filters li:nth-child(34) { top: 240px; left: 228px; }
+    .hero-filters li:nth-child(35) { top: 240px; left: 304px; }
+
+    .hero-filters li:nth-child(36) { top: 240px; right: 304px; }
+    .hero-filters li:nth-child(37) { top: 240px; right: 228px; }
+    .hero-filters li:nth-child(38) { top: 240px; right: 152px; }
+    .hero-filters li:nth-child(39) { top: 240px; right: 76px; }
+    .hero-filters li:nth-child(40) { top: 240px; right: 0px; }
+
+    .hero-filters li:nth-child(41) { top: 310px; left: 23px; }
+    .hero-filters li:nth-child(42) { top: 310px; left: 99px; }
+    .hero-filters li:nth-child(43) { top: 310px; left: 175px; }
+    .hero-filters li:nth-child(44) { top: 310px; left: 251px; }
+
+    .hero-filters li:nth-child(45) { top: 310px; right: 251px; }
+    .hero-filters li:nth-child(46) { top: 310px; right: 175px; }
+    .hero-filters li:nth-child(47) { top: 310px; right: 99px; }
+    .hero-filters li:nth-child(48) { top: 310px; right: 23px; }
+
+    .hero-filters li:nth-child(49) { top: 380px; left: 46px; }
+    .hero-filters li:nth-child(50) { top: 380px; left: 122px; }
+    .hero-filters li:nth-child(51) { top: 380px; left: 198px; }
+    .hero-filters li:nth-child(52) { top: 380px; left: 274px; }
+
+    .hero-filters li:nth-child(53) { top: 380px; right: 274px; }
+    .hero-filters li:nth-child(54) { top: 380px; right: 198px; }
+    .hero-filters li:nth-child(55) { top: 380px; right: 122px; }
+    .hero-filters li:nth-child(56) { top: 380px; right: 46px; }
+}
+
+@media (max-width: 979px) {
+    .hero-filters { height: auto; margin-bottom: 20px; text-align: center; }
+    .hero-filters li { position: inherit !important; display: inline-block; left: auto !important; top: auto !important; right: auto !important; vertical-align: top; }
+    .hero-filters li button { margin: 0 5px 5px 0; }
+    .hero-filters li button.empty { display: none; }
+    .hero-back { background: none !important; }
+    .hero-name,
+    .hero-description { display: none; }
+}
+
+@media (max-width: 768px) {
+    .hero-roles,
+    .hero-universes { float: none; margin: 0 auto; }
+
+    .hero-filters li button { width: 43px !important; height: 43px !important; border-width: 1px !important; }
+    .filters-maps li { margin: 0 5px 5px 0 !important; }
+    .filters-maps li button { width: 43px !important; height: 43px !important; border-width: 1px !important; }
+}
+
+.hots-filters-search { padding: 8px 0px 0px; }
+
 .hero-filters li button { display:inline-block; width:75px; height:75px; overflow:hidden; background-repeat: no-repeat; background-image:url('../img/hots/heroes/hots-hero-select.png'); border-radius: 50%; border: 3px solid #FFF; text-indent: -99999px; background-color: rgba(39,102,173,.2); outline: none; opacity: 1; transition: transform .25s ease-in-out, opacity .25s ease-in-out, background-color .25s ease-in-out; }
 .hero-filters li button:hover { background-color: #2766ad; }
 .hero-filters li button.empty { background-image: none; cursor: default; opacity: .3; }
@@ -6405,6 +6504,7 @@ p.white { color: #FFF; }
 
 .hero-filters li button.filtered { transform: scale(.9,.9); opacity: .3; }
 .hero-filters li button.not-selected { opacity: .3; }
+.hero-filters li button.not-selected:hover { opacity: .8; }
 .hero-filters li button.active { background-color: rgba(255,255,255,1); }
 
 .hero-filters li button.abathur {width:75px; height:75px; background-position: -2px -2px}
@@ -6491,7 +6591,7 @@ p.white { color: #FFF; }
 
 .filters-maps {}
 .filters-maps ul { margin: 0; padding: 0; }
-.filters-maps ul li { list-style: none; display: inline-block; margin-right: 10px; }
+.filters-maps ul li { list-style: none; display: inline-block; margin: 0 10px 10px 0; }
 .filters-maps ul li:last-child { margin-right: 0px; }
 
 .filters-maps ul li button { display:inline-block; width:55px; height:55px; border-radius: 50%; border: 2px solid #FFF; overflow:hidden; background-repeat: no-repeat; background: url('../img/hots/maps/hots-map-sprite.png'); white-space: nowrap; text-indent: -99999px; outline: none; transition: transform .25s ease-in-out, opacity .25s ease-in-out; }
