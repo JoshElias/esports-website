@@ -672,7 +672,8 @@ module.exports = {
                     author: userID,
                     activityType: "guideComment",
                     guide: guideID,
-                    createdDate: new Date().toISOString()
+                    createdDate: new Date().toISOString(),
+                    comment: newCommentID
                 });
                 activity.save(function(err, data) {
                     if (err) {
