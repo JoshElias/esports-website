@@ -567,6 +567,9 @@ module.exports = {
                     {
                         path: 'snapshot',
                         select: '_id title slug snapNum comments'
+                    },
+                    {
+                        path: 'comment',
                     }
                 ])
                 .exec(function (err, activities) {
