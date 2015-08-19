@@ -3299,6 +3299,7 @@ ul[dnd-list] .dndPlaceholder {
 .icon-johanna { background: url('../img/hots/heroes/johanna-hex.png') no-repeat center center; }
 .icon-the-butcher { background: url('../img/hots/heroes/the-butcher-hex.png') no-repeat center center; }
 .icon-leoric { background: url('../img/hots/heroes/leoric-hex.png') no-repeat center center; }
+.icon-kharazim { background: url('../img/hots/heroes/kharazim-hex.png') no-repeat center center; }
 
 .hero-selection .hero .icon-wrap .icon:hover { background-color: rgba(88, 43, 128, 1); }
 .hero-selection .hero .icon-wrap .icon.active { background-color: #2766ad; }
@@ -3314,6 +3315,7 @@ p.white { color: #FFF; }
 .map-selection .map-row.map-row-2 { max-width: 382px; }
 .map-selection .map-row.map-row-3 { max-width: 573px; }
 .map-selection .map-row.map-row-4 { max-width: 764px; }
+.map-selection .map-row.map-row-5 { max-width: 955px; }
 
 .map-selection .map { margin: 0 5px; display: inline-block; position: relative; width: 181px; height: 208px; }
 .map-selection .map .icon-wrap { width: 181px; height: 208px; display: inline-block; overflow: hidden; }
@@ -3329,6 +3331,7 @@ p.white { color: #FFF; }
 .map-selection .map .icon-wrap .icon a.icon-skytemple { background: url('../img/hots/maps/sky.png') no-repeat center center; }
 .map-selection .map .icon-wrap .icon a.icon-tomb-of-the-spider-queen { background: url('../img/hots/maps/spider.png') no-repeat center center; }
 .map-selection .map .icon-wrap .icon a.icon-battlefield-of-eternity { background: url('../img/hots/maps/bfoe.png') no-repeat center center; }
+.map-selection .map .icon-wrap .icon a.icon-shrine { background: url('../img/hots/maps/shrine.png') no-repeat center center; }
 
 .map-selection .map .icon-wrap .icon:hover { opacity: .8; }
 .map-selection .map .icon-wrap .icon.active { opacity: 1; }
@@ -3414,6 +3417,7 @@ p.white { color: #FFF; }
 .hero-list li a.johanna { background: url('../img/hots/heroes/28x/johanna28.png') no-repeat center right; }
 .hero-list li a.the-butcher { background: url('../img/hots/heroes/28x/the-butcher28.png') no-repeat center right; }
 .hero-list li a.leoric { background: url('../img/hots/heroes/28x/leoric28.png') no-repeat center right; }
+.hero-list li a.kharazim { background: url('../img/hots/heroes/28x/kharazim28.png') no-repeat center right; }
 
 /* guide steps */
 .gb-steps { margin: 0 0 20px 0; padding: 0 1px; }
@@ -3493,6 +3497,7 @@ p.white { color: #FFF; }
 .talents-title.johanna { background: url('../img/hots/heroes/60x/johanna60.png') no-repeat; }
 .talents-title.the-butcher { background: url('../img/hots/heroes/60x/the-butcher60.png') no-repeat; }
 .talents-title.leoric { background: url('../img/hots/heroes/60x/leoric60.png') no-repeat; }
+.talents-title.kharazim { background: url('../img/hots/heroes/60x/kharazim60.png') no-repeat; }
 
 /* talents icons */
 .talents-icon { display: block; width: 30px; height: 30px; overflow: hidden; white-space: nowrap; text-indent: -99999px; opacity: .5; transition: opacity .1s linear; }
@@ -3542,6 +3547,7 @@ p.white { color: #FFF; }
 .talents-icon.johanna { background: url('../img/hots/talents/johanna.png') no-repeat; }
 .talents-icon.the-butcher { background: url('../img/hots/talents/the-butcher.png') no-repeat; }
 .talents-icon.leoric { background: url('../img/hots/talents/leoric.png') no-repeat; }
+.talents-icon.kharazim { background: url('../img/hots/talents/kharazim.png') no-repeat; }
 
 /* talents - the-butcher - small */
 /* Tier 1 */
@@ -3900,7 +3906,7 @@ p.white { color: #FFF; }
 .talents-icon.anub-arak.regeneration-master { background-position: 0px -90px; }
 /* Tier 2 */
 .talents-icon.anub-arak.underking { background-position: 0px -120px; }
-.talents-icon.anub-arak.superiority { background-position: 0px -150px; }
+.talents-icon.anub-arak.mercenary-lord { background-position: 0px -150px; }
 .talents-icon.anub-arak.locust-needles { background-position: 0px -180px; }
 .talents-icon.anub-arak.legion-of-beetles { background-position: 0px -60px; }
 /* Tier 3 */
@@ -3936,7 +3942,7 @@ p.white { color: #FFF; }
 .talents-icon.anub-arak.large.regeneration-master { background-position: -30px -306px; }
 /* Tier 2 */
 .talents-icon.anub-arak.large.underking { background-position: -30px -408px; }
-.talents-icon.anub-arak.large.superiority { background-position: -30px -510px; }
+.talents-icon.anub-arak.large.mercenary-lord { background-position: -30px -510px; }
 .talents-icon.anub-arak.large.locust-needles { background-position: -30px -612px; }
 .talents-icon.anub-arak.large.legion-of-beetles { background-position: -30px -204px; }
 /* Tier 3 */
@@ -3971,7 +3977,7 @@ p.white { color: #FFF; }
 .talents-icon.arthas.frost-presence { background-position: 0px -60px; }
 .talents-icon.arthas.regeneration-master { background-position: 0px -90px; }
 /* Tier 2 */
-.talents-icon.arthas.superiority { background-position: 0px -120px; }
+.talents-icon.arthas.mercenary-lord { background-position: 0px -120px; }
 .talents-icon.arthas.destruction { background-position: 0px -30px; }
 .talents-icon.arthas.frozen-wastes { background-position: 0px -150px; }
 /* Tier 3 */
@@ -4005,7 +4011,7 @@ p.white { color: #FFF; }
 .talents-icon.arthas.large.frost-presence { background-position: -30px -204px; }
 .talents-icon.arthas.large.regeneration-master { background-position: -30px -306px; }
 /* Tier 2 */
-.talents-icon.arthas.large.superiority { background-position: -30px -408px; }
+.talents-icon.arthas.large.mercenary-lord { background-position: -30px -408px; }
 .talents-icon.arthas.large.destruction { background-position: -30px -102px; }
 .talents-icon.arthas.large.frozen-wastes { background-position: -30px -510px; }
 /* Tier 3 */
@@ -4045,7 +4051,7 @@ p.white { color: #FFF; }
 .talents-icon.azmodan.gluttony { background-position: 0px -30px; }
 .talents-icon.azmodan.army-of-hell { background-position: 0px -120px; }
 .talents-icon.azmodan.bound-minion { background-position: 0px -150px; }
-.talents-icon.azmodan.superiority { background-position: 0px -180px; }
+.talents-icon.azmodan.mercenary-lord { background-position: 0px -180px; }
 
 /* Tier 3 */
 .talents-icon.azmodan.enduring-warriors { background-position: 0px -120px; }
@@ -4089,7 +4095,7 @@ p.white { color: #FFF; }
 .talents-icon.azmodan.large.gluttony { background-position: -30px -102px; }
 .talents-icon.azmodan.large.army-of-hell { background-position: -30px -408px; }
 .talents-icon.azmodan.large.bound-minion { background-position: -30px -510px; }
-.talents-icon.azmodan.large.superiority { background-position: -30px -612px; }
+.talents-icon.azmodan.large.mercenary-lord { background-position: -30px -612px; }
 
 /* Tier 3 */
 .talents-icon.azmodan.large.enduring-warriors { background-position: -30px -408px; }
@@ -4484,7 +4490,7 @@ p.white { color: #FFF; }
 .talents-icon.gazlowe.extra-tnt { background-position: 0px -60px; }
 .talents-icon.gazlowe.demolitionist { background-position: 0px -90px; }
 /* Tier 2 */
-.talents-icon.gazlowe.superiority { background-position: 0px -120px; }
+.talents-icon.gazlowe.mercenary-lord { background-position: 0px -120px; }
 .talents-icon.gazlowe.reduce-reuse-recycle { background-position: 0px -30px; }
 .talents-icon.gazlowe.clockwerk-steam-fists { background-position: 0px -150px; }
 .talents-icon.gazlowe.promote { background-position: 0px -180px; }
@@ -4522,7 +4528,7 @@ p.white { color: #FFF; }
 .talents-icon.gazlowe.large.extra-tnt { background-position: -30px -204px; }
 .talents-icon.gazlowe.large.demolitionist { background-position: -30px -306px; }
 /* Tier 2 */
-.talents-icon.gazlowe.large.superiority { background-position: -30px -408px; }
+.talents-icon.gazlowe.large.mercenary-lord { background-position: -30px -408px; }
 .talents-icon.gazlowe.large.reduce-reuse-recycle { background-position: -30px -102px; }
 .talents-icon.gazlowe.large.clockwerk-steam-fists { background-position: -30px -510px; }
 .talents-icon.gazlowe.large.promote { background-position: -30px -612px; }
@@ -4769,6 +4775,118 @@ p.white { color: #FFF; }
 .talents-icon.kerrigan.large.torrasque { background-position: -30px -1122px; }
 .talents-icon.kerrigan.large.nexus-blades { background-position: -30px -1734px; }
 .talents-icon.kerrigan.large.bolt-of-the-storm { background-position: -30px -1836px; }
+
+/* talents - kharazim - small */
+/* Tier 1 */
+.talents-icon.kharazim.transcendence { background-position: 0px 0px; }
+.talents-icon.kharazim.iron-fists { background-position: 0px -30px; }
+.talents-icon.kharazim.insight { background-position: 0px -60px  }
+/* Tier 2 */
+.talents-icon.kharazim.foresight { background-position: 0px -90px; }
+.talents-icon.kharazim.overtake { background-position: 0px -120px; }
+.talents-icon.kharazim.healing-ward { background-position: 0px -150px; }
+.talents-icon.kharazim.protective-shield { background-position: 0px -180px; }
+/* Tier 3 */
+.talents-icon.kharazim.echo-of-heaven { background-position: 0px -210px; }
+.talents-icon.kharazim.way-of-the-hundred-fists { background-position: 0px -90px; }
+.talents-icon.kharazim.clairvoyance { background-position: 0px -240px; }
+.talents-icon.kharazim.cleanse { background-position: 0px -270px; }
+/* Tier 4 */
+.talents-icon.kharazim.seven-sided-strike { background-position: 0px -300px; }
+.talents-icon.kharazim.divine-palm { background-position: 0px -330px; }
+/* Tier 5 */
+.talents-icon.kharazim.quicksilver { background-position: 0px -90px; }
+.talents-icon.kharazim.spell-shield { background-position: 0px -360px; }
+.talents-icon.kharazim.relentless { background-position: 0px -390px; }
+.talents-icon.kharazim.fists-of-fury { background-position: 0px -120px; }
+/* Tier 6 */
+.talents-icon.kharazim.soothing-breeze { background-position: 0px -210px; }
+.talents-icon.kharazim.circle-of-life { background-position: 0px -210px; }
+.talents-icon.kharazim.blinding-speed { background-position: 0px -90px; }
+.talents-icon.kharazim.blazing-fists { background-position: 0px -120px; }
+/* Tier 7 */
+.talents-icon.kharazim.transgression { background-position: 0px -300px; }
+.talents-icon.kharazim.peaceful-repose { background-position: 0px -330px; }
+.talents-icon.kharazim.storm-shield { background-position: 0px -420px; }
+.talents-icon.kharazim.epiphany { background-position: 0px -450px; }
+/* trait */
+.talents-icon.kharazim.pick-your-trait { -webkit-animation: kharazim-traits 6s infinite; animation: kharazim-traits 6s infinite; }
+@-webkit-keyframes kharazim-traits {
+  0% { background-position: 0px 0px; }
+  33% { background-position: 0px -30px; }
+  66% { background-position: 0px -60px; }
+  100% { background-position: 0px 0px; }
+}
+
+@-moz-keyframes kharazim-traits {
+  0% { background-position: 0px 0px; }
+  33% { background-position: 0px -30px; }
+  66% { background-position: 0px -60px; }
+  100% { background-position: 0px 0px; }
+}
+
+@keyframes kharazim-traits {
+  0% { background-position: 0px 0px; }
+  33% { background-position: 0px -30px; }
+  66% { background-position: 0px -60px; }
+  100% { background-position: 0px 0px; }
+}
+
+/* talents - kharazim - large */
+/* Tier 1 */
+.talents-icon.kharazim.large.transcendence { background-position: -30px 0px; }
+.talents-icon.kharazim.large.iron-fists { background-position: -30px -102px; }
+.talents-icon.kharazim.large.insight { background-position: -30px -204px  }
+/* Tier 2 */
+.talents-icon.kharazim.large.foresight { background-position: -30px -306px; }
+.talents-icon.kharazim.large.overtake { background-position: -30px -408px; }
+.talents-icon.kharazim.large.healing-ward { background-position: -30px -510px; }
+.talents-icon.kharazim.large.protective-shield { background-position: -30px -612px; }
+/* Tier 3 */
+.talents-icon.kharazim.large.echo-of-heaven { background-position: -30px -714px; }
+.talents-icon.kharazim.large.way-of-the-hundred-fists { background-position: -30px -306px; }
+.talents-icon.kharazim.large.clairvoyance { background-position: -30px -816px; }
+.talents-icon.kharazim.large.cleanse { background-position: -30px -918px; }
+/* Tier 4 */
+.talents-icon.kharazim.large.seven-sided-strike { background-position: -30px -1020px; }
+.talents-icon.kharazim.large.divine-palm { background-position: -30px -1122px; }
+/* Tier 5 */
+.talents-icon.kharazim.large.quicksilver { background-position: -30px -306px; }
+.talents-icon.kharazim.large.spell-shield { background-position: -30px -1224px; }
+.talents-icon.kharazim.large.relentless { background-position: -30px -1326px; }
+.talents-icon.kharazim.large.fists-of-fury { background-position: -30px -408px; }
+/* Tier 6 */
+.talents-icon.kharazim.large.soothing-breeze { background-position: -30px -714px; }
+.talents-icon.kharazim.large.circle-of-life { background-position: -30px -714px; }
+.talents-icon.kharazim.large.blinding-speed { background-position: -30px -306px; }
+.talents-icon.kharazim.large.blazing-fists { background-position: -30px -408px; }
+/* Tier 7 */
+.talents-icon.kharazim.large.transgression { background-position: -30px -1020px; }
+.talents-icon.kharazim.large.peaceful-repose { background-position: -30px -1122px; }
+.talents-icon.kharazim.large.storm-shield { background-position: -30px -1428px; }
+.talents-icon.kharazim.large.epiphany { background-position: -30px -1530px; }
+/* trait */
+.talents-icon.kharazim.large.pick-your-trait { -webkit-animation: kharazim-traits-large 6s infinite; animation: kharazim-traits-large 6s infinite; }
+@-webkit-keyframes kharazim-traits-large {
+  0% { background-position: -30px 0px; }
+  33% { background-position: -30px -102px; }
+  66% { background-position: -30px -204px; }
+  100% { background-position: -30px 0px; }
+}
+
+@-moz-keyframes kharazim-traits-large {
+  0% { background-position: -30px 0px; }
+  33% { background-position: -30px -102px; }
+  66% { background-position: -30px -204px; }
+  100% { background-position: -30px 0px; }
+}
+
+@keyframes kharazim-traits-large {
+  0% { background-position: -30px 0px; }
+  33% { background-position: -30px -102px; }
+  66% { background-position: -30px -204px; }
+  100% { background-position: -30px 0px; }
+}
 
 /* talents - Leoric - small */
 /* Tier 1 */
@@ -5433,10 +5551,11 @@ p.white { color: #FFF; }
 .talents-icon.sonya.endless-fury { background-position: 0px -60px; }
 .talents-icon.sonya.shot-of-fury { background-position: 0px -60px; }
 /* Tier 2 */
-.talents-icon.sonya.superiority { background-position: 0px -90px; }
+.talents-icon.sonya.mercenary-lord { background-position: 0px -90px; }
 .talents-icon.sonya.focused-attack { background-position: 0px -120px; }
 .talents-icon.sonya.boon-of-the-ancients { background-position: 0px -150px; }
 .talents-icon.sonya.furious-blow { background-position: 0px -180px; }
+.talents-icon.sonya.follow-through { background-position: 0px -480px; }
 /* Tier 3 */
 .talents-icon.sonya.poisoned-spear { background-position: 0px -150px; }
 .talents-icon.sonya.shattered-ground { background-position: 0px -180px; }
@@ -5469,10 +5588,11 @@ p.white { color: #FFF; }
 .talents-icon.sonya.large.endless-fury { background-position: -30px -204px; }
 .talents-icon.sonya.large.shot-of-fury { background-position: -30px -204px; }
 /* Tier 2 */
-.talents-icon.sonya.large.superiority { background-position: -30px -306px; }
+.talents-icon.sonya.large.mercenary-lord { background-position: -30px -306px; }
 .talents-icon.sonya.large.focused-attack { background-position: -30px -408px; }
 .talents-icon.sonya.large.boon-of-the-ancients { background-position: -30px -510px; }
 .talents-icon.sonya.large.furious-blow { background-position: -30px -612px; }
+.talents-icon.sonya.large.follow-through { background-position: -30px -1632px; }
 /* Tier 3 */
 .talents-icon.sonya.large.poisoned-spear { background-position: -30px -510px; }
 .talents-icon.sonya.large.shattered-ground { background-position: -30px -612px; }
@@ -5506,7 +5626,7 @@ p.white { color: #FFF; }
 .talents-icon.stitches.regeneration-master { background-position: 0px -90px; }
 /* Tier 2 */
 .talents-icon.stitches.amplified-healing { background-position: 0px -120px; }
-.talents-icon.stitches.superiority { background-position: 0px -150px; }
+.talents-icon.stitches.mercenary-lord { background-position: 0px -150px; }
 .talents-icon.stitches.vile-cleaver { background-position: 0px -180px; }
 .talents-icon.stitches.putrid-ground { background-position: 0px -60px; }
 /* Tier 3 */
@@ -5541,7 +5661,7 @@ p.white { color: #FFF; }
 .talents-icon.stitches.large.regeneration-master { background-position: -30px -306px; }
 /* Tier 2 */
 .talents-icon.stitches.large.amplified-healing { background-position: -30px -408px; }
-.talents-icon.stitches.large.superiority { background-position: -30px -510px; }
+.talents-icon.stitches.large.mercenary-lord { background-position: -30px -510px; }
 .talents-icon.stitches.large.vile-cleaver { background-position: -30px -612px; }
 .talents-icon.stitches.large.putrid-ground { background-position: -30px -204px; }
 /* Tier 3 */
@@ -6447,6 +6567,7 @@ p.white { color: #FFF; }
 .hots-modal .hero.johanna { background: url('../img/hots/modal/heroes/johanna.png') no-repeat center right; }
 .hots-modal .hero.the-butcher { background: url('../img/hots/modal/heroes/the-butcher.png') no-repeat center right; }
 .hots-modal .hero.leoric { background: url('../img/hots/modal/heroes/leoric.png') no-repeat center right; }
+.hots-modal .hero.kharazim { background: url('../img/hots/modal/heroes/kharazim.png') no-repeat center right; }
 
 .hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
 .hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
@@ -6465,6 +6586,7 @@ p.white { color: #FFF; }
 .hots-modal .map.skytemple { background: url('../img/hots/maps/modal/temp.jpg') no-repeat center center; }
 .hots-modal .map.tomb-of-the-spider-queen { background: url('../img/hots/maps/modal/spider.jpg') no-repeat center center; }
 .hots-modal .map.battlefield-of-eternity { background: url('../img/hots/maps/modal/bfoe.jpg') no-repeat center center; }
+.hots-modal .map.shrine { background: url('../img/hots/maps/modal/shrine.jpg') no-repeat center center; }
 .hots-modal .map-text { float: right; width: 185px; }
 
 /* hots modal - talents */
@@ -6967,6 +7089,7 @@ p.white { color: #FFF; }
 .hots-guide.small.tomb-of-the-spider-queen { background: url('../img/hots/maps/guides/sq-tab.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.small.battlefield-of-eternity { background: url('../img/hots/maps/guides/bfoe-tab.jpg') no-repeat center top; background-size: cover; }
 
+
 /* hots guide list */
 .guides-list { padding: 20px 0 0 0; }
 .guides-list .guide-wrapper { margin: 0 0 20px 0; position: relative; width: 100%; height: 200px; }
@@ -7078,6 +7201,7 @@ p.white { color: #FFF; }
 .guide-hero-image.johanna { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/johanna60.png') no-repeat right top; }
 .guide-hero-image.the-butcher { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/the-butcher60.png') no-repeat right top; }
 .guide-hero-image.leoric { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/leoric60.png') no-repeat right top; }
+.guide-hero-image.kharazim { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/kharazim60.png') no-repeat right top; }
 
 .guide-heroes-1 { width: 100%; }
 .guide-heroes-2 { width: 50%; }
@@ -7130,6 +7254,7 @@ p.white { color: #FFF; }
 .guide-map.skytemple { background: url('../img/hots/maps/sky_small.png') no-repeat center center; }
 .guide-map.tomb-of-the-spider-queen { background: url('../img/hots/maps/spider_small.png') no-repeat center center; }
 .guide-map.battlefield-of-eternity { background: url('../img/hots/maps/bfoe_small.png') no-repeat center center; }
+.guide-map.shrine { background: url('../img/hots/maps/shrine_small.png') no-repeat center center; }
 
 .guide-subscribe > h1 { margin-top: 20px; color: #2766ad; font-family: 'Open Sans Bold'; }
 .guide-subscribe > h2 { margin-bottom: 20px; font-size: 20px; color: #FFF; }
@@ -7288,6 +7413,7 @@ p.white { color: #FFF; }
 .tc-hero.johanna { background: url('../img/hots/modal/heroes/johanna.png') no-repeat right 120px; }
 .tc-hero.the-butcher { background: url('../img/hots/modal/heroes/the-butcher.png') no-repeat right 120px; }
 .tc-hero.leoric { background: url('../img/hots/modal/heroes/leoric.png') no-repeat right 120px; }
+.tc-hero.kharazim { background: url('../img/hots/modal/heroes/kharazim.png') no-repeat right 120px; }
 
 
 /* talent calculator link */

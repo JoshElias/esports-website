@@ -72,7 +72,7 @@
             </div>
             <ul class="list-group" dnd-list="hero.abilities" dnd-allowed-types="['ability']" ng-show="hero.abilities.length">
                 <li class="list-group-item admin-list-item lh-lg clearfix"
-                    ng-repeat="ability in hero.abilities | orderBy: 'orderNum'"
+                    ng-repeat="ability in hero.abilities"
                     dnd-draggable="ability"
                     dnd-moved="updateDND(hero.abilities, $index)"
                     dnd-disable-if="hero.abilities.length < 2"
@@ -98,7 +98,7 @@
             </div>
             <ul class="list-group" dnd-list="hero.talents" dnd-allowed-types="['talent']" ng-show="hero.talents.length">
                 <li class="list-group-item admin-list-item lh-lg clearfix"
-                    ng-repeat="talent in hero.talents | orderBy: 'orderNum'"
+                    ng-repeat="talent in hero.talents"
                     dnd-draggable="talent"
                     dnd-moved="updateDND(hero.talents, $index)"
                     dnd-disable-if="hero.talents.length < 2"

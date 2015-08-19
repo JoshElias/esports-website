@@ -1924,13 +1924,40 @@ angular.module('app.controllers', ['ngCookies'])
             return out;
         }
         
-        $scope.updateDND = function (list, index) {
+        $scope.updateDND = function (list, index, d) {
             list.splice(index, 1);
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
             }
-            $scope.deckRanks();
+            updateMatchesDND(d)
+            
+            doUpdateMatches(function () {
+                $scope.selectedDecks = [];
+                $scope.removedDecks = [];
+                $scope.deckRanks();
+            }, false);
         };
+        
+        function updateMatchesDND (d) {
+            var tierLength = $scope.snapshot.tiers.length;
+            var maxTierLength = (tierLength > 2) ? 2 : tierLength;
+            
+            for (var i = 0; i < maxTierLength; i++) {
+                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
+                    if ($scope.snapshot.tiers[i].decks[j].deck._id == d.deck._id) {
+                        for (var k = 0; k < $scope.snapshot.matches.length; k++) {
+                            if ($scope.snapshot.matches[k].for._id == d.deck._id || $scope.snapshot.matches[k].against._id == d.deck._id) {
+                                return;
+                            }
+                        }
+                        $scope.selectedDecks.push(d);
+                        $scope.tier = $scope.snapshot.tiers[i].tier;
+                        return;
+                    }
+                }
+            }
+            removeMatch(d.deck);
+        }
         
         function escapeStr( str ) {
             return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -2042,7 +2069,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.search = "";
                     $scope.selectedDecks = [];
                     $scope.removedDecks = [];
-                });
+                }, true);
             }
         /* BOOTBOX METHODS */
         
@@ -2122,7 +2149,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 doUpdateMatches(function () {
                     $scope.deckRanks
-                });
+                }, true);
             }
             ///////////////////////////////////////////////////////////////////////////////////
             $scope.deckRanks = function () {
@@ -2142,7 +2169,7 @@ angular.module('app.controllers', ['ngCookies'])
                 match.againstChance = (100 - match.forChance);
             }
             
-            function doUpdateMatches (callback) {
+            function doUpdateMatches (callback, addDecksToTier) {
                 var tiers = $scope.snapshot.tiers,
                     tierLength = tiers.length,
                     maxTierLength = (tierLength > 2) ? 2 : tierLength;
@@ -2159,7 +2186,9 @@ angular.module('app.controllers', ['ngCookies'])
                             });
                         }
                     }
-                    $scope.snapshot.tiers[$scope.tier-1].decks.push($scope.selectedDecks[i]);
+                    if (addDecksToTier) {
+                        $scope.snapshot.tiers[$scope.tier-1].decks.push($scope.selectedDecks[i]);
+                    }
                 }
                 for (var j = 0; j < $scope.removedDecks.length; j++) {
                     $scope.removeDeck($scope.removedDecks[j]);
@@ -2167,7 +2196,7 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 return callback();
             }
-            
+        
             $scope.getMatches = function (deckID) {
                 var matches = $scope.snapshot.matches,
                     out = [];
@@ -2212,7 +2241,7 @@ angular.module('app.controllers', ['ngCookies'])
                             $scope.matches.splice(k,1);
                         }
                     }
-                    doRemoveDeck(sel);
+                    $scope.removeDeck(sel);
                 }
                 $scope.deckRanks();
             }
@@ -2253,20 +2282,25 @@ angular.module('app.controllers', ['ngCookies'])
                             k--;
                         }
                     }
-                    for (var j = 0; j < $scope.snapshot.matches.length; j++) {
-                        if (d._id == $scope.snapshot.matches[j].for._id || d._id == $scope.snapshot.matches[j].against._id) {
-                            $scope.snapshot.matches.splice(j,1);
-                            j--;
-                        }
-                    }
-                    for (var l = 0; l < $scope.matches.length; l++) {
-                        if (d._id == $scope.matches[l].deck._id) {
-                            $scope.matches.splice(l,1);
-                            l--;
-                        }
-                    }
+                    removeMatch(d);
                 }
                 $scope.deckRanks();
+            }
+            
+            function removeMatch(d) {
+                for (var j = 0; j < $scope.snapshot.matches.length; j++) {
+                    if (d._id == $scope.snapshot.matches[j].for._id || d._id == $scope.snapshot.matches[j].against._id) {
+                        $scope.snapshot.matches.splice(j,1);
+                        j--;
+                    }
+                }
+                
+                for (var l = 0; l < $scope.matches.length; l++) {
+                    if (d._id == $scope.matches[l].deck._id) {
+                        $scope.matches.splice(l,1);
+                        l--;
+                    }
+                }
             }
             
             $scope.searchDecks = function (s) {
@@ -2464,13 +2498,39 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.lockDND = true;
         $scope.loaded = false;
         
-        $scope.updateDND = function (list, index) {
+        $scope.updateDND = function (list, index, d) {
             list.splice(index, 1);
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
             }
-            $scope.deckRanks();
+            updateMatchesDND(d)
+            doUpdateMatches(function () {
+                $scope.selectedDecks = [];
+                $scope.removedDecks = [];
+                $scope.deckRanks();
+            }, false);
         };
+        
+        function updateMatchesDND (d) {
+            var tierLength = $scope.snapshot.tiers.length;
+            var maxTierLength = (tierLength > 2) ? 2 : tierLength;
+            
+            for (var i = 0; i < maxTierLength; i++) {
+                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
+                    if ($scope.snapshot.tiers[i].decks[j].deck._id == d.deck._id) {
+                        for (var k = 0; k < $scope.snapshot.matches.length; k++) {
+                            if ($scope.snapshot.matches[k].for._id == d.deck._id || $scope.snapshot.matches[k].against._id == d.deck._id) {
+                                return;
+                            }
+                        }
+                        $scope.selectedDecks.push(d);
+                        $scope.tier = $scope.snapshot.tiers[i].tier;
+                        return;
+                    }
+                }
+            }
+            removeMatch(d.deck);
+        }
         
         // photo upload
         $scope.photoUpload = function ($files) {
@@ -2619,7 +2679,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.search = "";
                     $scope.selectedDecks = [];
                     $scope.removedDecks = [];
-                });
+                }, true);
             }
         /* BOOTBOX METHODS */
         
@@ -2700,7 +2760,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 doUpdateMatches(function () {
                     $scope.deckRanks
-                });
+                }, true);
             }
             ///////////////////////////////////////////////////////////////////////////////////
             $scope.deckRanks = function () {
@@ -2720,15 +2780,19 @@ angular.module('app.controllers', ['ngCookies'])
                 match.againstChance = (100 - match.forChance);
             }
             
-            function doUpdateMatches (callback) {
+            function doUpdateMatches (callback, addDecksToTier) {
                 var tiers = $scope.snapshot.tiers,
                     tierLength = tiers.length,
                     maxTierLength = (tierLength > 2) ? 2 : tierLength;
+                
+                console.log('Selected: ',$scope.selectedDecks);
+                console.log('Matches: ',$scope.matches);
                 
                 for (var i = 0; i < $scope.selectedDecks.length; i++) {
                     if ($scope.tier < 3) {
                         $scope.matches.push($scope.selectedDecks[i]);
                         for (var j = 0; j < $scope.matches.length; j++) {
+                            console.log(j);
                             $scope.snapshot.matches.push({
                                 'for': $scope.selectedDecks[i].deck,
                                 'against': $scope.matches[j].deck,
@@ -2737,9 +2801,12 @@ angular.module('app.controllers', ['ngCookies'])
                             });
                         }
                     }
-                    $scope.snapshot.tiers[$scope.tier-1].decks.push($scope.selectedDecks[i]);
+                    if (addDecksToTier) {
+                        $scope.snapshot.tiers[$scope.tier-1].decks.push($scope.selectedDecks[i]);
+                    }
                 }
                 for (var j = 0; j < $scope.removedDecks.length; j++) {
+                    console.log('Removing: ', $scope.removedDecks[j]);
                     $scope.removeDeck($scope.removedDecks[j]);
                 }
                 
@@ -2791,7 +2858,7 @@ angular.module('app.controllers', ['ngCookies'])
                             $scope.matches.splice(k,1);
                         }
                     }
-                    doRemoveDeck(sel);
+                    $scope.removeDeck(sel);
                 }
                 $scope.deckRanks();
             }
@@ -2800,6 +2867,13 @@ angular.module('app.controllers', ['ngCookies'])
                 for (var j = 0; j < $scope.matches.length; j++) {
                     if (d._id == $scope.matches[j].deck._id) {
                         return 'true';
+                    }
+                }
+                for (var i = 2; i < $scope.snapshot.tiers.length; i++) {
+                    for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
+                        if (d._id == $scope.snapshot.tiers[i].decks[j].deck._id) {
+                            return true;
+                        }
                     }
                 }
                 return false;
@@ -2832,20 +2906,25 @@ angular.module('app.controllers', ['ngCookies'])
                             k--;
                         }
                     }
-                    for (var j = 0; j < $scope.snapshot.matches.length; j++) {
-                        if (d._id == $scope.snapshot.matches[j].for._id || d._id == $scope.snapshot.matches[j].against._id) {
-                            $scope.snapshot.matches.splice(j,1);
-                            j--;
-                        }
-                    }
-                    for (var l = 0; l < $scope.matches.length; l++) {
-                        if (d._id == $scope.matches[l].deck._id) {
-                            $scope.matches.splice(l,1);
-                            l--;
-                        }
-                    }
+                    removeMatch(d);
                 }
                 $scope.deckRanks();
+            }
+            
+            function removeMatch(d) {
+                for (var j = 0; j < $scope.snapshot.matches.length; j++) {
+                    if (d._id == $scope.snapshot.matches[j].for._id || d._id == $scope.snapshot.matches[j].against._id) {
+                        $scope.snapshot.matches.splice(j,1);
+                        j--;
+                    }
+                }
+                
+                for (var l = 0; l < $scope.matches.length; l++) {
+                    if (d._id == $scope.matches[l].deck._id) {
+                        $scope.matches.splice(l,1);
+                        l--;
+                    }
+                }
             }
             
             $scope.searchDecks = function (s) {
@@ -2965,7 +3044,9 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.matches = [];
                     for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                         for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
-                            $scope.matches.push($scope.snapshot.tiers[i].decks[k]);
+                            if (i < 2) {
+                                $scope.matches.push(data.snapshot.tiers[i].decks[k]);
+                            }
                             $scope.snapshot.tiers[i].decks[k].rank.last.splice(0,0,data.snapshot.tiers[i].decks[k].rank.current);
                             if ($scope.snapshot.tiers[i].decks[k].rank.last.length > 12) {
                                 $scope.snapshot.tiers[i].decks[k].rank.last.pop();
@@ -5299,6 +5380,18 @@ angular.module('app.controllers', ['ngCookies'])
             t.collapse('show');   
             d.collapse('show');
             $scope.scrollToDeck(d);  
+        }
+        
+        $scope.goToTwitch = function ($event, usr) {
+            $event.stopPropagation();
+            var url = 'http://twitch.tv/' + usr
+            window.open(url, '_blank');
+        }
+        
+        $scope.goToTwitter = function ($event, usr) {
+            $event.stopPropagation();
+            var url = 'http://twitter.com/' + usr;
+            window.open(url, '_blank');
         }
         
         $scope.getMatches = function (id) {

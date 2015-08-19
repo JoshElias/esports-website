@@ -318,7 +318,7 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/activity/activity.forumPost.html'
     };
 })
-.directive('activityForumComment', function () {
+.directive('activityForumPostComment', function () {
     return {
         templateUrl: tpl + 'views/frontend/activity/activity.forumPost.comment.html'
     };
