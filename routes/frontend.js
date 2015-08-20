@@ -529,65 +529,11 @@ module.exports = {
                 });
             };
             
-            function getActivity (callback) {
-                
-                var iterAct = function (activity, callback) {
-                    if (activity.forumPost) {
-                        Schemas.ForumThread.populate(activity.forumPost, {
-                            path: 'thread',
-                            select: 'slug.url'
-                        }, callback);
-                    } else {
-                        return callback();
-                    }
-                };
-                
-                Schemas.Activity.find({ author: usr._id, active: true })
-                .sort('-createdDate')
-                .lean()
-                .populate([
-                    {
-                        path: 'article',
-                        select: '_id title slug active comments description'
-                    },
-                    {
-                        path: 'deck',
-                        select: '_id name slug public comments description',
-                        match: { public: true }
-                    },
-                    {
-                        path: 'forumPost',
-                        select: '_id title slug thread'
-                    },
-                    {
-                        path: 'guide',
-                        select: '_id name slug public guideType description comments',
-                        match: { public: true }
-                    },
-                    {
-                        path: 'snapshot',
-                        select: '_id title slug snapNum comments'
-                    },
-                    {
-                        path: 'comment',
-                    }
-                ])
-                .exec(function (err, activities) {
-                    if (err) { return req.json({ success: false }); }
-                    async.each(activities, iterAct, function (err) {
-                        if (err) { return res.json({ success: false }); }
-                        return callback(activities);
-                    });
-                });
-            }
-            
             getUser(function() {
                 countPosts(function() {
                     countDecks(function() {
                         countGuides(function() {
-                            getActivity(function(activities) {
-                                return res.json({ success: true, user: usr, postCount: postCount, deckCount: deckCount, guideCount: guideCount, activities: activities });
-                            });
+                            return res.json({ success: true, user: usr, postCount: postCount, deckCount: deckCount, guideCount: guideCount, activities: activities });
                         });
                     });
                 });
@@ -822,7 +768,7 @@ module.exports = {
                 });
             }
             
-            function getActivity (user, callback) {
+            function getActivity (usr, callback) {
                 
                 var iterAct = function (activity, callback) {
                     if (activity.forumPost) {
@@ -835,32 +781,35 @@ module.exports = {
                     }
                 };
                 
-                Schemas.Activity.find({ author: user._id, active: true })
+                Schemas.Activity.find({ author: usr._id, active: true })
                 .sort('-createdDate')
-                .skip((perpage * page) - perpage)
-                .limit(perpage)
+                .lean()
                 .populate([
                     {
                         path: 'article',
-                        select: '_id title slug active'
+                        select: '_id title slug active comments description'
                     },
                     {
                         path: 'deck',
-                        select: '_id name slug public',
+                        select: '_id name slug public comments description',
                         match: { public: true }
                     },
                     {
                         path: 'forumPost',
-                        select: '_id title slug thread'
+                        select: '_id title slug thread comments content'
                     },
                     {
                         path: 'guide',
-                        select: '_id name slug public',
+                        select: '_id name slug public guideType description comments',
                         match: { public: true }
                     },
                     {
                         path: 'snapshot',
-                        select: '_id title slug snapNum'
+                        select: '_id title slug snapNum comments'
+                    },
+                    {
+                        path: 'comment',
+                        select: 'comment'
                     }
                 ])
                 .exec(function (err, activities) {
@@ -974,6 +923,7 @@ module.exports = {
     },
     profileGuides: function (Schemas) {
         return function (req, res, next) {
+            
             var username = req.params.username,
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 12;
@@ -1015,8 +965,12 @@ module.exports = {
     profileGuidesLoggedIn: function (Schemas) {
         return function (req, res, next) {
             var username = req.params.username,
+                hero = req.body.hero || 'all',
                 page = req.body.page || 1,
-                perpage = req.body.perpage || 12;
+                perpage = req.body.perpage || 10,
+                guides, total,
+                talents = [],
+                now = new Date().getTime();
             
             function getUser (callback) {
                 Schemas.User.findOne({ username: username }).select('_id').exec(function (err, user) {
@@ -1025,31 +979,105 @@ module.exports = {
                 });
             }
             
+
+            
+            if (hero !== 'all') {
+                where.heroes = hero;
+            }
+            
+            
+            // get total guides
+            function getTotal (callback) {
+                Schemas.Guide.count({ public: true, featured: false })
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            // get guides
             function getGuides (user, callback) {
-                var where = (req.user._id === user._id.toString()) ? {} : { 'public': true };
-                
-                Schemas.Guide.find({ author: user._id })
-                .where(where)
-                .sort('-createdDate')
-                //.skip((perpage * page) - perpage)
-                //.limit(perpage)
+                Schemas.Guide.find({ public: true, author:user._id }) //TODO
+                .lean()
                 .select('premium heroes guideType maps slug name description author createdDate comments votesCount')
                 .populate([{
+                        path: 'author',
+                        select: 'username -_id'
+                    }, {
                         path: 'heroes.hero',
                         select: 'className'
                     }, {
                         path: 'maps',
                         select: 'className'
                 }])
-                .exec(function (err, guide) {
-                    if (err) { return req.json({ success: false }); }
-                    return callback(guide);
+                .sort({ votesCount: -1, createdDate: -1 })
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    guides = results;
+                    return callback();
                 });
             }
             
+            // get talents
+            function getTalents (callback) {
+                var heroIDs = [];
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        if (heroIDs.indexOf() === -1) {
+                            heroIDs.push(guides[i].heroes[j].hero._id);
+                        }
+                    }
+                }
+                
+                if (!heroIDs.length) { return callback(); }
+                Schemas.Hero.find({ active: true, _id: { $in: heroIDs } })
+                .select('talents')
+                .exec(function (err, results) {
+                    if (err || !results) { return res.json({ success: false }); }
+                    
+                    for(var i = 0; i < results.length; i++) {
+                        for(var j = 0; j < results[i].talents.length; j++) {
+                            talents.push(results[i].talents[j]);
+                        }
+                    }
+                    return callback();
+                });
+            }
+            
+            function assignTalents (callback) {
+                if (!talents.length) { return callback(); }
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        for(var key in guides[i].heroes[j].talents) {
+                            for(var l = 0; l < talents.length; l++) {
+                                if (guides[i].heroes[j].talents[key].toString() === talents[l]._id.toString()) {
+                                    guides[i].heroes[j].talents[key] = {
+                                        _id: talents[l]._id,
+                                        name: talents[l].name,
+                                        className: talents[l].className
+                                    };
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return callback();
+            }
+            
             getUser(function (user) {
-                getGuides(user, function (guides) {
-                    return res.json({ success: true, guides: guides });
+                getGuides(user, function () {
+                    getTalents(function() {
+                        assignTalents(function() {
+                            console.log(guides);
+                            return res.json({ success: true, guides: guides });
+                        });
+                    });
                 });
             });
         };
@@ -1660,24 +1688,30 @@ module.exports = {
                 ])
                 .exec(function (err, article) {
                     if (err || !article) { return res.json({ success: false }); }
-                    
-                    Schemas.Comment.populate(article.comments, {
-                        path: 'author',
-                        select: 'username email'
-                    }, function (err, comments) {
-                        if (err || !comments) { return res.json({ success: false }); }
-                        article.comments = comments;
-                    });
-                    
-                    Schemas.Article.populate(article.related, {
-                        path: 'author',
-                        select: 'username'
-                    }, function (err, related) {
-                        if (err || !related) { return res.json({ success: false }); }
-                        article.related = related;
-                        return getDeck(article, callback);
-                    })
+                    return callback(article); 
                 });
+            }
+            
+            function getComments (article, callback) {
+                Schemas.Comment.populate(article.comments, {
+                    path: 'author',
+                    select: 'username email'
+                }, function (err, comments) {
+                    if (err || !comments) { return res.json({ success: false }); }
+                    article.comments = comments;
+                    return callback(article);
+                });
+            }
+            
+            function getRelated(article, callback) {
+                Schemas.Article.populate(article.related, {
+                    path: 'author',
+                    select: 'username'
+                }, function (err, related) {
+                    if (err || !related) { return res.json({ success: false }); }
+                    article.related = related;
+                    return callback(article);
+                })
             }
             
             function getDeck (article, callback) {
@@ -1695,7 +1729,13 @@ module.exports = {
             }
             
             getArticle(function (article) {
-                return res.json({ success: true, article: article });
+                getDeck(article, function (article) {
+                    getComments(article, function (article) {
+                        getRelated(article, function(article) {
+                            return res.json({ success: true, article: article });
+                        });
+                    });
+                });
             });
         };
     },

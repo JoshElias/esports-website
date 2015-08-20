@@ -602,7 +602,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .profile-bg-override {
     background-image: url(../img/backgrounds/profile-bg.jpg);
-    background-color: #000000;
+    background-color: #121111;
     background-repeat: no-repeat;
     background-size: 100%, auto;
 }
@@ -1870,6 +1870,10 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     margin: 0;
 }
 
+.login-modal .sign-up {
+    width: 100%;
+}
+
 /* admin */
 .admin-article-related-bg {
     background-color: #F5F5F5;
@@ -1992,53 +1996,126 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-page .activity-list .activity .activity-left { height: 100% }
 .profile-page .activity-list .activity .activity-left .activity-img { width: 60px; height: 60px; border-radius: 50%; background-color: rgb(255,255,255); padding: 2px; }
 .profile-page .activity-list .activity .activity-left .activity-img img { width: 100%; }
-.profile-page .activity-list .activity .activity-left .activity-btn-wrapper { opacity: 0; transition: .2s }
+.profile-page .activity-list .activity .activity-left .activity-btn-wrapper { opacity: .05; transition: .2s }
 .profile-page .activity-list .activity:hover .activity-left .activity-btn-wrapper { opacity: 1; }
 .profile-page .activity-list .activity .activity-left .activity-btn-wrapper .activity-btn { display: inline-block; width:25px; height: 25px; text-align: center; background-color: rgba(255,255,255,.75); border-radius: 50%; line-height: 1.75; }
 
 .profile-page .activity-list .activity .activity-right { padding-left: 25px; color: white; width: 100%; }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header {  }
-.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 { font-size: 16px; letter-spacing: 2px; }
+.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 { font-size: 16px; letter-spacing: 2px; width: 750px; }
+.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2.deleted { font-size: 16px; letter-spacing: 2px; width: 100%; color: rgba(215,215,215,.8); }
+.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 .color-wrapper { color: rgba(215,215,215,.8) }
+/*.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 a { color: rgba(255,255,255,1); }*/
+.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 a:hover { text-decoration: underline; }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-foot { color: rgba(200,200,200,.75); }
 
-.profile-page .activity-list .articleComment,
+.profile-page .activity-list .activity { border: 1px black solid; outline: 1px rgba(255,255,255,.2) solid; outline-offset: -2px; box-shadow: rgba(0,0,0,.5) 2px 2px 3px; background: rgba(0,0,0,.85); }
+
+.profile-page .activity-list .activity .activity-body {
+    color: rgba(215,215,215,.8);
+}
+
+/*.profile-page .activity-list .articleComment .activity-right .activity-body,*/
+.profile-page .activity-list .articleComment .activity-right .activity-header h2 a,
+.profile-page .activity-list .snapshotComment .activity-right .activity-header h2 a,
+.profile-page .activity-list .forumComment .activity-right .activity-header h2 a,
+.profile-page .activity-list .forumPost .activity-right .activity-header h2 a,
+.profile-page .activity-list .createArticle .activity-right .activity-header h2 a {
+    color: rgb(0,126,195);
+}
+.profile-page .activity-list .articleComment .activity-left .activity-img,
+.profile-page .activity-list .snapshotComment .activity-left .activity-img,
+.profile-page .activity-list .forumComment .activity-left .activity-img,
+.profile-page .activity-list .forumPost .activity-left .activity-img,
+.profile-page .activity-list .createArticle .activity-left .activity-img {
+    background-color: rgb(0,126,195);
+}
+
+/*.profile-page .activity-list .createGuide .activity-right .activity-body,*/
+.profile-page .activity-list .createGuide .activity-right .activity-header h2 a,
+.profile-page .activity-list .guideComment .activity-right .activity-header h2 a {
+    color: #785b97;
+}
+.profile-page .activity-list .createGuide .activity-left .activity-img,
+.profile-page .activity-list .guideComment .activity-left .activity-img {
+    background-color: #785b97;
+}
+
+/*.profile-page .activity-list .createDeck .activity-right .activity-body,*/
+.profile-page .activity-list .createDeck .activity-right .activity-header h2 a,
+.profile-page .activity-list .deckComment .activity-right .activity-header h2 a {
+    color: rgb(187,80,24);
+}
+.profile-page .activity-list .createDeck .activity-left .activity-img,
+.profile-page .activity-list .deckComment .activity-left .activity-img {
+    background-color: rgb(187,80,24);
+}
+
+.profile-page .activity-list .signup .activity-right .activity-header h2 {
+    color: gold;
+}
+.profile-page .activity-list .signup .activity-left .activity-img {
+    background-color: gold;
+}
+
+/*
+.profile-page .activity-list .articleComment .activity-right,
 .profile-page .activity-list .snapshotComment,
 .profile-page .activity-list .forumPost,
 .profile-page .activity-list .forumComment,
-.profile-page .activity-list .createArticle,
-.profile-page .activity-list .deckComment {
-    background: #007ec3; /* Old browsers */
-    background: -moz-linear-gradient(left,  rgba(0,126,195,.75) 0%, rgba(19,68,118,.75) 75%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(0,126,195,.75)), color-stop(75%,rgba(19,68,118,.75))); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(left,  rgba(0,126,195,.75) 0%,rgba(19,68,118,.75) 75%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(left,  rgba(0,126,195,.75) 0%,rgba(19,68,118,.75) 75%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(left,  rgba(0,126,195,.75) 0%,rgba(19,68,118,.75) 75%); /* IE10+ */
-    background: linear-gradient(to right,  rgba(0,126,195,.75) 0%,rgba(19,68,118,.75) 75%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#007ec3', endColorstr='#134476',GradientType=0 ); /* IE6-9 */
+.profile-page .activity-list .createArticle {
+    color: rgb(0,126,195);
+    
+    background: #007ec3; 
+    background: -moz-linear-gradient(left,  rgba(0,126,195,.75) 0%, rgba(19,68,118,.75) 75%); /
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(0,126,195,.75)), color-stop(75%,rgba(19,68,118,.75))); 
+    background: -webkit-linear-gradient(left,  rgba(0,126,195,.75) 0%,rgba(19,68,118,.75) 75%); 
+    background: -o-linear-gradient(left,  rgba(0,126,195,.75) 0%,rgba(19,68,118,.75) 75%);
+    background: -ms-linear-gradient(left,  rgba(0,126,195,.75) 0%,rgba(19,68,118,.75) 75%); 
+    background: linear-gradient(to right,  rgba(0,126,195,.75) 0%,rgba(19,68,118,.75) 75%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#007ec3', endColorstr='#134476',GradientType=0 );
+    
 }
 
-.profile-page .activity-list .createDeck { 
-    background: #faa519; /* Old browsers */
-    background: -moz-linear-gradient(left,  rgba(250,165,25,.75) 0%, rgba(187,80,24,.75) 75%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(250,165,25,.75)), color-stop(75%,rgba(187,80,24,.75))); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(left,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(left,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(left,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%); /* IE10+ */
-    background: linear-gradient(to right,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#faa519', endColorstr='#bb5018',GradientType=0 ); /* IE6-9 */ 
+.profile-page .activity-list .createDeck,
+.profile-page .activity-list .deckComment {
+    color: rgb(187,80,24);
+    
+    background: #faa519; 
+    background: -moz-linear-gradient(left,  rgba(250,165,25,.75) 0%, rgba(187,80,24,.75) 75%); 
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(250,165,25,.75)), color-stop(75%,rgba(187,80,24,.75))); 
+    background: -webkit-linear-gradient(left,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%); 
+    background: -o-linear-gradient(left,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%); 
+    background: -ms-linear-gradient(left,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%); 
+    background: linear-gradient(to right,  rgba(250,165,25,.75) 0%,rgba(187,80,24,.75) 75%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#faa519', endColorstr='#bb5018',GradientType=0 );
 }
 .profile-page .activity-list .createGuide,
-.profile-page .activity-list .guideComment { 
-    background-color: background: #461d6d; /* Old browsers */
-    background: -moz-linear-gradient(left,  rgba(70,29,109,.75) 0%, rgba(27,29,107,.75) 75%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(70,29,109,.75)), color-stop(75%,rgba(27,29,107,.75))); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(left,  rgba(70,29,109,.75) 0%,rgba(27,29,107,.75) 75%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(left,  rgba(70,29,109,.75) 0%,rgba(27,29,107,.75) 75%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(left,  rgba(70,29,109,.75) 0%,rgba(27,29,107,.75) 75%); /* IE10+ */
-    background: linear-gradient(to right,  rgba(70,29,109,.75) 0%,rgba(27,29,107,.75) 75%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#461d6d', endColorstr='#1b1d6b',GradientType=0 ); /* IE6-9 */; 
+.profile-page .activity-list .guideComment {
+    color: rgb(70,29,109);
+    
+    background-color: background: #461d6d; 
+    background: -moz-linear-gradient(left,  rgba(70,29,109,.75) 0%, rgba(27,29,107,.75) 75%); 
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(70,29,109,.75)), color-stop(75%,rgba(27,29,107,.75))); 
+    background: -webkit-linear-gradient(left,  rgba(70,29,109,.75) 0%,rgba(27,29,107,.75) 75%); 
+    background: -o-linear-gradient(left,  rgba(70,29,109,.75) 0%,rgba(27,29,107,.75) 75%); 
+    background: -ms-linear-gradient(left,  rgba(70,29,109,.75) 0%,rgba(27,29,107,.75) 75%); 
+    background: linear-gradient(to right,  rgba(70,29,109,.75) 0%,rgba(27,29,107,.75) 75%); 
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#461d6d', endColorstr='#1b1d6b',GradientType=0 ); 
 }
-.profile-page .activity-list .signup { background-color: gold; }
+.profile-page .activity-list .signup {
+    color: rgb(254, 162, 24);
+    
+    background-color: background: #461d6d; 
+    background: -moz-linear-gradient(left,  rgba(253,254,70,.75) 0%, rgba(254,162,24,.75) 75%); 
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(253,254,70,.75)), color-stop(75%,rgba(254,162,24,.75))); 
+    background: -webkit-linear-gradient(left,  rgba(253,254,70,.75) 0%,rgba(254,162,24,.75) 75%); 
+    background: -o-linear-gradient(left,  rgba(253,254,70,.75) 0%,rgba(254,162,24,.75) 75%); 
+    background: -ms-linear-gradient(left,  rgba(253,254,70,.75) 0%,rgba(254,162,24,.75) 75%); 
+    background: linear-gradient(to right,  rgba(253,254,70,.75) 0%,rgba(254,162,24,.75) 75%); 
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#461d6d', endColorstr='#1b1d6b',GradientType=0 ); 
+}
+*/
 
 
 /*

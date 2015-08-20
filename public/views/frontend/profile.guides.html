@@ -6,43 +6,9 @@
         </div>
     </div>
     <div class="row guides-list profile-guides" ng-show="guides.length">
-        <!-- guide -->
-        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="guide in guides">
-            <div class="guide-wrapper">
-                <div class="guide large {{guide.playerClass.toLowerCase()}}" ng-class="{ premium: guide.premium.isPremium }">
-                    <a href="./heroes-of-the-storm/guides/{{guide.slug}}"></a>
-                    <div class="guide-images" ng-if="guide.guideType == 'hero'">
-                    <div class="guide-image guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
-                    </div>
-                    <div class="guide-images" ng-if="guide.guideType == 'map'">
-                        <div class="guide-image guide-images-1 guide-image-1 {{guide.maps[0].className}}"></div>
-                    </div>
-                    <div class="guide-overlay"></div>
-                    <div class="guide-premium" ng-if="guide.premium.isPremium"></div>
-                    <div class="guide-title">[{{guide.guideType.toUpperCase()}}]&nbsp;{{guide.name}}</div>
-                    <div class="guide-score"><span><em ng-if="guide.votesCount > 0">+</em>{{guide.votesCount}}</span></div>
-                    <div class="guide-description">
-                        <p>{{guide.description}}</p>
-                    </div>
-                    <div class="guide-info clearfix">
-                        <div class="guide-owner" ng-if="app.user.getUserID() === guide.author">
-                            <a ui-sref="app.hots.guideBuilder.edit.hero({ slug: guide.slug })" class="btn btn-blue btn-xs" ng-if="guide.guideType == 'hero'">Edit</a>
-                            <a ui-sref="app.hots.guideBuilder.edit.map({ slug: guide.slug })" class="btn btn-blue btn-xs" ng-if="guide.guideType == 'map'">Edit</a>
-                            <a href="#" class="btn btn-danger btn-xs" ng-click="guideDelete(guide)">Delete</a>
-                        </div>
-                        <div class="pull-left m-r-sm">
-                            <span class="fa fa-clock-o"></span>
-                            <span>{{guide.createdDate | date : 'mediumDate'}}</span>
-                        </div>
-                        <div class="pull-left m-r-sm">
-                            <span class="fa fa-comment-o"></span>
-                            <span><a href="./heroes-of-the-storm/guides/{{guide.slug}}">{{guide.comments.length}} Comment<span ng-hide="guide.comments.length === 1">s</span></a></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="col-xs-12 col-sm-5">
+            <hots-guide-list guides="guides"></hots-guide-list>
         </div>
-        <!-- / guide -->
     </div>
     <p class="profile-no-content" ng-if="!guides.length">@{{user.username}} hasn't created any guides yet.</p>
 </div>

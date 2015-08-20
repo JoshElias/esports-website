@@ -446,9 +446,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.activities = dataProfile.activities;
         
 
-        
-
-
         function isMyProfile() {
             if($scope.app.user.getUsername() == $scope.user.username) {
                 return 'My Profile';
@@ -691,6 +688,17 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
+.controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity',  
+    function ($scope, $sce, dataActivity) {
+        $scope.activities = dataActivity.activities;
+        
+        $scope.activities.forEach(function (activity) {
+            activity.getActivity = function () {
+                return $sce.trustAsHtml(activity.activity);
+            };
+        });
+    }
+])
 .controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',  
     function ($scope, dataArticles) {
         $scope.articles = dataArticles.articles;
@@ -739,7 +747,7 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('ProfileGuidesCtrl', ['$scope', 'bootbox', 'HOTSGuideService', 'dataGuides',  
     function ($scope, bootbox, HOTSGuideService, dataGuides) {
-
+        $scope.guides = dataGuides.guides;
     }
 ])
 .controller('ProfilePostsCtrl', ['$scope', 'dataPosts',  

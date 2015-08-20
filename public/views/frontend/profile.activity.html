@@ -1,36 +1,43 @@
-<div class="container">
-    <!-- activities -->
-    <div class="activities" ng-show="activities.length">
-        <!-- activity -->
-        <div class="activity" ng-repeat="activity in activities">
-            <div class="avatar">
-                <a href="./user/{{user.username}}"><img gravatar-src-once="user.email" /></a>
+<!-- activities -->
+<div class="profile-col-header"><h2>ACTIVITY</h2></div>
+<div class="activity-list">
+    <!-- activity -->
+    <div class="activity {{activity.activityType}} m-b-sm" ng-repeat="activity in activities">
+        <div class="activity-left">
+            <div class="activity-img">
+                <img gravatar-src-once="user.email" class="img-circle">
             </div>
-            <div class="panel">
-                <div class="panel-heading pos-rl">
-                    <span class="arrow left"></span>
-                    <span>{{user.username}}</span>
-                    <span activity-article ng-if="activity.activityType == 'createArticle'"></span>
-                    <span activity-signup ng-if="activity.activityType == 'signup'"></span>
-                    <span activity-article-comment ng-if="activity.activityType == 'articleComment'"></span>
-                    <span activity-deck ng-if="activity.activityType == 'createDeck'"></span>
-                    <span activity-deck-comment ng-if="activity.activityType == 'deckComment'"></span>
-                    <span activity-forum-post ng-if="activity.activityType == 'forumPost'"></span>
-                    <span activity-forum-post-comment ng-if="activity.activityType == 'forumComment'"></span>
-                    <span activity-guide ng-if="activity.activityType == 'createGuide'"></span>
-                    <span activity-guide-comment ng-if="activity.activityType == 'guideComment'"></span>
-                    <span activity-snapshot-comment ng-if="activity.activityType == 'snapshotComment'"></span>
+            <div class="m-t-sm" ng-if="app.user.getUserID() == user._id">
+
+                <div ng-if="activity.activityType == 'createDeck' && activity.exists" class="activity-btn-wrapper m-l-xs">
+                    <a class="activity-btn" href="#"><i class="fa fa-pencil"></i></a>
+                    <a class="activity-btn" href="#"><i class="fa fa-close"></i></a>
                 </div>
-                <div class="panel-footer clearfix">
-                    <div class="pull-right">
-                        <span class="fa fa-clock-o text-muted"></span>
-                        <span class="text-muted">{{activity.createdDate | date : 'medium'}}</span>
-                    </div>
+
+
+
+                <div ng-if="activity.activityType == 'createGuide' && activity.exists" class="activity-btn-wrapper m-l-xs">
+                    <a class="activity-btn" ui-sref="app.hots.guideBuilder.edit.hero({ slug: activity.guide.slug })" ng-if="activity.guide.guideType == 'hero'"><i class="fa fa-pencil"></i></a>
+                    <a class="activity-btn" ui-sref="app.hots.guideBuilder.edit.map({ slug: activity.guide.slug })" ng-if="activity.guide.guideType == 'map'"><i class="fa fa-pencil"></i></a>
+                    <a class="activity-btn" ng-click="deleteGuide(activity.guide)" href="#"><i class="fa fa-close"></i></a>
                 </div>
             </div>
         </div>
-        <!-- / activity -->
+
+        <div class="activity-right">
+            <span activity-article ng-if="activity.activityType == 'createArticle'"></span>
+            <span activity-signup ng-if="activity.activityType == 'signup'"></span>
+            <span activity-article-comment ng-if="activity.activityType == 'articleComment'"></span>
+            <span activity-deck ng-if="activity.activityType == 'createDeck'"></span>
+            <span activity-deck-comment ng-if="activity.activityType == 'deckComment'"></span>
+            <span activity-forum-post ng-if="activity.activityType == 'forumPost'"></span>
+            <span activity-forum-post-comment ng-if="activity.activityType == 'forumComment'"></span>
+            <span activity-guide ng-if="activity.activityType == 'createGuide'"></span>
+            <span activity-guide-comment ng-if="activity.activityType == 'guideComment'"></span>
+            <span activity-snapshot-comment ng-if="activity.activityType == 'snapshotComment'"></span>
+        </div>
     </div>
-    <!-- / activities -->
-    <p class="profile-no-content" ng-show="!activities.length">@{{user.username}} has no site activity yet.</p>
+    <!-- / activity -->
 </div>
+<!-- / activities -->
+<p class="profile-no-content" ng-show="!activities.length">@{{user.username}} has no site activity yet.</p>
