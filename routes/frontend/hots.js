@@ -180,7 +180,7 @@ module.exports = {
                 guides, total,
                 talents = [],
                 now = new Date().getTime(),
-                weekAgo = new Date(now - (60*60*24*14*1000));
+                weekAgo = new Date(now - (60*60*24*30*1000));
             
             if (hero !== 'all') {
                 where.heroes = hero;
