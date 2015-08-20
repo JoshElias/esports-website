@@ -6845,9 +6845,10 @@ p.white { color: #FFF; }
 .hots-guide h1 { padding-right: 30px; font-family: 'Open Sans Bold'; font-size: 10px; color: #f7ef22; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
 .hots-guide h3 { padding-right: 30px; font-size: 12px; color: #ccc; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
 
+.hots-guide .hots-guide-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
 .hots-guide .hero-flip { position: absolute; bottom: 7px; right: 5px; z-index: 6; }
-.hots-guide .hots-guide-votes { position: absolute; top: 5px; right: 5px; width: 30px; height: 30px; line-height: 26px; border-radius: 50%; border: 2px solid #FFF; background: rgba(0,0,0,.7); color: #FFF; font-size: 12px; text-align: center; opacity: .7; }
-.hots-guide .hots-guide-talents { margin: 0; padding: 5px 15px; position: absolute; bottom: 0px; left: 0px; right: 0px; height: 40px; z-index: 5; }
+.hots-guide .hots-guide-votes { position: absolute; top: 30px; right: 5px; width: 30px; height: 30px; line-height: 26px; border-radius: 50%; border: 2px solid #FFF; background: rgba(0,0,0,.7); color: #FFF; font-size: 12px; text-align: center; opacity: .7; z-index: 3; }
+.hots-guide .hots-guide-talents { margin: 0; padding: 5px 0 0 5px; position: absolute; bottom: 0px; left: 0px; right: 0px; height: 40px; z-index: 5; }
 .hots-guide .hots-guide-talents li { list-style: none; float: left; margin: 0 5px 0 0; width: 30px; height: 30px; }
 
 /* hots - tempostorm tv */

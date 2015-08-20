@@ -84,17 +84,17 @@
 
 <!-- content start -->
 <div class="container-fluid hots-content hots-dark">
-    <div class="row">
+    <div class="row no-pad">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
             <h1 class="title">HEROES OF THE STORM ARTICLES</h1>
             <h3 class="sub-title m-b-md">The latest articles on all things Heroes of the Storm</h3>
-            <div class="row row-flex row-flex-wrap">
+            <div class="row no-pad">
                 <div class="col-xs-12 col-sm-6 pos-rl" ng-repeat="article in articles">
-                    <a ui-sref="app.articles.article({ slug: article.slug.url })" class="hots-article flex-col m-b-lg">
+                    <a ui-sref="app.articles.article({ slug: article.slug.url })" class="home-article active m-b-sm m-r-sm">
                         <div class="inner"></div>
                         <img ng-src="//cdn-tempostorm.netdna-ssl.com/articles/{{article.photos.small}}" class="img-responsive">
-                        <div class="hots-article-content">
-                            <h1>{{article.title}}</h1>
+                        <div class="home-article-content">
+                            <h1 class="{{article.articleType.join(' ')}}">{{article.title}}</h1>
                             <p>{{article.description}}</p>
                         </div>
                     </a>
@@ -102,62 +102,67 @@
             </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-            <div class="row">
+            <div class="row no-pad">
                 <div class="col-xs-12 col-sm-6">
-                    <h1 class="title">TEMPOSTORM GUIDES</h1>
-                    <h3 class="sub-title m-b-md">Guides from Team Tempo Storm</h3>
-                    <ul class="hots-guides">
-                        <li ng-repeat="guide in guidesFeatured">
-                            <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide small {{getGuideClass(guide)}}">
-                                <div class="inner"></div>
-                                <div class="bt-shadow" ng-if="guide.guideType == 'hero'"></div>
-                                <h1>{{guide.name}}</h1>
-                                <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>
-                                <div class="hots-guide-votes">{{guide.votesCount}}</div>
-                                <div class="hero-flip btn-group" ng-if="guide.heroes.length > 1">
-                                    <button class="btn btn-xs btn-blue" ng-click="guidePrevHero($event, guide)"><span class="fa fa-angle-left"></span></button>
-                                    <button class="btn btn-xs btn-blue" ng-click="guideNextHero($event, guide)"><span class="fa fa-angle-right"></span></button>
-                                </div>
-                                <ul class="hots-guide-talents" ng-if="guide.guideType == 'hero'">
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier1.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier1.name}}"></li>
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier4.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier4.name}}"></li>
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier7.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier7.name}}"></li>
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier10.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier10.name}}"></li>
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier13.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier13.name}}"></li>
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier16.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier16.name}}"></li>
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier20.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier20.name}}"></li>
-                                </ul>
-                            </a>
-                        </li>
-                    </ul>
+                    <div class="m-r-sm">
+                        <h1 class="title">TEMPOSTORM GUIDES</h1>
+                        <h3 class="sub-title m-b-md">Guides from Team Tempo Storm</h3>
+                        <ul class="hots-guides">
+                            <li ng-repeat="guide in guidesFeatured">
+                                <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide small {{getGuideClass(guide)}}">
+                                    <div class="inner"></div>
+                                    <div class="hots-guide-premium" ng-if="isPremium(guide)"></div>
+                                    <div class="bt-shadow" ng-if="guide.guideType == 'hero'"></div>
+                                    <h1>{{guide.name}}</h1>
+                                    <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>
+                                    <div class="hots-guide-votes">{{guide.votesCount}}</div>
+                                    <div class="hero-flip btn-group" ng-if="guide.heroes.length > 1">
+                                        <button class="btn btn-xs btn-blue" ng-click="guidePrevHero($event, guide)"><span class="fa fa-angle-left"></span></button>
+                                        <button class="btn btn-xs btn-blue" ng-click="guideNextHero($event, guide)"><span class="fa fa-angle-right"></span></button>
+                                    </div>
+                                    <ul class="hots-guide-talents" ng-if="guide.guideType == 'hero'">
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier1.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier1.name}}"></li>
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier4.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier4.name}}"></li>
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier7.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier7.name}}"></li>
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier10.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier10.name}}"></li>
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier13.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier13.name}}"></li>
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier16.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier16.name}}"></li>
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier20.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier20.name}}"></li>
+                                    </ul>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="col-xs-12 col-sm-6">
-                    <h1 class="title">COMMUNITY GUIDES</h1>
-                    <h3 class="sub-title m-b-md">Guides from the Community</h3>
-                    <ul class="hots-guides">
-                        <li ng-repeat="guide in guidesCommunity">
-                            <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide small {{getGuideClass(guide)}}">
-                                <div class="inner"></div>
-                                <div class="bt-shadow" ng-if="guide.guideType == 'hero'"></div>
-                                <h1>{{guide.name}}</h1>
-                                <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>
-                                <div class="hots-guide-votes">{{guide.votesCount}}</div>
-                                <div class="hero-flip btn-group" ng-if="guide.heroes.length > 1">
-                                    <button class="btn btn-xs btn-blue" ng-click="guidePrevHero($event, guide)"><span class="fa fa-angle-left"></span></button>
-                                    <button class="btn btn-xs btn-blue" ng-click="guideNextHero($event, guide)"><span class="fa fa-angle-right"></span></button>
-                                </div>
-                                <ul class="hots-guide-talents" ng-if="guide.guideType == 'hero'">
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier1.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier1.name}}"></li>
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier4.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier4.name}}"></li>
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier7.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier7.name}}"></li>
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier10.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier10.name}}"></li>
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier13.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier13.name}}"></li>
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier16.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier16.name}}"></li>
-                                    <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier20.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier20.name}}"></li>
-                                </ul>
-                            </a>
-                        </li>
-                    </ul>
+                    <div class="m-r-sm">
+                        <h1 class="title">COMMUNITY GUIDES</h1>
+                        <h3 class="sub-title m-b-md">Guides from the Community</h3>
+                        <ul class="hots-guides">
+                            <li ng-repeat="guide in guidesCommunity">
+                                <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide small {{getGuideClass(guide)}}">
+                                    <div class="inner"></div>
+                                    <div class="bt-shadow" ng-if="guide.guideType == 'hero'"></div>
+                                    <h1>{{guide.name}}</h1>
+                                    <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>
+                                    <div class="hots-guide-votes">{{guide.votesCount}}</div>
+                                    <div class="hero-flip btn-group" ng-if="guide.heroes.length > 1">
+                                        <button class="btn btn-xs btn-blue" ng-click="guidePrevHero($event, guide)"><span class="fa fa-angle-left"></span></button>
+                                        <button class="btn btn-xs btn-blue" ng-click="guideNextHero($event, guide)"><span class="fa fa-angle-right"></span></button>
+                                    </div>
+                                    <ul class="hots-guide-talents" ng-if="guide.guideType == 'hero'">
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier1.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier1.name}}"></li>
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier4.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier4.name}}"></li>
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier7.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier7.name}}"></li>
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier10.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier10.name}}"></li>
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier13.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier13.name}}"></li>
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier16.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier16.name}}"></li>
+                                        <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier20.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier20.name}}"></li>
+                                    </ul>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
