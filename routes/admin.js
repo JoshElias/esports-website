@@ -2193,7 +2193,7 @@ module.exports = {
                                 success: true,
                                 large: large,
                                 medium: medium,
-                                path: './photos/cards/'
+                                path: 'photos/cards/'
                             });
                         });
                     });
@@ -2257,7 +2257,7 @@ module.exports = {
                             return res.json({
                                 success: true,
                                 small: small,
-                                path: './photos/cards/'
+                                path: 'photos/cards/'
                             });
                         });
                     });
