@@ -8347,6 +8347,18 @@ angular.module('app.controllers', ['ngCookies'])
             guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
         };
         
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
         // load twitch streams
         TwitchService.getStreams().then(function(data) {
             for (var i = 0; i < data.data.length; i++) {
