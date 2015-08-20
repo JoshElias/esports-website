@@ -780,7 +780,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
                 }).success(function(data, status, headers, config) {
                     $scope.card.photos.small = data.small;
-                    $scope.deckImg = '.' + data.path + data.small;
+                    $scope.deckImg = $scope.app.cdn + data.path + data.small;
                     box.modal('hide');
                 });
             }
@@ -851,7 +851,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }).success(function(data, status, headers, config) {
                     $scope.card.photos.medium = data.medium;
                     $scope.card.photos.large = data.large;
-                    $scope.cardImg = '.' + data.path + data.large;
+                    $scope.cardImg = $scope.app.cdn + data.path + data.large;
                     box.modal('hide');
                 });
             }
@@ -877,7 +877,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
                 }).success(function(data, status, headers, config) {
                     $scope.card.photos.small = data.small;
-                    $scope.deckImg = '.' + data.path + data.small;
+                    $scope.deckImg = $scope.app.cdn + data.path + data.small;
                     box.modal('hide');
                 });
             }
