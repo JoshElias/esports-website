@@ -1,40 +1,9 @@
-<div class="container">
-    <div class="profile-articles m-t-md">
-        <!-- article -->
-        <div class="article-wrapper" ng-repeat="article in articles">
-            <div class="article" ng-class="{ premium: article.premium.isPremium }">
-                <a href="./articles/{{article.slug.url}}"></a>
-                <div class="article-premium" ng-if="article.premium.isPremium"></div>
-                <div class="article-theme" ng-class="{overcast:article.theme === 'overcast'}" ng-if="article.theme !== 'none'"><a href="./articles/{{article.slug.url}}"></a></div>
-                <div class="article-img" ng-background="{{app.cdn}}articles/{{article.photos.medium}}"></div>
-                <div class="article-content-wrapper">
-                    <div class="article-content flex-col">
-                        <h1>{{article.title}}</h1>
-                        <p class="flex-grow">{{article.description}}</p>
-                        <div class="article-info">
-                            <div class="pull-left m-r-sm">
-                                <span>by <a href="./user/{{article.author.username}}">@{{user.username}}</a></span>
-                            </div>
-                            <div class="pull-right">
-                                <div class="pull-left m-r-sm">
-                                    <span class="fa fa-clock-o"></span>
-                                    <span>{{article.createdDate | date : 'mediumDate'}}</span>
-                                </div>
-                                <div class="pull-left m-r-sm">
-                                    <span class="fa fa-comment-o"></span>
-                                    <a href="./articles/{{article.slug.url}}">{{article.comments.length}} Comment<span ng-if="article.comments.length === 1">s</span></a>
-                                </div>
-                                <div class="pull-left">
-                                    <span class="fa fa-thumbs-o-up"></span>
-                                    <span><span ng-if="article.votesCount > 0">+</span>{{article.votesCount}}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- / article -->
-        <p class="profile-no-content" ng-if="!articles.length">@{{user.username}} hasn't written any articles yet.</p>
+<div class="profile-col-header"><h2>ARTICLES</h2></div>
+ 
+    
+<div class="row no-wrap" ng-show="guides.length">
+    <div ng-repeat="guide in guides" class="col-xs-12 col-sm-6 m-b-sm">
+        gay shit goes here
     </div>
 </div>
+<p class="profile-no-content" ng-if="!guides.length">@{{user.username}} hasn't created any guides yet.</p>

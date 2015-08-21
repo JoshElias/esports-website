@@ -13,7 +13,7 @@
         
         <div class="container-fluid-max">
             <div class="row">
-                <div class="col-lg-3 profile-info">
+                <div class="col-lg-3 profile-info profile-fixed">
                     <div class="profile-col-header"></div>
                     <div class="profile-img">
                         <img gravatar-src-once="user.email" class="img-circle">
@@ -22,7 +22,7 @@
                         <h1>@{{user.username}}
                            <small class="m-t-xs">{{user.firstName}}&nbsp;{{user.lastName}}</small>
                         </h1>
-                        
+
                         <div class="profile-social">
                             <a target="_blank" href="http://twitter.com/{{user.social.twitter}}" ng-if="user.social.twitter"><i class="fa fa-twitter"></i></a>
                             <a target="_blank" href="http://twitch.tv/{{user.social.twitch}}" ng-if="user.social.twitch"><i class="fa fa-twitch"></i></a>
@@ -31,26 +31,21 @@
                             <a target="_blank" href="http://instagram.com/{{user.social.instagram}}" ng-if="user.social.instagram"><i class="fa fa-instagram"></i></a>
                             <a target="_blank" href="http://esea.com/{{user.social.esea}}" ng-if="user.social.esea"><i class="btn-team-esea"></i></a>
                         </div>
-                        
+
                         <div class="counts">
                             <h2>{{postCount}}<small class="m-t-sm">POSTS</small></h2>
                             <h2>{{deckCount}}<small class="m-t-sm">DECKS</small></h2>
                             <h2>{{guideCount}}<small class="m-t-sm">GUIDES</small></h2>
                         </div>
-                        
+
                         <div class="description">
                             <p>{{user.about}}</p>
                         </div>
                     </div>
                 </div>
-                <div ui-view="profile" class="col-lg-9">
+                <div ui-view="profile" class="col-lg-9 profile-scroll">
 
                 </div>
-<!--
-                <div class="col-lg-3">
-                    <div class="profile-col-header"><h2>GUIDES</h2></div>
-                </div>
--->
             </div>
         </div>
     </div>

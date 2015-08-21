@@ -152,6 +152,7 @@ twitter.route(app);
 
 app.post('/profile/:username', routes.frontend.profile(Schemas, async));
 app.post('/profile/:username/activity', routes.frontend.profileActivity(Schemas, async));
+//app.post('/profile/:username/activity/load', routes.frontend.profileActivityLoad(Schemas, async));
 app.post('/profile/:username/articles', routes.frontend.profileArticles(Schemas));
 app.post('/profile/:username/decks', routes.frontend.profileDecks(Schemas));
 app.post('/profile/:username/guides', routes.frontend.profileGuides(Schemas));

@@ -605,6 +605,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-color: #121111;
     background-repeat: no-repeat;
     background-size: 100%, auto;
+    background-attachment: fixed;
 }
 
 .heading { position:relative; }
@@ -1969,6 +1970,64 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .admin-dark {  }
 
 /* profile */
+/*
+.profile-page .profile-fixed {
+    position:fixed;
+    width: 25%;
+    
+}
+
+.profile-page .profile-scroll {
+    float:right;
+    width:71%;
+    min-height:800px;
+}
+*/
+
+
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.rotating {
+  -webkit-animation: rotating 2s linear infinite;
+  -moz-animation: rotating 2s linear infinite;
+  -ms-animation: rotating 2s linear infinite;
+  -o-animation: rotating 2s linear infinite;
+  animation: rotating 2s linear infinite;
+}
+
+
+
 .profile-page h1 { color: white; font-weight: bold; font-size: 24px; letter-spacing: 5px; }
 .profile-page h1 small { color: white; font-weight: bold; font-size: 12px; letter-spacing: 1px; display: block; }
 .profile-page h2 { color: white; font-weight: bold; font-size: 18px; letter-spacing: 3px; }
@@ -1989,8 +2048,10 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-page .profile-info .profile-info-body .profile-social a:hover .fa-instagram { color: #3f729b; }
 .profile-page .profile-info .profile-info-body .profile-social a i { font-size: 28px; line-height: 1.85; color: rgb(75,75,75); }
 .profile-page .profile-info .profile-info-body .counts h2 { display: inline-block; margin: 30px 5%; }
-.profile-page .profile-info .profile-info-body .description { margin: 30px 0px;}
+.profile-page .profile-info .profile-info-body .description { margin: 30px 0px; }
 
+
+.profile-page .activity-filter li { display: inline-block; }
 
 .profile-page .activity-list .activity { padding: 30px 25px 25px 25px; display: flex }
 .profile-page .activity-list .activity .activity-left { height: 100% }
@@ -2009,7 +2070,11 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 a:hover { text-decoration: underline; }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-foot { color: rgba(200,200,200,.75); }
 
-.profile-page .activity-list .activity { border: 1px black solid; outline: 1px rgba(255,255,255,.2) solid; outline-offset: -2px; box-shadow: rgba(0,0,0,.5) 2px 2px 3px; background: rgba(0,0,0,.85); }
+.profile-page .activity-list .activity,
+.profile-page .show-more { border: 1px black solid; outline: 1px rgba(255,255,255,.2) solid; outline-offset: -2px; box-shadow: rgba(0,0,0,.5) 2px 2px 3px; background: rgba(0,0,0,.85); }
+.profile-page .show-more { height: 55px; text-align: center; }
+.profile-page .show-more a { color: rgba(255,255,255,.8); font-size: 22px; line-height:2.25; display: block; height: 100%; width: 100%; }
+.profile-page .show-more a:hover { color: rgba(255,255,255,1) }
 
 .profile-page .activity-list .activity .activity-body {
     color: rgba(215,215,215,.8);
@@ -2020,7 +2085,9 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-page .activity-list .snapshotComment .activity-right .activity-header h2 a,
 .profile-page .activity-list .forumComment .activity-right .activity-header h2 a,
 .profile-page .activity-list .forumPost .activity-right .activity-header h2 a,
-.profile-page .activity-list .createArticle .activity-right .activity-header h2 a {
+.profile-page .activity-list .forumPost .activity-left i,
+.profile-page .activity-list .createArticle .activity-right .activity-header h2 a,
+.profile-page .activity-list .createArticle .activity-left i,{
     color: rgb(0,126,195);
 }
 .profile-page .activity-list .articleComment .activity-left .activity-img,
@@ -2033,6 +2100,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 /*.profile-page .activity-list .createGuide .activity-right .activity-body,*/
 .profile-page .activity-list .createGuide .activity-right .activity-header h2 a,
+.profile-page .activity-list .createGuide .activity-left i,
 .profile-page .activity-list .guideComment .activity-right .activity-header h2 a {
     color: #785b97;
 }
@@ -2043,6 +2111,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 /*.profile-page .activity-list .createDeck .activity-right .activity-body,*/
 .profile-page .activity-list .createDeck .activity-right .activity-header h2 a,
+.profile-page .activity-list .createDeck .activity-left i,
 .profile-page .activity-list .deckComment .activity-right .activity-header h2 a {
     color: rgb(187,80,24);
 }
@@ -2057,6 +2126,12 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-page .activity-list .signup .activity-left .activity-img {
     background-color: gold;
 }
+.profile-page .activity-list .activity.signup {
+    outline: 1px rgba(255,215,0,.2) solid;
+    outline-offset: -2px;
+}
+
+
 
 /*
 .profile-page .activity-list .articleComment .activity-right,

@@ -332,6 +332,13 @@ angular.module('app.services', [])
 }])
 .factory('ProfileService', ['$http', '$q', function ($http, $q) {
     return {
+//        loadActivities: function (length) {
+//            var d = $q.defer();
+//            $http.post('/profile/' + username + '/activity/load', { length: length }).success(function (data) {
+//                d.resolve(data);
+//            });
+//            return d.promise;
+//        },
         getUserProfile: function (username) {
             var d = $q.defer();
             $http.post('/api/profile/' + username, {}).success(function (data) {
@@ -346,11 +353,11 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
-        getActivity: function (username, page, perpage) {
+        getActivity: function (username, length, page, perpage) {
             var d = $q.defer(),
                 page = page || 1,
                 perpage = perpage || 20;
-            $http.post('/profile/' + username + '/activity', { page: page, perpage: perpage }).success(function (data) {
+            $http.post('/profile/' + username + '/activity', { length: length, page: page, perpage: perpage }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

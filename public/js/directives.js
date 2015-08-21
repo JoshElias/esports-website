@@ -584,15 +584,13 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
-.directive('hotsGuideList', function() {
+.directive('hotsGuide', function() {
     return {
         restrict: 'E',
-        scope: { guides: "=guides" },
+        scope: { guide: "=guide" },
         replace: true,
-        templateUrl: "views/frontend/directives/hots.guide.list.html",
+        templateUrl: "views/frontend/directives/hots.guide.html",
         link: function(scope, element, attrs) {
-            
-            
             
             scope.getGuideCurrentHero = function (guide) {
                 console.log(guide);

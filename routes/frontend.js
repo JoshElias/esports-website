@@ -757,18 +757,37 @@ module.exports = {
     },
     profileActivity: function (Schemas, async) {
         return function (req, res, next) {
+            
+            
             var username = req.params.username,
                 page = req.body.page || 1,
-                perpage = req.body.perpage || 20;
+                perpage = req.body.perpage || 20,
+                length = req.body.length || 0,
+                act, usr,
+                tot = 0;
+            
+            function getTotal(callback) {
+                if (length == 0) {
+                    Schemas.Activity.count({ author: usr._id, active: true })
+                    .exec(function (err, count) {
+                        if (err) { return res.json({ success: false }); }
+                        tot = count;
+                        return callback();
+                    });
+                } else {
+                    return callback();
+                }
+            }
             
             function getUser (callback) {
                 Schemas.User.findOne({ username: username }).select('_id').exec(function (err, user) {
                     if (err || !user) { return res.json({ success: false }); }
-                    return callback(user);
+                    usr = user
+                    return callback();
                 });
             }
             
-            function getActivity (usr, callback) {
+            function getActivity (callback) {
                 
                 var iterAct = function (activity, callback) {
                     if (activity.forumPost) {
@@ -784,6 +803,8 @@ module.exports = {
                 Schemas.Activity.find({ author: usr._id, active: true })
                 .sort('-createdDate')
                 .lean()
+                .skip(length)
+                .limit(4)
                 .populate([
                     {
                         path: 'article',
@@ -816,14 +837,17 @@ module.exports = {
                     if (err) { return req.json({ success: false }); }
                     async.each(activities, iterAct, function (err) {
                         if (err) { return res.json({ success: false }); }
+                        act = activities;
                         return callback(activities);
                     });
                 });
             }
             
-            getUser(function (user) {
-                getActivity(user, function (activities) {
-                    return res.json({ success: true, activities: activities });
+            getUser(function () {
+                getActivity(function () {
+                    getTotal(function() {
+                        return res.json({ success: true, activities: act, total: tot });
+                    });
                 });
             });
         };
@@ -1074,7 +1098,6 @@ module.exports = {
                 getGuides(user, function () {
                     getTalents(function() {
                         assignTalents(function() {
-                            console.log(guides);
                             return res.json({ success: true, guides: guides });
                         });
                     });

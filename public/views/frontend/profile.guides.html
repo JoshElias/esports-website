@@ -1,14 +1,9 @@
-<div class="container">
-    <div class="panel panel-success m-t-sm" ng-if="success.show">
-        <div class="panel-heading">
-            <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
-            <strong>{{success.msg}}</strong>
-        </div>
+<div class="profile-col-header"><h2>GUIDES</h2></div>
+ 
+    
+<div class="row no-wrap" ng-show="guides.length">
+    <div ng-repeat="guide in guides" class="col-xs-12 col-sm-6 m-b-sm">
+        <hots-guide guide="guide"></hots-guide-list>
     </div>
-    <div class="row guides-list profile-guides" ng-show="guides.length">
-        <div class="col-xs-12 col-sm-5">
-            <hots-guide-list guides="guides"></hots-guide-list>
-        </div>
-    </div>
-    <p class="profile-no-content" ng-if="!guides.length">@{{user.username}} hasn't created any guides yet.</p>
 </div>
+<p class="profile-no-content" ng-if="!guides.length">@{{user.username}} hasn't created any guides yet.</p>
