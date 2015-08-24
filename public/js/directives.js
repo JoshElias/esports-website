@@ -148,6 +148,14 @@ angular.module('app.directives', ['ui.load'])
             }
             scope.$apply();
         });
+        angular.element($window).bind("resize", function() {
+            if (this.pageYOffset >= (element.parent().offset().top - 50)) {
+                element.addClass('sticky');
+            } else {
+                element.removeClass('sticky');
+            }
+            scope.$apply();
+        });
     };
 }])
 .directive('ngBackground', function(){
