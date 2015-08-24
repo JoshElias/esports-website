@@ -467,9 +467,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .games-btn-hs .games-btn-back { background: url('../img/hs/hsheadbg.jpg') no-repeat; }
 .games-btn-hots .games-btn-back { background: url('../img/hots/hotsheadbg.jpg') no-repeat; }
 
-.games-btn-logo { margin: 67px auto; width: 400px; height: 157px; -moz-transition: all .5s; -webkit-transition: all .5s; transition: all .5s; -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); }
-.games-btn-hs .games-btn-logo { background: url('../img/hs/hs-logo.png') no-repeat; }
-.games-btn-hots .games-btn-logo { background: url('../img/hots/hots-logo.png') no-repeat; }
+.games-btn-logo { margin: 67px auto; max-width: 80%; -moz-transition: all .5s; -webkit-transition: all .5s; transition: all .5s; -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); }
 
 .games-btn:hover .games-btn-back { -moz-transform: scale(1.1,1.1); -webkit-transform: scale(1.1,1.1); transform: scale(1.1,1.1); opacity: .5; }
 .games-btn:hover .games-btn-logo { -moz-transform: scale(1.3,1.3); -webkit-transform: scale(1.3,1.3); transform: scale(1.3,1.3); }

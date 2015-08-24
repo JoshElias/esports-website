@@ -684,7 +684,7 @@ angular.module('app.controllers', ['ngCookies'])
                     
                 }
                 
-                (currentValue == type) ? (return true) : (return false);
+                return (currentValue == type);
             });
         }
         
