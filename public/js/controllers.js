@@ -2335,21 +2335,14 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
             
-            $scope.removeTechCard = function (c) {
-                for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-                    for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
-                        for (var l = 0; $scope.snapshot.tiers[i].decks[k].tech.length; l++) {
-                            for (var j = 0; $scope.snapshot.tiers[i].decks[k].tech[l].cards.length; j++) {
-                                if (c.orderNum == $scope.snapshot.tiers[i].decks[k].tech[l].cards[j].orderNum) {
-                                    $scope.snapshot.tiers[i].decks[k].tech[l].cards.splice(j,1);
-                                    return;
-                                }
-                            }
-                        }
+            $scope.removeTechCard = function (tech, c) {
+                for (var card in tech.cards) {
+                    if (c._id == tech.cards[card]._id) {
+                        tech.cards.splice(card,1);
+                        break;
                     }
                 }
             }
-            
             
             $scope.setBoth = function (c) {
                 if (!c.both) {
@@ -2961,17 +2954,11 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
             
-            $scope.removeTechCard = function (c) {
-                for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-                    for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
-                        for (var l = 0; $scope.snapshot.tiers[i].decks[k].tech.length; l++) {
-                            for (var j = 0; $scope.snapshot.tiers[i].decks[k].tech[l].cards.length; j++) {
-                                if (c.orderNum == $scope.snapshot.tiers[i].decks[k].tech[l].cards[j].orderNum) {
-                                    $scope.snapshot.tiers[i].decks[k].tech[l].cards.splice(j,1);
-                                    return;
-                                }
-                            }
-                        }
+            $scope.removeTechCard = function (tech, c) {
+                for (var card in tech.cards) {
+                    if (c._id == tech.cards[card]._id) {
+                        tech.cards.splice(card,1);
+                        break;
                     }
                 }
             }

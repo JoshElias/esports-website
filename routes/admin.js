@@ -3241,15 +3241,20 @@ module.exports = {
                     
                     for (var i = 0; i < results.tiers.length; i++) {
                         for (var j = 0; j < results.tiers[i].decks.length; j++) {
+                            console.log(results.tiers[i].decks[j]);
+                            
                             if (results.tiers[i].decks[j].deck === null) {
                                 results.tiers[i].decks.splice(j,1);
                                 fault = true;
                                 j--;
+                            } else {
+                                
                             }
                             
                             if (results.tiers[i].decks[j].name == undefined || results.tiers[i].decks[j].name == "") {
                                 results.tiers[i].decks[j].name = results.tiers[i].decks[j].deck.name;
                             }
+                            
                             
                         }
                     }
@@ -3502,7 +3507,7 @@ module.exports = {
                             }
                         }
                     }
-                    
+                    console.log(results.comments);
                     snapshot = results;
                     return callback();
                 });
