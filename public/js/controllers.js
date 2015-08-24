@@ -456,42 +456,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set(isMyProfile());
         
-        // delete guide
-        $scope.deleteGuide = function deleteGuide(guide) {
-            console.log('fuqui');
-            var box = bootbox.dialog({
-                title: 'Delete guide: ' + guide.name + '?',
-                message: 'Are you sure you want to delete the guide <strong>' + guide.name + '</strong>?',
-                buttons: {
-                    delete: {
-                        label: 'Delete',
-                        className: 'btn-danger',
-                        callback: function () {
-                            HOTSGuideService.guideDelete(guide._id).success(function (data) {
-                                if (data.success) {
-                                    var index = $scope.guides.indexOf(guide);
-                                    if (index !== -1) {
-                                        $scope.guides.splice(index, 1);
-                                    }
-                                    $scope.success = {
-                                        show: true,
-                                        msg: 'guide "' + guide.name + '" deleted successfully.'
-                                    };
-                                }
-                            });
-                        }
-                    },
-                    cancel: {
-                        label: 'Cancel',
-                        className: 'btn-default pull-left',
-                        callback: function () {
-                            box.modal('hide');
-                        }
-                    }
-                }
-            });
-            box.modal('show');
-        }
         
         
 //        $scope.socialExists = function () {
@@ -688,15 +652,123 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity',  
-    function ($scope, $sce, dataActivity) {
+.controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity', 'ProfileService', 'HOTSGuideService', 'DeckService',
+    function ($scope, $sce, dataActivity, ProfileService, HOTSGuideService, DeckService) {
         $scope.activities = dataActivity.activities;
+        $scope.total = dataActivity.total;
+        $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
+        
+        $scope.getActivityType = function (activity) {
+            switch (activity.activityType) {
+                case 'articleComment':
+                case 'deckComment':
+                case 'forumComment':
+                case 'guideComment':
+                case 'snapshotComment':
+                    return 'comments'; break;
+                case 'createArticle':
+                    return 'articles'; break;
+                case 'createDeck':
+                    return 'decks'; break;
+                case 'createGuide':
+                    return 'guides'; break;
+                case 'forumPost':
+                    return 'forumposts'; break;
+            }
+        }
+        
+        $scope.isFiltered = function(type) {
+            $scope.filterActivities.forEach(function(currentValue) {
+                
+                if (currentValue) {
+                    
+                }
+                
+                (currentValue == type) ? (return true) : (return false);
+            });
+        }
+        
+//        $scope.setFilter = function(filter) {
+//            console.log(filter);
+//        }
         
         $scope.activities.forEach(function (activity) {
             activity.getActivity = function () {
                 return $sce.trustAsHtml(activity.activity);
             };
         });
+        
+        $scope.loadActivities = function () {
+            ProfileService.getActivity($scope.user.username, $scope.activities.length).then(function (data) {
+                console.log(data);
+                $scope.activities = $scope.activities.concat(data.activities);
+            });
+        }
+        
+        // delete guide
+        $scope.deleteGuide = function deleteGuide(activity) {
+            var box = bootbox.dialog({
+                title: 'Delete guide: ' + activity.guide.name + '?',
+                message: 'Are you sure you want to delete <strong>' + activity.guide.name + '</strong>? All the data will be permanently deleted!',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            HOTSGuideService.guideDelete(activity.guide._id).success(function (data) {
+                                if (data.success) {
+                                    activity.exists = false;
+                                    $scope.success = {
+                                        show: true,
+                                        msg: 'guide "' + activity.guide.name + '" deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
+        
+        $scope.deleteDeck = function deleteDeck(activity) {
+            var box = bootbox.dialog({
+                title: 'Delete deck: ' + activity.deck.name + '?',
+                message: 'Are you sure you want to delete <strong>' + activity.deck.name + '</strong>? All the data will be permanently deleted!',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            DeckService.deckDelete(activity.deck._id).success(function (data) {
+                                if (data.success) {
+                                    activity.exists = false;
+                                    $scope.success = {
+                                        show: true,
+                                        msg: 'deck "' + activity.deck.name + '" deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
     }
 ])
 .controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',  
