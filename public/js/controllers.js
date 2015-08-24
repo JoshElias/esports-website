@@ -1050,6 +1050,10 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.getArticles();
             });
         }
+        
+        $scope.closeBox = function () {
+            itemAddBox.modal('hide');
+        }; 
 
         //change the article item
         $scope.modifyItem = function (item) {
@@ -1101,10 +1105,6 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
-        $scope.closeBox = function () {
-            itemAddBox.modal('hide');
-        }; 
         
         // load article
         $scope.article = angular.copy(defaultArticle);
@@ -1890,7 +1890,6 @@ angular.module('app.controllers', ['ngCookies'])
                     if ($scope.snapshot.tiers[i].decks[j].deck._id == d.deck._id) {
                         for (var k = 0; k < $scope.snapshot.matches.length; k++) {
                             if ($scope.snapshot.matches[k].for._id == d.deck._id || $scope.snapshot.matches[k].against._id == d.deck._id) {
-                                console.log('hello');
                                 return;
                             }
                         }
@@ -2118,10 +2117,6 @@ angular.module('app.controllers', ['ngCookies'])
                 var tiers = $scope.snapshot.tiers,
                     tierLength = tiers.length,
                     maxTierLength = (tierLength > 2) ? 2 : tierLength;
-                
-                console.log('Selected: ',$scope.selectedDecks);
-                console.log('Matches: ',$scope.matches);
-                
                 for (var i = 0; i < $scope.selectedDecks.length; i++) {
                     if ($scope.tier < 3) {
                         $scope.matches.push($scope.selectedDecks[i]);
@@ -2140,7 +2135,6 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
                 for (var j = 0; j < $scope.removedDecks.length; j++) {
-                    console.log('Removing: ', $scope.removedDecks[j]);
                     $scope.removeDeck($scope.removedDecks[j]);
                 }
                 
