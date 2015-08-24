@@ -1585,9 +1585,8 @@ module.exports = {
             }
             
             function updateActivities(callback) {
-                console.log(req.body._id);
-                    Schemas.Activity.update({guide: req.body._id, activityType: 'guideComment'}, {active: req.body.public}).exec(function (err, data) {
-                        return callback();
+                Schemas.Activity.update({guide: req.body._id, activityType: 'guideComment'}, {active: req.body.public}).exec(function (err, data) {
+                    return callback();
                 });
             }
             
@@ -3241,14 +3240,10 @@ module.exports = {
                     
                     for (var i = 0; i < results.tiers.length; i++) {
                         for (var j = 0; j < results.tiers[i].decks.length; j++) {
-                            console.log(results.tiers[i].decks[j]);
-                            
                             if (results.tiers[i].decks[j].deck === null) {
                                 results.tiers[i].decks.splice(j,1);
                                 fault = true;
                                 j--;
-                            } else {
-                                
                             }
                             
                             if (results.tiers[i].decks[j].name == undefined || results.tiers[i].decks[j].name == "") {
@@ -3507,7 +3502,6 @@ module.exports = {
                             }
                         }
                     }
-                    console.log(results.comments);
                     snapshot = results;
                     return callback();
                 });
