@@ -1859,15 +1859,22 @@ angular.module('app.controllers', ['ngCookies'])
                 tierLength = $scope.snapshot.tiers.length,
                 maxTierLength = (tierLength > 2) ? 2 : tierLength;
             
+            console.log('Populating matches', tierLength, maxTierLength);
+            console.log("///////////////////////////////////////////////////////////////////////////////////");
             for (var i = 0; i < maxTierLength; i++) {
                 for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
+                    console.log($scope.snapshot.tiers[i].decks[j]);
                     out.push($scope.snapshot.tiers[i].decks[j]);
                 }
             }
+            console.log(out);
+            console.log("END POPULATEMATCHES");
             return out;
         }
         
         $scope.updateDND = function (list, index, d) {
+            console.log("updateDND firing", d);
+            console.log("///////////////////////////////////////////////////////////////////////////////////");
             list.splice(index, 1);
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
@@ -1879,27 +1886,35 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.removedDecks = [];
                 $scope.deckRanks();
             }, false);
-        };
+            console.log("END UPDATEDND");
+        }
         
         function updateMatchesDND (d) {
             var tierLength = $scope.snapshot.tiers.length;
             var maxTierLength = (tierLength > 2) ? 2 : tierLength;
+            console.log('updateMatchesDND');
+            console.log("///////////////////////////////////////////////////////////////////////////////////");
+
             
             for (var i = 0; i < maxTierLength; i++) {
                 for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
                     if ($scope.snapshot.tiers[i].decks[j].deck._id == d.deck._id) {
                         for (var k = 0; k < $scope.snapshot.matches.length; k++) {
                             if ($scope.snapshot.matches[k].for._id == d.deck._id || $scope.snapshot.matches[k].against._id == d.deck._id) {
+                                console.log("END UPDATEMATCHESDND//exists");
                                 return;
                             }
                         }
                         $scope.selectedDecks.push(d);
                         $scope.tier = $scope.snapshot.tiers[i].tier;
+                        console.log("END UPDATEMATCHESDND//adding");
                         return;
                     }
                 }
             }
             removeMatch(d.deck);
+            
+            console.log("END UPDATEMATCHESDND//remove");
         }
         
         
