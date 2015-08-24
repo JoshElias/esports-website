@@ -1901,7 +1901,7 @@ angular.module('app.controllers', ['ngCookies'])
                     if ($scope.snapshot.tiers[i].decks[j].deck._id == d.deck._id) {
                         for (var k = 0; k < $scope.snapshot.matches.length; k++) {
                             if ($scope.snapshot.matches[k].for._id == d.deck._id || $scope.snapshot.matches[k].against._id == d.deck._id) {
-                                console.log("END UPDATEMATCHESDND//exists");
+                                console.log("END UPDATEMATCHESDND//exists", d.deck._id, $scope.snapshot.matches[k]);
                                 return;
                             }
                         }
