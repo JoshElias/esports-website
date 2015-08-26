@@ -1775,7 +1775,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .signup-form { margin: 0 auto; max-width: 620px; }
 
 .login-form.page,
-.signup-form.page { margin: 0 auto; max-width: 320px; height:600px; }
+.signup-form.page,
+.forgot-p{ margin: 0 auto; max-width: 320px; height:600px; } todo
 
 .btn-twitch { position: relative; padding: 12px 12px; font-size: 20px; color: #FFF !important; background: #6441a5; }
 .btn-twitch:hover,
