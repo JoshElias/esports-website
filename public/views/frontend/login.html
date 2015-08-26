@@ -1,13 +1,41 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-xs-12 m-t-md">
-            <div class="panel panel-success animated" ng-show="success.show">
-                <div class="panel-heading">
-                    <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
-                    <strong>{{success.msg}}</strong>
-                </div>
+<div class="login-form page row">
+    <div class="login-form-oauth col-sm-12 wrapper-none">
+        <a href="#" class="btn btn-block btn-twitch" ng-controller="Twitch" ng-click="login()"><i class="fa fa-twitch"></i>Log in with Twitch</a>
+        <a href="#" class="btn btn-block btn-bnet" ng-controller="Bnet" ng-click="login()" ng-if="false">Battle.net Login</a>
+    </div>
+    <div class="login-form-email col-sm-12 wrapper-none">
+        <div class="panel panel-danger error-modal" ng-show="showError">
+            <div class="panel-heading">
+                <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+                <strong>Unable to login</strong>
             </div>
-            <div login-form></div>
+            <div class="panel-body">
+                <ul class="error text-danger">
+                    <li>Please verify your login credentials are correct.</li>
+                </ul>
+            </div>
         </div>
+        <form class="form-horizontal form-modal" role="form" name="loginForm">
+        <div class="form-group m-b-sm">
+            <input type="email" class="form-control input-dark login-email" id="email" name="email" placeholder="Email Address" ng-model="loginInfo.email" required>
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control input-dark login-email" id="password" name="password" placeholder="Password" ng-model="loginInfo.password" required>
+        </div>
+            
+        <div class="remember-me">
+            <span class="fa-stack fa-lg">
+                <a class="remember-me-i" href="#" ng-click="remember = !remember">
+                    <i class="fa fa-square-o fa-stack-2x"></i>
+                    <i ng-if="remember" class="fa fa-check fa-stack-1x"></i>
+                </a>
+            </span>
+            Remember Me
+            <p class="forgot-password pull-right"><a href="#" ui-sref="app.forgotPassword">Forgot Password?</a></p>
+        </div>
+            
+        <button type="submit" class="btn btn-blue btn-block" ng-disabled="loginForm.$invalid" ng-click="login(loginInfo.email, loginInfo.password)">Login</button>
+        </form>
+        <div class="sign-up m-t-md"><span class="pull-left">Don't have an account?</span><a ui-sref="app.signup" href="#" class="pull-right">Sign Up</a></div>
     </div>
 </div>

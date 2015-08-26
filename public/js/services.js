@@ -278,7 +278,6 @@ angular.module('app.services', [])
             return $http.post('/api/snapshot/comment/add', { snapshotID: snapshot._id, comment: comment });
         },
         vote: function (snapshot) {
-            console.log(snapshot);
             return $http.post('/api/snapshot/vote', { snapshot: snapshot });
         },
         setStorage: function (isOpen) {

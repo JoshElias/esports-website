@@ -109,8 +109,28 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
     MetaService.setStatusCode(404);
 }])
-.controller('UserCtrl', ['$scope', '$location', '$window', '$state', 'UserService', 'AuthenticationService', 'AlertService', 'SubscriptionService', 
-    function ($scope, $location, $window, $state, UserService, AuthenticationService, AlertService, SubscriptionService) {
+.controller('UserCtrl', ['$scope', '$location', '$window', '$state', '$cookies', 'UserService', 'AuthenticationService', 'AlertService', 'SubscriptionService', 
+    function ($scope, $location, $window, $state, $cookies, UserService, AuthenticationService, AlertService, SubscriptionService) {
+        
+        $scope.remember;
+        $scope.loginInfo = {
+            email: "",
+            password: ""
+        };
+        $scope.verify = {
+            email: "",
+            code: ""
+        }
+
+        var cookMail = $cookies.rememberEmail;
+        var cookPass = $cookies.rememberPassword;
+
+        if (cookMail != undefined && cookPass != undefined) {
+            $scope.remember = true;
+            $scope.loginInfo.email = cookMail;
+            $scope.loginInfo.password = cookPass;
+        }
+        
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
@@ -5169,13 +5189,14 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.snapshot = data;
         $scope.show = [];
         $scope.matchupName = [];
+        $scope.voted = false;
         $scope.hasVoted = function () {
             for (var i = 0; i < $scope.snapshot.votes.length; i++) {
                 if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
-                    return true;
+                    $scope.voted = true;
+                    break;
                 }
             }
-            return false;
         };
         $scope.show.comments = SnapshotService.getStorage();
         $scope.$watch('app.user.isLogged()', function() {
@@ -5324,7 +5345,9 @@ angular.module('app.controllers', ['ngCookies'])
             } else {
                 $scope.snapshot.votesCount++;
                 SnapshotService.vote($scope.snapshot._id);
+                
             }
+            $scope.voted = true;
         }
         
         // check for custom deck name or load normal name
