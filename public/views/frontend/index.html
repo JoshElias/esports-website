@@ -55,8 +55,8 @@
                     <li ng-class="{active:$state.includes('app.polls')}"><a ui-sref="app.polls">Vote</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li ng-click="loginModal()" ng-hide="app.user.isLogged()"><a href="#">Login</a></li>
-                    <li ng-class="{active:$state.includes('app.signup')}" ng-hide="app.user.isLogged()"><a ui-sref="app.signup">Signup</a></li>
+                    <li ng-click="loginModal('login')" ng-hide="app.user.isLogged()"><a href="#">Login</a></li>
+                    <li ng-click="loginModal('signup')" ng-hide="app.user.isLogged()"><a href="#">Signup</a></li>
                     <li class="dropdown-short" ng-class="{active:$state.includes('app.profile')}" ng-if="app.user.isLogged()">
                         <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <span class="profile-avatar profile-avatar-sm pull-right hidden-xs">

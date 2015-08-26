@@ -18,28 +18,28 @@
                 </ul>
             </div>
         </div>
-        <form class="form-horizontal form-modal" role="form" name="loginForm" autocomplete="false">
+        <form class="form-horizontal form-modal" role="form" name="loginForm">
         <div class="form-group m-b-sm">
-            <input type="email" class="form-control input-dark login-email" id="email" name="email" placeholder="Email Address" ng-model="login.email" required>
+            <input type="email" class="form-control input-dark login-email" id="email" name="email" placeholder="Email Address" ng-model="loginInfo.email" required>
             <div class="login-charm">@</div>
         </div>
         <div class="form-group">
-            <input type="password" class="form-control input-dark login-email" id="password" name="password" placeholder="Password" ng-model="login.password" required>
+            <input type="password" class="form-control input-dark login-email" id="password" name="password" placeholder="Password" ng-model="loginInfo.password" required>
             <div class="login-charm lock"><i class="fa fa-lock"></i></div>
         </div>
             
         <div class="remember-me">
             <span class="fa-stack fa-lg">
-                <a class="remember-me-i" href="#" ng-click="remember = !remember">
+                <a class="remember-me-i" href="#" ng-click="$parent.remember = !$parent.remember">
                     <i class="fa fa-square-o fa-stack-2x"></i>
-                    <i ng-if="remember" class="fa fa-check fa-stack-1x"></i>
+                    <i ng-if="$parent.remember" class="fa fa-check fa-stack-1x"></i>
                 </a>
             </span>
             Remember Me
             <p class="forgot-password pull-right"><a href="#" ng-click="setState('forgot')">Forgot Password?</a></p>
         </div>
             
-        <button type="submit" class="btn btn-blue btn-block" ng-disabled="loginForm.$invalid" ng-click="login(login.email, login.password)">Login</button>
+        <button type="submit" class="btn btn-blue btn-block" ng-disabled="loginForm.$invalid" ng-click="login(loginInfo.email, loginInfo.password)">Login</button>
         </form>
         <div class="sign-up m-t-md"><span class="pull-left">Don't have an account?</span><a ng-click="setState('signup')" href="#" class="pull-right">Sign Up</a></div>
     </div>
@@ -124,7 +124,7 @@
         </div>
 </div>
 <div class="verify-email row" ng-if="getState() == 'verify'">
-    <div class="col-xs-12 m-t-md wrapper-none">
+    <div class="col-sm-12">
         <p class="white">We just sent you an email to verify your account. Copy the verification code and paste it in to this form or click the link from your email to finish signing up.</p>
         <div class="panel panel-danger error-modal animated" ng-show="showError">
             <div class="panel-heading">
@@ -144,7 +144,7 @@
         <div class="form-group">
             <input type="text" class="form-control input-dark login-email" id="code" placeholder="Authorization Code" ng-model="verify.code" required>
         </div>
-        <button type="submit" class="btn btn-blue btn-block" ng-disabled="verifyForm.$invalid" ng-click="verifyEmail()">Verify Account</button>
+        <button type="submit" class="btn btn-blue btn-block" ng-disabled="verifyForm.$invalid" ng-click="verifyEmail(verify.email, verify.code)">Verify Account</button>
         </form>
     </div>
 </div>

@@ -47,16 +47,33 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 })
-.directive('loginForm', ['$window', 'AuthenticationService', 'LoginModalService', 'UserService', 'SubscriptionService', function ($window, AuthenticationService, LoginModalService, UserService, SubscriptionService) {
+.directive('loginForm', ['$window', '$cookies', 'AuthenticationService', 'LoginModalService', 'UserService', 'SubscriptionService', function ($window, $cookies, AuthenticationService, LoginModalService, UserService, SubscriptionService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login.form.html',
         scope: {
             callback: '&'
         },
         link: function (scope, el, attr) {
-            var state = "login";
+            var state = scope.$parent.LoginModalService.state;
+            scope.remember;
+            scope.loginInfo = {
+                email: "",
+                password: ""
+            };
+            scope.verify = {
+                email: "",
+                code: ""
+            }
             
+            var cookMail = $cookies.rememberEmail;
+            var cookPass = $cookies.rememberPassword;
             
+            if (cookMail != undefined && cookPass != undefined) {
+                scope.remember = true;
+                scope.loginInfo.email = cookMail;
+                scope.loginInfo.password = cookPass;
+            }
+
             scope.closeModal = function () {
                 LoginModalService.hideModal();
             }
@@ -66,6 +83,7 @@ angular.module('app.directives', ['ui.load'])
             }
             
             scope.setState = function (s) {
+                console.log(s);
                 switch(s) {
                     case 'login'  : state = "login"; break;
                     case 'signup' : state = "signup"; break;
@@ -74,6 +92,30 @@ angular.module('app.directives', ['ui.load'])
                     default       : state = "login"; break;
                 }
             }
+            scope.setState(state);
+            
+            scope.verifyEmail = function (email, code) {
+                 UserService.verifyEmail(email, code).success(function (data) {
+                    if (!data.success) {
+                        scope.errors = data.errors;
+                        scope.showError = true;
+                    } else {
+                        AuthenticationService.setLogged(true);
+                        AuthenticationService.setAdmin(data.isAdmin);
+                        AuthenticationService.setProvider(data.isProvider);
+
+                        SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                        SubscriptionService.setTsPlan(data.subscription.plan);
+                        SubscriptionService.setExpiry(data.subscription.expiry);
+
+                        $window.sessionStorage.userID = data.userID;
+                        $window.sessionStorage.username = data.username;
+                        $window.sessionStorage.email = data.email;
+                        $window.sessionStorage.token = data.token;
+                        scope.closeModal();
+                    }
+                });
+            };
             
             scope.forgotPassword = function () {
                 UserService.forgotPassword(scope.forgot.email).success(function (data) {
@@ -94,6 +136,7 @@ angular.module('app.directives', ['ui.load'])
                             scope.errors = data.errors;
                             scope.showError = true;
                         } else {
+                            scope.verify.email = email;
                             state = "verify";
 //                            return $state.transitionTo('app.verify', { email: email });
                         }
@@ -117,6 +160,15 @@ angular.module('app.directives', ['ui.load'])
                         $window.sessionStorage.email = data.email;
                         $window.sessionStorage.token = data.token;
                         LoginModalService.hideModal();
+                        
+                        if (scope.remember) {
+                            $cookies.rememberEmail = email;
+                            $cookies.rememberPassword = password;
+                        } else {
+                            delete $cookies.rememberEmail;
+                            delete $cookies.rememberPassword;
+                        }
+                        
                         
                         scope.callback();
                     }).error(function() {

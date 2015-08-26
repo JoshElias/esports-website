@@ -160,8 +160,9 @@ angular.module('app.services', [])
 .factory('LoginModalService', ['$rootScope', '$compile', function ($rootScope, $compile) {
     var box = undefined;
     return {
-        showModal: function (callback) {
+        showModal: function (state, callback) {
             $rootScope.LoginModalService.callback = callback;
+            $rootScope.LoginModalService.state = state;
             box = bootbox.dialog({
                 title: 'USER LOGIN',
                 className: 'login-modal',
