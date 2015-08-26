@@ -54,9 +54,51 @@ angular.module('app.directives', ['ui.load'])
             callback: '&'
         },
         link: function (scope, el, attr) {
+            var state = "login";
+            
             
             scope.closeModal = function () {
                 LoginModalService.hideModal();
+            }
+            
+            scope.getState = function () {
+                return state;
+            }
+            
+            scope.setState = function (s) {
+                switch(s) {
+                    case 'login'  : state = "login"; break;
+                    case 'signup' : state = "signup"; break;
+                    case 'forgot' : state = "forgot"; break;
+                    case 'verify' : state = "verify"; break;
+                    default       : state = "login"; break;
+                }
+            }
+            
+            scope.forgotPassword = function () {
+                UserService.forgotPassword(scope.forgot.email).success(function (data) {
+                    if (!data.success) {
+                        scope.errors = data.errors;
+                        scope.showError = true;
+                    } else {
+                        scope.showSuccess = true;
+                        scope.forgot.email = '';
+                    }
+                });
+            };
+            
+            scope.signup = function signup(email, username, password, cpassword) {
+                if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
+                    UserService.signup(email, username, password, cpassword).success(function (data) {
+                        if (!data.success) {
+                            scope.errors = data.errors;
+                            scope.showError = true;
+                        } else {
+                            state = "verify";
+//                            return $state.transitionTo('app.verify', { email: email });
+                        }
+                    });
+                }
             }
             
             scope.login = function login(email, password) {

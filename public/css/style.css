@@ -1817,6 +1817,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     position: relative;
     border: 1px solid #FBFBFB;
 }
+/*
 .login-modal .modal-content .modal-body .form-group input:-webkit-autofill {
     -webkit-box-shadow:0 0 0 50px rgb(31,31,31) inset;
     -webkit-text-fill-color: white;
@@ -1825,6 +1826,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     -webkit-box-shadow:0 0 0 50px rgb(31,31,31) inset;
     -webkit-text-fill-color: white;
 }
+*/
 .login-modal .modal-content .modal-body .form-group input {
     color: white
 }
@@ -2050,8 +2052,13 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 
 .profile-page .activity-filter li { display: inline-block; }
+.profile-page .activity-filter .profile-filter-btn { background-color: rgba(0,0,0,.6); }
+.profile-page .activity-filter .profile-filter-btn.active { background-color: #2766ad; }
+.profile-page .activity-filter .profile-filter-btn:focus { background-color: rgba(0,0,0,.6); outline:none; }
+.profile-page .activity-filter .profile-filter-btn:focus.active { background-color: #2766ad; outline:none; }
 
-.profile-page .activity-list .activity { padding: 30px 25px 25px 25px; display: flex }
+
+.profile-page .activity-list .activity { padding: 30px 25px 25px 25px; display: flex; overflow: hidden; opacity: 1; }
 .profile-page .activity-list .activity .activity-left { height: 100% }
 .profile-page .activity-list .activity .activity-left .activity-img { width: 60px; height: 60px; border-radius: 50%; background-color: rgb(255,255,255); padding: 2px; }
 .profile-page .activity-list .activity .activity-left .activity-img img { width: 100%; }

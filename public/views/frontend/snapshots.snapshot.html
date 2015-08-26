@@ -14,7 +14,7 @@
                 <div class="vote-count vote-large m-l-sm pull-right">
                     {{snapshot.votesCount}}
                 </div>
-                <a ng-if="app.user.isLogged() && !hasVoted" class="btn-vote-up vote-large" ng-click="voteSnapshot()"><p><i class="fa fa-thumbs-up"></i></p></a>
+                <a ng-if="!hasVoted()" class="btn-vote-up vote-large" ng-click="voteSnapshot()"><p><i class="fa fa-thumbs-up"></i></p></a>
             </span>
 
         </div>

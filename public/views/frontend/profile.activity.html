@@ -2,16 +2,16 @@
 <div class="profile-col-header"><h2>ACTIVITY</h2></div>
 <div class="activity-filter clearfix">
     <ul class="pull-right">
-        <li><button ng-click="setFilter('comments')">Comments</button></li>
-        <li><button ng-click="setFilter('articles')">Articles</button></li>
-        <li><button ng-click="setFilter('decks')">Decks</button></li>
-        <li><button ng-click="setFilter('guides')">Guides</button></li>
-        <li><button ng-click="setFilter('forumposts')">Forum Posts</button></li>
+        <li><button class="profile-filter-btn btn btn-default" ng-class="{ 'active' : isFiltered('comments') }" ng-click="toggleFilter('comments')">Comments</button></li>
+        <li><button class="profile-filter-btn btn btn-default" ng-class="{ 'active' : isFiltered('articles') }" ng-click="toggleFilter('articles')">Articles</button></li>
+        <li><button class="profile-filter-btn btn btn-default" ng-class="{ 'active' : isFiltered('decks') }" ng-click="toggleFilter('decks')">Decks</button></li>
+        <li><button class="profile-filter-btn btn btn-default" ng-class="{ 'active' : isFiltered('guides') }" ng-click="toggleFilter('guides')">Guides</button></li>
+        <li><button class="profile-filter-btn btn btn-default" ng-class="{ 'active' : isFiltered('forumposts') }" ng-click="toggleFilter('forumposts')">Forum Posts</button></li>
     </ul>
 </div>
 <div class="activity-list">
     <!-- activity -->
-    <div ng-class="{ 'hidden' : !isFiltered(getActivityType(activity)) }" class="activity {{activity.activityType}} m-b-sm" ng-repeat="activity in activities">
+    <div ng-class="{ 'hidden' : !isFiltered(getActivityType(activity)) && activity.activityType != 'signup' }" class="activity {{activity.activityType}} m-b-sm" ng-repeat="activity in activities">
         <div class="activity-left">
             <div class="activity-img">
                 <img gravatar-src-once="user.email" class="img-circle">

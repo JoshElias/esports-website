@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('app.controllers', ['ngCookies'])
-  .controller('AppCtrl', ['$scope', '$localStorage', '$cookies', '$window', '$location', 'SubscriptionService', 'AuthenticationService', 'UserService', 
-    function($scope, $localStorage, $cookies, $window, $location, SubscriptionService, AuthenticationService, UserService) {
+  .controller('AppCtrl', ['$scope', '$localStorage', '$cookies', '$window', '$location', 'SubscriptionService', 'AuthenticationService', 'UserService', '$rootScope',
+    function($scope, $localStorage, $cookies, $window, $location, SubscriptionService, AuthenticationService, UserService, $rootScope) {
       var isIE = !!navigator.userAgent.match(/MSIE/i);
       isIE && angular.element($window.document.body).addClass('ie');
       isSmartDevice( $window ) && angular.element($window.document.body).addClass('smart');
@@ -58,7 +58,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.app.settings.token = null;
                     delete $cookies.token;
                 }
-                return $location.path("/login");
+//                return $location.path("/login");
             }
         }
       };
@@ -139,31 +139,6 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         }
-        
-        $scope.signup = function signup(email, username, password, cpassword) {
-            if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
-                UserService.signup(email, username, password, cpassword).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                    } else {
-                        return $state.transitionTo('app.verify', { email: email });
-                    }
-                });
-            }
-        }
-        
-        $scope.forgotPassword = function () {
-            UserService.forgotPassword($scope.forgot.email).success(function (data) {
-                if (!data.success) {
-                    $scope.errors = data.errors;
-                    $scope.showError = true;
-                } else {
-                    $scope.showSuccess = true;
-                    $scope.forgot.email = '';
-                }
-            });
-        };
     }
 ])
 .controller('UserVerifyCtrl', ['$scope', '$location', '$window', '$state', '$stateParams', 'UserService', 'AuthenticationService', 'SubscriptionService', 
@@ -389,8 +364,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('PremiumCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'UserService', 'AuthenticationService', 'SubscriptionService', 
-    function ($scope, $state, $window, $compile, bootbox, UserService, AuthenticationService, SubscriptionService) {
+.controller('PremiumCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'UserService', 'LoginModalService',
+    function ($scope, $state, $window, $compile, bootbox, UserService, LoginModalService) {
         var box,
             callback;
         
@@ -401,14 +376,9 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
                 }
             } else {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showMOdal(function () {
                     $scope.getPremium(plan);
-                };
+                });
             }
         }
         
@@ -656,7 +626,7 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $sce, dataActivity, ProfileService, HOTSGuideService, DeckService) {
         $scope.activities = dataActivity.activities;
         $scope.total = dataActivity.total;
-        $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
+        $scope.filterActivities = ['comments','articles','decks','guides'];
         
         $scope.getActivityType = function (activity) {
             switch (activity.activityType) {
@@ -678,14 +648,24 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.isFiltered = function(type) {
-            $scope.filterActivities.forEach(function(currentValue) {
-                
-                if (currentValue) {
-                    
+            for (var i = 0; i < $scope.filterActivities.length; i++) {
+                if ($scope.filterActivities[i] == type) {
+                    return true;
                 }
-                
-                return (currentValue == type);
-            });
+            }
+            return false;
+        }
+        
+        $scope.toggleFilter = function (filter) {
+            for (var i = 0; i < $scope.filterActivities.length; i++) {
+                if (filter == $scope.filterActivities[i]) {
+                    $scope.filterActivities.splice(i,1);
+                    console.log('removing');
+                    return;
+                }
+            }
+            console.log('adding');
+            $scope.filterActivities.push(filter);
         }
         
 //        $scope.setFilter = function(filter) {
@@ -4974,11 +4954,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.saveDeck = function () {
             if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
+                LoginModalService.showModal();
             } else {
                 DeckBuilder.saveDeck($scope.deck).success(function (data) {
                     if (data.success) {
@@ -5187,20 +5163,24 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'data', 'AuthenticationService', 'UserService', 'SubscriptionService', 'VoteService',
-    function ($scope, $state, $compile, $window, SnapshotService, data, AuthenticationService, UserService, SubscriptionService, VoteService) {
+.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'data', 'VoteService', 'LoginModalService',
+    function ($scope, $state, $compile, $window, SnapshotService, data, VoteService, LoginModalService) {
         
         $scope.snapshot = data;
         $scope.show = [];
         $scope.matchupName = [];
-        $scope.hasVoted = false;
-        $scope.show.comments = SnapshotService.getStorage();
-        $scope.$watch('app.user.isLogged()', function() {
+        $scope.hasVoted = function () {
             for (var i = 0; i < $scope.snapshot.votes.length; i++) {
                 if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
-                    $scope.hasVoted = true;
+                    return true;
                 }
             }
+            return false;
+        };
+        $scope.show.comments = SnapshotService.getStorage();
+        $scope.$watch('app.user.isLogged()', function() {
+            updateCommentVotes();
+            $scope.hasVoted();
         });
         
         var mouseOver = [],
@@ -5334,9 +5314,17 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.voteSnapshot = function () {
-            $scope.hasVoted = true;
-            $scope.snapshot.votesCount++;
-            SnapshotService.vote($scope.snapshot._id);
+            if (!$scope.app.user.isLogged()) {
+                LoginModalService.showModal(function() {
+                    if (!$scope.hasVoted()) {
+                        $scope.snapshot.votesCount++;
+                        SnapshotService.vote($scope.snapshot._id);
+                    }
+                });
+            } else {
+                $scope.snapshot.votesCount++;
+                SnapshotService.vote($scope.snapshot._id);
+            }
         }
         
         // check for custom deck name or load normal name
@@ -5390,14 +5378,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                var callback = function () {
+                LoginModalService.showModal(function () {
                     $scope.commentPost();
-                };
+                });
             } else {
                 SnapshotService.addComment($scope.snapshot, $scope.comment).success(function (data) {
                     if (data.success) {
@@ -5425,14 +5408,9 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                var callback = function () {
+                LoginModalService.showModal(function () {
                     $scope.voteComment(direction, snapshot);
-                };
+                });
             } else {
                 if (comment.author._id === $scope.app.user.getUserID()) {
                     bootbox.alert("You can't vote for your own content.");
@@ -5513,32 +5491,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.show.comments = SnapshotService.getStorage();
         }
         
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    updateCommentVotes();
-                }).error(function() {
-                    $scope.showError = true;
-                });
-            }
-        }
-        
         init();
-        
     }
 ])
 .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',
@@ -5720,7 +5673,9 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.$watch('app.user.isLogged()', function() {
             for (var i = 0; i < $scope.article.votes.length; i++) {
                 if ($scope.article.votes[i] == $scope.app.user.getUserID()) {
+                    console.log('yes');
                     checkVotes();
+                    updateCommentVotes();
                 }
             }
         });
@@ -5735,12 +5690,6 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
-        
-        function init () {
-            /******************************************* HAS VOTED *******************************************/
-            checkVotes();
-        }
-        init();
         
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
@@ -5813,8 +5762,7 @@ angular.module('app.controllers', ['ngCookies'])
         function vote(article) {
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal(function() {
-                    checkVotes();
-                    updateCommentVotes();
+                    vote(article);
                 });
             } else {
                 if (!$scope.hasVoted) {
@@ -5826,6 +5774,8 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 }
             }
+            checkVotes();
+            updateCommentVotes();
         };
         
         // comments
@@ -5836,14 +5786,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal(function () {
                     $scope.commentPost();
-                };
+                });
             } else {
                 ArticleService.addComment($scope.article, $scope.comment).success(function (data) {
                     if (data.success) {
@@ -5875,7 +5820,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal(function () {
-                    $scope.voteComment(direction, deck);
+                    $scope.voteComment(direction, comment);
                 });
             } else {
                 if (comment.author._id === $scope.app.user.getUserID()) {
@@ -5889,6 +5834,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
+            checkVotes();
+            updateCommentVotes();
         };
         
         // get premium
@@ -5898,14 +5845,11 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
                 }
             } else {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<login-form TODO></login-form>')($scope)
+                LoginModalService.showModal(function () {
+                    if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
+                        $scope.getPremium(plan);
+                    }
                 });
-                box.modal('show');
-                callback = function () {
-                    $scope.getPremium(plan);
-                };
             }
         }
     }
@@ -6069,8 +6013,8 @@ angular.module('app.controllers', ['ngCookies'])
         }   
     }
 ])
-.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
-    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, UserService, DeckService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
+.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'DeckService', 'VoteService', 'data', 'MetaService', 'LoginModalService',
+    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, DeckService, VoteService, data, MetaService, LoginModalService) {
         if (!data || !data.success) { return $state.go('app.hs.decks.list'); }
 
         // load deck
@@ -6288,14 +6232,9 @@ angular.module('app.controllers', ['ngCookies'])
                 
         function vote(direction, deck) {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal(function () {
                     vote(direction, deck);
-                };
+                });
             } else {
                 if (deck.author._id === $scope.app.user.getUserID()) {
                     bootbox.alert("You can't vote for your own content.");
@@ -6308,6 +6247,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
+            updateCommentVotes();
+            updateVotes();
         };
         
         // comments
@@ -6318,14 +6259,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal(function () {
                     $scope.commentPost();
-                };
+                });
             } else {
                 DeckService.addComment($scope.deck, $scope.comment).success(function (data) {
                     if (data.success) {
@@ -6334,6 +6270,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
+            updateCommentVotes();
+            updateVotes();
         };
                 
         updateCommentVotes();
@@ -6353,14 +6291,9 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
+                LoginModalService.showModal(function () {
+                    $scope.voteComment(direction, comment);
                 });
-                box.modal('show');
-                callback = function () {
-                    $scope.voteComment(direction, deck);
-                };
             } else {
                 if (comment.author._id === $scope.app.user.getUserID()) {
                     bootbox.alert("You can't vote for your own content.");
@@ -6373,6 +6306,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
+            checkVotes();
+            updateCommentVotes();
         };
         
         // get premium
@@ -6382,38 +6317,10 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
                 }
             } else {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
-                    $scope.getPremium(plan);
-                };
-            }
-        }
-        
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    updateVotes();
-                    callback();
-                }).error(function() {
-                    $scope.showError = true;
+                LoginModalService.showModal(function () {
+                    if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
+                        $scope.getPremium(plan);
+                    }
                 });
             }
         }
@@ -8621,8 +8528,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService', 'MetaService',
-    function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService, MetaService) {
+.controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'LoginModalService', 'MetaService',
+    function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps, LoginModalService, MetaService) {
         $scope.guide = data.guide;
         $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0].hero : false;
         $scope.heroes = dataHeroes.heroes;
@@ -8760,14 +8667,9 @@ angular.module('app.controllers', ['ngCookies'])
                 
         function vote(direction, guide) {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal(function () {
                     vote(direction, guide);
-                };
+                });
             } else {
                 if (guide.author._id === $scope.app.user.getUserID()) {
                     bootbox.alert("You can't vote for your own content.");
@@ -8780,6 +8682,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
+            updateVotes();
+            updateCommentVotes();
         };
         
         // comments
@@ -8790,14 +8694,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal(function () {
                     $scope.commentPost();
-                };
+                });
             } else {
                 HOTSGuideService.addComment($scope.guide, $scope.comment).success(function (data) {
                     if (data.success) {
@@ -8825,14 +8724,9 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal(function () {
                     $scope.voteComment(direction, deck);
-                };
+                });
             } else {
                 if (comment.author._id === $scope.app.user.getUserID()) {
                     bootbox.alert("You can't vote for your own content.");
@@ -8845,6 +8739,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
+            updateVotes();
+            updateCommentVotes();
         };
         
         //is premium
@@ -8866,45 +8762,15 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
                 }
             } else {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal(function () {
                     $scope.getPremium(plan);
-                };
-            }
-        }
-        
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    updateVotes();
-                    callback();
-                }).error(function() {
-                    $scope.showError = true;
                 });
             }
         }
     }
 ])
-.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
-    function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
+.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService',
+    function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService) {
         var box;
         
         // create guide
@@ -9028,39 +8894,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    $scope.saveGuide;
-                }).error(function() {
-                    $scope.showError = true;
-                });
-            }
-        }
-        
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
                 return false;
             }
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
+                LoginModalService.showModal();
             } else {
                 HOTSGuideService.addGuide($scope.guide).success(function (data) {
                     if (!data.success) {
@@ -9076,8 +8916,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
-    function ($scope, $state, $window, $compile, HOTS, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
+.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'LoginModalService',
+    function ($scope, $state, $window, $compile, HOTS, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps, LoginModalService) {
         var box;
         
         // create guide
@@ -9169,40 +9009,14 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    $scope.saveGuide();
-                }).error(function() {
-                    $scope.showError = true;
-                });
-            }
-        }
-        
+
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                 return false;
             }
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
+                LoginModalService.showModal();
             } else {
                 HOTSGuideService.addGuide($scope.guide).success(function (data) {
                     if (!data.success) {
@@ -9223,8 +9037,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.guide = dataGuide.guide;
     }
 ])
-.controller('HOTSGuideBuilderEditHeroCtrl', ['$scope', '$state', '$window', 'GuideBuilder', 'HOTSGuideService', 'HOTS', 'dataGuide', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, GuideBuilder, HOTSGuideService, HOTS, dataGuide, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderEditHeroCtrl', ['$scope', '$state', '$window', 'GuideBuilder', 'HOTSGuideService', 'HOTS', 'dataGuide', 'dataHeroes', 'dataMaps', 'LoginModalService',
+    function ($scope, $state, $window, GuideBuilder, HOTSGuideService, HOTS, dataGuide, dataHeroes, dataMaps, LoginModalService) {
         // create guide
         $scope.guide = GuideBuilder.new('hero', dataGuide.guide);
         
@@ -9376,11 +9190,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
+                LoginModalService.showModal();
             } else {
                 HOTSGuideService.editGuide($scope.guide).success(function (data) {
                     if (!data.success) {
@@ -9395,8 +9205,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'HOTS', 'GuideBuilder', 'HOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, HOTS, GuideBuilder, HOTSGuideService, dataGuide, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'HOTS', 'GuideBuilder', 'HOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 'LoginModalService',
+    function ($scope, $state, $window, HOTS, GuideBuilder, HOTSGuideService, dataGuide, dataHeroes, dataMaps, LoginModalService) {
         // create guide
         $scope.guide = GuideBuilder.new('map', dataGuide.guide);
         
@@ -9484,40 +9294,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    $scope.saveGuide();
-                }).error(function() {
-                    $scope.showError = true;
-                });
-            }
-        }
-        
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                 return false;
             }
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
+                LoginModalService.showModal();
             } else {
                 HOTSGuideService.editGuide($scope.guide).success(function (data) {
                     if (!data.success) {
