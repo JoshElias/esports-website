@@ -163,10 +163,11 @@ angular.module('app.services', [])
         showModal: function (state, callback) {
             $rootScope.LoginModalService.callback = callback;
             $rootScope.LoginModalService.state = state;
+            
             box = bootbox.dialog({
                 title: 'USER LOGIN',
                 className: 'login-modal',
-                message: $compile('<login-form callback="LoginModalService.callback()"></login-form>')($rootScope)
+                message: $compile('<login-modal callback="LoginModalService.callback()"></login-modal>')($rootScope)
             });
             box.modal('show');
         },

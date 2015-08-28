@@ -1698,7 +1698,7 @@ module.exports = {
                 .lean()
                 .populate([{
                         path: 'author',
-                        select: 'username -_id email providerDescription social'
+                        select: 'username -_id email providerDescription about social'
                     },
                     {
                         path: 'related',

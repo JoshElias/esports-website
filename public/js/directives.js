@@ -47,104 +47,60 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 })
-.directive('loginForm', ['$window', '$cookies', 'AuthenticationService', 'LoginModalService', 'UserService', 'SubscriptionService', function ($window, $cookies, AuthenticationService, LoginModalService, UserService, SubscriptionService) {
+.directive('loginModal', ['LoginModalService', '$rootScope', function (LoginModalService, $rootScope) {
     return {
-        templateUrl: tpl + 'views/frontend/directives/login.form.html',
-        scope: {
-            callback: '&'
-        },
+        templateUrl: tpl + 'views/frontend/directives/login/login.modal.html',
+        scope: true,
+        controller: ['$scope', function ($scope) {
+            $scope.state = $rootScope.LoginModalService.state;
+            $scope.callback = $rootScope.LoginModalService.callback;
+
+            $scope.getState = function () {
+                return $scope.state;
+            }
+            
+            $scope.setState = function (s) {
+                switch(s) {
+                    case 'login'  : $scope.state = "login"; break;
+                    case 'signup' : $scope.state = "signup"; break;
+                    case 'forgot' : $scope.state = "forgot"; break;
+                    case 'verify' : $scope.state = "verify"; break;
+                    default       : $scope.state = "login"; break;
+                }
+            }
+            $scope.setState($scope.state);
+            
+            $scope.closeModal = function () {
+                LoginModalService.hideModal();
+            }
+            
+        }],
         link: function (scope, el, attr) {
-            var state = scope.$parent.LoginModalService.state;
-            scope.remember;
-            scope.loginInfo = {
+            
+        }
+    }
+}])
+.directive('loginForm', ['$window', '$cookies', '$state', 'AuthenticationService', 'LoginModalService', 'UserService', 'SubscriptionService', function ($window, $cookies, $state, AuthenticationService, LoginModalService, UserService, SubscriptionService) {
+    return {
+        templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
+        scope: true,
+        link: function ($scope, el, attr) {
+            $scope.remember;
+            $scope.loginInfo = {
                 email: "",
                 password: ""
             };
-            scope.verify = {
-                email: "",
-                code: ""
-            }
             
             var cookMail = $cookies.rememberEmail;
             var cookPass = $cookies.rememberPassword;
             
             if (cookMail != undefined && cookPass != undefined) {
-                scope.remember = true;
-                scope.loginInfo.email = cookMail;
-                scope.loginInfo.password = cookPass;
+                $scope.remember = true;
+                $scope.loginInfo.email = cookMail;
+                $scope.loginInfo.password = cookPass;
             }
 
-            scope.closeModal = function () {
-                LoginModalService.hideModal();
-            }
-            
-            scope.getState = function () {
-                return state;
-            }
-            
-            scope.setState = function (s) {
-                console.log(s);
-                switch(s) {
-                    case 'login'  : state = "login"; break;
-                    case 'signup' : state = "signup"; break;
-                    case 'forgot' : state = "forgot"; break;
-                    case 'verify' : state = "verify"; break;
-                    default       : state = "login"; break;
-                }
-            }
-            scope.setState(state);
-            
-            scope.verifyEmail = function (email, code) {
-                 UserService.verifyEmail(email, code).success(function (data) {
-                    if (!data.success) {
-                        scope.errors = data.errors;
-                        scope.showError = true;
-                    } else {
-                        AuthenticationService.setLogged(true);
-                        AuthenticationService.setAdmin(data.isAdmin);
-                        AuthenticationService.setProvider(data.isProvider);
-
-                        SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                        SubscriptionService.setTsPlan(data.subscription.plan);
-                        SubscriptionService.setExpiry(data.subscription.expiry);
-
-                        $window.sessionStorage.userID = data.userID;
-                        $window.sessionStorage.username = data.username;
-                        $window.sessionStorage.email = data.email;
-                        $window.sessionStorage.token = data.token;
-                        scope.closeModal();
-                    }
-                });
-            };
-            
-            scope.forgotPassword = function () {
-                UserService.forgotPassword(scope.forgot.email).success(function (data) {
-                    if (!data.success) {
-                        scope.errors = data.errors;
-                        scope.showError = true;
-                    } else {
-                        scope.showSuccess = true;
-                        scope.forgot.email = '';
-                    }
-                });
-            };
-            
-            scope.signup = function signup(email, username, password, cpassword) {
-                if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
-                    UserService.signup(email, username, password, cpassword).success(function (data) {
-                        if (!data.success) {
-                            scope.errors = data.errors;
-                            scope.showError = true;
-                        } else {
-                            scope.verify.email = email;
-                            state = "verify";
-//                            return $state.transitionTo('app.verify', { email: email });
-                        }
-                    });
-                }
-            }
-            
-            scope.login = function login(email, password) {
+            $scope.login = function login(email, password) {
                 if (email !== undefined && password !== undefined) {
                     UserService.login(email, password).success(function(data) {
                         AuthenticationService.setLogged(true);
@@ -159,9 +115,14 @@ angular.module('app.directives', ['ui.load'])
                         $window.sessionStorage.username = data.username;
                         $window.sessionStorage.email = data.email;
                         $window.sessionStorage.token = data.token;
-                        LoginModalService.hideModal();
                         
-                        if (scope.remember) {
+                        if ($scope.setState) {
+                            $scope.closeModal();
+                        } else {
+                            $state.go('app.home');
+                        }
+                            
+                        if ($scope.remember) {
                             $cookies.rememberEmail = email;
                             $cookies.rememberPassword = password;
                         } else {
@@ -169,13 +130,98 @@ angular.module('app.directives', ['ui.load'])
                             delete $cookies.rememberPassword;
                         }
                         
-                        
-                        scope.callback();
+                        if ($scope.callback) {
+                            $scope.callback();
+                        }
+                            
                     }).error(function() {
-                        scope.showError = true;
+                        $scope.showError = true;
                     });
                 }
             }
+        }
+    }
+}])
+.directive('signupForm', ['$state', 'UserService', 'LoginModalService', function ($state, UserService, LoginModalService) {
+    return {
+        templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
+        scope: true,
+        link: function ($scope, el, attr) {
+            $scope.verify = {
+                email: "",
+                code: ""
+            }
+            
+            $scope.signup = function signup(email, username, password, cpassword) {
+                if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
+                    UserService.signup(email, username, password, cpassword).success(function (data) {
+                        if (!data.success) {
+                            $scope.errors = data.errors;
+                            $scope.showError = true;
+                        } else {
+                            console.log(email);
+                            $scope.verify.email = email;
+                            if ($scope.setState) {
+                                $scope.state = "verify";
+                            } else {
+                                $state.go('app.verify');
+                            }
+//                            return $state.transitionTo('app.verify', { email: email });
+                        }
+                    });
+                }
+            }
+        }
+    }
+}])
+.directive('forgotPasswordForm', ['LoginModalService', function (LoginModalService) {
+    return {
+        templateUrl: tpl + 'views/frontend/directives/login/forgot.password.form.html',
+        scope: true,
+        link: function ($scope, el, attr) {
+            $scope.forgotPassword = function () {
+                UserService.forgotPassword($scope.forgot.email).success(function (data) {
+                    if (!data.success) {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                    } else {
+                        $scope.showSuccess = true;
+                        $scope.forgot.email = '';
+                    }
+                });
+            };
+        }
+    }
+}])
+.directive('verifyForm', ['LoginModalService', function (LoginModalService) {
+    return {
+        templateUrl: tpl + 'views/frontend/directives/login/verify.form.html',
+        scope: true,
+        link: function ($scope, el, attr) {
+            console.log($scope.verify.email);
+            
+            $scope.verifyEmail = function (email, code) {
+                 UserService.verifyEmail(email, code).success(function (data) {
+                    if (!data.success) {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                    } else {
+                        AuthenticationService.setLogged(true);
+                        AuthenticationService.setAdmin(data.isAdmin);
+                        AuthenticationService.setProvider(data.isProvider);
+
+                        SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                        SubscriptionService.setTsPlan(data.subscription.plan);
+                        SubscriptionService.setExpiry(data.subscription.expiry);
+
+                        $window.sessionStorage.userID = data.userID;
+                        $window.sessionStorage.username = data.username;
+                        $window.sessionStorage.email = data.email;
+                        $window.sessionStorage.token = data.token;
+                        $scope.closeModal();
+                    }
+                });
+            };
         }
     }
 }])
