@@ -1629,7 +1629,7 @@ module.exports = {
     articles: function (Schemas) {
         return function (req, res, next) {
             var articleType = req.body.articleType || 'all',
-                filter = req.body.filter || 'all',
+                filter = (req.body.filter && req.body.filter.length) ? req.body.filter : 'all',
                 offset = req.body.offset || 0,
                 num = req.body.num || 5,
                 where = {},
@@ -1638,11 +1638,10 @@ module.exports = {
             
             // filtering articles
             if (articleType !== 'all') {
-                where.articleType = articleType;
-            } else {
-                if (filter !== 'all') {
-                    where.classTags = filter;
-                }
+                where.articleType = (articleType instanceof Array) ? { $in: articleType } : articleType;
+            }
+            if (filter !== 'all') {
+                where.classTags = (filter instanceof Array) ? { $in: filter } : filter;
             }
             
             // search

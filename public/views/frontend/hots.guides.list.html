@@ -1,5 +1,5 @@
 <!-- sub nav -->
-<div class="sub-nav-wrapper hidden-xs">
+<div class="sub-nav-wrapper sticky hidden-xs">
     <div class="container-fluid sub-nav sticky">
         <div class="now-streaming pull-left">
             
@@ -16,80 +16,260 @@
 </div>
 <!-- /sub nav -->
 
-<!-- filtering -->
-<div hots-filtering heroes="heroes" maps="maps"></div>
-<!-- / filtering -->
+<div class="hots-dark">
+    <!-- filtering -->
+    <div hots-filtering heroes="heroes" maps="maps" filters="filters"></div>
+    <!-- / filtering -->
 
-<!-- guides start -->
-<div class="container">
-    
-    <!-- page flipping -->
-    <div class="page-flipper page-flipper-top clearfix" ng-show="pagination.totalPages() > 1">
-        <div class="pull-right">
-            <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)" disabled="disabled"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() + 1 > pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)" disabled="disabled"><i class="fa fa-arrow-circle-right"></i></button>
-            </span>
-        </div>
-    </div>
-    <!-- / page flipping -->
-    
-    <!-- guides -->
-    <div class="row guides-list" ng-show="guides.length">
-        <!-- guide -->
-        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="guide in guides">
-            <div class="guide-wrapper">
-                <div class="guide large" ng-class="{ premium: guide.premium.isPremium }">
-                    <a href="./heroes-of-the-storm/guides/{{guide.slug}}"></a>
-                    <div class="guide-images" ng-if="guide.guideType == 'hero'">
-                        <div class="guide-image guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
-                    </div>
-                    <div class="guide-images" ng-if="guide.guideType == 'map'">
-                        <div class="guide-image guide-images-1 guide-image-1 {{guide.maps[0].className}}"></div>
-                    </div>
-                    <div class="guide-overlay"></div>
-                    <div class="guide-premium" ng-if="guide.premium.isPremium"></div>
-                    <div class="guide-title">[{{guide.guideType.toUpperCase()}}]&nbsp;{{guide.name}}</div>
-                    <div class="guide-score"><span><em ng-if="guide.votesCount > 0">+</em>{{guide.votesCount}}</span></div>
-                    <div class="guide-description">
-                        <p>{{guide.description}}</p>
-                    </div>
-                    <div class="guide-info clearfix">
-                        <div class="pull-left m-r-sm">
-                            <span>by <a href="./user/{{guide.author.username}}">@{{guide.author.username}}</a></span>
+    <!-- top guide -->
+    <div class="container-fluid hots-top-guide m-t-lg" ng-if="topGuide">
+        <div class="tri-bottom">
+            <div class="container-fluid-max hots-top-guide-inner pos-rl">
+                <div class="hero {{getGuideCurrentHero(topGuide).hero.className}}"></div>
+                <div class="row row-flex">
+                    <div class="col-xs-7">
+                        <div class="row-flex-col">
+                            <h1>TOP GUIDE</h1>
+                            <h3>{{topGuide.name}}</h3>
+                            <ul class="hots-top-guide-talents clearfix">
+                                <li>
+                                    <a href="#" class="talents-icon large active {{getGuideClass(topGuide)}} {{getGuideCurrentHero(topGuide).talents.tier1.className}}" ng-tooltip title="{{getGuideCurrentHero(topGuide).talents.tier1.name}}"></a>
+                                    <div class="guide-talent-dots hidden-xs">
+                                        <div class="guide-talent-dot" ng-class="{ active: selectedTalent(getGuideCurrentHero(topGuide), 1, dot) }" ng-repeat="dot in getTalents(getGuideCurrentHero(topGuide), 1)"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="#" class="talents-icon large active {{getGuideClass(topGuide)}} {{getGuideCurrentHero(topGuide).talents.tier4.className}}" ng-tooltip title="{{getGuideCurrentHero(topGuide).talents.tier4.name}}"></a>
+                                    <div class="guide-talent-dots hidden-xs">
+                                        <div class="guide-talent-dot" ng-class="{ active: selectedTalent(getGuideCurrentHero(topGuide), 4, dot) }" ng-repeat="dot in getTalents(getGuideCurrentHero(topGuide), 4)"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="#" class="talents-icon large active {{getGuideClass(topGuide)}} {{getGuideCurrentHero(topGuide).talents.tier7.className}}" ng-tooltip title="{{getGuideCurrentHero(topGuide).talents.tier7.name}}"></a>
+                                    <div class="guide-talent-dots hidden-xs">
+                                        <div class="guide-talent-dot" ng-class="{ active: selectedTalent(getGuideCurrentHero(topGuide), 7, dot) }" ng-repeat="dot in getTalents(getGuideCurrentHero(topGuide), 7)"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="#" class="talents-icon large active {{getGuideClass(topGuide)}} {{getGuideCurrentHero(topGuide).talents.tier10.className}}" ng-tooltip title="{{getGuideCurrentHero(topGuide).talents.tier10.name}}"></a>
+                                    <div class="guide-talent-dots hidden-xs">
+                                        <div class="guide-talent-dot" ng-class="{ active: selectedTalent(getGuideCurrentHero(topGuide), 10, dot) }" ng-repeat="dot in getTalents(getGuideCurrentHero(topGuide), 10)"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="#" class="talents-icon large active {{getGuideClass(topGuide)}} {{getGuideCurrentHero(topGuide).talents.tier13.className}}" ng-tooltip title="{{getGuideCurrentHero(topGuide).talents.tier13.name}}"></a>
+                                    <div class="guide-talent-dots hidden-xs">
+                                        <div class="guide-talent-dot" ng-class="{ active: selectedTalent(getGuideCurrentHero(topGuide), 13, dot) }" ng-repeat="dot in getTalents(getGuideCurrentHero(topGuide), 13)"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="#" class="talents-icon large active {{getGuideClass(topGuide)}} {{getGuideCurrentHero(topGuide).talents.tier16.className}}" ng-tooltip title="{{getGuideCurrentHero(topGuide).talents.tier16.name}}"></a>
+                                    <div class="guide-talent-dots hidden-xs">
+                                        <div class="guide-talent-dot" ng-class="{ active: selectedTalent(getGuideCurrentHero(topGuide), 16, dot) }" ng-repeat="dot in getTalents(getGuideCurrentHero(topGuide), 16)"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="#" class="talents-icon large active {{getGuideClass(topGuide)}} {{getGuideCurrentHero(topGuide).talents.tier20.className}}" ng-tooltip title="{{getGuideCurrentHero(topGuide).talents.tier20.name}}"></a>
+                                    <div class="guide-talent-dots hidden-xs">
+                                        <div class="guide-talent-dot" ng-class="{ active: selectedTalent(getGuideCurrentHero(topGuide), 20, dot) }" ng-repeat="dot in getTalents(getGuideCurrentHero(topGuide), 20)"></div>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
-                        <div class="pull-right">
-                            <div class="pull-left m-r-sm">
-                                <span class="fa fa-clock-o"></span>
-                                <span>{{guide.createdDate | date : 'mediumDate'}}</span>
-                            </div>
-                            <div class="pull-left">
-                                <span class="fa fa-comment-o"></span>
-                                <span><a href="./heroes-of-the-storm/guides/{{guide.slug}}">{{guide.comments.length}} Comment<span ng-hide="guide.comments.length === 1">s</span></a></span>
-                            </div>
+                    </div>
+                    <div class="col-xs-5">
+                        <div class="row-flex-col">
+                            <p>{{topGuide.description}}</p>
+                            <a ui-sref="app.hots.guides.guide({ slug: topGuide.slug })" class="btn btn-hots m-t-md"><div class="inner">VIEW GUIDE</div></a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- / guide -->
     </div>
-    <p ng-show="!guides.length && hero !== 'all' && !loading && !hasSearch()" class="guides-list-no-content">There are curently no guides under <strong>{{filters.hero.name}}</strong> yet.</p>
-    <p ng-show="!guides.length && !loading && hasSearch()" class="guides-list-no-content">There are no results for your search.</p>
-    <!-- / guides -->
-    
-    <!-- page flipping -->
-    <div class="page-flipper page-flipper-bottom clearfix" ng-show="pagination.totalPages() > 1">
-        <div class="pull-right">
-            <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)" disabled="disabled"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() + 1 > pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)" disabled="disabled"><i class="fa fa-arrow-circle-right"></i></button>
-            </span>
+    <!-- / top guide -->
+
+    <!-- tempostorm guides -->
+    <div class="container-fluid">
+        <div class="container-fluid-max hots-list-ts-guides">
+            <div class="hots-list-guides-title clearfix">
+                <div class="hots-mini-filters">
+                    <ul class="hero-roles clearfix">
+                        <li><button class="hero-role warrior" ng-class="{ 'active': !hasFilterRole('Warrior') }" ng-click="toggleFilterRole('Warrior')" ng-tooltip title="Warrior"></button></li>
+                        <li><button class="hero-role assassin" ng-class="{ 'active': !hasFilterRole('Assassin') }" ng-click="toggleFilterRole('Assassin')" ng-tooltip title="Assassin"></button></li>
+                        <li><button class="hero-role support" ng-class="{ 'active': !hasFilterRole('Support') }" ng-click="toggleFilterRole('Support')" ng-tooltip title="Support"></button></li>
+                        <li><button class="hero-role specialist" ng-class="{ 'active': !hasFilterRole('Specialist') }" ng-click="toggleFilterRole('Specialist')" ng-tooltip title="Specialist"></button></li>
+                    </ul>
+                    <ul class="hero-universes m-r-md clearfix">
+                        <li><button class="hero-universe warcraft" ng-class="{ 'active': !hasFilterUniverse('Warcraft') }" ng-click="toggleFilterUniverse('Warcraft')" ng-tooltip title="Warcraft"></button></li>
+                        <li><button class="hero-universe starcraft" ng-class="{ 'active': !hasFilterUniverse('Starcraft') }" ng-click="toggleFilterUniverse('Starcraft')" ng-tooltip title="Starcraft"></button></li>
+                        <li><button class="hero-universe diablo" ng-class="{ 'active': !hasFilterUniverse('Diablo') }" ng-click="toggleFilterUniverse('Diablo')" ng-tooltip title="Diablo"></button></li>
+                        <li><button class="hero-universe retro" ng-class="{ 'active': !hasFilterUniverse('Blizzard') }" ng-click="toggleFilterUniverse('Blizzard')" ng-tooltip title="Retro"></button></li>
+                    </ul>
+                    <div class="hots-filters-search">
+                        <form>
+                            <div class="input-group">
+                                <input type="text" class="form-control input-dark hots-search" ng-model="filters.search">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <h1>TEMPOSTORM GUIDES</h1>
+            </div>
+            <div>
+                <ul class="hots-guides row no-pad" ng-if="tempostormGuides.length">
+                    <li class="col-xs-3" ng-repeat="guide in tempostormGuides">
+                        <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide large {{getGuideClass(guide)}}">
+                            <div class="inner"></div>
+                            <div class="bt-shadow" ng-if="guide.guideType == 'hero'"></div>
+                            <h1>{{guide.name}}</h1>
+                            <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>
+                            <div class="hots-guide-votes">{{guide.votesCount}}</div>
+                            <div class="hero-flip btn-group" ng-if="guide.heroes.length > 1">
+                                <button class="btn btn-xs btn-blue" ng-click="guidePrevHero($event, guide)"><span class="fa fa-angle-left"></span></button>
+                                <button class="btn btn-xs btn-blue" ng-click="guideNextHero($event, guide)"><span class="fa fa-angle-right"></span></button>
+                            </div>
+                            <ul class="hots-guide-talents" ng-if="guide.guideType == 'hero'">
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier1.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier1.name}}"></li>
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier4.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier4.name}}"></li>
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier7.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier7.name}}"></li>
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier10.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier10.name}}"></li>
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier13.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier13.name}}"></li>
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier16.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier16.name}}"></li>
+                                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier20.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier20.name}}"></li>
+                            </ul>
+                        </a>
+                    </li>
+                </ul>
+                <p class="white" ng-if="!tempostormGuides.length">There are no guides for the filtering above.</p>
+            </div>
         </div>
     </div>
-    <!-- / page flipping -->
-    
+    <!-- / tempostorm guides -->
+
+    <!-- guides start -->
+    <div class="container-fluid hots-guide-list">
+        <div class="container-fluid-max hots-guide-list-inner tri-both">
+            
+            <div class="hots-list-guides-title clearfix">
+                <div class="hots-mini-filters">
+                    <ul class="hero-roles clearfix">
+                        <li><button class="hero-role warrior" ng-class="{ 'active': !hasFilterRole('Warrior') }" ng-click="toggleFilterRole('Warrior')" ng-tooltip title="Warrior"></button></li>
+                        <li><button class="hero-role assassin" ng-class="{ 'active': !hasFilterRole('Assassin') }" ng-click="toggleFilterRole('Assassin')" ng-tooltip title="Assassin"></button></li>
+                        <li><button class="hero-role support" ng-class="{ 'active': !hasFilterRole('Support') }" ng-click="toggleFilterRole('Support')" ng-tooltip title="Support"></button></li>
+                        <li><button class="hero-role specialist" ng-class="{ 'active': !hasFilterRole('Specialist') }" ng-click="toggleFilterRole('Specialist')" ng-tooltip title="Specialist"></button></li>
+                    </ul>
+                    <ul class="hero-universes m-r-md clearfix">
+                        <li><button class="hero-universe warcraft" ng-class="{ 'active': !hasFilterUniverse('Warcraft') }" ng-click="toggleFilterUniverse('Warcraft')" ng-tooltip title="Warcraft"></button></li>
+                        <li><button class="hero-universe starcraft" ng-class="{ 'active': !hasFilterUniverse('Starcraft') }" ng-click="toggleFilterUniverse('Starcraft')" ng-tooltip title="Starcraft"></button></li>
+                        <li><button class="hero-universe diablo" ng-class="{ 'active': !hasFilterUniverse('Diablo') }" ng-click="toggleFilterUniverse('Diablo')" ng-tooltip title="Diablo"></button></li>
+                        <li><button class="hero-universe retro" ng-class="{ 'active': !hasFilterUniverse('Blizzard') }" ng-click="toggleFilterUniverse('Blizzard')" ng-tooltip title="Retro"></button></li>
+                    </ul>
+                    <div class="hots-filters-search">
+                        <form>
+                            <div class="input-group">
+                                <input type="text" class="form-control input-dark hots-search" ng-model="filters.search">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <h1>COMMUNITY GUIDES</h1>
+            </div>
+
+            <div>
+                <!-- page flipping -->
+                <!--<div class="page-flipper page-flipper-top clearfix" ng-show="pagination.totalPages() > 1">
+                    <div class="pull-right">
+                        <span class="btn-group">
+                            <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)" disabled="disabled"><i class="fa fa-arrow-circle-left"></i></button>
+                            <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
+                            <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() + 1 > pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)" disabled="disabled"><i class="fa fa-arrow-circle-right"></i></button>
+                        </span>
+                    </div>
+                </div>-->
+                <!-- / page flipping -->
+
+                <!-- guides titles -->
+                <div class="row hots-guides-long-title">
+                    <div class="col-xs-4">
+                        <h1>GUIDE</h1>
+                    </div>
+                    <div class="col-xs-3">
+                        <h1>TALENTS</h1>
+                    </div>
+                    <div class="col-xs-1">
+                        <h1>SCORE</h1>
+                    </div>
+                    <div class="col-xs-4">
+                        <h1>HERO</h1>
+                    </div>
+                </div>
+                <!-- / guides titles -->
+                
+                <!-- guides -->
+                <div class="row guides-list" ng-show="guides.length">
+                    <!-- guide -->
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="guide in guides">
+                        <div class="guide-wrapper">
+                            <div class="guide large" ng-class="{ premium: guide.premium.isPremium }">
+                                <a href="./heroes-of-the-storm/guides/{{guide.slug}}"></a>
+                                <div class="guide-images" ng-if="guide.guideType == 'hero'">
+                                    <div class="guide-image guide-image-{{$index+1}} guide-images-{{guide.heroes.length}} {{hero.hero.className}}" ng-repeat="hero in guide.heroes"></div>
+                                </div>
+                                <div class="guide-images" ng-if="guide.guideType == 'map'">
+                                    <div class="guide-image guide-images-1 guide-image-1 {{guide.maps[0].className}}"></div>
+                                </div>
+                                <div class="guide-overlay"></div>
+                                <div class="guide-premium" ng-if="guide.premium.isPremium"></div>
+                                <div class="guide-title">[{{guide.guideType.toUpperCase()}}]&nbsp;{{guide.name}}</div>
+                                <div class="guide-score"><span><em ng-if="guide.votesCount > 0">+</em>{{guide.votesCount}}</span></div>
+                                <div class="guide-description">
+                                    <p>{{guide.description}}</p>
+                                </div>
+                                <div class="guide-info clearfix">
+                                    <div class="pull-left m-r-sm">
+                                        <span>by <a href="./user/{{guide.author.username}}">@{{guide.author.username}}</a></span>
+                                    </div>
+                                    <div class="pull-right">
+                                        <div class="pull-left m-r-sm">
+                                            <span class="fa fa-clock-o"></span>
+                                            <span>{{guide.createdDate | date : 'mediumDate'}}</span>
+                                        </div>
+                                        <div class="pull-left">
+                                            <span class="fa fa-comment-o"></span>
+                                            <span><a href="./heroes-of-the-storm/guides/{{guide.slug}}">{{guide.comments.length}} Comment<span ng-hide="guide.comments.length === 1">s</span></a></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- / guide -->
+                </div>
+                <p ng-show="!guides.length && hero !== 'all' && !loading && !hasSearch()" class="guides-list-no-content">There are curently no guides under <strong>{{filters.hero.name}}</strong> yet.</p>
+                <p ng-show="!guides.length && !loading && hasSearch()" class="guides-list-no-content">There are no results for your search.</p>
+                <!-- / guides -->
+
+                <!-- page flipping -->
+                <!--<div class="page-flipper page-flipper-bottom clearfix" ng-show="pagination.totalPages() > 1">
+                    <div class="pull-right">
+                        <span class="btn-group">
+                            <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)" disabled="disabled"><i class="fa fa-arrow-circle-left"></i></button>
+                            <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
+                            <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() + 1 > pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)" disabled="disabled"><i class="fa fa-arrow-circle-right"></i></button>
+                        </span>
+                    </div>
+                </div>-->
+                <!-- / page flipping -->
+            </div>
+
+        </div>
+    </div>
+    <!-- guides end -->
 </div>
-<!-- guides end -->

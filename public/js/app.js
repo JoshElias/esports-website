@@ -457,10 +457,10 @@ var app = angular.module('app', [
                         controller: 'HOTSHomeCtrl',
                         resolve: {
                             dataArticles: ['ArticleService', function (ArticleService) {
-                                var hero = 'all',
-                                    page = 1,
-                                    perpage = 4;
-                                return ArticleService.getArticles('hots', hero, page, perpage);
+                                var filters = 'all',
+                                    offset = 0,
+                                    perpage = 6;
+                                return ArticleService.getArticles('hots', filters, offset, perpage);
                             }],
                             dataGuidesCommunity: ['HOTSGuideService', function (HOTSGuideService) {
                                 return HOTSGuideService.getGuidesCommunity();
@@ -495,7 +495,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-                            data: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                            dataGuides: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
                                 var guideType = $stateParams.t || 'all',
                                     hero = $stateParams.h || 'all',
                                     map = $stateParams.m || 'all',
@@ -506,6 +506,17 @@ var app = angular.module('app', [
                                     order = $stateParams.o || '';
                                 
                                 return HOTSGuideService.getGuides(guideType, hero, map, page, perpage, search, age, order);
+                            }],
+                            dataTopGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                var guideType = $stateParams.t || 'all',
+                                    hero = $stateParams.h || 'all',
+                                    map = $stateParams.m || 'all',
+                                    order = $stateParams.o || '';
+                                
+                                return HOTSGuideService.getGuides('hero', hero, map, 0, 1, '', '', 'high');
+                            }],
+                            dataTempostormGuides: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getGuidesFeatured('all', 0, 4);
                             }],
                             dataHeroes: ['HeroService', function (HeroService) {
                                 return HeroService.getHeroes();

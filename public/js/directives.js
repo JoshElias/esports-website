@@ -185,16 +185,20 @@ angular.module('app.directives', ['ui.load'])
         angular.element($window).bind("scroll", function() {
             if (this.pageYOffset >= (element.parent().offset().top - 50)) {
                 element.addClass('sticky');
+                element.parent().addClass('sticky');
             } else {
                 element.removeClass('sticky');
+                element.parent().removeClass('sticky');
             }
             scope.$apply();
         });
         angular.element($window).bind("resize", function() {
             if (this.pageYOffset >= (element.parent().offset().top - 50)) {
                 element.addClass('sticky');
+                element.parent().addClass('sticky');
             } else {
                 element.removeClass('sticky');
+                element.parent().removeClass('sticky');
             }
             scope.$apply();
         });
@@ -691,119 +695,122 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 })
-.directive('hotsFiltering', [function () {
+.directive('hotsFiltering', ['$filter', '$timeout', function ($filter, $timeout) {
     return {
         restrict: 'A',
         scope: {
             maps: '=',
-            heroes: '='
+            heroes: '=',
+            filters: '='
         },
         templateUrl: 'views/frontend/directives/hots.filtering.html',
-        controller: ['$scope', '$filter', function ($scope, $filter) {
-            // filters
-            $scope.filters = {
-                roles: [],
-                universes: [],
-                search: '',
-                heroes: [],
-                map: false
-            };
-
-            $scope.toggleFilterRole = function (role) {
-                var index = $scope.filters.roles.indexOf(role);
-                if (index === -1) {
-                    $scope.filters.roles.push(role);
+        link: function (scope, element, attrs) {
+            var initializing = true;
+            scope.$watch(function(){ return scope.filters; }, function (value) {
+                if (initializing) {
+                    $timeout(function () {
+                        initializing = false;
+                    });
                 } else {
-                    $scope.filters.roles.splice(index, 1);
+                    scope.filters = value;
+                }
+            }, true);
+            
+            scope.toggleFilterRole = function (role) {
+                var index = scope.filters.roles.indexOf(role);
+                if (index === -1) {
+                    scope.filters.roles.push(role);
+                } else {
+                    scope.filters.roles.splice(index, 1);
                 }
             };
 
-            $scope.hasFilterRole = function (role) {
-                for (var i = 0; i < $scope.filters.roles.length; i++) {
-                    if ($scope.filters.roles[i] == role) {
+            scope.hasFilterRole = function (role) {
+                for (var i = 0; i < scope.filters.roles.length; i++) {
+                    if (scope.filters.roles[i] == role) {
                         return true;
                     }
                 }
                 return false;
             };
 
-            $scope.toggleFilterUniverse = function (universe) {
-                var index = $scope.filters.universes.indexOf(universe);
+            scope.toggleFilterUniverse = function (universe) {
+                var index = scope.filters.universes.indexOf(universe);
                 if (index === -1) {
-                    $scope.filters.universes.push(universe);
+                    scope.filters.universes.push(universe);
                 } else {
-                    $scope.filters.universes.splice(index, 1);
+                    scope.filters.universes.splice(index, 1);
                 }
             };
 
-            $scope.hasFilterUniverse = function (universe) {
-                for (var i = 0; i < $scope.filters.universes.length; i++) {
-                    if ($scope.filters.universes[i] == universe) {
+            scope.hasFilterUniverse = function (universe) {
+                for (var i = 0; i < scope.filters.universes.length; i++) {
+                    if (scope.filters.universes[i] == universe) {
                         return true;
                     }
                 }
                 return false;
             };
 
-            $scope.toggleFilterHero = function (hero) {
-                var index = $scope.filters.heroes.indexOf(hero);
+            scope.toggleFilterHero = function (hero) {
+                var index = scope.filters.heroes.indexOf(hero);
                 if (index === -1) {
-                    $scope.filters.heroes.push(hero);
+                    scope.filters.heroes.push(hero);
                 } else {
-                    $scope.filters.heroes.splice(index, 1);
+                    scope.filters.heroes.splice(index, 1);
                 }
             };
 
-            $scope.hasFilterHero = function (hero) {
-                return ($scope.filters.heroes.indexOf(hero) !== -1);
+            scope.hasFilterHero = function (hero) {
+                return (scope.filters.heroes.indexOf(hero) !== -1);
             };
 
-            $scope.hasFilterSearch = function (hero) {
-                var filtered = ($scope.filters.search && $scope.filters.search.length) ? $filter('filter')($scope.heroes, { name: $scope.filters.search }) : $scope.heroes;
+            scope.hasFilterSearch = function (hero) {
+                var filtered = (scope.filters.search && scope.filters.search.length) ? $filter('filter')(scope.heroes, { name: scope.filters.search }) : scope.heroes;
                 return (filtered.indexOf(hero) === -1);
             }
 
-            $scope.hasAnyFilter = function () {
-                return ($scope.filters.roles.length ||
-                        $scope.filters.universes.length ||
-                        $scope.filters.search.length ||
-                        $scope.filters.heroes.length);
+            scope.hasAnyFilter = function () {
+                return (scope.filters.roles.length ||
+                        scope.filters.universes.length ||
+                        scope.filters.search.length ||
+                        scope.filters.heroes.length);
             };
 
-            $scope.hasAnyFilterHero = function () {
-                return ($scope.filters.heroes.length);
+            scope.hasAnyFilterHero = function () {
+                return (scope.filters.heroes.length);
             };
 
-            $scope.hasFilterMap = function (map) {
-                return ($scope.filters.map === map);
+            scope.hasFilterMap = function (map) {
+                return (scope.filters.map === map);
             };
 
-            $scope.hasAnyFilterMap = function () {
-                return ($scope.filters.map !== false);
+            scope.hasAnyFilterMap = function () {
+                return (scope.filters.map !== false);
             };
 
-            $scope.toggleFilterMap = function (map) {
-                $scope.filters.map = ($scope.filters.map == map) ? false : map;
+            scope.toggleFilterMap = function (map) {
+                scope.filters.map = (scope.filters.map == map) ? false : map;
             };
 
-            $scope.currentMapBack = function () {
-                return ($scope.filters.map) ? $scope.filters.map.className : 'default';
+            scope.currentMapBack = function () {
+                return (scope.filters.map) ? scope.filters.map.className : 'default';
             };
 
             // setup hero filters
-            $scope.heroDots = [{}];
+            scope.heroDots = [{}];
             for (var i = 0; i < 55; i++) {
-                if ($scope.heroes[i]) {
-                    $scope.heroDots.push($scope.heroes[i]);
+                if (scope.heroes[i]) {
+                    scope.heroDots.push(scope.heroes[i]);
                 } else {
-                    $scope.heroDots.push({});
+                    scope.heroDots.push({});
                 }
             }
 
             // latest hero
-            $scope.hero = function () {
-                if ($scope.filters.heroes.length) {
-                    return $scope.filters.heroes[$scope.filters.heroes.length - 1];
+            scope.hero = function () {
+                if (scope.filters.heroes.length) {
+                    return scope.filters.heroes[scope.filters.heroes.length - 1];
                 } else {
                     return {
                         name: '\u00A0',
@@ -811,11 +818,7 @@ angular.module('app.directives', ['ui.load'])
                         className: 'default'
                     };
                 }
-            };
-
-        }],
-        link: function (scope, element, attrs) {
-            
+            };            
         }
     };
 }])
