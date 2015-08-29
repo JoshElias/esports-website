@@ -1,7 +1,42 @@
-<div class="container-fluid">
-    <div class="row">
+<div class="bg-override page row">
+    <div class="col-md-12 user-form">
+        <signup-form></signup-form>
+    </div>
+<!--
+    <div class="signup-form page row">
         <div class="col-xs-12 m-t-md">
-
+            <div class="login-form-oauth col-sm-12 wrapper-none m-b-md">
+                <a href="#" class="btn btn-block btn-twitch" ng-controller="Twitch" ng-click="signup()"><i class="fa fa-twitch"></i>Twitch Signup</a>
+            </div>
+            <div class="login-form-email col-sm-12 wrapper-none">
+                <div class="panel panel-danger error-modal animated" ng-show="showError">
+                    <div class="panel-heading">
+                        <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+                        <strong>Unable to create account</strong>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="error text-danger">
+                            <li ng-repeat="err in errors">{{err.msg}}</li>
+                        </ul>
+                    </div>
+                </div>
+                <form class="form-horizontal form-modal" role="form" name="signupForm">
+                <div class="form-group">
+                    <input type="email" class="first form-control input-dark login-email" id="email" placeholder="Email Address" ng-model="signup.email" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control input-dark login-email" id="username" placeholder="Username" ng-model="signup.username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control input-dark login-email" id="password" placeholder="Password" ng-model="signup.password" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="last form-control input-dark login-email" id="cpassword" placeholder="Confirm Password" ng-model="signup.cpassword" required>
+                </div>
+                <button type="submit" class="btn btn-default btn-block" ng-disabled="signupForm.$invalid" ng-click="signup(signup.email, signup.username, signup.password, signup.cpassword)">Signup</button>
+                </form>
+            </div>
         </div>
     </div>
+-->
 </div>

@@ -102,15 +102,35 @@ angular.module('app.controllers', ['ngCookies'])
 
 }])
 .controller('RootCtrl', ['$scope', 'LoginModalService', function ($scope, LoginModalService) {
-    $scope.loginModal = function () {
-        LoginModalService.showModal();
+    $scope.loginModal = function (state) {
+        LoginModalService.showModal(state);
     }
 }])
 .controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
     MetaService.setStatusCode(404);
 }])
-.controller('UserCtrl', ['$scope', '$location', '$window', '$state', 'UserService', 'AuthenticationService', 'AlertService', 'SubscriptionService', 
-    function ($scope, $location, $window, $state, UserService, AuthenticationService, AlertService, SubscriptionService) {
+.controller('UserCtrl', ['$scope', '$location', '$window', '$state', '$cookies', 'UserService', 'AuthenticationService', 'AlertService', 'SubscriptionService', 
+    function ($scope, $location, $window, $state, $cookies, UserService, AuthenticationService, AlertService, SubscriptionService) {
+        
+        $scope.remember;
+        $scope.loginInfo = {
+            email: "",
+            password: ""
+        };
+        $scope.verify = {
+            email: "",
+            code: ""
+        }
+
+        var cookMail = $cookies.rememberEmail;
+        var cookPass = $cookies.rememberPassword;
+
+        if (cookMail != undefined && cookPass != undefined) {
+            $scope.remember = true;
+            $scope.loginInfo.email = cookMail;
+            $scope.loginInfo.password = cookPass;
+        }
+        
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
@@ -376,7 +396,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
                 }
             } else {
-                LoginModalService.showMOdal(function () {
+                LoginModalService.showModal('login', function () {
                     $scope.getPremium(plan);
                 });
             }
@@ -4954,7 +4974,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.saveDeck = function () {
             if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal();
+                LoginModalService.showModal('login');
             } else {
                 DeckBuilder.saveDeck($scope.deck).success(function (data) {
                     if (data.success) {
@@ -5169,13 +5189,14 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.snapshot = data;
         $scope.show = [];
         $scope.matchupName = [];
+        $scope.voted = false;
         $scope.hasVoted = function () {
             for (var i = 0; i < $scope.snapshot.votes.length; i++) {
                 if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
-                    return true;
+                    $scope.voted = true;
+                    break;
                 }
             }
-            return false;
         };
         $scope.show.comments = SnapshotService.getStorage();
         $scope.$watch('app.user.isLogged()', function() {
@@ -5315,7 +5336,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.voteSnapshot = function () {
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal(function() {
+                LoginModalService.showModal('login', function() {
                     if (!$scope.hasVoted()) {
                         $scope.snapshot.votesCount++;
                         SnapshotService.vote($scope.snapshot._id);
@@ -5324,7 +5345,9 @@ angular.module('app.controllers', ['ngCookies'])
             } else {
                 $scope.snapshot.votesCount++;
                 SnapshotService.vote($scope.snapshot._id);
+                
             }
+            $scope.voted = true;
         }
         
         // check for custom deck name or load normal name
@@ -5378,7 +5401,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     $scope.commentPost();
                 });
             } else {
@@ -5408,7 +5431,7 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     $scope.voteComment(direction, snapshot);
                 });
             } else {
@@ -5761,7 +5784,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         function vote(article) {
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal(function() {
+                LoginModalService.showModal('login', function() {
                     vote(article);
                 });
             } else {
@@ -5786,7 +5809,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     $scope.commentPost();
                 });
             } else {
@@ -5819,7 +5842,7 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     $scope.voteComment(direction, comment);
                 });
             } else {
@@ -5845,7 +5868,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
                 }
             } else {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
                         $scope.getPremium(plan);
                     }
@@ -6232,7 +6255,7 @@ angular.module('app.controllers', ['ngCookies'])
                 
         function vote(direction, deck) {
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     vote(direction, deck);
                 });
             } else {
@@ -6259,7 +6282,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     $scope.commentPost();
                 });
             } else {
@@ -6291,7 +6314,7 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     $scope.voteComment(direction, comment);
                 });
             } else {
@@ -6317,7 +6340,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
                 }
             } else {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
                         $scope.getPremium(plan);
                     }
@@ -8557,7 +8580,7 @@ angular.module('app.controllers', ['ngCookies'])
                 
         function vote(direction, guide) {
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     vote(direction, guide);
                 });
             } else {
@@ -8584,7 +8607,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     $scope.commentPost();
                 });
             } else {
@@ -8614,7 +8637,7 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     $scope.voteComment(direction, deck);
                 });
             } else {
@@ -8652,7 +8675,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
                 }
             } else {
-                LoginModalService.showModal(function () {
+                LoginModalService.showModal('login', function () {
                     $scope.getPremium(plan);
                 });
             }
@@ -8790,7 +8813,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal();
+                LoginModalService.showModal('login');
             } else {
                 HOTSGuideService.addGuide($scope.guide).success(function (data) {
                     if (!data.success) {
@@ -8906,7 +8929,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal();
+                LoginModalService.showModal('login');
             } else {
                 HOTSGuideService.addGuide($scope.guide).success(function (data) {
                     if (!data.success) {
@@ -9080,7 +9103,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal();
+                LoginModalService.showModal('login');
             } else {
                 HOTSGuideService.editGuide($scope.guide).success(function (data) {
                     if (!data.success) {
@@ -9190,7 +9213,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
             if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal();
+                LoginModalService.showModal('login');
             } else {
                 HOTSGuideService.editGuide($scope.guide).success(function (data) {
                     if (!data.success) {
@@ -9506,8 +9529,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('PollsCtrl', ['$scope', '$sce', '$cookies', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 
-    function ($scope, $sce, $cookies, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
+.controller('PollsCtrl', ['$scope', '$sce', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 
+    function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
         
         var box;
         $scope.pollsMain = dataPollsMain.polls;

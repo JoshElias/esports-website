@@ -1784,6 +1784,53 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .login-form,
 .signup-form { margin: 0 auto; max-width: 620px; }
 
+.page .login-form,
+.page .signup-form,
+.page .forgot-form,
+.page .verify-form { margin: 0 auto; max-width: 320px; height:450px; }
+
+.page .user-form { color: white; padding: 65px 0px; background: rgba(0,0,0,.6) }
+.page .user-form .form-group { 
+    position: relative;
+    border: 1px solid #fbfbfb;
+        margin-bottom: 10px;
+}
+.page .user-form .login-email { width:85%; background: none; }
+.page .user-form .form-group input { color: white; margin-bottom: 0px;}
+.page .user-form .form-group .form-control { border: none; }
+.page .user-form .form-group .form-control:focus { border: none; box-shadow: none; }
+.page .user-form .form-group .login-charm {   
+    position:absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 18px; 
+    color: white;
+}
+.page .user-form .or { text-align: center; line-height: 3; font-weight: bold; }
+.page .user-form .remember-me .fa-square-o {
+    margin-top: 7px;
+    font-size: 1.5em;
+}
+.page .user-form .remember-me .fa-check {
+    font-size: .8em;
+}
+.page .user-form .remember-me .remember-me-i:hover,
+.page .user-form .remember-me .remember-me-i:focus,
+.page .user-form .remember-me .remember-me-i {
+    color: white;
+    text-decoration: none;
+}
+.page .user-form .remember-me .forgot-password {
+    line-height: 2.5;
+    margin: 0;
+}
+
+.page .user-form .sign-up {
+    width: 100%;
+}
+
+
+
 .btn-twitch { position: relative; padding: 12px 12px; font-size: 20px; color: #FFF !important; background: #6441a5; }
 .btn-twitch:hover,
 .btn-twitch:active { color: #FFF; }
@@ -1827,16 +1874,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     position: relative;
     border: 1px solid #FBFBFB;
 }
-/*
-.login-modal .modal-content .modal-body .form-group input:-webkit-autofill {
-    -webkit-box-shadow:0 0 0 50px rgb(31,31,31) inset;
-    -webkit-text-fill-color: white;
-}
-.login-modal .modal-content .modal-body .form-group input:-webkit-autofill:focus {
-    -webkit-box-shadow:0 0 0 50px rgb(31,31,31) inset;
-    -webkit-text-fill-color: white;
-}
-*/
 .login-modal .modal-content .modal-body .form-group input {
     color: white
 }
@@ -1884,6 +1921,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .login-modal .sign-up {
     width: 100%;
 }
+
+
 
 /* admin */
 .admin-article-related-bg {
@@ -2046,7 +2085,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-page .profile-col-header { height: 35px; margin-top: 30px; }
 .profile-page p { color: #C4C4C4; }
 
-.profile-page .profile-info { text-align: center; }
+.profile-page .profile-info { text-align: center; margin-bottom: 100px; }
 .profile-page .profile-img { width: 115px; height: 115px; border-radius: 50%; background-color: rgba(200,200,200,.4); padding: 5px; margin: auto; }
 .profile-page .profile-img img { width: 100%; }
 .profile-page .profile-info .profile-info-body .profile-social { margin: 30px 0px; }
@@ -2483,38 +2522,37 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-class-warlock:hover,
 .db-class-hunter:hover,
 .db-class-druid:hover {
-    margin-top: -10px;
-    height: 620px;
-    -webkit-animation-name: glow;
-    -webkit-animation-duration: 2s;
-    -webkit-animation-iteration-count: infinite;
-    -moz-animation-name: glow;
-    -moz-animation-duration: 2s;
-    -moz-animation-iteration-count: infinite;
-    z-index: 2;
+    background-size: 350px;
+    transition: background-size .2s ease-in;
+    -moz-transition: background-size .2s ease-in;
+    -ms-transition: background-size .2s ease-in;
+    -o-transition: background-size .2s ease-in;
+    -webkit-transition: background-size .2s ease-in;
 }
 
-.db-class-mage { background: #69CCF0 url('../img/mage-large-b.jpg') center center no-repeat; }
-.db-class-shaman { background: #0070DE url('../img/shaman-large-b.jpg') center center no-repeat; }
-.db-class-warrior { background: #C79C6E url('../img/warrior-large-b.jpg') center center no-repeat; }
-.db-class-rogue { background: #FFF569 url('../img/rogue-large-b.jpg') center center no-repeat; }
-.db-class-paladin { background: #F58CBA url('../img/paladin-large-b.jpg') center center no-repeat; }
-.db-class-priest { background: #FFFFFF url('../img/priest-large-b.jpg') center center no-repeat; }
-.db-class-warlock { background: #9482C9 url('../img/warlock-large-b.jpg') center center no-repeat; }
-.db-class-hunter { background: #ABD473 url('../img/hunter-large-b.jpg') center center no-repeat; }
-.db-class-druid { background: #FF7D0A url('../img/druid-large-b.jpg') center center no-repeat; }
+.db-class-mage { background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; }
+.db-class-shaman { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; }
+.db-class-warrior { background: #C79C6E url('../img/warrior-large.jpg') center center no-repeat; }
+.db-class-rogue { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; }
+.db-class-paladin { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; }
+.db-class-priest { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; }
+.db-class-warlock { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; }
+.db-class-hunter { background: #ABD473 url('../img/hunter-large.jpg') center center no-repeat; }
+.db-class-druid { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; }
 
-.db-class { -webkit-transition: all .25s linear; -moz-transition: all .25s linear; transition: all .25s linear; }
-.db-class a { -webkit-transition: opacity 1s; -moz-transition: opacity 1s; transition: opacity 1s; opacity: 0; background-position: center center; }
-.db-class-mage a:hover { background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; opacity: 1; }
-.db-class-shaman a:hover { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; opacity: 1; }
-.db-class-warrior a:hover { background: #C79C6E url('../img/warrior-large.jpg') center center no-repeat; opacity: 1; }
-.db-class-rogue a:hover { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; opacity: 1; }
-.db-class-paladin a:hover { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; opacity: 1; }
-.db-class-priest a:hover { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; opacity: 1; }
-.db-class-warlock a:hover { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; opacity: 1; }
-.db-class-hunter a:hover { background: #ABD473 url('../img/hunter-large.jpg') center center no-repeat; opacity: 1; }
-.db-class-druid a:hover { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; opacity: 1; }
+/*.db-class { -webkit-transition: all .25s linear; -moz-transition: all .25s linear; transition: all .25s linear; }*/
+/*.db-class a { -webkit-transition: opacity 1s; -moz-transition: opacity 1s; transition: opacity 1s; opacity: 0; background-position: center center; }*/
+/*
+.db-class-mage a:hover { background-size: 300px; opacity: 1; }
+.db-class-shaman a:hover { background-size: 300px; opacity: 1; }
+.db-class-warrior a:hover { background-size: 300px; opacity: 1; }
+.db-class-rogue a:hover { background-size: 300px; opacity: 1; }
+.db-class-paladin a:hover { background-size: 300px; opacity: 1; }
+.db-class-priest a:hover { background-size: 300px; opacity: 1; }
+.db-class-warlock a:hover { background-size: 300px; opacity: 1; }
+.db-class-hunter a:hover { background-size: 300px; opacity: 1; }
+.db-class-druid a:hover { background-size: 300px; opacity: 1; }
+*/
 
 /* start glows */
 @-webkit-keyframes glow-premium {

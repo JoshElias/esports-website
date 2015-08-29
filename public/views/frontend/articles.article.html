@@ -54,7 +54,8 @@
                         </span>
                         <div class="author-content">
                             <h2>{{article.author.username}}</h2>
-                            <p>{{article.author.providerDescription}}</p>
+                            <p ng-if="article.author.about && !article.author.providerDescription">{{article.author.about}}</p>
+                            <p ng-if="article.author.providerDescription">{{article.author.providerDescription}}</p>
                         </div>
                     </div>
 

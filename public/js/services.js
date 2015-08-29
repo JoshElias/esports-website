@@ -160,12 +160,14 @@ angular.module('app.services', [])
 .factory('LoginModalService', ['$rootScope', '$compile', function ($rootScope, $compile) {
     var box = undefined;
     return {
-        showModal: function (callback) {
+        showModal: function (state, callback) {
             $rootScope.LoginModalService.callback = callback;
+            $rootScope.LoginModalService.state = state;
+            
             box = bootbox.dialog({
                 title: 'USER LOGIN',
                 className: 'login-modal',
-                message: $compile('<login-form callback="LoginModalService.callback()"></login-form>')($rootScope)
+                message: $compile('<login-modal callback="LoginModalService.callback()"></login-modal>')($rootScope)
             });
             box.modal('show');
         },
@@ -277,7 +279,6 @@ angular.module('app.services', [])
             return $http.post('/api/snapshot/comment/add', { snapshotID: snapshot._id, comment: comment });
         },
         vote: function (snapshot) {
-            console.log(snapshot);
             return $http.post('/api/snapshot/vote', { snapshot: snapshot });
         },
         setStorage: function (isOpen) {
