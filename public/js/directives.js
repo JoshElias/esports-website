@@ -803,11 +803,18 @@ angular.module('app.directives', ['ui.load'])
         },
         templateUrl: 'views/frontend/directives/hots.filtering.html',
         link: function (scope, element, attrs) {
-            var initializing = true;
+            var initializing = true,
+                randHeroIndex = false;
+            
+            function randomIntFromInterval (min,max) {
+                return Math.floor(Math.random()*(max-min+1)+min);
+            }
+            
             scope.$watch(function(){ return scope.filters; }, function (value) {
                 if (initializing) {
                     $timeout(function () {
                         initializing = false;
+                        randHeroIndex = randomIntFromInterval(0, scope.heroes.length);
                     });
                 } else {
                     scope.filters = value;
@@ -857,6 +864,9 @@ angular.module('app.directives', ['ui.load'])
                 } else {
                     scope.filters.heroes.splice(index, 1);
                 }
+                if (!scope.filters.heroes.length) {
+                    randHeroIndex = randomIntFromInterval(0, scope.heroes.length);
+                }
             };
 
             scope.hasFilterHero = function (hero) {
@@ -904,11 +914,22 @@ angular.module('app.directives', ['ui.load'])
                     scope.heroDots.push({});
                 }
             }
-
+            
+            function getRandomHero () {
+                var hero = scope.heroes[randHeroIndex];
+                return {
+                    name: hero.name,
+                    title: hero.title,
+                    className: hero.className
+                };
+            }
+            
             // latest hero
             scope.hero = function () {
                 if (scope.filters.heroes.length) {
                     return scope.filters.heroes[scope.filters.heroes.length - 1];
+                } else if (randHeroIndex) {
+                    return getRandomHero();
                 } else {
                     return {
                         name: '\u00A0',

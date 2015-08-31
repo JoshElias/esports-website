@@ -8314,11 +8314,11 @@ angular.module('app.controllers', ['ngCookies'])
         });
     }
 ])
-.controller('HOTSGuidesListCtrl', ['$scope', '$state', '$timeout', 'dataGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $timeout, dataGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
-        if (!dataGuides.success) { return $state.transitionTo('app.hots.guides.list'); }
+.controller('HOTSGuidesListCtrl', ['$scope', '$state', '$timeout', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $timeout, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
+        if (!dataCommunityGuides.success) { return $state.transitionTo('app.hots.guides.list'); }
         
-        $scope.guides = dataGuides.guides;
+        $scope.communityGuides = dataCommunityGuides.guides;
         $scope.topGuide = (dataTopGuide.total) ? dataTopGuide.guides[0] : false;
         $scope.tempostormGuides = dataTempostormGuides.guides;
         

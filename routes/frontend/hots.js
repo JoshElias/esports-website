@@ -132,10 +132,10 @@ module.exports = {
                         select: 'username -_id'
                     }, {
                         path: 'heroes.hero',
-                        select: 'className talents'
+                        select: 'name className talents'
                     }, {
                         path: 'maps',
-                        select: 'className'
+                        select: 'name className'
                 }])
                 .where(where)
                 .sort(sort)
@@ -268,10 +268,10 @@ module.exports = {
                         select: 'username -_id'
                     }, {
                         path: 'heroes.hero',
-                        select: 'className'
+                        select: 'name className'
                     }, {
                         path: 'maps',
-                        select: 'className'
+                        select: 'name className'
                 }])
                 .sort({ votesCount: -1, createdDate: -1 })
                 .skip(offset)
@@ -381,10 +381,10 @@ module.exports = {
                         select: 'username -_id'
                     }, {
                         path: 'heroes.hero',
-                        select: 'className'
+                        select: 'name className'
                     }, {
                         path: 'maps',
-                        select: 'className'
+                        select: 'name className'
                 }])
                 .sort({ createdDate: -1 })
                 .skip(offset)
