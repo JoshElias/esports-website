@@ -1585,9 +1585,8 @@ module.exports = {
             }
             
             function updateActivities(callback) {
-                console.log(req.body._id);
-                    Schemas.Activity.update({guide: req.body._id, activityType: 'guideComment'}, {active: req.body.public}).exec(function (err, data) {
-                        return callback();
+                Schemas.Activity.update({guide: req.body._id, activityType: 'guideComment'}, {active: req.body.public}).exec(function (err, data) {
+                    return callback();
                 });
             }
             
@@ -2195,7 +2194,7 @@ module.exports = {
                                 success: true,
                                 large: large,
                                 medium: medium,
-                                path: './photos/cards/'
+                                path: 'cards/'
                             });
                         });
                     });
@@ -2259,7 +2258,7 @@ module.exports = {
                             return res.json({
                                 success: true,
                                 small: small,
-                                path: './photos/cards/'
+                                path: 'cards/'
                             });
                         });
                     });
@@ -3253,6 +3252,7 @@ module.exports = {
                                 results.tiers[i].decks[j].name = results.tiers[i].decks[j].deck.name;
                             }
                             
+                            
                         }
                     }
                     
@@ -3504,7 +3504,6 @@ module.exports = {
                             }
                         }
                     }
-                    
                     snapshot = results;
                     return callback();
                 });
