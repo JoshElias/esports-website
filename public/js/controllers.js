@@ -8130,14 +8130,66 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSHomeCtrl', ['$scope', '$filter', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 'TwitchService', 
-    function ($scope, $filter, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService, TwitchService) {
+.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 'TwitchService', 
+    function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService, TwitchService) {
         // data
         $scope.heroes = dataHeroes.heroes;
         $scope.maps = dataMaps.maps;
         $scope.articles = dataArticles.articles;
         $scope.guidesCommunity = dataGuidesCommunity.guides;
         $scope.guidesFeatured = dataGuidesFeatured.guides;
+        
+        $scope.filters = {
+            roles: [],
+            universes: [],
+            search: '',
+            heroes: [],
+            map: false
+        };
+        
+        var initializing = true;
+        $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            if (initializing) {
+                $timeout(function () {
+                    initializing = false;
+                });
+            } else {
+                // generate filters
+                var articleFilters = [];
+                var guideFilters = [];
+                for (var i = 0; i < $scope.filters.heroes.length; i++) {
+                    articleFilters.push($scope.filters.heroes[i].name);
+                }
+                
+                for (var i = 0; i < $scope.filters.heroes.length; i++) {
+                    guideFilters.push($scope.filters.heroes[i]._id);
+                }
+                if ($scope.filters.map) {
+                    guideFilters.push($scope.filters.map._id);
+                }
+                
+                // load articles
+                ArticleService.getArticles('hots', articleFilters, 0, 6).then(function (data) {
+                    $timeout(function () {
+                        $scope.articles = data.articles;
+                    });
+                });
+                
+                // load tempostorm guides
+                HOTSGuideService.getGuidesFeatured(guideFilters, 0, 10).then(function (data) {
+                    $timeout(function () {
+                        $scope.guidesFeatured = data.guides;
+                    });
+                });
+                
+                // load community guides
+                HOTSGuideService.getGuidesCommunity(guideFilters, 0, 10).then(function (data) {
+                    $timeout(function () {
+                        $scope.guidesCommunity = data.guides;
+                    });
+                });
+            }
+        }, true);
         
         // guides
         $scope.getGuideCurrentHero = function (guide) {
@@ -8209,12 +8261,131 @@ angular.module('app.controllers', ['ngCookies'])
         });
     }
 ])
-.controller('HOTSGuidesListCtrl', ['$scope', '$state', 'data', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, data, dataHeroes, dataMaps) {
-        if (!data.success) { return $state.transitionTo('app.hots.guides.list'); }
+.controller('HOTSGuidesListCtrl', ['$scope', '$state', '$timeout', 'dataGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
+    function ($scope, $state, $timeout, dataGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
+        if (!dataGuides.success) { return $state.transitionTo('app.hots.guides.list'); }
         
+        $scope.guides = dataGuides.guides;
+        $scope.topGuide = (dataTopGuide.total) ? dataTopGuide.guides[0] : false;
+        $scope.tempostormGuides = dataTempostormGuides.guides;
+        
+        // filtering
         $scope.heroes = dataHeroes.heroes;
         $scope.maps = dataMaps.maps;
+        $scope.filters = {
+            roles: [],
+            universes: [],
+            search: '',
+            heroes: [],
+            map: false
+        };
+        
+        var initializing = true;
+        $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            if (initializing) {
+                $timeout(function () {
+                    initializing = false;
+                });
+            } else {
+                // generate filters
+                var guideFilters = [];
+                for (var i = 0; i < $scope.filters.heroes.length; i++) {
+                    guideFilters.push($scope.filters.heroes[i]._id);
+                }
+                if ($scope.filters.map) {
+                    guideFilters.push($scope.filters.map._id);
+                }
+                
+                // load community guides
+                HOTSGuideService.getGuides(guideFilters, 0, 10).then(function (data) {
+                    $timeout(function () {
+                        $scope.guides = data.guides;
+                    });
+                });
+            }
+        }, true);
+        
+        // guides
+        $scope.getGuideCurrentHero = function (guide) {
+            return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
+        };
+        
+        $scope.getGuideClass = function (guide) {
+            return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
+        };
+        
+        $scope.guidePrevHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+            
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
+            }
+            
+            guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
+        };
+
+        $scope.guideNextHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+            
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
+            }
+            
+            guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
+        };
+        
+        $scope.getTalents = function (hero, tier) {
+            var out = [];
+            
+            for (var i = 0; i < hero.hero.talents.length; i++) {
+                if (hero.hero.talents[i].tier === tier) {
+                    out.push(hero.hero.talents[i]);
+                }
+            }
+            
+            return out;
+        };
+        
+        $scope.selectedTalent = function (hero, tier, talent) {
+            return (hero.talents['tier' + tier]._id == talent._id);
+        };
+        
+        $scope.getTalent = function (hero, tier) {
+            for (var i = 0; i < hero.hero.talents.length; i++) {
+                if (hero.talents['tier' + tier] == hero.hero.talents[i]._id) {
+                    return hero.hero.talents[i];
+                }
+            }
+            return false;
+        };
+        
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 ])
 .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'LoginModalService', 'MetaService',

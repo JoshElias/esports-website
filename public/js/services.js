@@ -1905,24 +1905,24 @@ angular.module('app.services', [])
 }])
 .factory('HOTSGuideService', ['$http', '$q', function ($http, $q) {
     return {
-        getGuidesCommunity: function (hero, page, perpage) {
-            hero = hero || 'all';
-            page = page || 1;
+        getGuidesCommunity: function (filters, offset, perpage) {
+            filters = filters || 'all';
+            offset = offset || 0;
             perpage = perpage || 10;
             
             var d = $q.defer();
-            $http.post('/hots/guides/community', { hero: hero, page: page, perpage: perpage }).success(function (data) {
+            $http.post('/hots/guides/community', { filters: filters, offset: offset, perpage: perpage }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
         },
-        getGuidesFeatured: function (hero, page, perpage) {
-            hero = hero || 'all';
-            page = page || 1;
+        getGuidesFeatured: function (filters, offset, perpage) {
+            filters = filters || 'all';
+            offset = offset || 0;
             perpage = perpage || 10;
             
             var d = $q.defer();
-            $http.post('/hots/guides/featured', { hero: hero, page: page, perpage: perpage }).success(function (data) {
+            $http.post('/hots/guides/featured', { filters: filters, offset: offset, perpage: perpage }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

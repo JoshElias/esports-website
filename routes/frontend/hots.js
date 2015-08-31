@@ -11,6 +11,7 @@ module.exports = {
                 order = req.body.order || 'high',
                 where = {}, sort = {},
                 guides, total, heroID, mapID, 
+                talents = [],
                 now = new Date().getTime();
             
             function getHeroID (callback) {
@@ -124,13 +125,14 @@ module.exports = {
             // get guides
             function getGuides (callback) {
                 Schemas.Guide.find({ public: true })
+                .lean()
                 .select('premium heroes guideType maps slug name description author createdDate comments votesCount')
                 .populate([{
                         path: 'author',
                         select: 'username -_id'
                     }, {
                         path: 'heroes.hero',
-                        select: 'className'
+                        select: 'className talents'
                     }, {
                         path: 'maps',
                         select: 'className'
@@ -146,23 +148,76 @@ module.exports = {
                 });
             }
             
+            // get talents
+            function getTalents (callback) {
+                var heroIDs = [];
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        if (heroIDs.indexOf() === -1) {
+                            heroIDs.push(guides[i].heroes[j].hero._id);
+                        }
+                    }
+                }
+                
+                if (!heroIDs.length) { return callback(); }
+                Schemas.Hero.find({ active: true, _id: { $in: heroIDs } })
+                .select('talents')
+                .exec(function (err, results) {
+                    if (err || !results) { return res.json({ success: false }); }
+                    
+                    for(var i = 0; i < results.length; i++) {
+                        for(var j = 0; j < results[i].talents.length; j++) {
+                            talents.push(results[i].talents[j]);
+                        }
+                    }
+                    return callback();
+                });
+            }
+            
+            function assignTalents (callback) {
+                if (!talents.length) { return callback(); }
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        for(var key in guides[i].heroes[j].talents) {
+                            for(var l = 0; l < talents.length; l++) {
+                                if (guides[i].heroes[j].talents[key].toString() === talents[l]._id.toString()) {
+                                    guides[i].heroes[j].talents[key] = {
+                                        _id: talents[l]._id,
+                                        name: talents[l].name,
+                                        className: talents[l].className
+                                    };
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return callback();
+            }
+            
             getHeroID(function () {
                 getMapID(function () {
                     getFilters(function () {
                         getGuides(function () {
                             getTotal(function () {
-                                return res.json({
-                                    success: true,
-                                    guides: guides,
-                                    total: total,
-                                    guideType: guideType,
-                                    hero: hero,
-                                    map: map,
-                                    page: page,
-                                    perpage: perpage,
-                                    search: search,
-                                    age: age,
-                                    order: order
+                                getTalents(function () {
+                                    assignTalents(function () {
+                                        return res.json({
+                                            success: true,
+                                            guides: guides,
+                                            total: total,
+                                            guideType: guideType,
+                                            hero: hero,
+                                            map: map,
+                                            page: page,
+                                            perpage: perpage,
+                                            search: search,
+                                            age: age,
+                                            order: order
+                                        });
+                                    });
                                 });
                             });
                         });
@@ -173,8 +228,8 @@ module.exports = {
     },
     guidesCommunity: function (Schemas) {
         return function (req, res, next) {
-            var hero = req.body.hero || 'all',
-                page = req.body.page || 1,
+            var filters = req.body.filters || 'all',
+                offset = req.body.offset || 0,
                 perpage = req.body.perpage || 10,
                 where = {},
                 guides, total,
@@ -182,8 +237,11 @@ module.exports = {
                 now = new Date().getTime(),
                 weekAgo = new Date(now - (60*60*24*30*1000));
             
-            if (hero !== 'all') {
-                where.heroes = hero;
+            if (filters !== 'all' && filters.length) {
+                var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
+                where.$or = [];
+                where.$or.push({ 'heroes.hero': dbFilters });
+                where.$or.push({ 'maps': dbFilters });
             }
             
             where.createdDate = { $gte: weekAgo };
@@ -216,7 +274,7 @@ module.exports = {
                         select: 'className'
                 }])
                 .sort({ votesCount: -1, createdDate: -1 })
-                .skip((perpage * page) - perpage)
+                .skip(offset)
                 .limit(perpage)
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
@@ -278,7 +336,7 @@ module.exports = {
                 getTalents(function () {
                     assignTalents(function () {
                         getTotal(function () {
-                            return res.json({ success: true, guides: guides, total: total, hero: hero, page: page, perpage: perpage });
+                            return res.json({ success: true, guides: guides, total: total });
                         });
                     });
                 });
@@ -287,12 +345,19 @@ module.exports = {
     },
     guidesFeatured: function (Schemas) {
         return function (req, res, next) {
-            var hero = req.body.hero || 'all',
-                page = req.body.page || 1,
+            var filters = req.body.filters || 'all',
+                offset = req.body.offset || 0,
                 perpage = req.body.perpage || 10,
-                where = (hero === 'all') ? {} : { 'heroes': hero },
+                where = {},
                 guides, total,
                 talents = [];
+            
+            if (filters !== 'all' && filters.length) {
+                var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
+                where.$or = [];
+                where.$or.push({ 'heroes.hero': dbFilters });
+                where.$or.push({ 'maps': dbFilters });
+            }
             
             // get total guides
             function getTotal (callback) {
@@ -322,7 +387,7 @@ module.exports = {
                         select: 'className'
                 }])
                 .sort({ createdDate: -1 })
-                .skip((perpage * page) - perpage)
+                .skip(offset)
                 .limit(perpage)
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
@@ -384,7 +449,7 @@ module.exports = {
                 getTalents(function () {
                     assignTalents(function () {
                         getTotal(function () {
-                            return res.json({ success: true, guides: guides, total: total, hero: hero, page: page, perpage: perpage });
+                            return res.json({ success: true, guides: guides, total: total });
                         });
                     });
                 });
