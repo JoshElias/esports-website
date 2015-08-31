@@ -3061,37 +3061,41 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 /* comments */
 .comments { }
 
-.comment { margin-left: 20px; padding-bottom: 10px; border-left: 1px solid #2766ad; }
-.comment .avatar { float: left; margin-left: -20px; }
-.comment .avatar img { width: 39px; height: 39px; background: #F2F2F2; border: 1px solid #2766ad; }
-.comment .panel { margin: 0 0 0 30px; border-radius: 0px; border: 1px solid #000; background: rgba(0,0,0,.3); }
-.comment .panel-heading { color: #FFF; background: #131313; border-bottom: 1px solid #000; border-radius: 0px; }
-.comment .panel-heading a { color: #FFF; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.comment .comment-ago { margin-right: 60px; }
+.comment { min-height: 100px; }
+.comment-section-title { color: white; }
+.comment-section-title h3 { font-weight: bold; letter-spacing: 2px; }
+.comment .deleted-user { color: red; font-size: 15px; }
+.comment .avatar-wrapper { float: left; padding-left: 0px; }
+.comment .avatar { background: white; width: 60px; height: 60px; border-radius: 50%; }
+.comment .avatar img { width: 60px; height: 60px; padding:2px; }
+.comment .panel-heading { color: #FFF; padding: 0; }
+.comment .panel-heading .deleted-user-text { color: #FECCCC; }
+.comment .panel-heading a { color: #9C9C9C; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; transition: .15s; }
 .comment .panel-body { color: #FFF; background: #1B1B1B; overflow: hidden; }
+.comment .comment-panel { color: white; border-radius: 0px; background: #262626; min-height: 100px; margin: 0; padding: 15px; transition: .15s; }
+.comment .comment-body { overflow: hidden; }
+.comment .comment-ago { float:right; color: #2267B2; transition: .15s; }
+.comment:hover .comment-panel { background-color: #2267B2; }
+.comment:hover .panel-heading a { color: #FFF; }
+.comment:hover .comment-ago { color: #9c9c9c } 
 
-.comment .comment { margin-left: 50px; }
+.comment .comment { margin-left: 50px;  }
 .comment .comment.first { margin-top: 10px; }
 .comment .comment:last-child { border-left: 1px solid transparent; padding-bottom: 0px; }
 
-.comment-add { margin-left: 21px; padding-left: 30px; position: relative; }
-.comment-add .avatar { position: absolute; top: 0px; left: -17px; width: 34px; height: 34px; border-radius: 50%; }
-.comment-add .avatar img { width: 34px; height: 34px; background: #F2F2F2; border: 1px solid #2766ad; }
+.comment-add { position: relative; background: #1b1b1b; margin: 0px; min-height: 100px; }
+.comment-add .row { margin: 0px; }
+.comment-add .avatar {  }
+.comment-add .avatar img { width: 34px; height: 34px; background: #F2F2F2; }
+.comment-add .comment-form { padding-right: 0; }
 .comment-add .form-group { margin-bottom: 0px; }
-.comment-add textarea { height: 150px; border-radius: 0px; border-color: transparent; resize: vertical; }
+.comment-add textarea { width: 100%; border-radius: 0px; border-color: transparent; resize: vertical; }
 
-.comment-votes { position: absolute; top: -2px; right: -25px; }
+.comment-votes { text-align: right; margin-right: 2px; }
 .comment-votes .vote-count { background: #2766ad; }
+.comment-vote { font-size: 20px; text-align: right; }
 
 .no-comments { margin: 0 0 20px 0; }
-
-/* comments - light */
-.comment.comment-light .panel { border: 1px solid #2766ad; background: #F2F2F2; }
-.comment.comment-light .panel-heading { color: #FFF; background: #2766ad; border-bottom: 1px solid #2766ad; }
-.comment.comment-light .panel-heading a { color: #FFF; }
-.comment.comment-light .panel-body { color: #222; background: #FEFEFE; }
-
-.comment.comment-light .comment-votes .vote-count { border-color: #2766ad; background: #FFF; color: #2766ad; }
 
 
 /* forum home */

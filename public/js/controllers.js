@@ -63,6 +63,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
       };
         
+      $rootScope.app = $scope.app;
+        
       // save settings to local storage
       if ( angular.isDefined($localStorage.settings) ) {
         $scope.app.settings = $localStorage.settings;
@@ -5204,6 +5206,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.hasVoted();
         });
         
+        $scope.SnapshotService = SnapshotService;
+        
         var mouseOver = [],
             charts = [],
             viewHeight = 0,
@@ -5693,6 +5697,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.article = data.article;
         $scope.authorEmail = data.article.author.email;
+        $scope.articleService = ArticleService;
         $scope.$watch('app.user.isLogged()', function() {
             for (var i = 0; i < $scope.article.votes.length; i++) {
                 if ($scope.article.votes[i] == $scope.app.user.getUserID()) {
@@ -6042,6 +6047,7 @@ angular.module('app.controllers', ['ngCookies'])
 
         // load deck
         $scope.deck = data.deck;
+        $scope.DeckService = DeckService;
         
         $scope.premiumTypes = [
             { text: 'No', value: false },
@@ -6272,65 +6278,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
             updateCommentVotes();
             updateVotes();
-        };
-        
-        // comments
-        var defaultComment = {
-            comment: ''
-        };
-        $scope.comment = angular.copy(defaultComment);
-        
-        $scope.commentPost = function () {
-            if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal('login', function () {
-                    $scope.commentPost();
-                });
-            } else {
-                DeckService.addComment($scope.deck, $scope.comment).success(function (data) {
-                    if (data.success) {
-                        $scope.deck.comments.push(data.comment);
-                        $scope.comment.comment = '';
-                    }
-                });
-            }
-            updateCommentVotes();
-            updateVotes();
-        };
-                
-        updateCommentVotes();
-        function updateCommentVotes() {
-            $scope.deck.comments.forEach(checkVotes);
-            
-            function checkVotes (comment) {
-                var vote = comment.votes.filter(function (vote) {
-                    return ($scope.app.user.getUserID() === vote.userID);
-                })[0];
-                
-                if (vote) {
-                    comment.voted = vote.direction;
-                }
-            }
-        }
-                
-        $scope.voteComment = function (direction, comment) {
-            if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal('login', function () {
-                    $scope.voteComment(direction, comment);
-                });
-            } else {
-                if (comment.author._id === $scope.app.user.getUserID()) {
-                    bootbox.alert("You can't vote for your own content.");
-                    return false;
-                }
-                VoteService.voteComment(direction, comment).then(function (data) {
-                    if (data.success) {
-                        comment.voted = direction;
-                        comment.votesCount = data.votesCount;
-                    }
-                });
-            }
-            checkVotes();
-            updateCommentVotes();
         };
         
         // get premium

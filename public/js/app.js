@@ -33,7 +33,6 @@ var app = angular.module('app', [
             $rootScope.UserService = UserService;
             $rootScope.LoginModalService = LoginModalService;
             
-            
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
                 //ngProgress.start();

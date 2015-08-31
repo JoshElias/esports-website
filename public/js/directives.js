@@ -61,11 +61,11 @@ angular.module('app.directives', ['ui.load'])
             
             $scope.setState = function (s) {
                 switch(s) {
-                    case 'login'  : $scope.state = "login"; break;
-                    case 'signup' : $scope.state = "signup"; break;
-                    case 'forgot' : $scope.state = "forgot"; break;
-                    case 'verify' : $scope.state = "verify"; break;
-                    default       : $scope.state = "login"; break;
+                    case 'login':  $scope.state = "login" ; break;
+                    case 'signup': $scope.state = "signup"; break;
+                    case 'forgot': $scope.state = "forgot"; break;
+                    case 'verify': $scope.state = "verify"; break;
+                    default:       $scope.state = "login" ; break;
                 }
             }
             $scope.setState($scope.state);
@@ -73,11 +73,7 @@ angular.module('app.directives', ['ui.load'])
             $scope.closeModal = function () {
                 LoginModalService.hideModal();
             }
-            
-        }],
-        link: function (scope, el, attr) {
-            
-        }
+        }]
     }
 }])
 .directive('loginForm', ['$window', '$cookies', '$state', 'AuthenticationService', 'LoginModalService', 'UserService', 'SubscriptionService', function ($window, $cookies, $state, AuthenticationService, LoginModalService, UserService, SubscriptionService) {
@@ -222,6 +218,78 @@ angular.module('app.directives', ['ui.load'])
                     }
                 });
             };
+        }
+    }
+}])
+.directive('commentSection', ['$rootScope', 'VoteService', 'LoginModalService', function ($rootScope, VoteService, LoginModalService) {
+    return {
+        restrict: "E",
+        templateUrl: tpl + 'views/frontend/directives/comments/commentSection.html',
+        scope: { 
+            commentable: "=",
+            service:     "=", 
+        },
+        controller: function ($scope) {
+            $scope.commentable;
+            $scope.service;
+            $scope.app = $rootScope.app;
+            
+            var defaultComment = '';
+            $scope.comment = angular.copy(defaultComment);
+
+            $scope.commentPost = function () {
+                if (!$scope.app.user.isLogged()) {
+                    LoginModalService.showModal('login', function () {
+                        $scope.commentPost();
+                    });
+                } else {
+                    $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
+                        if (data.success) {
+                            $scope.commentable.comments.push(data.comment);
+                            $scope.comment.comment = '';
+                        }
+                    });
+                }
+                updateCommentVotes();
+            };
+
+            updateCommentVotes();
+            function updateCommentVotes() {
+                $scope.commentable.comments.forEach(checkVotes);
+
+                function checkVotes (comment) {
+                    var vote = comment.votes.filter(function (vote) {
+                        return ($scope.app.user.getUserID() === vote.userID);
+                    })[0];
+
+                    if (vote) {
+                        comment.voted = vote.direction;
+                    }
+                }
+            }
+
+            $scope.voteComment = function (direction, comment) {
+                if (!$scope.app.user.isLogged()) {
+                    LoginModalService.showModal('login', function () {
+                        $scope.voteComment(direction, comment);
+                    });
+                } else {
+                    if (comment.author._id === $scope.app.user.getUserID()) {
+                        bootbox.alert("You can't vote for your own content.");
+                        return false;
+                    }
+                    VoteService.voteComment(direction, comment).then(function (data) {
+                        if (data.success) {
+                            comment.voted = direction;
+                            comment.votesCount = data.votesCount;
+                        }
+                    });
+                }
+                updateCommentVotes();
+            }
+        },
+        link: function ($scope, el, attr) {
+//            console.log($scope.comments);
         }
     }
 }])
