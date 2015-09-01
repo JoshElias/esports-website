@@ -494,17 +494,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-                            dataGuides: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
-                                var guideType = $stateParams.t || 'all',
-                                    hero = $stateParams.h || 'all',
-                                    map = $stateParams.m || 'all',
-                                    page = $stateParams.p || 1,
-                                    perpage = 24,
-                                    search = $stateParams.s || '',
-                                    age = $stateParams.a || '',
-                                    order = $stateParams.o || '';
-                                
-                                return HOTSGuideService.getGuides(guideType, hero, map, page, perpage, search, age, order);
+                            dataCommunityGuides: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                return HOTSGuideService.getGuidesCommunity('all', 0, 24, false);
                             }],
                             dataTopGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
                                 var guideType = $stateParams.t || 'all',

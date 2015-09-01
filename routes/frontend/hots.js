@@ -132,10 +132,10 @@ module.exports = {
                         select: 'username -_id'
                     }, {
                         path: 'heroes.hero',
-                        select: 'className talents'
+                        select: 'name className talents'
                     }, {
                         path: 'maps',
-                        select: 'className'
+                        select: 'name className'
                 }])
                 .where(where)
                 .sort(sort)
@@ -234,8 +234,9 @@ module.exports = {
                 where = {},
                 guides, total,
                 talents = [],
+                daysLimit = (req.body.daysLimit == false) ? false : parseInt(req.body.daysLimit) || 14,
                 now = new Date().getTime(),
-                weekAgo = new Date(now - (60*60*24*30*1000));
+                ago = new Date(now - (60*60*24*daysLimit*1000));
             
             if (filters !== 'all' && filters.length) {
                 var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
@@ -244,7 +245,9 @@ module.exports = {
                 where.$or.push({ 'maps': dbFilters });
             }
             
-            where.createdDate = { $gte: weekAgo };
+            if (daysLimit) {
+                where.createdDate = { $gte: ago };
+            }
             
             // get total guides
             function getTotal (callback) {
@@ -268,10 +271,10 @@ module.exports = {
                         select: 'username -_id'
                     }, {
                         path: 'heroes.hero',
-                        select: 'className'
+                        select: 'name className'
                     }, {
                         path: 'maps',
-                        select: 'className'
+                        select: 'name className'
                 }])
                 .sort({ votesCount: -1, createdDate: -1 })
                 .skip(offset)
@@ -381,10 +384,10 @@ module.exports = {
                         select: 'username -_id'
                     }, {
                         path: 'heroes.hero',
-                        select: 'className'
+                        select: 'name className'
                     }, {
                         path: 'maps',
-                        select: 'className'
+                        select: 'name className'
                 }])
                 .sort({ createdDate: -1 })
                 .skip(offset)
