@@ -237,8 +237,6 @@ angular.module('app.directives', ['ui.load'])
             $scope.service;
             $scope.app = $rootScope.app;
             
-            console.log($scope);
-            
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
 

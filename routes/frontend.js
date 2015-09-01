@@ -3078,7 +3078,6 @@ module.exports = {
                 Schemas.TeamMember.find()
                 .sort({ orderNum:1 })
                 .exec(function (err, results) {
-                    console.log(err, results);
                     if (err) { return req.json({ success: false }); }
                     for (i=0; i != results.length; i++) {
                         var type = results[i].game;

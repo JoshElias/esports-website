@@ -3244,10 +3244,20 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.getDescription = function (i) {
+            var temp = i,
+                magicNumber = 200;
+            
+            if(i.length > magicNumber) {
+                if (i[magicNumber] != " ") {
+                    for (var j = 0; i[magicNumber+j] != " "; j++) {} 
+                    i = temp.slice(0,magicNumber+j);
+                } else {
+                    i = temp.slice(0,magicNumber);
+                }
+                i = i + "...";
+            }
             return $sce.trustAsHtml(i);
         }
-        
-        
         
 //        for (var i = 0; i < $scope.members.length; i++) {
 //            var str = $scope.members[i].description;

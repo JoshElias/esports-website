@@ -42,11 +42,12 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 
 .app-content { padding-top: 52px; flex: 1; -ms-flex-preferred-size: auto; }
 
-.app-footer { width: 100%; background: #1a1a1a; }
+.app-footer { width: 100%; background: #2268AE; }
+.app-footer hr { width: 45%; margin-left: 0px; }
 .app-footer h1 { color: #FFF; font-size: 14px; }
 .app-footer ul { margin: 0; padding: 0; }
 .app-footer ul li { list-style: none; color: #FFF; padding-bottom: 10px; }
-.app-footer ul li a { color: #2766ad; text-decoration: none; }
+.app-footer ul li a { color: #FFF; text-decoration: none; }
 .app-footer ul li a:hover { text-decoration: underline; }
 
 .social {  }
