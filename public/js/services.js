@@ -165,10 +165,21 @@ angular.module('app.services', [])
             $rootScope.LoginModalService.state = state;
             
             box = bootbox.dialog({
-                title: 'USER LOGIN',
+                title: function() {
+                    switch(state) {
+                        case 'login':  return "User Login" ; break;
+                        case 'signup': return "User Signup"; break;
+                        case 'forgot': return "Forgot Password"; break;
+                        case 'verify': return "Verify Email"; break;
+                        default:       return "User Login"; break;
+                    }
+                },
                 className: 'login-modal',
                 message: $compile('<login-modal callback="LoginModalService.callback()"></login-modal>')($rootScope)
             });
+            
+            box.modal().title="fuk";
+            console.log(box);
             box.modal('show');
         },
         hideModal: function () {

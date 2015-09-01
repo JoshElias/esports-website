@@ -234,6 +234,8 @@ angular.module('app.directives', ['ui.load'])
             $scope.service;
             $scope.app = $rootScope.app;
             
+            console.log($scope);
+            
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
 
@@ -244,9 +246,10 @@ angular.module('app.directives', ['ui.load'])
                     });
                 } else {
                     $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
+                        console.log(data, $scope.comment.length);
                         if (data.success) {
                             $scope.commentable.comments.push(data.comment);
-                            $scope.comment.comment = '';
+                            $scope.comment = '';
                         }
                     });
                 }

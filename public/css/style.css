@@ -1070,7 +1070,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .article-page .article-votes { float: right; margin: 0 0 20px 20px; }
 
 
-.article-page .article-author { background-color: #2268AE; width: 100%; padding-bottom: 15px; position: relative; } 
+.article-page .article-author { background-color: #2268AE; width: 100%; padding-bottom: 15px; position: relative; margin-bottom: 50px; } 
 .article-page .article-author img {  width: 80px; height: 80px; border: 4px solid white; border-radius: 80px; background: white; position: absolute; top: 40px; left: 40px; } 
 
 .article-page .article-author .author-content { color: white; width: 570px; margin: 25px 0px 0px 150px; display: inline-block; } 
@@ -3079,7 +3079,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .comment .avatar { background: white; width: 60px; height: 60px; border-radius: 50%; }
 .comment .avatar img { width: 60px; height: 60px; padding:2px; }
 .comment .panel-heading { color: #FFF; padding: 0; }
-.comment .panel-heading .deleted-user-text { color: #FECCCC; }
 .comment .panel-heading a { color: #9C9C9C; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; transition: .15s; }
 .comment .panel-body { color: #FFF; background: #1B1B1B; overflow: hidden; }
 .comment .comment-panel { color: white; border-radius: 0px; background: #262626; min-height: 100px; margin: 0; padding: 15px; transition: .15s; }
@@ -3093,13 +3092,20 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .comment .comment.first { margin-top: 10px; }
 .comment .comment:last-child { border-left: 1px solid transparent; padding-bottom: 0px; }
 
-.comment-add { position: relative; background: #1b1b1b; margin: 0px; min-height: 100px; }
+.comment-add { position: relative; background: #262626; padding: 0px 0px 0px 10px; }
+.comment-add:hover { background: #2267B2; transition: .15s }
 .comment-add .row { margin: 0px; }
-.comment-add .avatar {  }
-.comment-add .avatar img { width: 34px; height: 34px; background: #F2F2F2; }
+.comment-add .comment-add-bot { height: 35px; margin-top: -5px; }
+.comment-add .avatar { width: 60px; height: 60px; background: rgba(255,255,255,1); border-radius: 50%; margin-top:15px; }
+.comment-add .avatar img { width: 60px; height: 60px; padding: 2px; }
 .comment-add .comment-form { padding-right: 0; }
 .comment-add .form-group { margin-bottom: 0px; }
-.comment-add textarea { width: 100%; border-radius: 0px; border-color: transparent; resize: vertical; }
+.comment-add textarea { width: 100%; border-radius: 0px; border-color: transparent; resize: none; background: none; color: white; padding:10px; transition: .15s }
+.comment-add textarea:focus { background: none; outline:none; }
+.comment-add .remaining { color: white; height: 100%; border-right: 1px solid rgba(0,0,0,.4); }
+.comment-add .remaining span { padding-top:8px; }
+.comment-add .post { padding-right: 0; border-left: 1px solid rgba(255,255,255,.4); height:100%; padding: 0; }
+.comment-add .post button { width:100%; height: 100%; background: none; outline: none; border: none; color: white; padding: 0; font-weight: bold; }
 
 .comment-votes { text-align: right; margin-right: 2px; }
 .comment-votes .vote-count { background: #2766ad; }

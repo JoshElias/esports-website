@@ -5697,7 +5697,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.article = data.article;
         $scope.authorEmail = data.article.author.email;
-        $scope.articleService = ArticleService;
+        $scope.ArticleService = ArticleService;
         $scope.$watch('app.user.isLogged()', function() {
             for (var i = 0; i < $scope.article.votes.length; i++) {
                 if ($scope.article.votes[i] == $scope.app.user.getUserID()) {

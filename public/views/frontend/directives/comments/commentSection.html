@@ -1,27 +1,27 @@
-<div class="comment-add m-b-md">
+<div class="comment-section-title m-b-md clearfix">
+    <h3 class="pull-left">COMMENTS</h3>
+</div>
+
+<div class="comment-add m-b-sm">
     <div class="row">
-        <div class="col-md-1">
-            <div class="avatar"><img gravatar-src="comment.author.email" alt=""></div>
+        <div class="col-md-1 wrapper-none">
+            <div class="avatar"><img gravatar-src="app.user.getUserEmail()" alt=""></div>
         </div>
         <div class="col-md-11 wrapper-none">
-            <textarea maxlength="600" rows="3" ng-model="comment" class="comment-input">
+            <textarea maxlength="1000" rows="6" ng-model="comment" placeholder="Write your comment here..." class="comment-input">
                 
             </textarea>
-            <div class="row">
-                <div class="col-md-10">
-                    {{comment.length}}/600
+            <div class="comment-add-bot row">
+                <div class="remaining col-md-10">
+                    <span class="pull-right">{{comment.length}}/1000</span>
                 </div>
                 
-                <div class="col-md-2">
-                    fuck
+                <div class="post col-md-2">
+                    <button ng-click="commentPost()">POST</button>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<div class="comment-section-title m-b-md clearfix">
-    <h3 class="pull-left">COMMENTS</h3>
 </div>
 
 <div class="comments">
