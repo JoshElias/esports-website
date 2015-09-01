@@ -8322,8 +8322,8 @@ angular.module('app.controllers', ['ngCookies'])
         });
     }
 ])
-.controller('HOTSGuidesListCtrl', ['$scope', '$state', '$timeout', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $timeout, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
+.controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
+    function ($q, $scope, $state, $timeout, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
         if (!dataCommunityGuides.success) { return $state.transitionTo('app.hots.guides.list'); }
         
         $scope.communityGuides = dataCommunityGuides.guides;
@@ -8338,6 +8338,7 @@ angular.module('app.controllers', ['ngCookies'])
             universes: [],
             search: '',
             heroes: [],
+            filteredHeroes: [],
             map: false
         };
         
@@ -8357,12 +8358,7 @@ angular.module('app.controllers', ['ngCookies'])
                     guideFilters.push($scope.filters.map._id);
                 }
                 
-                // load community guides
-                HOTSGuideService.getGuides(guideFilters, 0, 10).then(function (data) {
-                    $timeout(function () {
-                        $scope.guides = data.guides;
-                    });
-                });
+                updateTempostormGuides(0, 4);
             }
         }, true);
         
@@ -8447,6 +8443,57 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
+        
+        function getFilters () {
+            var filters = [];
+            
+            if ($scope.filters.heroes.length) {
+                for (var i = 0; i < $scope.filters.heroes.length; i++) {
+                    filters.push($scope.filters.heroes[i]._id);
+                }
+            }
+            
+            return filters;
+        }
+        
+        function updateTempostormGuides (offset, perpage, callback) {
+            HOTSGuideService.getGuidesFeatured(getFilters(), offset, perpage, false).then(function (data) {
+                $timeout(function () {
+                    $scope.tempostormGuides = data.guides;
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
+        $scope.tempostormPagination = AjaxPagination.new(4, dataTempostormGuides.total,
+            function (page, perpage) {
+                var d = $q.defer(),
+                    offset = ((page * perpage) - perpage);
+                
+                updateTempostormGuides(offset, perpage, function (data) {
+                    d.resolve(data.total);
+                });
+                
+                return d.promise;
+            }
+        );
+        
+        $scope.communityPagination = AjaxPagination.new(24, dataCommunityGuides.total,
+            function (page, perpage) {
+                var d = $q.defer(),
+                    offset = ((page * perpage) - perpage);
+            
+                HOTSGuideService.getGuidesCommunity('all', offset, perpage, false).then(function (data) {
+                    $timeout(function () {
+                        $scope.communityGuides = data.guides;
+                        d.resolve(data.total);
+                    });
+                });
+                return d.promise;
+            }
+        );
     }
 ])
 .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'LoginModalService', 'MetaService',

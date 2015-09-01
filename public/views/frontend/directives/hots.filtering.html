@@ -8,18 +8,8 @@
             <div class="col-xs-12 col-sm-8 m-b-md">
                 <div class="row">
                     <div class="col-xs-12">
-                        <ul class="hero-roles clearfix">
-                            <li><button class="hero-role warrior" ng-class="{ 'active': !hasFilterRole('Warrior') }" ng-click="toggleFilterRole('Warrior')" ng-tooltip title="Warrior"></button></li>
-                            <li><button class="hero-role assassin" ng-class="{ 'active': !hasFilterRole('Assassin') }" ng-click="toggleFilterRole('Assassin')" ng-tooltip title="Assassin"></button></li>
-                            <li><button class="hero-role support" ng-class="{ 'active': !hasFilterRole('Support') }" ng-click="toggleFilterRole('Support')" ng-tooltip title="Support"></button></li>
-                            <li><button class="hero-role specialist" ng-class="{ 'active': !hasFilterRole('Specialist') }" ng-click="toggleFilterRole('Specialist')" ng-tooltip title="Specialist"></button></li>
-                        </ul>
-                        <ul class="hero-universes clearfix">
-                            <li><button class="hero-universe warcraft" ng-class="{ 'active': !hasFilterUniverse('Warcraft') }" ng-click="toggleFilterUniverse('Warcraft')" ng-tooltip title="Warcraft"></button></li>
-                            <li><button class="hero-universe starcraft" ng-class="{ 'active': !hasFilterUniverse('Starcraft') }" ng-click="toggleFilterUniverse('Starcraft')" ng-tooltip title="Starcraft"></button></li>
-                            <li><button class="hero-universe diablo" ng-class="{ 'active': !hasFilterUniverse('Diablo') }" ng-click="toggleFilterUniverse('Diablo')" ng-tooltip title="Diablo"></button></li>
-                            <li><button class="hero-universe retro" ng-class="{ 'active': !hasFilterUniverse('Blizzard') }" ng-click="toggleFilterUniverse('Blizzard')" ng-tooltip title="Retro"></button></li>
-                        </ul>
+                        <div hots-filter-role filters="filters"></div>
+                        <div hots-filter-universe filters="filters"></div>
                     </div>
                 </div>
             </div>

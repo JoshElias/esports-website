@@ -23,7 +23,7 @@
 
     <!-- top guide -->
     <div class="container-fluid hots-top-guide m-t-lg" ng-if="topGuide">
-        <div class="tri-bottom">
+        <div class="tri-both">
             <div class="container-fluid-max hots-top-guide-inner pos-rl">
                 <div class="hero {{getGuideCurrentHero(topGuide).hero.className}}"></div>
                 <div class="row row-flex">
@@ -94,18 +94,8 @@
         <div class="container-fluid-max hots-list-ts-guides">
             <div class="hots-list-guides-title clearfix">
                 <div class="hots-mini-filters">
-                    <ul class="hero-roles clearfix">
-                        <li><button class="hero-role warrior" ng-class="{ 'active': !hasFilterRole('Warrior') }" ng-click="toggleFilterRole('Warrior')" ng-tooltip title="Warrior"></button></li>
-                        <li><button class="hero-role assassin" ng-class="{ 'active': !hasFilterRole('Assassin') }" ng-click="toggleFilterRole('Assassin')" ng-tooltip title="Assassin"></button></li>
-                        <li><button class="hero-role support" ng-class="{ 'active': !hasFilterRole('Support') }" ng-click="toggleFilterRole('Support')" ng-tooltip title="Support"></button></li>
-                        <li><button class="hero-role specialist" ng-class="{ 'active': !hasFilterRole('Specialist') }" ng-click="toggleFilterRole('Specialist')" ng-tooltip title="Specialist"></button></li>
-                    </ul>
-                    <ul class="hero-universes m-r-md clearfix">
-                        <li><button class="hero-universe warcraft" ng-class="{ 'active': !hasFilterUniverse('Warcraft') }" ng-click="toggleFilterUniverse('Warcraft')" ng-tooltip title="Warcraft"></button></li>
-                        <li><button class="hero-universe starcraft" ng-class="{ 'active': !hasFilterUniverse('Starcraft') }" ng-click="toggleFilterUniverse('Starcraft')" ng-tooltip title="Starcraft"></button></li>
-                        <li><button class="hero-universe diablo" ng-class="{ 'active': !hasFilterUniverse('Diablo') }" ng-click="toggleFilterUniverse('Diablo')" ng-tooltip title="Diablo"></button></li>
-                        <li><button class="hero-universe retro" ng-class="{ 'active': !hasFilterUniverse('Blizzard') }" ng-click="toggleFilterUniverse('Blizzard')" ng-tooltip title="Retro"></button></li>
-                    </ul>
+                    <div hots-filter-role filters="filters"></div>
+                    <div class="m-r-md" hots-filter-universe filters="filters"></div>
                     <div class="hots-filters-search">
                         <form>
                             <div class="input-group">
@@ -144,6 +134,11 @@
                         </a>
                     </li>
                 </ul>
+
+                <!-- page flipping -->
+                <div pagination="tempostormPagination" class="hots"></div>
+                <!-- / page flipping -->
+
                 <p class="white" ng-if="!tempostormGuides.length">There are no guides for the filtering above.</p>
             </div>
         </div>
@@ -156,18 +151,8 @@
             
             <div class="hots-list-guides-title clearfix">
                 <div class="hots-mini-filters">
-                    <ul class="hero-roles clearfix">
-                        <li><button class="hero-role warrior" ng-class="{ 'active': !hasFilterRole('Warrior') }" ng-click="toggleFilterRole('Warrior')" ng-tooltip title="Warrior"></button></li>
-                        <li><button class="hero-role assassin" ng-class="{ 'active': !hasFilterRole('Assassin') }" ng-click="toggleFilterRole('Assassin')" ng-tooltip title="Assassin"></button></li>
-                        <li><button class="hero-role support" ng-class="{ 'active': !hasFilterRole('Support') }" ng-click="toggleFilterRole('Support')" ng-tooltip title="Support"></button></li>
-                        <li><button class="hero-role specialist" ng-class="{ 'active': !hasFilterRole('Specialist') }" ng-click="toggleFilterRole('Specialist')" ng-tooltip title="Specialist"></button></li>
-                    </ul>
-                    <ul class="hero-universes m-r-md clearfix">
-                        <li><button class="hero-universe warcraft" ng-class="{ 'active': !hasFilterUniverse('Warcraft') }" ng-click="toggleFilterUniverse('Warcraft')" ng-tooltip title="Warcraft"></button></li>
-                        <li><button class="hero-universe starcraft" ng-class="{ 'active': !hasFilterUniverse('Starcraft') }" ng-click="toggleFilterUniverse('Starcraft')" ng-tooltip title="Starcraft"></button></li>
-                        <li><button class="hero-universe diablo" ng-class="{ 'active': !hasFilterUniverse('Diablo') }" ng-click="toggleFilterUniverse('Diablo')" ng-tooltip title="Diablo"></button></li>
-                        <li><button class="hero-universe retro" ng-class="{ 'active': !hasFilterUniverse('Blizzard') }" ng-click="toggleFilterUniverse('Blizzard')" ng-tooltip title="Retro"></button></li>
-                    </ul>
+                    <div hots-filter-role filters="filters"></div>
+                    <div class="m-r-md" hots-filter-universe filters="filters"></div>
                     <div class="hots-filters-search">
                         <form>
                             <div class="input-group">
@@ -184,15 +169,7 @@
 
             <div>
                 <!-- page flipping -->
-                <!--<div class="page-flipper page-flipper-top clearfix" ng-show="pagination.totalPages() > 1">
-                    <div class="pull-right">
-                        <span class="btn-group">
-                            <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)" disabled="disabled"><i class="fa fa-arrow-circle-left"></i></button>
-                            <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                            <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() + 1 > pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)" disabled="disabled"><i class="fa fa-arrow-circle-right"></i></button>
-                        </span>
-                    </div>
-                </div>-->
+                <div pagination="communityPagination" class="hots"></div>
                 <!-- / page flipping -->
 
                 <!-- guides titles -->
@@ -207,7 +184,7 @@
                         <h1 class="text-center">SCORE</h1>
                     </div>
                     <div class="col-xs-4">
-                        <h1>HERO</h1>
+                        <h1>HERO / MAP</h1>
                     </div>
                 </div>
                 <!-- / guides titles -->
@@ -260,15 +237,7 @@
                 <!-- / guides -->
 
                 <!-- page flipping -->
-                <!--<div class="page-flipper page-flipper-bottom clearfix" ng-show="pagination.totalPages() > 1">
-                    <div class="pull-right">
-                        <span class="btn-group">
-                            <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)" disabled="disabled"><i class="fa fa-arrow-circle-left"></i></button>
-                            <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                            <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() + 1 > pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)" disabled="disabled"><i class="fa fa-arrow-circle-right"></i></button>
-                        </span>
-                    </div>
-                </div>-->
+                <div pagination="communityPagination"></div>
                 <!-- / page flipping -->
             </div>
 

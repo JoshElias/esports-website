@@ -234,8 +234,9 @@ module.exports = {
                 where = {},
                 guides, total,
                 talents = [],
+                daysLimit = (req.body.daysLimit == false) ? false : parseInt(req.body.daysLimit) || 14,
                 now = new Date().getTime(),
-                weekAgo = new Date(now - (60*60*24*30*1000));
+                ago = new Date(now - (60*60*24*daysLimit*1000));
             
             if (filters !== 'all' && filters.length) {
                 var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
@@ -244,7 +245,9 @@ module.exports = {
                 where.$or.push({ 'maps': dbFilters });
             }
             
-            where.createdDate = { $gte: weekAgo };
+            if (daysLimit) {
+                where.createdDate = { $gte: ago };
+            }
             
             // get total guides
             function getTotal (callback) {

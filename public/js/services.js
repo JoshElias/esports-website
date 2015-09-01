@@ -978,6 +978,94 @@ angular.module('app.services', [])
     
     return pagination;
 })
+.factory('AjaxPagination', [function () {
+    var pagination = {};
+    
+    pagination.new = function (perpage, total, callback) {
+        var paginate = {
+            page: 1,
+            perpage: perpage || 10,
+            total: total || 0,
+            loading: false,
+            callback: function (newTotal) {
+                this.loading = false;
+                this.total = newTotal;
+            }
+        };
+        
+        paginate.isLoading = function () {
+            return paginate.loading;
+        };
+        
+        paginate.getPage = function () {
+            return paginate.page;
+        };
+        
+        paginate.getPerpage = function () {
+            return paginate.perpage;
+        };
+        
+        paginate.getTotal = function () {
+            return paginate.total;
+        };
+        
+        paginate.setPage = function (page) {
+            if (paginate.isLoading()) { return false; }
+            paginate.page = page;
+            paginate.loading = true;
+            
+            return callback(paginate.page, paginate.perpage).then(function (newTotal) {
+                return paginate.callback(newTotal);
+            });
+        };
+        
+        paginate.pagesArray = function () {
+            var pages = [],
+                start = 1,
+                end = paginate.totalPages();
+
+            if (this.totalPages() > 5) {
+                if (paginate.getPage() < 3) {
+                    start = 1;
+                    end = start + 4;
+                } else if (paginate.getPage() > paginate.totalPages() - 2) {
+                    end = paginate.totalPages();
+                    start = end - 4;
+                } else {
+                    start = paginate.getPage() - 2;
+                    end = paginate.getPage() + 2;
+                }
+
+            }
+
+            for (var i = start; i <= end; i++) {
+                pages.push(i);
+            }
+
+            return pages;
+        };
+        
+        paginate.isPage = function (page) {
+            return (page === paginate.getPage());
+        };
+        
+        paginate.totalPages = function (page) {
+            return (paginate.getTotal() > 0) ? Math.ceil(paginate.getTotal() / paginate.getPerpage()) : 0;
+        };
+        
+        paginate.from = function () {
+            return (paginate.getPage() * paginate.getPerpage()) - paginate.getPerpage() + 1;
+        };
+        
+        paginate.to = function () {
+            return ((paginate.getPage() * paginate.getPerpage()) > paginate.getTotal()) ? paginate.getTotal() : paginate.getPage() * paginate.getPerpage();
+        };
+        
+        return paginate;
+    };
+    
+    return pagination;
+}])
 .factory('Util', ['$http', function ($http) {
     return {
         toSelect: function (arr) {
@@ -1905,13 +1993,14 @@ angular.module('app.services', [])
 }])
 .factory('HOTSGuideService', ['$http', '$q', function ($http, $q) {
     return {
-        getGuidesCommunity: function (filters, offset, perpage) {
+        getGuidesCommunity: function (filters, offset, perpage, daysLimit) {
             filters = filters || 'all';
             offset = offset || 0;
             perpage = perpage || 10;
+            daysLimit = (daysLimit == false) ? false : daysLimit || 14;
             
             var d = $q.defer();
-            $http.post('/hots/guides/community', { filters: filters, offset: offset, perpage: perpage }).success(function (data) {
+            $http.post('/hots/guides/community', { filters: filters, offset: offset, perpage: perpage, daysLimit: daysLimit }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

@@ -814,22 +814,13 @@ angular.module('app.directives', ['ui.load'])
                 if (initializing) {
                     $timeout(function () {
                         initializing = false;
-                        randHeroIndex = randomIntFromInterval(0, scope.heroes.length);
+                        randHeroIndex = randomIntFromInterval(0, scope.heroes.length - 1);
                     });
                 } else {
                     scope.filters = value;
                 }
             }, true);
             
-            scope.toggleFilterRole = function (role) {
-                var index = scope.filters.roles.indexOf(role);
-                if (index === -1) {
-                    scope.filters.roles.push(role);
-                } else {
-                    scope.filters.roles.splice(index, 1);
-                }
-            };
-
             scope.hasFilterRole = function (role) {
                 for (var i = 0; i < scope.filters.roles.length; i++) {
                     if (scope.filters.roles[i] == role) {
@@ -838,16 +829,7 @@ angular.module('app.directives', ['ui.load'])
                 }
                 return false;
             };
-
-            scope.toggleFilterUniverse = function (universe) {
-                var index = scope.filters.universes.indexOf(universe);
-                if (index === -1) {
-                    scope.filters.universes.push(universe);
-                } else {
-                    scope.filters.universes.splice(index, 1);
-                }
-            };
-
+            
             scope.hasFilterUniverse = function (universe) {
                 for (var i = 0; i < scope.filters.universes.length; i++) {
                     if (scope.filters.universes[i] == universe) {
@@ -856,7 +838,7 @@ angular.module('app.directives', ['ui.load'])
                 }
                 return false;
             };
-
+            
             scope.toggleFilterHero = function (hero) {
                 var index = scope.filters.heroes.indexOf(hero);
                 if (index === -1) {
@@ -865,7 +847,7 @@ angular.module('app.directives', ['ui.load'])
                     scope.filters.heroes.splice(index, 1);
                 }
                 if (!scope.filters.heroes.length) {
-                    randHeroIndex = randomIntFromInterval(0, scope.heroes.length);
+                    randHeroIndex = randomIntFromInterval(0, scope.heroes.length - 1);
                 }
             };
 
@@ -939,6 +921,97 @@ angular.module('app.directives', ['ui.load'])
                 }
             };            
         }
+    };
+}])
+.directive('hotsFilterRole', ['$filter', '$timeout', function ($filter, $timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            filters: '='
+        },
+        templateUrl: 'views/frontend/directives/hots.filter.role.html',
+        replace: true,
+        link: function (scope, element, attrs) {
+            var initializing = true;
+            
+            scope.$watch(function(){ return scope.filters; }, function (value) {
+                if (initializing) {
+                    $timeout(function () {
+                        initializing = false;
+                    });
+                } else {
+                    scope.filters = value;
+                }
+            }, true);
+            
+            scope.toggleFilterRole = function (role) {
+                var index = scope.filters.roles.indexOf(role);
+                if (index === -1) {
+                    scope.filters.roles.push(role);
+                } else {
+                    scope.filters.roles.splice(index, 1);
+                }
+            };
+
+            scope.hasFilterRole = function (role) {
+                for (var i = 0; i < scope.filters.roles.length; i++) {
+                    if (scope.filters.roles[i] == role) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+        }
+    };
+}])
+.directive('hotsFilterUniverse', ['$filter', '$timeout', function ($filter, $timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            filters: '='
+        },
+        templateUrl: 'views/frontend/directives/hots.filter.universe.html',
+        replace: true,
+        link: function (scope, element, attrs) {
+            var initializing = true;
+            
+            scope.$watch(function(){ return scope.filters; }, function (value) {
+                if (initializing) {
+                    $timeout(function () {
+                        initializing = false;
+                    });
+                } else {
+                    scope.filters = value;
+                }
+            }, true);
+            
+            scope.toggleFilterUniverse = function (universe) {
+                var index = scope.filters.universes.indexOf(universe);
+                if (index === -1) {
+                    scope.filters.universes.push(universe);
+                } else {
+                    scope.filters.universes.splice(index, 1);
+                }
+            };
+
+            scope.hasFilterUniverse = function (universe) {
+                for (var i = 0; i < scope.filters.universes.length; i++) {
+                    if (scope.filters.universes[i] == universe) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+        }
+    };
+}])
+.directive('pagination', ['$timeout', function ($timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            pagination: '='
+        },
+        templateUrl: 'views/frontend/directives/pagination.html'
     };
 }])
 ;
