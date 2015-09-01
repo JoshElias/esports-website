@@ -648,7 +648,7 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $sce, dataActivity, ProfileService, HOTSGuideService, DeckService) {
         $scope.activities = dataActivity.activities;
         $scope.total = dataActivity.total;
-        $scope.filterActivities = ['comments','articles','decks','guides'];
+        $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
         
         $scope.getActivityType = function (activity) {
             switch (activity.activityType) {

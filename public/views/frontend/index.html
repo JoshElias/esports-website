@@ -12,7 +12,7 @@
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 <div class="app-header">
     <nav class="navbar navbar-default navbar-tempo navbar-static-top no-border-radius no-active-arrow" role="navigation">
-        <div class="container">
+        <div class="container-fluid">
             <!-- for full width layout or use class="container" for boxed layout -->
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#MegaNavbar">
@@ -22,7 +22,7 @@
                 <a class="navbar-brand" ui-sref="app.home">{{app.name}}</a>
             </div>
             <div class="collapse navbar-collapse" id="MegaNavbar">
-                <ul class="nav navbar-nav navbar-left">
+                <ul class="nav navbar-nav navbar-center">
                     <li ng-class="{active:$state.includes('app.articles')}"><a ui-sref="app.articles.list">Articles</a></li>
                     <li class="dropdown-grid" ng-class="{active:$state.includes('app.hots') || $state.includes('app.hs') || $state.includes('app.snapshot')}">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Games<span class="caret"></span></a>

@@ -80,23 +80,31 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 /* nav bar */
 .navbar-tempo {
     margin-bottom: 0px;
-    /*height: 52px;*/
-    background: #FFF;
+    height: 55px;
+    background: #1b1b1b;
     color: #2766ad;
     border-bottom: 2px solid #000;
 }
 
+
+
 .navbar-tempo .navbar-header { margin-left: 0px !important; }
 .navbar-tempo .navbar-toggle { margin-right: 0px !important; }
-.navbar-tempo .nav.navbar-nav { margin: 0px; }
+/*.navbar-tempo .nav.navbar-nav { margin: 0px; }*/
+.navbar .navbar-center {
+    margin: 0 auto;
+    display: table;
+    table-layout: fixed;
+    float: none;
+}
 /*.navbar-tempo .dropdown-header { border-bottom: 1px solid #2766ad; }*/
 
 .navbar-tempo .navbar-brand {
     margin: 6px 10px 6px 15px;
-    width: 110px;
-    height: 38px;
-    background: url('../img/logo.png') no-repeat;
-    background-position: 0px 0px;
+    width: 40px;
+    height: 40px;
+    background: url('../img/logo_white.png') no-repeat;
+    background-position: center;
     overflow: hidden;
     white-space: nowrap;
     text-indent: -99999px;
@@ -104,7 +112,10 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 
 .navbar-tempo .navbar-nav > li > a,
 .navbar-tempo .navbar-nav > li > a:hover {
-    color: #2766ad;
+    color: rgba(255,255,255,.4);
+    font-weight:bold;
+    letter-spacing: 1px;
+    text-shadow: none;
 }
 
 .navbar-tempo .navbar-nav > .active > a,

@@ -61,11 +61,11 @@ angular.module('app.directives', ['ui.load'])
             
             $scope.setState = function (s) {
                 switch(s) {
-                    case 'login':  $scope.state = "login" ; break;
-                    case 'signup': $scope.state = "signup"; break;
-                    case 'forgot': $scope.state = "forgot"; break;
-                    case 'verify': $scope.state = "verify"; break;
-                    default:       $scope.state = "login" ; break;
+                    case 'login':  $scope.state = "login" ; $scope.title = "User Login"; break;
+                    case 'signup': $scope.state = "signup"; $scope.title = "User Signup"; break;
+                    case 'forgot': $scope.state = "forgot"; $scope.title = "Forgot Password"; break;
+                    case 'verify': $scope.state = "verify"; $scope.title = "Verify Email"; break;
+                    default:       $scope.state = "login" ; $scope.title = "UserLogin"; break;
                 }
             }
             $scope.setState($scope.state);
@@ -73,7 +73,12 @@ angular.module('app.directives', ['ui.load'])
             $scope.closeModal = function () {
                 LoginModalService.hideModal();
             }
-        }]
+        }],
+        link: function($scope, el, attr) {
+            $scope.setTitle = function(s) {
+                $(".modal-title")[0].innerHTML = s;
+            }
+        }
     }
 }])
 .directive('loginForm', ['$window', '$cookies', '$state', 'AuthenticationService', 'LoginModalService', 'UserService', 'SubscriptionService', function ($window, $cookies, $state, AuthenticationService, LoginModalService, UserService, SubscriptionService) {
@@ -86,14 +91,12 @@ angular.module('app.directives', ['ui.load'])
                 email: "",
                 password: ""
             };
+            var cook = $cookies.getObject('TSRememberMe');
             
-            var cookMail = $cookies.rememberEmail;
-            var cookPass = $cookies.rememberPassword;
-            
-            if (cookMail != undefined && cookPass != undefined) {
+            if (cook != undefined) {
                 $scope.remember = true;
-                $scope.loginInfo.email = cookMail;
-                $scope.loginInfo.password = cookPass;
+                $scope.loginInfo.email = cook.email;
+                $scope.loginInfo.password = cook.password;
             }
 
             $scope.login = function login(email, password) {
@@ -119,11 +122,11 @@ angular.module('app.directives', ['ui.load'])
                         }
                             
                         if ($scope.remember) {
-                            $cookies.rememberEmail = email;
-                            $cookies.rememberPassword = password;
+                            var expireDate = new Date();
+                            expireDate.setDate(expireDate.getDate() + 356);
+                            $cookies.putObject('TSRememberMe', { email: $scope.loginInfo.email, password: $scope.loginInfo.password }, { expires: expireDate });
                         } else {
-                            delete $cookies.rememberEmail;
-                            delete $cookies.rememberPassword;
+                            $cookies.remove('TSRememberMe');
                         }
                         
                         if ($scope.callback) {
