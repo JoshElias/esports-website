@@ -91,11 +91,21 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 .navbar-tempo .navbar-header { margin-left: 0px !important; }
 .navbar-tempo .navbar-toggle { margin-right: 0px !important; }
 /*.navbar-tempo .nav.navbar-nav { margin: 0px; }*/
-.navbar .navbar-center {
-    margin: 0 auto;
-    display: table;
-    table-layout: fixed;
-    float: none;
+@media (min-width: 980px) {
+    .navbar .navbar-center {
+        margin: 0 auto;
+        display: table;
+        table-layout: fixed;
+        float: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .navbar .navbar-right {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+    }
 }
 /*.navbar-tempo .dropdown-header { border-bottom: 1px solid #2766ad; }*/
 
