@@ -2563,7 +2563,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     -webkit-transition: .6s;
     
 }
-.db-class.fade { 
+.db-class.nosel { 
     opacity:.6;
 }
 .db-class button { width: 100%; position: absolute; bottom: -26px; background: #163142; outline: none; border:none; color: white; height: 26px; font-size: 10px; font-weight: bold; letter-spacing:1px; }
