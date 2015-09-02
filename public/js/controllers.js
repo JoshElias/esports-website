@@ -3229,8 +3229,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('TeamCtrl', ['$scope', '$sce', 'data',
-    function ($scope, $sce, data) {
+.controller('TeamCtrl', ['$scope', '$compile', '$templateCache', '$sce', 'data',
+    function ($scope, $compile, $templateCache, $sce, data) {
         $scope.members = data.members;
         
         $scope.hsMembers = data.hsMembers;
@@ -3243,9 +3243,15 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.members[i].description = $scope.members[i].description.replace(/(?:\r\n|\r|\n)/g, '<br />');
         }
         
+        $scope.getTitle = function (i) {
+            for (var j = 0; j < i.length && i[j] != "-"; j++) {}
+            i = i.slice(0,j);
+            return i;
+        }
+        
         $scope.getDescription = function (i) {
             var temp = i,
-                magicNumber = 200;
+                magicNumber = 190;
             
             if(i.length > magicNumber) {
                 if (i[magicNumber] != " ") {
@@ -3257,6 +3263,16 @@ angular.module('app.controllers', ['ngCookies'])
                 i = i + "...";
             }
             return $sce.trustAsHtml(i);
+        }
+        
+        $scope.showMember = function (member) {
+            $scope.member = member;
+            
+            var box = bootbox.dialog({
+                title: member.screenName,
+                className: 'member-modal',
+                message: $compile('<img class="responsive" src="../../img/team/{{member.photo}}" /><div class="wrapper-md content-wrapper "><h1 class="m-b-xs">{{member.screenName}}</h1><span class="btn-team-wrapper"><a ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a><a ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a><a ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a><a ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a><a ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a><a ng-if="member.social.esea" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="btn-team-esea"></i></div></a></span><h3>{{member.fullName}}</h3><p>{{member.description}}</p></div>')($scope)
+            });
         }
         
 //        for (var i = 0; i < $scope.members.length; i++) {
@@ -4802,10 +4818,27 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+.controller('DeckBuilderClassCtrl', ['$scope', function ($scope) {
+    $scope.klass = false;
+    $scope.classList = [
+        { class: 'mage', secondary: true },
+        { class: 'shaman', secondary: false },
+        { class: 'warrior', secondary: true },
+        { class: 'rogue', secondary: false },
+        { class: 'paladin', secondary: false },
+        { class: 'priest', secondary: false },
+        { class: 'warlock', secondary: false },
+        { class: 'hunter', secondary: true },
+        { class: 'druid', secondary: false },
+
+    ];
+}])
 .controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
     function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
         // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+        
+
         
         // set default tab page
         $scope.step = 1;

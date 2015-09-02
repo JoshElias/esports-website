@@ -1491,6 +1491,7 @@ angular.module('app.services', [])
                     _id: card._id,
                     cost: card.cost,
                     name: card.name,
+                    cardType: card.cardType,
                     dust: card.dust,
                     photos: {
                         small: card.photos.small,
@@ -1505,10 +1506,21 @@ angular.module('app.services', [])
         };
 
         db.sortDeck = function () {
+            var weights = {
+                'Weapon' : 0,
+                'Spell': 1,
+                'Minion': 2
+            };
+            
             function dynamicSort(property) { 
                 return function (a, b) {
-                    if (a[property] < b[property]) return -1;
-                    if (a[property] > b[property]) return 1;
+                    if (property == 'cardType') {
+                        if (weights[a[property]] < weights[b[property]]) return -1;
+                        if (weights[a[property]] > weights[b[property]]) return 1;
+                    } else {
+                        if (a[property] < b[property]) return -1;
+                        if (a[property] > b[property]) return 1;
+                    }
                     return 0;
                 }
             }
@@ -1527,7 +1539,7 @@ angular.module('app.services', [])
                 }
             }
 
-            db.cards.sort(dynamicSortMultiple('cost', 'name'));
+            db.cards.sort(dynamicSortMultiple('cost', 'cardType', 'name'));
         };
 
         db.removeCardFromDeck = function (card) {

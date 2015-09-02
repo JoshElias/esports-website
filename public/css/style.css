@@ -42,7 +42,7 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 
 .app-content { padding-top: 52px; flex: 1; -ms-flex-preferred-size: auto; }
 
-.app-footer { width: 100%; background: #2268AE; }
+.app-footer { width: 100%; background: #2766ad; }
 .app-footer hr { width: 45%; margin-left: 0px; }
 .app-footer h1 { color: #FFF; font-size: 14px; }
 .app-footer ul { margin: 0; padding: 0; }
@@ -54,7 +54,7 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 .social a { float: left; margin-right: 10px; display: block; color: #FFF; width: 30px; height: 30px; font-size: 30px; opacity: .7; }
 .social a:hover { opacity: 1; }
 
-.footer-sponsors { height: 70px; background: url('../img/sponsorbanner.png') center center repeat-x; }
+.footer-sponsors { height: 70px; background: url('../img/sponsorbanner.jpg') center center repeat-x; }
 
 .container-fluid-max {
     max-width: 1448px;
@@ -2542,8 +2542,33 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-header { background: #111; color: #FFF; height: 50px; padding: 0px 10px; line-height: 50px; font-size: 26px; }
 .db-footer { background: #111; height: 50px; }
 
-.db-classes { height: 600px; }
-.db-class { position: relative; height: 600px; float: left; width: 11.11%; }
+.db-classes { height: 450px; width:80%; margin: 0 auto; }
+.db-class { 
+    position: relative; 
+    height: 450px; 
+    float: left; 
+    width: 10%; 
+    margin-left: .5%; 
+    margin-right: .5%; 
+    
+    border: 1px solid rgba(0,0,0,.4); 
+    outline: 1px solid rgba(255,255,255,.4); 
+    outline-offset: -2px;
+    
+    
+    transition: .6s;
+    -moz-transition: .6s;
+    -ms-transition: .6s;
+    -o-transition: .6s;
+    -webkit-transition: .6s;
+    
+}
+.db-class.fade { 
+    opacity:.6;
+}
+.db-class button { width: 100%; position: absolute; bottom: -26px; background: #163142; outline: none; border:none; color: white; height: 26px; font-size: 10px; font-weight: bold; letter-spacing:1px; }
+.db-class button[disabled] { opacity: .5 }
+.db-class button.active { background:#2766AD; }
 .db-class a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; }
 
 .db-class-mage,
@@ -2554,7 +2579,14 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-class-priest,
 .db-class-warlock,
 .db-class-hunter,
-.db-class-druid { background: #ccc; }
+.db-class-druid { 
+    background: #ccc;     
+    transition: .6s;
+    -moz-transition: .6s;
+    -ms-transition: .6s;
+    -o-transition: .6s;
+    -webkit-transition .6s;
+}
 
 .db-class-mage:hover,
 .db-class-shaman:hover,
@@ -2564,24 +2596,39 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-class-priest:hover,
 .db-class-warlock:hover,
 .db-class-hunter:hover,
-.db-class-druid:hover {
-    background-size: 350px;
-    transition: background-size .2s ease-in;
-    -moz-transition: background-size .2s ease-in;
-    -ms-transition: background-size .2s ease-in;
-    -o-transition: background-size .2s ease-in;
-    -webkit-transition: background-size .2s ease-in;
+.db-class-druid:hover,
+.db-class-mage.active:hover,
+.db-class-shaman.active:hover,
+.db-class-warrior.active:hover,
+.db-class-rogue.active:hover,
+.db-class-paladin.active:hover,
+.db-class-priest.active:hover,
+.db-class-warlock.active:hover,
+.db-class-hunter.active:hover,
+.db-class-druid.active:hover{
+    background-size: 250px;
+
 }
 
-.db-class-mage { background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; }
-.db-class-shaman { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; }
-.db-class-warrior { background: #C79C6E url('../img/warrior-large.jpg') center center no-repeat; }
-.db-class-rogue { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; }
-.db-class-paladin { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; }
-.db-class-priest { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; }
-.db-class-warlock { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; }
-.db-class-hunter { background: #ABD473 url('../img/hunter-large.jpg') center center no-repeat; }
-.db-class-druid { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; }
+.db-class-mage { background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-shaman { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-warrior { background: #C79C6E url('../img/warrior-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-rogue { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-paladin { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-priest { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-warlock { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-hunter { background: #ABD473 url('../img/hunter-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-druid { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 195%; }
+
+.db-class-mage.active { background: #69CCF0 url('../img/medivh.jpg') center center no-repeat; background-size: 195%; }
+.db-class-shaman.active { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-warrior.active { background: #C79C6E url('../img/magni.jpg') center center no-repeat; background-size: 195%; }
+.db-class-rogue.active { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-paladin.active { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-priest.active { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-warlock.active { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 195%; }
+.db-class-hunter.active { background: #ABD473 url('../img/alleria.jpg') center center no-repeat; background-size: 195%; }
+.db-class-druid.active { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 195%; }
 
 /*.db-class { -webkit-transition: all .25s linear; -moz-transition: all .25s linear; transition: all .25s linear; }*/
 /*.db-class a { -webkit-transition: opacity 1s; -moz-transition: opacity 1s; transition: opacity 1s; opacity: 0; background-position: center center; }*/
@@ -3383,29 +3430,44 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 
 
 .teams .member {
-    height: 450px;
+    height: 470px;
+}
+.teams .member button {
+    outline: none;
+    padding: none;
+    text-align: inherit;
+    border: none;
+    background: none;
+    
+    height:100%;
 }
 .teams .member img {
     height: 200px;
     width: 100%;
 }
-.teams .member .outer {
-    border: 1px solid black;
+.teams .member .outline {
+    transition: .10s;
+    outline: 1px solid rgba(255,255,255,.2);
+    outline-offset: -2px;
     height: 100%;
-}
-.teams .member .inner {
-    border: 1px solid rgba(255,255,255,.2);
-    height: 100%;
+    border: 1px solid rgba(0,0,0,1);
     background-color: rgba(29,29,29,.7);
 }
-.teams .member .inner h1 {
+.teams .member .outline:hover {
+    border: 1px solid #2766ad;
+    background-color: #2766ad;
+}
+.teams .member .outline:hover p {
+    color: white;
+}
+.teams .member .outline h1 {
     text-shadow: none;
     color: #D27A2A;
     font-size: 20px;
     text-transform: uppercase;
 }
-.teams .member .inner h3,
-.teams .member .inner p {
+.teams .member .outline h3,
+.teams .member .outline p {
     color: #BABABA;
     font-size: 16px;
     white-space: normal;
@@ -3413,11 +3475,38 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 }
 .teams .member .content-wrapper { position: relative; }
 
+
+.teams .member .view-more-team { position: absolute; width: 88%; bottom:20px; }
+.teams .member .view-more-team h3 { margin: 0 auto; text-align:center; opacity: .5 }
+
 .btn-team-wrapper { position: absolute; top: 20px; right: 20px; }
 .btn-team { width: 30px; height: 30px; border-radius: 30px; display: block; float: left; text-align: center; line-height: 1.35; border: 1px solid white; text-decoration: none; color: rgba(29,29,29,1); font-size: 18px; }
 .btn-team-inner { width: 24px; height: 24px; border-radius: 24px; background-color: rgba(255,255,255,1); margin: 2px; }
 .btn-team-esea { background: url('../img/esea.png') no-repeat center center; color: #0dc503 }
 
+
+.member-modal { background: rgba(0,0,0,.9); }
+.member-modal .bootbox-close-button { color: white; font-weight: bold; opacity: 1; }
+.member-modal .modal-content { border-radius: 0; }
+.member-modal .modal-body { padding: 0; }
+.member-modal .content-wrapper { position: relative; }
+.member-modal .content-wrapper h1 {    
+    text-shadow: none;
+    color: #D27A2A;
+    font-size: 20px;
+    text-transform: uppercase; 
+    max-width: 480px;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+.member-modal .content-wrapper h3,
+.member-modal .content-wrapper p { 
+    color: #BABABA;
+    font-size: 16px;
+    white-space: normal;
+    text-overflow: ellipsis;
+}
+.member-modal img { width:100% }
 /*
 .team-member { margin-left: 100px; min-height: 200px; max-height: 200px; position: relative; background: #181919; -webkit-transition: all .5s ease-in-out; -moz-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }
 .team-member-content { padding: 20px 90px 20px 132px; max-height: 160px; overflow: hidden; -webkit-transition: all .3s ease-in-out; -moz-transition: all .5s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out; }

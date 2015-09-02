@@ -2,7 +2,7 @@
     <div class="container-fluid sub-nav sticky">
         <div class="sub-nav-links">
             <ul>
-                <li><a ui-sref="#hs">HEARTHSTONE</a></li><li><a ui-sref="#hots">HEROES OF THE STORM</a></li><li><a ui-sref="#cs">COUNTER STRIKE: GO</a></li><li><a ui-sref="#fgc">FGC</a></li><li><a ui-sref="#fifa">FIFA</a></li>
+                <li><a target="_blank" href="#hs">HEARTHSTONE</a></li><li><a target="_blank" href="#hots">HEROES OF THE STORM</a></li><li><a target="_blank" href="#fgc">FGC</a></li><li><a target="_blank" href="#fifa">FIFA</a></li>
             </ul>
         </div>
     </div>
@@ -10,123 +10,108 @@
 <div class="bg-override container-fluid">
     <div class="container-fluid-max">
         <div class="teams">
-            <h1>HEARTHSTONE</h1>
-            <div id="hs" class="team row flex-row">
-                <div class="member m-b-lg col-lg-3" ng-repeat="member in hsMembers">
-                    <div class="outer">
-                        <div class="inner">
+            
+            <div id="hs" class="team col-lg-12 m-b-lg">
+                <h1>HEARTHSTONE</h1>
+                <div class="member m-b-sm col-lg-3 wrapper-none wrapper-none" ng-repeat="member in hsMembers">
+                    <button ng-click="showMember(member)">
+                        <div class="outline">
                             <img src="../../img/team/{{member.photo}}" />
                             <div class="wrapper-md content-wrapper ">
-                                <h1 class="m-b-xs">{{member.screenName}}</h1>
+                                <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
                                 <span class="btn-team-wrapper">
-                                    <a ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
-                                    <a ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
-                                    <a ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
-                                    <a ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
-                                    <a ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
-                                    <a ng-if="member.social.esea" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="btn-team-esea"></i></div></a>
+                                    <a target="_blank" href="https://twitter.com/{{member.social.twitter}}" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
                                 </span>
-                                <h3>{{member.fullName}}</h3>
-                                <p class="flex-col">{{getDescription(member.description)}}</p>
+                                <h3 class="m-t-md">{{member.fullName}}</h3>
+                                <p>{{getDescription(member.description)}}</p>
                             </div>
+                            <span class="view-more-team">
+                                <h3>View more</h3>
+                            </span>
                         </div>
-                    </div>
+                    </button>
                 </div>
             </div>
-            
-            <div id="hots" class="team col-lg-12">
+                
+            <div id="hots" class="team col-lg-12 m-b-lg">
                 <h1>HEROES OF THE STORM</h1>
-                <div class="member m-b-lg col-lg-3" ng-repeat="member in hotsMembers">
-                    <div class="outer">
-                        <div class="inner">
+                <div class="member m-b-sm col-lg-3 wrapper-none" ng-repeat="member in hotsMembers">
+                    <button ng-click="showMember(member)">
+                        <div class="outline">
                             <img src="../../img/team/{{member.photo}}" />
                             <div class="wrapper-md content-wrapper">
-                                <h1 class="m-b-xs">{{member.screenName}}</h1>
+                                <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
                                 <span class="btn-team-wrapper">
-                                    <a ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
-                                    <a ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
-                                    <a ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
-                                    <a ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
-                                    <a ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
-                                    <a ng-if="member.social.esea" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="btn-team-esea"></i></div></a>
+                                    <a target="_blank" href="https://twitter.com/{{member.social.twitter}}" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
                                 </span>
-                                <h3>{{member.fullName}}</h3>
-                                <p class="flex-col">{{getDescription(member.description)}}</p>
+                                <h3 class="m-t-md">{{member.fullName}}</h3>
+                                <p>{{getDescription(member.description)}}</p>
                             </div>
+                            <span class="view-more-team">
+                                <h3>View more</h3>
+                            </span>
                         </div>
-                    </div>
+                    </button>
                 </div>
             </div>
             
-            <div id="cs" class="team col-lg-12">
-                <h1>COUNTER STRIKE: GO</h1>
-                <div class="member m-b-lg col-lg-3" ng-repeat="member in csMembers">
-                    <div class="outer">
-                        <div class="inner">
-                            <img src="../../img/team/{{member.photo}}" />
-                            <div class="wrapper-md content-wrapper">
-                                <h1 class="m-b-xs">{{member.screenName}}</h1>
-                                <span class="btn-team-wrapper">
-                                    <a ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
-                                    <a ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
-                                    <a ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
-                                    <a ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
-                                    <a ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
-                                    <a ng-if="member.social.esea" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="btn-team-esea"></i></div></a>
-                                </span>
-                                <h3>{{member.fullName}}</h3>
-                                <p class="flex-col">{{getDescription(member.description)}}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="fgc" class="team col-lg-12">
+            <div id="fgc" class="team col-lg-12 m-b-lg">
                 <h1>FIGHTING GAME COMMUNITY</h1>
-                <div class="member m-b-lg col-lg-3" ng-repeat="member in fgcMembers">
-                    <div class="outer">
-                        <div class="inner">
+                <div class="member m-b-sm col-lg-3 wrapper-none" ng-repeat="member in fgcMembers">
+                    <button ng-click="showMember(member)">
+                        <div class="outline">
                             <img src="../../img/team/{{member.photo}}" />
                             <div class="wrapper-md content-wrapper">
-                                <h1 class="m-b-xs">{{member.screenName}}</h1>
+                                <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
                                 <span class="btn-team-wrapper">
-                                    <a ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
-                                    <a ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
-                                    <a ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
-                                    <a ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
-                                    <a ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
-                                    <a ng-if="member.social.esea" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="btn-team-esea"></i></div></a>
+                                    <a target="_blank" href="https://twitter.com/{{member.social.twitter}}" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
                                 </span>
-                                <h3>{{member.fullName}}</h3>
-                                <p class="flex-col">{{getDescription(member.description)}}</p>
+                                <h3 class="m-t-md">{{member.fullName}}</h3>
+                                <p>{{getDescription(member.description)}}</p>
                             </div>
+                            <span class="view-more-team">
+                                <h3>View more</h3>
+                            </span>
                         </div>
-                    </div>
+                    </button>
                 </div>
             </div>
             
-            <div id="fifa" class="team col-lg-12">
+            <div id="fifa" class="team col-lg-12 m-b-lg">
                 <h1>FIFA</h1>
-                <div class="member m-b-lg col-lg-3" ng-repeat="member in fifaMembers">
-                    <div class="outer">
-                        <div class="inner">
+                <div class="member m-b-sm col-lg-3 wrapper-none" ng-repeat="member in fifaMembers">
+                    <button ng-click="showMember(member)">
+                        <div class="outline">
                             <img src="../../img/team/{{member.photo}}" />
                             <div class="wrapper-md content-wrapper">
-                                <h1 class="m-b-xs">{{member.screenName}}</h1>
+                                <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
                                 <span class="btn-team-wrapper">
-                                    <a ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
-                                    <a ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
-                                    <a ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
-                                    <a ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
-                                    <a ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
-                                    <a ng-if="member.social.esea" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="btn-team-esea"></i></div></a>
+                                    <a target="_blank" href="https://twitter.com/{{member.social.twitter}}" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
+                                    <a target="_blank" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
                                 </span>
-                                <h3>{{member.fullName}}</h3>
-                                <p class="flex-col">{{getDescription(member.description)}}</p>
+                                <h3 class="m-t-md">{{member.fullName}}</h3>
+                                <p>{{getDescription(member.description)}}</p>
                             </div>
+                            <span class="view-more-team">
+                                <h3>View more</h3>
+                            </span>
                         </div>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>

@@ -403,7 +403,8 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     deckBuilder: {
-                        templateUrl: tpl + 'views/frontend/hs.deck-builder.class.html'
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.class.html',
+                        controller: 'DeckBuilderClassCtrl'
                     }
                 },
                 seo: { title: 'Deck Builder', description: 'Deck building tool for Hearthstone.', keywords: '' }
