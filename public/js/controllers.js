@@ -4820,17 +4820,16 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('DeckBuilderClassCtrl', ['$scope', function ($scope) {
     $scope.klass = false;
-    $scope.classList = [
-        { class: 'mage', secondary: true },
-        { class: 'shaman', secondary: false },
-        { class: 'warrior', secondary: true },
-        { class: 'rogue', secondary: false },
-        { class: 'paladin', secondary: false },
-        { class: 'priest', secondary: false },
-        { class: 'warlock', secondary: false },
-        { class: 'hunter', secondary: true },
-        { class: 'druid', secondary: false },
-
+    $scope.heroes = [
+        { class: 'mage', hasSecondary: true, secondary: false },
+        { class: 'shaman', hasSecondary: false, secondary: false },
+        { class: 'warrior', hasSecondary: true, secondary: false },
+        { class: 'rogue', hasSecondary: false, secondary: false },
+        { class: 'paladin', hasSecondary: false, secondary: false },
+        { class: 'priest', hasSecondary: false, secondary: false },
+        { class: 'warlock', hasSecondary: false, secondary: false },
+        { class: 'hunter', hasSecondary: true, secondary: false },
+        { class: 'druid', hasSecondary: false, secondary: false }
     ];
 }])
 .controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',

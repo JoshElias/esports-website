@@ -7,7 +7,7 @@ var app = angular.module('app', [
     'angularMoment',
     'angularPayments',
     'dndLists',
-    'ngAnimate',
+    /*'ngAnimate',*/
     'ngCookies',
     'ngStorage',
     'ngSanitize',

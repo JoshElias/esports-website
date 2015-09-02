@@ -1088,4 +1088,12 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: 'views/frontend/directives/pagination.html'
     };
 }])
+.directive('noAnimate', ['$animate', function ($animate) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            $animate.enabled(element, false);
+        }
+    };
+}])
 ;

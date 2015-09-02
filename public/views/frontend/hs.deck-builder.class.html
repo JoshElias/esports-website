@@ -1,7 +1,7 @@
 <div class="db-header"></div>
 <div class="container-fluid-max">
     <div class="db-classes clearfix">
-        <div ng-repeat="class in classList" class="db-class db-class-{{class.class}}" ng-class="{ 'active':active, 'nosel': $parent.klass && $parent.klass != '{{class.class}}'  }" ng-mouseover="$parent.klass=class.class;" ng-mouseout="$parent.klass=false"><a href="./hearthstone/deck-builder/{{class.class}}"></a><button ng-disabled="!class.secondary" ng-click="active = !active" ng-class="{'active': active}"><span ng-if="class.secondary">SWITCH HERO</span><span ng-if="!class.secondary">COMING SOON</span></button></div>
+        <div ng-repeat="hero in heroes track by $index" no-animate class="db-class db-class-{{hero.class}}" ng-class="{ 'active': hero.secondary, 'nosel': $parent.klass && $parent.klass != hero.class }" ng-mouseover="$parent.klass = hero.class" ng-mouseout="$parent.klass = false"><a href="./hearthstone/deck-builder/{{hero.class}}"></a><button ng-disabled="!hero.hasSecondary" ng-click="hero.secondary = !hero.secondary" ng-class="{'active': hero.secondary}"><span ng-if="hero.hasSecondary">SWITCH HERO</span><span ng-if="!hero.hasSecondary">COMING SOON</span></button></div>
     </div>
 </div>
 <div class="db-footer"></div>
