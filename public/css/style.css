@@ -2539,10 +2539,27 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 /* deck builder */
-.db-header { background: #111; color: #FFF; height: 50px; padding: 0px 10px; line-height: 50px; font-size: 26px; }
+.db-footer,
+.db-header { color: #FFF; height: auto; line-height: 50px; font-size: 26px; width: 80%; margin: 20px auto; }
+.db-header span { float: left; }
+.db-header h1,
+.db-footer h1 { color: #FFF; font-size: 36px; font-weight: bold; text-shadow: 0px 0px 20px rgba(255,255,255,.4); }
+.db-header h2,
+.db-footer h2 { color: #FFF; font-size: 22px; font-weight: bold; text-shadow: 0px 0px 20px rgba(255,255,255,.4); }
+
+.db-footer h2 a { text-decoration: none; color: white; }
+.db-footer h2 span { text-decoration: none; color: white; opacity: .5 }
+
+.db-header h3,
+.db-footer h3 { color: #B1E1F8; font-size: 14px; font-weight: bold; }
+.db-header ul { float: right; margin-top: 10px; }
+.db-header li { width: 90px; font-size: 18px; text-align: center; padding: 7px 5px 7px 5px; }
+.db-header li.active { background: #2766AD; opacity: 1; }
+.db-header li h1 { font-size: 18px; margin-bottom: 5px; text-shadow: none; }
+.db-header li h3 { font-size: 12px; color: white; margin: 0; }
 .db-footer { background: #111; height: 50px; }
 
-.db-classes { height: 450px; width:80%; margin: 0 auto; }
+.db-classes { height: 450px; width:80%; margin: 0 auto 60px auto; }
 .db-class { 
     position: relative; 
     height: 450px; 
@@ -2551,22 +2568,23 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     margin-left: .5%; 
     margin-right: .5%; 
     
-    border: 1px solid rgba(0,0,0,.4); 
-    outline: 1px solid rgba(255,255,255,.4); 
+    border: 1px solid rgba(0,0,0,1); 
+    outline: 1px solid rgba(255,255,255,.6); 
     outline-offset: -2px;
     
     -moz-transition: opacity .6s linear;
     -ms-transition: opacity .6s linear;
     -o-transition: opacity .6s linear;
     -webkit-transition: opacity .6s linear;
-    
+    transition: opacity .6s linear;
 }
-.db-class.nosel {
-    opacity: .6;
+.db-class.no-select {
+    opacity: .4;
 }
-.db-class button { width: 100%; position: absolute; bottom: -26px; background: #163142; outline: none; border:none; color: white; height: 26px; font-size: 10px; font-weight: bold; letter-spacing:1px; }
-.db-class button[disabled] { opacity: .5 }
-.db-class button.active { background:#2766AD; }
+.db-class .select-hero-btn { width: 100%; height: 100%; background: none; border: none; outline: none; }
+.db-class .switch-hero-btn { width: 100%; position: absolute; bottom: -26px; left: 0; background: #163142; outline: none; border:none; color: white; height: 26px; font-size: 10px; font-weight: bold; letter-spacing:1px; }
+.db-class .switch-hero-btn[disabled] { opacity: .5 }
+.db-class .switch-hero-btn.active { background:#2766AD; }
 .db-class a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; }
 
 .db-class-mage,
@@ -2586,6 +2604,24 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     -webkit-transition .6s;
 }
 
+.db-class-mage.selected,
+.db-class-shaman.selected,
+.db-class-warrior.selected,
+.db-class-rogue.selected,
+.db-class-paladin.selected,
+.db-class-priest.selected,
+.db-class-warlock.selected,
+.db-class-hunter.selected,
+.db-class-druid.selected,
+.db-class-mage.active.selected,
+.db-class-shaman.active.selected,
+.db-class-warrior.active.selected,
+.db-class-rogue.active.selected,
+.db-class-paladin.active.selected,
+.db-class-priest.active.selected,
+.db-class-warlock.active.selected,
+.db-class-hunter.active.selected,
+.db-class-druid.active.selected,
 .db-class-mage:hover,
 .db-class-shaman:hover,
 .db-class-warrior:hover,
@@ -2603,9 +2639,9 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-class-priest.active:hover,
 .db-class-warlock.active:hover,
 .db-class-hunter.active:hover,
-.db-class-druid.active:hover{
+.db-class-druid.active:hover {
     background-size: 250px;
-
+    opacity: 1;
 }
 
 .db-class-mage { background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; background-size: 195%; }
@@ -2641,6 +2677,87 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-class-hunter a:hover { background-size: 300px; opacity: 1; }
 .db-class-druid a:hover { background-size: 300px; opacity: 1; }
 */
+
+/* MULLIGANS */
+.db-mulligans h2 { color: #FFF; font-size: 22px; font-weight: bold; text-shadow: 0px 0px 20px rgba(255,255,255,.4); margin: 0px; }
+.db-mulligans h3 { color: rgba(255,255,255,.6); margin: 0px; font-size: 14px; }
+
+.db-mulligans .class { 
+    position: relative; 
+    width: 11.11%; 
+    height: 440px; 
+    float: left; 
+    border: 1px solid rgba(0,0,0,1); 
+    outline: 1px solid rgba(255,255,255,.2); 
+    outline-offset: -2px; 
+    -moz-transition: .25s;
+    -ms-transition: .25s;
+    -o-transition: .25s;
+    -webkit-transition: .25s;
+    transition: .25s;
+        
+}
+.db-mulligans .class button { width: 100%; height: 100%; outline: none; border: none; background: none; }
+.db-mulligans .class.active { outline: 1px solid rgba(255,255,255,1); }
+.db-mulligans .class span { position: absolute; width: 100%; bottom: 0; text-align: center; font-size: 16px; font-weight: bold; color: white; }
+.db-mulligans .class-select { width: 100%; }
+
+.db-mulligans .class-mage { background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-shaman { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-warrior { background: #C79C6E url('../img/warrior-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-rogue { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-paladin { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-priest { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-warlock { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-hunter { background: #ABD473 url('../img/hunter-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-druid { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-mage.secondary { background: #69CCF0 url('../img/medivh.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-shaman.secondary { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-warrior.secondary { background: #C79C6E url('../img/magni.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-rogue.secondary { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-paladin.secondary { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-priest.secondary { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-warlock.secondary { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-hunter.secondary { background: #ABD473 url('../img/alleria.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-druid.secondary { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 195%; }
+
+.db-mulligans .description-header { 
+    width: 100%;
+    height: 115px;
+    position: relative;
+    
+    background: rgba(0,41,245,1);
+    background: -moz-linear-gradient(left, rgba(0,41,245,1) 0%, rgba(122,129,255,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(0,41,245,1)), color-stop(100%, rgba(122,129,255,1)));
+    background: -webkit-linear-gradient(left, rgba(0,41,245,1) 0%, rgba(122,129,255,1) 100%);
+    background: -o-linear-gradient(left, rgba(0,41,245,1) 0%, rgba(122,129,255,1) 100%);
+    background: -ms-linear-gradient(left, rgba(0,41,245,1) 0%, rgba(122,129,255,1) 100%);
+    background: linear-gradient(to right, rgba(0,41,245,1) 0%, rgba(122,129,255,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0029f5', endColorstr='#7a81ff', GradientType=1 );
+}
+.db-mulligans .big-coin { height: 60px; overflow: hidden; position: absolute; top: 27.5px; left: 27.5px; border-radius: 50%; border: 3px solid white; }
+.db-mulligans .header-text { position: absolute; top: 27.5px; left: 100px; }
+
+.db-mulligans .db-mulligan-content .left { color: #FFF; padding: 0; }
+.db-mulligans .db-mulligan-content .right { color: #FFF; padding: 0; }
+
+.db-mulligans .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-bottom: 1px; }
+.db-mulligans .mana-cost { background: #2766AD; height: 28px; width: 28px; float: left; text-align: center; text-indent: 0px; color: white; }
+
+.db-mulligans .db-mulligan-instructions,
+.db-mulligans .db-mulligan-instructions:focus {
+    outline: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    border: none;
+    resize: none!important;
+    width: 100%;
+    height:173px;
+    background: none;
+    padding:30px;
+}
+.db-mulligans .db-mulligan-content .card { width: 150px; height: 200px; float: left; }
+
 
 /* start glows */
 @-webkit-keyframes glow-premium {
@@ -2903,9 +3020,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .note-group-select-from-files { display: none !important; }
 
 /* deck builder mulligans */
-.db-mulligans h3 { margin-top: 20px; font-size: 16px; font-weight: bold; }
+/*.db-mulligans h3 { margin-top: 20px; font-size: 16px; font-weight: bold; }*/
 
-.db-mulligan-content { padding: 20px; color: #FFF; }
 
 .mulligan-cards { height: 200px; overflow-y: scroll; background: url('../img/binding_dark.png'); }
 
@@ -2917,7 +3033,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .db-mulligan-card-photo { position: absolute; top: 1px; right: 0px; width: 269px; height: 28px; }
 .db-mulligan-card-photo img { position: absolute; top: 0px; right: 0px; width: 110px; height: 26px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
 
-.db-mulligan-instructions { height: 200px !important; resize: none; }
 
 .db-deck-cards,
 .db-cards-view { -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
