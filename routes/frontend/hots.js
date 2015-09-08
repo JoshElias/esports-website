@@ -61,9 +61,7 @@ module.exports = {
                     where.$or = [];
                     where.$or.push({ name: new RegExp(search, "i") });
                     where.$or.push({ description: new RegExp(search, "i") });
-                    where.$or.push({ contentEarly: new RegExp(search, "i") });
-                    where.$or.push({ contentMid: new RegExp(search, "i") });
-                    where.$or.push({ contentLate: new RegExp(search, "i") });
+                    where.$or.push({ content: new RegExp(search, "i") });
                 }
 
                 // age
@@ -238,7 +236,7 @@ module.exports = {
                 now = new Date().getTime(),
                 ago = new Date(now - (60*60*24*daysLimit*1000));
             
-            if (filters !== 'all' && filters.length) {
+            if (filters !== 'all') {
                 var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
                 where.$or = [];
                 where.$or.push({ 'heroes.hero': dbFilters });
@@ -355,7 +353,7 @@ module.exports = {
                 guides, total,
                 talents = [];
             
-            if (filters !== 'all' && filters.length) {
+            if (filters !== 'all') {
                 var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
                 where.$or = [];
                 where.$or.push({ 'heroes.hero': dbFilters });

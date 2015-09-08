@@ -916,6 +916,12 @@ angular.module('app.directives', ['ui.load'])
             scope.toggleFilterHero = function (hero) {
                 var index = scope.filters.heroes.indexOf(hero);
                 if (index === -1) {
+                    if (scope.filters.roles.length && scope.filters.roles.indexOf(hero.role) == -1) {
+                        scope.filters.roles.push(hero.role);
+                    }
+                    if (scope.filters.universes.length && scope.filters.universes.indexOf(hero.universe) == -1) {
+                        scope.filters.universes.push(hero.universe);
+                    }
                     scope.filters.heroes.push(hero);
                 } else {
                     scope.filters.heroes.splice(index, 1);
@@ -924,7 +930,26 @@ angular.module('app.directives', ['ui.load'])
                     randHeroIndex = randomIntFromInterval(0, scope.heroes.length - 1);
                 }
             };
-
+            
+            scope.isFiltered = function (hero) {
+                if (scope.hasFilterHero(hero)) {
+                    return false;
+                }
+                if (scope.hasAnyFilterHero() && !scope.hasFilterHero(hero)) {
+                    return true;
+                }
+                if (scope.filters.roles.length && !scope.hasFilterRole(hero.role)) {
+                    return true;
+                }
+                if (scope.filters.universes.length && !scope.hasFilterUniverse(hero.universe)) {
+                    return true;
+                }
+                if (scope.filters.search.length && scope.hasFilterSearch(hero)) {
+                    return true;
+                }
+                return false;
+            };
+            
             scope.hasFilterHero = function (hero) {
                 return (scope.filters.heroes.indexOf(hero) !== -1);
             };
@@ -1085,7 +1110,15 @@ angular.module('app.directives', ['ui.load'])
         scope: {
             pagination: '='
         },
-        templateUrl: 'views/frontend/directives/pagination.html'
+        templateUrl: 'views/frontend/directives/pagination.html'/*,
+        link: function (scope, element, attrs) {
+            scope.$watch(function () { return scope.pagination; }, function (newValue) {
+                console.log(newValue);
+                $timeout(function () {
+                    scope.pagination = newValue;
+                });
+            }, true);
+        }*/
     };
 }])
 .directive('noAnimate', ['$animate', function ($animate) {

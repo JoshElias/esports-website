@@ -1502,6 +1502,12 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .m-l-none { margin-left: 0px; }
 
 /* padding */
+.p-xs { padding: 5px; }
+.p-sm { padding: 10px; }
+.p-md { padding: 20px; }
+.p-lg { padding: 30px; }
+.p-xl { padding: 50px; }
+
 .p-t-xs { padding-top: 5px; }
 .p-r-xs { padding-right: 5px; }
 .p-b-xs { padding-bottom: 5px; }
