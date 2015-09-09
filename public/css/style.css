@@ -3005,6 +3005,7 @@ ul[dnd-list] .dndPlaceholder {
 .icon-the-butcher { background: url('../img/hots/heroes/the-butcher-hex.png') no-repeat center center; }
 .icon-leoric { background: url('../img/hots/heroes/leoric-hex.png') no-repeat center center; }
 .icon-kharazim { background: url('../img/hots/heroes/kharazim-hex.png') no-repeat center center; }
+.icon-rexxar { background: url('../img/hots/heroes/rexxar-hex.png') no-repeat center center; }
 
 .hero-selection .hero .icon-wrap .icon:hover { background-color: rgba(88, 43, 128, 1); }
 .hero-selection .hero .icon-wrap .icon.active { background-color: #2766ad; }
@@ -3123,6 +3124,7 @@ p.white { color: #FFF; }
 .hero-list li a.the-butcher { background: url('../img/hots/heroes/28x/the-butcher28.png') no-repeat center right; }
 .hero-list li a.leoric { background: url('../img/hots/heroes/28x/leoric28.png') no-repeat center right; }
 .hero-list li a.kharazim { background: url('../img/hots/heroes/28x/kharazim28.png') no-repeat center right; }
+.hero-list li a.rexxar { background: url('../img/hots/heroes/28x/rexxar28.png') no-repeat center right; }
 
 /* guide steps */
 .gb-steps { margin: 0 0 20px 0; padding: 0 1px; }
@@ -3203,6 +3205,7 @@ p.white { color: #FFF; }
 .talents-title.the-butcher { background: url('../img/hots/heroes/60x/the-butcher60.png') no-repeat; }
 .talents-title.leoric { background: url('../img/hots/heroes/60x/leoric60.png') no-repeat; }
 .talents-title.kharazim { background: url('../img/hots/heroes/60x/kharazim60.png') no-repeat; }
+.talents-title.rexxar { background: url('../img/hots/heroes/60x/rexxar60.png') no-repeat; }
 
 /* talents icons */
 .talents-icon { display: block; width: 30px; height: 30px; overflow: hidden; white-space: nowrap; text-indent: -99999px; opacity: .5; transition: opacity .1s linear; }
@@ -3253,6 +3256,7 @@ p.white { color: #FFF; }
 .talents-icon.the-butcher { background: url('../img/hots/talents/the-butcher.png') no-repeat; }
 .talents-icon.leoric { background: url('../img/hots/talents/leoric.png') no-repeat; }
 .talents-icon.kharazim { background: url('../img/hots/talents/kharazim.png') no-repeat; }
+.talents-icon.rexxar { background: url('../img/hots/talents/rexxar.png') no-repeat; }
 
 /* talents - the-butcher - small */
 /* Tier 1 */
@@ -5177,6 +5181,79 @@ p.white { color: #FFF; }
 .talents-icon.rehgar.large.rewind { background-position: -30px -1428px; }
 .talents-icon.rehgar.large.storm-shield { background-position: -30px -1530px; }
 
+/* talents – rexxar - heroes */
+.talents-icon.rexxar { background: url('../img/hots/talents/rexxar.png') no-repeat; }
+
+/* talents - rexxar - small */
+/* Tier 1 */
+.talents-icon.rexxar.grizzled-bear { background-position: 0px 0px; }
+.talents-icon.rexxar.hunter-gatherer { background-position: 0px -30px; }
+.talents-icon.rexxar.survivalist-training { background-position: 0px -60px; }
+.talents-icon.rexxar.flare { background-position: 0px -90px; }
+/* Tier 2 */
+.talents-icon.rexxar.hungry-bear { background-position: 0px -120px; }
+.talents-icon.rexxar.crippling-talons { background-position: 0px -150px; }
+.talents-icon.rexxar.taking-flight { background-position: 0px -150px; }
+.talents-icon.rexxar.easy-prey { background-position: 0px -120px; }
+/* Tier 3 */
+.talents-icon.rexxar.blood-of-the-rhino { background-position: 0px -180px; }
+.talents-icon.rexxar.throwing-axes { background-position: 0px -210px; }
+.talents-icon.rexxar.aspect-of-the-beast { background-position: 0px -240px; }
+.talents-icon.rexxar.bird-of-prey { background-position: 0px -150px; }
+/* Tier 4 */
+.talents-icon.rexxar.bestial-wrath { background-position: 0px -270px; }
+.talents-icon.rexxar.unleash-the-boars { background-position: 0px -300px; }
+/* Tier 5 */
+.talents-icon.rexxar.wildfire-bear { background-position: 0px -330px; }
+.talents-icon.rexxar.thrill-of-the-hunt { background-position: 0px -120px; }
+.talents-icon.rexxar.bear-necessities { background-position: 0px -240px; }
+.talents-icon.rexxar.barkskin { background-position: 0px -240px; }
+/* Tier 6 */
+.talents-icon.rexxar.primal-intimidation { background-position: 0px -360px; }
+.talents-icon.rexxar.critical-care { background-position: 0px -180px; }
+.talents-icon.rexxar.aspect-of-the-hawk { background-position: 0px -150px; }
+.talents-icon.rexxar.feign-death { background-position: 0px -390px; }
+/* Tier 7 */
+.talents-icon.rexxar.spirit-bond { background-position: 0px -270px; }
+.talents-icon.rexxar.kill-command { background-position: 0px -300px; }
+.talents-icon.rexxar.frenzy-of-kalimdor { background-position: 0px -420px; }
+.talents-icon.rexxar.hardened-skin { background-position: 0px -450px; }
+
+/* talents - rexxar - large */
+/* Tier 1 */
+.talents-icon.rexxar.large.grizzled-bear { background-position: -30px 0px; }
+.talents-icon.rexxar.large.hunter-gatherer { background-position: -30px -102px; }
+.talents-icon.rexxar.large.survivalist-training { background-position: -30px -204px; }
+.talents-icon.rexxar.large.flare { background-position: -30px -306px; }
+/* Tier 2 */
+.talents-icon.rexxar.large.hungry-bear { background-position: -30px -408px; }
+.talents-icon.rexxar.large.crippling-talons { background-position: -30px -510px; }
+.talents-icon.rexxar.large.taking-flight { background-position: -30px -510px; }
+.talents-icon.rexxar.large.easy-prey { background-position: -30px -408px; }
+/* Tier 3 */
+.talents-icon.rexxar.large.blood-of-the-rhino { background-position: -30px -612px; }
+.talents-icon.rexxar.large.throwing-axes { background-position: -30px -714px; }
+.talents-icon.rexxar.large.aspect-of-the-beast { background-position: -30px -816px; }
+.talents-icon.rexxar.large.bird-of-prey { background-position: -30px -510px; }
+/* Tier 4 */
+.talents-icon.rexxar.large.bestial-wrath { background-position: -30px -918px; }
+.talents-icon.rexxar.large.unleash-the-boars { background-position: -30px -1020px; }
+/* Tier 5 */
+.talents-icon.rexxar.large.wildfire-bear { background-position: -30px -1122px; }
+.talents-icon.rexxar.large.thrill-of-the-hunt { background-position: -30px -408px; }
+.talents-icon.rexxar.large.bear-necessities { background-position: -30px -816px; }
+.talents-icon.rexxar.large.barkskin { background-position: -30px -816px; }
+/* Tier 6 */
+.talents-icon.rexxar.large.primal-intimidation { background-position: -30px -1226px; }
+.talents-icon.rexxar.large.critical-care { background-position: -30px -612px; }
+.talents-icon.rexxar.large.aspect-of-the-hawk { background-position: -30px -510px; }
+.talents-icon.rexxar.large.feign-death { background-position: -30px -1328px; }
+/* Tier 7 */
+.talents-icon.rexxar.large.spirit-bond { background-position: -30px -918px; }
+.talents-icon.rexxar.large.kill-command { background-position: -30px -1020px; }
+.talents-icon.rexxar.large.frenzy-of-kalimdor { background-position: -30px -1428px; }
+.talents-icon.rexxar.large.hardened-skin { background-position: -30px -1530px; }
+
 /* talents - sgthammer - small */
 /* Tier 1 */
 .talents-icon.sgthammer.advanced-artillery { background-position: 0px 0px; }
@@ -6273,6 +6350,7 @@ p.white { color: #FFF; }
 .hots-modal .hero.the-butcher { background: url('../img/hots/modal/heroes/the-butcher.png') no-repeat center right; }
 .hots-modal .hero.leoric { background: url('../img/hots/modal/heroes/leoric.png') no-repeat center right; }
 .hots-modal .hero.kharazim { background: url('../img/hots/modal/heroes/kharazim.png') no-repeat center right; }
+.hots-modal .hero.rexxar { background: url('../img/hots/modal/heroes/rexxar.png') no-repeat center right; }
 
 .hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
 .hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
@@ -6458,6 +6536,12 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-images .guide-image.guide-images-3.kharazim { background: url('../img/hots/heroes/guide-images/3/kharazim3.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-4.kharazim { background: url('../img/hots/heroes/guide-images/4/kharazim4.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-5.kharazim { background: url('../img/hots/heroes/guide-images/5/kharazim5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.guide-images-1.rexxar { background: url('../img/hots/heroes/guide-images/1/rexxar.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-2.rexxar { background: url('../img/hots/heroes/guide-images/2/rexxar2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-3.rexxar { background: url('../img/hots/heroes/guide-images/3/rexxar3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-4.rexxar { background: url('../img/hots/heroes/guide-images/4/rexxar4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.guide-images-5.rexxar { background: url('../img/hots/heroes/guide-images/5/rexxar5.jpg') no-repeat center top; background-size: cover; }
 
 .guide-images .guide-image.guide-images-1.leoric { background: url('../img/hots/heroes/guide-images/1/leoric.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.guide-images-2.leoric { background: url('../img/hots/heroes/guide-images/2/leoric2.jpg') no-repeat center top; background-size: cover; }
@@ -6686,6 +6770,12 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-images .guide-image.side.guide-images-3.kharazim { background: url('../img/hots/heroes/guide-images/side/3/kharazim3.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-4.kharazim { background: url('../img/hots/heroes/guide-images/side/4/kharazim4.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-5.kharazim { background: url('../img/hots/heroes/guide-images/side/5/kharazim5.jpg') no-repeat center top; background-size: cover; }
+
+.guide-images .guide-image.side.guide-images-1.rexxar { background: url('../img/hots/heroes/guide-images/side/1/rexxar.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-2.rexxar { background: url('../img/hots/heroes/guide-images/side/2/rexxar2.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-3.rexxar { background: url('../img/hots/heroes/guide-images/side/3/rexxar3.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-4.rexxar { background: url('../img/hots/heroes/guide-images/side/4/rexxar4.jpg') no-repeat center top; background-size: cover; }
+.guide-images .guide-image.side.guide-images-5.rexxar { background: url('../img/hots/heroes/guide-images/side/5/rexxar5.jpg') no-repeat center top; background-size: cover; }
 
 .guide-images .guide-image.side.guide-images-1.leoric { background: url('../img/hots/heroes/guide-images/side/1/leoric.jpg') no-repeat center top; background-size: cover; }
 .guide-images .guide-image.side.guide-images-2.leoric { background: url('../img/hots/heroes/guide-images/side/2/leoric2.jpg') no-repeat center top; background-size: cover; }
@@ -6953,6 +7043,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .guide-hero-image.the-butcher { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/the-butcher60.png') no-repeat right top; }
 .guide-hero-image.leoric { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/leoric60.png') no-repeat right top; }
 .guide-hero-image.kharazim { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/kharazim60.png') no-repeat right top; }
+.guide-hero-image.rexxar { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/rexxar60.png') no-repeat right top; }
 
 .guide-heroes-1 { width: 100%; }
 .guide-heroes-2 { width: 50%; }
@@ -7165,6 +7256,7 @@ a.create-a-guide { display: block; margin-bottom: 20px; height: 119px; backgroun
 .tc-hero.the-butcher { background: url('../img/hots/modal/heroes/the-butcher.png') no-repeat right 120px; }
 .tc-hero.leoric { background: url('../img/hots/modal/heroes/leoric.png') no-repeat right 120px; }
 .tc-hero.kharazim { background: url('../img/hots/modal/heroes/kharazim.png') no-repeat right 120px; }
+.tc-hero.rexxar { background: url('../img/hots/modal/heroes/rexxar.png') no-repeat right 120px; }
 
 
 /* talent calculator link */
