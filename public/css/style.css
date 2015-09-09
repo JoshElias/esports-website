@@ -2726,21 +2726,24 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     height: 115px;
     position: relative;
     
-    background: rgba(0,41,245,1);
-    background: -moz-linear-gradient(left, rgba(0,41,245,1) 0%, rgba(122,129,255,1) 100%);
-    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(0,41,245,1)), color-stop(100%, rgba(122,129,255,1)));
-    background: -webkit-linear-gradient(left, rgba(0,41,245,1) 0%, rgba(122,129,255,1) 100%);
-    background: -o-linear-gradient(left, rgba(0,41,245,1) 0%, rgba(122,129,255,1) 100%);
-    background: -ms-linear-gradient(left, rgba(0,41,245,1) 0%, rgba(122,129,255,1) 100%);
-    background: linear-gradient(to right, rgba(0,41,245,1) 0%, rgba(122,129,255,1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0029f5', endColorstr='#7a81ff', GradientType=1 );
+    background: rgba(36,104,172,1); 
+    background: -moz-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(36,104,172,1)), color-stop(15%, rgba(36,104,172,1)), color-stop(100%, rgba(0,139,198,1)));
+    background: -webkit-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+    background: -o-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+    background: -ms-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+    background: linear-gradient(to right, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2468ac', endColorstr='#008bc6', GradientType=1 );
 }
 .db-mulligans .big-coin { height: 60px; overflow: hidden; position: absolute; top: 27.5px; left: 27.5px; border-radius: 50%; border: 3px solid white; }
+.db-mulligans .description-header i { color: red; position: absolute; font-size: 100px; top: 5px; left: 22px; opacity: .7; }
 .db-mulligans .header-text { position: absolute; top: 27.5px; left: 100px; }
 
-.db-mulligans .db-mulligan-content .left { color: #FFF; padding: 0; }
+.db-mulligans .db-mulligan-content .left { color: #FFF; padding: 0; min-height: 400px; }
 .db-mulligans .db-mulligan-content .right { color: #FFF; padding: 0; }
 
+
+.db-mulligans .mulliganCardWrapper { position: relative; width: 80%; margin: auto 14%; }
 .db-mulligans .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-bottom: 1px; }
 .db-mulligans .mana-cost { background: #2766AD; height: 28px; width: 28px; float: left; text-align: center; text-indent: 0px; color: white; }
 
@@ -2753,10 +2756,14 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     resize: none!important;
     width: 100%;
     height:173px;
-    background: none;
+    background: rgba(0,0,0,.5);
     padding:30px;
 }
-.db-mulligans .db-mulligan-content .card { width: 150px; height: 200px; float: left; }
+.db-mulligans .db-mulligan-content .mulliganCards { width: 150px; height: 200px; position: absolute; display: block; }
+.db-mulligans .db-mulligan-content .mulliganCards img { width: 100%; height: 100%; float: left; }
+.db-mulligans .db-mulligan-content .list-card .legendary { margin-right: 8px; }
+.db-mulligans .db-mulligan-content .list-card button { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
+.db-mulligans .db-mulligan-content .list-card button:hover { background: rgba(255,255,255,.2); }
 
 
 /* start glows */
@@ -2819,7 +2826,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-right { float: right; width: 300px; }
 .db-left { margin-right: 381px; overflow: hidden; }
 
-.db-section { border: 1px solid #000; background: rgba(0,0,0,.3); }
+.db-section { outline: 1px solid rgba(255,255,255,.3); outline-offset: 0px; background: rgba(0,0,0,.3); }
 .db-section-title { padding: 0 20px; min-height: 60px; line-height: 60px; border-bottom: 1px solid #000; background: rgba(0,0,0,.3); }
 .db-section-title h1 { margin: 0 20px 0 0; padding: 0; height: 60px; line-height: 60px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 20px; }
 
@@ -3038,6 +3045,30 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .db-cards-view { -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
 
 /* deck builder - against */
+
+.db-against .match { border: none; }
+.db-against .match-add-wrapper { border: 1px dashed white; }
+.db-against .match-add-wrapper button { background: none; outline: none; border: none; }
+.db-against .match-add-wrapper button img { transition: 1s; }
+.db-against .match-add-wrapper button img:hover { opacity: .75; }
+.db-against .deck-name { outline: none; border: none; margin: 18px; background: none; color: white; }
+.db-against input[type=range] { 
+    -webkit-appearance: none;
+    width: 90%;
+    border-radius: 8px;
+    height: 7px;
+    border: none;
+    background-color: rgba(255,255,255,.2);
+}
+
+
+
+
+
+
+
+
+
 .db-sw-title { margin-top: 30px; position: relative; background: rgba(0,0,0,.6); border: 1px solid #000; height: 60px; line-height: 60px; }
 .db-sw-title div { position: absolute; }
 .db-sw-title-strong,
@@ -3103,6 +3134,29 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 .class-icon.small.druid.active { background-position: -124px -224px; }
 .class-icon.small.shaman.active { background-position: -124px -256px; }
 .class-icon.small.neutral.active { background-position: -124px -288px; }
+
+.class-icon.large { width: 61px; height: 62px; border-radius: 50%; }
+.class-icon.large.warlock { background-position: -1px -1px; }
+.class-icon.large.warrior { background-position: 0px -63px; }
+.class-icon.large.hunter { background-position: 0px -126px; }
+.class-icon.large.rogue { background-position: -1px -189px; }
+.class-icon.large.priest { background-position: -1px -252px; }
+.class-icon.large.paladin { background-position: -1px -315px; }
+.class-icon.large.mage { background-position: -1px -378px; }
+.class-icon.large.druid { background-position: -1px -441px; }
+.class-icon.large.shaman { background-position: -1px -505px; }
+.class-icon.large.neutral { background-position: 0px -549px; }
+
+.class-icon.large.warlock.active { background-position: -124px 0px; }
+.class-icon.large.warrior.active { background-position: -124px -32px; }
+.class-icon.large.hunter.active { background-position: -124px -64px; }
+.class-icon.large.rogue.active { background-position: -124px -96px; }
+.class-icon.large.priest.active { background-position: -124px -128px; }
+.class-icon.large.paladin.active { background-position: -124px -160px; }
+.class-icon.large.mage.active { background-position: -124px -192px; }
+.class-icon.large.druid.active { background-position: -124px -224px; }
+.class-icon.large.shaman.active { background-position: -124px -256px; }
+.class-icon.large.neutral.active { background-position: -124px -288px; }
 /* end class icons */
 
 /* start decks list */
@@ -3528,7 +3582,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .sponsor-page a { margin: 0 auto; display: block; width: 20px; color: #FFF; opacity: .6; font-size: 20px; }
 .sponsor-page a:hover { opacity: 1; }
 
-/* team pages */
+/* team page */
 .teams { margin-top: 50px; }
 .teams h1 {
     color: white;
@@ -3539,6 +3593,12 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 
 .teams .team {
     z-index:1;
+}
+.teams .team .anchor {
+    display: block!important;
+    position: relative;
+    top: -120px;
+    visibility: hidden;
 }
 
 
@@ -3555,7 +3615,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
     height:100%;
 }
 .teams .member img {
-    height: 200px;
+    max-height: 250px;
     width: 100%;
 }
 .teams .member .outline {
@@ -3599,7 +3659,8 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 
 
 .member-modal { background: rgba(0,0,0,.9); }
-.member-modal .bootbox-close-button { color: white; font-weight: bold; opacity: 1; }
+.member-modal .modal-header { display: none; visibility: hidden; }
+.member-modal .bootbox-close-button { color: white; font-weight: bold; opacity: 1; position: absolute; right: 10px; top: 7px; }
 .member-modal .modal-content { border-radius: 0; }
 .member-modal .modal-body { padding: 0; }
 .member-modal .content-wrapper { position: relative; }
