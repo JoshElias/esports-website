@@ -205,23 +205,25 @@
                                                 <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
                                                     <h3 class="m-b-lg">RANKING</h3>
                                                     <div class="deck-rank m-b-lg">
-                                                <div class="{{(deck.rank.current <= deck.rank.last[0]) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{(deck.rank.current <= deck.rank.last[0] || deck.rank.last[0] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         CURRENT
                                                     </div>
                                                     {{deck.rank.current}}
                                                 </div>
-                                                <div class="{{(deck.rank.last[0] >= deck.rank.current) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{(deck.rank.last[0] >= deck.rank.current || deck.rank.last[0] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         LAST WEEK
                                                     </div>
-                                                    {{deck.rank.last[0]}}
+                                                    <span ng-if="deck.rank.last[0] != 0 && deck.rank.last[0] != undefined">{{deck.rank.last[0]}}</span>
+                                                    <span ng-if="deck.rank.last[0] == 0 || deck.rank.last[0] == undefined">N/A</span>
                                                 </div>
-                                                <div class="{{(deck.rank.last[0] - deck.rank.current) >= 0 ? 'green-back' : 'red-back'}}">
+                                                <div class="{{((deck.rank.last[0] - deck.rank.current) >= 0 || deck.rank.last[0] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         CHANGE
                                                     </div>
-                                                    {{deck.rank.last[0] - deck.rank.current}}
+                                                    <span ng-if="deck.rank.last[0] != 0 && deck.rank.last[0] != undefined">{{deck.rank.last[0] - deck.rank.current}}</span>
+                                                    <span ng-if="deck.rank.last[0] == 0 || deck.rank.last[0] == undefined">N/A</span>
                                                 </div>
                                             </div>
                                                 </div>
@@ -238,7 +240,7 @@
                                                                 </span>
                                                             </div>
                                                             <div class="tech-card" ng-repeat="card in tech.cards">
-                                                                <div class="tech-card-body" ng-class="{ 'multi' : card.both }" style="background-image: url('https://s3-us-west-2.amazonaws.com/ts-node2/cards/{{card.card.photos.small}}')">
+                                                                <div class="tech-card-body" ng-class="{ 'multi' : card.both }" style="background-image: url('{{app.cdn}}cards/{{card.card.photos.small}}')">
                                                                     <div class="pull-left toss" ng-if="!card.toss"><i class="fa fa-plus"></i></div>
                                                                     <div class="pull-left keep" ng-if="card.toss"><i class="fa fa-minus"></i></div>
                                                                     {{card.card.name}}
