@@ -2017,25 +2017,27 @@ angular.module('app.services', [])
 }])
 .factory('HOTSGuideService', ['$http', '$q', function ($http, $q) {
     return {
-        getGuidesCommunity: function (filters, offset, perpage, daysLimit) {
+        getGuidesCommunity: function (filters, offset, perpage, search, daysLimit) {
             filters = filters || 'all';
             offset = offset || 0;
             perpage = perpage || 10;
+            search = search || false;
             daysLimit = (daysLimit == false) ? false : daysLimit || 14;
             
             var d = $q.defer();
-            $http.post('/hots/guides/community', { filters: filters, offset: offset, perpage: perpage, daysLimit: daysLimit }).success(function (data) {
+            $http.post('/hots/guides/community', { filters: filters, offset: offset, perpage: perpage, search: search, daysLimit: daysLimit }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
         },
-        getGuidesFeatured: function (filters, offset, perpage) {
+        getGuidesFeatured: function (filters, offset, perpage, search) {
             filters = filters || 'all';
             offset = offset || 0;
             perpage = perpage || 10;
+            search = search || false;
             
             var d = $q.defer();
-            $http.post('/hots/guides/featured', { filters: filters, offset: offset, perpage: perpage }).success(function (data) {
+            $http.post('/hots/guides/featured', { filters: filters, offset: offset, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

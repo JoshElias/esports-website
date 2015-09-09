@@ -28,7 +28,7 @@
     <div class="container-fluid hero-back {{hero().className}}">
         <ul class="hero-filters clearfix">
             <li ng-repeat="hero in heroDots">
-                <button class="{{hero.className}}" ng-class="{ 'active': hasFilterHero(hero), 'not-selected': !hasFilterHero(hero) && hasAnyFilterHero(),  'filtered': !hasFilterHero(hero) && (hasFilterRole(hero.role) || hasFilterUniverse(hero.universe) || hasFilterSearch(hero)) }" ng-if="hero.className" ng-click="toggleFilterHero(hero)" ng-tooltip title="{{hero.name}}">{{hero.name}}</button>
+                <button class="{{hero.className}}" ng-class="{ 'active': hasFilterHero(hero), 'not-selected': !hasFilterHero(hero) && hasAnyFilterHero(),  'filtered': isFiltered(hero) }" ng-if="hero.className" ng-click="toggleFilterHero(hero)" ng-tooltip title="{{hero.name}}">{{hero.name}}</button>
                 <button class="empty" ng-class="{ 'filtered': hasAnyFilter() }" ng-if="!hero.className"></button>
             </li>
         </ul>
@@ -39,9 +39,5 @@
                 <li class="m-b-md" ng-repeat="map in maps"><button class="{{map.className}}" ng-class="{ 'active': hasFilterMap(map), 'not-selected': !hasFilterMap(map) && hasAnyFilterMap() }" ng-click="toggleFilterMap(map)" ng-tooltip title="{{map.name}}">{{map.name}}</button></li>
             </ul>
         </div>
-    </div>
-    <div class="container text-center">
-        <a ui-sref="app.hots.guideBuilder.step1" class="btn btn-hots m-r-md m-b-lg"><div class="inner">CREATE A GUIDE</div></a>
-        <a ui-sref="app.hots.guides.list" class="btn btn-hots m-b-lg"><div class="inner">FIND A GUIDE</div></a>
     </div>
 </div>

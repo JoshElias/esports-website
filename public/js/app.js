@@ -496,7 +496,7 @@ var app = angular.module('app', [
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
                             dataCommunityGuides: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
-                                return HOTSGuideService.getGuidesCommunity('all', 0, 24, false);
+                                return HOTSGuideService.getGuidesCommunity('all', 0, 10, false, false);
                             }],
                             dataTopGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
                                 var guideType = $stateParams.t || 'all',

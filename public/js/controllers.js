@@ -8356,8 +8356,8 @@ angular.module('app.controllers', ['ngCookies'])
         });
     }
 ])
-.controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
-    function ($q, $scope, $state, $timeout, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
+.controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
+    function ($q, $scope, $state, $timeout, $filter, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
         if (!dataCommunityGuides.success) { return $state.transitionTo('app.hots.guides.list'); }
         
         $scope.communityGuides = dataCommunityGuides.guides;
@@ -8372,7 +8372,6 @@ angular.module('app.controllers', ['ngCookies'])
             universes: [],
             search: '',
             heroes: [],
-            filteredHeroes: [],
             map: false
         };
         
@@ -8392,7 +8391,8 @@ angular.module('app.controllers', ['ngCookies'])
                     guideFilters.push($scope.filters.map._id);
                 }
                 
-                updateTempostormGuides(0, 4);
+                updateTempostormGuides(1, 4);
+                updateCommunityGuides(1, 10);
             }
         }, true);
         
@@ -8478,6 +8478,42 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
+        function hasFilterRole (role) {
+            for (var i = 0; i < $scope.filters.roles.length; i++) {
+                if ($scope.filters.roles[i] == role) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        function hasFilterUniverse (universe) {
+            for (var i = 0; i < $scope.filters.universes.length; i++) {
+                if ($scope.filters.universes[i] == universe) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        
+        function hasFilterSearch (hero) {
+            var filtered = ($scope.filters.search && $scope.filters.search.length) ? $filter('filter')($scope.heroes, { name: $scope.filters.search }) : $scope.heroes;
+            return (filtered.indexOf(hero) === -1);
+        }
+        
+        function isFiltered (hero) {
+            if ($scope.filters.roles.length && !hasFilterRole(hero.role)) {
+                return true;
+            }
+            if ($scope.filters.universes.length && !hasFilterUniverse(hero.universe)) {
+                return true;
+            }
+            if ($scope.filters.search.length && hasFilterSearch(hero)) {
+                return true;
+            }
+            return false;
+        };
+        
         function getFilters () {
             var filters = [];
             
@@ -8485,15 +8521,27 @@ angular.module('app.controllers', ['ngCookies'])
                 for (var i = 0; i < $scope.filters.heroes.length; i++) {
                     filters.push($scope.filters.heroes[i]._id);
                 }
+            } else if ($scope.filters.roles.length || $scope.filters.universes.length) {
+                for (var i = 0; i < $scope.heroes.length; i++) {
+                    if (!isFiltered($scope.heroes[i])) {
+                        filters.push($scope.heroes[i]._id);
+                    }
+                }
+            } else {
+                return false;
             }
-            
             return filters;
         }
         
-        function updateTempostormGuides (offset, perpage, callback) {
-            HOTSGuideService.getGuidesFeatured(getFilters(), offset, perpage, false).then(function (data) {
+        function updateTempostormGuides (page, perpage, callback) {
+            var offset = ((page * perpage) - perpage);
+            
+            HOTSGuideService.getGuidesFeatured(getFilters(), offset, perpage, $scope.filters.search).then(function (data) {
+                $scope.tempostormPagination.total = data.total;
+                $scope.tempostormPagination.page = page;
                 $timeout(function () {
                     $scope.tempostormGuides = data.guides;
+
                     if (callback) {
                         return callback(data);
                     }
@@ -8503,23 +8551,38 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.tempostormPagination = AjaxPagination.new(4, dataTempostormGuides.total,
             function (page, perpage) {
-                var d = $q.defer(),
-                    offset = ((page * perpage) - perpage);
-                
-                updateTempostormGuides(offset, perpage, function (data) {
+                var d = $q.defer();
+
+                updateTempostormGuides(page, perpage, function (data) {
                     d.resolve(data.total);
                 });
-                
+
                 return d.promise;
             }
         );
         
-        $scope.communityPagination = AjaxPagination.new(24, dataCommunityGuides.total,
+        function updateCommunityGuides (page, perpage, callback) {
+            var offset = ((page * perpage) - perpage);
+            
+            HOTSGuideService.getGuidesCommunity(getFilters(), offset, perpage, $scope.filters.search, false).then(function (data) {
+                $scope.communityPagination.total = data.total;
+                $scope.communityPagination.page = page;
+                $timeout(function () {
+                    $scope.communityGuides = data.guides;
+
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
+        $scope.communityPagination = AjaxPagination.new(10, dataCommunityGuides.total,
             function (page, perpage) {
                 var d = $q.defer(),
                     offset = ((page * perpage) - perpage);
-            
-                HOTSGuideService.getGuidesCommunity('all', offset, perpage, false).then(function (data) {
+
+                HOTSGuideService.getGuidesCommunity(getFilters(), offset, perpage, $scope.filters.search, false).then(function (data) {
                     $timeout(function () {
                         $scope.communityGuides = data.guides;
                         d.resolve(data.total);
