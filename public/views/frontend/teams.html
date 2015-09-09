@@ -1,8 +1,8 @@
-<div class="sub-nav-wrapper sticky">
+<div class="sub-nav-wrapper sticky hidden-sm hidden-xs">
     <div class="container-fluid sub-nav sticky">
         <div class="sub-nav-links">
             <ul>
-                <li><a target="_blank" href="#hs">HEARTHSTONE</a></li><li><a target="_blank" href="#hots">HEROES OF THE STORM</a></li><li><a target="_blank" href="#fgc">FGC</a></li><li><a target="_blank" href="#fifa">FIFA</a></li>
+                <li><a href="#hs">HEARTHSTONE</a></li><li><a href="#hots">HEROES OF THE STORM</a></li><li><a href="#fgc">FGC</a></li><li><a href="#fifa">FIFA</a></li>
             </ul>
         </div>
     </div>
@@ -10,108 +10,119 @@
 <div class="bg-override container-fluid">
     <div class="container-fluid-max">
         <div class="teams">
-            
-            <div id="hs" class="team col-lg-12 m-b-lg">
-                <h1>HEARTHSTONE</h1>
-                <div class="member m-b-sm col-lg-3 wrapper-none wrapper-none" ng-repeat="member in hsMembers">
-                    <button ng-click="showMember(member)">
-                        <div class="outline">
-                            <img src="../../img/team/{{member.photo}}" />
-                            <div class="wrapper-md content-wrapper ">
-                                <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
-                                <span class="btn-team-wrapper">
-                                    <a target="_blank" href="https://twitter.com/{{member.social.twitter}}" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
+            <div class="row">
+                <div class="team col-lg-12 m-b-lg">
+                    <a id="hs" class="anchor"></a>
+                    <h1>HEARTHSTONE</h1>
+                    <div class="member m-b-sm col-lg-3 col-md-4 col-sm-6 col-xs-12 wrapper-none wrapper-none" ng-repeat="member in hsMembers">
+                        <button ng-click="showMember(member)">
+                            <div class="outline">
+                                <img class="img-responsive" src="../../img/team/{{member.photo}}" />
+                                <div class="wrapper-md content-wrapper ">
+                                    <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
+                                    <span class="btn-team-wrapper">
+                                        <a target="_blank" ng-click="openLink($event, 'https://twitter.com/' + member.social.twitter)" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://twitch.tv/' + member.social.twitch)" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://youtube.com/' + member.social.youtube)" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://facebook.com/' + member.social.facebook)" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://instagram.com/' + member.social.instagram)" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
+                                    </span>
+                                    <h3 class="m-t-md">{{member.fullName}}</h3>
+                                    <p>{{getDescription(member.description)}}</p>
+                                </div>
+                                <span class="view-more-team">
+                                    <h3>View more</h3>
                                 </span>
-                                <h3 class="m-t-md">{{member.fullName}}</h3>
-                                <p>{{getDescription(member.description)}}</p>
                             </div>
-                            <span class="view-more-team">
-                                <h3>View more</h3>
-                            </span>
-                        </div>
-                    </button>
-                </div>
-            </div>
-                
-            <div id="hots" class="team col-lg-12 m-b-lg">
-                <h1>HEROES OF THE STORM</h1>
-                <div class="member m-b-sm col-lg-3 wrapper-none" ng-repeat="member in hotsMembers">
-                    <button ng-click="showMember(member)">
-                        <div class="outline">
-                            <img src="../../img/team/{{member.photo}}" />
-                            <div class="wrapper-md content-wrapper">
-                                <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
-                                <span class="btn-team-wrapper">
-                                    <a target="_blank" href="https://twitter.com/{{member.social.twitter}}" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
-                                </span>
-                                <h3 class="m-t-md">{{member.fullName}}</h3>
-                                <p>{{getDescription(member.description)}}</p>
-                            </div>
-                            <span class="view-more-team">
-                                <h3>View more</h3>
-                            </span>
-                        </div>
-                    </button>
+                        </button>
+                    </div>
                 </div>
             </div>
             
-            <div id="fgc" class="team col-lg-12 m-b-lg">
-                <h1>FIGHTING GAME COMMUNITY</h1>
-                <div class="member m-b-sm col-lg-3 wrapper-none" ng-repeat="member in fgcMembers">
-                    <button ng-click="showMember(member)">
-                        <div class="outline">
-                            <img src="../../img/team/{{member.photo}}" />
-                            <div class="wrapper-md content-wrapper">
-                                <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
-                                <span class="btn-team-wrapper">
-                                    <a target="_blank" href="https://twitter.com/{{member.social.twitter}}" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
+            <div class="row">
+                <div class="team col-lg-12 m-b-lg">
+                    <a id="hots" class="anchor"></a>
+                    <h1>HEROES OF THE STORM</h1>
+                    <div class="member m-b-sm col-lg-3 col-md-4 col-sm-6 col-xs-12 wrapper-none" ng-repeat="member in hotsMembers">
+                        <button ng-click="showMember(member)">
+                            <div class="outline">
+                                <img src="../../img/team/{{member.photo}}" />
+                                <div class="wrapper-md content-wrapper">
+                                    <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
+                                    <span class="btn-team-wrapper">
+                                        <a target="_blank" ng-click="openLink($event, 'https://twitter.com/' + member.social.twitter)" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://twitch.tv/' + member.social.twitch)" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://youtube.com/' + member.social.youtube)" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://facebook.com/' + member.social.facebook)" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://instagram.com/' + member.social.instagram)" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
+                                    </span>
+                                    <h3 class="m-t-md">{{member.fullName}}</h3>
+                                    <p>{{getDescription(member.description)}}</p>
+                                </div>
+                                <span class="view-more-team">
+                                    <h3>View more</h3>
                                 </span>
-                                <h3 class="m-t-md">{{member.fullName}}</h3>
-                                <p>{{getDescription(member.description)}}</p>
                             </div>
-                            <span class="view-more-team">
-                                <h3>View more</h3>
-                            </span>
-                        </div>
-                    </button>
+                        </button>
+                    </div>
                 </div>
             </div>
             
-            <div id="fifa" class="team col-lg-12 m-b-lg">
-                <h1>FIFA</h1>
-                <div class="member m-b-sm col-lg-3 wrapper-none" ng-repeat="member in fifaMembers">
-                    <button ng-click="showMember(member)">
-                        <div class="outline">
-                            <img src="../../img/team/{{member.photo}}" />
-                            <div class="wrapper-md content-wrapper">
-                                <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
-                                <span class="btn-team-wrapper">
-                                    <a target="_blank" href="https://twitter.com/{{member.social.twitter}}" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
-                                    <a target="_blank" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
+            <div class="row">
+                <div class="team col-lg-12 m-b-lg">
+                    <a id="fgc" class="anchor"></a>
+                    <h1>FIGHTING GAME COMMUNITY</h1>
+                    <div class="member m-b-sm col-lg-3 col-md-4 col-sm-6 col-xs-12 wrapper-none" ng-repeat="member in fgcMembers">
+                        <button ng-click="showMember(member)">
+                            <div class="outline">
+                                <img src="../../img/team/{{member.photo}}" />
+                                <div class="wrapper-md content-wrapper">
+                                    <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
+                                    <span class="btn-team-wrapper">
+                                        <a target="_blank" ng-click="openLink($event, 'https://twitter.com/' + member.social.twitter)" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://twitch.tv/' + member.social.twitch)" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://youtube.com/' + member.social.youtube)" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://facebook.com/' + member.social.facebook)" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://instagram.com/' + member.social.instagram)" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
+                                    </span>
+                                    <h3 class="m-t-md">{{member.fullName}}</h3>
+                                    <p>{{getDescription(member.description)}}</p>
+                                </div>
+                                <span class="view-more-team">
+                                    <h3>View more</h3>
                                 </span>
-                                <h3 class="m-t-md">{{member.fullName}}</h3>
-                                <p>{{getDescription(member.description)}}</p>
                             </div>
-                            <span class="view-more-team">
-                                <h3>View more</h3>
-                            </span>
-                        </div>
-                    </button>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="team col-lg-12 m-b-lg">
+                    <a id="fifa" class="anchor"></a>
+                    <h1>FIFA</h1>
+                    <div class="member m-b-sm col-lg-3 col-md-4 col-sm-6 col-xs-12 wrapper-none" ng-repeat="member in fifaMembers">
+                        <button ng-click="showMember(member)">
+                            <div class="outline">
+                                <img src="../../img/team/{{member.photo}}" />
+                                <div class="wrapper-md content-wrapper">
+                                    <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
+                                    <span class="btn-team-wrapper">
+                                        <a target="_blank" ng-click="openLink($event, 'https://twitter.com/' + member.social.twitter)" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://twitch.tv/' + member.social.twitch)" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://youtube.com/' + member.social.youtube)" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://facebook.com/' + member.social.facebook)" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
+                                        <a target="_blank" ng-click="openLink($event, 'https://instagram.com/' + member.social.instagram)" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
+                                    </span>
+                                    <h3 class="m-t-md">{{member.fullName}}</h3>
+                                    <p>{{getDescription(member.description)}}</p>
+                                </div>
+                                <span class="view-more-team">
+                                    <h3>View more</h3>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

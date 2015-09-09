@@ -20,7 +20,8 @@ angular.module('app.controllers', ['ngCookies'])
                 deck: null,
                 article: null,
                 decks: null
-            }
+            },
+            secondaryPortrait: [false,false,false,false,false,false,false,false,false]
         },
         user: {
             getUserEmail: function () {
@@ -3243,6 +3244,11 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.members[i].description = $scope.members[i].description.replace(/(?:\r\n|\r|\n)/g, '<br />');
         }
         
+        $scope.openLink = function ($event, link) {
+            $event.stopPropagation();
+            window.open(link, '_blank');
+        }
+        
         $scope.getTitle = function (i) {
             for (var j = 0; j < i.length && i[j] != "-"; j++) {}
             i = i.slice(0,j);
@@ -3251,7 +3257,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.getDescription = function (i) {
             var temp = i,
-                magicNumber = 190;
+                magicNumber = 180;
             
             if(i.length > magicNumber) {
                 if (i[magicNumber] != " ") {
@@ -3271,7 +3277,7 @@ angular.module('app.controllers', ['ngCookies'])
             var box = bootbox.dialog({
                 title: member.screenName,
                 className: 'member-modal',
-                message: $compile('<img class="responsive" src="../../img/team/{{member.photo}}" /><div class="wrapper-md content-wrapper "><h1 class="m-b-xs">{{member.screenName}}</h1><span class="btn-team-wrapper"><a ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a><a ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a><a ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a><a ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a><a ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a><a ng-if="member.social.esea" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="btn-team-esea"></i></div></a></span><h3>{{member.fullName}}</h3><p>{{member.description}}</p></div>')($scope)
+                message: $compile('<button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true">×</button><img class="responsive" src="../../img/team/{{member.photo}}" /><div class="wrapper-md content-wrapper "><h1 class="m-b-xs">{{member.screenName}}</h1><span class="btn-team-wrapper"><a target="_blank" ng-click="stopDatShitNigga($event, \'https://twitter.com/\' + member.social.twitter)" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a><a target="_blank" ng-click="stopDatShitNigga($event, \'https://twitch.tv/\' + member.social.twitch)" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a><a target="_blank" ng-click="stopDatShitNigga($event, \'https://youtube.com/\' + member.social.youtube)" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a><a target="_blank" ng-click="stopDatShitNigga($event, \'https://facebook.com/\' + member.social.facebook)" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a><a target="_blank" ng-click="stopDatShitNigga($event, \'https://instagram.com/\' + member.social.instagram)" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a></span><h3>{{member.fullName}}</h3><p>{{member.description}}</p></div>')($scope)
             });
         }
         
@@ -4819,18 +4825,31 @@ angular.module('app.controllers', ['ngCookies'])
     }
 ])
 .controller('DeckBuilderClassCtrl', ['$scope', function ($scope) {
+    var portaitSettings = $scope.app.settings.secondaryPortrait;
+    
+    $scope.selectedHero = "";
     $scope.klass = false;
     $scope.heroes = [
-        { class: 'mage', hasSecondary: true, secondary: false },
-        { class: 'shaman', hasSecondary: false, secondary: false },
-        { class: 'warrior', hasSecondary: true, secondary: false },
-        { class: 'rogue', hasSecondary: false, secondary: false },
-        { class: 'paladin', hasSecondary: false, secondary: false },
-        { class: 'priest', hasSecondary: false, secondary: false },
-        { class: 'warlock', hasSecondary: false, secondary: false },
-        { class: 'hunter', hasSecondary: true, secondary: false },
-        { class: 'druid', hasSecondary: false, secondary: false }
+        { class: 'mage', hasSecondary: true, secondary: portaitSettings[0] },
+        { class: 'shaman', hasSecondary: false, secondary: portaitSettings[1] },
+        { class: 'warrior', hasSecondary: true, secondary: portaitSettings[2] },
+        { class: 'rogue', hasSecondary: false, secondary: portaitSettings[3] },
+        { class: 'paladin', hasSecondary: false, secondary: portaitSettings[4] },
+        { class: 'priest', hasSecondary: false, secondary: portaitSettings[5] },
+        { class: 'warlock', hasSecondary: false, secondary: portaitSettings[6] },
+        { class: 'hunter', hasSecondary: true, secondary: portaitSettings[7] },
+        { class: 'druid', hasSecondary: false, secondary: portaitSettings[8] }
     ];
+    
+    $scope.selectHero = function (hero) {
+        (hero.class != $scope.selectedHero) ? $scope.selectedHero = hero.class : null;
+    }
+    
+    $scope.updateHero = function (secondary, index) {
+        console.log($scope.app.settings);
+        $scope.app.settings.secondaryPortrait[index] = secondary;
+        console.log(secondary, index);
+    }
 }])
 .controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
     function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
@@ -4981,15 +5000,31 @@ angular.module('app.controllers', ['ngCookies'])
         }, true);
         
         // current mulligan
-        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
+        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
         
         $scope.setMulligan = function (mulligan) {
+            console.log(mulligan);
             $scope.currentMulligan = mulligan;
         };
         
         $scope.isMulliganSet = function (mulligan) {
+            console.log(mulligan);
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
+        
+        //match-ups
+        var defaultMatchUp = {
+            deckName: '',
+            klass: '',
+            match: 0
+        };
+        
+        $scope.matches = [];
+        $scope.newMatch = function (klass) {
+            var m = angular.copy(defaultMatchUp);
+            m.klass = klass;
+            $scope.matches.push(m);
+        }
         
         // premium
         $scope.premiumTypes = [
@@ -5005,6 +5040,16 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
+        
+        $scope.getMulliganCards = function (coin) {
+            if (!$scope.currentMulligan) { return false; }
+            var m = $scope.currentMulligan;
+            return (coin) ? m.withCoin.cards : m.withoutCoin.cards;
+        };
+        
+        $scope.cardLeft = function ($index, coin) {
+            return (80 / ($scope.getMulliganCards(coin).length)) * $index;
+        };
         
         // featured
         $scope.featuredTypes = [

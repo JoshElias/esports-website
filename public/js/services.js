@@ -1495,6 +1495,7 @@ angular.module('app.services', [])
                     dust: card.dust,
                     photos: {
                         small: card.photos.small,
+                        medium: card.photos.medium,
                         large: card.photos.large
                     },
                     legendary: isLegendary,
