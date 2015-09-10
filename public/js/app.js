@@ -417,8 +417,11 @@ var app = angular.module('app', [
                         controller: 'DeckBuilderCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
-                                var playerClass = $stateParams.playerClass;
-                                return DeckBuilder.loadCards(playerClass);
+                                var playerClass = $stateParams.playerClass,
+                                    page = 1,
+                                    perpage = 15,
+                                    search = "";
+                                return DeckBuilder.loadCards(page, perpage, search, playerClass);
                             }]
                         }
                     }
@@ -685,7 +688,7 @@ var app = angular.module('app', [
                         controller: 'HOTSTalentCalculatorCtrl',
                         resolve: {
                             dataHeroesList: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroesList();2
+                                return HeroService.getHeroesList();
                             }]
                         }
                     }

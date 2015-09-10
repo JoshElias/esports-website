@@ -1222,15 +1222,49 @@ module.exports = {
     deckBuilder: function (Schemas, Util) {
         return function (req, res, next) {
             var playerClass = Util.ucfirst(req.body.playerClass),
+                page = req.body.page || 1,
+                perpage = req.body.perpage || 15,
+                classTotal = undefined,
+                neutralTotal = undefined,
+                search = req.body.search || "",
+                where = {},
                 cards = {};
             
-            // make sure it is a proper class
-            if (['mage', 'shaman', 'warrior', 'rogue', 'paladin', 'priest', 'warlock', 'hunter', 'druid'].indexOf(req.body.playerClass) === -1) {
-                return res.json({ success: false });
+//            // make sure it is a proper class
+//            if (['mage', 'shaman', 'warrior', 'rogue', 'paladin', 'priest', 'warlock', 'hunter', 'druid'].indexOf(req.body.playerClass) === -1) {
+//                return res.json({ success: false });
+//            }
+            
+            if (search) {
+                where.$or = [];
+                where.$or.push({ name: new RegExp(search, "i") });
+                where.$or.push({ expansion: new RegExp(search, "i") });
+            }
+            
+            function getNeutralTotal (callback) {
+                Schemas.Card.count({ playerClass: 'Neutral' })
+                .where({ deckable: true, active: true })
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    neutralTotal = count;
+                    return callback();
+                });
+            }
+            
+            function getClassTotal (callback) {
+                Schemas.Card.count({ playerClass: playerClass })
+                .where({ deckable: true, active: true })
+                .where(where)
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    classTotal = count;
+                    return callback();
+                });
             }
             
             function getClass(callback) {
-                Schemas.Card.find({ playerClass: playerClass }).where({ deckable: true, active: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                Schemas.Card.find({ playerClass: playerClass }).skip((perpage * page) - perpage).limit(perpage).where({ deckable: true, active: true }).where(where).sort({ cost: 1, name: 1 }).exec(function (err, results) {
                     if (err || !results) { console.log(err || 'No cards for class'); }
                     cards.class = results;
                     callback();
@@ -1238,7 +1272,7 @@ module.exports = {
             }
         
             function getNeutral(callback) {
-                Schemas.Card.find({ playerClass: 'Neutral' }).where({ deckable: true, active: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                Schemas.Card.find({ playerClass: 'Neutral' }).skip((perpage * page) - perpage).limit(perpage).where({ deckable: true, active: true }).where(where).sort({ cost: 1, name: 1 }).exec(function (err, results) {
                     if (err || !results) { console.log(err || 'No cards for neutral'); }
                     cards.neutral = results;
                     callback();
@@ -1247,10 +1281,16 @@ module.exports = {
     
             getClass(function (){
                 getNeutral(function () {
-                    return res.json({
-                        success: true,
-                        className: playerClass,
-                        cards: cards
+                    getNeutralTotal(function () {
+                        getClassTotal(function () {
+                            return res.json({
+                                success: true,
+                                className: playerClass,
+                                cards: cards,
+                                neutralTotal: neutralTotal,
+                                classTotal: classTotal
+                            }); 
+                        });
                     });
                 });
             });
