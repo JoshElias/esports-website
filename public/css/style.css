@@ -1328,7 +1328,7 @@ label p {
     background-color: #CB882D;
     opacity: .85;
 }
-.voted-poll-item-img-wrapper span { width:138px; position:absolute; background-color:#2568AF; background: rgba(37,104,175,.85); bottom: 0px; }
+.voted-poll-item-img-wrapper span { width:138px; position:absolute; background-color:#2568AF; background: rgba(37,104,175,.85); bottom: 0px; left: 0px; }
 .voted-poll-item-img-wrapper img { height: 100%; width: 100%; float:left; }
 .voted-poll-item-img-wrapper h4 { color: #FFF; font-family: 'Open Sans Regular'; color: rgba(255,255,255,.80); text-align: center; margin:auto; font-size:14px;     
     -webkit-text-shadow: 2px 2px 1px rgba(0,0,0,0.7);
@@ -2607,9 +2607,9 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     opacity: .4;
 }
 .db-class .select-hero-btn { width: 100%; height: 100%; background: none; border: none; outline: none; }
-.db-class .switch-hero-btn { width: 100%; position: absolute; bottom: -26px; left: 0; background: #163142; outline: none; border:none; color: white; height: 26px; font-size: 10px; font-weight: bold; letter-spacing:1px; }
-.db-class .switch-hero-btn[disabled] { opacity: .5 }
-.db-class .switch-hero-btn.active { background:#2766AD; }
+.db-class .switch-hero-btn { width: 100%; position: absolute; bottom: -26px; left: 0; background: #163142; outline: none; border:1px solid rgba(255,255,255,.4); color: white; height: 26px; font-size: 10px; font-weight: bold; letter-spacing:1px; }
+.db-class .switch-hero-btn[disabled] { opacity: .5; border: 1px solid rgba(255,255,255,.5) }
+.db-class .switch-hero-btn.active { background:#2766AD; border: rgba(255,255,255,.4) 1px solid; }
 .db-class a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; }
 
 .db-class-mage,
@@ -2724,7 +2724,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 .db-mulligans .class button { width: 100%; height: 100%; outline: none; border: none; background: none; }
 .db-mulligans .class.active { outline: 1px solid rgba(255,255,255,1); }
-.db-mulligans .class span { position: absolute; width: 100%; bottom: 0; text-align: center; font-size: 16px; font-weight: bold; color: white; }
+.db-mulligans .class span { position: absolute; width: 100%; bottom: 0; left: 0; text-align: center; font-size: 16px; font-weight: bold; color: white; }
 .db-mulligans .class-select { width: 100%; }
 
 .db-mulligans .class-mage { background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; background-size: 195%; }
@@ -2848,8 +2848,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 /* end glows */
 
 .db-builder { position: relative; margin: 20px 0; }
-.db-right { float: right; width: 300px; }
-.db-left { margin-right: 381px; overflow: hidden; }
 
 .db-section { outline: 1px solid rgba(255,255,255,.3); outline-offset: 0px; background: rgba(0,0,0,.3); }
 .db-section-title { padding: 0 20px; min-height: 60px; line-height: 60px; border-bottom: 1px solid #000; background: rgba(0,0,0,.3); }
@@ -2916,7 +2914,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .db-descriptions label { margin: 0; font-weight: normal; }
 
-.db-search,
+
 .db-mechanics,
 .db-mana { float: left; margin-right: 10px; line-height: 30px; margin-top: 15px; margin-bottom: 15px; }
 
@@ -2936,11 +2934,10 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-arrow-right { right: -15px; }
 .db-arrow i { font-size: 31px; }
 
-.db-cards-view-wrapper { position: relative; height: 590px; overflow-y: scroll; }
+.db-cards-view-wrapper { position: relative; height: auto; width:90%; margin: auto; }
 .db-cards-view {  }
 
-.db-card { float: left; position: relative; }
-.db-card,
+.db-card { float: left; position: relative; width:20%; display: block; height: 221px; }
 .db-card a,
 .db-card a img { display: block; width: 160px; height: 221px; }
 
@@ -2948,35 +2945,71 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .db-cards-no-match { color: #2766ad; font-size: 40px; text-align: center; width: 100%; height: 590px; line-height: 590px; }
 
-/* deck builder - mana curve */
-.db-mana-curve { margin: 0 auto; width: 300px; background: rgba(0,0,0,.3); border: 1px solid #000; }
+.db-search { width: 300px; margin: 0px auto 10px auto; position: relative; }
+.db-search input { width: 300px; }
+.db-search .search-charm { background: #2268AD; position: absolute; top: 0; right: 0; height: 100%; width: 30px; text-align: center; line-height: 2; color: white; border-radius: 0px 2px 2px 0px; }
 
-.db-mana-curve-title { padding: 0 20px; height: 60px; line-height: 60px; font-size: 20px; color: #FFF; font-family: 'Open Sans Bold'; background: rgba(0,0,0,.3); }
+/* deck builder - mana curve */
+.db-mana-curve { margin: 0 auto 20px auto; width: 300px; background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.2); }
+
+.db-mana-curve-title { padding: 0 20px; height: 60px; line-height: 60px; font-size: 20px; color: #FFF; font-family: 'Open Sans Bold'; background: #2268AD; }
 .db-mana-curve-title a { color: #FFF !important; text-decoration: none; }
 .db-mana-curve-content { border-top: 1px solid #000; }
 
-.db-mana-curve ul { display: block; width: 280px; padding: 0; margin: 9px; }
-.db-mana-curve ul li { float: left; list-style: none; width: 35px; }
+.db-mana-curve ul { display: block; width: 280px; padding: 0; margin: 9px 25px; }
+.db-mana-curve ul li { float: left; list-style: none; width: 30px; }
 
 .db-mana-curve .db-mana-curve-amt { width: 35px; text-align: center; font-family: hs; font-size: 14px; color: #FFF; font-weight: bold; line-height: 20px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; margin-bottom: 5px; }
 
-.db-mana-curve .db-mana-curve-bar { position: relative; width: 15px; margin: 0 10px; height: 100px; background: url('../img/black-60.png'); border: 1px solid #000; border-radius: 4px; -webkit-box-shadow: inset 3px 3px 5px 0px rgba(0,0,0,0.75); -moz-box-shadow: inset 3px 3px 5px 0px rgba(0,0,0,0.75); box-shadow: inset 3px 3px 5px 0px rgba(0,0,0,0.75); background: rgba(255,255,255,.15); }
-.db-mana-curve .db-mana-curve-bar span { position: absolute; left: 0px; right: 0px; bottom: 0px; height: 0px; border-radius: 4px; -webkit-transition: height .25s; transition: height .25s; 
-    -moz-box-shadow:    inset 0 0 10px rgba(0,0,0,.5);
-   -webkit-box-shadow: inset 0 0 10px rgba(0,0,0,.5);
-   box-shadow:         inset 0 0 10px rgba(0,0,0,.5);
-background: #ffaf4b; /* Old browsers */
-background: -moz-linear-gradient(top,  #01a4df 0%, #2767ae 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#01a4df), color-stop(100%,#2767ae)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #01a4df 0%,#2767ae 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  #01a4df 0%,#2767ae 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  #01a4df 0%,#2767ae 100%); /* IE10+ */
-background: linear-gradient(to bottom,  #01a4df 0%,#2767ae 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', endColorstr='#2767ae',GradientType=0 ); /* IE6-9 */
+.db-mana-curve .db-mana-curve-bar { position: relative; width: 15px; margin: 0 10px; height: 100px; background: url('../img/black-60.png'); border: 1px solid #000; background: rgba(255,255,255,.15); }
+.db-mana-curve .db-mana-curve-bar span { position: absolute; left: 0px; right: 0px; bottom: 0px; height: 0px; -webkit-transition: height .25s; transition: height .25s; 
+    background: #2268AD; /* Old browsers */
 }
 
 .db-mana-curve .db-mana-curve-num { position: relative; width: 35px; height: 20px; margin: 5px 0 0 0; line-height: 20px; text-align: center; font-family: hs; font-size: 14px; color: #FFF; font-weight: bold; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; }
 .db-mana-curve .db-mana-curve-num span { position: absolute; top: 1px; right: 3px; font-size: 10px; }
+
+/* deck builder- name */
+.db-builder .deck-info { width:300px; height: 260px; margin: auto; border: 1px solid rgba(255,255,255,.2); }
+.db-builder .deck-title {
+    font-family: 'Open Sans Bold';
+    color: white;
+    padding: 0 20px;
+    font-size: 20px;
+    line-height: 60px;
+    height: 60px;
+    width: 100%;
+    background: #2268AD;
+}
+.db-builder .deck-description {
+    display:block;
+    height: 200px;
+    width: 100%;
+}
+.db-builder .deck-description textarea {
+    height: 100%;
+    width: 100%;
+    resize: none;
+    background: rgba(0,0,0,.4);
+    outline: none;
+    border: none;
+    color: white;
+    padding: 10px;
+}
+
+.db-builder .deck-list {
+    width: 300px;
+    height: auto;
+}
+
+.db-builder .deck-list .mana-cost { background: #2766AD; height: 28px; width: 28px; float: left; text-align: center; text-indent: 0px; color: white; }
+.db-builder .deck-list .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-bottom: 1px; cursor: pointer; cursor: hand; }
+.db-builder .deck-list .list-card .legendary { margin-right: 8px; }
+/*
+.db-builder .deck-list .list-card { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
+.db-builder .deck-list .list-card { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
+*/
+.db-builder .deck-list .list-card:hover { background: rgba(255,255,255,.2); }
 
 /* deck builder - deck */
 .db-deck { margin: 20px auto; width: 300px; }
@@ -3071,12 +3104,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 
 /* deck builder - against */
 
-.db-against .match { border: none; }
-.db-against .match-add-wrapper { border: 1px dashed white; }
-.db-against .match-add-wrapper button { background: none; outline: none; border: none; }
+.db-against .match { border: none; background: rgba(255,255,255,.1); margin-bottom: 2px; }
+.db-against a { margin-top:5px; }
+.db-against .match-add-wrapper { border: 1px dashed white; padding:10px; text-align: center; }
+.db-against button { background: none; outline: none; border: none; }
 .db-against .match-add-wrapper button img { transition: 1s; }
 .db-against .match-add-wrapper button img:hover { opacity: .75; }
-.db-against .deck-name { outline: none; border: none; margin: 18px; background: none; color: white; }
+.db-against .deck-name { outline: none; border: none; margin: 25px 0px 0px 25px; background: none; color: white; }
 .db-against input[type=range] { 
     -webkit-appearance: none;
     width: 90%;
@@ -3084,7 +3118,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
     height: 7px;
     border: none;
     background-color: rgba(255,255,255,.2);
+    margin-top: 30px;
 }
+.db-against .match-number {
+    color: white;
+    font-weight: bold;
+    line-height: 5;
+}
+.db-against .close-wrapper { text-align: center; line-height: 5; }
+.db-against .close-button i { color: rgba(255,255,255,.4); font-size: 24px; }
+.db-against .close-button:hover i { color: red }
 
 
 
@@ -3627,17 +3670,18 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 }
 .teams .member .outline {
     transition: .10s;
+    -moz-transition: .10s;
     outline: 1px solid rgba(255,255,255,.2);
     outline-offset: -2px;
     height: 100%;
     border: 1px solid rgba(0,0,0,1);
     background-color: rgba(29,29,29,.7);
 }
-.teams .member .outline:hover {
+.teams .member:hover .outline {
     border: 1px solid #2766ad;
     background-color: #2766ad;
 }
-.teams .member .outline:hover p {
+.teams .member:hover .outline p {
     color: white;
 }
 .teams .member .outline h1 {

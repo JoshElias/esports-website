@@ -47,22 +47,20 @@
         </ul>
     </div>
 </div>
-<div class="container">
+<div class="container-fluid-max" ng-hide="step !== 1">
     <form class="form-horizontal" name="dbForm" novalidate>
-    <div class="db-builder clearfix">
+    <div class="db-builder row clearfix">
         <!-- db-right -->
-<!--
-        <div class="db-right">
-            <div class="db-mana-curve clearfix">
+        <div class="col-md-push-9 col-md-3">
+            <div class="db-search">
+                <input type="text" name="search" class="input-sm input-dark" placeholder="Search..." ng-keyup="search()" ng-model="filters.search">
+                <div class="search-charm"><i class="fa fa-search"></i></div>
+            </div>
+            <div class="db-mana-curve m-b-md">
                 <div class="db-mana-curve-title">
-                    <a href="#" ng-click="showCurve = !showCurve">
-                        <div class="pull-right">
-                            <i class="fa" ng-class="{ 'fa-angle-down': !showCurve, 'fa-angle-up': showCurve }"></i>
-                        </div>
-                        MANA CURVE
-                    </a>
+                    MANA CURVE
                 </div>
-                <div class="db-mana-curve-content clearfix" ng-show="showCurve">
+                <div class="db-mana-curve-content clearfix" >
                     <ul class="clearfix">
                         <li>
                             <div class="db-mana-curve-amt">{{deck.manaCount(0)}}</div>
@@ -107,53 +105,48 @@
                     </ul>
                 </div>
             </div>
-            <div class="db-deck">
-                <div class="db-deck-header db-deck-{{className.toLowerCase()}}">
-                    <div class="db-arena has-hover" ng-click="deck.arena = !deck.arena">
-                        <span ng-show="!deck.arena">Constructed</span>
-                        <span ng-show="deck.arena">Arena</span>
-                    </div>
-                    <div class="db-deck-count">{{deck.getSize()}} / 30</div>
+            
+            <div class="deck-info">
+                <div class="deck-title">
+                    FUCK SURFING
                 </div>
-                <div class="db-deck-cards">
-                    <div class="db-deck-card" ng-class="{multi:card.qty > 1 || card.legendary}" ng-click="deck.removeCard(card)" ng-right-click="deck.removeCard(card)" ng-repeat="card in deck.cards" data-tooltip-img="{{app.cdn}}cards/{{card.photos.large}}" data-tooltip-pos="left" hs-card>
-                        <div class="db-deck-card-mana">{{card.cost}}</div>
-                        <div class="db-deck-card-qty" ng-show="card.qty > 1">{{card.qty}}</div>
-                        <div class="db-deck-card-legendary" ng-show="card.legendary"><i class="fa fa-star"></i></div>
-                        <div class="db-deck-card-photo"><img ng-src="{{app.cdn}}cards/{{card.photos.small}}" alt=""></div>
-                        <div class="db-deck-card-name">{{card.name}}</div>
-                    </div>
-                    <div class="db-deck-footer db-deck-{{className.toLowerCase()}}">
-                        <div class="db-deck-footer-wrapper">
-                            <div class="db-deck-dust">{{deck.getDust()}}</div>
-                            <div class="dust-bottle-sm"></div>
-                        </div>
+                <div class="deck-description">
+                    <textarea placeholder="Put stuff here" resize="none"></textarea>
+                </div>
+                
+                <div class="deck-list">
+                    <div class="list-card" ng-repeat="card in deck.cards track by $index" ng-click="deck.removeCardFromDeck(card)">
+                        <div class="mana-cost">{{card.cost}}</div>
+                        {{card.name}}
+                        <div ng-if="card.qty == 2" class="pull-right m-r-sm">2</div>
+                        <div ng-if="card.legendary" class="legendary pull-right"><i class="fa fa-star"></i></div>
                     </div>
                 </div>
+                
             </div>
+            
+            
+            
         </div>
--->
         <!-- / db-right -->
         
-        <div class="db-left">
-            <div class="db-section" ng-hide="step !== 1">
+
+            <div class="col-md-pull-3 col-md-9" ng-hide="step !== 1">
                 <div class="db-section-title clearfix">
                     <h1 class="pull-left">CARD PICKER</h1>
+                    <div ng-show="isClassCards()" pagination="classPagination"></div>
+                    <div ng-show="!isClassCards()" pagination="neutralPagination"></div>
                     <div class="pull-left">
                         <ul class="db-filter-classes clearfix">
-                            <li ng-class="{active: cards.current === cards.class}"><a href="#" class="active {{className.toLowerCase()}}" ng-click="cards.current = cards.class; pagination.setPage(1)" ng-tooltip title="{{className}}">{{className}}</a></li>
-                            <li ng-class="{active: cards.current === cards.neutral}"><a href="#" class="active neutral" ng-click="cards.current = cards.neutral; pagination.setPage(1)" ng-tooltip title="Neutral">Neutral</a></li>
+                            <li ng-class="{active: isClassCards()}"><a href="#" class="active {{className.toLowerCase()}}" ng-click="setClassCards(true); cards.current = cards.class" ng-tooltip title="{{className}}">{{className}}</a></li>
+                            <li ng-class="{active: !isClassCards()}"><a href="#" class="active neutral" ng-click="setClassCards(false); cards.current = cards.neutral" ng-tooltip title="Neutral">Neutral</a></li>
                         </ul>
                     </div>
                     <div class="db-filters pull-right clearfix">
-                        <div class="db-search">
-                            <input type="text" name="search" class="input-sm input-dark" placeholder="Search..." ng-model="filters.search">
-                        </div>
                         <div class="db-mechanics">
                             <div class="dropdown">
                                 <button class="btn db-mechanics-btn input-dark" type="button" data-toggle="dropdown">
                                     <span>Mechanics ({{filters.mechanics.length}})</span>
-                                    <b class="caret"></b>
                                 </button>
                                 <ul class="list-group dropdown-menu dropdown-dark">
                                     <li class="list-group-item" ng-class="{active: inMechanics(mechanic)}" ng-repeat="mechanic in mechanics">
@@ -163,11 +156,15 @@
                             </div>
                         </div>
                         <div class="db-mana">
+<!--
                             <div class="dropdown">
                                 <button class="btn db-mana-btn input-dark" type="button" data-toggle="dropdown">
                                     <span>Mana Cost: {{getManaCost()}}</span>
                                     <b class="caret"></b>
                                 </button>
+                              
+                                
+
                                 <ul class="list-group dropdown-menu dropdown-dark">
                                     <li class="list-group-item" ng-class="{active: filters.mana === 'all'}">
                                         <a href="#" ng-click="filters.mana = 'all'; pagination.setPage(1)">All</a>
@@ -197,7 +194,8 @@
                                         <a href="#" ng-click="filters.mana = '7+'; pagination.setPage(1)">7+</a>
                                     </li>
                                 </ul>
-                            </div>
+-->
+<!--                            </div>-->
                         </div>
                     </div><!-- / db-filters -->
                 </div>
@@ -208,9 +206,9 @@
                     <!-- cards -->
                     <div class="db-cards-view-wrapper clearfix">
                         <div class="db-cards-view clearfix">
-                            <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in filtered = ( cards.current | filter: filters.search | filter: filters.byMechanics() | filter: filters.byMana())">
+                            <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in filtered = ( cards.current | filter: filters.byMechanics() | filter: filters.byMana())">
                                 <a href="#" data-tooltip-img="{{app.cdn}}cards/{{card.photos.large}}" ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
-                                    <img ng-src="{{app.cdn}}cards/{{card.photos.medium}}" alt="{{card.name}}">
+                                    <img ng-src="https://s3-us-west-2.amazonaws.com/cdn.tempostorm.com/cards/{{card.photos.medium}}" alt="{{card.name}}">
                                 </a>
                             </div>
                             <div class="db-cards-no-match" ng-show="!filtered.length">No Matches Found</div>
@@ -218,10 +216,15 @@
                     </div>
                 </div><!-- / db-cards -->
             </div>
-            </div><!-- / step 1 -->
-            <!-- step 2 -->
+            </div>
+    </form>
+</div>
+    <!-- / step 1 -->
+    <!-- step 2 -->
+<div class="container">
+    <form class="form-horizontal" name="dbForm" novalidate>
+        <div class="db-builder clearfix">
             <div class="db-section db-mulligans" ng-hide="step !== 2">
-
                 <div class="class-select clearfix">
                     <div ng-class="{'secondary': app.settings.secondaryPortrait[0], 'active':currentMulligan.klass == 'Mage' }" class="class class-mage">
                         <button ng-click="setMulligan(deck.getMulligan('Mage'))"></button>
@@ -273,13 +276,6 @@
                 <div class="db-mulligan-content row m-r-none m-l-none" ng-repeat="mulligan in deck.mulligans" ng-show="currentMulligan == mulligan">
                     <div class="col-xs-8 left clearfix">
                         <textarea class="db-mulligan-instructions" placeholder="Type your mulligan instructions here" resize="none" ng-model="mulligan.withCoin.instructions"></textarea>
-                        
-<!--
-                        <div class="list-card" ng-repeat="card in mulligan.withCoin.cards">
-                            <div class="mana-cost">{{card.cost}}</div>
-                            {{card.name}}
-                        </div>
--->
                         <div class="mulliganCardWrapper">
                             <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};" ng-repeat="card in mulligan.withCoin.cards track by $index" class="mulliganCards">
                                 <img ng-src="https://s3-us-west-2.amazonaws.com/cdn.tempostorm.com/cards/{{card.photos.large}}" />
@@ -297,7 +293,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="description-header">
                     <div class="big-coin">
                         <img src="../../img/bigcoin.png" />
@@ -311,13 +306,6 @@
                 <div class="db-mulligan-content row m-r-none m-l-none" ng-repeat="mulligan in deck.mulligans" ng-show="currentMulligan == mulligan">
                     <div class="col-xs-8 left clearfix">
                         <textarea class="db-mulligan-instructions" placeholder="Type your mulligan instructions here" resize="none" ng-model="mulligan.withoutCoin.instructions"></textarea>
-                        
-<!--
-                        <div class="list-card" ng-repeat="card in mulligan.withCoin.cards">
-                            <div class="mana-cost">{{card.cost}}</div>
-                            {{card.name}}
-                        </div>
--->
                         <div class="mulliganCardWrapper">
                             <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};" ng-repeat="card in mulligan.withoutCoin.cards track by $index" class="mulliganCards">
                                 <img ng-src="https://s3-us-west-2.amazonaws.com/cdn.tempostorm.com/cards/{{card.photos.large}}" />
@@ -335,53 +323,6 @@
                         </div>
                     </div>
                 </div>
-                
-                
-                
-<!--
-                <div class="db-section-title clearfix">
-                    <h1 class="pull-left">MULLIGANS</h1>
-                    <ul class="db-filter-classes pull-right">
-                        <li ng-class="{ active: currentMulligan.klass === class }" ng-repeat="class in classes">
-                            <a href="#" class="{{class.toLowerCase()}}" ng-class="{ active: isMulliganSet(deck.getMulligan(class)) }" ng-click="setMulligan(deck.getMulligan(class))" ng-tooltip title="{{class}}">{{class}}</a>
-                        </li>
-                    </ul>
-                </div>
--->
-                
-<!--
-                <div class="db-mulligan-content row" ng-repeat="mulligan in deck.mulligans" ng-show="currentMulligan == mulligan">
-                    <div class="col-xs-6">
-                        <h3>Keep against {{mulligan.klass}} (with coin):</h3>
-                        <div class="mulligan-cards" ng-show="deck.cards.length">
-                            <div class="db-mulligan-card" ng-class="{active:deck.inMulligan(mulligan, true, card)}" ng-repeat="card in deck.cards" ng-click="deck.toggleMulligan(mulligan, true, card)" data-tooltip-img="{{app.cdn}}cards/{{card.photos.large}}" data-tooltip-pos="right" hs-card>
-                                <div class="db-mulligan-card-photo"><img ng-src="{{app.cdn}}cards/{{card.photos.small}}" alt=""></div>
-                                <div class="db-mulligan-card-name">{{card.name}}</div>
-                            </div>
-                        </div>
-                        <p ng-show="!deck.cards.length">You must have cards in your deck to select mulligans.</p>
-                    </div>
-                    <div class="col-xs-6">
-                        <h3>Instructions:</h3>
-                        <textarea class="form-control input-dark db-mulligan-instructions" ng-model="mulligan.withCoin.instructions"></textarea>
-                    </div>
-                    <div class="col-xs-6">
-                        <h3>Keep against {{mulligan.klass}} (without coin):</h3>
-                        <div class="mulligan-cards" ng-show="deck.cards.length">
-                            <div class="db-mulligan-card" ng-class="{active:deck.inMulligan(mulligan, false, card)}" ng-repeat="card in deck.cards" ng-click="deck.toggleMulligan(mulligan, false, card)" data-tooltip-img="{{app.cdn}}cards/{{card.photos.large}}" data-tooltip-pos="right" hs-card>
-                                <div class="db-mulligan-card-photo"><img ng-src="{{app.cdn}}cards/{{card.photos.small}}" alt=""></div>
-                                <div class="db-mulligan-card-name">{{card.name}}</div>
-                            </div>
-                        </div>
-                        <p ng-show="!deck.cards.length">You must have cards in your deck to select mulligans.</p>
-                    </div>
-                    <div class="col-xs-6">
-                        <h3>Instructions:</h3>
-                        <textarea class="form-control input-dark db-mulligan-instructions" ng-model="mulligan.withoutCoin.instructions"></textarea>
-                    </div>
-                </div>
--->
-
             </div>
             <!-- / step 2 -->
             <!-- step 3 -->
@@ -408,63 +349,31 @@
             <!-- / step 3 -->
             <!-- step 4 -->
             <div class="db-against row" ng-hide="step !== 4">
-                
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="match col-md-12" ng-repeat="match in matches">
-                                <div class="row">
-                                    <div class="col-md-1">
-                                        <a class="db-sw-class-icon class-icon large {{match.klass.toLowerCase()}}"></a>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input class="deck-name" placeholder="Deck Name..." ng-model="match.deckName">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <input class="deck-chance" type="range" min="0" value="50" max="100" step="1">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="match-add-wrapper">
-                        <button ng-repeat="class in classes" ng-click="newMatch(class.toLowerCase())">
-                            <img class="db-sw-class-icon class-icon large {{class.toLowerCase()}}" />
-                        </button>
-                    </div>
-                
-<!--
-                <div class="wrapper-md">
+                <div class="col-md-12">
                     <div class="row">
-                        <div class="col-xs-6">
-                            <div class="db-sw-title">
-                                <div class="db-sw-title-vs">VS</div>
-                                <div class="db-sw-title-strong">STRONG</div>
-                                <div class="db-sw-title-weak">WEAK</div>
-                            </div>
-                            <div class="db-sw-classes">
-                                <div class="db-sw-class" ng-repeat="class in classes">
-                                    <div class="db-sw-circle-strong" ng-class="{ 'active': deck.isStrong(deck.getStrong(class)) }"><a href="#" class="small active {{class.toLowerCase()}}" ng-click="deck.toggleStrong(deck.getStrong(class))" ng-class="{ 'class-icon': deck.isStrong(deck.getStrong(class)) }"></a></div>
-                                    <div class="db-sw-circle-class clearfix">
-                                        <a href="#" class="db-sw-arrow" ng-click="deck.toggleStrong(deck.getStrong(class))"><i class="fa fa-angle-left"></i></a>
-                                        <a href="#" class="db-sw-class-icon class-icon small active {{class.toLowerCase()}}" ng-tooltip title="{{class}}"></a>
-                                        <a href="#" class="db-sw-arrow" ng-click="deck.toggleWeak(deck.getWeak(class))"><i class="fa fa-angle-right"></i></a>
-                                    </div>
-                                    <div class="db-sw-circle-weak" ng-class="{ 'active': deck.isWeak(deck.getWeak(class)) }"><a href="#" class="small active {{class.toLowerCase()}}" ng-click="deck.toggleWeak(deck.getWeak(class))" ng-class="{ 'class-icon': deck.isWeak(deck.getWeak(class)) }"></a></div>
+                        <div class="match col-md-12" ng-repeat="match in matches track by $index">
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <a class="db-sw-class-icon class-icon large {{match.klass.toLowerCase()}}"></a>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-6">
-                            <div class="db-section m-t-lg">
-                                <div class="db-section-title">
-                                    <h1>DESCRIPTION</h1>
+                                <div class="col-md-4">
+                                    <input class="deck-name" placeholder="Deck Name..." ng-model="match.deckName">
                                 </div>
-                                <textarea class="form-control input-dark" ng-model="deck.against.instructions"></textarea>
+                                <div class="col-md-6">
+                                    <input class="pull-left match-slider" type="range" ng-model="match.match" min="0" value="50" max="100" step="5"><span class="pull-right match-number" ng-bind="match.match"></span>
+                                </div>
+                                <div class="col-md-1 close-wrapper">
+                                    <button class="close-button" ng-click="removeMatch($index)"><i class="fa fa-close"></i></button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
--->
+                <div class="match-add-wrapper m-t-lg col-md-12">
+                    <button ng-repeat="class in classes" ng-click="newMatch(class.toLowerCase())">
+                        <img class="db-sw-class-icon class-icon large {{class.toLowerCase()}}" />
+                    </button>
+                </div>
             </div>
             <!-- / step 4 -->
             <!-- step 5 -->
@@ -585,7 +494,6 @@
                 </div>
             </div>
             <!-- / step 5 -->
-        
-    </div>
+        </div>
     </form>
 </div>

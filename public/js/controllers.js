@@ -21,7 +21,7 @@ angular.module('app.controllers', ['ngCookies'])
                 article: null,
                 decks: null
             },
-            secondaryPortrait: [false,false,false,false,false,false,false,false,false]
+            secondaryPortrait: []
         },
         user: {
             getUserEmail: function () {
@@ -4826,20 +4826,23 @@ angular.module('app.controllers', ['ngCookies'])
     }
 ])
 .controller('DeckBuilderClassCtrl', ['$scope', function ($scope) {
-    var portaitSettings = $scope.app.settings.secondaryPortrait;
+    var portraitSettings = ($scope.app.settings.secondaryPortrait) ? $scope.app.settings.secondaryPortrait : function() { 
+        $scope.app.settings.secondaryPortrait = [false,false,false,false,false,false,false,false,false];
+        return $scope.app.settings.secondaryPortrait;
+    };
     
     $scope.selectedHero = "";
     $scope.klass = false;
     $scope.heroes = [
-        { class: 'mage', hasSecondary: true, secondary: portaitSettings[0] },
-        { class: 'shaman', hasSecondary: false, secondary: portaitSettings[1] },
-        { class: 'warrior', hasSecondary: true, secondary: portaitSettings[2] },
-        { class: 'rogue', hasSecondary: false, secondary: portaitSettings[3] },
-        { class: 'paladin', hasSecondary: false, secondary: portaitSettings[4] },
-        { class: 'priest', hasSecondary: false, secondary: portaitSettings[5] },
-        { class: 'warlock', hasSecondary: false, secondary: portaitSettings[6] },
-        { class: 'hunter', hasSecondary: true, secondary: portaitSettings[7] },
-        { class: 'druid', hasSecondary: false, secondary: portaitSettings[8] }
+        { class: 'mage', hasSecondary: true, secondary: portraitSettings[0] },
+        { class: 'shaman', hasSecondary: false, secondary: portraitSettings[1] },
+        { class: 'warrior', hasSecondary: true, secondary: portraitSettings[2] },
+        { class: 'rogue', hasSecondary: false, secondary: portraitSettings[3] },
+        { class: 'paladin', hasSecondary: false, secondary: portraitSettings[4] },
+        { class: 'priest', hasSecondary: false, secondary: portraitSettings[5] },
+        { class: 'warlock', hasSecondary: false, secondary: portraitSettings[6] },
+        { class: 'hunter', hasSecondary: true, secondary: portraitSettings[7] },
+        { class: 'druid', hasSecondary: false, secondary: portraitSettings[8] }
     ];
     
     $scope.selectHero = function (hero) {
@@ -4847,13 +4850,13 @@ angular.module('app.controllers', ['ngCookies'])
     }
     
     $scope.updateHero = function (secondary, index) {
-        console.log($scope.app.settings);
+        portraitSettings[index] = secondary;
         $scope.app.settings.secondaryPortrait[index] = secondary;
         console.log(secondary, index);
     }
 }])
-.controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
-    function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
+.controller('DeckBuilderCtrl', ['$q', '$state', '$scope', '$timeout', '$compile', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
+    function ($q, $state, $scope, $timeout, $compile, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
         // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
         
@@ -4898,16 +4901,66 @@ angular.module('app.controllers', ['ngCookies'])
         };
 
         // load cards
+        var classCards = true;
+        
+        $scope.isClassCards = function () {
+            return classCards;
+        }
+        
+        $scope.setClassCards = function (b) {
+            classCards = b;
+            updateCards(1, 15);
+        }
+        
         $scope.className = data.className;
         $scope.cards = data.cards;
         $scope.cards.current = $scope.cards.class;
+        
+        $scope.search = function() {
+            updateCards(1, 15, $scope.filters.search);
+        }
+        
+        function updateCards (page, perpage, search, callback) {
+            DeckBuilder.loadCards(page, perpage, search, $scope.className).then(function (data) {
+                console.log(data);
+                $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+                $scope.classPagination.page = page;
+                $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+                $scope.neutralPagination.page = page;
+                $timeout(function () {
+                    $scope.cards.current = ($scope.isClassCards()) ? data.cards.class : data.cards.neutral;
 
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
         // page flipping
-        $scope.pagination = Pagination.new(6);
-        $scope.pagination.perpage = 10;
-        $scope.pagination.results = function () {
-            return ($scope.filtered) ? $scope.filtered.length : $scope.cards.current.length;
-        };
+        $scope.classPagination = AjaxPagination.new(15, data.classTotal,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateCards(page, perpage, $scope.filters.search, function (data) {
+                    d.resolve(data.classTotal);
+                });
+
+                return d.promise;
+            }
+        );
+        
+        $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateCards(page, perpage, $scope.filters.search, function (data) {
+                    d.resolve(data.neutralTotal);
+                });
+
+                return d.promise;
+            }
+        );
         
         // filters
         $scope.filters = {
@@ -5025,6 +5078,10 @@ angular.module('app.controllers', ['ngCookies'])
             var m = angular.copy(defaultMatchUp);
             m.klass = klass;
             $scope.matches.push(m);
+        }
+        
+        $scope.removeMatch = function (index) {
+            $scope.matches.splice(index,1);
         }
         
         // premium
