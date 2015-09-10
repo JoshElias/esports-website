@@ -2352,26 +2352,26 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .page-flipper.page-flipper-top { margin-bottom: 20px; }
 .page-flipper.page-flipper-bottom { margin-top: 20px; margin-bottom: 20px; }
 
-.hots .page-flipper .btn { position: relative; min-width: 30px; height: 30px; line-height: 28px; font-family: 'Open Sans Bold'; color: #DDD; background: rgba(19,18,19,.7); border-radius: 0px; border: 1px solid #000; outline: none; }
+.default .page-flipper .btn { position: relative; min-width: 30px; height: 30px; line-height: 28px; font-family: 'Open Sans Bold'; color: #DDD; background: rgba(19,18,19,.7); border-radius: 0px; border: 1px solid #000; outline: none; }
 
-.hots .page-flipper .btn .inner { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; border: 1px solid rgba(255,255,255,.2); }
+.default .page-flipper .btn .inner { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; border: 1px solid rgba(255,255,255,.2); }
 
-.hots .page-flipper .btn-pagination-nav,
-.hots .page-flipper .btn-group { box-shadow: 2px 2px 3px rgba(0,0,0,.75); }
+.default .page-flipper .btn-pagination-nav,
+.default .page-flipper .btn-group { box-shadow: 2px 2px 3px rgba(0,0,0,.75); }
 
-.hots .page-flipper .btn-group .btn { border-left: none; border-right: none; }
-.hots .page-flipper .btn-group .btn:first-child { border-left: 1px solid #000; }
-.hots .page-flipper .btn-group .btn:last-child { border-right: 1px solid #000; }
+.default .page-flipper .btn-group .btn { border-left: none; border-right: none; }
+.default .page-flipper .btn-group .btn:first-child { border-left: 1px solid #000; }
+.default .page-flipper .btn-group .btn:last-child { border-right: 1px solid #000; }
 
-.hots .page-flipper .btn-group .btn .inner { border-left: none; border-right: none; }
-.hots .page-flipper .btn-group .btn:first-child .inner { border-left: 1px solid rgba(255,255,255,.2); }
-.hots .page-flipper .btn-group .btn:last-child .inner { border-right: 1px solid rgba(255,255,255,.2); }
+.default .page-flipper .btn-group .btn .inner { border-left: none; border-right: none; }
+.default .page-flipper .btn-group .btn:first-child .inner { border-left: 1px solid rgba(255,255,255,.2); }
+.default .page-flipper .btn-group .btn:last-child .inner { border-right: 1px solid rgba(255,255,255,.2); }
 
-.hots .page-flipper .btn:hover { background: rgba(255,255,255,.2); }
-.hots .page-flipper .btn:hover .inner { border: 1px solid rgba(255,255,255,.2) !important; }
+.default .page-flipper .btn:hover { background: rgba(255,255,255,.2); }
+.default .page-flipper .btn:hover .inner { border: 1px solid rgba(255,255,255,.2) !important; }
 
-.hots .page-flipper .btn.active { background: #2766ad; }
-.hots .page-flipper .btn.active .inner { border: 1px solid rgba(255,255,255,.2) !important; }
+.default .page-flipper .btn.active { background: #2766ad; }
+.default .page-flipper .btn.active .inner { border: 1px solid rgba(255,255,255,.2) !important; }
 
 /* row flex */
 .row-flex, .row-flex > div[class*='col-'] {  

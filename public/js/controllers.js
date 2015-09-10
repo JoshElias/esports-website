@@ -6088,6 +6088,32 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
+        
+        function updateCommunityDecks (page, perpage, callback) {
+            DeckService.getDecksCommunity($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
+                $scope.communityPagination.total = data.total;
+                $scope.communityPagination.page = page;
+                $timeout(function () {
+                    $scope.communityDecks = data.decks;
+
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
+        $scope.communityPagination = AjaxPagination.new(12, dataDecksCommunity.total,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateCommunityDecks(page, perpage, function (data) {
+                    d.resolve(data.total);
+                });
+
+                return d.promise;
+            }
+        );
     }
 ])
 .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'DeckService', 'VoteService', 'data', 'MetaService', 'LoginModalService',
