@@ -6040,6 +6040,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
         
         // decks
+        $scope.deckSearch = '';
         $scope.tempostormDecks = dataDecksTempostorm.decks;
         $scope.communityDecks = dataDecksCommunity.decks;
         
@@ -6061,6 +6062,10 @@ angular.module('app.controllers', ['ngCookies'])
                 updateCommunityDecks(1, 12);
             }
         }, true);
+        
+        $scope.newSearch = function () {
+            $scope.filters.search = $scope.deckSearch;
+        }
         
         // pagination
         function updateTempostormDecks (page, perpage, callback) {
