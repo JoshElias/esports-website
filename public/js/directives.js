@@ -1156,7 +1156,9 @@ angular.module('app.directives', ['ui.load'])
         scope: {
             pagination: '='
         },
-        templateUrl: 'views/frontend/directives/pagination.html'
+        templateUrl: function (element, attrs) {
+            return 'views/frontend/directives/pagination/' + attrs.theme + '.html';
+        }
     };
 }])
 .directive('noAnimate', ['$animate', function ($animate) {

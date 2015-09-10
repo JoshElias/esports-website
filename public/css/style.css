@@ -2926,6 +2926,20 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .db-cards { position: relative; padding: 30px; }
 
+.db-builder .db-pagination { top: 45%; }
+.db-builder .db-pagination button { background: none; height: 50px; }
+.db-builder .db-pagination button:disabled { opacity: .2 }
+.db-builder .db-pagination i { font-size: 48px; color: rgba(255,255,255,1); }
+
+.db-builder .db-pagination-right,
+.db-builder .db-pagination-left { position: absolute; }
+
+.db-builder .db-pagination-right { right: 0; }
+.db-builder .db-pagination-left { left: 0; }
+
+.db-builder .db-pagination-right .left { visibility: hidden; display: none; }
+.db-builder .db-pagination-left .right { visibility: hidden; display: none; }
+
 .db-arrow { position: absolute; top: 50%; margin-top: -15px; width: 30px; height: 30px; text-align: center; background: #FFF; border-radius: 15px; padding: 0; color: #66ccff; }
 .db-arrow:hover,
 .db-arrow:active,
@@ -2945,12 +2959,12 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .db-cards-no-match { color: #2766ad; font-size: 40px; text-align: center; width: 100%; height: 590px; line-height: 590px; }
 
-.db-search { width: 300px; margin: 0px auto 10px auto; position: relative; }
+.db-search { margin: 0px auto 10px auto; position: relative; }
 .db-search input { width: 300px; }
 .db-search .search-charm { background: #2268AD; position: absolute; top: 0; right: 0; height: 100%; width: 30px; text-align: center; line-height: 2; color: white; border-radius: 0px 2px 2px 0px; }
 
 /* deck builder - mana curve */
-.db-mana-curve { margin: 0 auto 20px auto; width: 300px; background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.2); }
+.db-mana-curve { margin: 0 auto 20px auto; background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.2); }
 
 .db-mana-curve-title { padding: 0 20px; height: 60px; line-height: 60px; font-size: 20px; color: #FFF; font-family: 'Open Sans Bold'; background: #2268AD; }
 .db-mana-curve-title a { color: #FFF !important; text-decoration: none; }
@@ -2970,7 +2984,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-mana-curve .db-mana-curve-num span { position: absolute; top: 1px; right: 3px; font-size: 10px; }
 
 /* deck builder- name */
-.db-builder .deck-info { width:300px; height: 260px; margin: auto; border: 1px solid rgba(255,255,255,.2); }
+.db-builder .deck-info { margin: auto; border: 1px solid rgba(255,255,255,.2); }
 .db-builder .deck-title {
     font-family: 'Open Sans Bold';
     color: white;
@@ -2998,12 +3012,11 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 .db-builder .deck-list {
-    width: 300px;
     height: auto;
 }
 
 .db-builder .deck-list .mana-cost { background: #2766AD; height: 28px; width: 28px; float: left; text-align: center; text-indent: 0px; color: white; }
-.db-builder .deck-list .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-bottom: 1px; cursor: pointer; cursor: hand; }
+.db-builder .deck-list .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-top: 1px; cursor: pointer; cursor: hand; }
 .db-builder .deck-list .list-card .legendary { margin-right: 8px; }
 /*
 .db-builder .deck-list .list-card { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
@@ -3103,8 +3116,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-cards-view { -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
 
 /* deck builder - against */
-
-.db-against .match { border: none; background: rgba(255,255,255,.1); margin-bottom: 2px; }
+.db-against .match-header { background: #2766ad; padding: 25px 0px; color: white; font-family: 'Open Sans Bold'; text-align: center; }
+.db-against .match { border: 1px solid rgba(255,255,255,.2); background: rgba(0,0,0,.4); margin-bottom: 2px; padding: 10px; }
 .db-against a { margin-top:5px; }
 .db-against .match-add-wrapper { border: 1px dashed white; padding:10px; text-align: center; }
 .db-against button { background: none; outline: none; border: none; }

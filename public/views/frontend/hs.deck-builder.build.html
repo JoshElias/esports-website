@@ -134,8 +134,6 @@
             <div class="col-md-pull-3 col-md-9" ng-hide="step !== 1">
                 <div class="db-section-title clearfix">
                     <h1 class="pull-left">CARD PICKER</h1>
-                    <div ng-show="isClassCards()" pagination="classPagination"></div>
-                    <div ng-show="!isClassCards()" pagination="neutralPagination"></div>
                     <div class="pull-left">
                         <ul class="db-filter-classes clearfix">
                             <li ng-class="{active: isClassCards()}"><a href="#" class="active {{className.toLowerCase()}}" ng-click="setClassCards(true); cards.current = cards.class" ng-tooltip title="{{className}}">{{className}}</a></li>
@@ -200,6 +198,13 @@
                     </div><!-- / db-filters -->
                 </div>
                 <div class="db-cards">
+                    
+                    <div ng-show="isClassCards()" pagination="classPagination" theme="deckbuilder" class="db-pagination db-pagination-left"></div>
+                    <div ng-show="isClassCards()" pagination="classPagination" theme="deckbuilder" class="db-pagination db-pagination-right"></div>
+
+                    <div ng-show="!isClassCards()" pagination="neutralPagination" theme="deckbuilder" class="db-pagination db-pagination-left"></div>
+                    <div ng-show="!isClassCards()" pagination="neutralPagination" theme="deckbuilder" class="db-pagination db-pagination-right"></div>
+                    
                     <!-- arrows --><!--
                     <button class="btn db-arrow db-arrow-left" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
                     <button class="btn db-arrow db-arrow-right" ng-disabled="pagination.page == pagination.pages()" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>-->
@@ -351,6 +356,19 @@
             <div class="db-against row" ng-hide="step !== 4">
                 <div class="col-md-12">
                     <div class="row">
+                        <div class="match-header col-md-12">
+                            <div class="row">
+                                <div class="col-md-1 match-title">
+                                    CLASS
+                                </div>
+                                <div class="col-md-4 match-title">
+                                    DECK NAME
+                                </div>
+                                <div class="col-md-6 match-title">
+                                    CHANCE TO WIN
+                                </div>
+                            </div>
+                        </div>
                         <div class="match col-md-12" ng-repeat="match in matches track by $index">
                             <div class="row">
                                 <div class="col-md-1">
