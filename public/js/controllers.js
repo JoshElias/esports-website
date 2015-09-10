@@ -8574,6 +8574,15 @@ angular.module('app.controllers', ['ngCookies'])
         function getFilters () {
             var filters = [];
             
+            // check for no filters
+            if (!$scope.filters.roles.length && 
+                !$scope.filters.universes.length && 
+                !$scope.filters.heroes.length && 
+                !$scope.filters.map) {
+                return false;
+            }
+
+            // heroes
             if ($scope.filters.heroes.length) {
                 for (var i = 0; i < $scope.filters.heroes.length; i++) {
                     filters.push($scope.filters.heroes[i]._id);
@@ -8584,9 +8593,13 @@ angular.module('app.controllers', ['ngCookies'])
                         filters.push($scope.heroes[i]._id);
                     }
                 }
-            } else {
-                return false;
             }
+            
+            // maps
+            if ($scope.filters.map) {
+                filters.push($scope.filters.map._id);
+            }
+            
             return filters;
         }
         
