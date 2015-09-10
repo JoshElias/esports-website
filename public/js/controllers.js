@@ -329,12 +329,13 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HearthstoneHomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataDecks', 'dataDecksFeatured', 'ArticleService', 'DeckService', 
-    function ($scope, dataBanners, dataArticles, dataDecks, dataDecksFeatured, ArticleService, DeckService) {
+.controller('HearthstoneHomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataDecks', 'dataDecksFeatured', 'ArticleService', 'DeckService', 'Hearthstone',
+    function ($scope, dataBanners, dataArticles, dataDecks, dataDecksFeatured, ArticleService, DeckService, Hearthstone) {
         // data
         $scope.articles = dataArticles.articles;
         $scope.decks = dataDecks.decks;
         $scope.decksFeatured = dataDecksFeatured.decks;
+        $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
         $scope.loading = {
             articles: false,
             community: false,
@@ -5977,163 +5978,20 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('DecksCtrl', ['$scope', '$state', 'Hearthstone', 'DeckService', 'data', 
-    function ($scope, $state, Hearthstone, DeckService, data) {
-        if (!data.success) { return $state.transitionTo('app.hs.decks.list'); }
+.controller('DecksCtrl', ['$scope', '$state', 'Hearthstone', 'DeckService', 'dataDecksTempostorm', 'dataDecksCommunity', 
+    function ($scope, $state, Hearthstone, DeckService, dataDecksTempostorm, dataDecksCommunity) {
+        $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
         
         // decks
-        $scope.decks = data.decks;
-        $scope.total = data.total;
-        $scope.klass = data.klass;
-        $scope.page = parseInt(data.page);
-        $scope.perpage = data.perpage;
-        $scope.search = data.search;
-        $scope.age = data.age;
-        $scope.order = data.order;
-
-        $scope.hasSearch = function () {
-            return (data.search) ? data.search.length : false;
-        }
-        
-        
-        $scope.metaservice.setOg('https://tempostorm.com/decks');
-        
-        
-        // advanced filters
-        if (!$scope.app.settings.show.decks) {
-            $scope.app.settings.show.decks = {
-                advanced: false
-            };
-        }
-
-        $scope.toggleAdvanced = function () {
-            $scope.app.settings.show.decks.advanced = !$scope.app.settings.show.decks.advanced;
-        }
-        
-        $scope.showAdvanced = function () {
-            return $scope.app.settings.show.decks.advanced;
-        }
-        
-        $scope.loading = false;
-
-        $scope.setKlass = function (klass) {
-            $scope.klass = klass;
-            $scope.page = 1;
-            $scope.getDecks();
-        };
+        $scope.tempostormDecks = dataDecksTempostorm.decks;
+        $scope.communityDecks = dataDecksCommunity.decks;
         
         // filters
-        $scope.getFilter = function (name, value) {
-            var filter = $scope.filters.all[name];
-            for (var i = 0; i < filter.length; i++) {
-                if (filter[i].value == value) {
-                    return filter[i];
-                }
-            }
-            return filter[0];
-        }
-
         $scope.filters = {
-            all: {
-                age: [
-                    { name: 'All Decks', value: 'all' },
-                    { name: '7 Days', value: '7' },
-                    { name: '15 Days', value: '15' },
-                    { name: '30 Days', value: '30' },
-                    { name: '60 Days', value: '60' },
-                    { name: '90 Days', value: '90' }
-                ],
-                order: [
-                    { name: 'Highest Ranked', value: 'high' },
-                    { name: 'Lowest Ranked', value: 'low' },
-                    { name: 'Newest Decks', value: 'new' },
-                    { name: 'Oldest Decks', value: 'old' }
-                ]
-            }
+            classes: [],
+            search: ''
         };
-        $scope.filters.age = $scope.getFilter('age', $scope.age);
-        $scope.filters.order = $scope.getFilter('order', $scope.order);
-        
-        $scope.getDecks = function () {
-            var params = {};
-            
-            if ($scope.search) {
-                params.s = $scope.search;
-            }
-            
-            if ($scope.page !== 1) {
-                params.p = $scope.page;
-            }
-            
-            if ($scope.klass != 'all') {
-                params.k = $scope.klass;
-            }
-            
-            if ($scope.filters.age.value !== 'all') {
-                params.a = $scope.filters.age.value;
-            }
-            
-            if ($scope.filters.order.value !== 'high') {
-                params.o = $scope.filters.order.value;
-            }
-            
-            $scope.loading = true;
-            $state.transitionTo('app.hs.decks.list', params);
-        }
-        
-        // pagination
-        $scope.pagination = {
-            page: function () {
-                return $scope.page;
-            },
-            perpage: function () {
-                return $scope.perpage;
-            },
-            results: function () {
-                return $scope.total;
-            },
-            setPage: function (page) {
-                $scope.page = page;
-                $scope.getDecks();
-            },
-            pagesArray: function () {
-                var pages = [],
-                    start = 1,
-                    end = this.totalPages();
-                
-                if (this.totalPages() > 5) {
-                    if (this.page() < 3) {
-                        start = 1;
-                        end = start + 4;
-                    } else if (this.page() > this.totalPages() - 2) {
-                        end = this.totalPages();
-                        start = end - 4;
-                    } else {
-                        start = this.page() - 2;
-                        end = this.page() + 2;
-                    }
-                    
-                }
-                
-                for (var i = start; i <= end; i++) {
-                    pages.push(i);
-                }
-                
-                return pages;
-            },
-            isPage: function (page) {
-                return (page === this.page());
-            },
-            totalPages: function (page) {
-                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 1;
-            },
-            
-        };
-
-        // verify valid page
-        if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
-            $scope.pagination.setPage(1);
-        }   
+        $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
     }
 ])
 .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'DeckService', 'VoteService', 'data', 'MetaService', 'LoginModalService',
@@ -8242,6 +8100,51 @@ angular.module('app.controllers', ['ngCookies'])
             map: false
         };
         
+        function getFilters () {
+            var filters = [];
+            
+            // check for no filters
+            if (!$scope.filters.roles.length && 
+                !$scope.filters.universes.length && 
+                !$scope.filters.heroes.length && 
+                !$scope.filters.map) {
+                return false;
+            }
+
+            // heroes
+            if ($scope.filters.heroes.length) {
+                for (var i = 0; i < $scope.filters.heroes.length; i++) {
+                    filters.push($scope.filters.heroes[i]._id);
+                }
+            } else if ($scope.filters.roles.length || $scope.filters.universes.length) {
+                for (var i = 0; i < $scope.heroes.length; i++) {
+                    if (!isFiltered($scope.heroes[i])) {
+                        filters.push($scope.heroes[i]._id);
+                    }
+                }
+            }
+            
+            // maps
+            if ($scope.filters.map) {
+                filters.push($scope.filters.map._id);
+            }
+            
+            return filters;
+        }
+        
+        function isFiltered (hero) {
+            if ($scope.filters.roles.length && !hasFilterRole(hero.role)) {
+                return true;
+            }
+            if ($scope.filters.universes.length && !hasFilterUniverse(hero.universe)) {
+                return true;
+            }
+            if ($scope.filters.search.length && hasFilterSearch(hero)) {
+                return true;
+            }
+            return false;
+        };
+        
         var initializing = true;
         $scope.$watch(function(){ return $scope.filters; }, function (value) {
             if (initializing) {
@@ -8249,18 +8152,10 @@ angular.module('app.controllers', ['ngCookies'])
                     initializing = false;
                 });
             } else {
-                // generate filters
+                // article filters
                 var articleFilters = [];
-                var guideFilters = [];
                 for (var i = 0; i < $scope.filters.heroes.length; i++) {
                     articleFilters.push($scope.filters.heroes[i].name);
-                }
-                
-                for (var i = 0; i < $scope.filters.heroes.length; i++) {
-                    guideFilters.push($scope.filters.heroes[i]._id);
-                }
-                if ($scope.filters.map) {
-                    guideFilters.push($scope.filters.map._id);
                 }
                 
                 // load articles
@@ -8270,15 +8165,17 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 });
                 
+                console.log(getFilters());
+                
                 // load tempostorm guides
-                HOTSGuideService.getGuidesFeatured(guideFilters, 0, 10).then(function (data) {
+                HOTSGuideService.getGuidesFeatured(getFilters(), 1, 10, $scope.filters.search).then(function (data) {
                     $timeout(function () {
                         $scope.guidesFeatured = data.guides;
                     });
                 });
                 
                 // load community guides
-                HOTSGuideService.getGuidesCommunity(guideFilters, 0, 10).then(function (data) {
+                HOTSGuideService.getGuidesCommunity(getFilters(), 1, 10, $scope.filters.search, 90).then(function (data) {
                     $timeout(function () {
                         $scope.guidesCommunity = data.guides;
                     });

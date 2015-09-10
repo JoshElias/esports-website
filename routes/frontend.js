@@ -1918,16 +1918,19 @@ module.exports = {
             var klass = req.body.klass || 'all',
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
+                daysLimit = (!req.body.daysLimit) ? false : parseInt(req.body.daysLimit) || 14,
                 where = {},
                 decks, total,
                 now = new Date().getTime(),
-                weekAgo = new Date(now - (60*60*24*7*1000));
+                ago = new Date(now - (60*60*24*daysLimit*1000));
             
             if (klass !== 'all') {
                 where.playerClass = klass;
             }
             
-            where.createdDate = { $gte: weekAgo };
+            if (daysLimit) {
+                where.createdDate = { $gte: ago };
+            }
             
             // get total decks
             function getTotal (callback) {

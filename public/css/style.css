@@ -539,7 +539,6 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 
 .home-content .btn-hots { width: 100% !important; }
 .home-content .btn-hots .inner { width: 100% !important; }
-
 /* content end */
 
 /* deck builder link */
@@ -557,41 +556,61 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .deck-builder-link-inner a:hover { background-position: center -196px; }
 
 /* start decks */
-.home-decks { margin-bottom: 20px; }
-.home-decks h1.decks-title { margin: 0; padding: 20px 0px 10px 0px; font-family: 'Open Sans Bold'; font-size: 30px; background: #2766ad; color: #FFF; text-indent: 10px; }
-.home-decks h1.decks-title-small { padding: 10px; font-size: 20px; line-height: 20px; }
-.home-no-decks { padding: 10px; background: rgba(0,0,0,.6); color: #FFF; }
+.hs-decks { margin: 0; padding: 0; }
+.hs-decks li { list-style: none; margin-bottom: 10px; }
+.hs-deck { position: relative; top: 0px; left: 0px; display: block; height: 99px; padding: 10px 15px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }
+.hs-deck.small:hover,
+.hs-deck.large:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
+.hs-deck.large { height: 220px; }
 
-.home-decks .deck-wrapper { position: relative; width: 100%; height: 90px; }
-.home-decks .deck { position: absolute; top: 0px; left: 0px; width: inherit; height: 90px; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; z-index: 10; }
+.hs-deck .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 4; }
+.hs-deck .bt-shadow { position: absolute; right: 0px; bottom: 0px; left: 0px; height: 60px; background: url('../img/hs/bt-shadow.png') repeat-x; z-index: 2; }
+.hs-deck.large .hs-deck-details { position: absolute; bottom: 0px; left: 0px; padding: 0 20px 0; max-width: 100%; z-index: 3; }
+.hs-deck h1 { padding-right: 30px; font-family: 'Open Sans Bold'; font-size: 10px; color: #f7ef22; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
+.hs-deck h3 { padding-right: 30px; font-size: 12px; color: #ccc; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
 
-.home-decks .deck.druid { background: url('../img/decks/druid.png') center center no-repeat; background-size: cover; }
-.home-decks .deck.hunter { background: url('../img/decks/hunter.png') center center no-repeat; background-size: cover; }
-.home-decks .deck.mage { background: url('../img/decks/mage.png') center center no-repeat; background-size: cover; }
-.home-decks .deck.paladin { background: url('../img/decks/paladin.png') center center no-repeat; background-size: cover; }
-.home-decks .deck.priest { background: url('../img/decks/priest.png') center center no-repeat; background-size: cover; }
-.home-decks .deck.rogue { background: url('../img/decks/rogue.png') center center no-repeat; background-size: cover; }
-.home-decks .deck.shaman { background: url('../img/decks/shaman.png') center center no-repeat; background-size: cover; }
-.home-decks .deck.warlock { background: url('../img/decks/warlock.png') center center no-repeat; background-size: cover; }
-.home-decks .deck.warrior { background: url('../img/decks/warrior.png') center center no-repeat; background-size: cover; }
+.hs-deck .hs-deck-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
+.hs-deck.small .hs-deck-votes,
+.hs-deck.large .hs-deck-votes { position: absolute; bottom: 15px; right: 20px; width: 30px; height: 30px; line-height: 26px; border-radius: 50%; border: 2px solid #FFF; background: rgba(0,0,0,.7); color: #FFF; font-size: 12px; text-align: center; opacity: .7; z-index: 3; }
 
-.home-decks .deck > a { position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; z-index: 14; }
-.home-decks .deck-overlay { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: #000; opacity: .8; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
-.home-decks .deck-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 13; }
-.home-decks .deck-title { position: absolute; top: 34px; left: 30px; color: #FFF; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 250px; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
-.home-decks .deck-score { position: absolute; top: 25px; right: 30px; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #FFF; color: #FFF; text-align: center; line-height: 36px; font-family: 'Open Sans Bold'; font-size: 11px; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; z-index: 14; }
-.home-decks .deck-score em { font-style: normal; }
-.home-decks .deck-score span { margin-left: -5px; }
-.home-decks .deck-info { position: absolute; left: 0px; right: 0px; bottom: 0px; padding: 10px; background: url('../img/black-60.png'); border-top: 1px solid #000; opacity: 0; transition: all 0.3s ease-in-out; color: #FFF; font-size: 11px; }
-.home-decks .deck-info a { color: #FFF !important; }
+.hs-list-ts-decks .hs-decks li .hs-deck { margin-right: 20px; }
+.hs-list-ts-decks .hs-decks li:last-child .hs-deck { margin-right: 0px; }
 
-.home-decks .deck:hover { top: -5%; left: -5%; width: 110%; height: 110%; z-index: 12; border: 1px solid #000; -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
-.home-decks .deck.premium:hover { border: 1px solid #f0c55c; -webkit-animation-name: glow-premium; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow-premium; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
-.home-decks .deck:hover .deck-overlay { opacity: .4; }
-.home-decks .deck:hover .deck-title { top: 10px; left: 10px; text-shadow: 0px 0px 5px rgba(0,0,0,.6); width: initial; margin-right: 120px; overflow: auto; white-space: normal; text-overflow: inherit; }
-.home-decks .deck:hover .deck-score { top: 10px; right: 10px; background: rgba(0,0,0,.6); }
-.home-decks .deck.premium:hover .deck-score { right: 60px; }
-.home-decks .deck:hover .deck-info { opacity: 1; }
+.hs-deck.long h1 { margin: 12px 0 18px 0; font-size: 14px; }
+.hs-deck.long .hs-deck-votes,
+.hs-deck.long .hs-deck-hero-name { margin-bottom: 0; font-family: 'Open Sans Bold'; font-size: 14px; color: #FFF; line-height: 79px; }
+.hs-deck.long .hs-deck-hero-name { text-shadow: 0px 0px 10px rgba(255,255,255,.6); }
+.hs-deck.long:hover { background-color: rgba(255,255,255,.2); }
+
+.hs-deck.small.druid { background: url('../img/decks/druid.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.hunter { background: url('../img/decks/hunter.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.mage { background: url('../img/decks/mage.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.paladin { background: url('../img/decks/paladin.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.priest { background: url('../img/decks/priest.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.rogue { background: url('../img/decks/rogue.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.shaman { background: url('../img/decks/shaman.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.warlock { background: url('../img/decks/warlock.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.warrior { background: url('../img/decks/warrior.png') center center no-repeat; background-size: cover; }
+
+.hs-deck.large.druid { background: url('../img/decks/druid-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.hunter { background: url('../img/decks/hunter-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.mage { background: url('../img/decks/mage-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.paladin { background: url('../img/decks/paladin-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.priest { background: url('../img/decks/priest-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.rogue { background: url('../img/decks/rogue-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.shaman { background: url('../img/decks/shaman-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.warlock { background: url('../img/decks/warlock-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.warrior { background: url('../img/decks/warrior-large.png') center center no-repeat; background-size: cover; }
+
+.hs-deck.long.druid { background-image: url('../img/decks/druid.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.hunter { background-image: url('../img/decks/hunter.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.mage { background-image: url('../img/decks/mage.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.paladin { background-image: url('../img/decks/paladin.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.priest { background-image: url('../img/decks/priest.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.rogue { background-image: url('../img/decks/rogue.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.shaman { background-image: url('../img/decks/shaman.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.warlock { background-image: url('../img/decks/warlock.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.warrior { background-image: url('../img/decks/warrior.png'); background-position: right center; background-repeat: no-repeat; }
 /* end decks */
 
 /* sections */
@@ -3166,53 +3185,35 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01a4df', end
 /* end class icons */
 
 /* start decks list */
+.hs-bg { background: url('../img/hs/tgtbg.jpg') top center no-repeat; }
+.hs-list-ts-decks { margin-top: 50px; margin-bottom: 50px; }
+
+.hs-list-decks-title { margin: 30px 0px; }
+.hs-list-decks-title h1 { float: left; font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
+.hs-list-decks-title .hs-mini-filters { float: right; }
+.hs-list-decks-title .hs-mini-filters .filter-classes,
+.hs-list-decks-title .hs-mini-filters .filter-classes li,
+.hs-list-decks-title .hs-mini-filters .hs-filters-search { float: left; }
+.hs-list-decks-title .hs-mini-filters .hs-filters-search .input-group-btn { width: auto; }
+
+.hs-list-decks-title .hs-mini-filters .filter-classes { margin-right: 10px; }
+.hs-list-decks-title .hs-mini-filters .filter-classes li { list-style: none; margin-right: 5px; }
+.hs-list-decks-title .hs-mini-filters .filter-classes li a.not-selected { opacity: .3; }
+.hs-list-decks-title .hs-mini-filters .filter-classes li a.not-selected:hover { opacity: .6; }
+
+.hs-list-ts-decks .hs-list-ts-decks-title .hots-search { max-width: 200px; }
+
+.hs-list-ts-decks .hs-decks li .hs-deck { margin-right: 20px; }
+.hs-list-ts-decks .hs-decks li:last-child .hs-deck { margin-right: 0px; }
+
+.hs-deck-list { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center top; }
+.hs-deck-list-inner { padding: 30px 0; }
+
+.hs-decks-long-title h1 { font-family: 'Open Sans Bold'; font-size: 14px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
+
 .decks-list { padding: 20px 0 0 0; }
 .decks-list .deck-wrapper { margin: 0 0 20px 0; position: relative; width: 100%; height: 200px; }
 .decks-list .deck { position: absolute; top: 0px; left: 0px; width: inherit; height: inherit; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; z-index: 10; }
-
-.decks-list .deck.druid { background: url('../img/decks/druid.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.hunter { background: url('../img/decks/hunter.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.mage { background: url('../img/decks/mage.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.paladin { background: url('../img/decks/paladin.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.priest { background: url('../img/decks/priest.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.rogue { background: url('../img/decks/rogue.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.shaman { background: url('../img/decks/shaman.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.warlock { background: url('../img/decks/warlock.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.warrior { background: url('../img/decks/warrior.png') center center no-repeat; background-size: cover; }
-
-.decks-list .deck.large.druid { background: url('../img/decks/druid-large.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.large.hunter { background: url('../img/decks/hunter-large.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.large.mage { background: url('../img/decks/mage-large.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.large.paladin { background: url('../img/decks/paladin-large.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.large.priest { background: url('../img/decks/priest-large.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.large.rogue { background: url('../img/decks/rogue-large.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.large.shaman { background: url('../img/decks/shaman-large.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.large.warlock { background: url('../img/decks/warlock-large.png') center center no-repeat; background-size: cover; }
-.decks-list .deck.large.warrior { background: url('../img/decks/warrior-large.png') center center no-repeat; background-size: cover; }
-
-.decks-list .deck > a { position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; z-index: 14; }
-.decks-list .deck-overlay { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: #000; opacity: .8; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
-.decks-list .deck-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 13; }
-.decks-list .deck-title { position: absolute; top: 34px; left: 30px; margin: 0 110px 0 0; color: #FFF; /*font-family: 'Open Sans Bold';*/ font-weight: bold; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
-.decks-list .deck-score { position: absolute; top: 25px; right: 30px; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #FFF; color: #FFF; text-align: center; line-height: 36px; font-family: 'Open Sans Bold'; font-size: 11px; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; z-index: 14; }
-.decks-list .deck-score em { font-style: normal; }
-.decks-list .deck-score span { margin-left: -5px; }
-.decks-list .deck-description { position: absolute; top: 50px; left: 0px; max-height: 150px; overflow: hidden; color: #FFF; opacity: 0; -webkit-transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; }
-.decks-list .deck-description p { padding: 10px; }
-.decks-list .deck-info { position: absolute; left: 0px; right: 0px; bottom: 0px; padding: 10px; background: url('../img/black-60.png'); border-top: 1px solid #000; opacity: 1; transition: all 0.3s ease-in-out; color: #FFF; font-size: 11px; }
-.decks-list .deck-info a { color: #FFF !important; }
-.decks-list .deck-owner { position: absolute; bottom: 6px; right: 10px; z-index: 15; }
-
-.decks-list .deck:hover { top: -10%; left: -5%; width: 110%; height: 120%; z-index: 12; border: 1px solid #000; -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
-.decks-list .deck.premium:hover { border: 1px solid #f0c55c; -webkit-animation-name: glow-premium; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow-premium; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
-.decks-list .deck:hover .deck-overlay { opacity: .4; }
-.decks-list .deck:hover .deck-title { top: 10px; left: 10px; text-shadow: 0px 0px 5px rgba(0,0,0,.6); }
-.decks-list .deck:hover .deck-score { top: 10px; right: 10px; background: rgba(0,0,0,.6); }
-.decks-list .deck.premium:hover .deck-score { right: 60px; }
-.decks-list .deck:hover .deck-description { text-shadow: 0px 0px 5px rgba(0,0,0,.6); opacity: 1; }
-.decks-list .deck:hover .deck-info { opacity: 1; }
-
-.decks-list-no-content { padding: 20px; color: #FFF; background: rgba(0,0,0,.6); border: 1px solid #000; border-radius: 4px; }
 /* end decks list */
 
 /* deck */
@@ -7607,7 +7608,7 @@ p.white { color: #FFF; }
 .hots-guide.long .hots-guide-hero-name { text-shadow: 0px 0px 10px rgba(255,255,255,.6); }
 .hots-guide.long:hover { background-color: rgba(255,255,255,.2); }
 
-/* hots - tempostorm tv */
+/* tempostorm tv */
 .tempostorm-tv { margin: 0; padding: 0; }
 .tempostorm-tv li { margin: 0 0 10px 0; list-style: none; position: relative; }
 .tempostorm-tv .tempostorm-tv-stream { position: relative; top: 0px; left: 0px; display: block; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }

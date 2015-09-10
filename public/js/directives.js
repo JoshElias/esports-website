@@ -1104,21 +1104,59 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
+.directive('hsFilterClass', ['$filter', '$timeout', function ($filter, $timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            classes: '=',
+            filters: '='
+        },
+        templateUrl: 'views/frontend/directives/hs.filter.class.html',
+        replace: true,
+        link: function (scope, element, attrs) {
+            var initializing = true;
+            
+            scope.$watch(function(){ return scope.filters; }, function (value) {
+                if (initializing) {
+                    $timeout(function () {
+                        initializing = false;
+                    });
+                } else {
+                    scope.filters = value;
+                }
+            }, true);
+            
+            scope.toggleFilterClass = function (klass) {
+                var index = scope.filters.classes.indexOf(klass);
+                if (index === -1) {
+                    scope.filters.classes.push(klass);
+                } else {
+                    scope.filters.classes.splice(index, 1);
+                }
+            };
+
+            scope.hasFilterClass = function (klass) {
+                if (!klass) {
+                    return (scope.filters.classes.length > 0);
+                }
+                
+                for (var i = 0; i < scope.filters.classes.length; i++) {
+                    if (scope.filters.classes[i] == klass) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+        }
+    };
+}])
 .directive('pagination', ['$timeout', function ($timeout) {
     return {
         restrict: 'A',
         scope: {
             pagination: '='
         },
-        templateUrl: 'views/frontend/directives/pagination.html'/*,
-        link: function (scope, element, attrs) {
-            scope.$watch(function () { return scope.pagination; }, function (newValue) {
-                console.log(newValue);
-                $timeout(function () {
-                    scope.pagination = newValue;
-                });
-            }, true);
-        }*/
+        templateUrl: 'views/frontend/directives/pagination.html'
     };
 }])
 .directive('noAnimate', ['$animate', function ($animate) {

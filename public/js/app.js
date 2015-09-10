@@ -354,15 +354,25 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.decks.list.html',
                         controller: 'DecksCtrl',
                         resolve: {
-                            data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
+                            dataDecksTempostorm: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
                                 var klass = $stateParams.k || 'all',
                                     page = $stateParams.p || 1,
-                                    perpage = 24,
+                                    perpage = 4,
                                     search = $stateParams.s || '',
                                     age = $stateParams.a || '',
                                     order = $stateParams.o || '';
                                 
-                                return DeckService.getDecks(klass, page, perpage, search, age, order);
+                                return DeckService.getDecksFeatured(klass, page, perpage, search, age, order);
+                            }],
+                            dataDecksCommunity: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
+                                var klass = $stateParams.k || 'all',
+                                    page = $stateParams.p || 1,
+                                    perpage = 12,
+                                    search = $stateParams.s || '',
+                                    age = $stateParams.a || '',
+                                    order = $stateParams.o || '';
+                                
+                                return DeckService.getDecksCommunity(klass, page, perpage, search);
                             }]
                         }
                     }
