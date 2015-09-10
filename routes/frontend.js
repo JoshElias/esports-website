@@ -1909,11 +1909,22 @@ module.exports = {
     },
     decksFeatured: function (Schemas) {
         return function (req, res, next) {
-            var klass = req.body.klass || 'all',
+            var klass = req.body.klass || false,
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
-                where = (klass === 'all') ? {} : { 'playerClass': klass },
+                search = req.body.search || false,
+                where = {},
                 decks, total;
+            
+            console.log(req.body);
+            
+            if (klass && klass.length) {
+                where.playerClass = (klass instanceof Array) ? { $in: klass } : klass;
+            }
+            
+            if (search) {
+                // todo: add search
+            }
             
             // get total decks
             function getTotal (callback) {

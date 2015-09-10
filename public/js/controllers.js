@@ -6035,8 +6035,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('DecksCtrl', ['$scope', '$state', 'Hearthstone', 'DeckService', 'dataDecksTempostorm', 'dataDecksCommunity', 
-    function ($scope, $state, Hearthstone, DeckService, dataDecksTempostorm, dataDecksCommunity) {
+.controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'DeckService', 'dataDecksTempostorm', 'dataDecksCommunity', 
+    function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, DeckService, dataDecksTempostorm, dataDecksCommunity) {
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
         
         // decks
@@ -6049,6 +6049,45 @@ angular.module('app.controllers', ['ngCookies'])
             search: ''
         };
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
+        
+        var initializing = true;
+        $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            if (initializing) {
+                $timeout(function () {
+                    initializing = false;
+                });
+            } else {
+                updateTempostormDecks(1, 4);
+                updateCommunityDecks(1, 12);
+            }
+        }, true);
+        
+        // pagination
+        function updateTempostormDecks (page, perpage, callback) {
+            DeckService.getDecksFeatured($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
+                $scope.tempostormPagination.total = data.total;
+                $scope.tempostormPagination.page = page;
+                $timeout(function () {
+                    $scope.tempostormDecks = data.decks;
+
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
+        $scope.tempostormPagination = AjaxPagination.new(4, dataDecksTempostorm.total,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateTempostormDecks(page, perpage, function (data) {
+                    d.resolve(data.total);
+                });
+
+                return d.promise;
+            }
+        );
     }
 ])
 .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'DeckService', 'VoteService', 'data', 'MetaService', 'LoginModalService',
@@ -8432,6 +8471,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
+        
+        // filtering
         function hasFilterRole (role) {
             for (var i = 0; i < $scope.filters.roles.length; i++) {
                 if ($scope.filters.roles[i] == role) {
@@ -8500,6 +8541,7 @@ angular.module('app.controllers', ['ngCookies'])
             return filters;
         }
         
+        // pagination
         function updateTempostormGuides (page, perpage, callback) {
             var offset = ((page * perpage) - perpage);
             

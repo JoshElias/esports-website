@@ -1958,7 +1958,7 @@ angular.module('app.services', [])
 .factory('DeckService', ['$http', '$q', function ($http, $q) {
     return {
         getDecksCommunity: function (klass, page, perpage) {
-            klass = klass || 'all';
+            klass = klass || false;
             page = page || 1;
             perpage = perpage || 24;
             
@@ -1968,13 +1968,14 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
-        getDecksFeatured: function (klass, page, perpage) {
-            klass = klass || 'all';
+        getDecksFeatured: function (klass, page, perpage, search) {
+            klass = klass || false;
             page = page || 1;
             perpage = perpage || 24;
+            search = search || false;
             
             var d = $q.defer();
-            $http.post('/decks/featured', { klass: klass, page: page, perpage: perpage }).success(function (data) {
+            $http.post('/decks/featured', { klass: klass, page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
