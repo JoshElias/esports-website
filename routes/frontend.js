@@ -1227,6 +1227,10 @@ module.exports = {
                 classTotal = undefined,
                 neutralTotal = undefined,
                 search = req.body.search || "",
+                mechanics = req.body.mechanics || [],
+                mana = req.body.mana,
+                man = {},
+                mech = {},
                 where = {},
                 cards = {};
             
@@ -1235,6 +1239,19 @@ module.exports = {
 //                return res.json({ success: false });
 //            }
             
+            console.log(mana);
+            
+            if (mana == 'all') {
+                mana = -1;
+            }
+            
+            if (mechanics.length != 0) {
+                mech.$and = [];
+                for (var i = 0; i < mechanics.length; i++) {
+                    mech.$and.push({ mechanics: mechanics[i]});
+                }
+            }
+            
             if (search) {
                 where.$or = [];
                 where.$or.push({ name: new RegExp(search, "i") });
@@ -1242,41 +1259,113 @@ module.exports = {
             }
             
             function getNeutralTotal (callback) {
-                Schemas.Card.count({ playerClass: 'Neutral' })
-                .where({ deckable: true, active: true })
-                .where(where)
-                .exec(function (err, count) {
-                    if (err) { return res.json({ success: false }); }
-                    neutralTotal = count;
-                    return callback();
-                });
+                if (mana > -1) {
+                    Schemas.Card.count({ playerClass: 'Neutral' })
+                    .where({ deckable: true, active: true })
+                    .where(where)
+                    .where(mech)
+                    .where('cost').equals(mana)
+                    .exec(function (err, count) {
+                        if (err) { return res.json({ success: false }); }
+                        neutralTotal = count;
+                        return callback();
+                    });
+                } else {
+                    Schemas.Card.count({ playerClass: 'Neutral' })
+                    .where({ deckable: true, active: true })
+                    .where(where)
+                    .where(mech)
+                    .exec(function (err, count) {
+                        if (err) { return res.json({ success: false }); }
+                        neutralTotal = count;
+                        return callback();
+                    });
+                }
             }
             
             function getClassTotal (callback) {
-                Schemas.Card.count({ playerClass: playerClass })
-                .where({ deckable: true, active: true })
-                .where(where)
-                .exec(function (err, count) {
-                    if (err) { return res.json({ success: false }); }
-                    classTotal = count;
-                    return callback();
-                });
+                if (mana > -1) {
+                    Schemas.Card.count({ playerClass: playerClass })
+                    .where({ deckable: true, active: true })
+                    .where(where)
+                    .where(mech)
+                    .where('cost').equals(mana)
+                    .exec(function (err, count) {
+                        if (err) { return res.json({ success: false }); }
+                        classTotal = count;
+                        return callback();
+                    });
+                } else {
+                    Schemas.Card.count({ playerClass: playerClass })
+                    .where({ deckable: true, active: true })
+                    .where(where)
+                    .where(mech)
+                    .exec(function (err, count) {
+                        if (err) { return res.json({ success: false }); }
+                        classTotal = count;
+                        return callback();
+                    });
+                }
             }
             
             function getClass(callback) {
-                Schemas.Card.find({ playerClass: playerClass }).skip((perpage * page) - perpage).limit(perpage).where({ deckable: true, active: true }).where(where).sort({ cost: 1, name: 1 }).exec(function (err, results) {
-                    if (err || !results) { console.log(err || 'No cards for class'); }
-                    cards.class = results;
-                    callback();
-                });
+                if (mana > -1) {
+                    Schemas.Card.find({ playerClass: playerClass })
+                    .skip((perpage * page) - perpage)
+                    .limit(perpage)
+                    .where({ deckable: true, active: true })
+                    .where(where)
+                    .where(mech)
+                    .where('cost').equals(mana)
+                    .sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                        if (err || !results) { console.log(err || 'No cards for class'); }
+                        cards.class = results;
+                        callback();
+                    });
+                } else {
+                    Schemas.Card.find({ playerClass: playerClass })
+                    .skip((perpage * page) - perpage)
+                    .limit(perpage)
+                    .where({ deckable: true, active: true })
+                    .where(where)
+                    .where(mech)
+                    .sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                        if (err || !results) { console.log(err || 'No cards for class'); }
+                        cards.class = results;
+                        callback();
+                    });
+                }
             }
         
             function getNeutral(callback) {
-                Schemas.Card.find({ playerClass: 'Neutral' }).skip((perpage * page) - perpage).limit(perpage).where({ deckable: true, active: true }).where(where).sort({ cost: 1, name: 1 }).exec(function (err, results) {
-                    if (err || !results) { console.log(err || 'No cards for neutral'); }
-                    cards.neutral = results;
-                    callback();
-                });
+                if (mana > -1) {
+                    Schemas.Card.find({ playerClass: 'Neutral' })
+                    .skip((perpage * page) - perpage)
+                    .limit(perpage)
+                    .where({ deckable: true, active: true })
+                    .where(where)
+                    .where(mech)
+                    .where('cost').equals(mana)
+                    .sort({ cost: 1, name: 1 })
+                    .exec(function (err, results) {
+                        if (err || !results) { console.log(err || 'No cards for neutral'); }
+                        cards.neutral = results;
+                        callback();
+                    });
+                } else {
+                    Schemas.Card.find({ playerClass: 'Neutral' })
+                    .skip((perpage * page) - perpage)
+                    .limit(perpage)
+                    .where({ deckable: true, active: true })
+                    .where(where)
+                    .where(mech)
+                    .sort({ cost: 1, name: 1 })
+                    .exec(function (err, results) {
+                        if (err || !results) { console.log(err || 'No cards for neutral'); }
+                        cards.neutral = results;
+                        callback();
+                    });
+                }
             }
     
             getClass(function (){

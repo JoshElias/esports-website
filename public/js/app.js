@@ -430,8 +430,11 @@ var app = angular.module('app', [
                                 var playerClass = $stateParams.playerClass,
                                     page = 1,
                                     perpage = 15,
+                                    mechanics = [],
+                                    mana = 'all',
                                     search = "";
-                                return DeckBuilder.loadCards(page, perpage, search, playerClass);
+                                
+                                return DeckBuilder.loadCards(page, perpage, search, mechanics, mana, playerClass);
                             }]
                         }
                     }

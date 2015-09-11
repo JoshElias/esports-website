@@ -1626,9 +1626,9 @@ angular.module('app.services', [])
         return db;
     }
 
-    deckBuilder.loadCards = function (page, perpage, search, playerClass) {
+    deckBuilder.loadCards = function (page, perpage, search, mechanics, mana, playerClass) {
         var d = $q.defer();
-        $http.post('/deckbuilder', { page: page, perpage: perpage, search: search, playerClass: playerClass }).success(function (data) {
+        $http.post('/deckbuilder', { page: page, perpage: perpage, search: search, mechanics: mechanics, mana: mana, playerClass: playerClass }).success(function (data) {
             d.resolve(data);
         });
         return d.promise;

@@ -133,14 +133,66 @@
 
             <div class="col-md-pull-3 col-md-9" ng-hide="step !== 1">
                 <div class="db-section-title clearfix">
-                    <h1 class="pull-left">CARD PICKER</h1>
-                    <div class="pull-left">
-                        <ul class="db-filter-classes clearfix">
+                    
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h1>CLASS</h1>
+                            <ul class="db-filter-classes clearfix">
                             <li ng-class="{active: isClassCards()}"><a href="#" class="active {{className.toLowerCase()}}" ng-click="setClassCards(true); cards.current = cards.class" ng-tooltip title="{{className}}">{{className}}</a></li>
                             <li ng-class="{active: !isClassCards()}"><a href="#" class="active neutral" ng-click="setClassCards(false); cards.current = cards.neutral" ng-tooltip title="Neutral">Neutral</a></li>
                         </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h1>CARD TYPE</h1>
+                            <div class="db-mechanics">
+                                <div class="dropdown">
+                                    <button class="btn db-mechanics-btn input-dark" type="button" data-toggle="dropdown">
+                                        <span>Mechanics ({{filters.mechanics.length}})</span>
+                                    </button>
+                                    <ul class="list-group dropdown-menu dropdown-dark">
+                                        <li class="list-group-item" ng-class="{active: inMechanics(mechanic)}" ng-repeat="mechanic in mechanics">
+                                            <a href="#" ng-click="toggleMechanic(mechanic); pagination.setPage(1); $event.preventDefault(); $event.stopPropagation()">{{mechanic}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <h1>fuck</h1>
+                            <div class="mana-crystals">
+                                <div ng-class="{active: filters.mana === 'all'}">
+                                    <a href="#" ng-click="doFilterByMana('all'); pagination.setPage(1)">All</a>
+                                </div>
+                                <div ng-class="{active: filters.mana === 0}">
+                                    <a href="#" ng-click="doFilterByMana(0); pagination.setPage(1)">0</a>
+                                </div>
+                                <div ng-class="{active: filters.mana === 1}">
+                                    <a href="#" ng-click="doFilterByMana(1); pagination.setPage(1)">1</a>
+                                </div>
+                                <div ng-class="{active: filters.mana === 2}">
+                                    <a href="#" ng-click="doFilterByMana(2); pagination.setPage(1)">2</a>
+                                </div>
+                                <div ng-class="{active: filters.mana === 3}">
+                                    <a href="#" ng-click="doFilterByMana(3); pagination.setPage(1)">3</a>
+                                </div>
+                                <div ng-class="{active: filters.mana === 4}">
+                                    <a href="#" ng-click="doFilterByMana(4); pagination.setPage(1)">4</a>
+                                </div>
+                                <div ng-class="{active: filters.mana === 5}">
+                                    <a href="#" ng-click="doFilterByMana(5); pagination.setPage(1)">5</a>
+                                </div>
+                                <div ng-class="{active: filters.mana === 6}">
+                                    <a href="#" ng-click="doFilterByMana(6); pagination.setPage(1)">6</a>
+                                </div>
+                                <div ng-class="{active: filters.mana === '7+'}">
+                                    <a href="#" ng-click="doFilterByMana('7+'); pagination.setPage(1)">7+</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    
                     <div class="db-filters pull-right clearfix">
+<!--
                         <div class="db-mechanics">
                             <div class="dropdown">
                                 <button class="btn db-mechanics-btn input-dark" type="button" data-toggle="dropdown">
@@ -153,8 +205,9 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="db-mana">
+-->
 <!--
+                        <div class="db-mana">
                             <div class="dropdown">
                                 <button class="btn db-mana-btn input-dark" type="button" data-toggle="dropdown">
                                     <span>Mana Cost: {{getManaCost()}}</span>
@@ -192,9 +245,9 @@
                                         <a href="#" ng-click="filters.mana = '7+'; pagination.setPage(1)">7+</a>
                                     </li>
                                 </ul>
--->
-<!--                            </div>-->
+                            </div>
                         </div>
+-->
                     </div><!-- / db-filters -->
                 </div>
                 <div class="db-cards">
@@ -211,12 +264,12 @@
                     <!-- cards -->
                     <div class="db-cards-view-wrapper clearfix">
                         <div class="db-cards-view clearfix">
-                            <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in filtered = ( cards.current | filter: filters.byMechanics() | filter: filters.byMana())">
+                            <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in cards.current">
                                 <a href="#" data-tooltip-img="{{app.cdn}}cards/{{card.photos.large}}" ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
                                     <img ng-src="https://s3-us-west-2.amazonaws.com/cdn.tempostorm.com/cards/{{card.photos.medium}}" alt="{{card.name}}">
                                 </a>
                             </div>
-                            <div class="db-cards-no-match" ng-show="!filtered.length">No Matches Found</div>
+                            <div class="db-cards-no-match" ng-show="!cards.current.length">No Matches Found</div>
                         </div>
                     </div>
                 </div><!-- / db-cards -->

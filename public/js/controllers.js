@@ -4908,8 +4908,10 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.setClassCards = function (b) {
-            classCards = b;
-            updateCards(1, 15);
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+            $timeout(function () {
+                classCards = b;
+            });
         }
         
         $scope.className = data.className;
@@ -4917,12 +4919,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.cards.current = $scope.cards.class;
         
         $scope.search = function() {
-            updateCards(1, 15, $scope.filters.search);
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
         }
         
-        function updateCards (page, perpage, search, callback) {
-            DeckBuilder.loadCards(page, perpage, search, $scope.className).then(function (data) {
-                console.log(data);
+        function updateCards (page, perpage, search, mechanics, mana, callback) {
+            DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className).then(function (data) {
                 $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
                 $scope.classPagination.page = page;
                 $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
@@ -4942,7 +4943,7 @@ angular.module('app.controllers', ['ngCookies'])
             function (page, perpage) {
                 var d = $q.defer();
 
-                updateCards(page, perpage, $scope.filters.search, function (data) {
+                updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
                     d.resolve(data.classTotal);
                 });
 
@@ -4954,7 +4955,7 @@ angular.module('app.controllers', ['ngCookies'])
             function (page, perpage) {
                 var d = $q.defer();
 
-                updateCards(page, perpage, $scope.filters.search, function (data) {
+                updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
                     d.resolve(data.neutralTotal);
                 });
 
@@ -4974,6 +4975,7 @@ angular.module('app.controllers', ['ngCookies'])
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
         }
         $scope.toggleMechanic = function (mechanic) {
+            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics);
             var index = $scope.filters.mechanics.indexOf(mechanic);
             if (index === -1) {
                 $scope.filters.mechanics.push(mechanic);
@@ -4995,6 +4997,11 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // filter by mana
+        $scope.doFilterByMana = function (m) {
+            $scope.filters.mana = m;
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+        }
+        
         $scope.filters.byMana = function () {
             return function (item) {
                 switch ($scope.filters.mana) {
@@ -5016,18 +5023,18 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.getManaCost = function () {
             switch ($scope.filters.mana) {
-                    case 'all':
-                        return 'All';
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case '7+':
-                        return $scope.filters.mana;
-                }
+                case 'all':
+                    return 'All';
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case '7+':
+                    return $scope.filters.mana;
+            }
         }
         
         // deck
