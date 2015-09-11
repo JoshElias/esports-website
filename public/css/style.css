@@ -602,15 +602,15 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .hs-deck.large.warlock { background: url('../img/decks/warlock-large.png') center center no-repeat; background-size: cover; }
 .hs-deck.large.warrior { background: url('../img/decks/warrior-large.png') center center no-repeat; background-size: cover; }
 
-.hs-deck.long.druid { background-image: url('../img/decks/druid.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.hunter { background-image: url('../img/decks/hunter.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.mage { background-image: url('../img/decks/mage.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.paladin { background-image: url('../img/decks/paladin.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.priest { background-image: url('../img/decks/priest.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.rogue { background-image: url('../img/decks/rogue.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.shaman { background-image: url('../img/decks/shaman.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.warlock { background-image: url('../img/decks/warlock.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.warrior { background-image: url('../img/decks/warrior.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.druid { background-image: url('../img/decks/long/malfurion.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.hunter { background-image: url('../img/decks/long/rexxar.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.mage { background-image: url('../img/decks/long/jaina.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.paladin { background-image: url('../img/decks/long/uther.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.priest { background-image: url('../img/decks/long/anduin.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.rogue { background-image: url('../img/decks/long/valeera.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.shaman { background-image: url('../img/decks/long/thrall.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.warlock { background-image: url('../img/decks/long/guldan.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.warrior { background-image: url('../img/decks/long/garrosh.png'); background-position: right center; background-repeat: no-repeat; }
 /* end decks */
 
 /* sections */
@@ -2352,26 +2352,26 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .page-flipper.page-flipper-top { margin-bottom: 20px; }
 .page-flipper.page-flipper-bottom { margin-top: 20px; margin-bottom: 20px; }
 
-.hots .page-flipper .btn { position: relative; min-width: 30px; height: 30px; line-height: 28px; font-family: 'Open Sans Bold'; color: #DDD; background: rgba(19,18,19,.7); border-radius: 0px; border: 1px solid #000; outline: none; }
+.default .page-flipper .btn { position: relative; min-width: 30px; height: 30px; line-height: 28px; font-family: 'Open Sans Bold'; color: #DDD; background: rgba(19,18,19,.7); border-radius: 0px; border: 1px solid #000; outline: none; }
 
-.hots .page-flipper .btn .inner { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; border: 1px solid rgba(255,255,255,.2); }
+.default .page-flipper .btn .inner { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; border: 1px solid rgba(255,255,255,.2); }
 
-.hots .page-flipper .btn-pagination-nav,
-.hots .page-flipper .btn-group { box-shadow: 2px 2px 3px rgba(0,0,0,.75); }
+.default .page-flipper .btn-pagination-nav,
+.default .page-flipper .btn-group { box-shadow: 2px 2px 3px rgba(0,0,0,.75); }
 
-.hots .page-flipper .btn-group .btn { border-left: none; border-right: none; }
-.hots .page-flipper .btn-group .btn:first-child { border-left: 1px solid #000; }
-.hots .page-flipper .btn-group .btn:last-child { border-right: 1px solid #000; }
+.default .page-flipper .btn-group .btn { border-left: none; border-right: none; }
+.default .page-flipper .btn-group .btn:first-child { border-left: 1px solid #000; }
+.default .page-flipper .btn-group .btn:last-child { border-right: 1px solid #000; }
 
-.hots .page-flipper .btn-group .btn .inner { border-left: none; border-right: none; }
-.hots .page-flipper .btn-group .btn:first-child .inner { border-left: 1px solid rgba(255,255,255,.2); }
-.hots .page-flipper .btn-group .btn:last-child .inner { border-right: 1px solid rgba(255,255,255,.2); }
+.default .page-flipper .btn-group .btn .inner { border-left: none; border-right: none; }
+.default .page-flipper .btn-group .btn:first-child .inner { border-left: 1px solid rgba(255,255,255,.2); }
+.default .page-flipper .btn-group .btn:last-child .inner { border-right: 1px solid rgba(255,255,255,.2); }
 
-.hots .page-flipper .btn:hover { background: rgba(255,255,255,.2); }
-.hots .page-flipper .btn:hover .inner { border: 1px solid rgba(255,255,255,.2) !important; }
+.default .page-flipper .btn:hover { background: rgba(255,255,255,.2); }
+.default .page-flipper .btn:hover .inner { border: 1px solid rgba(255,255,255,.2) !important; }
 
-.hots .page-flipper .btn.active { background: #2766ad; }
-.hots .page-flipper .btn.active .inner { border: 1px solid rgba(255,255,255,.2) !important; }
+.default .page-flipper .btn.active { background: #2766ad; }
+.default .page-flipper .btn.active .inner { border: 1px solid rgba(255,255,255,.2) !important; }
 
 /* row flex */
 .row-flex, .row-flex > div[class*='col-'] {  
@@ -3295,7 +3295,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .hs-deck-list { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center top; }
 .hs-deck-list-inner { padding: 30px 0; }
 
-.hs-decks-long-title h1 { font-family: 'Open Sans Bold'; font-size: 14px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
+.hs-decks-long-title { margin-left: 0px; margin-right: 0px; padding: 15px 0px !important; border: 1px solid rgba(255,255,255,.3); background: rgba(39, 102, 173, .7); }
+.hs-decks-long-title h1 { margin-bottom: 0px; font-family: 'Open Sans Bold'; font-size: 14px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
 
 .decks-list { padding: 20px 0 0 0; }
 .decks-list .deck-wrapper { margin: 0 0 20px 0; position: relative; width: 100%; height: 200px; }
@@ -7943,7 +7944,8 @@ p.white { color: #FFF; }
 .hots-guide-list { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center top; }
 .hots-guide-list-inner { padding: 30px 0; }
 
-.hots-guides-long-title h1 { font-family: 'Open Sans Bold'; font-size: 14px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
+.hots-guides-long-title { margin-left: 0px; margin-right: 0px; padding: 15px 0px !important; border: 1px solid rgba(255,255,255,.3); background: rgba(77, 40, 108, .7); }
+.hots-guides-long-title h1 { margin-bottom: 0px; font-family: 'Open Sans Bold'; font-size: 14px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
 
 /* guides */
 .guide-header { background: #2766ad url('../img/hots/hots-blue-banner.png') no-repeat right top; border-bottom: 1px solid #083f7d; }

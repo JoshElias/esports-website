@@ -1998,11 +1998,25 @@ module.exports = {
     },
     decksFeatured: function (Schemas) {
         return function (req, res, next) {
-            var klass = req.body.klass || 'all',
+            var klass = req.body.klass || false,
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
-                where = (klass === 'all') ? {} : { 'playerClass': klass },
+                search = req.body.search || false,
+                where = {},
                 decks, total;
+            
+            if (klass && klass.length) {
+                where.playerClass = (klass instanceof Array) ? { $in: klass } : klass;
+            }
+            
+            if (search) {
+                where.$or = [];
+                where.$or.push({ name: new RegExp(search, "i") });
+                where.$or.push({ description: new RegExp(search, "i") });
+                where.$or.push({ contentEarly: new RegExp(search, "i") });
+                where.$or.push({ contentMid: new RegExp(search, "i") });
+                where.$or.push({ contentLate: new RegExp(search, "i") });
+            }
             
             // get total decks
             function getTotal (callback) {
@@ -2044,19 +2058,29 @@ module.exports = {
     },
     decksCommunity: function (Schemas) {
         return function (req, res, next) {
-            var klass = req.body.klass || 'all',
+            var klass = req.body.klass || false,
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
+                search = req.body.search || false,
                 daysLimit = (!req.body.daysLimit) ? false : parseInt(req.body.daysLimit) || 14,
                 where = {},
                 decks, total,
                 now = new Date().getTime(),
                 ago = new Date(now - (60*60*24*daysLimit*1000));
             
-            if (klass !== 'all') {
-                where.playerClass = klass;
+            if (klass && klass.length) {
+                where.playerClass = (klass instanceof Array) ? { $in: klass } : klass;
             }
             
+            if (search) {
+                where.$or = [];
+                where.$or.push({ name: new RegExp(search, "i") });
+                where.$or.push({ description: new RegExp(search, "i") });
+                where.$or.push({ contentEarly: new RegExp(search, "i") });
+                where.$or.push({ contentMid: new RegExp(search, "i") });
+                where.$or.push({ contentLate: new RegExp(search, "i") });
+            }
+                        
             if (daysLimit) {
                 where.createdDate = { $gte: ago };
             }

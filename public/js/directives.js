@@ -1157,7 +1157,8 @@ angular.module('app.directives', ['ui.load'])
             pagination: '='
         },
         templateUrl: function (element, attrs) {
-            return 'views/frontend/directives/pagination/' + attrs.theme + '.html';
+            var theme = attrs.theme || 'default';
+            return 'views/frontend/directives/pagination/' + theme + '.html';
         }
     };
 }])

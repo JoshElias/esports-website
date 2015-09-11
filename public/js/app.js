@@ -355,7 +355,7 @@ var app = angular.module('app', [
                         controller: 'DecksCtrl',
                         resolve: {
                             dataDecksTempostorm: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
-                                var klass = $stateParams.k || 'all',
+                                var klass = $stateParams.k || false,
                                     page = $stateParams.p || 1,
                                     perpage = 4,
                                     search = $stateParams.s || '',
@@ -365,7 +365,7 @@ var app = angular.module('app', [
                                 return DeckService.getDecksFeatured(klass, page, perpage, search, age, order);
                             }],
                             dataDecksCommunity: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
-                                var klass = $stateParams.k || 'all',
+                                var klass = $stateParams.k || false,
                                     page = $stateParams.p || 1,
                                     perpage = 12,
                                     search = $stateParams.s || '',

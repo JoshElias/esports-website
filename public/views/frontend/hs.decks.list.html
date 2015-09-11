@@ -25,9 +25,9 @@
             <div class="hs-mini-filters">
                 <div hs-filter-class filters="filters" classes="classes"></div>
                 <div class="hs-filters-search">
-                    <form>
+                    <form ng-submit="newSearch()">
                         <div class="input-group">
-                            <input type="text" class="form-control input-dark hs-search" ng-model="filters.search">
+                            <input type="text" class="form-control input-dark hs-search" ng-model="deckSearch">
                             <span class="input-group-btn">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                             </span>
@@ -53,7 +53,7 @@
             </ul>
 
             <!-- page flipping -->
-            <div pagination="tempostormPagination" class="hs"></div>
+            <div pagination="tempostormPagination" class="default"></div>
             <!-- / page flipping -->
 
             <p class="darkbox white p-md" ng-if="!tempostormDecks.length">There are no decks for the filtering above.</p>
@@ -65,9 +65,9 @@
             <div class="hs-mini-filters">
                 <div hs-filter-class filters="filters" classes="classes"></div>
                 <div class="hs-filters-search">
-                    <form>
+                    <form ng-submit="newSearch()">
                         <div class="input-group">
-                            <input type="text" class="form-control input-dark hs-search" ng-model="filters.search">
+                            <input type="text" class="form-control input-dark hs-search" ng-model="deckSearch">
                             <span class="input-group-btn">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                             </span>
@@ -79,7 +79,7 @@
         </div>
         <div>
             <!-- page flipping -->
-            <div pagination="communityPagination" class="hs"></div>
+            <div pagination="communityPagination" class="default"></div>
             <!-- / page flipping -->
 
             <!-- decks titles -->
@@ -133,7 +133,7 @@
             <!-- / decks -->
 
             <!-- page flipping -->
-            <div pagination="communityPagination"></div>
+            <div pagination="communityPagination" class="default"></div>
             <!-- / page flipping -->
         </div>
         <!-- / community decks -->
