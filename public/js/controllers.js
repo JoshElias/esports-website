@@ -4852,7 +4852,6 @@ angular.module('app.controllers', ['ngCookies'])
     $scope.updateHero = function (secondary, index) {
         portraitSettings[index] = secondary;
         $scope.app.settings.secondaryPortrait[index] = secondary;
-        console.log(secondary, index);
     }
 }])
 .controller('DeckBuilderCtrl', ['$q', '$state', '$scope', '$timeout', '$compile', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
@@ -5080,11 +5079,12 @@ angular.module('app.controllers', ['ngCookies'])
             match: 0
         };
         
-        $scope.matches = [];
+        $scope.deck.matches = [];
+        
         $scope.newMatch = function (klass) {
             var m = angular.copy(defaultMatchUp);
             m.klass = klass;
-            $scope.matches.push(m);
+            $scope.deck.matches.push(m);
         }
         
         $scope.removeMatch = function (index) {
@@ -5176,10 +5176,12 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('DeckEditCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'data',
-    function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, data) {
-        // redirect back to class pick if no data
-        if (!data || !data.success) { $state.transitionTo('app.home'); return false; }
+.controller('DeckEditCtrl', ['$state', '$scope', '$compile', '$window', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'data',
+    function ($state, $scope, $compile, $window, $timeout, $q, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, data) {
+          // redirect back to class pick if no data
+        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+        
+
         
         // set default tab page
         $scope.step = 1;
@@ -5195,7 +5197,7 @@ angular.module('app.controllers', ['ngCookies'])
             5: 'Provide a synopsis and title for your deck.'            
         };
         
-        // steps
+        
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
         }
@@ -5220,16 +5222,67 @@ angular.module('app.controllers', ['ngCookies'])
         };
 
         // load cards
+        var classCards = true;
+        
+        $scope.isClassCards = function () {
+            return classCards;
+        }
+        
+        $scope.setClassCards = function (b) {
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+            $timeout(function () {
+                classCards = b;
+            });
+        }
+        
+        console.log(data);
         $scope.className = data.deck.playerClass;
-        $scope.cards = data.cards;
-        $scope.cards.current = $scope.cards.class;
+        $scope.cards = {};
+//        $scope.cards.current = $scope.cards.class;
+        
+        $scope.search = function() {
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+        }
+        
+        function updateCards (page, perpage, search, mechanics, mana, callback) {
+            DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className).then(function (data) {
+                $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+                $scope.classPagination.page = page;
+                $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+                $scope.neutralPagination.page = page;
+                $timeout(function () {
+                    $scope.cards.current = ($scope.isClassCards()) ? data.cards.class : data.cards.neutral;
 
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
         // page flipping
-        $scope.pagination = Pagination.new(6);
-        $scope.pagination.perpage = 10;
-        $scope.pagination.results = function () {
-            return ($scope.filtered) ? $scope.filtered.length : $scope.cards.current.length;
-        };
+        $scope.classPagination = AjaxPagination.new(15, data.classTotal,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
+                    d.resolve(data.classTotal);
+                });
+
+                return d.promise;
+            }
+        );
+        
+        $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
+                    d.resolve(data.neutralTotal);
+                });
+                return d.promise;
+            }
+        );
         
         // filters
         $scope.filters = {
@@ -5243,6 +5296,7 @@ angular.module('app.controllers', ['ngCookies'])
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
         }
         $scope.toggleMechanic = function (mechanic) {
+            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics);
             var index = $scope.filters.mechanics.indexOf(mechanic);
             if (index === -1) {
                 $scope.filters.mechanics.push(mechanic);
@@ -5264,6 +5318,11 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // filter by mana
+        $scope.doFilterByMana = function (m) {
+            $scope.filters.mana = m;
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+        }
+        
         $scope.filters.byMana = function () {
             return function (item) {
                 switch ($scope.filters.mana) {
@@ -5283,21 +5342,59 @@ angular.module('app.controllers', ['ngCookies'])
             }
         };
         
+        $scope.getManaCost = function () {
+            switch ($scope.filters.mana) {
+                case 'all':
+                    return 'All';
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case '7+':
+                    return $scope.filters.mana;
+            }
+        }
+        
         // deck
         $scope.deckTypes = Hearthstone.deckTypes;
         
-        $scope.deck = DeckBuilder.new(data.deck.playerClass, data.deck);
+        //$scope.deck = DeckBuilder.new(data.className);
+        $scope.deck = DeckBuilder.new(data.deck.className, data.deck)
         
         // current mulligan
-        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
+        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
         
         $scope.setMulligan = function (mulligan) {
+            console.log(mulligan);
             $scope.currentMulligan = mulligan;
         };
         
         $scope.isMulliganSet = function (mulligan) {
+            console.log(mulligan);
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
+        
+        //match-ups
+        var defaultMatchUp = {
+            deckName: '',
+            klass: '',
+            match: 0
+        };
+        
+        $scope.deck.matches = [];
+        
+        $scope.newMatch = function (klass) {
+            var m = angular.copy(defaultMatchUp);
+            m.klass = klass;
+            $scope.deck.matches.push(m);
+        }
+        
+        $scope.removeMatch = function (index) {
+            $scope.matches.splice(index,1);
+        }
         
         // premium
         $scope.premiumTypes = [
@@ -5314,6 +5411,16 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
+        $scope.getMulliganCards = function (coin) {
+            if (!$scope.currentMulligan) { return false; }
+            var m = $scope.currentMulligan;
+            return (coin) ? m.withCoin.cards : m.withoutCoin.cards;
+        };
+        
+        $scope.cardLeft = function ($index, coin) {
+            return (80 / ($scope.getMulliganCards(coin).length)) * $index;
+        };
+        
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
@@ -5328,6 +5435,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
+        
+        updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
         
         // save deck
         $scope.updateDeck = function () {

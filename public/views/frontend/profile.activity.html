@@ -18,14 +18,12 @@
             </div>
             <div class="m-t-sm" ng-if="app.user.getUserID() == user._id">
 
-                <div ng-if="activity.activityType == 'createDeck' && activity.exists" class="activity-btn-wrapper m-l-xs">
+                <div ng-if="activity.activityType == 'createDeck' && activity.exists && activity.deck" class="activity-btn-wrapper m-l-xs">
                     <a class="activity-btn" ui-sref="app.hs.deckBuilder.edit({ slug: activity.deck.slug })" href="#"><i class="fa fa-pencil"></i></a>
                     <a class="activity-btn" ng-click="deleteDeck(activity)" href="#"><i class="fa fa-close"></i></a>
                 </div>
 
-
-
-                <div ng-if="activity.activityType == 'createGuide' && activity.exists" class="activity-btn-wrapper m-l-xs">
+                <div ng-if="activity.activityType == 'createGuide' && activity.exists && activity.deck" class="activity-btn-wrapper m-l-xs">
                     <a class="activity-btn" ui-sref="app.hots.guideBuilder.edit.hero({ slug: activity.guide.slug })" ng-if="activity.guide.guideType == 'hero'"><i class="fa fa-pencil"></i></a>
                     <a class="activity-btn" ui-sref="app.hots.guideBuilder.edit.map({ slug: activity.guide.slug })" ng-if="activity.guide.guideType == 'map'"><i class="fa fa-pencil"></i></a>
                     <a class="activity-btn" ng-click="deleteGuide(activity)" href="#"><i class="fa fa-close"></i></a>

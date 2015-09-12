@@ -1192,6 +1192,7 @@ angular.module('app.services', [])
             contentEarly: data.contentEarly || '',
             contentMid: data.contentMid || '',
             contentLate: data.contentLate || '',
+            matches: data.matches || [],
             cards: data.cards || [],
             playerClass: playerClass,
             arena: data.arena || false,
@@ -1576,7 +1577,7 @@ angular.module('app.services', [])
 
             if (big === 0) return 0;
 
-            return Math.ceil(db.manaCount(mana) / big * 98);
+            return Math.ceil(db.manaCount(mana) / big * 100);
         };
 
         db.manaCount = function (mana) {
@@ -1635,6 +1636,7 @@ angular.module('app.services', [])
     }
 
     deckBuilder.saveDeck = function (deck) {
+        console.log(deck);
         return $http.post('/api/deck/add', {
             name: deck.name,
             deckType: deck.deckType,
@@ -1642,6 +1644,7 @@ angular.module('app.services', [])
             contentEarly: deck.contentEarly,
             contentMid: deck.contentMid,
             contentLate: deck.contentLate,
+            matches: deck.matches,
             cards: deck.cards,
             playerClass: deck.playerClass,
             arena: deck.arena,
