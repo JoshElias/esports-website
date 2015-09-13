@@ -933,6 +933,45 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('AdminVodService', ['$http', '$q', function ($http, $q) {
+    return {
+        getVods: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/vods').success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getVod: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/vod', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        vodAdd: function (vod) {
+            var d = $q.defer();
+            $http.post('/api/admin/vod/add', { vod: vod }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        vodEdit: function (vod) {
+            var d = $q.defer();
+            $http.post('/api/admin/vod/edit', { vod: vod }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        vodRemove: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/vod/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    }
+}])
 .service('Pagination', function () {
     
     var pagination = {};

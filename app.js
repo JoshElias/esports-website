@@ -335,6 +335,11 @@ app.post('/api/admin/banner/delete', routes.admin.isAdmin(Schemas), routes.admin
 app.post('/api/admin/banner/add', routes.admin.isAdmin(Schemas), routes.admin.bannerAdd(Schemas));
 app.post('/api/admin/banner/edit', routes.admin.isAdmin(Schemas), routes.admin.bannerEdit(Schemas));
 
+app.post('/api/admin/vods', routes.admin.isAdmin(Schemas), routes.admin.vods(Schemas));
+app.post('/api/admin/vod', routes.admin.isAdmin(Schemas), routes.admin.vod(Schemas));
+app.post('/api/admin/vod/add', routes.admin.isAdmin(Schemas), routes.admin.vodAdd(Schemas));
+app.post('/api/admin/vod/edit', routes.admin.isAdmin(Schemas), routes.admin.vodEdit(Schemas));
+app.post('/api/admin/vod/delete', routes.admin.isAdmin(Schemas), routes.admin.vodDelete(Schemas));
 
 app.post('/api/admin/id', routes.admin.isAdmin(Schemas), routes.admin.getObjectID(mongoose));
 

@@ -3412,6 +3412,51 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
+.controller('AdminVodListCtrl', ['$scope', 'data', 'AdminVodService',
+    function ($scope, data, AdminVodService) {
+        $scope.vods = data.vods;
+    }
+])
+.controller('AdminVodAddCtrl', ['$scope', '$window', '$state', 'AdminVodService', 'AlertService',
+    function ($scope, $window, $state, AdminVodService, AlertService) {
+        
+        var defaultVod = {
+                date: {},
+                url: '',
+                vars: {
+                    list: ''
+                }
+            };
+        
+        $scope.isPlaylist = true;
+        $scope.vod = angular.copy(defaultVod);
+        $scope.log = function (a) {
+            console.log(a);
+        }
+        
+                // save deck
+        $scope.saveVod = function () {
+            AdminVodService.vodAdd($scope.vod).then(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                } else {
+                    AlertService.setSuccess({ show: true, msg: 'Video of the Day has been added successfully.' });
+                    $scope.showSuccess = true;
+                    $scope.vod = angular.copy(defaultVod);
+                    $scope.playlist = {
+                        vars: {
+                            list: ''
+                        }
+                    }
+                    $state.go('app.admin.vod.add');
+                }
+                $window.scrollTo(0,0);
+            });
+        };
+        
+    }
+])
 .controller('AdminDeckListCtrl', ['$scope', 'AdminDeckService', 'AlertService', 'Pagination', 'data', 
     function ($scope, AdminDeckService, AlertService, Pagination, data) {
         // grab alerts

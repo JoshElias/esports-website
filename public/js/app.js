@@ -6,6 +6,7 @@ var app = angular.module('app', [
     'angular-bootbox',
     'angularMoment',
     'angularPayments',
+    'youtube-embed',
     'dndLists',
     /*'ngAnimate',*/
     'ngCookies',
@@ -2087,6 +2088,42 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.vod', {
+                abstract: true,
+                url: '/vod',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/vod.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.vod.list', {
+                url: '',
+                views: {
+                    vod: {
+                        templateUrl: tpl + 'views/admin/vod.list.html',
+                        controller: 'AdminVodListCtrl',
+                        resolve: {
+                            data: ['AdminVodService', function (AdminVodService) {
+                                return AdminVodService.getVods();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.vod.add', {
+                url: '/add',
+                views: {
+                    vod: {
+                        templateUrl: tpl + 'views/admin/vod.add.html',
+                        controller: 'AdminVodAddCtrl'
+                    }
+                }
             })
             .state('app.admin.streams', {
                 url: '/streams',
