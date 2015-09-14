@@ -3,7 +3,7 @@
         <div class="container-fluid sub-nav sticky">
             <div class="sub-nav-links">
                 <ul>
-                    <li><a ng-disabled="" ui-sref="app.hs.deckBuilder.class">CLASS SELECT</a></li><li><a ng-disabled="" href="#" ng-click="step = 1" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 1}">CARD SELECT</a></li><li><a ng-disabled="" href="#" ng-click="step = 2" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 2}">MULLIGANS</a></li><li><a ng-disabled="" href="#" ng-click="step = 3" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 3}">DESCRIPTION</a></li><li><a ng-disabled="" href="#" ng-click="step = 4" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 4}">MATCH UPS</a></li><li><a ng-disabled="" href="#" ng-click="step = 5" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 5}">SUBMIT</a></li>
+                    <li><a ui-sref="app.hs.deckBuilder.class">CLASS SELECT</a></li><li><a href="#" ng-click="step = 1" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 1} ">CARD SELECT</a></li><li><a href="#" ng-click="step = 2" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 2} ">MULLIGANS</a></li><li><a href="#" ng-click="step = 3" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 3} ">DESCRIPTION</a></li><li><a href="#" ng-click="step = 4" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 4} ">MATCH UPS</a></li><li><a href="#" ng-click="step = 5" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 5} ">SUBMIT</a></li>
                 </ul>
             </div>
         </div>
@@ -20,24 +20,34 @@
                     <h3>Class Select</h3>
                 </li>
                 <li>
-                    <h1>Step 2</h1>
-                    <h3>Card Select</h3>
+                    <a ui-sref="app.hs.deckBuilder.build({ playerClass: selectedHero, goToStep: 1 })">
+                        <h1>Step 2</h1>
+                        <h3>Card Select</h3>
+                    </a>
                 </li>
                 <li>
-                    <h1>Step 3</h1>
-                    <h3>Mulligans</h3>
+                    <a ui-sref="app.hs.deckBuilder.build({ playerClass: selectedHero, goToStep: 2 })">
+                        <h1>Step 3</h1>
+                        <h3>Mulligans</h3>
+                    </a>
                 </li>
                 <li>
-                    <h1>Step 4</h1>
-                    <h3>Match Ups</h3>
+                    <a ui-sref="app.hs.deckBuilder.build({ playerClass: selectedHero, gotoStep: 3 })">
+                        <h1>Step 4</h1>
+                        <h3>Description</h3>
+                    </a>
                 </li>
                 <li>
-                    <h1>Step 5</h1>
-                    <h3>Description</h3>
+                    <a ui-sref="app.hs.deckBuilder.build({ playerClass: selectedHero, goToStep: 4 })">
+                        <h1>Step 5</h1>
+                        <h3>Match Ups</h3>
+                    </a>
                 </li>
                 <li>
-                    <h1>Step 6</h1>
-                    <h3>Submit</h3>
+                    <a ui-sref="app.hs.deckBuilder.build({ playerClass: selectedHero, goToStep: 5 })">
+                        <h1>Step 6</h1>
+                        <h3>Submit</h3>
+                    </a>
                 </li>
             </ul>
         </div>
@@ -47,7 +57,7 @@
         <div class="db-footer">
             <h2 class="pull-right">
                 <span ng-if="!selectedHero">NEXT STEP</span>
-                <a ng-if="selectedHero" href="./hearthstone/deck-builder/{{selectedHero}}">NEXT STEP</a>
+                <a ng-if="selectedHero" ui-sref="app.hs.deckBuilder.build({ playerClass: selectedHero })">NEXT STEP</a>
             </h2>
         </div>
     </div>

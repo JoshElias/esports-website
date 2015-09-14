@@ -4871,10 +4871,14 @@ angular.module('app.controllers', ['ngCookies'])
     }
 ])
 .controller('DeckBuilderClassCtrl', ['$scope', function ($scope) {
-    var portraitSettings = ($scope.app.settings.secondaryPortrait) ? $scope.app.settings.secondaryPortrait : function() { 
+    
+    var portraitSettings = ($scope.app.settings.secondaryPortrait != undefined) ? $scope.app.settings.secondaryPortrait : function() { 
         $scope.app.settings.secondaryPortrait = [false,false,false,false,false,false,false,false,false];
+        console.log('fuck');
         return $scope.app.settings.secondaryPortrait;
     };
+    
+    $scope.statdddde = 1;
     
     $scope.selectedHero = "";
     $scope.klass = false;
@@ -4899,15 +4903,13 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.app.settings.secondaryPortrait[index] = secondary;
     }
 }])
-.controller('DeckBuilderCtrl', ['$q', '$state', '$scope', '$timeout', '$compile', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
-    function ($q, $state, $scope, $timeout, $compile, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
+.controller('DeckBuilderCtrl', ['$q', '$state', '$scope', '$timeout', '$compile', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data', 'toStep',
+    function ($q, $state, $scope, $timeout, $compile, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data, toStep) {
         // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
         
-
-        
         // set default tab page
-        $scope.step = 1;
+        (!toStep) ? $scope.step = 1 : $scope.step = toStep;
         $scope.showManaCurve = false;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
         
@@ -4967,7 +4969,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         function updateCards (page, perpage, search, mechanics, mana, callback) {
-            DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className).then(function (data) {
+            DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
                 $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
                 $scope.classPagination.page = page;
                 $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
@@ -5019,7 +5021,7 @@ angular.module('app.controllers', ['ngCookies'])
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
         }
         $scope.toggleMechanic = function (mechanic) {
-            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics);
+            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
             var index = $scope.filters.mechanics.indexOf(mechanic);
             if (index === -1) {
                 $scope.filters.mechanics.push(mechanic);
@@ -5290,7 +5292,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         function updateCards (page, perpage, search, mechanics, mana, callback) {
-            DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className).then(function (data) {
+            DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
                 $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
                 $scope.classPagination.page = page;
                 $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
@@ -5341,7 +5343,7 @@ angular.module('app.controllers', ['ngCookies'])
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
         }
         $scope.toggleMechanic = function (mechanic) {
-            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics);
+            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
             var index = $scope.filters.mechanics.indexOf(mechanic);
             if (index === -1) {
                 $scope.filters.mechanics.push(mechanic);

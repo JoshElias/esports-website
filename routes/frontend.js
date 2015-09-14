@@ -1213,10 +1213,10 @@ module.exports = {
                 where = {},
                 cards = {};
             
-//            // make sure it is a proper class
-//            if (['mage', 'shaman', 'warrior', 'rogue', 'paladin', 'priest', 'warlock', 'hunter', 'druid'].indexOf(req.body.playerClass) === -1) {
-//                return res.json({ success: false });
-//            }
+            // make sure it is a proper class
+            if (['mage', 'shaman', 'warrior', 'rogue', 'paladin', 'priest', 'warlock', 'hunter', 'druid'].indexOf(req.body.playerClass) === -1) {
+                return res.json({ success: false });
+            }
             
             if (mana == 'all') {
                 mana = -1;
@@ -1656,6 +1656,7 @@ module.exports = {
                     deck.contentEarly = req.body.contentEarly;
                     deck.contentMid = req.body.contentMid;
                     deck.contentLate = req.body.contentLate;
+                    deck.matches = req.body.matches;
                     deck.cards = cards;
                     deck.public = req.body.public;
                     deck.mulligans = req.body.mulligans || [];

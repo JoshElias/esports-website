@@ -2,15 +2,13 @@
     <h3 class="pull-left">COMMENTS</h3>
 </div>
 
-<div class="comment-add m-b-sm">
+<div class="comment-add m-b-sm" ng-class="{ 'active': addAreaFocus }">
     <div class="row">
         <div class="col-md-1 wrapper-none">
             <div class="avatar"><img gravatar-src="app.user.getUserEmail()" alt=""></div>
         </div>
         <div class="col-md-11 wrapper-none">
-            <textarea maxlength="1000" rows="6" ng-model="comment" placeholder="Write your comment here..." class="comment-input">
-                
-            </textarea>
+            <textarea ng-focus="addAreaFocus = true" ng-blur="addAreaFocus = false" maxlength="1000" rows="6" ng-model="comment" placeholder="Write your comment here..." class="comment-input"></textarea>
             <div class="comment-add-bot row">
                 <div class="remaining col-md-10">
                     <span class="pull-right">{{comment.length}}/1000</span>

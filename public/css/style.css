@@ -655,6 +655,21 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     height: 800px;
 }
 
+.bg-override.team-page {
+    background-image: url(../img/backgrounds/meta-bg.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.meta-snapshot {
+    background-image: url(../img/backgrounds/meta-bg.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+
 .heading { position:relative; }
 
 .snapTitle { position: absolute; top: 20px; left: 20px; text-shadow: 1px 1px 0px rgba(0,0,0,.7); }
@@ -2572,6 +2587,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 /* deck builder */
+
 .db-footer,
 .db-header { color: #FFF; height: auto; line-height: 50px; font-size: 26px; width: 80%; margin: 20px auto; }
 .db-header span { float: left; }
@@ -3447,7 +3463,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .comment .panel-heading { color: #FFF; padding: 0; }
 .comment .panel-heading a { color: #9C9C9C; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; transition: .15s; }
 .comment .panel-body { color: #FFF; background: #1B1B1B; overflow: hidden; }
-.comment .comment-panel { color: white; border-radius: 0px; background: #262626; min-height: 100px; margin: 0; padding: 15px; transition: .15s; }
+.comment .comment-panel { color: white; border-radius: 0px; background: #262626; min-height: 100px; margin: 0; padding: 15px; transition: all .15s; -webkit-transition: all .15s; -moz-transition: all .15s; }
 .comment .comment-body { overflow: hidden; }
 .comment .comment-ago { float:right; color: #2267B2; transition: .15s; }
 .comment:hover .comment-panel { background-color: #2267B2; }
@@ -3459,7 +3475,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .comment .comment:last-child { border-left: 1px solid transparent; padding-bottom: 0px; }
 
 .comment-add { position: relative; background: #262626; padding: 0px 0px 0px 10px; }
-.comment-add:hover { background: #2267B2; transition: .15s }
+.comment-add.active, 
+.comment-add:hover { background: #2267B2; transition: all .15s; -webkit-transition: all .15s; -moz-transition: all .15s; }
 .comment-add .row { margin: 0px; }
 .comment-add .comment-add-bot { height: 35px; margin-top: -5px; }
 .comment-add .avatar { width: 60px; height: 60px; background: rgba(255,255,255,1); border-radius: 50%; margin-top:15px; }
@@ -3713,15 +3730,17 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 
 .teams .member {
     height: 470px;
+    padding: 0px 5px;
 }
 .teams .member button {
+    position: absolute;
+    bottom: 10px;
     outline: none;
     padding: none;
     text-align: inherit;
     border: none;
     background: none;
-    
-    height:100%;
+    width:100%;
 }
 .teams .member img {
     max-height: 250px;
@@ -3729,6 +3748,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 }
 .teams .member .outline {
     transition: .10s;
+    position:relative;
     -moz-transition: .10s;
     outline: 1px solid rgba(255,255,255,.2);
     outline-offset: -2px;
@@ -3756,10 +3776,10 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
     white-space: normal;
     text-overflow: ellipsis;
 }
-.teams .member .content-wrapper { position: relative; }
+.teams .member .content-wrapper { position: relative; padding-bottom: 0px; }
 
 
-.teams .member .view-more-team { position: absolute; width: 88%; bottom:20px; }
+.teams .member .view-more-team { width: 88%; bottom:0; }
 .teams .member .view-more-team h3 { margin: 0 auto; text-align:center; opacity: .5 }
 
 .btn-team-wrapper { position: absolute; top: 20px; right: 20px; }
@@ -7325,10 +7345,13 @@ p.white { color: #FFF; }
 .sub-nav { background: #2766ad; box-shadow: inset 0px 4px 10px rgba(0,0,0,.7); border-bottom: 1px solid #000; }
 .sub-nav .sub-nav-links { text-align: center; }
 .sub-nav .sub-nav-links ul { margin: 15px 0; padding: 0; }
+.sub-nav .sub-nav-links ul button,
 .sub-nav .sub-nav-links ul li { list-style: none; display: inline-block; line-height: 40px; font-weight: bold; padding: 0 40px; border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid #000; }
 .sub-nav .sub-nav-links ul li:first-child { border-left: none; }
 .sub-nav .sub-nav-links ul li:last-child { border-right: none; }
+.sub-nav .sub-nav-links ul li button,
 .sub-nav .sub-nav-links ul li a { color: rgba(255,255,255,.7); }
+.sub-nav .sub-nav-links ul li button,
 .sub-nav .sub-nav-links ul li a:hover { color: rgba(255,255,255,1); }
 
 .sub-nav.sticky { position: fixed; top: 52px; z-index: 1000; width: 100%; box-shadow: none; }

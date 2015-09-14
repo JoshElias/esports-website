@@ -1705,6 +1705,7 @@ angular.module('app.services', [])
             contentEarly: deck.contentEarly,
             contentMid: deck.contentMid,
             contentLate: deck.contentLate,
+            matches: deck.matches,
             cards: deck.cards,
             playerClass: deck.playerClass,
             arena: deck.arena,

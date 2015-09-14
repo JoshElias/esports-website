@@ -295,7 +295,10 @@ angular.module('app.directives', ['ui.load'])
             }
         },
         link: function ($scope, el, attr) {
-//            console.log($scope.comments);
+            
+            $scope.addAreaFocus = false;
+            
+            console.log(el);
         }
     }
 }])
