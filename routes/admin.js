@@ -3590,9 +3590,6 @@ module.exports = {
                 })
             }
             
-            
-            
-            
             function addNewMember(c, callback) {
                 var newMember = new Schemas.TeamMember({
                     game: member.game,
@@ -3726,6 +3723,91 @@ module.exports = {
                 });
             })
             
+        }
+    },
+    vod: function (Schemas) {
+        return function (req, res, next) {
+            console.log('vod');
+            
+            return res.json({
+                success: true
+            });
+        }    
+    },
+    vods: function (Schemas) {
+        return function (req, res, next) {
+            
+            function getVods(callback) {
+                Schemas.Vod.find()
+                .sort({ Date:1 })
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    console.log(results);
+                    return callback(results);
+                });
+            }
+            
+            getVods(function(results) {
+                return res.json({
+                    vods: results,
+                    success: true
+                });
+            }); 
+        }
+    },
+    vodAdd: function (Schemas) {
+        return function (req, res, next) {
+            
+            console.log(req.body.vod);
+            console.log(req.body.vars);
+            
+            function createVod (callback) {
+                var newVod = new Schemas.Vod({
+                    date: req.body.vod.date,
+                    url: req.body.vod.url,
+                    vars: {
+                        list: req.body.vod.vars.list
+                    },
+                    createdDate: new Date().toISOString()
+                });
+                newVod.save(function(err, data) {
+                    if (err) {
+                        return res.json({ 
+                            success: false,
+                            errors: { 
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                    return callback();
+                });
+            }
+            
+            createVod(function () {
+                return res.json({
+                    success: true
+                });
+            });
+        }    
+    },
+    vodEdit: function (Schemas) {
+        return function (req, res, next) {
+            console.log('vodEdit');
+            
+            return res.json({
+                success: true
+            });
+        }
+    },
+    vodDelete: function (Schemas) {
+        return function (req, res, next) {
+            console.log('vodDelete');
+            
+            return res.json({
+                success: true
+            });
         }
     },
     getObjectID: function (mongoose) {

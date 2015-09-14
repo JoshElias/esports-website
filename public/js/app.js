@@ -6,6 +6,7 @@ var app = angular.module('app', [
     'angular-bootbox',
     'angularMoment',
     'angularPayments',
+    'youtube-embed',
     'dndLists',
     /*'ngAnimate',*/
     'ngCookies',
@@ -418,8 +419,11 @@ var app = angular.module('app', [
                                 var playerClass = $stateParams.playerClass,
                                     page = 1,
                                     perpage = 15,
+                                    mechanics = [],
+                                    mana = 'all',
                                     search = "";
-                                return DeckBuilder.loadCards(page, perpage, search, playerClass);
+                                
+                                return DeckBuilder.loadCards(page, perpage, search, mechanics, mana, playerClass);
                             }]
                         }
                     }
@@ -2072,6 +2076,42 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.vod', {
+                abstract: true,
+                url: '/vod',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/vod.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.vod.list', {
+                url: '',
+                views: {
+                    vod: {
+                        templateUrl: tpl + 'views/admin/vod.list.html',
+                        controller: 'AdminVodListCtrl',
+                        resolve: {
+                            data: ['AdminVodService', function (AdminVodService) {
+                                return AdminVodService.getVods();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.vod.add', {
+                url: '/add',
+                views: {
+                    vod: {
+                        templateUrl: tpl + 'views/admin/vod.add.html',
+                        controller: 'AdminVodAddCtrl'
+                    }
+                }
             })
             .state('app.admin.streams', {
                 url: '/streams',
