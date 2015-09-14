@@ -1153,6 +1153,52 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
+.directive('hsFilterClassLarge', ['$filter', '$timeout', function ($filter, $timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            classes: '=',
+            filters: '='
+        },
+        templateUrl: 'views/frontend/directives/hs.filter.class.large.html',
+        replace: true,
+        link: function (scope, element, attrs) {
+            var initializing = true;
+            
+            scope.$watch(function(){ return scope.filters; }, function (value) {
+                if (initializing) {
+                    $timeout(function () {
+                        initializing = false;
+                    });
+                } else {
+                    scope.filters = value;
+                }
+            }, true);
+            
+            scope.toggleFilterClass = function (klass) {
+                var index = scope.filters.classes.indexOf(klass);
+                if (index === -1) {
+                    scope.filters.classes.push(klass);
+                } else {
+                    scope.filters.classes.splice(index, 1);
+                }
+            };
+
+            scope.hasFilterClass = function (klass) {
+                if (!klass) {
+                    return (scope.filters.classes.length > 0);
+                }
+                
+                for (var i = 0; i < scope.filters.classes.length; i++) {
+                    if (scope.filters.classes[i] == klass) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+        }
+    };
+}])
 .directive('pagination', ['$timeout', function ($timeout) {
     return {
         restrict: 'A',
@@ -1170,6 +1216,30 @@ angular.module('app.directives', ['ui.load'])
         restrict: 'A',
         link: function (scope, element, attrs) {
             $animate.enabled(element, false);
+        }
+    };
+}])
+.directive('tempostormTv', ['TwitchService', function (TwitchService) {
+    return {
+        restrict: 'A',
+        templateUrl: 'views/frontend/directives/twitch.streams.html',
+        link: function (scope, element, attrs) {
+            scope.streamWheel = false;
+            scope.twitWheel = false;
+            scope.streams = undefined;
+            scope.tweets = undefined;
+
+            TwitchService.getStreams().then(function(data) {
+                for (var i = 0; i < data.data.length; i++) {
+                    var log = data.data[i].logoUrl;
+                    var sub = log.substr(4);
+                    var im = "https" + sub;
+                    data.data[i].logoUrl = im;
+                }
+                scope.streamWheel = true;
+                scope.streams = data.data;
+            });
+
         }
     };
 }])

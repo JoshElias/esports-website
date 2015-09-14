@@ -223,8 +223,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', '$sce', 'dataBanners', 'dataArticles', 'ArticleService', 'TwitchService', 'TwitterService',
-    function ($scope, $sce, dataBanners, dataArticles, ArticleService, TwitchService, TwitterService) {
+.controller('HomeCtrl', ['$scope', '$sce', 'dataArticles', 'ArticleService', 'TwitterService',
+    function ($scope, $sce, dataArticles, ArticleService, TwitterService) {
         // data
         $scope.articles = {
             loading: false,
@@ -259,21 +259,9 @@ angular.module('app.controllers', ['ngCookies'])
             data: dataArticles.articles
         };
                 
-        $scope.streamWheel = false;
         $scope.twitWheel = false;
-        $scope.streams = undefined;
         $scope.tweets = undefined;
-        
-        TwitchService.getStreams().then(function(data) {
-            for (var i = 0; i < data.data.length; i++) {
-                var log = data.data[i].logoUrl;
-                var sub = log.substr(4);
-                var im = "https" + sub;
-                data.data[i].logoUrl = im;
-            }
-            $scope.streamWheel = true;
-            $scope.streams = data.data;
-        });
+
         
         TwitterService.getFeed().then(function(data) {
             $scope.twitWheel = true;
@@ -329,63 +317,58 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HearthstoneHomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataDecks', 'dataDecksFeatured', 'ArticleService', 'DeckService', 'Hearthstone',
-    function ($scope, dataBanners, dataArticles, dataDecks, dataDecksFeatured, ArticleService, DeckService, Hearthstone) {
+.controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'ArticleService', 'DeckService', 'Hearthstone',
+    function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, ArticleService, DeckService, Hearthstone) {
         // data
         $scope.articles = dataArticles.articles;
-        $scope.decks = dataDecks.decks;
-        $scope.decksFeatured = dataDecksFeatured.decks;
+        $scope.tempostormDecks = dataDecksTempostorm.decks;
+        $scope.communityDecks = dataDecksCommunity.decks;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
-        $scope.loading = {
-            articles: false,
-            community: false,
-            featured: false
+        
+        // filters
+        $scope.filters = {
+            classes: [],
+            search: ''
         };
         
-        // banner
-        $scope.banner = {
-            current: 0,
-            direction: 'left',
-            slides: dataBanners.banners,
-            setCurrent: function (current) {
-                this.direction = 'right';
-                this.current = current;
-            },
-            next: function () {
-                this.direction = 'right';
-                this.current = (this.current < (this.slides.length - 1)) ? ++this.current : 0;
-            },
-            prev: function () {
-                this.direction = 'left';
-                this.current = (this.current > 0) ? --this.current : this.slides.length - 1;
+        var initializing = true;
+        $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            if (initializing) {
+                $timeout(function () {
+                    initializing = false;
+                });
+            } else {
+                updateArticles(0, 6);
+                updateTempostormDecks(1, 10);
+                updateCommunityDecks(1, 10);
             }
-        };
+        }, true);
         
-        // content
-        $scope.klass = 'all';
-        $scope.setKlass = function (klass) {
-            $scope.klass = klass;
-            $scope.loading = {
-                articles: true,
-                community: true,
-                featured: true
-            };
-            
-            ArticleService.getArticles('hs', klass, 1, 9).then(function (data) {
-                $scope.articles = data.articles;
-                $scope.loading.articles = false;
+        function updateArticles (offset, perpage) {
+            ArticleService.getArticles('hs', $scope.filters.classes, offset, perpage).then(function (data) {
+                $timeout(function () {
+                    $scope.articles = data.articles;
+                });
             });
-
-            DeckService.getDecksCommunity(klass, 1, 10).then(function (data) {
-                $scope.decks = data.decks;
-                $scope.loading.community = false;
+        }
+        
+        // update decks
+        function updateTempostormDecks (page, perpage) {
+            DeckService.getDecksFeatured($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
+                $timeout(function () {
+                    $scope.tempostormDecks = data.decks;
+                });
             });
-            
-            DeckService.getDecksFeatured(klass, 1, 10).then(function (data) {
-                $scope.decksFeatured = data.decks;
-                $scope.loading.featured = false;
+        }
+        
+        function updateCommunityDecks (page, perpage) {
+            DeckService.getDecksCommunity($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
+                $timeout(function () {
+                    $scope.communityDecks = data.decks;
+                });
             });
-        };
+        }
+        
     }
 ])
 .controller('PremiumCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'UserService', 'LoginModalService',
@@ -8373,8 +8356,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 'TwitchService', 
-    function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService, TwitchService) {
+.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 
+    function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService) {
         // data
         $scope.heroes = dataHeroes.heroes;
         $scope.maps = dataMaps.maps;
@@ -8455,8 +8438,6 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 });
                 
-                console.log(getFilters());
-                
                 // load tempostorm guides
                 HOTSGuideService.getGuidesFeatured(getFilters(), 1, 10, $scope.filters.search).then(function (data) {
                     $timeout(function () {
@@ -8529,18 +8510,6 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
-        
-        // load twitch streams
-        TwitchService.getStreams().then(function(data) {
-            for (var i = 0; i < data.data.length; i++) {
-                var log = data.data[i].logoUrl;
-                var sub = log.substr(4);
-                var im = "https" + sub;
-                data.data[i].logoUrl = im;
-            }
-            $scope.streamWheel = true;
-            $scope.streams = data.data;
-        });
     }
 ])
 .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
