@@ -174,9 +174,6 @@ var app = angular.module('app', [
                                     offset = 0,
                                     num = 6;
                                 return ArticleService.getArticles('all', klass, offset, num);
-                            }],
-                            dataBanners: ['BannerService', function (BannerService) {
-                                 return BannerService.getBanners('ts');
                             }]
                         }
                     }
@@ -314,23 +311,14 @@ var app = angular.module('app', [
                             dataArticles: ['ArticleService', function (ArticleService) {
                                 var klass = 'all',
                                     page = 1,
-                                    perpage = 9;
+                                    perpage = 6;
                                 return ArticleService.getArticles('hs', klass, page, perpage);
                             }],
-                            dataDecks: ['DeckService', function (DeckService) {
-                                var klass = 'all',
-                                    page = 1,
-                                    perpage = 10;
-                                return DeckService.getDecksCommunity(klass, page, perpage);
+                            dataDecksTempostorm: ['DeckService', function (DeckService) {
+                                return DeckService.getDecksFeatured(false, 1, 10);
                             }],
-                            dataDecksFeatured: ['DeckService', function (DeckService) {
-                                var klass = 'all',
-                                    page = 1,
-                                    perpage = 10;
-                                return DeckService.getDecksFeatured(klass, page, perpage);
-                            }],
-                            dataBanners: ['BannerService', function (BannerService) {
-                                return BannerService.getBanners('hs');
+                            dataDecksCommunity: ['DeckService', function (DeckService) {
+                                return DeckService.getDecksCommunity(false, 1, 10);
                             }]
                         }
                     }

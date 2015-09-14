@@ -400,83 +400,34 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .fof .inner p { font-size: 16px; color: #BCBCBC }
 .fof .inner button { display: block; margin: 0px auto; }
 
-
 /* animated dropdowns */
 .open .dropdown-menu {
     -webkit-animation: fadeInRight 0.5s;
     animation: fadeInRight 0.5s;
 }
 
-/* start banner */
-.home-banner { position: relative; margin-bottom: 0px; box-shadow: 0px 1px 1px black }
-
-.banner-prev,
-.banner-next { position: absolute; top: 132px; display: block; width: 40px; height: 135px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.5); color: #FFF !important; font-size: 30px; text-align: center; line-height: 135px; transition: all .1s linear; z-index: 4; }
-.banner-prev { left: 0px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-left: none; }
-.banner-next { right: 0px; border-top-left-radius: 4px; border-bottom-left-radius: 4px; border-right: none; }
-.banner-prev:hover,
-.banner-next:hover { width: 60px; background: rgba(39,102,173,.8); font-size: 50px; }
-
-.banner-pages-wrapper { position: absolute; left: 0px; bottom: 70px; width: 100%; height: 24px; text-align: center; z-index: 4; }
-.banner-pages { margin: 0; padding: 0; display: inline-block; *display: inline; zoom: 1; height: 24px; border: 1px solid rgba(255,255,255,.5); background: rgba(0,0,0,.6); border-radius: 12px; }
-.banner-pages li { margin: 4px 0px 4px 8px; padding: 0; display: inline-block; *display: inline; zoom: 1; }
-.banner-pages li:last-child { margin: 4px 8px 4px 8px; }
-.banner-pages li a { display: block; width: 14px; height: 14px; background: rgba(255,255,255,.5); border-radius: 50%; transition: all .3s linear; }
-.banner-pages li a:hover { background: rgba(255,255,255,1); }
-.banner-pages li.active a { background: rgba(39,102,173,.8); }
-.banner-pages li.active a:hover { background: rgba(39,102,173,1); }
-
-.home-banner .banner-slide-wrapper { position: relative; height: 400px; overflow: hidden; white-space: nowrap; }
-.home-banner .banner-slide { display: none; position: absolute; top: 0px; left: 0px; width: 100%; height: 400px; z-index: 2; overflow: hidden; }
-.home-banner .banner-slide.active { display: block; z-index: 3; }
-.home-banner .banner-slide .container { position: relative; }
-.home-banner .banner-panel { position: absolute; top: 50px; left: 0px; width: 600px; height: 200px; }
-.home-banner .banner-panel h1 { margin: 20px; display: inline-block; padding: 10px 30px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 30px; background: rgba(39,102,173,.8); letter-spacing: 2px; }
-.home-banner .banner-panel p { margin: 0 20px 20px; padding: 15px 30px; display: inline-block; color: #FFF; white-space: normal; background: rgba(0,0,0,.8); }
-.home-banner .banner-panel .banner-btn-wrapper { margin: 20px; }
-.home-banner .banner-panel .banner-btn { background: rgba(39,102,173,.8); border: 1px solid rgba(255,255,255,.5); color: #FFF; padding: 10px 30px; text-decoration: none; }
-.home-banner .banner-panel .banner-btn:hover { color: #2766ad; background: #FFF; border-color: #2766ad; box-shadow: 0px 0px 30px rgba(255,255,255,1); }
-/* end banner */
-
 /* start filters */
-.filter-bar-home { border-top: 1px solid #8f8e8c; }
-.filter-bar { padding: 20px 0; background: #1a1a1a; }
-.filter-bar h1 { float: left; margin: 0 40px 0 0; color: #FFF; font-size: 28px; font-family: 'Open Sans Bold'; }
-.filter-bar.small h1 { font-size: 20px; line-height: 32px; }
+.hs-filter-bar { padding: 20px 0; background: rgba(36,104,171,.3); }
 
-.filter-bar-advanced { margin: 0 0 70px 0; background: #2766ad; }
-.filter-bar-advanced-options-wrapper { height: 0px; overflow: hidden; /*-webkit-transition: all 0.5s cubic-bezier(1.000, 0.055, 0.440, 1.650); transition: all 0.5s cubic-bezier(1.000, 0.055, 0.440, 1.650);*/ }
-.filter-bar-advanced-options { position: absolute; top: -49px; left: 0px; padding: 5px 10px 10px; /*-webkit-transition: all 0.5s cubic-bezier(1.000, 0.055, 0.440, 1.650); transition: all 0.5s cubic-bezier(1.000, 0.055, 0.440, 1.650);*/ }
-.filter-bar-advanced-tab { position: absolute; right: 15px; bottom: -50px; height: 50px; background: #2766ad; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; }
-.filter-bar-advanced-tab a { padding: 5px 10px; color: rgba(255,255,255,.8); }
-.filter-bar-advanced-tab a:hover { color: #FFF; text-decoration: none; }
-.filter-bar-advanced-tab a .icon { margin-right: 5px; font-size: 30px; line-height: 40px; }
-.filter-bar-advanced-tab a .text { padding: 5px 0; font-size: 12px; line-height: 15px; }
+.hs-filter-bar .filter-class { margin: 0; padding: 0px; }
+.hs-filter-bar .filter-class li { list-style: none; margin-right: 30px; display: inline-block; *display: inline; zoom: 1; width: 62px; height: 63px; }
+.hs-filter-bar .filter-class li:last-child { margin-right: 0px; }
 
-.filter-bar-advanced-options-wrapper.open { height: 49px; overflow: visible; }
-.filter-bar-advanced-options-wrapper.open .filter-bar-advanced-options { top: 0px; }
+.hs-filter-bar .filter-class li a { display: block; width: 62px; height: 63px; overflow: hidden; text-indent: -99999px; background: url('../img/class-icons.png') no-repeat; opacity: .5; }
+.hs-filter-bar .filter-class li a.active { opacity: 1; }
+.hs-filter-bar .filter-class li a.not-selected { opacity: .3; }
+.hs-filter-bar .filter-class li a.not-selected:hover { opacity: .6; }
 
-.filter-class { margin: 0; padding: 0px; }
-.filter-class li { list-style: none; margin-right: 30px; display: inline-block; *display: inline; zoom: 1; width: 62px; height: 63px; }
-.filter-class li:last-child { margin-right: 0px; }
 
-.filter-class li a { display: block; width: 62px; height: 63px; overflow: hidden; text-indent: -99999px; background: url('../img/class-icons.png') no-repeat; opacity: .5; }
-.filter-class li.active a { opacity: 1; }
-
-.filter-class li.warlock a { background-position: 0px 0px; }
-.filter-class li.warrior a { background-position: 0px -63px; }
-.filter-class li.hunter a { background-position: 0px -126px; }
-.filter-class li.rogue a { background-position: 0px -189px; }
-.filter-class li.priest a { background-position: 0px -252px; }
-.filter-class li.paladin a { background-position: 0px -315px; }
-.filter-class li.mage a { background-position: 0px -378px; }
-.filter-class li.druid a { background-position: 0px -441px; }
-.filter-class li.shaman a { background-position: 0px -504px; }
-.filter-class li.all a { background-position: 0px -567px; }
-
-.filter-bar-decks,
-.filter-bar-guides,
-.filter-bar-articles { border-bottom: 5px solid #2766ad; }
+.hs-filter-bar .filter-class li .warlock { background-position: 0px 0px; }
+.hs-filter-bar .filter-class li .warrior { background-position: 0px -63px; }
+.hs-filter-bar .filter-class li .hunter { background-position: 0px -126px; }
+.hs-filter-bar .filter-class li .rogue { background-position: 0px -189px; }
+.hs-filter-bar .filter-class li .priest { background-position: 0px -252px; }
+.hs-filter-bar .filter-class li .paladin { background-position: 0px -315px; }
+.hs-filter-bar .filter-class li .mage { background-position: 0px -378px; }
+.hs-filter-bar .filter-class li .druid { background-position: 0px -441px; }
+.hs-filter-bar .filter-class li .shaman { background-position: 0px -504px; }
 /* end filters */
 
 /* content start */
@@ -555,6 +506,10 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .deck-builder-link-inner a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/decks/deck-builder-button.png') no-repeat; background-position: center 0px; -webkit-transition: background-position ease-in-out .3s; transition: background-position ease-in-out .3s; }
 .deck-builder-link-inner a:hover { background-position: center -196px; }
 
+/* hs - home */
+.hs-home-title { background: #2766ad url('../img/hs/top-banner.jpg') center center no-repeat; background-size: cover; }
+.hs-home-logo { margin: 60px auto; }
+
 /* start decks */
 .hs-decks { margin: 0; padding: 0; }
 .hs-decks li { list-style: none; margin-bottom: 10px; }
@@ -565,6 +520,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 
 .hs-deck .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 4; }
 .hs-deck .bt-shadow { position: absolute; right: 0px; bottom: 0px; left: 0px; height: 60px; background: url('../img/hs/bt-shadow.png') repeat-x; z-index: 2; }
+.hs-deck.small .hs-deck-details,
 .hs-deck.large .hs-deck-details { position: absolute; bottom: 0px; left: 0px; padding: 0 20px 0; max-width: 100%; z-index: 3; }
 .hs-deck h1 { padding-right: 30px; font-family: 'Open Sans Bold'; font-size: 10px; color: #f7ef22; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
 .hs-deck h3 { padding-right: 30px; font-size: 12px; color: #ccc; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
@@ -7819,6 +7775,7 @@ p.white { color: #FFF; }
 .hots-guide.large.skytemple { background: url('../img/hots/maps/guides/st.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.large.tomb-of-the-spider-queen { background: url('../img/hots/maps/guides/sq.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.large.battlefield-of-eternity { background: url('../img/hots/maps/guides/bfoe.jpg') no-repeat center top; background-size: cover; }
+.hots-guide.large.infernal-shrine { background: url('../img/hots/maps/guides/shrine.jpg') no-repeat center top; background-size: cover; }
 
 .hots-guide.small.blackheartsbay { background: url('../img/hots/maps/guides/bhb-tab.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.small.cursedhollow { background: url('../img/hots/maps/guides/curse-tab.jpg') no-repeat center top; background-size: cover; }
@@ -7828,15 +7785,17 @@ p.white { color: #FFF; }
 .hots-guide.small.skytemple { background: url('../img/hots/maps/guides/st-tab.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.small.tomb-of-the-spider-queen { background: url('../img/hots/maps/guides/sq-tab.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.small.battlefield-of-eternity { background: url('../img/hots/maps/guides/bfoe-tab.jpg') no-repeat center top; background-size: cover; }
+.hots-guide.small.infernal-shrine { background: url('../img/hots/maps/guides/shrine-tab.jpg') no-repeat center top; background-size: cover; }
 
-.hots-guide.long.blackheartsbay { background-image: url('../img/hots/maps/guides/bhb-tab.jpg'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.cursedhollow { background-image: url('../img/hots/maps/guides/curse-tab.jpg'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.dragonshrine { background-image: url('../img/hots/maps/guides/ds-tab.jpg'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.gardenofterror { background-image: url('../img/hots/maps/guides/garden-tab.jpg'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.hauntedmines { background-image: url('../img/hots/maps/guides/hm-tab.jpg'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.skytemple { background-image: url('../img/hots/maps/guides/st-tab.jpg'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.tomb-of-the-spider-queen { background-image: url('../img/hots/maps/guides/sq-tab.jpg'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.battlefield-of-eternity { background-image: url('../img/hots/maps/guides/bfoe-tab.jpg'); background-repeat: no-repeat; background-position: right top; }
+.hots-guide.long.blackheartsbay { background-image: url('../img/hots/maps/guides/long/blackheart-bay.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-guide.long.cursedhollow { background-image: url('../img/hots/maps/guides/long/cursed-hollow.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-guide.long.dragonshrine { background-image: url('../img/hots/maps/guides/long/dragon-shrine.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-guide.long.gardenofterror { background-image: url('../img/hots/maps/guides/long/garden-of-terror.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-guide.long.hauntedmines { background-image: url('../img/hots/maps/guides/long/haunted-mines.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-guide.long.skytemple { background-image: url('../img/hots/maps/guides/long/sky-temple.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-guide.long.tomb-of-the-spider-queen { background-image: url('../img/hots/maps/guides/long/tomb-of-the-spider-queen.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-guide.long.battlefield-of-eternity { background-image: url('../img/hots/maps/guides/long/battlefield-of-eternity.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-guide.long.infernal-shrine { background-image: url('../img/hots/maps/guides/long/infernal-shrine.png'); background-repeat: no-repeat; background-position: right top; }
 
 /* hots guide list */
 .tri-bottom { background: url('../img/hots/tri-bottom.png') no-repeat center bottom; }
@@ -8332,16 +8291,16 @@ input[type=range]:focus::-ms-fill-upper {
     .filter-bar h1 br { display: none; }
     .filter-class li { margin-right: 10px; width: 31px; height: 32px; }
     .filter-class li a { width: 31px; height: 32px; }
-    .filter-class li.warlock a { background-position: -124px 0px; }
-    .filter-class li.warrior a { background-position: -124px -32px; }
-    .filter-class li.hunter a { background-position: -124px -64px; }
-    .filter-class li.rogue a { background-position: -124px -96px; }
-    .filter-class li.priest a { background-position: -124px -128px; }
-    .filter-class li.paladin a { background-position: -124px -160px; }
-    .filter-class li.mage a { background-position: -124px -192px; }
-    .filter-class li.druid a { background-position: -124px -224px; }
-    .filter-class li.shaman a { background-position: -124px -256px; }
-    .filter-class li.all a { background-position: -124px -288px; }
+    .filter-class li a.warlock { background-position: -124px 0px; }
+    .filter-class li a.warrior { background-position: -124px -32px; }
+    .filter-class li a.hunter { background-position: -124px -64px; }
+    .filter-class li a.rogue { background-position: -124px -96px; }
+    .filter-class li a.priest { background-position: -124px -128px; }
+    .filter-class li a.paladin { background-position: -124px -160px; }
+    .filter-class li a.mage { background-position: -124px -192px; }
+    .filter-class li a.druid { background-position: -124px -224px; }
+    .filter-class li a.shaman { background-position: -124px -256px; }
+    .filter-class li a.all { background-position: -124px -288px; }
     
     /* article */
     .article-page .article-left { margin-right: 0px; }
