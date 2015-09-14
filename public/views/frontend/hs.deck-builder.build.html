@@ -422,7 +422,7 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="match-header col-md-12">
-                                <div class="row">
+                                <div ng-if="deck.matches.length != 0" class="row">
                                     <div class="col-md-1 match-title">
                                         CLASS
                                     </div>
@@ -431,6 +431,11 @@
                                     </div>
                                     <div class="col-md-6 match-title">
                                         CHANCE TO WIN
+                                    </div>
+                                </div>
+                                <div ng-if="deck.matches.length == 0" class="row">
+                                    <div class="col-md-12 match-title">
+                                        No matches currently selected
                                     </div>
                                 </div>
                             </div>

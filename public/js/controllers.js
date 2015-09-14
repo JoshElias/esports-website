@@ -5118,7 +5118,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.removeMatch = function (index) {
-            $scope.matches.splice(index,1);
+            $scope.deck.matches.splice(index,1);
         }
         
         // premium
@@ -5423,7 +5423,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.removeMatch = function (index) {
-            $scope.matches.splice(index,1);
+            $scope.deck.matches.splice(index,1);
         }
         
         // premium
