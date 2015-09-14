@@ -133,22 +133,7 @@
         <div class="col-xs-12 col-sm-6">
             <h1 class="title">TEMPOSTORM TV</h1>
             <h3 class="sub-title m-b-md">Check out who is streaming right now</h3>
-            <ul class="tempostorm-tv">
-                <li ng-repeat="stream in streams">
-                    <a ng-href="{{stream.channelUrl}}" target="_blank" class="tempostorm-tv-stream">
-                        <div class="inner"></div>
-                        <div class="tempostorm-tv-wrapper clearfix">
-                            <img ng-src="{{stream.screenshotUrl}}" class="pull-left img-responsive hidden-xs">
-                            <div class="tempostorm-tv-content pos-rl">
-                                <h1>{{stream.title}}</h1>
-                                <h3>PLAYING: {{stream.gameName}}</h3>
-                                <div class="streamer">{{stream.displayName}}</div>
-                                <div class="viewers"><span class="fa fa-eye m-r-sm"></span>{{stream.viewerCount}}</div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-            </ul>
+            <div tempostorm-tv></div>
         </div>
     </div>
 </div>

@@ -579,7 +579,7 @@ angular.module('app.directives', ['ui.load'])
 })
 .directive('articleRelatedAdd', function () {
     return {
-        templateUrl: 'views/admin/articles.related.add.html',
+        templateUrl: tpl + 'views/admin/articles.related.add.html',
     };
 })
 .directive('hsBuilder', function() {
@@ -692,7 +692,7 @@ angular.module('app.directives', ['ui.load'])
         scope: {
             url: "=url"
         },
-        templateUrl: 'views/frontend/socialmedia/fblikebutton.html'
+        templateUrl: tpl + 'views/frontend/socialmedia/fblikebutton.html'
     }
 }])
 .directive("tweetButton", [function () {
@@ -702,7 +702,7 @@ angular.module('app.directives', ['ui.load'])
         scope: {
             url: "=url"
         },
-        templateUrl: 'views/frontend/socialmedia/tweetbutton.html'
+        templateUrl: tpl + 'views/frontend/socialmedia/tweetbutton.html'
     }
 }])
 .directive("redditButton", [function () {
@@ -712,7 +712,7 @@ angular.module('app.directives', ['ui.load'])
         scope: {
             url: "=url"
         },
-        templateUrl: 'views/frontend/socialmedia/redditbutton.html'
+        templateUrl: tpl + 'views/frontend/socialmedia/redditbutton.html'
     }
 }])
 .directive("dbDeck", [function () {
@@ -731,7 +731,7 @@ angular.module('app.directives', ['ui.load'])
                 return dust;
             };
         },
-        templateUrl: 'views/frontend/directives/db.deck.html'
+        templateUrl: tpl + 'views/frontend/directives/db.deck.html'
     }
 }])
 .directive('homeArticles', ['$window', function ($window) {
@@ -878,7 +878,7 @@ angular.module('app.directives', ['ui.load'])
             heroes: '=',
             filters: '='
         },
-        templateUrl: 'views/frontend/directives/hots.filtering.html',
+        templateUrl: tpl + 'views/frontend/directives/hots.filtering.html',
         link: function (scope, element, attrs) {
             var initializing = true,
                 randHeroIndex = false;
@@ -1031,7 +1031,7 @@ angular.module('app.directives', ['ui.load'])
         scope: {
             filters: '='
         },
-        templateUrl: 'views/frontend/directives/hots.filter.role.html',
+        templateUrl: tpl + 'views/frontend/directives/hots.filter.role.html',
         replace: true,
         link: function (scope, element, attrs) {
             var initializing = true;
@@ -1072,7 +1072,7 @@ angular.module('app.directives', ['ui.load'])
         scope: {
             filters: '='
         },
-        templateUrl: 'views/frontend/directives/hots.filter.universe.html',
+        templateUrl: tpl + 'views/frontend/directives/hots.filter.universe.html',
         replace: true,
         link: function (scope, element, attrs) {
             var initializing = true;
@@ -1114,7 +1114,7 @@ angular.module('app.directives', ['ui.load'])
             classes: '=',
             filters: '='
         },
-        templateUrl: 'views/frontend/directives/hs.filter.class.html',
+        templateUrl: tpl + 'views/frontend/directives/hs.filter.class.html',
         replace: true,
         link: function (scope, element, attrs) {
             var initializing = true;
@@ -1160,7 +1160,7 @@ angular.module('app.directives', ['ui.load'])
             classes: '=',
             filters: '='
         },
-        templateUrl: 'views/frontend/directives/hs.filter.class.large.html',
+        templateUrl: tpl + 'views/frontend/directives/hs.filter.class.large.html',
         replace: true,
         link: function (scope, element, attrs) {
             var initializing = true;
@@ -1207,7 +1207,7 @@ angular.module('app.directives', ['ui.load'])
         },
         templateUrl: function (element, attrs) {
             var theme = attrs.theme || 'default';
-            return 'views/frontend/directives/pagination/' + theme + '.html';
+            return tpl + 'views/frontend/directives/pagination/' + theme + '.html';
         }
     };
 }])
@@ -1222,7 +1222,7 @@ angular.module('app.directives', ['ui.load'])
 .directive('tempostormTv', ['TwitchService', function (TwitchService) {
     return {
         restrict: 'A',
-        templateUrl: 'views/frontend/directives/twitch.streams.html',
+        templateUrl: tpl + 'views/frontend/directives/twitch.streams.html',
         link: function (scope, element, attrs) {
             scope.streamWheel = false;
             scope.twitWheel = false;
