@@ -1225,9 +1225,7 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/directives/twitch.streams.html',
         link: function (scope, element, attrs) {
             scope.streamWheel = false;
-            scope.twitWheel = false;
             scope.streams = undefined;
-            scope.tweets = undefined;
 
             TwitchService.getStreams().then(function(data) {
                 for (var i = 0; i < data.data.length; i++) {
@@ -1239,6 +1237,26 @@ angular.module('app.directives', ['ui.load'])
                 scope.streamWheel = true;
                 scope.streams = data.data;
             });
+        }
+    };
+}])
+.directive('twitterFeed', ['$sce', 'TwitterService', function ($sce, TwitterService) {
+    return {
+        restrict: 'A',
+        templateUrl: tpl + 'views/frontend/directives/twitter.tweets.html',
+        link: function (scope, element, attrs) {
+            scope.twitWheel = false;
+            scope.tweets = undefined;
+
+            TwitterService.getFeed().then(function(data) {
+                scope.twitWheel = true;
+                scope.tweets = data.data;
+                console.log(data.data);
+            });
+
+            scope.getContent = function (c) {
+                return $sce.trustAsHtml(c);
+            };
 
         }
     };
