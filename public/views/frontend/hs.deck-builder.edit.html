@@ -1,4 +1,4 @@
-<div class="bg-override ">
+<div class="bg-override deck-builder">
     <div class="sub-nav-wrapper hidden-xs">
         <div class="container-fluid sub-nav sticky">
             <div class="sub-nav-links">
@@ -29,28 +29,6 @@
             <span ng-if="step == 5">
                 <h1>SUBMIT</h1>
             </span>
-            <ul class="list-inline">
-                <li ng-click="step = 1" ng-class="{active:$state.includes('app.hs.deckBuilder.edit') && step == 1}">
-                    <h1>Step 1</h1>
-                    <h3>Card Select</h3>
-                </li>
-                <li ng-click="step = 2" ng-class="{active:$state.includes('app.hs.deckBuilder.edit') && step == 2}">
-                    <h1>Step 2</h1>
-                    <h3>Mulligans</h3>
-                </li>
-                <li ng-click="step = 3" ng-class="{active:$state.includes('app.hs.deckBuilder.edit') && step == 3}">
-                    <h1>Step 3</h1>
-                    <h3>Description</h3>
-                </li>
-                <li ng-click="step = 4" ng-class="{active:$state.includes('app.hs.deckBuilder.edit') && step == 4}">
-                    <h1>Step 4</h1>
-                    <h3>Match Ups</h3>
-                </li>
-                <li ng-click="step = 5" ng-class="{active:$state.includes('app.hs.deckBuilder.edit') && step == 5}">
-                    <h1>Step 5</h1>
-                    <h3>Submit</h3>
-                </li>
-            </ul>
         </div>
     </div>
     <div class="container-fluid-max" ng-hide="step !== 1">
@@ -109,6 +87,24 @@
                                 <div class="db-mana-curve-num">7<span>+</span></div>
                             </li>
                         </ul>
+                    </div>
+                </div>
+                
+                <div class="row db-btn-wrapper">
+                    <div ng-click="deck.type = 1" class="col-md-4" ng-class="{ 'active': deck.type == 1 }">
+                        Constructed
+                    </div>
+                    <div ng-click="deck.type = 2" class="col-md-4" ng-class="{ 'active': deck.type == 2 }">
+                        Arena
+                    </div>
+                    <div ng-click="deck.type = 3" class="col-md-4" ng-class="{ 'active': deck.type == 3 }">
+                        Brawl
+                    </div>
+                    <div ng-click="deck.basic = false" class="col-md-6" ng-class="{ 'active' : deck.basic == false }">
+                        Advanced
+                    </div>
+                    <div ng-click="deck.basic = true" class="col-md-6" ng-class="{ 'active' : deck.basic == true }">
+                        Basic
                     </div>
                 </div>
 
@@ -391,24 +387,14 @@
                 <!-- / step 2 -->
                 <!-- step 3 -->
                 <div class="db-descriptions" ng-hide="step !== 3">
-                    <div class="db-section m-b-md">
-                        <div class="db-section-title">
-                            <h1><label for="contentEarly">EARLY GAME</label></h1>
+                    <div ng-repeat="chapter in deck.chapters track by $index" class="db-section m-b-md">
+                        <div class="db-section-chapter-title">
+                            <h1><input placeholder="New Chapter Title..." ng-model="chapter.title" /></h1>
+                                <i ng-click="removeChapter($index)" class="fa fa-close pull-right"></i>
                         </div>
-                        <summernote id="contentEarly" config="options" ng-model="deck.contentEarly"></summernote>
+                        <summernote id="contentEarly" config="options" ng-model="chapter.content"></summernote>
                     </div>
-                    <div class="db-section m-b-md">
-                        <div class="db-section-title">
-                            <h1><label for="contentMid">MID GAME</label></h1>
-                        </div>
-                        <summernote id="contentMid" config="options" ng-model="deck.contentMid"></summernote>
-                    </div>
-                    <div class="db-section">
-                        <div class="db-section-title">
-                            <h1><label for="contentLate">LATE GAME</label></h1>
-                        </div>
-                        <summernote id="contentLate" config="options" ng-model="deck.contentLate"></summernote>
-                    </div>
+                    <div class="chapter-add-btn" ng-click="newChapter()"><i class="fa fa-plus-circle"></i> Add Chapter</div>
                 </div>
                 <!-- / step 3 -->
                 <!-- step 4 -->

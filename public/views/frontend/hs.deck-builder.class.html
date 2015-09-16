@@ -1,4 +1,4 @@
-<div class="bg-override deckbuilder">
+<div class="bg-override deck-builder">
     <div class="sub-nav-wrapper hidden-xs">
         <div class="container-fluid sub-nav sticky">
             <div class="sub-nav-links">
@@ -14,51 +14,13 @@
                 <h1>CLASS SELECT</h1>
                 <h3>CHOOSE YOUR CLASS AND HERO</h3>
             </span>
-            <ul class="list-inline">
-                <li class="active">
-                    <h1>Step 1</h1>
-                    <h3>Class Select</h3>
-                </li>
-                <li>
-                    <a ui-sref="app.hs.deckBuilder.build({ playerClass: selectedHero, goToStep: 1 })">
-                        <h1>Step 2</h1>
-                        <h3>Card Select</h3>
-                    </a>
-                </li>
-                <li>
-                    <a ui-sref="app.hs.deckBuilder.build({ playerClass: selectedHero, goToStep: 2 })">
-                        <h1>Step 3</h1>
-                        <h3>Mulligans</h3>
-                    </a>
-                </li>
-                <li>
-                    <a ui-sref="app.hs.deckBuilder.build({ playerClass: selectedHero, gotoStep: 3 })">
-                        <h1>Step 4</h1>
-                        <h3>Description</h3>
-                    </a>
-                </li>
-                <li>
-                    <a ui-sref="app.hs.deckBuilder.build({ playerClass: selectedHero, goToStep: 4 })">
-                        <h1>Step 5</h1>
-                        <h3>Match Ups</h3>
-                    </a>
-                </li>
-                <li>
-                    <a ui-sref="app.hs.deckBuilder.build({ playerClass: selectedHero, goToStep: 5 })">
-                        <h1>Step 6</h1>
-                        <h3>Submit</h3>
-                    </a>
-                </li>
-            </ul>
         </div>
         <div class="db-classes clearfix">
-            <div ng-repeat="hero in heroes track by $index" no-animate class="db-class db-class-{{hero.class}}" ng-class="{ 'active': hero.secondary, 'no-select': ($parent.klass && $parent.klass != hero.class) || ($parent.selectedHero && $parent.selectedHero != hero.class), 'selected': $parent.selectedHero == hero.class }" ng-mouseover="(!$parent.selectedHero) ? $parent.klass = hero.class : false" ng-mouseout="(!$parent.selectedHero) ? $parent.klass = false : false"><button class="select-hero-btn" ng-click="selectHero(hero)"></button><button class="switch-hero-btn" ng-disabled="!hero.hasSecondary" ng-click="hero.secondary = !hero.secondary; updateHero(hero.secondary, $index)" ng-class="{'active': hero.secondary}"><span ng-if="hero.hasSecondary">SWITCH HERO</span><span ng-if="!hero.hasSecondary">COMING SOON</span></button></div>
+            <div ng-repeat="hero in heroes track by $index" no-animate class="db-class db-class-{{hero.class}}" ng-class="{ 'active': hero.secondary, 'no-select': ($parent.klass && $parent.klass != hero.class) || ($parent.selectedHero && $parent.selectedHero != hero.class)}" ng-mouseover="(!$parent.selectedHero) ? $parent.klass = hero.class : false" ng-mouseout="(!$parent.selectedHero) ? $parent.klass = false : false"><div class="db-class-clip"><button class="select-hero-btn" ui-sref="app.hs.deckBuilder.build({ playerClass: hero.class })"><div class="hero-img"></div></button></div><button class="switch-hero-btn" ng-disabled="!hero.hasSecondary" ng-click="hero.secondary = !hero.secondary; updateHero(hero.secondary, $index)" ng-class="{'active': hero.secondary}"><span ng-if="hero.hasSecondary">SWITCH HERO</span><span ng-if="!hero.hasSecondary">COMING SOON</span></button>
+</div>
         </div>
         <div class="db-footer">
-            <h2 class="pull-right">
-                <span ng-if="!selectedHero">NEXT STEP</span>
-                <a ng-if="selectedHero" ui-sref="app.hs.deckBuilder.build({ playerClass: selectedHero })">NEXT STEP</a>
-            </h2>
+            
         </div>
     </div>
 </div>
