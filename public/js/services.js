@@ -1129,6 +1129,9 @@ angular.module('app.services', [])
         slugify: function (str) {
             return (str) ? str.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') : '';
         },
+        numberWithCommas : function (x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
         getObjectID: function () {
             return $http.post('/api/admin/id', {});
         }

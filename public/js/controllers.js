@@ -6168,8 +6168,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'DeckService', 'dataDecksTempostorm', 'dataDecksCommunity', 
-    function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, DeckService, dataDecksTempostorm, dataDecksCommunity) {
+.controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'DeckService', 'dataDecksTempostorm', 'dataDecksCommunity', 
+    function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, DeckService, dataDecksTempostorm, dataDecksCommunity) {
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
         
         // decks
@@ -6195,6 +6195,10 @@ angular.module('app.controllers', ['ngCookies'])
                 updateCommunityDecks(1, 12);
             }
         }, true);
+        
+        $scope.dustFormatted = function (dust) {
+            return Util.numberWithCommas(dust);
+        }
         
         $scope.newSearch = function () {
             $scope.filters.search = $scope.deckSearch;

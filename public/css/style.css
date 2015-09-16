@@ -498,6 +498,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .hs-list-ts-decks .hs-decks li:last-child .hs-deck { margin-right: 0px; }
 
 .hs-deck.long h1 { margin: 12px 0 18px 0; font-size: 14px; }
+.hs-deck.long .hs-deck-dust,
 .hs-deck.long .hs-deck-votes,
 .hs-deck.long .hs-deck-hero-name { margin-bottom: 0; font-family: 'Open Sans Bold'; font-size: 14px; color: #FFF; line-height: 79px; }
 .hs-deck.long .hs-deck-hero-name { text-shadow: 0px 0px 10px rgba(255,255,255,.6); }
