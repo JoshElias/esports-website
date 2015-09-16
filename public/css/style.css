@@ -603,12 +603,12 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-attachment: fixed;
 }
 
-.bg-override.deckbuilder {
+.bg-override.deck-builder {
     background-image: url(../img/backgrounds/profile-bg.jpg);
     background-color: #121111;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    height: 800px;
+    min-height: 800px;
 }
 
 .bg-override.team-page {
@@ -2105,7 +2105,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .profile-page h1 { color: white; font-weight: bold; font-size: 24px; letter-spacing: 5px; }
 .profile-page h1 small { color: white; font-weight: bold; font-size: 12px; letter-spacing: 1px; display: block; }
-.profile-page h2 { color: white; font-weight: bold; font-size: 18px; letter-spacing: 3px; }
+.profile-page h2 { color: white; font-size: 18px; letter-spacing: 3px; }
 .profile-page h2 small { color: #C4C4C4; font-size: 16px; letter-spacing: 3px; display: block }
 
 .profile-page .profile-col-header { height: 35px; margin-top: 30px; }
@@ -2127,42 +2127,45 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 
 .profile-page .activity-filter li { display: inline-block; }
-.profile-page .activity-filter .profile-filter-btn { background-color: rgba(0,0,0,.6); }
-.profile-page .activity-filter .profile-filter-btn.active { background-color: #2766ad; }
+.profile-page .activity-filter .profile-filter-btn { background-color: rgba(0,0,0,.6); border-radius: 0; opacity: .8 }
+.profile-page .activity-filter .profile-filter-btn:hover { opacity: 1; }
+.profile-page .activity-filter .profile-filter-btn.active { background-color: #2766ad; opacity: 1; }
 .profile-page .activity-filter .profile-filter-btn:focus { background-color: rgba(0,0,0,.6); outline:none; }
 .profile-page .activity-filter .profile-filter-btn:focus.active { background-color: #2766ad; outline:none; }
 
 
-.profile-page .activity-list .activity { padding: 30px 25px 25px 25px; display: flex; overflow: hidden; opacity: 1; }
+.profile-page .activity-list .activity { padding: 30px 25px 25px 25px; display: flex; overflow: hidden; opacity: 1; transition: .2s; -moz-transition: .2s; -webkit-transition: .2s; }
+.profile-page .activity-list .activity:hover { background: rgba(255,255,255,.1); transition: .2s; -moz-transition: .2s; -webkit-transition: .2s; }
 .profile-page .activity-list .activity .activity-left { height: 100% }
 .profile-page .activity-list .activity .activity-left .activity-img { width: 60px; height: 60px; border-radius: 50%; background-color: rgb(255,255,255); padding: 2px; }
 .profile-page .activity-list .activity .activity-left .activity-img img { width: 100%; }
-.profile-page .activity-list .activity .activity-left .activity-btn-wrapper { opacity: .05; transition: .2s }
+.profile-page .activity-list .activity .activity-left .activity-btn-wrapper { opacity: .15; transition: .2s }
 .profile-page .activity-list .activity:hover .activity-left .activity-btn-wrapper { opacity: 1; }
 .profile-page .activity-list .activity .activity-left .activity-btn-wrapper .activity-btn { display: inline-block; width:25px; height: 25px; text-align: center; background-color: rgba(255,255,255,.75); border-radius: 50%; line-height: 1.75; }
 
 .profile-page .activity-list .activity .activity-right { padding-left: 25px; color: white; width: 100%; }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header {  }
-.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 { font-size: 16px; letter-spacing: 2px; width: 750px; }
-.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2.deleted { font-size: 16px; letter-spacing: 2px; width: 100%; color: rgba(215,215,215,.8); }
-.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 .color-wrapper { color: rgba(215,215,215,.8) }
-/*.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 a { color: rgba(255,255,255,1); }*/
+.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 { font-size: 14px; letter-spacing: 2px; width: 750px; }
+.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2.deleted { font-size: 14px; letter-spacing: 2px; width: 100%; color: rgba(215,215,215,.8); }
+.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 .color-wrapper { color: rgba(215,215,215,1) }
+.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 a { font-weight: bold; }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 a:hover { text-decoration: underline; }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-foot { color: rgba(200,200,200,.75); }
 
 .profile-page .activity-list .activity,
-.profile-page .show-more { border: 1px black solid; outline: 1px rgba(255,255,255,.2) solid; outline-offset: -2px; box-shadow: rgba(0,0,0,.5) 2px 2px 3px; background: rgba(0,0,0,.85); }
+.profile-page .show-more { border: 1px black solid; outline: 1px rgba(255,255,255,.2) solid; outline-offset: -2px; box-shadow: 2px 2px 3px rgba(0,0,0,.75); background: rgba(0,0,0,.85); transition: .2s; -moz-transition: .2s; -webkit-transition: .2s; }
+.profile-page .show-more:hover { background: rgba(255,255,255,.1); }
+.profile-page .show-more:hover a { color: rgba(255,255,255,1); }
 .profile-page .show-more { height: 55px; text-align: center; }
-.profile-page .show-more a { color: rgba(255,255,255,.8); font-size: 22px; line-height:2.25; display: block; height: 100%; width: 100%; }
-.profile-page .show-more a:hover { color: rgba(255,255,255,1) }
+.profile-page .show-more a { color: rgba(255,255,255,.8); font-size: 18px; line-height:3; display: block; height: 100%; width: 100%; transition: .2s; -moz-transition: .2s; -webkit-transition: .2s; }
+.profile-page .show-more a:focus { outline: none; border: none; }
 
 .profile-page .activity-list .activity .activity-body {
-    color: rgba(215,215,215,.8);
+    color: rgba(215,215,215,1);
 }
 
 /*.profile-page .activity-list .articleComment .activity-right .activity-body,*/
 .profile-page .activity-list .articleComment .activity-right .activity-header h2 a,
-.profile-page .activity-list .snapshotComment .activity-right .activity-header h2 a,
 .profile-page .activity-list .forumComment .activity-right .activity-header h2 a,
 .profile-page .activity-list .forumPost .activity-right .activity-header h2 a,
 .profile-page .activity-list .forumPost .activity-left i,
@@ -2171,7 +2174,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     color: rgb(0,126,195);
 }
 .profile-page .activity-list .articleComment .activity-left .activity-img,
-.profile-page .activity-list .snapshotComment .activity-left .activity-img,
 .profile-page .activity-list .forumComment .activity-left .activity-img,
 .profile-page .activity-list .forumPost .activity-left .activity-img,
 .profile-page .activity-list .createArticle .activity-left .activity-img {
@@ -2192,10 +2194,12 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 /*.profile-page .activity-list .createDeck .activity-right .activity-body,*/
 .profile-page .activity-list .createDeck .activity-right .activity-header h2 a,
 .profile-page .activity-list .createDeck .activity-left i,
+.profile-page .activity-list .snapshotComment .activity-right .activity-header h2 a,
 .profile-page .activity-list .deckComment .activity-right .activity-header h2 a {
     color: rgb(187,80,24);
 }
 .profile-page .activity-list .createDeck .activity-left .activity-img,
+.profile-page .activity-list .snapshotComment .activity-left .activity-img,
 .profile-page .activity-list .deckComment .activity-left .activity-img {
     background-color: rgb(187,80,24);
 }
@@ -2543,6 +2547,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 /* deck builder */
+.db-loading-indicator { font-size: 48px; color: white; text-align: center; margin-top: 50px; }
 
 .db-footer,
 .db-header { color: #FFF; height: auto; line-height: 50px; font-size: 26px; width: 80%; margin: 20px auto; }
@@ -2573,9 +2578,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     margin-left: .5%; 
     margin-right: .5%; 
     
-    border: 1px solid rgba(0,0,0,1); 
-    outline: 1px solid rgba(255,255,255,.6); 
-    outline-offset: -2px;
     
     -moz-transition: opacity .6s linear;
     -ms-transition: opacity .6s linear;
@@ -2583,14 +2585,37 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     -webkit-transition: opacity .6s linear;
     transition: opacity .6s linear;
 }
-.db-class.no-select {
+.db-class .db-class-clip {
+    border: 1px solid rgba(255,255,255,.4); 
+    border-bottom: none;
+    
+    position: relative; 
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+.db-class.no-select .hero-img {
     opacity: .4;
 }
 .db-class .select-hero-btn { width: 100%; height: 100%; background: none; border: none; outline: none; }
 .db-class .switch-hero-btn { width: 100%; position: absolute; bottom: -26px; left: 0; background: #163142; outline: none; border:1px solid rgba(255,255,255,.4); color: white; height: 26px; font-size: 10px; font-weight: bold; letter-spacing:1px; }
-.db-class .switch-hero-btn[disabled] { opacity: .5; border: 1px solid rgba(255,255,255,.5) }
+.db-class .switch-hero-btn[disabled] { opacity: .5; border: 1px solid rgba(255,255,255,.5); }
 .db-class .switch-hero-btn.active { background:#2766AD; border: rgba(255,255,255,.4) 1px solid; }
+.db-class .switch-hero-btn:hover .hero-img { opacity: 1; }
 .db-class a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; }
+
+.hero-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height:100%;
+    width:100%;
+    -moz-transition: .6s;
+    -ms-transition: .6s;
+    -o-transition: .6s;
+    -webkit-transition .6s;
+    background-size: cover;
+}
 
 .db-class-mage,
 .db-class-shaman,
@@ -2601,7 +2626,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-class-warlock,
 .db-class-hunter,
 .db-class-druid { 
-    background: #ccc;     
     transition: .6s;
     -moz-transition: .6s;
     -ms-transition: .6s;
@@ -2609,65 +2633,65 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     -webkit-transition .6s;
 }
 
-.db-class-mage.selected,
-.db-class-shaman.selected,
-.db-class-warrior.selected,
-.db-class-rogue.selected,
-.db-class-paladin.selected,
-.db-class-priest.selected,
-.db-class-warlock.selected,
-.db-class-hunter.selected,
-.db-class-druid.selected,
-.db-class-mage.active.selected,
-.db-class-shaman.active.selected,
-.db-class-warrior.active.selected,
-.db-class-rogue.active.selected,
-.db-class-paladin.active.selected,
-.db-class-priest.active.selected,
-.db-class-warlock.active.selected,
-.db-class-hunter.active.selected,
-.db-class-druid.active.selected,
-.db-class-mage:hover,
-.db-class-shaman:hover,
-.db-class-warrior:hover,
-.db-class-rogue:hover,
-.db-class-paladin:hover,
-.db-class-priest:hover,
-.db-class-warlock:hover,
-.db-class-hunter:hover,
-.db-class-druid:hover,
-.db-class-mage.active:hover,
-.db-class-shaman.active:hover,
-.db-class-warrior.active:hover,
-.db-class-rogue.active:hover,
-.db-class-paladin.active:hover,
-.db-class-priest.active:hover,
-.db-class-warlock.active:hover,
-.db-class-hunter.active:hover,
-.db-class-druid.active:hover {
-    background-size: 250px;
-    opacity: 1;
+.db-class-mage.selected .hero-img,
+.db-class-shaman.selected .hero-img,
+.db-class-warrior.selected .hero-img,
+.db-class-rogue.selected .hero-img,
+.db-class-paladin.selected .hero-img,
+.db-class-priest.selected .hero-img,
+.db-class-warlock.selected .hero-img,
+.db-class-hunter.selected .hero-img,
+.db-class-druid.selected .hero-img,
+.db-class-mage.active.selected .hero-img,
+.db-class-shaman.active.selected .hero-img,
+.db-class-warrior.active.selected .hero-img,
+.db-class-rogue.active.selected .hero-img,
+.db-class-paladin.active.selected .hero-img,
+.db-class-priest.active.selected .hero-img,
+.db-class-warlock.active.selected .hero-img,
+.db-class-hunter.active.selected .hero-img,
+.db-class-druid.active.selected .hero-img,
+.db-class-mage .db-class-clip:hover .hero-img,
+.db-class-shaman .db-class-clip:hover .hero-img,
+.db-class-warrior .db-class-clip:hover .hero-img,
+.db-class-rogue .db-class-clip:hover .hero-img,
+.db-class-paladin .db-class-clip:hover .hero-img,
+.db-class-priest .db-class-clip:hover .hero-img,
+.db-class-warlock .db-class-clip:hover .hero-img,
+.db-class-hunter .db-class-clip:hover .hero-img,
+.db-class-druid .db-class-clip:hover .hero-img,
+.db-class-mage.active .db-class-clip:hover .hero-img,
+.db-class-shaman.active .db-class-clip:hover .hero-img,
+.db-class-warrior.active .db-class-clip:hover .hero-img,
+.db-class-rogue.active .db-class-clip:hover .hero-img,
+.db-class-paladin.active .db-class-clip:hover .hero-img,
+.db-class-priest.active .db-class-clip:hover .hero-img,
+.db-class-warlock.active .db-class-clip:hover .hero-img,
+.db-class-hunter.active .db-class-clip:hover .hero-img,
+.db-class-druid.active .db-class-clip:hover .hero-img {
+    transform: scale(1.2,1.2);
+    opacity: 1!important;
 }
 
-.db-class-mage { background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-shaman { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-warrior { background: #C79C6E url('../img/warrior-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-rogue { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-paladin { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-priest { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-warlock { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-hunter { background: #ABD473 url('../img/hunter-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-druid { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-mage .hero-img{ background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-shaman .hero-img{ background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-warrior .hero-img{ background: #C79C6E url('../img/warrior-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-rogue .hero-img{ background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-paladin .hero-img{ background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-priest .hero-img{ background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-warlock .hero-img{ background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-hunter .hero-img{ background: #ABD473 url('../img/hunter-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-druid .hero-img{ background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 220px; }
 
-.db-class-mage.active { background: #69CCF0 url('../img/medivh.jpg') center center no-repeat; background-size: 220px; }
-.db-class-shaman.active { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-warrior.active { background: #C79C6E url('../img/magni.jpg') center center no-repeat; background-size: 220px; }
-.db-class-rogue.active { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-paladin.active { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-priest.active { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-warlock.active { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-hunter.active { background: #ABD473 url('../img/alleria.jpg') center center no-repeat; background-size: 220px; }
-.db-class-druid.active { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-mage.active .hero-img{ background: #69CCF0 url('../img/medivh.jpg') center center no-repeat; background-size: 220px; }
+.db-class-shaman.active .hero-img{ background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-warrior.active .hero-img{ background: #C79C6E url('../img/magni.jpg') center center no-repeat; background-size: 220px; }
+.db-class-rogue.active .hero-img{ background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-paladin.active .hero-img{ background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-priest.active .hero-img{ background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-warlock.active .hero-img{ background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 220px; }
+.db-class-hunter.active .hero-img{ background: #ABD473 url('../img/alleria.jpg') center center no-repeat; background-size: 220px; }
+.db-class-druid.active .hero-img{ background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 220px; }
 
 /*.db-class { -webkit-transition: all .25s linear; -moz-transition: all .25s linear; transition: all .25s linear; }*/
 /*.db-class a { -webkit-transition: opacity 1s; -moz-transition: opacity 1s; transition: opacity 1s; opacity: 0; background-position: center center; }*/
@@ -2826,15 +2850,24 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
   to { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
 }
 /* end glows */
+.db-sub-nav-border-override {
+    border-right: none!important;
+}
 
 .db-builder { position: relative; margin: 20px 0; }
 
 .db-section { outline: 1px solid rgba(255,255,255,.3); outline-offset: 0px; background: rgba(0,0,0,.3); }
-.db-section-title { padding: 0 85px; min-height: 60px; line-height: 60px; background: none; }
+.db-section-title { padding: 0 85px; min-height: 60px; line-height: 60px; background: none; font-size: 14px; }
 .db-section-title h1 { margin: 0 20px 0 0; padding: 0; height: 50px; line-height: 60px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 12px; }
 
+.db-section-chapter-title { padding: 0 45px; min-height: 60px; line-height: 60px; background: rgba(0,0,0,.5); position: relative; }
+.db-section-chapter-title i { position: absolute; color: rgba(255,255,255,.4); right: 20px; top: 15px; cursor: pointer; font-size: 24px; }
+.db-section-chapter-title h1 { margin: 0 20px 0 0; padding: 0; height: 50px; line-height: 60px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 18px; }
+.db-section-chapter-title input { height: 45px; background: none; width: 50%; outline: none; border: none; }
 
 .db-section label { color: #FFF; }
+
+.db-descriptions .chapter-add-btn { width:200px; height:50px; color: white; border: 1px solid rgba(255,255,255,.75); text-align: center; line-height: 3.25; margin: 0 auto; cursor: pointer; }
 
 .db-filter-classes { margin: 0; padding: 0; }
 .db-filter-classes li { float: left; width: 31px; height: 32px; margin-right: 10px; list-style: none; }
@@ -2892,9 +2925,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .note-editor .note-statusbar .note-resizebar { border-color: #000; background-color: #444; }
 .note-editor .note-statusbar .note-resizebar .note-icon-bar { border-top: 1px solid #FFF; }
 
-.db-descriptions label { margin: 0; font-weight: normal; }
-
-
 .db-mechanics,
 .db-mana { line-height: 30px; margin-bottom: 15px; }
 
@@ -2931,7 +2961,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-arrow-right { right: -15px; }
 .db-arrow i { font-size: 31px; }
 
-.db-cards-view-wrapper { position: relative; height: auto; width:90%; margin: auto; }
+.db-cards-view-wrapper { position: relative; height: auto; width:90%; margin: auto; text-align: center; }
 .db-cards-view {  }
 
 .db-card { float: left; position: relative; width:20%; display: block; height: 221px; }
@@ -2996,6 +3026,38 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-mana-curve .db-mana-curve-num { position: relative; width: 35px; height: 20px; margin: 5px 0 0 0; line-height: 20px; text-align: center; font-family: hs; font-size: 14px; color: #FFF; font-weight: bold; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; }
 .db-mana-curve .db-mana-curve-num span { position: absolute; top: 1px; right: 3px; font-size: 10px; }
 
+
+/* deck builder- btns */
+.db-btn-wrapper {
+    color: white;
+    text-align: center;
+    margin: 0px 0px 20px 0px;
+}
+.db-btn-wrapper div {
+    font-weight: bold;
+    cursor: pointer;
+    padding: 3px;
+    background-color: rgba(0,0,0,.5);
+}
+.db-btn-wrapper div:hover {
+    background-color: rgba(255,255,255,.5);
+}
+.db-btn-wrapper div.active {
+    background-color: #2268AD;
+}
+
+.basic-submit-btn {
+    width: 100%;
+    height: 50px;
+    background: #2268AD;
+    color: white;
+    font-size: 24px;
+    text-align: center;
+    line-height: 2;
+    outline: none;
+    border: none;
+}
+
 /* deck builder- name */
 .db-builder .deck-info { margin: auto; border: 1px solid rgba(255,255,255,.15); }
 .db-builder .deck-title input {
@@ -3027,14 +3089,16 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     padding: 10px;
 }
 
-.db-builder .deck-list {
-    overflow-y: auto;
-    max-height: 385px;
+
+.db-builder .db-deck-dust {
+    position: relative!important;
 }
 
 .db-builder .deck-list .mana-cost { background: #2766AD; height: 28px; width: 28px; float: left; text-align: center; text-indent: 0px; color: white; }
-.db-builder .deck-list .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-top: 1px; cursor: pointer; cursor: hand; }
-.db-builder .deck-list .list-card .legendary { margin-right: 8px; }
+.db-builder .deck-list .list-card .card-charm { color: gold; position: relative; width:28px;  }
+.db-builder .deck-list .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-top: 1px; cursor: pointer; cursor: hand; position: relative; }
+.db-builder .deck-list .list-card .card-name { position: absolute; left: 28px; }
+.db-builder .deck-list .list-card .legendary { padding: 0px 7px; }
 /*
 .db-builder .deck-list .list-card { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
 .db-builder .deck-list .list-card { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
@@ -7309,6 +7373,7 @@ p.white { color: #FFF; }
 .sub-nav .sub-nav-links ul li a { color: rgba(255,255,255,.7); }
 .sub-nav .sub-nav-links ul li button,
 .sub-nav .sub-nav-links ul li a:hover { color: rgba(255,255,255,1); }
+.sub-nav .sub-nav-links ul li a.active { color: rgba(255,255,255,1) }
 
 .sub-nav.sticky { position: fixed; top: 52px; z-index: 1000; width: 100%; box-shadow: none; }
 .sub-nav.sticky .sub-nav-links ul { margin: 10px 0; }

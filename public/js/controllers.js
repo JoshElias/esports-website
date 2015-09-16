@@ -4857,7 +4857,6 @@ angular.module('app.controllers', ['ngCookies'])
     
     var portraitSettings = ($scope.app.settings.secondaryPortrait != undefined) ? $scope.app.settings.secondaryPortrait : function() { 
         $scope.app.settings.secondaryPortrait = [false,false,false,false,false,false,false,false,false];
-        console.log('fuck');
         return $scope.app.settings.secondaryPortrait;
     };
     
@@ -4892,9 +4891,17 @@ angular.module('app.controllers', ['ngCookies'])
         if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
         
         // set default tab page
-        (!toStep) ? $scope.step = 1 : $scope.step = toStep;
+        $scope.step = 1;
         $scope.showManaCurve = false;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
+        
+        $scope.getDust = function (cards) {
+            var dust = 0;
+            for (var i = 0; i < cards.length; i++) {
+                dust += cards[i].dust;
+            }
+            return dust
+        }
         
         // steps
         $scope.stepDesc = {
@@ -4905,6 +4912,8 @@ angular.module('app.controllers', ['ngCookies'])
             5: 'Provide a synopsis and title for your deck.'            
         };
         
+        $scope.type = 1;
+        $scope.basic = false;
         
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
@@ -4936,13 +4945,6 @@ angular.module('app.controllers', ['ngCookies'])
             return classCards;
         }
         
-        $scope.setClassCards = function (b) {
-            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
-            $timeout(function () {
-                classCards = b;
-            });
-        }
-        
         $scope.className = data.className;
         $scope.cards = data.cards;
         $scope.cards.current = $scope.cards.class;
@@ -4952,6 +4954,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         function updateCards (page, perpage, search, mechanics, mana, callback) {
+            $scope.fetching = true;
             DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
                 $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
                 $scope.classPagination.page = page;
@@ -4959,7 +4962,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.neutralPagination.page = page;
                 $timeout(function () {
                     $scope.cards.current = ($scope.isClassCards()) ? data.cards.class : data.cards.neutral;
-
+                    $scope.fetching = false;
                     if (callback) {
                         return callback(data);
                     }
@@ -4983,11 +4986,9 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
             function (page, perpage) {
                 var d = $q.defer();
-
                 updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
                     d.resolve(data.neutralTotal);
                 });
-
                 return d.promise;
             }
         );
@@ -4998,6 +4999,11 @@ angular.module('app.controllers', ['ngCookies'])
             mechanics: [],
             mana: 'all'
         };
+        
+        $scope.setClassCards = function (b) {
+            classCards = b;
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+        }
         
         $scope.mechanics = Hearthstone.mechanics;
         $scope.inMechanics = function (mechanic) {
@@ -5076,12 +5082,11 @@ angular.module('app.controllers', ['ngCookies'])
                 name: $scope.deck.name,
                 deckType: $scope.deck.deckType,
                 description: $scope.deck.description,
-                contentEarly: $scope.deck.contentEarly,
-                contentMid: $scope.deck.contentMid,
-                contentLate: $scope.deck.contentLate,
+                chapters: $scope.deck.chapters,
                 cards: $scope.deck.cards,
                 playerClass: $scope.deck.playerClass,
-                arena: $scope.deck.arena,
+                type: $scope.deck.type,
+                basic: $scope.deck.basic,
                 mulligans: $scope.deck.mulligans,
                 against: $scope.deck.against,
                 video: $scope.deck.video,
@@ -5101,6 +5106,26 @@ angular.module('app.controllers', ['ngCookies'])
             console.log(mulligan);
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
+        
+        //chapters
+        var defaultChapter = {
+            title: '',
+            content: ''
+        };
+        
+        $scope.deck.chapters = [
+            defaultChapter
+        ]
+        
+        $scope.newChapter = function () {
+            var m = angular.copy(defaultChapter);
+            $scope.deck.chapters.push(m);
+        }
+        
+        $scope.removeChapter = function (index) {
+            console.log(index);
+            $scope.deck.chapters.splice(index,1);
+        }
         
         //match-ups
         var defaultMatchUp = {
@@ -5390,9 +5415,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         // deck
         $scope.deckTypes = Hearthstone.deckTypes;
-        
+        console.log(data.deck);
         //$scope.deck = DeckBuilder.new(data.className);
-        $scope.deck = DeckBuilder.new(data.deck.className, data.deck)
+        $scope.deck = DeckBuilder.new(data.deck.className, data.deck);
         
         // current mulligan
         $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
@@ -5407,14 +5432,28 @@ angular.module('app.controllers', ['ngCookies'])
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
         
+        //chapters
+        var defaultChapter = {
+            title: '',
+            content: ''
+        };
+        
+        $scope.newChapter = function () {
+            var m = angular.copy(defaultChapter);
+            $scope.deck.chapters.push(m);
+        }
+        
+        $scope.removeChapter = function (index) {
+            console.log(index);
+            $scope.deck.chapters.splice(index,1);
+        }
+        
         //match-ups
         var defaultMatchUp = {
             deckName: '',
             klass: '',
             match: 0
         };
-        
-        $scope.deck.matches = [];
         
         $scope.newMatch = function (klass) {
             var m = angular.copy(defaultMatchUp);
