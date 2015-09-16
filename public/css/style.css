@@ -337,58 +337,23 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
     animation: fadeOutRight 0.5s;
 }
 
-
-/* twitch FEED */
-.twitch-feed { max-height: 420px; display:block; padding: 0px; } 
-.twitch-feed .twitch-head { height: 60px; background-color: #64449b; }
-.twitch-feed div {  }
-.twitch-feed div h3,
-.twitch-feed div i { color: white; display:inline-block; line-height: 40px; vertical-align: middle; margin: 0px 10px 0px 0px }
-.twitch-feed div h3 { font-size: 20px; font-family: 'Open Sans Bold' }
-.twitch-feed div i { font-size: 24px; margin: 0px 10px; }
-.twitch-feed .twitch-body { max-height: 360px; padding: 0px; overflow-y: auto; border: 4px solid #0f0f0f }
-.twitch-feed .twitch-body .stream { border-bottom: 1px solid #171514; height: 60px; background-color: #0f0f0f; padding-top: 8px }
-.twitch-feed .twitch-body .stream:nth-child(2n) { background-color: #161515 }
-.twitch-feed .twitch-body .stream:hover { background-color: #363434 }
-.twitch-feed .twitch-body .stream-img-wrapper,
-.twitch-feed .twitch-body .stream-img-wrapper img { width: 40px; height: 40px; margin:auto; float:left; vertical-align:top; }
-.twitch-feed .twitch-body .stream-info { color:white; position: relative; padding-left:45px; }
-.twitch-feed .twitch-body .stream-info .stream-info-top { position:relative; }
-.twitch-feed .twitch-body .stream-info .stream-info-top .views { position:absolute; top: 0; right: 0; }
-.twitch-feed .twitch-body .stream-info .stream-info-top h4 { color: #BCBCBC; font-size: 14px; margin: 0px; }
-.twitch-feed .twitch-body .stream-info .stream-info-top i { color: #BCBCBC; font-size: 14px; height:14px; line-height: 1; margin:0px 5px 0px 0px; text-shadow: none; }
-.twitch-feed .twitch-body .stream-info .stream-info-bottom p { color: #7F6AAF; margin: 0px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width:inherit }
-.twitch-feed .twitch-body .stream-info .stream-info-bottom { padding: 8px 0px; max-width: 190px; }
-.twitch-feed .nostream p { color: white; font-size: 14px; padding: 0px }
-
-.twitch-feed .twitch-body .stream.lite { background-color: #161515 }
-
-
-
-
 /* twitter FEED */
-.twitter-feed { height: 420px; display:block; padding: 0px; } 
-.twitter-feed .twitter-head { height: 60px; background-color: #6CADDE; }
-.twitter-feed div h3,
-.twitter-feed div i { color: white; display:inline-block; line-height: 40px; vertical-align: middle; margin: 0px 10px 0px 0px }
-.twitter-feed div h3 { font-size: 20px; font-family: 'Open Sans Bold' }
-.twitter-feed div i { font-size: 28px; margin: 0px 10px }
-.twitter-feed .twitter-body { height: 360px; padding: 0px; overflow-y: auto }
-.twitter-feed .twitter-body .tweet { border-bottom: 1px solid #171514; height: 60px; background-color: #0f0f0f; position: relative; height: auto; }
-.twitter-feed .twitter-body .tweet:nth-child(2n) { background-color: #161515 }
-.twitter-feed .twitter-body img { width: 40px; height: 40px; position: absolute; margin:auto; top: 0; bottom: 0; left: 10;  }
-.twitter-feed .twitter-body .tweet-info { color:white; position: relative; top: 0; bottom: 0; right: 0; }
-.twitter-feed .twitter-body .tweet-info .tweet-info-top { position:relative; }
-.twitter-feed .twitter-body .tweet-info .tweet-info-top .time h4 {color: #BCBCBC; font-size: 14px; margin: 0px; }
-.twitter-feed .twitter-body .tweet-info .tweet-info-top .name { color: #6CADDE; font-size: 14px; margin: 0px; width: 125px; padding-right:5px; }
-.twitter-feed .twitter-body .tweet-info .tweet-info-top .time { color: #BCBCBC; position:absolute; top: 0; right: 0; }
+.twitter-tweets-wrapper { border: 1px solid #000; box-shadow: 2px 2px 3px rgba(0,0,0,.75); }
+.twitter-tweets { margin: 0; padding: 0; background: rgba(19,18,19,.7); border: 1px solid rgba(255,255,255,.2); }
+.twitter-tweets li { list-style: none; }
+.twitter-tweets img { margin: 0 20px; border-radius: 50%; }
+.twitter-tweets .twitter-tweet-wrapper { padding: 20px 0; }
+.twitter-tweets .twitter-tweet-content { margin-left: 88px; }
+.twitter-tweets .twitter-tweet-content .ago { position: absolute; top: 0px; right: 20px; color: #f7ef22; }
+.twitter-tweets .twitter-tweet-content h1 { margin-bottom: 5px; font-size: 16px; color: #f7ef22; }
+.twitter-tweets .twitter-tweet-content p { margin: 10px 0 0 0; padding: 0 20px 0 0; color: #DDD; }
+.twitter-tweets .twitter-tweet-content p a { color: #f7ef22; }
+.twitter-tweets .twitter-tweet-content p a.twitter,
+.twitter-tweets .twitter-tweet-content p a.hashtag { color: #FFF; font-weight: bold; }
 
-.twitter-feed .twitter-body .tweet-info .tweet-info-top .time i { color: #BCBCBC; font-size: 14px; height:14px; line-height: .5; margin:0px 5px 0px 0px; text-shadow: none; }
-.twitter-feed .twitter-body .tweet-info .tweet-info-bottom p {color: #BCBCBC;  margin: 0px; width:inherit }
-.twitter-feed .twitter-body .tweet-info .tweet-info-bottom { padding-bottom: 0px; }
-.twitter-feed .nostream p { color: white; font-size: 14px; padding: 0px }
-.twitter-feed .twitter-body .stream.lite { background-color: #161515 }
-
+@media (max-width: 767px) {
+    .twitter-tweets .twitter-tweet-content .ago { top: auto; bottom: -20px; }
+}
 
 /* 404 */
 .fofOuter {  padding: 0px; }

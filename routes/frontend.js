@@ -2009,7 +2009,7 @@ module.exports = {
                     path: 'author',
                     select: 'username -_id'
                 })
-                .sort({ votesCount: -1, createdDate: -1 })
+                .sort({ createdDate: -1 })
                 .skip((perpage * page) - perpage)
                 .limit(perpage)
                 .exec(function (err, results) {
@@ -2076,7 +2076,7 @@ module.exports = {
                     path: 'author',
                     select: 'username -_id'
                 })
-                .sort({ votesCount: -1, createdDate: -1 })
+                .sort({ createdDate: -1 })
                 .skip((perpage * page) - perpage)
                 .limit(perpage)
                 .exec(function (err, results) {

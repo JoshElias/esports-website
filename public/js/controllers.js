@@ -223,8 +223,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', '$sce', 'dataArticles', 'ArticleService', 'TwitterService',
-    function ($scope, $sce, dataArticles, ArticleService, TwitterService) {
+.controller('HomeCtrl', ['$scope', '$sce', 'dataArticles', 'ArticleService', 
+    function ($scope, $sce, dataArticles, ArticleService) {
         // data
         $scope.articles = {
             loading: false,
@@ -259,19 +259,6 @@ angular.module('app.controllers', ['ngCookies'])
             data: dataArticles.articles
         };
                 
-        $scope.twitWheel = false;
-        $scope.tweets = undefined;
-
-        
-        TwitterService.getFeed().then(function(data) {
-            $scope.twitWheel = true;
-            $scope.tweets = data.data;
-        });
-        
-        $scope.getContent = function (c) {
-            return $sce.trustAsHtml(c);
-        };
-        
         // articles
         $scope.getArticleDesc = function (desc, limit) {
             var words = desc.split(' ');
@@ -8586,6 +8573,7 @@ angular.module('app.controllers', ['ngCookies'])
                     guideFilters.push($scope.filters.map._id);
                 }
                 
+                updateTopGuide();
                 updateTempostormGuides(1, 4);
                 updateCommunityGuides(1, 10);
             }
@@ -8741,6 +8729,15 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             return filters;
+        }
+        
+        function updateTopGuide () {
+            HOTSGuideService.getGuides(getFilters(), 0, 1, $scope.filters.search).then(function (data) {
+                $timeout(function () {
+                    console.log(data);
+                    $scope.topGuide = (data.total) ? data.guides[0] : false;
+                });
+            });
         }
         
         // pagination
