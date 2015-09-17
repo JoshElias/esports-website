@@ -7348,8 +7348,8 @@ p.white { color: #FFF; }
 .sub-nav .sub-nav-links ul { margin: 15px 0; padding: 0; }
 .sub-nav .sub-nav-links ul button,
 .sub-nav .sub-nav-links ul li { list-style: none; display: inline-block; line-height: 40px; font-weight: bold; padding: 0 40px; border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid #000; }
-.sub-nav .sub-nav-links ul li:first-child { border-left: none; }
-.sub-nav .sub-nav-links ul li:last-child { border-right: none; }
+.sub-nav .sub-nav-links ul li:first-child { border-left: none; padding-left: 0px; }
+.sub-nav .sub-nav-links ul li:last-child { border-right: none; padding-right: 0px; }
 .sub-nav .sub-nav-links ul li button,
 .sub-nav .sub-nav-links ul li a { color: rgba(255,255,255,.7); }
 .sub-nav .sub-nav-links ul li button,
