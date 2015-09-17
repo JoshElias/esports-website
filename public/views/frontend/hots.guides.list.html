@@ -22,12 +22,13 @@
     <!-- / filtering -->
 
     <!-- top guide -->
-    <div class="container-fluid hots-top-guide m-t-lg" ng-if="topGuide">
+    <div class="container-fluid hots-top-guide m-t-lg pos-rl" ng-if="topGuide">
+        <div class="hots-top-guide-premium" ng-if="isPremium(topGuide)"></div>
         <div class="tri-both">
             <div class="container-fluid-max hots-top-guide-inner pos-rl">
                 <div class="hero {{getGuideCurrentHero(topGuide).hero.className}}"></div>
                 <div class="row row-flex">
-                    <div class="col-xs-7">
+                    <div class="col-md-12 col-lg-7">
                         <div class="row-flex-col">
                             <h1>TOP GUIDE</h1>
                             <h3>{{topGuide.name}}</h3>
@@ -109,11 +110,12 @@
                 </div>
                 <h1>TEMPOSTORM GUIDES</h1>
             </div>
-            <div>
+            <div class="hots-list-ts-guides-wrapper">
                 <ul class="hots-guides row no-pad" ng-if="tempostormGuides.length">
-                    <li class="col-xs-3" ng-repeat="guide in tempostormGuides">
+                    <li class="col-xs-12 col-sm-6 col-md-6 col-lg-3" ng-repeat="guide in tempostormGuides">
                         <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide large {{getGuideClass(guide)}}">
                             <div class="inner"></div>
+                            <div class="hots-guide-premium" ng-if="isPremium(guide)"></div>
                             <div class="bt-shadow" ng-if="guide.guideType == 'hero'"></div>
                             <h1>{{guide.name}}</h1>
                             <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>
@@ -134,13 +136,12 @@
                         </a>
                     </li>
                 </ul>
-
-                <!-- page flipping -->
-                <div pagination="tempostormPagination" class="default"></div>
-                <!-- / page flipping -->
-
-                <p class="darkbox white p-md" ng-if="!tempostormGuides.length">There are no guides for the filtering above.</p>
             </div>
+            <!-- page flipping -->
+            <div pagination="tempostormPagination" class="default"></div>
+            <!-- / page flipping -->
+
+            <p class="darkbox white p-md" ng-if="!tempostormGuides.length">There are no guides for the filtering above.</p>
         </div>
     </div>
     <!-- / tempostorm guides -->
@@ -174,16 +175,16 @@
 
                 <!-- guides titles -->
                 <div class="row hots-guides-long-title m-b-sm">
-                    <div class="col-xs-4">
+                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
                         <h1>GUIDE</h1>
                     </div>
-                    <div class="col-xs-3">
+                    <div class="hidden-xs col-sm-6 col-md-4 col-lg-3">
                         <h1>TALENTS</h1>
                     </div>
-                    <div class="col-xs-1">
+                    <div class="hidden-xs hidden-sm hidden-md col-lg-1">
                         <h1 class="text-center">SCORE</h1>
                     </div>
-                    <div class="col-xs-4">
+                    <div class="hidden-xs hidden-sm col-md-4 col-lg-4">
                         <h1>HERO / MAP</h1>
                     </div>
                 </div>
@@ -194,14 +195,15 @@
                     <li ng-repeat="guide in communityGuides">
                         <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide long {{getGuideClass(guide)}}">
                             <div class="inner"></div>
+                            <div class="hots-guide-premium" ng-if="isPremium(guide)"></div>
                             <div class="row row-flex">
-                                <div class="col-xs-4">
+                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
                                     <div class="row-col">
                                         <h1>{{guide.name}}</h1>
                                         <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>
                                     </div>
                                 </div>
-                                <div class="col-xs-3">
+                                <div class="hidden-xs col-sm-6 col-md-4 col-lg-3">
                                     <div class="row-col">
                                         <ul class="hots-guide-talents" ng-if="guide.guideType == 'hero'">
                                             <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier1.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier1.name}}"></li>
@@ -214,12 +216,12 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="col-xs-1">
+                                <div class="hidden-xs hidden-sm hidden-md col-lg-1">
                                     <div class="row-col">
                                         <p class="hots-guide-votes text-center">{{guide.votesCount}}</p>
                                     </div>
                                 </div>
-                                <div class="col-xs-4">
+                                <div class="hidden-xs hidden-sm col-md-4 col-lg-4">
                                     <div class="row-col">
                                         <p class="hots-guide-hero-name" ng-if="guide.guideType == 'hero'">{{getGuideCurrentHero(guide).hero.name}}</p>
                                         <p class="hots-guide-hero-name" ng-if="guide.guideType == 'map'">{{guide.maps[0].name}}</p>

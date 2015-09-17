@@ -41,6 +41,7 @@
                 <div class="col-xs-12 col-sm-6 pos-rl" ng-repeat="article in articles">
                     <a ui-sref="app.articles.article({ slug: article.slug.url })" class="home-article active m-b-sm m-r-sm">
                         <div class="inner"></div>
+                        <div class="article-premium" ng-if="isPremium(article)"></div>
                         <img ng-src="//cdn-tempostorm.netdna-ssl.com/articles/{{article.photos.small}}" class="img-responsive">
                         <div class="home-article-content">
                             <h1 class="{{article.articleType.join(' ')}}">{{article.title}}</h1>
@@ -93,6 +94,7 @@
                             <li ng-repeat="guide in guidesCommunity">
                                 <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide small {{getGuideClass(guide)}}">
                                     <div class="inner"></div>
+                                    <div class="hots-guide-premium" ng-if="isPremium(guide)"></div>
                                     <div class="bt-shadow" ng-if="guide.guideType == 'hero'"></div>
                                     <h1>{{guide.name}}</h1>
                                     <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>

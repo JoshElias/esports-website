@@ -898,6 +898,10 @@ angular.module('app.directives', ['ui.load'])
                 }
             }, true);
             
+            scope.updateSearch = function () {
+                scope.filters.search = scope.searchHeroes;
+            }
+            
             scope.hasFilterRole = function (role) {
                 for (var i = 0; i < scope.filters.roles.length; i++) {
                     if (scope.filters.roles[i] == role) {
@@ -947,7 +951,7 @@ angular.module('app.directives', ['ui.load'])
                 if (scope.filters.universes.length && !scope.hasFilterUniverse(hero.universe)) {
                     return true;
                 }
-                if (scope.filters.search.length && scope.hasFilterSearch(hero)) {
+                if (scope.searchHeroes && scope.searchHeroes.length && scope.hasFilterSearch(hero)) {
                     return true;
                 }
                 return false;
@@ -958,7 +962,7 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.hasFilterSearch = function (hero) {
-                var filtered = (scope.filters.search && scope.filters.search.length) ? $filter('filter')(scope.heroes, { name: scope.filters.search }) : scope.heroes;
+                var filtered = (scope.searchHeroes && scope.searchHeroes.length) ? $filter('filter')(scope.heroes, { name: scope.searchHeroes }) : scope.heroes;
                 return (filtered.indexOf(hero) === -1);
             }
 

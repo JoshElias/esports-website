@@ -429,6 +429,8 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-article.active:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
 
 .home-article .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 2; }
+.home-article .article-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
+
 .home-article img { width: 100%; height: auto; }
 .home-article .home-article-content { position: relative; bottom: 0px; margin: -1px 1px 0px 1px; padding: 15px 20px 20px 20px; border-top: 1px solid rgba(255,255,255,.2); z-index: 2; overflow: hidden; }
 .home-article .home-article-content h1 { margin-bottom: 20px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; }
@@ -7922,6 +7924,8 @@ p.white { color: #FFF; }
 .hots-top-guide p { padding: 0 0 72px 0; color: #FFF; max-width: 265px; }
 .hots-top-guide .btn { position: absolute; bottom: 0px; }
 .hots-top-guide-inner { padding: 20px 0px; }
+.hots-top-guide .hots-top-guide-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
+
 
 .hots-top-guide-talents { margin: 0; padding: 0; }
 .hots-top-guide-talents li { list-style: none; display: inline-block; vertical-align: top; }
@@ -7970,6 +7974,7 @@ p.white { color: #FFF; }
 .hots-top-guide .hero.kharazim { background: url('../img/hots/modal/heroes/kharazim.png') no-repeat center right; }
 
 .hots-list-ts-guides { margin-top: 50px; margin-bottom: 50px; }
+.hots-list-ts-guides-wrapper { margin-right: -20px; }
 
 .hots-list-guides-title { margin: 0 0 30px 0; }
 .hots-list-guides-title h1 { float: left; font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
@@ -7982,7 +7987,6 @@ p.white { color: #FFF; }
 .hots-list-ts-guides .hots-list-ts-guides-title .hots-search { max-width: 200px; }
 
 .hots-list-ts-guides .hots-guides li .hots-guide { margin-right: 20px; }
-.hots-list-ts-guides .hots-guides li:last-child .hots-guide { margin-right: 0px; }
 
 .hots-guide-list { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center top; }
 .hots-guide-list-inner { padding: 30px 0; }

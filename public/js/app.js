@@ -511,7 +511,7 @@ var app = angular.module('app', [
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
                             dataCommunityGuides: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
-                                return HOTSGuideService.getGuidesCommunity('all', 0, 10, false, false);
+                                return HOTSGuideService.getGuidesCommunity(false, 0, 10, false, false);
                             }],
                             dataTopGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
                                 var guideType = $stateParams.t || 'all',
@@ -522,7 +522,7 @@ var app = angular.module('app', [
                                 return HOTSGuideService.getGuides('hero', hero, map, 0, 1, '', '', 'high');
                             }],
                             dataTempostormGuides: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getGuidesFeatured('all', 0, 4);
+                                return HOTSGuideService.getGuidesFeatured(false, 0, 4);
                             }],
                             dataHeroes: ['HeroService', function (HeroService) {
                                 return HeroService.getHeroes();

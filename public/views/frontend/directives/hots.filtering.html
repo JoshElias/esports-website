@@ -14,9 +14,9 @@
                 </div>
             </div>
             <div class="col-xs-12 col-sm-4 m-b-md hots-filters-search">
-                <form>
+                <form ng-submit="updateSearch()">
                     <div class="input-group">
-                        <input type="text" class="form-control input-dark" ng-model="filters.search">
+                        <input type="text" class="form-control input-dark" ng-model="searchHeroes">
                         <span class="input-group-btn">
                             <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                         </span>
