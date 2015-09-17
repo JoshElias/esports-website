@@ -195,6 +195,7 @@ app.post('/polls/vote', routes.frontend.pollsVote(Schemas));
 
 app.post('/upload', routes.frontend.uploadToImgur(fs, imgur));
 
+app.post('/vod', routes.frontend.vod(Schemas));
 // frontend - requires login 
 app.post('/api/verify', routes.frontend.verify(Schemas));
 
