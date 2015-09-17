@@ -568,14 +568,12 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-size: cover;
     background-position: top;
 }
-
 .bg-override.profile {
     background-image: url(../img/backgrounds/profile-bg.jpg);
     background-color: #121111;
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
-
 .bg-override.deck-builder {
     background-image: url(../img/backgrounds/profile-bg.jpg);
     background-color: #121111;
@@ -583,7 +581,6 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-attachment: fixed;
     min-height: 800px;
 }
-
 .bg-override.team-page {
     background-image: url(../img/backgrounds/meta-bg.jpg);
     background-color: #121111;
@@ -592,7 +589,12 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-attachment: fixed;
 }
 .bg-override.meta-snapshot {
-    background-image: url(../img/backgrounds/meta-bg.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.article {
     background-color: #121111;
     background-repeat: no-repeat;
     background-size: 100%;
@@ -604,6 +606,70 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-size: 100%;
     background-attachment: fixed;
 }
+.bg-override.druid {
+    background-image: url(../img/backgrounds/classes/druid.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.hunter {
+    background-image: url(../img/backgrounds/classes/hunter.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.mage {
+    background-image: url(../img/backgrounds/classes/mage.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.paladin {
+    background-image: url(../img/backgrounds/classes/paladin.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.priest {
+    background-image: url(../img/backgrounds/classes/priest.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.rogue {
+    background-image: url(../img/backgrounds/classes/rogue.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.shaman {
+    background-image: url(../img/backgrounds/classes/shaman.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.warlock{
+    background-image: url(../img/backgrounds/classes/warlockjpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.warrior {
+    background-image: url(../img/backgrounds/classes/warrior.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+
 
 .heading { position:relative; }
 
@@ -842,6 +908,15 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .bar-Shaman { fill: rgb(0, 112, 222) }
 .bar-Warlock { fill: rgb(148, 130, 201) }
 .bar-Warrior { fill: rgb(199, 156, 110) }
+.bar-druid { fill: rgb(255, 125, 10) }
+.bar-hunter { fill: rgb(171, 212, 115) }
+.bar-mage { fill: rgb(105, 204, 240) }
+.bar-paladin { fill: rgb(245, 140, 186) }
+.bar-priest { fill: white }
+.bar-rogue { fill: rgb(255, 245, 105) }
+.bar-shaman { fill: rgb(0, 112, 222) }
+.bar-warlock { fill: rgb(148, 130, 201) }
+.bar-warrior { fill: rgb(199, 156, 110) }
 
 .dot-Druid { stroke: rgb(255, 125, 10); fill: rgb(255, 125, 10); }
 .dot-Hunter { stroke: rgb(171, 212, 115); fill: rgb(171, 212, 115); }
@@ -2835,7 +2910,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .db-builder { position: relative; margin: 20px 0; }
 
-.db-section { outline: 1px solid rgba(255,255,255,.3); outline-offset: 0px; background: rgba(0,0,0,.3); }
+.db-section { outline: 1px solid rgba(255,255,255,.3); outline-offset: 0px; background: rgba(0,0,0,.3); position: relative; }
 .db-section-title { padding: 0 85px; min-height: 60px; line-height: 60px; background: none; font-size: 14px; }
 .db-section-title h1 { margin: 0 20px 0 0; padding: 0; height: 50px; line-height: 60px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 12px; }
 
@@ -2847,6 +2922,10 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-section label { color: #FFF; }
 
 .db-descriptions .chapter-add-btn { width:200px; height:50px; color: white; border: 1px solid rgba(255,255,255,.75); text-align: center; line-height: 3.25; margin: 0 auto; cursor: pointer; }
+.db-descriptions .chapter-carets { position: absolute; top: 7px; left: 17px; width: 10px; height: 50px; }
+.db-descriptions .chapter-carets a { position: absolute; top: 0; left: 0; font-size: 18px; color: white; }
+.db-descriptions .chapter-carets a.disabled { color: rgba(255,255,255,.4); }
+.db-descriptions .chapter-carets .move-chapter-down { top: 20px; }
 
 .db-filter-classes { margin: 0; padding: 0; }
 .db-filter-classes li { float: left; width: 31px; height: 32px; margin-right: 10px; list-style: none; }
@@ -3085,7 +3164,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-builder .deck-list .list-card:hover { background: rgba(255,255,255,.2); }
 
 /* deck builder - deck */
-.db-deck { margin: 20px auto; width: 300px; }
+.db-deck { margin: 20px auto; width: auto; }
 
 .db-deck-header { margin: 0 auto; position: relative; width: 100%; height: 100px; padding: 10px; border: 1px solid #000; }
 
@@ -3358,14 +3437,14 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .deck-page .deck-content { position: relative; }
 .deck-page .deck-content iframe { width: 100% !important; }
 
-.deck-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
-.deck-section-title { font-size: 20px; line-height: 60px; min-height: 60px; color: #FFF; background: rgba(0,0,0,.3); }
+.deck-section { margin: 0 0 20px; border: 1px solid rgba(0,0,0,1); outline: 1px solid rgba(255,255,255,.2); outline-offset: -2px; background: rgba(0,0,0,.5); padding: 20px 15px; }
+.deck-section-title { font-size: 28px; line-height: 20px; }
 .deck-section-title a { color: #FFF; }
-.deck-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; }
-.deck-section-content { padding: 20px; border-top: 1px solid #000; }
+.deck-section-title h3 { margin: 0 20px 0; font-size: 24px; font-family: 'Open Sans Bold'; line-height: 20px; color: #CEEAF6; }
+.deck-section-content { padding: 20px; }
 .deck-section-content.unpadded { padding: 0px; }
-.deck-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
-.deck-section-content p { color: #FFF; }
+.deck-section-content h3 { color: #CEEAF6; font-size: 20px; font-family: 'Open Sans Bold'; }
+.deck-section-content p { color: #CEEAF6; }
 
 .deck-mulligan-details > div { padding-left: 80px; }
 

@@ -1,8 +1,9 @@
 <div class="db-deck clearfix">
     <div class="db-deck-header db-deck-{{deck.playerClass.toLowerCase()}}">
         <div class="db-arena">
-            <span ng-show="!deck.arena">Contructed</span>
-            <span ng-show="deck.arena">Arena</span>
+            <span ng-show="deck.type == 1">Contructed</span>
+            <span ng-show="deck.type == 2">Arena</span>
+            <span ng-show="deck.type == 3">Brawl</span>
         </div>
     </div>
     <div class="db-deck-cards">

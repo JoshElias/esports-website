@@ -5445,9 +5445,7 @@ angular.module('app.controllers', ['ngCookies'])
             content: ''
         };
         
-        $scope.deck.chapters = [
-            defaultChapter
-        ]
+        $scope.deck.chapters = []
         
         $scope.newChapter = function () {
             var m = angular.copy(defaultChapter);
@@ -5521,6 +5519,7 @@ angular.module('app.controllers', ['ngCookies'])
         // save deck
         var box;
         $scope.saveDeck = function () {
+            console.log('shit');
             if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login');
@@ -6758,28 +6757,6 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.cardRight = function () {
             return $scope.getMulliganCards().length * 80 / 2;
-        };
-        
-        // strong / weak
-        $scope.hasStrong = function () {
-            var strong = $scope.deck.against.strong;
-            for (var i = 0; i < strong.length; i++) {
-                if (strong[i].isStrong) {
-                    return true;
-                }
-            }
-            
-            return false;
-        };
-        $scope.hasWeak = function () {
-            var weak = $scope.deck.against.weak;
-            for (var i = 0; i < weak.length; i++) {
-                if (weak[i].isWeak) {
-                    return true;
-                }
-            }
-            
-            return false;
         };
         
         // charts
