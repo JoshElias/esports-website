@@ -1664,6 +1664,26 @@ angular.module('app.services', [])
 
             return true;
         };
+        
+        db.moveChapterUp = function (chapter) {
+            var oldIndex = db.chapters.indexOf(chapter),
+                newIndex = oldIndex - 1;
+            
+            if (newIndex < 0) { return false; }
+            
+            db.chapters.splice(oldIndex, 1);
+            db.chapters.splice(newIndex, 0, chapter);
+        };
+        
+        db.moveChapterDown = function (chapter) {
+            var oldIndex = db.chapters.indexOf(chapter),
+                newIndex = oldIndex + 1;
+            
+            if (newIndex < 0) { return false; }
+            
+            db.chapters.splice(oldIndex, 1);
+            db.chapters.splice(newIndex, 0, chapter);
+        };
 
         return db;
     }

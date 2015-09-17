@@ -133,7 +133,7 @@
                         <div class="dust-bottle-sm"></div>
                     </div>
                 </div>
-                <button ng-if="deck.basic" class="basic-submit-btn m-t-md">
+                <button ng-click="saveDeck()" ng-disabled="!deck.validDeck()" ng-if="deck.basic" class="basic-submit-btn m-t-md">
                     SUBMIT
                 </button>
             </div>
@@ -397,6 +397,10 @@
                         <div class="db-section-chapter-title">
                             <h1><input placeholder="New Chapter Title..." ng-model="chapter.title" /></h1>
                                 <i ng-click="removeChapter($index)" class="fa fa-close pull-right"></i>
+                        </div>
+                        <div class="chapter-carets">
+                            <a href="#" class="move-chapter-down" ng-class="{ 'disabled': $index == (deck.chapters.length - 1) }" ng-show="deck.chapters.length > 1" ng-click="deck.moveChapterDown(chapter)"><i class="fa fa-caret-down"></i></a>
+                            <a href="#" class="move-chapter-up" ng-class="{ 'disabled': $index == 0 }" ng-show="deck.chapters.length > 1" ng-click="deck.moveChapterUp(chapter)"><i class="fa fa-caret-up"></i></a>
                         </div>
                         <summernote id="contentEarly" config="options" ng-model="chapter.content"></summernote>
                     </div>
