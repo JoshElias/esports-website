@@ -54,27 +54,46 @@
                         <li ng-class="{active:$state.includes('app.forum')}"><a ui-sref="app.forum.home">Forum</a></li>
                         <li ng-class="{active:$state.includes('app.sponsors')}"><a ui-sref="app.sponsors">Sponsors</a></li>
                         <li ng-class="{active:$state.includes('app.polls')}"><a ui-sref="app.polls">Vote</a></li>
+                        <li>
+                            <span class="dropdown-grid">
+                                <li ng-click="loginModal('login')" ng-hide="app.user.isLogged()"><a href="#">Login</a></li>
+                                <li ng-click="loginModal('signup')" ng-hide="app.user.isLogged()"><a href="#">Signup</a></li>
+                                <li style="overflow: hidden" class="dropdown-short hidden-sm hidden-md hidden-lg" ng-class="{active:$state.includes('app.profile')}" ng-if="app.user.isLogged()">
+                                    <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      <span class="profile-avatar profile-avatar-sm pull-right hidden-xs">
+                                        <img gravatar-src="app.user.getUserEmail()" alt="">
+                                      </span>
+                                      <span class="hidden-sm hidden-md">{{app.user.getUsername()}}</span><span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu no-border-radius no-padding">
+                                      <li ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{app.user.getUsername()}}">Profile</a></li>
+                                      <li ng-class="{active: $state.includes('app.admin')}" ng-show="app.user.isAdmin()"><a ui-sref="app.admin.dashboard">Admin</a></li>
+                                      <li><a href="#" ng-click="app.user.logout()">Logout</a></li>
+                                    </ul>
+                                </li>
+                            </span>
+                        </li>
                     </ul>
 
                 </div>
             </div>
-            <ul class="nav navbar-nav navbar-right">
-                    <li ng-click="loginModal('login')" ng-hide="app.user.isLogged()"><a href="#">Login</a></li>
-                    <li ng-click="loginModal('signup')" ng-hide="app.user.isLogged()"><a href="#">Signup</a></li>
-                    <li class="dropdown-short" ng-class="{active:$state.includes('app.profile')}" ng-if="app.user.isLogged()">
-                        <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <span class="profile-avatar profile-avatar-sm pull-right hidden-xs">
-                            <img gravatar-src="app.user.getUserEmail()" alt="">
-                          </span>
-                          <span class="hidden-sm hidden-md">{{app.user.getUsername()}}</span><span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu no-border-radius no-padding">
-                          <li ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{app.user.getUsername()}}">Profile</a></li>
-                          <li ng-class="{active: $state.includes('app.admin')}" ng-show="app.user.isAdmin()"><a ui-sref="app.admin.dashboard">Admin</a></li>
-                          <li><a href="#" ng-click="app.user.logout()">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <ul class="nav navbar-nav navbar-right hidden-xs">
+                <li ng-click="loginModal('login')" ng-hide="app.user.isLogged()"><a href="#">Login</a></li>
+                <li ng-click="loginModal('signup')" ng-hide="app.user.isLogged()"><a href="#">Signup</a></li>
+                <li class="dropdown-short" ng-class="{active:$state.includes('app.profile')}" ng-if="app.user.isLogged()">
+                    <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span class="profile-avatar profile-avatar-sm pull-right hidden-xs">
+                        <img gravatar-src="app.user.getUserEmail()" alt="">
+                      </span>
+                      <span class="hidden-sm hidden-md">{{app.user.getUsername()}}</span><span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu no-border-radius no-padding">
+                      <li ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{app.user.getUsername()}}">Profile</a></li>
+                      <li ng-class="{active: $state.includes('app.admin')}" ng-show="app.user.isAdmin()"><a ui-sref="app.admin.dashboard">Admin</a></li>
+                      <li><a href="#" ng-click="app.user.logout()">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </nav>
 </div>

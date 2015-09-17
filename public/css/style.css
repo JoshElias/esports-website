@@ -120,13 +120,15 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
     white-space: nowrap;
     text-indent: -99999px;
 }
-
+.navbar-tempo .navbar-nav .dropdown-menu { background: #1B1B1B; }
+.navbar-tempo .navbar-nav > li { margin-bottom: -1px; }
 .navbar-tempo .navbar-nav > li > a,
 .navbar-tempo .navbar-nav > li > a:hover {
     color: rgba(255,255,255,.4);
     font-weight:bold;
     letter-spacing: 1px;
     text-shadow: none;
+    background: #1B1B1B;
 }
 
 .navbar-tempo .navbar-nav > .active > a,
@@ -143,23 +145,24 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 }
 
 .navbar-tempo .dropdown-menu li a:focus,
-.navbar-tempo .dropdown-menu li a:hover { background: #e8e8e8; }
+.navbar-tempo .dropdown-menu li a:hover { background: none;!important; color: white!important; }
 
 .navbar-nav .dropdown-menu li { min-width: 200px; }
 
 .navbar-nav .dropdown-menu li,
-.navbar-nav .dropdown-menu li a { color: #2766ad !important; }
+.navbar-nav .dropdown-menu li a { color: rgba(255,255,255,.4) !important; }
 .navbar-nav .dropdown-menu li a:focus { color: #2766ad !important; }
 .navbar-nav .dropdown-menu li.active a,
 .navbar-nav .dropdown-menu li a.active { background: #2766ad; color: #FFF !important; }
 
 .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
-.navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover { background: #2766ad; color: #FFF !important; }
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover { color: #FFF !important; }
 
 .navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover { background: #2766ad; border-color: #083f7d; }
 .navbar-default .navbar-toggle:focus .icon-bar, .navbar-default .navbar-toggle:hover .icon-bar { background-color: #FFF; }
 .navbar-default .navbar-nav .open .dropdown-menu > li > a { padding-top: 10px; padding-bottom: 11px; }
 .navbar-nav .gameHeadLink { display: block; padding: 5px 15px; font-size: 16px; line-height: 20px; white-space: nowrap; font-weight: 700; }
+
 
 /* notifications */
 .notifications .badge {
@@ -369,6 +372,8 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .open .dropdown-menu {
     -webkit-animation: fadeInRight 0.5s;
     animation: fadeInRight 0.5s;
+    
+    background: #1B1B1B;
 }
 
 /* start filters */
@@ -586,6 +591,12 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 }
 .bg-override.meta-snapshot {
     background-image: url(../img/backgrounds/meta-bg.jpg);
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.polls {
     background-color: #121111;
     background-repeat: no-repeat;
     background-size: 100%;
@@ -3717,16 +3728,19 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .teams .member {
     height: 470px;
     padding: 0px 5px;
+    position: relative;
 }
 .teams .member button {
-    position: absolute;
+/*    position: absolute;*/
+    z-index: 2;
     bottom: 10px;
     outline: none;
-    padding: none;
+    padding: 0;
     text-align: inherit;
     border: none;
     background: none;
     width:100%;
+    height:100%;
 }
 .teams .member img {
     max-height: 250px;
@@ -3765,10 +3779,11 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .teams .member .content-wrapper { position: relative; padding-bottom: 0px; }
 
 
-.teams .member .view-more-team { width: 88%; bottom:0; }
+.teams .member .view-more-team { width: 100%; bottom:10px; position:absolute; margin:0px auto; }
 .teams .member .view-more-team h3 { margin: 0 auto; text-align:center; opacity: .5 }
 
-.btn-team-wrapper { position: absolute; top: 20px; right: 20px; }
+.btn-team-wrapper { position: absolute; top: 230px; right: 20px; }
+.btn-team-wrapper-modal { position: absolute; top: 20px; right: 20px; }
 .btn-team { width: 30px; height: 30px; border-radius: 30px; display: block; float: left; text-align: center; line-height: 1.35; border: 1px solid white; text-decoration: none; color: rgba(29,29,29,1); font-size: 18px; }
 .btn-team-inner { width: 24px; height: 24px; border-radius: 24px; background-color: rgba(255,255,255,1); margin: 2px; }
 .btn-team-esea { background: url('../img/esea.png') no-repeat center center; color: #0dc503 }
@@ -7333,8 +7348,8 @@ p.white { color: #FFF; }
 .sub-nav .sub-nav-links ul { margin: 15px 0; padding: 0; }
 .sub-nav .sub-nav-links ul button,
 .sub-nav .sub-nav-links ul li { list-style: none; display: inline-block; line-height: 40px; font-weight: bold; padding: 0 40px; border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid #000; }
-.sub-nav .sub-nav-links ul li:first-child { border-left: none; }
-.sub-nav .sub-nav-links ul li:last-child { border-right: none; }
+.sub-nav .sub-nav-links ul li:first-child { border-left: none; padding-left: 0px; }
+.sub-nav .sub-nav-links ul li:last-child { border-right: none; padding-right: 0px; }
 .sub-nav .sub-nav-links ul li button,
 .sub-nav .sub-nav-links ul li a { color: rgba(255,255,255,.7); }
 .sub-nav .sub-nav-links ul li button,

@@ -107,7 +107,7 @@
                     </div>
                 </div>
                 
-                <div ng-if="deck.cards.length > 0" class="deck-info">
+                <div class="deck-info">
                     <span ng-if="deck.basic">
                         <div class="deck-title">
                             <input placeholder="DECK NAME..." ng-model="deck.name"/>
@@ -118,7 +118,7 @@
                     </span>
 
                     <div class="deck-list">
-                        <div class="list-card" ng-repeat="card in deck.cards track by $index" ng-click="deck.removeCardFromDeck(card)">
+                        <div ng-if="deck.cards.length > 0" class="list-card" ng-repeat="card in deck.cards track by $index" ng-click="deck.removeCardFromDeck(card)">
                             <div class="mana-cost">{{card.cost}}</div>
                             <span class="card-name">{{card.name}}</span>
                             <div class="card-charm pull-right">
@@ -133,11 +133,9 @@
                         <div class="dust-bottle-sm"></div>
                     </div>
                 </div>
-                
                 <button ng-if="deck.basic" class="basic-submit-btn m-t-md">
                     SUBMIT
                 </button>
-
             </div>
             <!-- / db-right -->
 

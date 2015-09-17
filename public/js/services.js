@@ -2311,6 +2311,17 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('VodService', ['$http', '$q', function ($http, $q) {
+    return {
+        getLatestVod: function () {
+            var d = $q.defer();
+            $http.post('/vod').success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    }
+}])
 .factory('markitupSettings', [
   function() {
     var factory, markset;

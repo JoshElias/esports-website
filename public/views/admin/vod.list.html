@@ -30,8 +30,8 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="pull-right btn-toolbar">
-                        <a href="./admin/vods/edit/{{vod._id}}" class="btn btn-default">Edit</a>
-                        <button class="btn btn-danger" ng-click="deletevod(vod)">Delete</button>
+                        <a ui-sref="app.admin.vod.edit({ id: vod._id })" class="btn btn-default">Edit</a>
+                        <button class="btn btn-danger" ng-click="deleteVod(vod)">Delete</button>
                     </div>
                 </div>
             </div>

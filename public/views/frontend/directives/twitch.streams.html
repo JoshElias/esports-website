@@ -1,4 +1,4 @@
-<ul class="tempostorm-tv">
+<ul class="tempostorm-tv" ng-if="streams.length">
     <li ng-repeat="stream in streams">
         <a ng-href="{{stream.channelUrl}}" target="_blank" class="tempostorm-tv-stream">
             <div class="inner"></div>
@@ -14,3 +14,4 @@
         </a>
     </li>
 </ul>
+<p class="darkbox white" ng-if="!streams.length">There are currently no Tempo Storm streams.</p>
