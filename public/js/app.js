@@ -175,6 +175,9 @@ var app = angular.module('app', [
                                     offset = 0,
                                     num = 6;
                                 return ArticleService.getArticles('all', klass, offset, num);
+                            }],
+                            dataVod: ['VodService', function (VodService) {
+                                return VodService.getLatestVod();
                             }]
                         }
                     }
@@ -1299,7 +1302,8 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     decks: {
-                        templateUrl: tpl + 'views/admin/decks.add.class.html'
+                        templateUrl: tpl + 'views/admin/decks.add.class.html',
+                        controller: 'AdminDeckBuilderClassCtrl'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1313,8 +1317,14 @@ var app = angular.module('app', [
                         controller: 'AdminDeckAddCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
-                                var playerClass = $stateParams.playerClass;
-                                return DeckBuilder.loadCards(playerClass);
+                                var page = 1,
+                                    perpage = 15, 
+                                    search = "",
+                                    mechanics = [],
+                                    mana = 'all',
+                                    playerClass = $stateParams.playerClass;
+                                
+                                return DeckBuilder.loadCards(page, perpage, search, mechanics, mana, playerClass);
                             }]
                         }
                     }
@@ -2117,6 +2127,21 @@ var app = angular.module('app', [
                     vod: {
                         templateUrl: tpl + 'views/admin/vod.add.html',
                         controller: 'AdminVodAddCtrl'
+                    }
+                }
+            })
+            .state('app.admin.vod.edit', {
+                url: '/:id',
+                views: {
+                    vod: {
+                        templateUrl: tpl + 'views/admin/vod.edit.html',
+                        controller: 'AdminVodEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminVodService', function ($stateParams, AdminVodService) {
+                                var id = $stateParams.id;
+                                return AdminVodService.getVod(id);
+                            }]
+                        }
                     }
                 }
             })

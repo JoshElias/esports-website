@@ -1109,7 +1109,8 @@ module.exports = {
         return function (req, res, next) {
             var slug = req.body.slug,
                 deck,
-                cards = {};
+                cards = {},
+                dust = 0;
             
             function getDeck(callback) {
                 Schemas.Deck.findOne({ slug: slug })
@@ -1133,6 +1134,7 @@ module.exports = {
                             legendary: (item.card.rarity === 'Legendary') ? true : false,
                             qty: item.qty
                         };
+                        dust += (obj.qty < 2) ? obj.dust : (obj.dust * 2);
                         theArray[index] = obj;
                     }
                     
@@ -1174,6 +1176,7 @@ module.exports = {
                         playerClass: results.playerClass,
                         public: results.public.toString(),
                         mulligans: results.mulligans,
+                        dust: dust,
                         against: {
                             strong: results.against.strong,
                             weak: results.against.weak,
@@ -1191,6 +1194,7 @@ module.exports = {
             }
             
             getDeck(function () {
+                console.log(deck);
                 return res.json({
                     success: true,
                     deck: deck
@@ -1359,8 +1363,6 @@ module.exports = {
                 newDeckID = mongoose.Types.ObjectId(),
                 author;
             
-            console.log(req.body);
-            
             req.assert('name', 'Deck name is required').notEmpty();
             req.assert('name', 'Deck name cannot be more than 60 characters').len(1, 60);
             req.assert('deckType', 'Deck type is required').notEmpty();
@@ -1422,8 +1424,10 @@ module.exports = {
             
             function createDeck(callback) {
                 // setup cards
-                var cards = [];
+                var cards = [],
+                    dust = 0;
                 for (var i = 0; i < req.body.cards.length; i++) {
+                    dust += (req.body.cards[i].qty < 2) ? req.body.cards[i].dust : (req.body.cards[i].dust * 2);
                     cards.push({
                         card: req.body.cards[i]._id,
                         qty: req.body.cards[i].qty
@@ -1488,10 +1492,11 @@ module.exports = {
                         featured: featured,
                         allowComments: true,
                         createdDate: new Date().toISOString(),
-                        premium: premium
+                        premium: premium,
+                        dust: dust
                     });
 
-                newDeck.save(function(err, data){
+                newDeck.save(function(err, data) {
                     if (err) {
                         console.log(err);
                         return res.json({ success: false,
@@ -2004,7 +2009,7 @@ module.exports = {
             function getDecks (callback) {
                 Schemas.Deck.find({ featured: true })
                 .where(where)
-                .select('premium playerClass slug name description author createdDate comments votesCount')
+                .select('premium playerClass slug name description author createdDate comments votesCount dust')
                 .populate({
                     path: 'author',
                     select: 'username -_id'
@@ -2071,7 +2076,7 @@ module.exports = {
             function getDecks (callback) {
                 Schemas.Deck.find({ public: true, featured: false })
                 .where(where)
-                .select('premium playerClass slug name description author createdDate comments votesCount')
+                .select('premium playerClass slug name description author createdDate comments votesCount dust')
                 .populate({
                     path: 'author',
                     select: 'username -_id'
@@ -2178,7 +2183,7 @@ module.exports = {
             // get decks
             function getDecks (callback) {
                 Schemas.Deck.find({ public: true })
-                .select('premium playerClass slug name description author createdDate comments votesCount')
+                .select('premium playerClass slug name description author createdDate comments votesCount dust')
                 .populate({
                     path: 'author',
                     select: 'username -_id'
@@ -3228,6 +3233,30 @@ module.exports = {
                     csMembers: csMembers,
                     fgcMembers: fgcMembers,
                     fifaMembers: fifaMembers,
+                    success: true
+                });
+            });
+        }
+    },
+    vod: function (Schemas) {
+        return function(req, res, next) {
+            tod = new Date();
+            tom = new Date();
+            
+            function getVod (callback) {
+                Schemas.Vod.find()
+                .where('date.getFullYear()').equals(d.getFullYear())
+                .where('date.getMonth()').equals(d.getMonth())
+                .where('date.getDay()').equals(d.getDay())
+                .exec(function (err, results) {
+                    if (err) { return req.json({ success: false }); }
+                    console.log(results);
+                    return callback();
+                });
+            }
+            
+            getVod(function () {
+                return res.json({
                     success: true
                 });
             });

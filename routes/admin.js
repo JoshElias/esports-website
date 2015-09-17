@@ -3727,10 +3727,21 @@ module.exports = {
     },
     vod: function (Schemas) {
         return function (req, res, next) {
-            console.log('vod');
+            var id = req.body._id;
             
-            return res.json({
-                success: true
+            function getVod(callback) {
+                Schemas.Vod.findOne({ _id: id })
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }) }
+                    return callback(results);
+                });
+            }
+            
+            getVod(function(vod) {
+                return res.json({
+                    vod: vod,
+                    success: true
+                });
             });
         }    
     },
@@ -3742,7 +3753,6 @@ module.exports = {
                 .sort({ Date:1 })
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
-                    console.log(results);
                     return callback(results);
                 });
             }
@@ -3794,19 +3804,62 @@ module.exports = {
     },
     vodEdit: function (Schemas) {
         return function (req, res, next) {
-            console.log('vodEdit');
+            var vod = req.body.vod;
             
-            return res.json({
-                success: true
+            function editVod(callback) {
+                Schemas.Vod.findOne({ _id: vod._id }).exec(function(err, results) {
+                    if (err || !results) {
+                        console.log(err || 'VOD not found');
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                    results.date = vod.date;
+                    results.url = vod.url;
+                    results.vars = vod.vars;
+                    
+                    results.save(function (err) {
+                        if (err || !results) {
+                            console.log(err || 'VOD not found');
+                            return res.json({ success: false,
+                                errors: {
+                                    unknown: {
+                                        msg: 'An unknown error occurred'
+                                    }
+                                }
+                            });
+                        }
+                        return callback();
+                    });
+                })
+            }
+            
+            editVod(function () {
+                return res.json({
+                    success: true
+                });
             });
         }
     },
     vodDelete: function (Schemas) {
         return function (req, res, next) {
-            console.log('vodDelete');
-            
-            return res.json({
-                success: true
+            var _id = req.body._id;
+            Schemas.Vod.findOne({ _id: _id }).remove().exec(function (err) {
+                if (err) {
+                    console.log(err);
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+                return res.json({ success: true });
             });
         }
     },

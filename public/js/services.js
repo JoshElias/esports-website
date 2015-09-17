@@ -1129,6 +1129,9 @@ angular.module('app.services', [])
         slugify: function (str) {
             return (str) ? str.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') : '';
         },
+        numberWithCommas : function (x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
         getObjectID: function () {
             return $http.post('/api/admin/id', {});
         }
@@ -2307,6 +2310,17 @@ angular.module('app.services', [])
             return d.promise;
         }
     };
+}])
+.factory('VodService', ['$http', '$q', function ($http, $q) {
+    return {
+        getLatestVod: function () {
+            var d = $q.defer();
+            $http.post('/vod').success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    }
 }])
 .factory('markitupSettings', [
   function() {
