@@ -3240,14 +3240,9 @@ module.exports = {
     },
     vod: function (Schemas) {
         return function(req, res, next) {
-            tod = new Date();
-            tom = new Date();
-            
+
             function getVod (callback) {
                 Schemas.Vod.find()
-                .where('date.getFullYear()').equals(d.getFullYear())
-                .where('date.getMonth()').equals(d.getMonth())
-                .where('date.getDay()').equals(d.getDay())
                 .exec(function (err, results) {
                     if (err) { return req.json({ success: false }); }
                     console.log(results);
