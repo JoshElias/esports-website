@@ -226,24 +226,24 @@ module.exports = {
     },
     guidesCommunity: function (Schemas) {
         return function (req, res, next) {
-            var filters = req.body.filters || 'all',
+            var filters = req.body.filters || false,
                 offset = req.body.offset || 0,
                 perpage = req.body.perpage || 10,
                 where = {},
                 guides, total,
                 talents = [],
-                daysLimit = (req.body.daysLimit == false) ? false : parseInt(req.body.daysLimit) || 14,
+                daysLimit = (!req.body.daysLimit) ? 0 : parseInt(req.body.daysLimit) || 14,
                 now = new Date().getTime(),
                 ago = new Date(now - (60*60*24*daysLimit*1000));
             
-            if (filters !== 'all') {
+            if (filters) {
                 var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
                 where.$or = [];
                 where.$or.push({ 'heroes.hero': dbFilters });
                 where.$or.push({ 'maps': dbFilters });
             }
             
-            if (daysLimit) {
+            if (daysLimit > 0) {
                 where.createdDate = { $gte: ago };
             }
             
@@ -274,7 +274,7 @@ module.exports = {
                         path: 'maps',
                         select: 'name className'
                 }])
-                .sort({ votesCount: -1, createdDate: -1 })
+                .sort({ createdDate: -1 })
                 .skip(offset)
                 .limit(perpage)
                 .exec(function (err, results) {
@@ -346,14 +346,16 @@ module.exports = {
     },
     guidesFeatured: function (Schemas) {
         return function (req, res, next) {
-            var filters = req.body.filters || 'all',
+            var filters = req.body.filters || false,
                 offset = req.body.offset || 0,
                 perpage = req.body.perpage || 10,
                 where = {},
                 guides, total,
                 talents = [];
             
-            if (filters !== 'all') {
+            console.log(req.body);
+            
+            if (filters) {
                 var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
                 where.$or = [];
                 where.$or.push({ 'heroes.hero': dbFilters });

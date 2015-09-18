@@ -2085,11 +2085,11 @@ angular.module('app.services', [])
 .factory('HOTSGuideService', ['$http', '$q', function ($http, $q) {
     return {
         getGuidesCommunity: function (filters, offset, perpage, search, daysLimit) {
-            filters = filters || 'all';
+            filters = filters || false;
             offset = offset || 0;
             perpage = perpage || 10;
             search = search || false;
-            daysLimit = (daysLimit == false) ? false : daysLimit || 14;
+            daysLimit = daysLimit || false;
             
             var d = $q.defer();
             $http.post('/hots/guides/community', { filters: filters, offset: offset, perpage: perpage, search: search, daysLimit: daysLimit }).success(function (data) {
@@ -2098,7 +2098,7 @@ angular.module('app.services', [])
             return d.promise;
         },
         getGuidesFeatured: function (filters, offset, perpage, search) {
-            filters = filters || 'all';
+            filters = filters || false;
             offset = offset || 0;
             perpage = perpage || 10;
             search = search || false;

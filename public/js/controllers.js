@@ -8807,14 +8807,14 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 
                 // load tempostorm guides
-                HOTSGuideService.getGuidesFeatured(getFilters(), 1, 10, $scope.filters.search).then(function (data) {
+                HOTSGuideService.getGuidesFeatured(getFilters(), 0, 10, $scope.filters.search).then(function (data) {
                     $timeout(function () {
                         $scope.guidesFeatured = data.guides;
                     });
                 });
                 
                 // load community guides
-                HOTSGuideService.getGuidesCommunity(getFilters(), 1, 10, $scope.filters.search, 90).then(function (data) {
+                HOTSGuideService.getGuidesCommunity(getFilters(), 0, 10, $scope.filters.search, false).then(function (data) {
                     $timeout(function () {
                         $scope.guidesCommunity = data.guides;
                     });
@@ -8920,6 +8920,16 @@ angular.module('app.controllers', ['ngCookies'])
                 updateCommunityGuides(1, 10);
             }
         }, true);
+        
+        // top guide
+        $scope.getTopGuideHeroBg = function () {
+            return ($scope.app.bootstrapWidth !== 'xs') ? $scope.getGuideCurrentHero($scope.topGuide).hero.className : '';
+        };
+        
+        $scope.isLarge = function () {
+            var width = $scope.app.bootstrapWidth;
+            return (width === 'lg' || width === 'md') ? 'large' : '';
+        };
         
         // guides
         $scope.getGuideCurrentHero = function (guide) {
@@ -9141,6 +9151,18 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
+        
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 ])
 .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'LoginModalService', 'MetaService',
