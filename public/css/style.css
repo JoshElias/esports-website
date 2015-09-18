@@ -2643,13 +2643,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     width: 10%; 
     margin-left: .5%; 
     margin-right: .5%; 
-    
-    
-    -moz-transition: opacity .6s linear;
-    -ms-transition: opacity .6s linear;
-    -o-transition: opacity .6s linear;
-    -webkit-transition: opacity .6s linear;
-    transition: opacity .6s linear;
+
 }
 .db-class .db-class-clip {
     border: 1px solid rgba(255,255,255,.4); 
@@ -2676,27 +2670,11 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     left: 0;
     height:100%;
     width:100%;
-    -moz-transition: .6s;
-    -ms-transition: .6s;
-    -o-transition: .6s;
-    -webkit-transition .6s;
+    -moz-transition: all .6s ease-in-out;
+    -ms-transition: all .6s ease-in-out;
+    -o-transition: all .6s ease-in-out;
+    -webkit-transition: all .6s ease-in-out;
     background-size: cover;
-}
-
-.db-class-mage,
-.db-class-shaman,
-.db-class-warrior,
-.db-class-rogue,
-.db-class-paladin,
-.db-class-priest,
-.db-class-warlock,
-.db-class-hunter,
-.db-class-druid { 
-    transition: .6s;
-    -moz-transition: .6s;
-    -ms-transition: .6s;
-    -o-transition: .6s;
-    -webkit-transition .6s;
 }
 
 .db-class-mage.selected .hero-img,
