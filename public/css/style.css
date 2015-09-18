@@ -501,8 +501,8 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .hs-deck.small .hs-deck-votes,
 .hs-deck.large .hs-deck-votes { position: absolute; bottom: 15px; right: 20px; width: 30px; height: 30px; line-height: 26px; border-radius: 50%; border: 2px solid #FFF; background: rgba(0,0,0,.7); color: #FFF; font-size: 12px; text-align: center; opacity: .7; z-index: 3; }
 
+.hs-list-ts-decks { margin-right: -20px; }
 .hs-list-ts-decks .hs-decks li .hs-deck { margin-right: 20px; }
-.hs-list-ts-decks .hs-decks li:last-child .hs-deck { margin-right: 0px; }
 
 .hs-deck.long h1 { margin: 12px 0 18px 0; font-size: 14px; }
 .hs-deck.long .hs-deck-dust,
@@ -3381,7 +3381,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 /* start decks list */
 .hs-bg { background: url('../img/hs/tgtbg.jpg') top center no-repeat; }
-.hs-list-ts-decks { margin-top: 50px; margin-bottom: 50px; }
+.hs-list-ts-decks-wrapper { margin-bottom: 50px; }
+.hs-list-ts-decks { margin-top: 50px; }
 
 .hs-list-decks-title { margin: 30px 0px; }
 .hs-list-decks-title h1 { float: left; font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
@@ -3397,9 +3398,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .hs-list-decks-title .hs-mini-filters .filter-classes li a.not-selected:hover { opacity: .6; }
 
 .hs-list-ts-decks .hs-list-ts-decks-title .hots-search { max-width: 200px; }
-
-.hs-list-ts-decks .hs-decks li .hs-deck { margin-right: 20px; }
-.hs-list-ts-decks .hs-decks li:last-child .hs-deck { margin-right: 0px; }
 
 .hs-deck-list { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center top; }
 .hs-deck-list-inner { padding: 30px 0; }
@@ -7774,9 +7772,14 @@ p.white { color: #FFF; }
 .filters-maps ul li button.skytemple {width:55px; height:55px; background-position: -401px -2px}
 .filters-maps ul li button.tomb-of-the-spider-queen {width:55px; height:55px; background-position: -458px -2px}
 
+/* hs - content */
+.hs-content { margin-right: -10px; padding-top: 80px; }
+.hs-content > .row { margin: 0 auto; max-width: 1448px; }
+.hs-content h1.title { font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
+.hs-content h3.sub-title { font-size: 14px; color: #d3eefa; }
 
 /* hots - home content */
-.hots-content { padding-top: 80px; }
+.hots-content { margin-right: -10px; padding-top: 80px; }
 .hots-content > .row { margin: 0 auto; max-width: 1448px; }
 .hots-content h1.title { font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
 .hots-content h3.sub-title { font-size: 14px; color: #d3eefa; }

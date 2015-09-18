@@ -22,7 +22,8 @@
     
         <!-- tempostorm decks -->
         <div class="hs-list-decks-title clearfix">
-            <div class="hs-mini-filters">
+            <h1>TEMPOSTORM DECKS</h1>
+            <div class="hs-mini-filters hidden-xs">
                 <div hs-filter-class filters="filters" classes="classes"></div>
                 <div class="hs-filters-search">
                     <form ng-submit="newSearch()">
@@ -35,22 +36,23 @@
                     </form>
                 </div>
             </div>
-            <h1>TEMPOSTORM DECKS</h1>
         </div>
-        <div class="hs-list-ts-decks">
-            <ul class="hs-decks row no-pad" ng-if="tempostormDecks.length">
-                <li class="col-xs-3" ng-repeat="deck in tempostormDecks">
-                    <a ui-sref="app.hs.decks.deck({ slug: deck.slug })" class="hs-deck large {{deck.playerClass.toLowerCase()}}">
-                        <div class="inner"></div>
-                        <div class="bt-shadow"></div>
-                        <div class="hs-deck-details">
-                            <h1>{{deck.name}}</h1>
-                            <h3>by {{deck.author.username || '[Deleted User]'}} - <span am-time-ago="deck.createdDate"></span></h3>
-                        </div>
-                        <div class="hs-deck-votes">{{deck.votesCount}}</div>
-                    </a>
-                </li>
-            </ul>
+        <div class="hs-list-ts-decks-wrapper">
+            <div class="hs-list-ts-decks">
+                <ul class="hs-decks row no-pad" ng-if="tempostormDecks.length">
+                    <li class="col-xs-12 col-sm-6 col-md-6 col-lg-3" ng-repeat="deck in tempostormDecks">
+                        <a ui-sref="app.hs.decks.deck({ slug: deck.slug })" class="hs-deck large {{deck.playerClass.toLowerCase()}}">
+                            <div class="inner"></div>
+                            <div class="bt-shadow"></div>
+                            <div class="hs-deck-details">
+                                <h1>{{deck.name}}</h1>
+                                <h3>by {{deck.author.username || '[Deleted User]'}} - <span am-time-ago="deck.createdDate"></span></h3>
+                            </div>
+                            <div class="hs-deck-votes">{{deck.votesCount}}</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
             <!-- page flipping -->
             <div pagination="tempostormPagination" class="default"></div>
@@ -62,7 +64,8 @@
         
         <!-- community decks -->
         <div class="hs-list-decks-title clearfix">
-            <div class="hs-mini-filters">
+            <h1>COMMUNITY DECKS</h1>
+            <div class="hs-mini-filters hidden-xs">
                 <div hs-filter-class filters="filters" classes="classes"></div>
                 <div class="hs-filters-search">
                     <form ng-submit="newSearch()">
@@ -75,7 +78,6 @@
                     </form>
                 </div>
             </div>
-            <h1>COMMUNITY DECKS</h1>
         </div>
         <div>
             <!-- page flipping -->
@@ -84,16 +86,16 @@
 
             <!-- decks titles -->
             <div class="row hs-decks-long-title m-b-sm">
-                <div class="col-xs-4">
-                    <h1>DECKS</h1>
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <h1>DECK</h1>
                 </div>
-                <div class="col-xs-3">
+                <div class="hidden-xs col-sm-6 col-md-4 col-lg-3">
                     <h1>DUST COST</h1>
                 </div>
-                <div class="col-xs-1">
+                <div class="hidden-xs hidden-sm hidden-md col-lg-1">
                     <h1 class="text-center">SCORE</h1>
                 </div>
-                <div class="col-xs-4">
+                <div class="hidden-xs hidden-sm col-md-4 col-lg-4">
                     <h1>CLASS</h1>
                 </div>
             </div>
@@ -105,23 +107,23 @@
                     <a ui-sref="app.hs.decks.deck({ slug: deck.slug })" class="hs-deck long {{deck.playerClass.toLowerCase()}}">
                         <div class="inner"></div>
                         <div class="row row-flex">
-                            <div class="col-xs-4">
+                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
                                 <div class="row-col">
                                     <h1>{{deck.name}}</h1>
                                     <h3>by {{deck.author.username || '[Deleted User]'}} - <span am-time-ago="deck.createdDate"></span></h3>
                                 </div>
                             </div>
-                            <div class="col-xs-3">
+                            <div class="hidden-xs col-sm-6 col-md-4 col-lg-3">
                                 <div class="row-col">
                                     <p class="hs-deck-dust">{{dustFormatted(deck.dust)}}</p>
                                 </div>
                             </div>
-                            <div class="col-xs-1">
+                            <div class="hidden-xs hidden-sm hidden-md col-lg-1">
                                 <div class="row-col">
                                     <p class="hs-deck-votes text-center">{{deck.votesCount}}</p>
                                 </div>
                             </div>
-                            <div class="col-xs-4">
+                            <div class="hidden-xs hidden-sm col-md-4 col-lg-4">
                                 <div class="row-col">
                                     <p class="hs-deck-hero-name">{{deck.playerClass}}</p>
                                 </div>

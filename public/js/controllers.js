@@ -8905,6 +8905,16 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }, true);
         
+        // top guide
+        $scope.getTopGuideHeroBg = function () {
+            return ($scope.app.bootstrapWidth !== 'xs') ? $scope.getGuideCurrentHero($scope.topGuide).hero.className : '';
+        };
+        
+        $scope.isLarge = function () {
+            var width = $scope.app.bootstrapWidth;
+            return (width === 'lg' || width === 'md') ? 'large' : '';
+        };
+        
         // guides
         $scope.getGuideCurrentHero = function (guide) {
             return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
