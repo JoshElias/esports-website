@@ -1153,6 +1153,32 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
+.directive('articleThumb', ['$sce', function ($sce) {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            article: '='
+        },
+        templateUrl: tpl + 'views/frontend/directives/article.thumb.html',
+        controller: function ($scope) {
+        $scope.getDescription = function (i) {
+            var temp = i,
+                magicNumber = 170;
+            if(i.length > magicNumber-10) {
+                if (i[magicNumber] != " ") {
+                    for (var j = 0; i[magicNumber+j] != " " && i[magicNumber+j] != undefined; j++) {}
+                    i = temp.slice(0,magicNumber+j);
+                } else {
+                    i = temp.slice(0,magicNumber);
+                }
+                i = i + "...";
+            }
+            return $sce.trustAsHtml(i);
+        }
+        }
+    }
+}])
 .directive('hsFilterClassLarge', ['$filter', '$timeout', function ($filter, $timeout) {
     return {
         restrict: 'A',

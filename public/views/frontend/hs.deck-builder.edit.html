@@ -432,7 +432,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="match-add-wrapper m-t-lg col-md-12">
+                    <div ng-if="deck.matches.length < 9" class="match-add-wrapper m-t-lg col-md-12">
                         <button ng-repeat="class in classes" ng-click="newMatch(class.toLowerCase())">
                             <img class="db-sw-class-icon class-icon large {{class.toLowerCase()}}" />
                         </button>

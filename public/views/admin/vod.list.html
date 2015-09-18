@@ -23,10 +23,12 @@
         </div>
     </div>
     <div class="list-group">
-        <div class="list-group-item articles-list-item clearfix" ng-repeat="vod in vods">
+        <div class="list-group-item articles-list-item clearfix" ng-repeat="vod in vods | orderBy : '-date'">
             <div class="row">
                 <div class="col-sm-6">
-                    <span>{{vod.date}}</span>
+                    <youtube-video class="admin-vod-list" ng-if="vod.url" video-url="vod.url"></youtube-video>
+                    <youtube-video class="admin-vod-list" ng-if="vod.vars.list" player-vars="vod.vars"></youtube-video>
+                    <span>{{convertMonth(getDate(vod.date).getMonth())}} {{getDate(vod.date).getDate()}} - {{getDate(vod.date).getFullYear()}}</span>
                 </div>
                 <div class="col-sm-6">
                     <div class="pull-right btn-toolbar">

@@ -3778,6 +3778,7 @@ module.exports = {
                     vars: {
                         list: req.body.vod.vars.list
                     },
+                    subTitle: req.body.vod.subTitle,
                     createdDate: new Date().toISOString()
                 });
                 newVod.save(function(err, data) {
@@ -3818,9 +3819,11 @@ module.exports = {
                             }
                         });
                     }
+                    
                     results.date = vod.date;
                     results.url = vod.url;
                     results.vars = vod.vars;
+                    results.subTitle = vod.subTitle;
                     
                     results.save(function (err) {
                         if (err || !results) {

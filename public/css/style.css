@@ -418,6 +418,16 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-dark { background-color: #121111; }
 .home-img-back { background: url('../img/worgenbg.jpg') top center no-repeat; }
 
+.home-vod {
+    width:100%;
+}
+.admin-vod-list {
+    width: 75px;
+    height: 50px;
+}
+
+
+
 .home-articles { position:relative; background: rgba(36,104,171,.3); }
 
 .home-articles-wrapper { position: relative; margin: 0 10px; padding: 40px 0px; height: 400px; overflow: hidden; }
@@ -426,6 +436,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-article-wrapper { display: inline-block; padding: 0 10px; height: 400px; vertical-align: top; }
 
 .home-article { position: relative; top: 0px; left: 0px; display: block; height: 320px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out; overflow: hidden; }
+.article-wrapper .home-article:hover,
 .home-article.active:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
 
 .home-article .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 2; }
@@ -597,6 +608,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-repeat: no-repeat;
     background-size: 100%;
     background-attachment: fixed;
+    min-height: 1250px;
 }
 .bg-override.polls {
     background-color: #121111;
@@ -653,8 +665,8 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-size: 100%;
     background-attachment: fixed;
 }
-.bg-override.warlock{
-    background-image: url(../img/backgrounds/classes/warlockjpg);
+.bg-override.warlock {
+    background-image: url(../img/backgrounds/classes/warlock.jpg);
     background-color: #121111;
     background-repeat: no-repeat;
     background-size: 100%;
@@ -3069,7 +3081,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-mana-curve-title a { color: #FFF !important; text-decoration: none; }
 .db-mana-curve-content { border-top: 1px solid #000; }
 
-.db-mana-curve ul { display: block; width: 280px; padding: 0; margin: 9px 25px; }
+.db-mana-curve ul { display: block; width: 280px; padding: 0; margin: 9px auto; }
 .db-mana-curve ul li { float: left; list-style: none; width: 35px; }
 
 .db-mana-curve .db-mana-curve-amt { width: 35px; text-align: center; font-family: hs; font-size: 14px; color: #FFF; font-weight: bold; line-height: 20px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; margin-bottom: 5px; }
@@ -3411,13 +3423,14 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 /* end decks list */
 
 /* deck */
-.deck-header { background: #2766ad; border-bottom: 1px solid #083f7d; }
+.deck-header { background: rgba(0,0,0,.85); border-bottom: 1px solid black; box-shadow: 0px 2px 4px 2px black; }
 .deck-header h1 { margin-top: 10px; font-family: 'Open Sans Bold'; color: #FFF; }
 .deck-header p,
 .deck-header p a { color: #FFF; }
 
 .deck-votes { margin: 15px 0; }
 
+/*
 .deck-header-inner { height: 148px; background: url('../img/deckpagebanner.png') no-repeat; }
 .deck-header-inner.mage { background-position: right 0px; }
 .deck-header-inner.paladin { background-position: right -148px; }
@@ -3428,6 +3441,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .deck-header-inner.warrior { background-position: right -888px; }
 .deck-header-inner.druid { background-position: right -1036px; }
 .deck-header-inner.hunter { background-position: right -1184px; }
+*/
 
 .deck-page .deck-right { float: right; }
 .deck-page .deck-left { margin-right: 320px; overflow: hidden; }
@@ -3435,7 +3449,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .deck-page .deck-content { position: relative; }
 .deck-page .deck-content iframe { width: 100% !important; }
 
-.deck-section { margin: 0 0 20px; border: 1px solid rgba(0,0,0,1); outline: 1px solid rgba(255,255,255,.2); outline-offset: -2px; background: rgba(0,0,0,.5); padding: 20px 15px; }
+.deck-section { margin: 0 0 20px; border: 1px solid rgba(0,0,0,1); outline: 1px solid rgba(255,255,255,.2); outline-offset: -2px; background: rgba(0,0,0,.65); padding: 20px 15px; }
 .deck-section-title { font-size: 28px; line-height: 20px; }
 .deck-section-title a { color: #FFF; }
 .deck-section-title h3 { margin: 0 20px 0; font-size: 24px; font-family: 'Open Sans Bold'; line-height: 20px; color: #CEEAF6; }
@@ -3570,7 +3584,18 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .comment-votes .vote-count { background: #2766ad; }
 .comment-vote { font-size: 20px; text-align: right; }
 
-.no-comments { margin: 0 0 20px 0; }
+.no-comments { 
+    font-size: 18px;
+    font-weight: bold;
+    text-indent: 30px;
+    line-height: 95px;
+}
+.no-comments:hover .comment-panel { 
+    background: #262626;
+}
+.no-comments .comment-panel {
+    padding: 0px!important;
+}
 
 
 /* forum home */

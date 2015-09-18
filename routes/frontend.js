@@ -3240,18 +3240,24 @@ module.exports = {
     },
     vod: function (Schemas) {
         return function(req, res, next) {
-
+            
+            var where = {},
+                now = new Date();
+            where.date = { $lte: now };
             function getVod (callback) {
                 Schemas.Vod.find()
+                .where(where)
+                .sort('-date')
+                .limit(1)
                 .exec(function (err, results) {
                     if (err) { return req.json({ success: false }); }
-                    console.log(results);
-                    return callback();
+                    return callback(results);
                 });
             }
             
-            getVod(function () {
+            getVod(function (vod) {
                 return res.json({
+                    vod: vod[0],
                     success: true
                 });
             });

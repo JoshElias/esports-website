@@ -223,9 +223,11 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', '$sce', 'dataArticles', 'ArticleService', 
-    function ($scope, $sce, dataArticles, ArticleService) {
+.controller('HomeCtrl', ['$scope', '$sce', 'dataArticles', 'ArticleService', 'dataVod',
+    function ($scope, $sce, dataArticles, ArticleService, dataVod) {
         // data
+        console.log(dataVod);
+        $scope.vod = dataVod.vod;
         $scope.articles = {
             loading: false,
             viewable: function () {
@@ -3386,6 +3388,28 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, data, AdminVodService) {
         $scope.vods = data.vods;
         
+        $scope.getDate = function (d) {
+            d = new Date(d);
+            return d;
+        }
+        
+        $scope.convertMonth = function (d) {
+            switch (d) {
+                case 0 : return "January"; break;
+                case 1 : return "February"; break;
+                case 2 : return "March"; break;
+                case 3 : return "April"; break;
+                case 4 : return "May"; break;
+                case 5 : return "June"; break;
+                case 6 : return "July"; break;
+                case 7 : return "August"; break;
+                case 8 : return "September"; break;
+                case 9 : return "October"; break;
+                case 10 : return "November"; break;
+                case 11 : return "December"; break;
+            }
+        }
+        
         // delete deck
         $scope.deleteVod = function deleteVos(vod) {
             var box = bootbox.dialog({
@@ -3429,6 +3453,7 @@ angular.module('app.controllers', ['ngCookies'])
         var defaultVod = {
                 date: {},
                 url: '',
+                subTitle: '',
                 vars: {
                     list: ''
                 }
@@ -6253,8 +6278,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('ArticlesCtrl', ['$scope', '$state', 'ArticleService', 'data', 'MetaService',
-    function ($scope, $state, ArticleService, data, MetaService) {
+.controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'ArticleService', 'data', 'MetaService', 'AjaxPagination',
+    function ($scope, $state, $q, $timeout, ArticleService, data, MetaService, AjaxPagination) {
         //if (!data.success) { return $state.transitionTo('app.articles.list'); }
         
         // articles
@@ -6265,7 +6290,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.page = parseInt(data.page);
         $scope.perpage = data.perpage;
         $scope.search = data.search;
-        $scope.loading = false;
+        $scope.fetching = false;
         
         
         $scope.metaservice = MetaService;
@@ -6307,58 +6332,39 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // pagination
-        $scope.pagination = {
-            page: function () {
-                return $scope.page;
-            },
-            perpage: function () {
-                return $scope.perpage;
-            },
-            results: function () {
-                return $scope.total;
-            },
-            setPage: function (page) {
-                $scope.page = page;
-                $scope.getArticles();
-            },
-            pagesArray: function () {
-                var pages = [],
-                    start = 1,
-                    end = this.totalPages();
-                
-                if (this.totalPages() > 5) {
-                    if (this.page() < 3) {
-                        start = 1;
-                        end = start + 4;
-                    } else if (this.page() > this.totalPages() - 2) {
-                        end = this.totalPages();
-                        start = end - 4;
-                    } else {
-                        start = this.page() - 2;
-                        end = this.page() + 2;
+        function updateArticles (page, perpage, search, callback) {
+            $scope.fetching = true;
+            ArticleService.getArticles('all', 'all', ((page*perpage)-perpage), 12, search).then(function (data) {
+                $scope.articlePagination.total = data.total;
+                $scope.articlePagination.page = page;
+                $scope.articlePagination.perpage = perpage;
+                console.log(data);
+                $timeout(function () {
+                    $scope.articles = data.articles;
+                    $scope.fetching = false;
+                    if (callback) {
+                        return callback(data);
                     }
-                    
-                }
-                
-                for (var i = start; i <= end; i++) {
-                    pages.push(i);
-                }
-                
-                return pages;
-            },
-            isPage: function (page) {
-                return (page === this.page());
-            },
-            totalPages: function (page) {
-                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 1;
-            },
-            
-        };
+                });
+            });
+        }
+        // page flipping
+        $scope.articlePagination = AjaxPagination.new(12, data.total,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateArticles(page, perpage, $scope.search, function (data) {
+                    d.resolve(data.total);
+                });
+
+                return d.promise;
+            }
+        );
         
         // verify valid page
-        if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
-            $scope.pagination.setPage(1);
-        }
+//        if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
+//            $scope.pagination.setPage(1);
+//        }
     }
 ])
 .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'ArticleService', 'VoteService', 'MetaService', 'LoginModalService',
@@ -6697,7 +6703,16 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.coin = !$scope.coin;
         }
         
-        $scope.currentMulligan = false;
+        $scope.getFirstMulligan = function () {
+            var mulligans = $scope.deck.mulligans;
+            for (var i = 0; i < mulligans.length; i++) {
+                if ($scope.isMulliganSet(mulligans[i]) === true) {
+                    console.log(mulligans[i]);
+                    return mulligans[i];
+                }
+            }
+            return false;
+        }
         
         $scope.getMulligan = function (klass) {
             var mulligans = $scope.deck.mulligans;
@@ -6727,18 +6742,6 @@ angular.module('app.controllers', ['ngCookies'])
             return false;
         };
         
-        $scope.mulliganHide = function (card) {
-            if (!$scope.anyMulliganSet()) { return false; }
-            if (!$scope.currentMulligan) { return false; }
-            var cards = ($scope.coin) ? $scope.currentMulligan.withCoin.cards : $scope.currentMulligan.withoutCoin.cards;
-            
-            for (var i = 0; i < cards.length; i++) {
-                if (cards[i]._id === card.card._id) { return false; }
-            }
-            
-            return true;
-        }
-        
         $scope.getMulliganInstructions = function () {
             if (!$scope.currentMulligan) { return false; }
             var m = $scope.currentMulligan;
@@ -6759,6 +6762,8 @@ angular.module('app.controllers', ['ngCookies'])
             return $scope.getMulliganCards().length * 80 / 2;
         };
         
+        $scope.currentMulligan = $scope.getFirstMulligan();
+        
         // charts
         $scope.charts = {
             colors: ['rgba(151,187,205,1)', 'rgba(151,187,205,1)', 'rgba(151,187,205,1)', 'rgba(151,187,205,1)']
@@ -6774,6 +6779,17 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getContent = function (content) {
             return $sce.trustAsHtml(content);
         };
+        
+        
+        //matches
+        $scope.mouseOver = '';
+        $scope.setMouseOver = function (deck) {
+            (deck != false) ? $scope.mouseOver = deck : $scope.mouseOver = false;
+        }
+        
+        $scope.getMouseOver = function (deck) {
+            return $scope.mouseOver;
+        }
         
         // deck dust
         $scope.deck.getDust = function () {

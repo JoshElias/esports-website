@@ -204,10 +204,10 @@ var app = angular.module('app', [
                                 var articleType = $stateParams.t || 'all',
                                     filter = $stateParams.f || 'all',
                                     page = $stateParams.p || 1,
-                                    perpage = 10,
+                                    perpage = 12,
                                     search = $stateParams.s || '';
                                 
-                                return ArticleService.getArticles(articleType, filter, page, perpage, search);
+                                return ArticleService.getArticles(articleType, filter, ((perpage*page)-perpage), perpage, search);
                             }]
                         }
                     }

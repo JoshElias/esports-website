@@ -126,8 +126,10 @@
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                         <h1 class="title m-t-md">VIDEO OF THE DAY</h1>
-                        <h3 class="sub-title m-b-md">Subheading goes in here</h3>
-
+                        <h3 ng-if="vod.subTitle" class="sub-title m-b-md">{{vod.subTitle}}</h3>
+                        <h3 ng-if="!vod.subTitle" class="sub-title m-b-md">Generic subtitle lol</h3>
+                        <youtube-video class="home-vod" ng-if="vod.url" video-url="vod.url"></youtube-video>
+                        <youtube-video class="home-vod" ng-if="vod.vars.list" player-vars="vod.vars"></youtube-video>
                     </div>
                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
                         <h1 class="title m-t-md">TEMPOSTORM TV</h1>
