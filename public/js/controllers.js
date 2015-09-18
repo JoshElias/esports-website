@@ -3203,8 +3203,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('TeamCtrl', ['$scope', '$compile', '$templateCache', '$sce', 'data',
-    function ($scope, $compile, $templateCache, $sce, data) {
+.controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$templateCache', '$sce', 'data',
+    function ($scope, $compile, $timeout, $location, $anchorScroll, $templateCache, $sce, data) {
         $scope.members = data.members;
         
         $scope.hsMembers = data.hsMembers;
@@ -3212,6 +3212,12 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.csMembers = data.csMembers;
         $scope.fgcMembers = data.fgcMembers;
         $scope.fifaMembers = data.fifaMembers;
+        
+        if ($location.hash()) {
+            $timeout(function () {
+                $anchorScroll();
+            });
+        }
         
         for(var i = 0; i < $scope.members.length; i++) {
             $scope.members[i].description = $scope.members[i].description.replace(/(?:\r\n|\r|\n)/g, '<br />');

@@ -2305,7 +2305,7 @@ angular.module('app.services', [])
     return {
         getFeed: function () {
             var d = $q.defer();
-            $http.post('/twitterFeed', { limit: 5 }).success(function (data) {
+            $http.post('/twitterFeed', { limit: 6 }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
