@@ -46,14 +46,7 @@
         <div class="home-articles-wrapper" home-articles data-viewable="articles.viewable()" data-offset="articles.offset" data-size="articles.data.length">
             <div class="home-articles-inner">
                 <div class="home-article-wrapper" ng-repeat="article in articles.data track by $index">
-                    <a ui-sref="app.articles.article({ slug: article.slug.url })" class="home-article" ng-class="{ 'active': isArticleActive($index) }">
-                        <div class="inner"></div>
-                        <img ng-src="//cdn-tempostorm.netdna-ssl.com/articles/{{article.photos.small}}" class="img-responsive">
-                        <div class="home-article-content">
-                            <h1 class="{{article.articleType.join(' ')}}">{{article.title}}</h1>
-                            <p>{{getArticleDesc(article.description, 30)}}</p>
-                        </div>
-                    </a>
+                    <article-thumb article="article" />
                 </div>
             </div>
         </div>

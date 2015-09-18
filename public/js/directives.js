@@ -1166,20 +1166,32 @@ angular.module('app.directives', ['ui.load'])
         },
         templateUrl: tpl + 'views/frontend/directives/article.thumb.html',
         controller: function ($scope) {
-        $scope.getDescription = function (i) {
-            var temp = i,
-                magicNumber = 170;
-            if(i.length > magicNumber-10) {
-                if (i[magicNumber] != " ") {
-                    for (var j = 0; i[magicNumber+j] != " " && i[magicNumber+j] != undefined; j++) {}
-                    i = temp.slice(0,magicNumber+j);
-                } else {
-                    i = temp.slice(0,magicNumber);
+            $scope.getDescription = function (i) {
+                var temp = i,
+                    magicNumber = 170;
+                if(i.length > magicNumber-10) {
+                    if (i[magicNumber] != " ") {
+                        for (var j = 0; i[magicNumber+j] != " " && i[magicNumber+j] != undefined; j++) {}
+                        i = temp.slice(0,magicNumber+j);
+                    } else {
+                        i = temp.slice(0,magicNumber);
+                    }
+                    i = i + "...";
                 }
-                i = i + "...";
+                return $sce.trustAsHtml(i);
             }
-            return $sce.trustAsHtml(i);
-        }
+            
+            //is premium
+            $scope.isPremium = function (guide) {
+                if (!guide.premium.isPremium) { return false; }
+                var now = new Date().getTime(),
+                    expiry = new Date(guide.premium.expiryDate).getTime();
+                if (expiry > now) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         }
     }
 }])

@@ -35,14 +35,9 @@
                 <h3 class="sub-title m-b-md">The latest articles on all things Hearthstone</h3>
                 <div class="row no-pad" ng-if="articles.length">
                     <div class="col-xs-12 col-sm-6 pos-rl" ng-repeat="article in articles">
-                        <a ui-sref="app.articles.article({ slug: article.slug.url })" class="home-article active m-b-sm m-r-sm">
-                            <div class="inner"></div>
-                            <img ng-src="//cdn-tempostorm.netdna-ssl.com/articles/{{article.photos.small}}" class="img-responsive">
-                            <div class="home-article-content">
-                                <h1 class="{{article.articleType.join(' ')}}">{{article.title}}</h1>
-                                <p>{{article.description}}</p>
-                            </div>
-                        </a>
+                        <div class="m-r-sm m-b-sm">
+                            <article-thumb article="article" />
+                        </div>
                     </div>
                 </div>
                 <p class="white" ng-if="!articles.length">There are no articles for the filtering above.</p>
