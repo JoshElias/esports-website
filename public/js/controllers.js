@@ -3659,8 +3659,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.app.settings.secondaryPortrait[index] = secondary;
     }
 }])
-.controller('AdminDeckAddCtrl', ['$state', '$scope', '$compile', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data', 
-    function ($state, $scope, $compile, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, data) {
+.controller('AdminDeckAddCtrl', ['$state', '$scope', '$compile', '$q', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data', 
+    function ($state, $scope, $compile, $q, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, data) {
         // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
         
@@ -4024,6 +4024,13 @@ angular.module('app.controllers', ['ngCookies'])
             5: 'Provide a synopsis and title for your deck.'            
         };
         
+        $scope.getDust = function (cards) {
+            var dust = 0;
+            for (var i = 0; i < cards.length; i++) {
+                dust += cards[i].dust * cards[i].qty;
+            }
+            return dust
+        }
         
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
@@ -4062,7 +4069,6 @@ angular.module('app.controllers', ['ngCookies'])
             });
         }
         
-        console.log(data);
         $scope.className = data.deck.playerClass;
         $scope.cards = {};
 //        $scope.cards.current = $scope.cards.class;
@@ -5255,7 +5261,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getDust = function (cards) {
             var dust = 0;
             for (var i = 0; i < cards.length; i++) {
-                dust += (cards[i].qty < 2) ? cards[i].dust : (cards[i].dust*2);
+                dust += cards[i].dust * cards[i].qty;
             }
             return dust
         }
@@ -6707,7 +6713,7 @@ angular.module('app.controllers', ['ngCookies'])
             var mulligans = $scope.deck.mulligans;
             for (var i = 0; i < mulligans.length; i++) {
                 if ($scope.isMulliganSet(mulligans[i]) === true) {
-                    console.log(mulligans[i]);
+                    console.log(mulligans);
                     return mulligans[i];
                 }
             }
@@ -6742,6 +6748,18 @@ angular.module('app.controllers', ['ngCookies'])
             return false;
         };
         
+        $scope.mulliganHide = function (card) {
+            if (!$scope.anyMulliganSet()) { return false; }
+            if (!$scope.currentMulligan) { return false; }
+            var cards = ($scope.coin) ? $scope.currentMulligan.withCoin.cards : $scope.currentMulligan.withoutCoin.cards;
+
+            for (var i = 0; i < cards.length; i++) {
+                if (cards[i]._id === card.card._id) { return false; }
+            }
+
+            return true;
+        }
+        
         $scope.getMulliganInstructions = function () {
             if (!$scope.currentMulligan) { return false; }
             var m = $scope.currentMulligan;
@@ -6761,8 +6779,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.cardRight = function () {
             return $scope.getMulliganCards().length * 80 / 2;
         };
-        
-        $scope.currentMulligan = $scope.getFirstMulligan();
         
         // charts
         $scope.charts = {

@@ -306,9 +306,7 @@ module.exports = {
                         slug: results.slug,
                         deckType: results.deckType,
                         description: results.description,
-                        contentEarly: results.contentEarly,
-                        contentMid: results.contentMid,
-                        contentLate: results.contentLate,
+                        chapters: results.chapters,
                         cards: results.cards,
                         playerClass: results.playerClass,
                         public: results.public.toString(),
@@ -319,7 +317,8 @@ module.exports = {
                             instructions: results.against.instructions
                         },
                         video: results.video,
-                        arena: results.arena,
+                        type: results.type,
+                        basic: results.basic,
                         featured: results.featured,
                         premium: {
                             isPremium: results.premium.isPremium,
@@ -346,10 +345,11 @@ module.exports = {
                     return callback();
                 });
             }
-            
+                        
             getDeck(function () {
                 getClass(function () {
                     getNeutral(function () {
+                        console.log(deck);
                         return res.json({
                             success: true,
                             deck: deck,
@@ -434,9 +434,7 @@ module.exports = {
                         slug: Util.slugify(req.body.name),
                         deckType: req.body.deckType,
                         description: req.body.description,
-                        contentEarly: req.body.contentEarly,
-                        contentMid: req.body.contentMid,
-                        contentLate: req.body.contentLate,
+                        chapters: req.body.chapters,
                         author: req.user._id,
                         cards: cards,
                         playerClass: req.body.playerClass,
@@ -452,7 +450,8 @@ module.exports = {
                             userID: req.user._id,
                             direction: 1
                         }],
-                        arena: req.body.arena,
+                        type: req.body.type,
+                        basic: req.body.basic,
                         featured: req.body.featured,
                         allowComments: true,
                         createdDate: new Date().toISOString(),
@@ -553,9 +552,7 @@ module.exports = {
                     deck.slug = Util.slugify(req.body.name);
                     deck.deckType = req.body.deckType;
                     deck.description = req.body.description;
-                    deck.contentEarly = req.body.contentEarly;
-                    deck.contentMid = req.body.contentMid;
-                    deck.contentLate = req.body.contentLate;
+                    deck.chapters = req.body.chapters;
                     deck.cards = cards;
                     deck.public = req.body.public;
                     deck.mulligans = req.body.mulligans || [];
@@ -569,7 +566,8 @@ module.exports = {
                         isPremium: req.body.premium.isPremium || false,
                         expiryDate: req.body.premium.expiryDate || new Date().toISOString()
                     };
-                    deck.arena = req.body.arena;
+                    deck.type = req.body.type;
+                    deck.basic = req.body.basic;
                     deck.featured = req.body.featured;
                     
                     deck.save(function(err, data){

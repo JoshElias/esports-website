@@ -101,7 +101,7 @@
                 <!-- / mana curve -->
 
                 <!-- deck -->
-                <div class="deck-deck" db-deck deck="deck"></div>
+                <div class="deck-deck" db-deck deck="deck" mulligan-hide="mulliganHide"></div>
                 <!-- / deck -->
 
             </div>
@@ -141,13 +141,13 @@
                             <div class="m-r-md pull-right clearfix">
                                 <ul class="deck-mulligan-classes pull-left clearfix">
                                     <li ng-class="{ active: currentMulligan.klass === class }" ng-repeat="class in classes">
-                                        <a href="#" class="{{class.toLowerCase()}}" ng-class="{ active: isMulliganSet(getMulligan(class)) }" ng-click="setMulligan(getMulligan(class))" ng-tooltip title="{{class}}">{{class}}</a>
+                                        <a href="#" class="{{class.toLowerCase()}}" ng-class="{ active: isMulliganSet(getMulligan(class)) }" ng-click="show.mulligans = (currentMulligan.klass != class); setMulligan(getMulligan(class)); (!show.mulligans) ? setMulligan(false) : false " ng-tooltip title="{{class}}">{{class}}</a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
 
-                        <div class="deck-section-content deck-mulligan-details pos-rl">
+                        <div class="deck-section-content deck-mulligan-details pos-rl" ng-show="show.mulligans && currentMulligan">
                             <a href="#" class="mulligan-coin pull-left" ng-class="{active:coin}" ng-click="toggleCoin()"></a>
                             <div>
                                 <h3>{{currentMulligan.klass.toUpperCase()}} MULLIGAN</h3>

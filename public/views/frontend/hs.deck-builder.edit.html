@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="container-fluid-max">
-        <div class="db-header clearfix">
+        <div class="db-header clearfix" ng-class="{ 'head-shift' : step == 1 }">
 
             <span ng-if="step == 1">
                 <h1>CARD SELECT</h1>
@@ -109,13 +109,17 @@
                 </div>
 
                 <div class="deck-info">
-                    <div class="deck-title">
-                        <input placeholder="DECK NAME..." ng-model="deck.name"/>
+                    <div class="db-deck-header db-deck-{{className.toLowerCase()}}">
+                        <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                     </div>
-                    <div class="deck-description">
-                        <textarea placeholder="Put stuff here" resize="none" ng-model="deck.description"></textarea>
-                    </div>
-
+                    <span ng-show="deck.basic">
+                        <div class="deck-title">
+                            <input placeholder="DECK NAME..." ng-model="deck.name"/>
+                        </div>
+                        <div class="deck-description">
+                            <textarea placeholder="Put stuff here" resize="none" ng-model="deck.description"></textarea>
+                        </div>
+                    </span>
                     <div class="deck-list">
                         <div class="list-card" ng-repeat="card in deck.cards track by $index" ng-click="deck.removeCardFromDeck(card)">
                             <div class="mana-cost">{{card.cost}}</div>
@@ -124,8 +128,14 @@
                             <div ng-if="card.legendary" class="legendary pull-right"><i class="fa fa-star"></i></div>
                         </div>
                     </div>
-
+                    <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}}">
+                        {{getDust(deck.cards)}}
+                        <div class="dust-bottle-sm"></div>
+                    </div>
                 </div>
+                <button ng-if="deck.basic" class="basic-submit-btn m-t-md">
+                    SUBMIT
+                </button>
 
 
 
@@ -281,7 +291,7 @@
     </div>
         <!-- / step 1 -->
         <!-- step 2 -->
-    <div class="container">
+    <div class="container-fluid-max">
         <form class="form-horizontal" name="dbForm" novalidate>
             <div class="db-builder clearfix">
                 <div class="db-section db-mulligans" ng-hide="step !== 2">
