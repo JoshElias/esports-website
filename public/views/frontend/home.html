@@ -46,14 +46,7 @@
         <div class="home-articles-wrapper" home-articles data-viewable="articles.viewable()" data-offset="articles.offset" data-size="articles.data.length">
             <div class="home-articles-inner">
                 <div class="home-article-wrapper" ng-repeat="article in articles.data track by $index">
-                    <a ui-sref="app.articles.article({ slug: article.slug.url })" class="home-article" ng-class="{ 'active': isArticleActive($index) }">
-                        <div class="inner"></div>
-                        <img ng-src="//cdn-tempostorm.netdna-ssl.com/articles/{{article.photos.small}}" class="img-responsive">
-                        <div class="home-article-content">
-                            <h1 class="{{article.articleType.join(' ')}}">{{article.title}}</h1>
-                            <p>{{getArticleDesc(article.description, 30)}}</p>
-                        </div>
-                    </a>
+                    <article-thumb article="article" />
                 </div>
             </div>
         </div>
@@ -69,7 +62,7 @@
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <div class="row">
                             <div class="col-xs-12 col-sm-6 m-b-md">
-                                <a ui-sref="app.snapshot.redirect" target="_blank" class="home-resource">
+                                <a ui-sref="app.snapshot.redirect" class="home-resource">
                                     <div class="inner"></div>
                                     <img ng-src="{{app.cdn}}img/metasnapshot.jpg" class="img-responsive">
                                     <div class="home-resource-content">
@@ -79,7 +72,7 @@
                                 </a>
                             </div>
                             <div class="col-xs-12 col-sm-6 m-b-md">
-                                <a ui-sref="app.hs.deckBuilder.class" target="_blank" class="home-resource">
+                                <a ui-sref="app.hs.deckBuilder.class" class="home-resource">
                                     <div class="inner"></div>
                                     <img ng-src="{{app.cdn}}img/deckbuilder.jpg" class="img-responsive">
                                     <div class="home-resource-content">
@@ -96,7 +89,7 @@
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <div class="row">
                             <div class="col-xs-12 col-sm-6 m-b-md">
-                                <a ui-sref="app.hots.talentCalculator.redirect" target="_blank" class="home-resource">
+                                <a ui-sref="app.hots.talentCalculator.redirect" class="home-resource">
                                     <div class="inner"></div>
                                     <img ng-src="{{app.cdn}}img/talentcalculator.jpg" class="img-responsive">
                                     <div class="home-resource-content">
@@ -106,7 +99,7 @@
                                 </a>
                             </div>
                             <div class="col-xs-12 col-sm-6 m-b-md">
-                                <a ui-sref="app.hots.guideBuilder.step1" target="_blank" class="home-resource">
+                                <a ui-sref="app.hots.guideBuilder.step1" class="home-resource">
                                     <div class="inner"></div>
                                     <img ng-src="{{app.cdn}}img/heroguide.jpg" class="img-responsive">
                                     <div class="home-resource-content">
@@ -124,19 +117,16 @@
             </div>
             <div class="col-xs-12">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                        <h1 class="title m-t-md">VIDEO OF THE DAY</h1>
-                        <h3 ng-if="vod.subTitle" class="sub-title m-b-md">{{vod.subTitle}}</h3>
-                        <h3 ng-if="!vod.subTitle" class="sub-title m-b-md">Generic subtitle lol</h3>
-                        <youtube-video class="home-vod" ng-if="vod.url" video-url="vod.url"></youtube-video>
-                        <youtube-video class="home-vod" ng-if="vod.vars.list" player-vars="vod.vars"></youtube-video>
-                    </div>
-                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <h1 class="title m-t-md">TEMPOSTORM TV</h1>
                         <h3 class="sub-title m-b-md">Check out who is streaming right now</h3>
                         <div tempostorm-tv></div>
+                        <h1 class="title m-t-md">VIDEO OF THE DAY</h1>
+                        <h3 class="sub-title m-b-md">{{vod.subTitle}}</h3>
+                        <youtube-video class="home-vod" ng-if="vod.url" video-url="vod.url"></youtube-video>
+                        <youtube-video class="home-vod" ng-if="vod.vars.list" player-vars="vod.vars"></youtube-video>
                     </div>
-                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <h1 class="title m-t-md">TWITTER FEED</h1>
                         <h3 class="sub-title m-b-md">Join the conversation on Twitter</h3>
                         <div twitter-feed></div>
