@@ -44,7 +44,7 @@
                         <div class="db-mana-curve-title">
                             MANA CURVE
                         </div>
-                        <div class="db-mana-curve-content clearfix" >
+                        <div class="db-mana-curve-content clearfix">
                             <ul class="clearfix">
                                 <li>
                                     <div class="db-mana-curve-amt">{{deck.manaCount(0)}}</div>
@@ -396,7 +396,7 @@
                         <div ng-repeat="chapter in deck.chapters track by $index" class="db-section m-b-md">
                             <div class="db-section-chapter-title">
                                 <h1><input placeholder="New Chapter Title..." ng-model="chapter.title" /></h1>
-                                    <i ng-click="removeChapter($index)" class="fa fa-close pull-right"></i>
+                                    <i ng-click="deck.removeChapter($index)" class="fa fa-close pull-right"></i>
                             </div>
                             <div class="chapter-carets">
                                 <a href="#" class="move-chapter-down" ng-class="{ 'disabled': $index == (deck.chapters.length - 1) }" ng-show="deck.chapters.length > 1" ng-click="deck.moveChapterDown(chapter)"><i class="fa fa-caret-down"></i></a>
@@ -404,7 +404,7 @@
                             </div>
                             <summernote id="contentEarly" config="options" ng-model="chapter.content"></summernote>
                         </div>
-                        <div class="chapter-add-btn" ng-click="newChapter()"><i class="fa fa-plus-circle"></i> Add Chapter</div>
+                        <div class="chapter-add-btn" ng-click="deck.addChapter()"><i class="fa fa-plus-circle"></i> Add Chapter</div>
                     </div>
                     <!-- / step 3 -->
                     <!-- step 4 -->
@@ -441,15 +441,15 @@
                                             <input class="pull-left match-slider" type="range" ng-model="match.match" min="0" value="50" max="100" step="5"><span class="pull-right match-number">{{match.match}} %</span>
                                         </div>
                                         <div class="col-md-1 close-wrapper">
-                                            <button class="close-button" ng-click="removeMatch($index)"><i class="fa fa-close"></i></button>
+                                            <button class="close-button" ng-click="deck.removeMatch($index)"><i class="fa fa-close"></i></button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="match-add-wrapper m-t-lg col-md-12">
-                            <button ng-disabled="match <= 8" ng-repeat="class in classes" ng-click="newMatch(class.toLowerCase())">
-                                <img class="db-sw-class-icon class-icon large {{class.toLowerCase()}}" />
+                            <button ng-disabled="match <= 8" ng-repeat="class in classes" ng-click="deck.newMatch(class.toLowerCase())">
+                                <img class="db-sw-class-icon class-icon large {{class.toLowerCase()}}" /> 
                             </button>
                         </div>
                     </div>

@@ -1325,65 +1325,6 @@ angular.module('app.services', [])
                         instructions: ''
                     }
             }],
-            against: data.against || {
-                strong: [{
-                        klass: 'Mage',
-                        isStrong: false
-                    },{
-                        klass: 'Shaman',
-                        isStrong: false
-                    },{
-                        klass: 'Warrior',
-                        isStrong: false
-                    },{
-                        klass: 'Rogue',
-                        isStrong: false
-                    },{
-                        klass: 'Paladin',
-                        isStrong: false
-                    },{
-                        klass: 'Priest',
-                        isStrong: false
-                    },{
-                        klass: 'Warlock',
-                        isStrong: false
-                    },{
-                        klass: 'Hunter',
-                        isStrong: false
-                    },{
-                        klass: 'Druid',
-                        isStrong: false
-                }],
-                weak: [{
-                        klass: 'Mage',
-                        isWeak: false
-                    },{
-                        klass: 'Shaman',
-                        isWeak: false
-                    },{
-                        klass: 'Warrior',
-                        isWeak: false
-                    },{
-                        klass: 'Rogue',
-                        isWeak: false
-                    },{
-                        klass: 'Paladin',
-                        isWeak: false
-                    },{
-                        klass: 'Priest',
-                        isWeak: false
-                    },{
-                        klass: 'Warlock',
-                        isWeak: false
-                    },{
-                        klass: 'Hunter',
-                        isWeak: false
-                    },{
-                        klass: 'Druid',
-                        isWeak: false
-                }],
-                instructions: ''
-            },
             video: data.video || '',
             premium: data.premium || {
                 isPremium: false,
@@ -1682,6 +1623,32 @@ angular.module('app.services', [])
             db.chapters.splice(oldIndex, 1);
             db.chapters.splice(newIndex, 0, chapter);
         };
+        
+        db.addChapter = function () {
+            db.chapters.push({
+                title: '',
+                content: ''
+            });
+        }
+        
+        db.removeChapter = function (index) {
+            db.chapters.splice(index,1);
+        }
+        
+        db.newMatch = function (klass) {
+            var m = {
+                deckName: '',
+                klass: '',
+                match: 0
+            };
+            
+            m.klass = klass;
+            db.matches.push(m);
+        }
+        
+        db.removeMatch = function (index) {
+            db.matches.splice(index,1);
+        }
 
         return db;
     }

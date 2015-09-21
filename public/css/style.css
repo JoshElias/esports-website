@@ -3185,7 +3185,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     position: relative!important;
 }
 
-.db-builder .deck-list { min-height: 425px; }
+.db-builder .deck-list { min-height: 425px; background: rgba(0,0,0,.7); }
 .db-builder .deck-list .mana-cost { background: #2766AD; height: 28px; width: 28px; float: left; text-align: center; text-indent: 0px; color: white; }
 .db-builder .deck-list .list-card .card-charm { color: gold; position: relative; width:28px;  }
 .db-builder .deck-list .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-top: 1px; cursor: pointer; cursor: hand; position: relative; }

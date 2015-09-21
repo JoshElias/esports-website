@@ -5605,12 +5605,12 @@ angular.module('app.controllers', ['ngCookies'])
                 deckType: $scope.deck.deckType,
                 description: $scope.deck.description,
                 chapters: $scope.deck.chapters,
+                matches: $scope.deck.matches,
                 cards: $scope.deck.cards,
                 playerClass: $scope.deck.playerClass,
                 type: $scope.deck.type,
                 basic: $scope.deck.basic,
                 mulligans: $scope.deck.mulligans,
-                against: $scope.deck.against,
                 video: $scope.deck.video,
                 public: $scope.deck.public
             };
@@ -5642,43 +5642,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
-        //chapters
-        var defaultChapter = {
-            title: '',
-            content: ''
-        };
-        
-        $scope.deck.chapters = []
-        
-        $scope.newChapter = function () {
-            var m = angular.copy(defaultChapter);
-            $scope.deck.chapters.push(m);
-        }
-        
-        $scope.removeChapter = function (index) {
-            $scope.deck.chapters.splice(index,1);
-        }
-        
-        //match-ups
-        var defaultMatchUp = {
-            deckName: '',
-            klass: '',
-            match: 0
-        };
-        
-        $scope.deck.matches = [];
-        
-        $scope.newMatch = function (klass) {
-            var m = angular.copy(defaultMatchUp);
-            m.klass = klass;
-            $scope.deck.matches.push(m);
-        }
-        
-        $scope.removeMatch = function (index) {
-            $scope.deck.matches.splice(index,1);
-        }
-        
+
         // premium
         $scope.premiumTypes = [
             { text: 'No', value: false },
@@ -6110,10 +6074,6 @@ angular.module('app.controllers', ['ngCookies'])
         
         for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
             $scope.show[i+1] = false;
-        }
-        
-        $scope.log = function (a) {
-            console.log(a);
         }
         
         $scope.setView = function (height) {

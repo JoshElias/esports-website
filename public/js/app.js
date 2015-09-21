@@ -416,7 +416,6 @@ var app = angular.module('app', [
                         controller: 'DeckBuilderCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
-                                console.log($stateParams);
                                 var playerClass = $stateParams.playerClass,
                                     page = 1,
                                     perpage = 15,
@@ -427,7 +426,6 @@ var app = angular.module('app', [
                                 return DeckBuilder.loadCards(page, perpage, search, mechanics, mana, playerClass);
                             }],
                             toStep: ['$stateParams', function ($stateParams) {
-                                console.log($stateParams);
                                 if ($stateParams.goTo) {
                                     return $stateParams.goTo;
                                 }

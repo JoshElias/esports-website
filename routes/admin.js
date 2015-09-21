@@ -349,7 +349,6 @@ module.exports = {
             getDeck(function () {
                 getClass(function () {
                     getNeutral(function () {
-                        console.log(deck);
                         return res.json({
                             success: true,
                             deck: deck,
@@ -3765,9 +3764,6 @@ module.exports = {
     },
     vodAdd: function (Schemas) {
         return function (req, res, next) {
-            
-            console.log(req.body.vod);
-            console.log(req.body.vars);
             
             function createVod (callback) {
                 var newVod = new Schemas.Vod({
