@@ -5337,11 +5337,11 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('DeckBuilderClassCtrl', ['$scope', function ($scope) {
     
-    var portraitSettings = ($scope.app.settings.secondaryPortrait != undefined) ? $scope.app.settings.secondaryPortrait : function() { 
+    if ($scope.app.settings.secondaryPortrait == undefined) {
         $scope.app.settings.secondaryPortrait = [false,false,false,false,false,false,false,false,false];
-        return $scope.app.settings.secondaryPortrait;
-    };
-    
+    }
+    var portraitSettings = $scope.app.settings.secondaryPortrait;
+
     $scope.selectedHero = "";
     $scope.klass = false;
     $scope.heroes = [
