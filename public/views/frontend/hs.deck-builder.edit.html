@@ -278,7 +278,7 @@
                             <div class="db-cards-view clearfix">
                                 <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in cards.current">
                                     <a href="#" data-tooltip-img="{{app.cdn}}cards/{{card.photos.large}}" ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
-                                        <img ng-src="https://s3-us-west-2.amazonaws.com/cdn.tempostorm.com/cards/{{card.photos.medium}}" alt="{{card.name}}">
+                                        <img ng-src="{{app.cdn}}cards/{{card.photos.medium}}" alt="{{card.name}}">
                                     </a>
                                 </div>
                                 <div class="db-cards-no-match" ng-show="!cards.current.length">No Matches Found</div>
@@ -348,7 +348,7 @@
                             <textarea class="db-mulligan-instructions" placeholder="Type your mulligan instructions here" resize="none" ng-model="mulligan.withCoin.instructions"></textarea>
                             <div class="mulliganCardWrapper">
                                 <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};" ng-repeat="card in mulligan.withCoin.cards track by $index" class="mulliganCards">
-                                    <img ng-src="https://s3-us-west-2.amazonaws.com/cdn.tempostorm.com/cards/{{card.photos.large}}" />
+                                    <img ng-src="{{app.cdn}}cards/{{card.photos.large}}" />
                                 </div>
                             </div>
                         </div>
@@ -378,7 +378,7 @@
                             <textarea class="db-mulligan-instructions" placeholder="Type your mulligan instructions here" resize="none" ng-model="mulligan.withoutCoin.instructions"></textarea>
                             <div class="mulliganCardWrapper">
                                 <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};" ng-repeat="card in mulligan.withoutCoin.cards track by $index" class="mulliganCards">
-                                    <img ng-src="https://s3-us-west-2.amazonaws.com/cdn.tempostorm.com/cards/{{card.photos.large}}" />
+                                    <img ng-src="{{app.cdn}}cards/{{card.photos.large}}" />
                                 </div>
                             </div>
                         </div>
