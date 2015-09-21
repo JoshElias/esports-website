@@ -1,4 +1,4 @@
-<div class="bg-override deck-builder">
+<div class="bg-override deck-builder {{className.toLowerCase()}}">
     <div class="sub-nav-wrapper hidden-xs">
         <div class="container-fluid sub-nav">
             <div class="sub-nav-links">
@@ -108,7 +108,7 @@
                 </div>
                 
                 <div class="deck-info">
-                    <div class="db-deck-header db-deck-{{className.toLowerCase()}}">
+                    <div class="db-deck-header db-deck-{{className.toLowerCase()}}" ng-class="{ 'secondary' : isSecondary(className.toLowerCase()) }">
                         <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                     </div>
                     <span ng-show="deck.basic">
@@ -127,7 +127,7 @@
                             <div ng-if="card.legendary" class="legendary pull-right"><i class="fa fa-star"></i></div>
                         </div>
                     </div>
-                    <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}}">
+                    <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}}" ng-class="{ 'secondary' : isSecondary(className.toLowerCase()) }">
                         {{getDust(deck.cards)}}
                         <div class="dust-bottle-sm"></div>
                     </div>

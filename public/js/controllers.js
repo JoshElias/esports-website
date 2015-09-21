@@ -3653,6 +3653,20 @@ angular.module('app.controllers', ['ngCookies'])
             return dust
         }
         
+        $scope.isSecondary = function (klass) {
+            switch(klass) {
+                case 'mage': return $scope.app.settings.secondaryPortrait[0]; break;
+                case 'shaman': return $scope.app.settings.secondaryPortrait[1]; break;
+                case 'warrior': return $scope.app.settings.secondaryPortrait[2]; break;
+                case 'rogue': return $scope.app.settings.secondaryPortrait[3]; break;
+                case 'paladin': return $scope.app.settings.secondaryPortrait[4]; break;
+                case 'priest': return $scope.app.settings.secondaryPortrait[5]; break;
+                case 'warlock': return $scope.app.settings.secondaryPortrait[6]; break;
+                case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
+                case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
+            }
+        }
+        
         // steps
         $scope.stepDesc = {
             1: 'Select the cards for your deck.',
@@ -3996,6 +4010,20 @@ angular.module('app.controllers', ['ngCookies'])
             4: 'Select how your deck preforms against other classes.',
             5: 'Provide a synopsis and title for your deck.'            
         };
+        
+        $scope.isSecondary = function (klass) {
+            switch(klass) {
+                case 'mage': return $scope.app.settings.secondaryPortrait[0]; break;
+                case 'shaman': return $scope.app.settings.secondaryPortrait[1]; break;
+                case 'warrior': return $scope.app.settings.secondaryPortrait[2]; break;
+                case 'rogue': return $scope.app.settings.secondaryPortrait[3]; break;
+                case 'paladin': return $scope.app.settings.secondaryPortrait[4]; break;
+                case 'priest': return $scope.app.settings.secondaryPortrait[5]; break;
+                case 'warlock': return $scope.app.settings.secondaryPortrait[6]; break;
+                case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
+                case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
+            }
+        }
         
         $scope.getDust = function (cards) {
             var dust = 0;
@@ -5588,7 +5616,19 @@ angular.module('app.controllers', ['ngCookies'])
           // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
         
-
+        $scope.isSecondary = function (klass) {
+            switch(klass) {
+                case 'mage': return $scope.app.settings.secondaryPortrait[0]; break;
+                case 'shaman': return $scope.app.settings.secondaryPortrait[1]; break;
+                case 'warrior': return $scope.app.settings.secondaryPortrait[2]; break;
+                case 'rogue': return $scope.app.settings.secondaryPortrait[3]; break;
+                case 'paladin': return $scope.app.settings.secondaryPortrait[4]; break;
+                case 'priest': return $scope.app.settings.secondaryPortrait[5]; break;
+                case 'warlock': return $scope.app.settings.secondaryPortrait[6]; break;
+                case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
+                case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
+            }
+        }
         
         // set default tab page
         $scope.step = 1;
