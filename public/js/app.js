@@ -175,9 +175,6 @@ var app = angular.module('app', [
                                     offset = 0,
                                     num = 6;
                                 return ArticleService.getArticles('all', klass, offset, num);
-                            }],
-                            dataVod: ['VodService', function (VodService) {
-                                return VodService.getLatestVod();
                             }]
                         }
                     }
@@ -515,11 +512,10 @@ var app = angular.module('app', [
                             }],
                             dataTopGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
                                 var guideType = $stateParams.t || 'all',
-                                    hero = $stateParams.h || 'all',
-                                    map = $stateParams.m || 'all',
-                                    order = $stateParams.o || '';
+                                    filters = $stateParams.h || false,
+                                    order = $stateParams.o || 'high';
                                 
-                                return HOTSGuideService.getGuides('hero', hero, map, 0, 1, '', '', 'high');
+                                return HOTSGuideService.getGuides('hero', filters, 1, 1, '', '', order);
                             }],
                             dataTempostormGuides: ['HOTSGuideService', function (HOTSGuideService) {
                                 return HOTSGuideService.getGuidesFeatured(false, 0, 4);

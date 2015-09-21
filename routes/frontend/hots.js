@@ -2,60 +2,31 @@ module.exports = {
     guides: function (Schemas) {
         return function (req, res, next) {
             var guideType = req.body.guideType || 'all',
-                hero = req.body.hero || 'all',
-                map = req.body.map || 'all',
+                filters = req.body.filters || false,
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
                 search = req.body.search || '',
                 age = req.body.age || 'all',
                 order = req.body.order || 'high',
                 where = {}, sort = {},
-                guides, total, heroID, mapID, 
+                guides, total, 
                 talents = [],
                 now = new Date().getTime();
-            
-            function getHeroID (callback) {
-                if (hero === 'all') { return callback(); }
-                Schemas.Hero.findOne({ className: hero, active: true })
-                .select('_id')
-                .exec(function (err, results) {
-                    if (err || !results) { return res.json({ success: false }); }
-                    heroID = results._id;
-                    return callback();
-                });
-            }
-            
-            function getMapID (callback) {
-                if (map === 'all') { return callback(); }
-                Schemas.Map.findOne({ className: map, active: true })
-                .select('_id')
-                .exec(function (err, results) {
-                    if (err || !results) { return res.json({ success: false }); }
-                    mapID = results._id;
-                    return callback();
-                });
-            }
-            
+                        
             function getFilters (callback) {
                 // guide type
                 if (guideType !== 'all') {
                     where.guideType = guideType;
                 }
                 
-                // hero
-                if (hero !== 'all') {
-                    if (guideType !== 'map') {
-                        where['heroes.hero'] = heroID;
-                    } else {
-                        where.synergy = heroID;
-                    }
+                // filters
+                if (filters) {
+                    var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
+                    where.$or = [];
+                    where.$or.push({ 'heroes.hero': dbFilters });
+                    where.$or.push({ 'maps': dbFilters });
                 }
 
-                // map
-                if (map !== 'all') {
-                    where.maps = mapID;
-                }
-                
                 // search
                 if (search) {
                     where.$or = [];
@@ -195,27 +166,15 @@ module.exports = {
                 return callback();
             }
             
-            getHeroID(function () {
-                getMapID(function () {
-                    getFilters(function () {
-                        getGuides(function () {
-                            getTotal(function () {
-                                getTalents(function () {
-                                    assignTalents(function () {
-                                        return res.json({
-                                            success: true,
-                                            guides: guides,
-                                            total: total,
-                                            guideType: guideType,
-                                            hero: hero,
-                                            map: map,
-                                            page: page,
-                                            perpage: perpage,
-                                            search: search,
-                                            age: age,
-                                            order: order
-                                        });
-                                    });
+            getFilters(function () {
+                getGuides(function () {
+                    getTotal(function () {
+                        getTalents(function () {
+                            assignTalents(function () {
+                                return res.json({
+                                    success: true,
+                                    guides: guides,
+                                    total: total
                                 });
                             });
                         });

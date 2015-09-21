@@ -2109,18 +2109,15 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
-        getGuides: function (guideType, hero, map, page, perpage, search, age, order) {
+        getGuides: function (guideType, filters, page, perpage, search) {
             guideType = guideType || 'all';
-            hero = hero || 'all';
-            map = map || 'all';
+            filters = filters || false;
             page = page || 1;
             perpage = perpage || 24;
             search = search || '';
-            age = age || 'all';
-            order = order || 'high';
             
             var d = $q.defer();
-            $http.post('/hots/guides', { guideType: guideType, hero: hero, map: map, page: page, perpage: perpage, search: search, age: age, order: order }).success(function (data) {
+            $http.post('/hots/guides', { guideType: guideType, filters: filters, page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;

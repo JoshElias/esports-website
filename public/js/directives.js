@@ -930,10 +930,13 @@ angular.module('app.directives', ['ui.load'])
                     if (scope.filters.universes.length && scope.filters.universes.indexOf(hero.universe) == -1) {
                         scope.filters.universes.push(hero.universe);
                     }
-                    scope.filters.heroes.push(hero);
+                    scope.filters.heroes = [hero];
+                    //scope.filters.heroes.push(hero);
                 } else {
-                    scope.filters.heroes.splice(index, 1);
+                    scope.filters.heroes = [];
+                    //scope.filters.heroes.splice(index, 1);
                 }
+                
                 if (!scope.filters.heroes.length) {
                     randHeroIndex = randomIntFromInterval(0, scope.heroes.length - 1);
                 }
@@ -1301,6 +1304,17 @@ angular.module('app.directives', ['ui.load'])
                 return $sce.trustAsHtml(c);
             };
 
+        }
+    };
+}])
+.directive('videoOfTheDay', ['VodService', function (VodService) {
+    return {
+        restrict: 'A',
+        templateUrl: tpl + 'views/frontend/directives/video-of-the-day.html',
+        link: function (scope, element, attrs) {
+            VodService.getLatestVod().then(function (data) {
+                scope.vod = data.vod;
+            });
         }
     };
 }])

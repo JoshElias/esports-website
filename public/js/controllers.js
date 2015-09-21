@@ -223,11 +223,9 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', '$sce', 'dataArticles', 'ArticleService', 'dataVod',
-    function ($scope, $sce, dataArticles, ArticleService, dataVod) {
+.controller('HomeCtrl', ['$scope', '$sce', 'dataArticles', 'ArticleService', 
+    function ($scope, $sce, dataArticles, ArticleService) {
         // data
-        console.log(dataVod);
-        $scope.vod = dataVod.vod;
         $scope.articles = {
             loading: false,
             viewable: function () {
@@ -358,6 +356,17 @@ angular.module('app.controllers', ['ngCookies'])
             });
         }
         
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 ])
 .controller('PremiumCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'UserService', 'LoginModalService',
@@ -6657,6 +6666,18 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
+        
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 ])
 .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'DeckService', 'VoteService', 'data', 'MetaService', 'LoginModalService',
@@ -8763,6 +8784,30 @@ angular.module('app.controllers', ['ngCookies'])
             map: false
         };
         
+        // filtering
+        function hasFilterRole (role) {
+            for (var i = 0; i < $scope.filters.roles.length; i++) {
+                if ($scope.filters.roles[i] == role) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        function hasFilterUniverse (universe) {
+            for (var i = 0; i < $scope.filters.universes.length; i++) {
+                if ($scope.filters.universes[i] == universe) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        
+        function hasFilterSearch (hero) {
+            var filtered = ($scope.filters.search && $scope.filters.search.length) ? $filter('filter')($scope.heroes, { name: $scope.filters.search }) : $scope.heroes;
+            return (filtered.indexOf(hero) === -1);
+        }
+        
         function getFilters () {
             var filters = [];
             
@@ -8817,8 +8862,10 @@ angular.module('app.controllers', ['ngCookies'])
             } else {
                 // article filters
                 var articleFilters = [];
-                for (var i = 0; i < $scope.filters.heroes.length; i++) {
-                    articleFilters.push($scope.filters.heroes[i].name);
+                for (var i = 0; i < $scope.heroes.length; i++) {
+                    if (!isFiltered($scope.heroes[i])) {
+                        articleFilters.push($scope.heroes[i].name);
+                    }
                 }
                 
                 // load articles
@@ -8904,10 +8951,8 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
     function ($q, $scope, $state, $timeout, $filter, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
-        if (!dataCommunityGuides.success) { return $state.transitionTo('app.hots.guides.list'); }
-        
         $scope.communityGuides = dataCommunityGuides.guides;
-        $scope.topGuide = (dataTopGuide.total) ? dataTopGuide.guides[0] : false;
+        $scope.topGuides = (dataTopGuide.total) ? dataTopGuide.guides : false;
         $scope.tempostormGuides = dataTempostormGuides.guides;
         
         // filtering
@@ -8944,8 +8989,8 @@ angular.module('app.controllers', ['ngCookies'])
         }, true);
         
         // top guide
-        $scope.getTopGuideHeroBg = function () {
-            return ($scope.app.bootstrapWidth !== 'xs') ? $scope.getGuideCurrentHero($scope.topGuide).hero.className : '';
+        $scope.getTopGuideHeroBg = function (guide) {
+            return ($scope.app.bootstrapWidth !== 'xs') ? $scope.getGuideCurrentHero(guide).hero.className : '';
         };
         
         $scope.isLarge = function () {
@@ -9034,8 +9079,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
-        
-        
+                
         // filtering
         function hasFilterRole (role) {
             for (var i = 0; i < $scope.filters.roles.length; i++) {
@@ -9106,10 +9150,9 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         function updateTopGuide () {
-            HOTSGuideService.getGuides(getFilters(), 0, 1, $scope.filters.search).then(function (data) {
+            HOTSGuideService.getGuides('hero', getFilters(), 1, 1, $scope.filters.search).then(function (data) {
                 $timeout(function () {
-                    console.log(data);
-                    $scope.topGuide = (data.total) ? data.guides[0] : false;
+                    $scope.topGuides = (data.total) ? data.guides : false;
                 });
             });
         }
