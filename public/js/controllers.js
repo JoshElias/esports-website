@@ -8747,6 +8747,30 @@ angular.module('app.controllers', ['ngCookies'])
             map: false
         };
         
+        // filtering
+        function hasFilterRole (role) {
+            for (var i = 0; i < $scope.filters.roles.length; i++) {
+                if ($scope.filters.roles[i] == role) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        function hasFilterUniverse (universe) {
+            for (var i = 0; i < $scope.filters.universes.length; i++) {
+                if ($scope.filters.universes[i] == universe) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        
+        function hasFilterSearch (hero) {
+            var filtered = ($scope.filters.search && $scope.filters.search.length) ? $filter('filter')($scope.heroes, { name: $scope.filters.search }) : $scope.heroes;
+            return (filtered.indexOf(hero) === -1);
+        }
+        
         function getFilters () {
             var filters = [];
             
@@ -8801,8 +8825,10 @@ angular.module('app.controllers', ['ngCookies'])
             } else {
                 // article filters
                 var articleFilters = [];
-                for (var i = 0; i < $scope.filters.heroes.length; i++) {
-                    articleFilters.push($scope.filters.heroes[i].name);
+                for (var i = 0; i < $scope.heroes.length; i++) {
+                    if (!isFiltered($scope.heroes[i])) {
+                        articleFilters.push($scope.heroes[i].name);
+                    }
                 }
                 
                 // load articles
@@ -8888,8 +8914,6 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
     function ($q, $scope, $state, $timeout, $filter, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
-        if (!dataCommunityGuides.success) { return $state.transitionTo('app.hots.guides.list'); }
-        
         $scope.communityGuides = dataCommunityGuides.guides;
         $scope.topGuide = (dataTopGuide.total) ? dataTopGuide.guides[0] : false;
         $scope.tempostormGuides = dataTempostormGuides.guides;
@@ -9018,8 +9042,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
-        
-        
+                
         // filtering
         function hasFilterRole (role) {
             for (var i = 0; i < $scope.filters.roles.length; i++) {

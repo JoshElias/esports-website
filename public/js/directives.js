@@ -929,10 +929,13 @@ angular.module('app.directives', ['ui.load'])
                     if (scope.filters.universes.length && scope.filters.universes.indexOf(hero.universe) == -1) {
                         scope.filters.universes.push(hero.universe);
                     }
-                    scope.filters.heroes.push(hero);
+                    scope.filters.heroes = [hero];
+                    //scope.filters.heroes.push(hero);
                 } else {
-                    scope.filters.heroes.splice(index, 1);
+                    scope.filters.heroes = [];
+                    //scope.filters.heroes.splice(index, 1);
                 }
+                
                 if (!scope.filters.heroes.length) {
                     randHeroIndex = randomIntFromInterval(0, scope.heroes.length - 1);
                 }
