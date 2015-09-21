@@ -158,7 +158,6 @@ angular.module('app.directives', ['ui.load'])
                             $scope.errors = data.errors;
                             $scope.showError = true;
                         } else {
-                            console.log(email);
                             $scope.verify.email = email;
                             if ($scope.setState) {
                                 $scope.state = "verify";
@@ -197,8 +196,6 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/directives/login/verify.form.html',
         scope: true,
         link: function ($scope, el, attr) {
-            console.log($scope.verify.email);
-            
             $scope.verifyEmail = function (email, code) {
                  UserService.verifyEmail(email, code).success(function (data) {
                     if (!data.success) {
@@ -237,8 +234,6 @@ angular.module('app.directives', ['ui.load'])
             $scope.service;
             $scope.app = $rootScope.app;
             
-            console.log($scope);
-            
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
 
@@ -249,7 +244,6 @@ angular.module('app.directives', ['ui.load'])
                     });
                 } else {
                     $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
-                        console.log(data, $scope.comment.length);
                         if (data.success) {
                             $scope.commentable.comments.push(data.comment);
                             $scope.comment = '';
@@ -298,7 +292,6 @@ angular.module('app.directives', ['ui.load'])
             
             $scope.addAreaFocus = false;
             
-            console.log(el);
         }
     }
 }])
@@ -744,15 +737,8 @@ angular.module('app.directives', ['ui.load'])
             size: '='
         },
         link: function(scope, element, attrs) {
-            console.log('viewable: ', scope.viewable());
-            console.log('offset: ', scope.offset);
-            console.log('size: ', scope.size);
-            console.log('width: ', $('body').innerWidth());
-            
             function updateWidth () {
                 var newWidth = (((100 / scope.viewable()) * scope.size) / 100 * ($('body').innerWidth() - 20));
-                console.log('width: ', $window.innerWidth);
-                console.log('newWidth: ', newWidth);
                 $(element).find('.home-articles-inner').css('width', newWidth + 'px');
                 $(element).find('.home-article-wrapper').css('width', Math.floor(newWidth / scope.size, 2) + 'px');
             }
@@ -768,16 +754,13 @@ angular.module('app.directives', ['ui.load'])
                     return $scope.viewable();
                 },
                 function(newValue){
-                    console.log('viewable: ', newValue);
                     updateWidth();
                     updateOffset();
             });
             scope.$watch('offset', function(value){
-                console.log('offset: ', value);
                 updateOffset();
             });
             scope.$watch('size', function(value){
-                console.log('size: ', value);
                 updateWidth();
             });
             angular.element($window).bind("resize", function() {
@@ -823,12 +806,10 @@ angular.module('app.directives', ['ui.load'])
         link: function(scope, element, attrs) {
             
             scope.getGuideCurrentHero = function (guide) {
-                console.log(guide);
                 return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
             };
 
             scope.getGuideClass = function (guide) {
-                console.log(guide);
                 return (guide.guideType == 'hero') ? scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
             };
             
@@ -1297,7 +1278,6 @@ angular.module('app.directives', ['ui.load'])
             TwitterService.getFeed().then(function(data) {
                 scope.twitWheel = true;
                 scope.tweets = data.data;
-                console.log(data.data);
             });
 
             scope.getContent = function (c) {

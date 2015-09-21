@@ -1394,8 +1394,9 @@ angular.module('app.services', [])
         };
         
         db.validVideo = function () {
-            var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
-            return (db.video.length) ? db.video.match(r) : true;
+            //var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+            //return (db.video.length) ? db.video.match(r) : true;
+            return true;
         };
         
         db.isStrong = function (strong) {
@@ -1777,8 +1778,9 @@ angular.module('app.services', [])
         }
         
         gb.validVideo = function () {
-            var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
-            return (gb.video.length) ? gb.video.match(r) : true;
+            //var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+            //return (gb.video.length) ? gb.video.match(r) : true;
+            return true;
         };
         
         gb.getContent = function (content) {
