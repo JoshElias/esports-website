@@ -989,7 +989,6 @@ module.exports = {
     profileGuidesLoggedIn: function (Schemas) {
         return function (req, res, next) {
             var username = req.params.username,
-                hero = req.body.hero || 'all',
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
                 guides, total,
@@ -1003,13 +1002,6 @@ module.exports = {
                 });
             }
             
-
-            
-            if (hero !== 'all') {
-                where.heroes = hero;
-            }
-            
-            
             // get total guides
             function getTotal (callback) {
                 Schemas.Guide.count({ public: true, featured: false })
@@ -1022,7 +1014,10 @@ module.exports = {
             
             // get guides
             function getGuides (user, callback) {
-                Schemas.Guide.find({ public: true, author:user._id }) //TODO
+                var where = (req.user._id === user._id.toString()) ? {} : { 'public': true };
+                
+                Schemas.Guide.find({ author:user._id }) //TODO
+                .where(where)
                 .lean()
                 .select('premium heroes guideType maps slug name description author createdDate comments votesCount')
                 .populate([{
