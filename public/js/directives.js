@@ -1095,7 +1095,7 @@ angular.module('app.directives', ['ui.load'])
             article: '='
         },
         templateUrl: tpl + 'views/frontend/directives/article.thumb.html',
-        controller: function ($scope) {
+        controller: ['$scope', function ($scope) {
             $scope.getDescription = function (i) {
                 var temp = i,
                     magicNumber = 170;
@@ -1122,7 +1122,7 @@ angular.module('app.directives', ['ui.load'])
                     return false;
                 }
             }
-        }
+        }]
     }
 }])
 .directive('hsFilterClassLarge', ['$filter', '$timeout', function ($filter, $timeout) {
