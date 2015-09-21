@@ -133,15 +133,11 @@
                         <div class="dust-bottle-sm"></div>
                     </div>
                 </div>
-                <button ng-if="deck.basic" class="basic-submit-btn m-t-md">
+                <button ng-if="deck.basic" class="basic-submit-btn m-t-md" ng-click="updateDeck()">
                     SUBMIT
                 </button>
-
-
-
             </div>
             <!-- / db-right -->
-
 
                 <div class="col-md-pull-3 col-md-9" ng-hide="step !== 1">
                     <div class="db-section-title clearfix">
