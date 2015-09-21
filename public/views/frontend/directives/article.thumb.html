@@ -1,7 +1,7 @@
 <a ui-sref="app.articles.article({ slug: article.slug.url })" class="home-article active">
     <div class="inner"></div>
     <div class="article-premium" ng-if="isPremium(article)"></div>
-    <img ng-src="//cdn-tempostorm.netdna-ssl.com/articles/{{article.photos.small}}" class="img-responsive">
+    <img ng-src="{{app.cdn}}articles/{{article.photos.small}}" class="img-responsive">
     <div class="home-article-content">
         <h1 class="{{article.articleType.join(' ')}}">{{article.title}}</h1>
         <p>{{getDescription(article.description)}}</p>
