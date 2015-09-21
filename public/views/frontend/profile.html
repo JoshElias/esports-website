@@ -22,7 +22,13 @@
                         <h1>@{{user.username}}
                            <small class="m-t-xs">{{user.firstName}}&nbsp;{{user.lastName}}</small>
                         </h1>
-
+                        
+                        <div ng-if="app.user.isLogged()" class="row">
+                            <div class="show-more col-md-6 col-md-push-3">
+                                <a href="./user/{{user.username}}/edit" class="show-more-btn">EDIT PROFILE</a>
+                            </div>
+                        </div>
+                            
                         <div class="profile-social">
                             <a target="_blank" href="http://twitter.com/{{user.social.twitter}}" ng-if="user.social.twitter"><i class="fa fa-twitter"></i></a>
                             <a target="_blank" href="http://twitch.tv/{{user.social.twitch}}" ng-if="user.social.twitch"><i class="fa fa-twitch"></i></a>

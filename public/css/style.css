@@ -144,14 +144,17 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
     background: #2766ad;
 }
 
+
+.navbar-tempo .dropdown-menu { border-top: 2px solid #2766ad; }
 .navbar-tempo .dropdown-menu li a:focus,
-.navbar-tempo .dropdown-menu li a:hover { background: none;!important; color: white!important; }
+.navbar-tempo .dropdown-menu li a:hover { background: none;!important; color: white; }
 
 .navbar-nav .dropdown-menu li { min-width: 200px; }
 
+
 .navbar-nav .dropdown-menu li,
-.navbar-nav .dropdown-menu li a { color: rgba(255,255,255,.4) !important; }
-.navbar-nav .dropdown-menu li a:focus { color: #2766ad !important; }
+.navbar-nav .dropdown-menu li a { color: rgba(255,255,255,.4); }
+.navbar-nav .dropdown-menu li a:focus { color: rgba(255,255,255,.4) !important; border: none; outline: none; }
 .navbar-nav .dropdown-menu li.active a,
 .navbar-nav .dropdown-menu li a.active { background: #2766ad; color: #FFF !important; }
 
@@ -161,8 +164,8 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 .navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover { background: #2766ad; border-color: #083f7d; }
 .navbar-default .navbar-toggle:focus .icon-bar, .navbar-default .navbar-toggle:hover .icon-bar { background-color: #FFF; }
 .navbar-default .navbar-nav .open .dropdown-menu > li > a { padding-top: 10px; padding-bottom: 11px; }
-.navbar-nav .gameHeadLink { display: block; padding: 5px 15px; font-size: 16px; line-height: 20px; white-space: nowrap; font-weight: 700; }
-
+.navbar-nav .game-head-link { display: block; padding: 5px 15px; font-size: 16px; line-height: 20px; white-space: nowrap; font-weight: 700; color: white!important; }
+.navbar-nav .game-head-link:hover { text-decoration: underline; }
 
 /* notifications */
 .notifications .badge {
@@ -570,7 +573,14 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .snapshot-votes .snapVoteWrap a { cursor: pointer; background:  }
 .snapshot-votes .snapVoteWrap i { margin-top: 10px; font-size: 24px }
 
-
+.pin-stripe { 
+    border:1px solid rgba(255,255,255,.4);
+    outline: 1px solid rgba(0,0,0,1);
+    outline-offset: -2px;
+}
+.drop-shadow {
+    box-shadow: 2px 2px 2px 2px rgba(0,0,0,.4);
+}
 
 .bg-override {
     background-image: url(../img/backgrounds/meta-bg.jpg);
@@ -580,7 +590,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-position: top;
 }
 .bg-override.profile {
-    background-image: url(../img/backgrounds/profile-bg.jpg);
+    background-image: url(../img/backgrounds/classes/mage.jpg);
     background-color: #121111;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -613,6 +623,12 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     min-height: 1250px;
 }
 .bg-override.polls {
+    background-color: #121111;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-attachment: fixed;
+}
+.bg-override.sponsors {
     background-color: #121111;
     background-repeat: no-repeat;
     background-size: 100%;
@@ -680,6 +696,9 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
     background-repeat: no-repeat;
     background-size: 100%;
     background-attachment: fixed;
+}
+@media (max-width: 1248px) {
+    .bg-override { background-size: cover!important; }
 }
 
 
@@ -1120,13 +1139,13 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .article-votes { position: absolute; right: 20px; top: 20px; }
 .article-votes .vote-wrap { position: relative; text-align: center; }
-.article-votes .vote-wrap a { cursor: pointer; background:  }
+.article-votes .vote-wrap a { cursor: pointer; }
 .article-votes .vote-wrap i { margin-top: 10px; font-size: 24px }
 
 
 .article-photo-banner { width: 100%; height: 293; border-bottom: 1px solid rgba(255,255,255,.2); }
 .article-page { background: rgba(0,0,0,.5); border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid rgba(255,255,255,.2); padding: 0; position: relative; }
-.article-page .title-wrapper { position: absolute; top: 30px; left: 30px; width: 900px; }
+.article-page .title-wrapper { position: absolute; top: 30px; left: 30px; max-width: 80%; }
 .article-page .title-wrapper h1 { color: #FFFFFF; text-shadow: 1px 1px 1px black; font-weight: bold; letter-spacing: 3px; }
 .article-page .title-wrapper h2 { color: #FFFFFF; font-size: 18px; text-shadow: 1px 1px 1px black; }
 
@@ -2618,7 +2637,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-loading-indicator { font-size: 48px; color: white; text-align: center; margin-top: 50px; }
 
 .db-footer,
-.db-header { color: #FFF; height: auto; line-height: 50px; font-size: 26px; width: 80%; margin: 20px auto; }
+.db-header { color: #FFF; height: auto; line-height: 50px; font-size: 26px; width: 80%; margin: 20px 0px; }
+.db-header.head-shift { margin: 20px 95px; }
 .db-header span { float: left; }
 .db-header h1,
 .db-footer h1 { color: #FFF; font-size: 36px; font-weight: bold; text-shadow: 0px 0px 20px rgba(255,255,255,.4); }
@@ -2655,6 +2675,9 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     width: 100%;
     height: 100%;
     overflow: hidden;
+}
+.db-builder .no-select {
+    opacity: .4;
 }
 .db-class.no-select .hero-img {
     opacity: .4;
@@ -3440,7 +3463,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .deck-mulligan-details > div { padding-left: 80px; }
 
-.deck-mulligan-classes { margin: 14px 0 0 10px; padding: 0; }
+.deck-mulligan-classes { margin: 0px; padding: 0; }
 .deck-mulligan-classes li { float: left; width: 31px; height: 32px; margin: 0 10px 14px 0; list-style: none; }
 .deck-mulligan-classes li:last-child { margin-right: 0; }
 .deck-mulligan-classes li a { display: block; width: 31px; height: 32px; background: url('../img/class-icons.png') no-repeat; overflow: hidden; text-indent: -99999px; opacity: .5; }
@@ -3786,7 +3809,10 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .sponsor-logo-g2a { margin: 0 auto; width: 275px; height: 80px; background: url('../img/g2a.png') no-repeat; }
 .sponsor-logo-namecheap { margin: 0 auto; width: 275px; height: 80px; background: url('../img/namecheap.png') no-repeat; }
 .sponsor-logo-func { margin: 0 auto; width: 275px; height: 80px; background: url('../img/func.png') no-repeat; }
-.sponsor-page a { margin: 0 auto; display: block; width: 20px; color: #FFF; opacity: .6; font-size: 20px; }
+/*.sponsor-page a { margin: 0 auto; display: block; width: 20px; color: #FFF; opacity: .6; font-size: 20px; }*/
+.btn-sponsor { width: 36px; height: 36px; border-radius: 50%; display: block; border: 1px solid white; margin: 10px 0px; }
+.btn-sponsor div { width: 30px; height: 30px; text-align: center; }
+.btn-sponsor div i { font-size: 24px; line-height: 1.25; color: black; }
 .sponsor-page a:hover { opacity: 1; }
 
 /* team page */
@@ -3869,6 +3895,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .btn-team-wrapper { position: absolute; top: 230px; right: 20px; }
 .btn-team-wrapper-modal { position: absolute; top: 20px; right: 20px; }
 .btn-team { width: 30px; height: 30px; border-radius: 30px; display: block; float: left; text-align: center; line-height: 1.35; border: 1px solid white; text-decoration: none; color: rgba(29,29,29,1); font-size: 18px; }
+.btn-inner,
 .btn-team-inner { width: 24px; height: 24px; border-radius: 24px; background-color: rgba(255,255,255,1); margin: 2px; }
 .btn-team-esea { background: url('../img/esea.png') no-repeat center center; color: #0dc503 }
 

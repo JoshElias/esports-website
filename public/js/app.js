@@ -855,7 +855,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Teams', description: 'Teams on Tempostorm', keywords: '' }
             })
             .state('app.polls', {
                 url: 'vote',

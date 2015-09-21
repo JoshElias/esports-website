@@ -3,13 +3,13 @@
         <div class="container-fluid sub-nav">
             <div class="sub-nav-links">
                 <ul>
-                    <li><a ng-disabled="" href="#" ng-click="step = 1" ng-class="{active:$state.includes('app.hs.deckBuilder.edit') && step == 1}">CARD SELECT</a></li><li><a ng-disabled="" href="#" ng-click="step = 2" ng-class="{active:$state.includes('app.hs.deckBuilder.edit') && step == 2}">MULLIGANS</a></li><li><a ng-disabled="" href="#" ng-click="step = 3" ng-class="{active:$state.includes('app.hs.deckBuilder.edit') && step == 3}">DESCRIPTION</a></li><li><a ng-disabled="" href="#" ng-click="step = 4" ng-class="{active:$state.includes('app.hs.deckBuilder.edit') && step == 4}">MATCH UPS</a></li><li><a ng-disabled="" href="#" ng-click="step = 5" ng-class="{active:$state.includes('app.hs.deckBuilder.edit') && step == 5}">SUBMIT</a></li>
+                    <li><a ui-sref="app.hs.deckBuilder.class">CLASS SELECT</a></li><li ng-class="{'db-sub-nav-border-override': deck.basic}"><a href="#" ng-click="step = 1" ng-class="{'active':$state.includes('app.hs.deckBuilder.build') && step == 1}">CARD SELECT</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 2" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 2}">MULLIGANS</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 3" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 3}">DESCRIPTION</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 4" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 4}">MATCH UPS</a></li><li ng-show="!deck.basic"><a href="#" ng-click="step = 5" ng-class="{active:$state.includes('app.hs.deckBuilder.build') && step == 5}">SUBMIT</a></li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="container-fluid-max">
-        <div class="db-header clearfix">
+        <div class="db-header clearfix" ng-class="{ 'head-shift' : step == 1 }">
 
             <span ng-if="step == 1">
                 <h1>CARD SELECT</h1>
@@ -109,13 +109,17 @@
                 </div>
 
                 <div class="deck-info">
-                    <div class="deck-title">
-                        <input placeholder="DECK NAME..." ng-model="deck.name"/>
+                    <div class="db-deck-header db-deck-{{className.toLowerCase()}}">
+                        <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                     </div>
-                    <div class="deck-description">
-                        <textarea placeholder="Put stuff here" resize="none" ng-model="deck.description"></textarea>
-                    </div>
-
+                    <span ng-show="deck.basic">
+                        <div class="deck-title">
+                            <input placeholder="DECK NAME..." ng-model="deck.name"/>
+                        </div>
+                        <div class="deck-description">
+                            <textarea placeholder="Put stuff here" resize="none" ng-model="deck.description"></textarea>
+                        </div>
+                    </span>
                     <div class="deck-list">
                         <div class="list-card" ng-repeat="card in deck.cards track by $index" ng-click="deck.removeCardFromDeck(card)">
                             <div class="mana-cost">{{card.cost}}</div>
@@ -124,11 +128,14 @@
                             <div ng-if="card.legendary" class="legendary pull-right"><i class="fa fa-star"></i></div>
                         </div>
                     </div>
-
+                    <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}}">
+                        {{getDust(deck.cards)}}
+                        <div class="dust-bottle-sm"></div>
+                    </div>
                 </div>
-
-
-
+                <button ng-if="deck.basic" class="basic-submit-btn m-t-md">
+                    SUBMIT
+                </button>
             </div>
             <!-- / db-right -->
 

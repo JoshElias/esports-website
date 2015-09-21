@@ -720,6 +720,7 @@ angular.module('app.directives', ['ui.load'])
         restrict: "A",
         replace: true,
         scope: {
+            mulliganHide: "=",
             deck: "=deck"
         },
         link: function (scope,elem,attr) {
