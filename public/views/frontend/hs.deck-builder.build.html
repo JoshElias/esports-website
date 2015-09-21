@@ -108,7 +108,7 @@
                 </div>
                 
                 <div class="deck-info">
-                    <div class="db-deck-header db-deck-{{className.toLowerCase()}}">
+                    <div class="db-deck-header db-deck-{{className.toLowerCase()}}" ng-class="{ 'secondary' : isSecondary(className.toLowerCase()) }">
                         <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                     </div>
                     <span ng-show="deck.basic">
@@ -127,12 +127,12 @@
                             <div ng-if="card.legendary" class="legendary pull-right"><i class="fa fa-star"></i></div>
                         </div>
                     </div>
-                    <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}}">
+                    <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}}" ng-class="{ 'secondary' : isSecondary(className.toLowerCase()) }">
                         {{getDust(deck.cards)}}
                         <div class="dust-bottle-sm"></div>
                     </div>
                 </div>
-                <button ng-if="deck.basic" class="basic-submit-btn m-t-md">
+                <button ng-if="deck.basic" class="basic-submit-btn m-t-md" ng-click="saveDeck()">
                     SUBMIT
                 </button>
             </div>
@@ -349,7 +349,7 @@
                         </div>
                         <div class="col-xs-4 right">
                             <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                <button ng-click="deck.toggleMulligan(mulligan, true, card)">
+                                <button ng-click="deck.toggleMulligan(mulligan, true, card)" ng-class="{ 'active' : isMulliganCard(true, card) }">
                                     <div class="mana-cost">{{card.cost}}</div>
                                     {{card.name}}
                                     <div ng-if="card.qty == 2" class="pull-right m-r-sm">2</div>
@@ -379,7 +379,7 @@
                         </div>
                         <div class="col-xs-4 right">
                             <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                <button ng-click="deck.toggleMulligan(mulligan, false, card)">
+                                <button ng-click="deck.toggleMulligan(mulligan, false, card)" ng-class="{ 'active' : isMulliganCard(false, card) }">
                                     <div class="mana-cost">{{card.cost}}</div>
                                     {{card.name}}
                                     <div ng-if="card.qty == 2" class="pull-right m-r-sm">2</div>

@@ -1194,7 +1194,6 @@ module.exports = {
             }
             
             getDeck(function () {
-                console.log(deck);
                 return res.json({
                     success: true,
                     deck: deck
@@ -3251,7 +3250,6 @@ module.exports = {
                 .limit(1)
                 .exec(function (err, results) {
                     if (err) { return req.json({ success: false }); }
-                    console.log(results);
                     return callback(results);
                 });
             }

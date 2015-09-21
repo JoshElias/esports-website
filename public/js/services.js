@@ -177,9 +177,6 @@ angular.module('app.services', [])
                 className: 'login-modal',
                 message: $compile('<login-modal callback="LoginModalService.callback()"></login-modal>')($rootScope)
             });
-            
-            box.modal().title="fuk";
-            console.log(box);
             box.modal('show');
         },
         hideModal: function () {
@@ -1697,7 +1694,6 @@ angular.module('app.services', [])
     }
 
     deckBuilder.saveDeck = function (deck) {
-        console.log(deck);
         return $http.post('/api/deck/add', {
             name: deck.name,
             deckType: deck.deckType,

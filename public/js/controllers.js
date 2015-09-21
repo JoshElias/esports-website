@@ -5238,8 +5238,6 @@ angular.module('app.controllers', ['ngCookies'])
         return $scope.app.settings.secondaryPortrait;
     };
     
-    $scope.statdddde = 1;
-    
     $scope.selectedHero = "";
     $scope.klass = false;
     $scope.heroes = [
@@ -5263,10 +5261,24 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.app.settings.secondaryPortrait[index] = secondary;
     }
 }])
-.controller('DeckBuilderCtrl', ['$q', '$state', '$scope', '$timeout', '$compile', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data', 'toStep',
-    function ($q, $state, $scope, $timeout, $compile, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data, toStep) {
+.controller('DeckBuilderCtrl', ['$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data', 'toStep',
+    function ($q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data, toStep) {
         // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+        
+        $scope.isSecondary = function (klass) {
+            switch(klass) {
+                case 'mage': return $scope.app.settings.secondaryPortrait[0]; break;
+                case 'shaman': return $scope.app.settings.secondaryPortrait[1]; break;
+                case 'warrior': return $scope.app.settings.secondaryPortrait[2]; break;
+                case 'rogue': return $scope.app.settings.secondaryPortrait[3]; break;
+                case 'paladin': return $scope.app.settings.secondaryPortrait[4]; break;
+                case 'priest': return $scope.app.settings.secondaryPortrait[5]; break;
+                case 'warlock': return $scope.app.settings.secondaryPortrait[6]; break;
+                case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
+                case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
+            }
+        }
         
         // set default tab page
         $scope.step = 1;
@@ -5476,14 +5488,28 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
         
         $scope.setMulligan = function (mulligan) {
-            console.log(mulligan);
             $scope.currentMulligan = mulligan;
         };
         
         $scope.isMulliganSet = function (mulligan) {
-            console.log(mulligan);
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
+        
+        $scope.isMulliganCard = function (coin, card) {
+            if (coin) {
+                for (var i = 0; i < $scope.currentMulligan.withCoin.cards.length; i++) {
+                    if ($scope.currentMulligan.withCoin.cards[i]._id == card._id) {
+                        return true;
+                    }
+                }
+            } else {
+                for (var i = 0; i < $scope.currentMulligan.withoutCoin.cards.length; i++) {
+                    if ($scope.currentMulligan.withoutCoin.cards[i]._id == card._id) {
+                        return true;
+                    }
+                }
+            }
+        }
         
         //chapters
         var defaultChapter = {
@@ -5565,7 +5591,6 @@ angular.module('app.controllers', ['ngCookies'])
         // save deck
         var box;
         $scope.saveDeck = function () {
-            console.log('shit');
             if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login');
@@ -5584,32 +5609,32 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    $scope.saveDeck();
-                }).error(function() {
-                    $scope.showError = true;
-                });
-            }
-        }
+//        $scope.login = function login(email, password) {
+//            if (email !== undefined && password !== undefined) {
+//                UserService.login(email, password).success(function(data) {
+//                    AuthenticationService.setLogged(true);
+//                    AuthenticationService.setAdmin(data.isAdmin);
+//                    AuthenticationService.setProvider(data.isProvider);
+//                    
+//                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+//                    SubscriptionService.setTsPlan(data.subscription.plan);
+//                    SubscriptionService.setExpiry(data.subscription.expiry);
+//                    
+//                    $window.sessionStorage.userID = data.userID;
+//                    $window.sessionStorage.username = data.username;
+//                    $window.sessionStorage.email = data.email;
+//                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+//                    box.modal('hide');
+//                    $scope.saveDeck();
+//                }).error(function() {
+//                    $scope.showError = true;
+//                });
+//            }
+//        }
     }
 ])
-.controller('DeckEditCtrl', ['$state', '$scope', '$compile', '$window', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'data',
-    function ($state, $scope, $compile, $window, $timeout, $q, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, data) {
+.controller('DeckEditCtrl', ['$state', '$scope', '$compile', '$window', '$timeout', '$q', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'data',
+    function ($state, $scope, $compile, $window, $timeout, $q, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, data) {
           // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
         

@@ -2870,6 +2870,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-mulligans .db-mulligan-content .list-card .legendary { margin-right: 8px; }
 .db-mulligans .db-mulligan-content .list-card button { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
 .db-mulligans .db-mulligan-content .list-card button:hover { background: rgba(255,255,255,.2); }
+.db-mulligans .list-card button.active { background: rgba(255,255,255,.2) }
 
 
 /* start glows */
@@ -3193,13 +3194,16 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-deck-header { margin: 0 auto; position: relative; width: 100%; height: 100px; padding: 10px; border: 1px solid #000; }
 
 .db-deck-header.db-deck-mage { background: url('../img/mage-large.jpg') center -175px; background-size: cover; }
+.db-deck-header.db-deck-mage.secondary { background: url('../img/medivh-top.jpg') center; background-size: cover; }
 .db-deck-header.db-deck-shaman { background: url('../img/shaman-large.jpg') center -175px; background-size: cover; }
 .db-deck-header.db-deck-warrior { background: url('../img/warrior-large.jpg') center -175px; background-size: cover; }
+.db-deck-header.db-deck-warrior.secondary { background: url('../img/magni-top.jpg') center; background-size: cover; }
 .db-deck-header.db-deck-rogue { background: url('../img/rogue-large.jpg') center -175px; background-size: cover; }
 .db-deck-header.db-deck-paladin { background: url('../img/paladin-large.jpg') center -175px; background-size: cover; }
 .db-deck-header.db-deck-priest { background: url('../img/priest-large.jpg') center -175px; background-size: cover; }
 .db-deck-header.db-deck-warlock { background: url('../img/warlock-large.jpg') center -175px; background-size: cover; }
 .db-deck-header.db-deck-hunter { background: url('../img/hunter-large.jpg') center -175px; background-size: cover; }
+.db-deck-header.db-deck-hunter.secondary { background: url('../img/alleria-top.jpg') center; background-size: cover; }
 .db-deck-header.db-deck-druid { background: url('../img/druid-large.jpg') center -175px; background-size: cover; }
 
 .db-arena { position: absolute; left: 5px; bottom: 5px; font-family: hs; font-size: 20px; line-height: 20px; color: #FFF; font-weight: bold; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; }
@@ -3230,13 +3234,16 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-deck-footer { position: absolute; left: 0px; bottom: 0px; width: 100%; height: 30px; }
 
 .db-deck-footer.db-deck-mage { background: url('../img/mage-large.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-mage.secondary { background: url('../img/medivh-bottom.jpg') center top no-repeat; background-size: cover; }
 .db-deck-footer.db-deck-shaman { background: url('../img/shaman-large.jpg') center bottom no-repeat; background-size: cover; }
 .db-deck-footer.db-deck-warrior { background: url('../img/warrior-large.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-warrior.secondary { background: url('../img/magni-bottom.jpg') center top no-repeat; background-size: cover; }
 .db-deck-footer.db-deck-rogue { background: url('../img/rogue-large.jpg') center top no-repeat; background-size: cover; }
 .db-deck-footer.db-deck-paladin { background: url('../img/paladin-large.jpg') center top no-repeat; background-size: cover; }
 .db-deck-footer.db-deck-priest { background: url('../img/priest-large.jpg') center top no-repeat; background-size: cover; }
 .db-deck-footer.db-deck-warlock { background: url('../img/warlock-large.jpg') center top no-repeat; background-size: cover; }
 .db-deck-footer.db-deck-hunter { background: url('../img/hunter-large.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-hunter.secondary { background: url('../img/alleria-bottom.jpg') center top no-repeat; background-size: cover; }
 .db-deck-footer.db-deck-druid { background: url('../img/druid-large.jpg') center bottom no-repeat; background-size: cover; }
 
 .db-deck-footer-wrapper { position: relative; height: 29px; }
