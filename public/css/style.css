@@ -505,6 +505,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .hs-deck.large { height: 220px; }
 
 .hs-deck .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 4; }
+.hs-deck .hs-deck-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
 .hs-deck .bt-shadow { position: absolute; right: 0px; bottom: 0px; left: 0px; height: 60px; background: url('../img/hs/bt-shadow.png') repeat-x; z-index: 2; }
 .hs-deck.small .hs-deck-details,
 .hs-deck.large .hs-deck-details { position: absolute; bottom: 0px; left: 0px; padding: 0 20px 0; max-width: 100%; z-index: 3; }
@@ -8085,7 +8086,7 @@ p.white { color: #FFF; }
 .hots-top-guide .btn { position: absolute; bottom: 0px; }
 .hots-top-guide-inner { padding: 20px 0px; }
 .hots-top-guide .hots-top-guide-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
-
+.hots-top-guide .hots-top-guide-votes { position: absolute; top: 0px; right: 30px; width: 60px; height: 60px; line-height: 56px; border-radius: 50%; border: 2px solid #FFF; background: rgba(0,0,0,.7); color: #FFF; font-size: 20px; text-align: center; opacity: .7; z-index: 3; }
 
 .hots-top-guide-talents { margin: 0; padding: 0; }
 .hots-top-guide-talents li { list-style: none; display: inline-block; vertical-align: top; }

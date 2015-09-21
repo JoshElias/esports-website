@@ -22,16 +22,17 @@
     <!-- / filtering -->
 
     <!-- top guide -->
-    <div class="container-fluid hots-top-guide m-t-lg pos-rl" ng-if="topGuide">
+    <div class="container-fluid hots-top-guide m-t-lg pos-rl hidden-xs hidden-sm hidden-md" ng-if="topGuide" ng-repeat="topGuide in topGuides">
         <div class="hots-top-guide-premium" ng-if="isPremium(topGuide)"></div>
         <div class="tri-both">
             <div class="container-fluid-max hots-top-guide-inner pos-rl">
-                <div class="hero {{getTopGuideHeroBg()}}"></div>
+                <div class="hero {{getTopGuideHeroBg(topGuide)}}"></div>
                 <div class="row row-flex row-flex-wrap">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-7">
                         <div class="row-flex-col">
                             <h1>TOP GUIDE</h1>
                             <h3>{{topGuide.name}}</h3>
+                            <div class="hots-top-guide-votes">{{topGuide.votesCount}}</div>
                             <ul class="hots-top-guide-talents clearfix">
                                 <li>
                                     <a href="#" class="talents-icon active {{isLarge()}} {{getGuideClass(topGuide)}} {{getGuideCurrentHero(topGuide).talents.tier1.className}}" ng-tooltip title="{{getGuideCurrentHero(topGuide).talents.tier1.name}}"></a>
