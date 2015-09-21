@@ -3329,8 +3329,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$templateCache', '$sce', 'data',
-    function ($scope, $compile, $timeout, $location, $anchorScroll, $templateCache, $sce, data) {
+.controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'data',
+    function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, data) {
         $scope.members = data.members;
         
         $scope.hsMembers = data.hsMembers;
