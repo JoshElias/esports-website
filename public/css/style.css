@@ -1189,7 +1189,14 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .article-page .article-author .author-social a div { width:30px; height: 30px; border-radius: 100%; } 
 .article-page .article-author .author-social a div i { font-size: 16px; line-height: 2 } 
 
+@media (max-width: 767px) {
 
+    .article-page .article-author .author-social a { width:26px; height: 26px; margin-top: 5px; font-size: 14px; } 
+    .article-page .article-author .author-social a div { width:20px; height: 20px; } 
+    .article-page .article-author .author-social a div i { font-size: 14px; line-height: .5 } 
+
+    
+}
 
 .article-page .article-title { margin: 0; color: #2766ad; font-family: 'Open Sans Bold'; } 
 .article-page .article-page-content { color: #FFF; padding-left: 10px; }
@@ -2233,7 +2240,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .profile-page .activity-list .activity .activity-right { padding-left: 25px; color: white; width: 100%; }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header {  }
-.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 { font-size: 14px; letter-spacing: 2px; width: 750px; }
+.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 { font-size: 14px; letter-spacing: 2px; }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header h2.deleted { font-size: 14px; letter-spacing: 2px; width: 100%; color: rgba(215,215,215,.8); }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 .color-wrapper { color: rgba(215,215,215,1) }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 a { font-weight: bold; }
@@ -3168,6 +3175,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     position: relative!important;
 }
 
+.db-builder .deck-list { min-height: 425px; }
 .db-builder .deck-list .mana-cost { background: #2766AD; height: 28px; width: 28px; float: left; text-align: center; text-indent: 0px; color: white; }
 .db-builder .deck-list .list-card .card-charm { color: gold; position: relative; width:28px;  }
 .db-builder .deck-list .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-top: 1px; cursor: pointer; cursor: hand; position: relative; }
@@ -3180,7 +3188,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-builder .deck-list .list-card:hover { background: rgba(255,255,255,.2); }
 
 /* deck builder - deck */
-.db-deck { margin: 20px auto; width: auto; }
+.db-deck { margin: 20px auto; width: auto; opacity: .9 }
 
 .db-deck-header { margin: 0 auto; position: relative; width: 100%; height: 100px; padding: 10px; border: 1px solid #000; }
 
@@ -3547,13 +3555,19 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 /* comments */
 .comments { }
 
-.comment { min-height: 100px; }
+.comment { min-height: 100px; opacity: .9; }
 .comment-section-title { color: white; }
 .comment-section-title h3 { font-weight: bold; letter-spacing: 2px; }
 .comment .deleted-user { color: red; font-size: 15px; }
 .comment .avatar-wrapper { float: left; padding-left: 0px; }
 .comment .avatar { background: white; width: 60px; height: 60px; border-radius: 50%; }
 .comment .avatar img { width: 60px; height: 60px; padding:2px; }
+
+@media (max-width: 767px) {
+    .comment .avatar { width: 30px; height: 30px; }
+    .comment .avatar img { width: 30px; height: 30px; }
+}
+
 .comment .panel-heading { color: #FFF; padding: 0; }
 .comment .panel-heading a { color: #9C9C9C; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; transition: .15s; }
 .comment .panel-body { color: #FFF; background: #1B1B1B; overflow: hidden; }
@@ -3568,13 +3582,19 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .comment .comment.first { margin-top: 10px; }
 .comment .comment:last-child { border-left: 1px solid transparent; padding-bottom: 0px; }
 
-.comment-add { position: relative; background: #262626; padding: 0px 0px 0px 10px; }
+.comment-add { position: relative; background: #262626; padding: 0px 0px 0px 10px; opacity: .9; }
 .comment-add.active, 
 .comment-add:hover { background: #2267B2; transition: all .15s; -webkit-transition: all .15s; -moz-transition: all .15s; }
 .comment-add .row { margin: 0px; }
 .comment-add .comment-add-bot { height: 35px; margin-top: -5px; }
 .comment-add .avatar { width: 60px; height: 60px; background: rgba(255,255,255,1); border-radius: 50%; margin-top:15px; }
 .comment-add .avatar img { width: 60px; height: 60px; padding: 2px; }
+
+@media (max-width: 767px) {
+    .comment-add .avatar { width: 30px; height: 30px; }
+    .comment-add .avatar img { width: 30px; height: 30px; }
+}
+
 .comment-add .comment-form { padding-right: 0; }
 .comment-add .form-group { margin-bottom: 0px; }
 .comment-add textarea { width: 100%; border-radius: 0px; border-color: transparent; resize: none; background: none; color: white; padding:10px; transition: .15s }
@@ -3896,6 +3916,14 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .btn-team-wrapper { position: absolute; top: 230px; right: 20px; }
 .btn-team-wrapper-modal { position: absolute; top: 20px; right: 20px; }
 .btn-team { width: 30px; height: 30px; border-radius: 30px; display: block; float: left; text-align: center; line-height: 1.35; border: 1px solid white; text-decoration: none; color: rgba(29,29,29,1); font-size: 18px; }
+
+@media (max-width: 767px) {
+    
+    .btn-team { width: 20px; height: 20px; border-radius: 30px; float: none; }
+    .btn-team-inner { width: 14px; height: 14px; }
+
+}
+
 .btn-inner,
 .btn-team-inner { width: 24px; height: 24px; border-radius: 24px; background-color: rgba(255,255,255,1); margin: 2px; }
 .btn-team-esea { background: url('../img/esea.png') no-repeat center center; color: #0dc503 }
