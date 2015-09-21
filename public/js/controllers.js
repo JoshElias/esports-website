@@ -754,12 +754,34 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.articles = dataArticles.articles;
     }
 ])
-.controller('ProfileDecksCtrl', ['$scope', 'bootbox', 'DeckService', 'dataDecks',  
-    function ($scope, bootbox, DeckService, dataDecks) {
+.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'dataDecks',  
+    function ($scope, $state, bootbox, DeckService, dataDecks) {
         $scope.decks = dataDecks.decks;
         
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        $scope.deckEdit = function ($event, deck) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            return $state.transitionTo('app.hs.deckBuilder.edit', { slug: deck.slug });
+        };
+        
         // delete deck
-        $scope.deckDelete = function deleteDeck(deck) {
+        $scope.deckDelete = function deleteDeck($event, deck) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
             var box = bootbox.dialog({
                 title: 'Delete deck: ' + deck.name + '?',
                 message: 'Are you sure you want to delete the deck <strong>' + deck.name + '</strong>?',
@@ -795,9 +817,140 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileGuidesCtrl', ['$scope', 'bootbox', 'HOTSGuideService', 'dataGuides',  
-    function ($scope, bootbox, HOTSGuideService, dataGuides) {
+.controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'dataGuides',  
+    function ($scope, $state, bootbox, HOTSGuideService, dataGuides) {
         $scope.guides = dataGuides.guides;
+        
+        // guides
+        $scope.getGuideCurrentHero = function (guide) {
+            return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
+        };
+        
+        $scope.getGuideClass = function (guide) {
+            return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
+        };
+        
+        $scope.guidePrevHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+            
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
+            }
+            
+            guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
+        };
+
+        $scope.guideNextHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+            
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
+            }
+            
+            guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
+        };
+        
+        $scope.getTalents = function (hero, tier) {
+            var out = [];
+            
+            for (var i = 0; i < hero.hero.talents.length; i++) {
+                if (hero.hero.talents[i].tier === tier) {
+                    out.push(hero.hero.talents[i]);
+                }
+            }
+            
+            return out;
+        };
+        
+        $scope.selectedTalent = function (hero, tier, talent) {
+            return (hero.talents['tier' + tier]._id == talent._id);
+        };
+        
+        $scope.getTalent = function (hero, tier) {
+            for (var i = 0; i < hero.hero.talents.length; i++) {
+                if (hero.talents['tier' + tier] == hero.hero.talents[i]._id) {
+                    return hero.hero.talents[i];
+                }
+            }
+            return false;
+        };
+        
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        $scope.guideEdit = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            if (guide.guideType == 'hero') {
+                return $state.transitionTo('app.hots.guideBuilder.edit.hero', { slug: guide.slug });
+            } else {
+                return $state.transitionTo('app.hots.guideBuilder.edit.map', { slug: guide.slug });
+            }
+        };
+        
+        $scope.guideDelete = function deleteGuide($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+
+            var box = bootbox.dialog({
+                title: 'Delete guide: ' + guide.name + '?',
+                message: 'Are you sure you want to delete the guide <strong>' + guide.name + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            HOTSGuideService.guideDelete(guide._id).success(function (data) {
+                                if (data.success) {
+                                    var index = $scope.guides.indexOf(guide);
+                                    if (index !== -1) {
+                                        $scope.guides.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: 'guide "' + guide.name + '" deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        };
     }
 ])
 .controller('ProfilePostsCtrl', ['$scope', 'dataPosts',  
@@ -5212,11 +5365,11 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('DeckBuilderClassCtrl', ['$scope', function ($scope) {
     
-    var portraitSettings = ($scope.app.settings.secondaryPortrait != undefined) ? $scope.app.settings.secondaryPortrait : function() { 
+    if ($scope.app.settings.secondaryPortrait == undefined) {
         $scope.app.settings.secondaryPortrait = [false,false,false,false,false,false,false,false,false];
-        return $scope.app.settings.secondaryPortrait;
-    };
-    
+    }
+    var portraitSettings = $scope.app.settings.secondaryPortrait;
+
     $scope.selectedHero = "";
     $scope.klass = false;
     $scope.heroes = [

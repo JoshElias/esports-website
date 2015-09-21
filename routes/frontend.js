@@ -895,6 +895,10 @@ module.exports = {
             function getDecks (user, callback) {
                 Schemas.Deck.find({ author: user._id, public: true })
                 //.where(where)
+                .populate([{
+                    path: 'author',
+                    select: 'username'
+                }])
                 .sort('-createdDate')
                 //.skip((perpage * page) - perpage)
                 //.limit(perpage)
@@ -929,6 +933,10 @@ module.exports = {
                 
                 Schemas.Deck.find({ author: user._id })
                 .where(where)
+                .populate([{
+                    path: 'author',
+                    select: 'username'
+                }])
                 .sort('-createdDate')
                 //.skip((perpage * page) - perpage)
                 //.limit(perpage)
@@ -1022,7 +1030,7 @@ module.exports = {
                 .select('premium heroes guideType maps slug name description author createdDate comments votesCount')
                 .populate([{
                         path: 'author',
-                        select: 'username -_id'
+                        select: 'username'
                     }, {
                         path: 'heroes.hero',
                         select: 'className'

@@ -3,7 +3,31 @@
     
 <div class="row no-wrap" ng-show="guides.length">
     <div ng-repeat="guide in guides" class="col-xs-12 col-sm-6 m-b-sm">
-        <hots-guide guide="guide"></hots-guide-list>
+        <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide large {{getGuideClass(guide)}}">
+            <div class="inner"></div>
+            <div class="hots-guide-premium" ng-if="isPremium(guide)"></div>
+            <div class="bt-shadow" ng-if="guide.guideType == 'hero'"></div>
+            <h1>{{guide.name}}</h1>
+            <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>
+            <div class="hots-guide-votes">{{guide.votesCount}}</div>
+            <div class="hero-flip btn-group" ng-if="guide.heroes.length > 1">
+                <button class="btn btn-xs btn-blue" ng-click="guidePrevHero($event, guide)"><span class="fa fa-angle-left"></span></button>
+                <button class="btn btn-xs btn-blue" ng-click="guideNextHero($event, guide)"><span class="fa fa-angle-right"></span></button>
+            </div>
+            <ul class="hots-guide-talents" ng-if="guide.guideType == 'hero'">
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier1.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier1.name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier4.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier4.name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier7.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier7.name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier10.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier10.name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier13.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier13.name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier16.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier16.name}}"></li>
+                <li class="talents-icon active {{getGuideClass(guide)}} {{getGuideCurrentHero(guide).talents.tier20.className}}" ng-tooltip title="{{getGuideCurrentHero(guide).talents.tier20.name}}"></li>
+            </ul>
+            <div class="hots-guide-owner" ng-if="app.user.getUserID() == guide.author._id">
+                <button class="btn btn-blue btn-xs" ng-click="guideEdit($event, guide)">Edit</button>
+                <button class="btn btn-danger btn-xs" ng-click="guideDelete($event, guide)">Delete</button>
+            </div>
+        </a>
     </div>
 </div>
 <p class="profile-no-content" ng-if="!guides.length">@{{user.username}} hasn't created any guides yet.</p>

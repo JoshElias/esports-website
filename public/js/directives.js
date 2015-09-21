@@ -797,61 +797,6 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
-.directive('hotsGuide', function() {
-    return {
-        restrict: 'E',
-        scope: { guide: "=guide" },
-        replace: true,
-        templateUrl: "views/frontend/directives/hots.guide.html",
-        link: function(scope, element, attrs) {
-            
-            scope.getGuideCurrentHero = function (guide) {
-                return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
-            };
-
-            scope.getGuideClass = function (guide) {
-                return (guide.guideType == 'hero') ? scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
-            };
-            
-            scope.guidePrevHero = function ($event, guide) {
-                $event.preventDefault();
-                $event.stopPropagation();
-
-                var currentHero = scope.getGuideCurrentHero(guide),
-                    index = 0;
-
-                // get index of current hero
-                for (var i = 0; i < guide.heroes.length; i++) {
-                    if (currentHero.hero._id == guide.heroes[i].hero._id) {
-                        index = i;
-                        break;
-                    }
-                }
-
-                guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
-            };
-
-            scope.guideNextHero = function ($event, guide) {
-                $event.preventDefault();
-                $event.stopPropagation();
-
-                var currentHero = scope.getGuideCurrentHero(guide),
-                    index = 0;
-
-                // get index of current hero
-                for (var i = 0; i < guide.heroes.length; i++) {
-                    if (currentHero.hero._id == guide.heroes[i].hero._id) {
-                        index = i;
-                        break;
-                    }
-                }
-
-                guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
-            };
-            
-        }
-    };
-})
 .directive('hotsFiltering', ['$filter', '$timeout', function ($filter, $timeout) {
     return {
         restrict: 'A',
