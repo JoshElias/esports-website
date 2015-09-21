@@ -1182,7 +1182,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .article-page .article-author { background-color: #2268AE; width: 100%; padding-bottom: 15px; position: relative; margin-bottom: 50px; } 
 .article-page .article-author img {  width: 80px; height: 80px; border: 4px solid white; border-radius: 80px; background: white; position: absolute; top: 40px; left: 40px; } 
 
-.article-page .article-author .author-content { color: white; width: 570px; margin: 25px 0px 0px 150px; display: inline-block; } 
+.article-page .article-author .author-content { color: white; width: 570px; margin: 25px 0px 0px 150px; display: inline-block; min-height: 120px; } 
 .article-page .article-author .author-content h2 { font-weight: bold; margin-bottom: 15px } 
 .article-page .article-author .author-content p { line-height: 1.25 } 
 .article-page .article-author .author-social { position:absolute; right: 25px; top: 25px } 
@@ -1193,7 +1193,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 @media (max-width: 767px) {
 
     .article-page .article-author .author-social a { width:26px; height: 26px; margin-top: 5px; font-size: 14px; } 
-    .article-page .article-author .author-social a div { width:20px; height: 20px; } 
+    .article-page .article-author .author-social a div { width:20px; height: 20px; }
     .article-page .article-author .author-social a div i { font-size: 14px; line-height: .5 } 
 
     
