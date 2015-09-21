@@ -1,2 +1,8 @@
-<span ng-if="activity.forumPost">made a new forum post!  <a href="./forum/{{activity.forumPost.thread.slug.url}}/{{activity.forumPost.slug.url}}">{{activity.forumPost.title}}</a></span>
-<span ng-if="!activity.forumPost">had their forum post deleted.</span>
+<span  class="activity-content">
+    <span ng-if="activity.forumPost">
+        <span class="activity-header clearfix"><h2 class="pull-left"><span class="color-wrapper">{{user.username}} wrote a new forum post </span> <a target="_blank" ui-sref="app.forum.post({thread:activity.forumPost.thread.slug.url, post:activity.forumPost.slug.url})">{{activity.forumPost.title}}</a></h2><span class="pull-right" am-time-ago="activity.createdDate"></span></span>
+        <div class="activity-body m-t-md">{{activity.forumPost.content}}</div>
+        <div class="activity-foot m-t-md pull-right">Comments {{activity.forumPost.comments.length}}</div>
+    </span>
+    <span ng-if="!activity.forumPost" class="activity-header"><h2 class="deleted">{{user.username}} removed their forum post.</h2></span>
+</span>

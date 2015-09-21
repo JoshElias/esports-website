@@ -1,2 +1,7 @@
-<span ng-if="activity.forumPost">commented on a forum post!  <a href="./forum/{{activity.forumPost.thread.slug.url}}/{{activity.forumPost.slug.url}}">{{activity.forumPost.title}}</a></span>
-<span ng-if="!activity.forumPost">commented on a forum post which has been deleted.</span>
+<span  class="activity-content">
+    <span ng-if="activity.forumPost">
+        <span class="activity-header clearfix"><h2 class="pull-left"><span class="color-wrapper">{{user.username}} commented on</span> <a target="_blank" ui-sref="app.forum.post({thread:activity.forumPost.thread.slug.url, post:activity.forumPost.slug.url})">{{activity.forumPost.title}}</a></h2><span class="pull-right" am-time-ago="activity.createdDate"></span></span>
+        <div class="activity-body m-t-md">{{activity.comment.comment}}</div>
+    </span>
+    <span ng-if="!activity.forumPost" class="activity-header"><h2 class="deleted">{{user.username}} commented on an forumPost that had been deleted.</h2></span>
+</span>

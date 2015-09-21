@@ -1,4 +1,5 @@
 'use strict';
+var Z;
 
 angular.module('app.directives', ['ui.load'])
 .directive('uiModule', ['MODULE_CONFIG','uiLoad', '$compile', function(MODULE_CONFIG, uiLoad, $compile) {
@@ -46,12 +47,255 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 })
-.directive('loginForm', function () {
+.directive('loginModal', ['LoginModalService', '$rootScope', function (LoginModalService, $rootScope) {
     return {
-        templateUrl: tpl + 'views/frontend/login.form.html'
-    };
-})
-.directive('datePicker', function(){
+        templateUrl: tpl + 'views/frontend/directives/login/login.modal.html',
+        scope: true,
+        controller: ['$scope', function ($scope) {
+            $scope.state = $rootScope.LoginModalService.state;
+            $scope.callback = $rootScope.LoginModalService.callback;
+
+            $scope.getState = function () {
+                return $scope.state;
+            }
+            
+            $scope.setState = function (s) {
+                switch(s) {
+                    case 'login':  $scope.state = "login" ; $scope.title = "User Login"; break;
+                    case 'signup': $scope.state = "signup"; $scope.title = "User Signup"; break;
+                    case 'forgot': $scope.state = "forgot"; $scope.title = "Forgot Password"; break;
+                    case 'verify': $scope.state = "verify"; $scope.title = "Verify Email"; break;
+                    default:       $scope.state = "login" ; $scope.title = "UserLogin"; break;
+                }
+            }
+            $scope.setState($scope.state);
+            
+            $scope.closeModal = function () {
+                LoginModalService.hideModal();
+            }
+        }],
+        link: function($scope, el, attr) {
+            $scope.setTitle = function(s) {
+                $(".modal-title")[0].innerHTML = s;
+            }
+        }
+    }
+}])
+.directive('loginForm', ['$window', '$cookies', '$state', 'AuthenticationService', 'LoginModalService', 'UserService', 'SubscriptionService', function ($window, $cookies, $state, AuthenticationService, LoginModalService, UserService, SubscriptionService) {
+    return {
+        templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
+        scope: true,
+        link: function ($scope, el, attr) {
+            $scope.remember;
+            $scope.loginInfo = {
+                email: "",
+                password: ""
+            };
+            var cook = $cookies.getObject('TSRememberMe');
+            
+            if (cook != undefined) {
+                $scope.remember = true;
+                $scope.loginInfo.email = cook.email;
+                $scope.loginInfo.password = cook.password;
+            }
+
+            $scope.login = function login(email, password) {
+                if (email !== undefined && password !== undefined) {
+                    UserService.login(email, password).success(function(data) {
+                        AuthenticationService.setLogged(true);
+                        AuthenticationService.setAdmin(data.isAdmin);
+                        AuthenticationService.setProvider(data.isProvider);
+
+                        SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                        SubscriptionService.setTsPlan(data.subscription.plan);
+                        SubscriptionService.setExpiry(data.subscription.expiry);
+
+                        $window.sessionStorage.userID = data.userID;
+                        $window.sessionStorage.username = data.username;
+                        $window.sessionStorage.email = data.email;
+                        $window.sessionStorage.token = data.token;
+                        
+                        if ($scope.setState) {
+                            $scope.closeModal();
+                        } else {
+                            $state.go('app.home');
+                        }
+                            
+                        if ($scope.remember) {
+                            var expireDate = new Date();
+                            expireDate.setDate(expireDate.getDate() + 356);
+                            $cookies.putObject('TSRememberMe', { email: $scope.loginInfo.email, password: $scope.loginInfo.password }, { expires: expireDate });
+                        } else {
+                            $cookies.remove('TSRememberMe');
+                        }
+                        
+                        if ($scope.callback) {
+                            $scope.callback();
+                        }
+                            
+                    }).error(function() {
+                        $scope.showError = true;
+                    });
+                }
+            }
+        }
+    }
+}])
+.directive('signupForm', ['$state', 'UserService', 'LoginModalService', function ($state, UserService, LoginModalService) {
+    return {
+        templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
+        scope: true,
+        link: function ($scope, el, attr) {
+            $scope.verify = {
+                email: "",
+                code: ""
+            }
+            
+            $scope.signup = function signup(email, username, password, cpassword) {
+                if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
+                    UserService.signup(email, username, password, cpassword).success(function (data) {
+                        if (!data.success) {
+                            $scope.errors = data.errors;
+                            $scope.showError = true;
+                        } else {
+                            $scope.verify.email = email;
+                            if ($scope.setState) {
+                                $scope.state = "verify";
+                            } else {
+                                $state.go('app.verify');
+                            }
+//                            return $state.transitionTo('app.verify', { email: email });
+                        }
+                    });
+                }
+            }
+        }
+    }
+}])
+.directive('forgotPasswordForm', ['LoginModalService', function (LoginModalService) {
+    return {
+        templateUrl: tpl + 'views/frontend/directives/login/forgot.password.form.html',
+        scope: true,
+        link: function ($scope, el, attr) {
+            $scope.forgotPassword = function () {
+                UserService.forgotPassword($scope.forgot.email).success(function (data) {
+                    if (!data.success) {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                    } else {
+                        $scope.showSuccess = true;
+                        $scope.forgot.email = '';
+                    }
+                });
+            };
+        }
+    }
+}])
+.directive('verifyForm', ['LoginModalService', function (LoginModalService) {
+    return {
+        templateUrl: tpl + 'views/frontend/directives/login/verify.form.html',
+        scope: true,
+        link: function ($scope, el, attr) {
+            $scope.verifyEmail = function (email, code) {
+                 UserService.verifyEmail(email, code).success(function (data) {
+                    if (!data.success) {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                    } else {
+                        AuthenticationService.setLogged(true);
+                        AuthenticationService.setAdmin(data.isAdmin);
+                        AuthenticationService.setProvider(data.isProvider);
+
+                        SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                        SubscriptionService.setTsPlan(data.subscription.plan);
+                        SubscriptionService.setExpiry(data.subscription.expiry);
+
+                        $window.sessionStorage.userID = data.userID;
+                        $window.sessionStorage.username = data.username;
+                        $window.sessionStorage.email = data.email;
+                        $window.sessionStorage.token = data.token;
+                        $scope.closeModal();
+                    }
+                });
+            };
+        }
+    }
+}])
+.directive('commentSection', ['$rootScope', 'VoteService', 'LoginModalService', function ($rootScope, VoteService, LoginModalService) {
+    return {
+        restrict: "E",
+        templateUrl: tpl + 'views/frontend/directives/comments/commentSection.html',
+        scope: { 
+            commentable: "=",
+            service:     "=", 
+        },
+        controller: function ($scope) {
+            $scope.commentable;
+            $scope.service;
+            $scope.app = $rootScope.app;
+            
+            var defaultComment = '';
+            $scope.comment = angular.copy(defaultComment);
+
+            $scope.commentPost = function () {
+                if (!$scope.app.user.isLogged()) {
+                    LoginModalService.showModal('login', function () {
+                        $scope.commentPost();
+                    });
+                } else {
+                    $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
+                        if (data.success) {
+                            $scope.commentable.comments.push(data.comment);
+                            $scope.comment = '';
+                        }
+                    });
+                }
+                updateCommentVotes();
+            };
+
+            updateCommentVotes();
+            function updateCommentVotes() {
+                $scope.commentable.comments.forEach(checkVotes);
+
+                function checkVotes (comment) {
+                    var vote = comment.votes.filter(function (vote) {
+                        return ($scope.app.user.getUserID() === vote.userID);
+                    })[0];
+
+                    if (vote) {
+                        comment.voted = vote.direction;
+                    }
+                }
+            }
+
+            $scope.voteComment = function (direction, comment) {
+                if (!$scope.app.user.isLogged()) {
+                    LoginModalService.showModal('login', function () {
+                        $scope.voteComment(direction, comment);
+                    });
+                } else {
+                    if (comment.author._id === $scope.app.user.getUserID()) {
+                        bootbox.alert("You can't vote for your own content.");
+                        return false;
+                    }
+                    VoteService.voteComment(direction, comment).then(function (data) {
+                        if (data.success) {
+                            comment.voted = direction;
+                            comment.votesCount = data.votesCount;
+                        }
+                    });
+                }
+                updateCommentVotes();
+            }
+        },
+        link: function ($scope, el, attr) {
+            
+            $scope.addAreaFocus = false;
+            
+        }
+    }
+}])
+.directive('datePicker', function (){
     return {
         replace: true,
         templateUrl: tpl + 'views/admin/date-picker.html',
@@ -100,6 +344,30 @@ angular.module('app.directives', ['ui.load'])
              } else {
                  scope.scrolled = false;
              }
+            scope.$apply();
+        });
+    };
+}])
+.directive("subNav", ['$window', function ($window) {
+    return function(scope, element, attrs) {
+        angular.element($window).bind("scroll", function() {
+            if (this.pageYOffset >= (element.parent().offset().top - 50)) {
+                element.addClass('sticky');
+                element.parent().addClass('sticky');
+            } else {
+                element.removeClass('sticky');
+                element.parent().removeClass('sticky');
+            }
+            scope.$apply();
+        });
+        angular.element($window).bind("resize", function() {
+            if (this.pageYOffset >= (element.parent().offset().top - 50)) {
+                element.addClass('sticky');
+                element.parent().addClass('sticky');
+            } else {
+                element.removeClass('sticky');
+                element.parent().removeClass('sticky');
+            }
             scope.$apply();
         });
     };
@@ -304,7 +572,7 @@ angular.module('app.directives', ['ui.load'])
 })
 .directive('articleRelatedAdd', function () {
     return {
-        templateUrl: 'views/admin/articles.related.add.html',
+        templateUrl: tpl + 'views/admin/articles.related.add.html',
     };
 })
 .directive('hsBuilder', function() {
@@ -417,7 +685,7 @@ angular.module('app.directives', ['ui.load'])
         scope: {
             url: "=url"
         },
-        templateUrl: 'views/frontend/socialmedia/fblikebutton.html'
+        templateUrl: tpl + 'views/frontend/socialmedia/fblikebutton.html'
     }
 }])
 .directive("tweetButton", [function () {
@@ -427,7 +695,7 @@ angular.module('app.directives', ['ui.load'])
         scope: {
             url: "=url"
         },
-        templateUrl: 'views/frontend/socialmedia/tweetbutton.html'
+        templateUrl: tpl + 'views/frontend/socialmedia/tweetbutton.html'
     }
 }])
 .directive("redditButton", [function () {
@@ -437,7 +705,542 @@ angular.module('app.directives', ['ui.load'])
         scope: {
             url: "=url"
         },
-        templateUrl: 'views/frontend/socialmedia/redditbutton.html'
+        templateUrl: tpl + 'views/frontend/socialmedia/redditbutton.html'
     }
+}])
+.directive("dbDeck", [function () {
+    return {
+        restrict: "A",
+        replace: true,
+        scope: {
+            mulliganHide: "=",
+            deck: "=deck"
+        },
+        link: function (scope,elem,attr) {
+            scope.getDust = function () {
+                var dust = 0;
+                for (var i = 0; i < scope.deck.cards.length; i++) {
+                    dust += scope.deck.cards[i].qty * scope.deck.cards[i].card.dust;
+                }
+                return dust;
+            };
+        },
+        templateUrl: tpl + 'views/frontend/directives/db.deck.html'
+    }
+}])
+.directive('homeArticles', ['$window', function ($window) {
+    return {
+        restrict: 'A',
+        scope: {
+            viewable: '&',
+            offset: '=',
+            size: '='
+        },
+        link: function(scope, element, attrs) {
+            function updateWidth () {
+                var newWidth = (((100 / scope.viewable()) * scope.size) / 100 * ($('body').innerWidth() - 20));
+                $(element).find('.home-articles-inner').css('width', newWidth + 'px');
+                $(element).find('.home-article-wrapper').css('width', Math.floor(newWidth / scope.size, 2) + 'px');
+            }
+            
+            function updateOffset () {
+                var newWidth = (((100 / scope.viewable()) * scope.size) / 100 * ($('body').innerWidth() - 20));
+                var offset = (scope.offset + scope.viewable() > scope.size) ? scope.size - scope.viewable() : scope.offset;
+                $(element).find('.home-articles-inner').css('left', (Math.floor(newWidth / scope.size) * offset * -1) + 'px');
+            }
+            
+            scope.$watch(
+                function ($scope) {
+                    return $scope.viewable();
+                },
+                function(newValue){
+                    updateWidth();
+                    updateOffset();
+            });
+            scope.$watch('offset', function(value){
+                updateOffset();
+            });
+            scope.$watch('size', function(value){
+                updateWidth();
+            });
+            angular.element($window).bind("resize", function() {
+                updateWidth();
+                updateOffset();
+            });
+        }
+    };
+}])
+.directive('bootstrapWidth', ['$window', '$timeout', function ($window, $timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            function updateBootstrapWidth () {
+                var width = $('body').innerWidth();
+                
+                if (width < 768) {
+                    scope.app.bootstrapWidth = 'xs';
+                } else if (width < 993) {
+                    scope.app.bootstrapWidth = 'sm';
+                } else if (width < 1199) {
+                    scope.app.bootstrapWidth = 'md';
+                } else {
+                    scope.app.bootstrapWidth = 'lg';
+                }
+                $timeout(function () {
+                    scope.$apply();
+                });
+            }
+            updateBootstrapWidth();
+            angular.element($window).bind("resize", function() {
+                updateBootstrapWidth();
+            });
+        }
+    };
+}])
+.directive('hotsFiltering', ['$filter', '$timeout', function ($filter, $timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            maps: '=',
+            heroes: '=',
+            filters: '='
+        },
+        templateUrl: tpl + 'views/frontend/directives/hots.filtering.html',
+        link: function (scope, element, attrs) {
+            var initializing = true,
+                randHeroIndex = false;
+            
+            function randomIntFromInterval (min,max) {
+                return Math.floor(Math.random()*(max-min+1)+min);
+            }
+            
+            scope.$watch(function(){ return scope.filters; }, function (value) {
+                if (initializing) {
+                    $timeout(function () {
+                        initializing = false;
+                        randHeroIndex = randomIntFromInterval(0, scope.heroes.length - 1);
+                    });
+                } else {
+                    scope.filters = value;
+                }
+            }, true);
+            
+            scope.updateSearch = function () {
+                scope.filters.search = scope.searchHeroes;
+            }
+            
+            scope.hasFilterRole = function (role) {
+                for (var i = 0; i < scope.filters.roles.length; i++) {
+                    if (scope.filters.roles[i] == role) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            
+            scope.hasFilterUniverse = function (universe) {
+                for (var i = 0; i < scope.filters.universes.length; i++) {
+                    if (scope.filters.universes[i] == universe) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            
+            scope.toggleFilterHero = function (hero) {
+                var index = scope.filters.heroes.indexOf(hero);
+                if (index === -1) {
+                    if (scope.filters.roles.length && scope.filters.roles.indexOf(hero.role) == -1) {
+                        scope.filters.roles.push(hero.role);
+                    }
+                    if (scope.filters.universes.length && scope.filters.universes.indexOf(hero.universe) == -1) {
+                        scope.filters.universes.push(hero.universe);
+                    }
+                    scope.filters.heroes = [hero];
+                    //scope.filters.heroes.push(hero);
+                } else {
+                    scope.filters.heroes = [];
+                    //scope.filters.heroes.splice(index, 1);
+                }
+                
+                if (!scope.filters.heroes.length) {
+                    randHeroIndex = randomIntFromInterval(0, scope.heroes.length - 1);
+                }
+            };
+            
+            scope.isFiltered = function (hero) {
+                if (scope.hasFilterHero(hero)) {
+                    return false;
+                }
+                if (scope.hasAnyFilterHero() && !scope.hasFilterHero(hero)) {
+                    return true;
+                }
+                if (scope.filters.roles.length && !scope.hasFilterRole(hero.role)) {
+                    return true;
+                }
+                if (scope.filters.universes.length && !scope.hasFilterUniverse(hero.universe)) {
+                    return true;
+                }
+                if (scope.searchHeroes && scope.searchHeroes.length && scope.hasFilterSearch(hero)) {
+                    return true;
+                }
+                return false;
+            };
+            
+            scope.hasFilterHero = function (hero) {
+                return (scope.filters.heroes.indexOf(hero) !== -1);
+            };
+
+            scope.hasFilterSearch = function (hero) {
+                var filtered = (scope.searchHeroes && scope.searchHeroes.length) ? $filter('filter')(scope.heroes, { name: scope.searchHeroes }) : scope.heroes;
+                return (filtered.indexOf(hero) === -1);
+            }
+
+            scope.hasAnyFilter = function () {
+                return (scope.filters.roles.length ||
+                        scope.filters.universes.length ||
+                        scope.filters.search.length ||
+                        scope.filters.heroes.length);
+            };
+
+            scope.hasAnyFilterHero = function () {
+                return (scope.filters.heroes.length);
+            };
+
+            scope.hasFilterMap = function (map) {
+                return (scope.filters.map === map);
+            };
+
+            scope.hasAnyFilterMap = function () {
+                return (scope.filters.map !== false);
+            };
+
+            scope.toggleFilterMap = function (map) {
+                scope.filters.map = (scope.filters.map == map) ? false : map;
+            };
+
+            scope.currentMapBack = function () {
+                return (scope.filters.map) ? scope.filters.map.className : 'default';
+            };
+
+            // setup hero filters
+            scope.heroDots = [{}];
+            for (var i = 0; i < 55; i++) {
+                if (scope.heroes[i]) {
+                    scope.heroDots.push(scope.heroes[i]);
+                } else {
+                    scope.heroDots.push({});
+                }
+            }
+            
+            function getRandomHero () {
+                var hero = scope.heroes[randHeroIndex];
+                return {
+                    name: hero.name,
+                    title: hero.title,
+                    className: hero.className
+                };
+            }
+            
+            // latest hero
+            scope.hero = function () {
+                if (scope.filters.heroes.length) {
+                    return scope.filters.heroes[scope.filters.heroes.length - 1];
+                } else if (randHeroIndex) {
+                    return getRandomHero();
+                } else {
+                    return {
+                        name: '\u00A0',
+                        title: '\u00A0',
+                        className: 'default'
+                    };
+                }
+            };            
+        }
+    };
+}])
+.directive('hotsFilterRole', ['$filter', '$timeout', function ($filter, $timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            filters: '='
+        },
+        templateUrl: tpl + 'views/frontend/directives/hots.filter.role.html',
+        replace: true,
+        link: function (scope, element, attrs) {
+            var initializing = true;
+            
+            scope.$watch(function(){ return scope.filters; }, function (value) {
+                if (initializing) {
+                    $timeout(function () {
+                        initializing = false;
+                    });
+                } else {
+                    scope.filters = value;
+                }
+            }, true);
+            
+            scope.toggleFilterRole = function (role) {
+                var index = scope.filters.roles.indexOf(role);
+                if (index === -1) {
+                    scope.filters.roles.push(role);
+                } else {
+                    scope.filters.roles.splice(index, 1);
+                }
+            };
+
+            scope.hasFilterRole = function (role) {
+                for (var i = 0; i < scope.filters.roles.length; i++) {
+                    if (scope.filters.roles[i] == role) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+        }
+    };
+}])
+.directive('hotsFilterUniverse', ['$filter', '$timeout', function ($filter, $timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            filters: '='
+        },
+        templateUrl: tpl + 'views/frontend/directives/hots.filter.universe.html',
+        replace: true,
+        link: function (scope, element, attrs) {
+            var initializing = true;
+            
+            scope.$watch(function(){ return scope.filters; }, function (value) {
+                if (initializing) {
+                    $timeout(function () {
+                        initializing = false;
+                    });
+                } else {
+                    scope.filters = value;
+                }
+            }, true);
+            
+            scope.toggleFilterUniverse = function (universe) {
+                var index = scope.filters.universes.indexOf(universe);
+                if (index === -1) {
+                    scope.filters.universes.push(universe);
+                } else {
+                    scope.filters.universes.splice(index, 1);
+                }
+            };
+
+            scope.hasFilterUniverse = function (universe) {
+                for (var i = 0; i < scope.filters.universes.length; i++) {
+                    if (scope.filters.universes[i] == universe) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+        }
+    };
+}])
+.directive('hsFilterClass', ['$filter', '$timeout', function ($filter, $timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            classes: '=',
+            filters: '='
+        },
+        templateUrl: tpl + 'views/frontend/directives/hs.filter.class.html',
+        replace: true,
+        link: function (scope, element, attrs) {
+            var initializing = true;
+            
+            scope.$watch(function(){ return scope.filters; }, function (value) {
+                if (initializing) {
+                    $timeout(function () {
+                        initializing = false;
+                    });
+                } else {
+                    scope.filters = value;
+                }
+            }, true);
+            
+            scope.toggleFilterClass = function (klass) {
+                var index = scope.filters.classes.indexOf(klass);
+                if (index === -1) {
+                    scope.filters.classes.push(klass);
+                } else {
+                    scope.filters.classes.splice(index, 1);
+                }
+            };
+
+            scope.hasFilterClass = function (klass) {
+                if (!klass) {
+                    return (scope.filters.classes.length > 0);
+                }
+                
+                for (var i = 0; i < scope.filters.classes.length; i++) {
+                    if (scope.filters.classes[i] == klass) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+        }
+    };
+}])
+.directive('articleThumb', ['$sce', function ($sce) {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            article: '='
+        },
+        templateUrl: tpl + 'views/frontend/directives/article.thumb.html',
+        controller: function ($scope) {
+            $scope.getDescription = function (i) {
+                var temp = i,
+                    magicNumber = 170;
+                if(i.length > magicNumber-10) {
+                    if (i[magicNumber] != " ") {
+                        for (var j = 0; i[magicNumber+j] != " " && i[magicNumber+j] != undefined; j++) {}
+                        i = temp.slice(0,magicNumber+j);
+                    } else {
+                        i = temp.slice(0,magicNumber);
+                    }
+                    i = i + "...";
+                }
+                return $sce.trustAsHtml(i);
+            }
+            
+            //is premium
+            $scope.isPremium = function (guide) {
+                if (!guide.premium.isPremium) { return false; }
+                var now = new Date().getTime(),
+                    expiry = new Date(guide.premium.expiryDate).getTime();
+                if (expiry > now) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+}])
+.directive('hsFilterClassLarge', ['$filter', '$timeout', function ($filter, $timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            classes: '=',
+            filters: '='
+        },
+        templateUrl: tpl + 'views/frontend/directives/hs.filter.class.large.html',
+        replace: true,
+        link: function (scope, element, attrs) {
+            var initializing = true;
+            
+            scope.$watch(function(){ return scope.filters; }, function (value) {
+                if (initializing) {
+                    $timeout(function () {
+                        initializing = false;
+                    });
+                } else {
+                    scope.filters = value;
+                }
+            }, true);
+            
+            scope.toggleFilterClass = function (klass) {
+                var index = scope.filters.classes.indexOf(klass);
+                if (index === -1) {
+                    scope.filters.classes.push(klass);
+                } else {
+                    scope.filters.classes.splice(index, 1);
+                }
+            };
+
+            scope.hasFilterClass = function (klass) {
+                if (!klass) {
+                    return (scope.filters.classes.length > 0);
+                }
+                
+                for (var i = 0; i < scope.filters.classes.length; i++) {
+                    if (scope.filters.classes[i] == klass) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+        }
+    };
+}])
+.directive('pagination', ['$timeout', function ($timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            pagination: '='
+        },
+        templateUrl: function (element, attrs) {
+            var theme = attrs.theme || 'default';
+            return tpl + 'views/frontend/directives/pagination/' + theme + '.html';
+        }
+    };
+}])
+.directive('noAnimate', ['$animate', function ($animate) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            $animate.enabled(element, false);
+        }
+    };
+}])
+.directive('tempostormTv', ['TwitchService', function (TwitchService) {
+    return {
+        restrict: 'A',
+        templateUrl: tpl + 'views/frontend/directives/twitch.streams.html',
+        link: function (scope, element, attrs) {
+            scope.streamWheel = false;
+            scope.streams = undefined;
+
+            TwitchService.getStreams().then(function(data) {
+                for (var i = 0; i < data.data.length; i++) {
+                    var log = data.data[i].logoUrl;
+                    var sub = log.substr(4);
+                    var im = "https" + sub;
+                    data.data[i].logoUrl = im;
+                }
+                scope.streamWheel = true;
+                scope.streams = data.data;
+            });
+        }
+    };
+}])
+.directive('twitterFeed', ['$sce', 'TwitterService', function ($sce, TwitterService) {
+    return {
+        restrict: 'A',
+        templateUrl: tpl + 'views/frontend/directives/twitter.tweets.html',
+        link: function (scope, element, attrs) {
+            scope.twitWheel = false;
+            scope.tweets = undefined;
+
+            TwitterService.getFeed().then(function(data) {
+                scope.twitWheel = true;
+                scope.tweets = data.data;
+            });
+
+            scope.getContent = function (c) {
+                return $sce.trustAsHtml(c);
+            };
+
+        }
+    };
+}])
+.directive('videoOfTheDay', ['VodService', function (VodService) {
+    return {
+        restrict: 'A',
+        templateUrl: tpl + 'views/frontend/directives/video-of-the-day.html',
+        link: function (scope, element, attrs) {
+            VodService.getLatestVod().then(function (data) {
+                scope.vod = data.vod;
+            });
+        }
+    };
 }])
 ;

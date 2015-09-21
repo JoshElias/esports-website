@@ -150,8 +150,9 @@ app.post('/forgot-password/reset', routes.frontend.resetPassword(Schemas, Mail))
 twitch.route(app);
 twitter.route(app);
 
-app.post('/profile/:username', routes.frontend.profile(Schemas));
+app.post('/profile/:username', routes.frontend.profile(Schemas, async));
 app.post('/profile/:username/activity', routes.frontend.profileActivity(Schemas, async));
+//app.post('/profile/:username/activity/load', routes.frontend.profileActivityLoad(Schemas, async));
 app.post('/profile/:username/articles', routes.frontend.profileArticles(Schemas));
 app.post('/profile/:username/decks', routes.frontend.profileDecks(Schemas));
 app.post('/profile/:username/guides', routes.frontend.profileGuides(Schemas));
@@ -194,6 +195,7 @@ app.post('/polls/vote', routes.frontend.pollsVote(Schemas));
 
 app.post('/upload', routes.frontend.uploadToImgur(fs, imgur));
 
+app.post('/vod', routes.frontend.vod(Schemas));
 // frontend - requires login 
 app.post('/api/verify', routes.frontend.verify(Schemas));
 
@@ -334,6 +336,11 @@ app.post('/api/admin/banner/delete', routes.admin.isAdmin(Schemas), routes.admin
 app.post('/api/admin/banner/add', routes.admin.isAdmin(Schemas), routes.admin.bannerAdd(Schemas));
 app.post('/api/admin/banner/edit', routes.admin.isAdmin(Schemas), routes.admin.bannerEdit(Schemas));
 
+app.post('/api/admin/vods', routes.admin.isAdmin(Schemas), routes.admin.vods(Schemas));
+app.post('/api/admin/vod', routes.admin.isAdmin(Schemas), routes.admin.vod(Schemas));
+app.post('/api/admin/vod/add', routes.admin.isAdmin(Schemas), routes.admin.vodAdd(Schemas));
+app.post('/api/admin/vod/edit', routes.admin.isAdmin(Schemas), routes.admin.vodEdit(Schemas));
+app.post('/api/admin/vod/delete', routes.admin.isAdmin(Schemas), routes.admin.vodDelete(Schemas));
 
 app.post('/api/admin/id', routes.admin.isAdmin(Schemas), routes.admin.getObjectID(mongoose));
 

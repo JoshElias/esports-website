@@ -491,13 +491,52 @@ module.exports = {
             }
         };
     },
-    profile: function (Schemas) {
+    profile: function (Schemas, async) {
         return function (req, res, next) {
-            var username = req.params.username;
+            var username = req.params.username,
+                usr = undefined,
+                postCount = 0,
+                deckCount = 0,
+                guideCount = 0,
+                activities = [];
             
-            Schemas.User.findOne({ username: username, active: true }).select('username email firstName lastName photos social about subscription.isSubscribed').exec(function (err, user) {
-                if (err || !user) { return res.json({ success: false }); }
-                return res.json({ success: true, user: user });
+            function getUser(callback) {
+                Schemas.User.findOne({ username: username, active: true }).select('username email firstName lastName photos social about subscription.isSubscribed').exec(function (err, user) {
+                    if (err || !user) { return res.json({ success: false }); }
+                    usr = user;
+                    return callback();
+                });
+            };
+            
+            function countPosts(callback) {
+                Schemas.ForumPost.count({ author:usr._id }).exec(function (err, count) {
+                    postCount = count;
+                    return callback();
+                });
+            }
+            
+            function countDecks(callback) {
+                Schemas.Deck.count({ author:usr._id }).exec(function (err, count) {
+                    deckCount = count;
+                    return callback();
+                })
+            };
+            
+            function countGuides(callback) {
+                Schemas.Guide.count({ author:usr._id }).exec(function (err, count) {
+                    guideCount = count;
+                    return callback();
+                });
+            };
+            
+            getUser(function() {
+                countPosts(function() {
+                    countDecks(function() {
+                        countGuides(function() {
+                            return res.json({ success: true, user: usr, postCount: postCount, deckCount: deckCount, guideCount: guideCount, activities: activities });
+                        });
+                    });
+                });
             });
         };
     },
@@ -718,18 +757,37 @@ module.exports = {
     },
     profileActivity: function (Schemas, async) {
         return function (req, res, next) {
+            
+            
             var username = req.params.username,
                 page = req.body.page || 1,
-                perpage = req.body.perpage || 20;
+                perpage = req.body.perpage || 20,
+                length = req.body.length || 0,
+                act, usr,
+                tot = 0;
+            
+            function getTotal(callback) {
+                if (length == 0) {
+                    Schemas.Activity.count({ author: usr._id, active: true })
+                    .exec(function (err, count) {
+                        if (err) { return res.json({ success: false }); }
+                        tot = count;
+                        return callback();
+                    });
+                } else {
+                    return callback();
+                }
+            }
             
             function getUser (callback) {
                 Schemas.User.findOne({ username: username }).select('_id').exec(function (err, user) {
                     if (err || !user) { return res.json({ success: false }); }
-                    return callback(user);
+                    usr = user
+                    return callback();
                 });
             }
             
-            function getActivity (user, callback) {
+            function getActivity (callback) {
                 
                 var iterAct = function (activity, callback) {
                     if (activity.forumPost) {
@@ -742,46 +800,54 @@ module.exports = {
                     }
                 };
                 
-                Schemas.Activity.find({ author: user._id, active: true })
+                Schemas.Activity.find({ author: usr._id, active: true })
                 .sort('-createdDate')
-                .skip((perpage * page) - perpage)
-                .limit(perpage)
+                .lean()
+                .skip(length)
+                .limit(4)
                 .populate([
                     {
                         path: 'article',
-                        select: '_id title slug active'
+                        select: '_id title slug active comments description'
                     },
                     {
                         path: 'deck',
-                        select: '_id name slug public',
+                        select: '_id name slug public comments description',
                         match: { public: true }
                     },
                     {
                         path: 'forumPost',
-                        select: '_id title slug thread'
+                        select: '_id title slug thread comments content'
                     },
                     {
                         path: 'guide',
-                        select: '_id name slug public',
+                        select: '_id name slug public guideType description comments',
                         match: { public: true }
                     },
                     {
                         path: 'snapshot',
-                        select: '_id title slug snapNum'
+                        select: '_id title slug snapNum comments'
+                    },
+                    {
+                        path: 'comment',
+                        select: 'comment'
                     }
                 ])
                 .exec(function (err, activities) {
                     if (err) { return req.json({ success: false }); }
                     async.each(activities, iterAct, function (err) {
                         if (err) { return res.json({ success: false }); }
+                        act = activities;
                         return callback(activities);
                     });
                 });
             }
             
-            getUser(function (user) {
-                getActivity(user, function (activities) {
-                    return res.json({ success: true, activities: activities });
+            getUser(function () {
+                getActivity(function () {
+                    getTotal(function() {
+                        return res.json({ success: true, activities: act, total: tot });
+                    });
                 });
             });
         };
@@ -829,6 +895,10 @@ module.exports = {
             function getDecks (user, callback) {
                 Schemas.Deck.find({ author: user._id, public: true })
                 //.where(where)
+                .populate([{
+                    path: 'author',
+                    select: 'username'
+                }])
                 .sort('-createdDate')
                 //.skip((perpage * page) - perpage)
                 //.limit(perpage)
@@ -863,6 +933,10 @@ module.exports = {
                 
                 Schemas.Deck.find({ author: user._id })
                 .where(where)
+                .populate([{
+                    path: 'author',
+                    select: 'username'
+                }])
                 .sort('-createdDate')
                 //.skip((perpage * page) - perpage)
                 //.limit(perpage)
@@ -881,6 +955,7 @@ module.exports = {
     },
     profileGuides: function (Schemas) {
         return function (req, res, next) {
+            
             var username = req.params.username,
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 12;
@@ -923,7 +998,10 @@ module.exports = {
         return function (req, res, next) {
             var username = req.params.username,
                 page = req.body.page || 1,
-                perpage = req.body.perpage || 12;
+                perpage = req.body.perpage || 10,
+                guides, total,
+                talents = [],
+                now = new Date().getTime();
             
             function getUser (callback) {
                 Schemas.User.findOne({ username: username }).select('_id').exec(function (err, user) {
@@ -932,31 +1010,100 @@ module.exports = {
                 });
             }
             
+            // get total guides
+            function getTotal (callback) {
+                Schemas.Guide.count({ public: true, featured: false })
+                .exec(function (err, count) {
+                    if (err) { return res.json({ success: false }); }
+                    total = count;
+                    return callback();
+                });
+            }
+            
+            // get guides
             function getGuides (user, callback) {
                 var where = (req.user._id === user._id.toString()) ? {} : { 'public': true };
                 
-                Schemas.Guide.find({ author: user._id })
+                Schemas.Guide.find({ author:user._id }) //TODO
                 .where(where)
-                .sort('-createdDate')
-                //.skip((perpage * page) - perpage)
-                //.limit(perpage)
+                .lean()
                 .select('premium heroes guideType maps slug name description author createdDate comments votesCount')
                 .populate([{
+                        path: 'author',
+                        select: 'username'
+                    }, {
                         path: 'heroes.hero',
                         select: 'className'
                     }, {
                         path: 'maps',
                         select: 'className'
                 }])
-                .exec(function (err, guide) {
-                    if (err) { return req.json({ success: false }); }
-                    return callback(guide);
+                .sort({ votesCount: -1, createdDate: -1 })
+                .skip((perpage * page) - perpage)
+                .limit(perpage)
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    guides = results;
+                    return callback();
                 });
             }
             
+            // get talents
+            function getTalents (callback) {
+                var heroIDs = [];
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        if (heroIDs.indexOf() === -1) {
+                            heroIDs.push(guides[i].heroes[j].hero._id);
+                        }
+                    }
+                }
+                
+                if (!heroIDs.length) { return callback(); }
+                Schemas.Hero.find({ active: true, _id: { $in: heroIDs } })
+                .select('talents')
+                .exec(function (err, results) {
+                    if (err || !results) { return res.json({ success: false }); }
+                    
+                    for(var i = 0; i < results.length; i++) {
+                        for(var j = 0; j < results[i].talents.length; j++) {
+                            talents.push(results[i].talents[j]);
+                        }
+                    }
+                    return callback();
+                });
+            }
+            
+            function assignTalents (callback) {
+                if (!talents.length) { return callback(); }
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        for(var key in guides[i].heroes[j].talents) {
+                            for(var l = 0; l < talents.length; l++) {
+                                if (guides[i].heroes[j].talents[key].toString() === talents[l]._id.toString()) {
+                                    guides[i].heroes[j].talents[key] = {
+                                        _id: talents[l]._id,
+                                        name: talents[l].name,
+                                        className: talents[l].className
+                                    };
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return callback();
+            }
+            
             getUser(function (user) {
-                getGuides(user, function (guides) {
-                    return res.json({ success: true, guides: guides });
+                getGuides(user, function () {
+                    getTalents(function() {
+                        assignTalents(function() {
+                            return res.json({ success: true, guides: guides });
+                        });
+                    });
                 });
             });
         };
@@ -965,7 +1112,8 @@ module.exports = {
         return function (req, res, next) {
             var slug = req.body.slug,
                 deck,
-                cards = {};
+                cards = {},
+                dust = 0;
             
             function getDeck(callback) {
                 Schemas.Deck.findOne({ slug: slug })
@@ -989,6 +1137,7 @@ module.exports = {
                             legendary: (item.card.rarity === 'Legendary') ? true : false,
                             qty: item.qty
                         };
+                        dust += (obj.qty < 2) ? obj.dust : (obj.dust * 2);
                         theArray[index] = obj;
                     }
                     
@@ -1022,20 +1171,21 @@ module.exports = {
                         slug: results.slug,
                         deckType: results.deckType,
                         description: results.description,
-                        contentEarly: results.contentEarly,
-                        contentMid: results.contentMid,
-                        contentLate: results.contentLate,
+                        chapters: results.chapters,
+                        matches: results.matches,
+                        type: results.type,
+                        basic: results.basic,
                         cards: results.cards,
                         playerClass: results.playerClass,
                         public: results.public.toString(),
                         mulligans: results.mulligans,
+                        dust: dust,
                         against: {
                             strong: results.against.strong,
                             weak: results.against.weak,
                             instructions: results.against.instructions
                         },
                         video: results.video,
-                        arena: results.arena,
                         featured: results.featured,
                         premium: {
                             isPremium: results.premium.isPremium,
@@ -1046,31 +1196,10 @@ module.exports = {
                 });
             }
             
-            function getClass(callback) {
-                Schemas.Card.find({ playerClass: deck.playerClass }).where({ deckable: true, active: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
-                    if (err || !results) { console.log(err || 'No cards for class'); }
-                    cards.class = results;
-                    return callback();
-                });
-            }
-        
-            function getNeutral(callback) {
-                Schemas.Card.find({ playerClass: 'Neutral' }).where({ deckable: true, active: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
-                    if (err || !results) { console.log(err || 'No cards for neutral'); }
-                    cards.neutral = results;
-                    return callback();
-                });
-            }
-            
             getDeck(function () {
-                getClass(function () {
-                    getNeutral(function () {
-                        return res.json({
-                            success: true,
-                            deck: deck,
-                            cards: cards
-                        });
-                    });
+                return res.json({
+                    success: true,
+                    deck: deck
                 });
             });
         };
@@ -1078,6 +1207,16 @@ module.exports = {
     deckBuilder: function (Schemas, Util) {
         return function (req, res, next) {
             var playerClass = Util.ucfirst(req.body.playerClass),
+                page = req.body.page || 1,
+                perpage = req.body.perpage || 15,
+                classTotal = undefined,
+                neutralTotal = undefined,
+                search = req.body.search || "",
+                mechanics = req.body.mechanics || [],
+                mana = req.body.mana,
+                man = {},
+                mech = {},
+                where = {},
                 cards = {};
             
             // make sure it is a proper class
@@ -1085,28 +1224,136 @@ module.exports = {
                 return res.json({ success: false });
             }
             
+            if (mana == 'all') {
+                mana = -1;
+            }
+            
+            if (mechanics.length != 0) {
+                mech.$and = [];
+                for (var i = 0; i < mechanics.length; i++) {
+                    mech.$and.push({ mechanics: mechanics[i]});
+                }
+            }
+            
+            if (search) {
+                where.$or = [];
+                where.$or.push({ name: new RegExp(search, "i") });
+                where.$or.push({ expansion: new RegExp(search, "i") });
+            }
+            
+            function getNeutralTotal (callback) {
+                var q = Schemas.Card.count({ playerClass: 'Neutral' }).where({ deckable: true, active: true }).where(where).where(mech)
+                if (mana > -1) {
+                    q.where('cost').equals(mana).exec(function (err, count) {
+                        if (err) { return res.json({ success: false }); }
+                        neutralTotal = count;
+                        return callback();
+                    });
+                } else if (mana == '7+') {
+                    q.where('cost').gte(7).exec(function (err, count) {
+                        if (err) { return res.json({ success: false }); }
+                        neutralTotal = count;
+                        return callback();
+                    });
+                } else {
+                    q.exec(function (err, count) {
+                        if (err) { return res.json({ success: false }); }
+                        neutralTotal = count;
+                        return callback();
+                    });
+                }
+            }
+            
+            function getClassTotal (callback) {
+                var q = Schemas.Card.count({ playerClass: playerClass }).where({ deckable: true, active: true }).where(where).where(mech)
+                if (mana > -1) {
+                    q.where('cost').equals(mana)
+                    .exec(function (err, count) {
+                        if (err) { return res.json({ success: false }); }
+                        classTotal = count;
+                        return callback();
+                    });
+                } else if (mana == '7+') {
+                    q.where('cost').gte(7)
+                    .exec(function (err, count) {
+                        if (err) { return res.json({ success: false }); }
+                        classTotal = count;
+                        return callback();
+                    });
+                } else {
+                    q.exec(function (err, count) {
+                        if (err) { return res.json({ success: false }); }
+                        classTotal = count;
+                        return callback();
+                    });
+                }
+            }
+            
             function getClass(callback) {
-                Schemas.Card.find({ playerClass: playerClass }).where({ deckable: true, active: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
-                    if (err || !results) { console.log(err || 'No cards for class'); }
-                    cards.class = results;
-                    callback();
-                });
+                var q = Schemas.Card.find({ playerClass: playerClass }).skip((perpage * page) - perpage).limit(perpage).where({ deckable: true, active: true }).where(where).where(mech)
+                if (mana > -1) {
+                    q.where('cost').equals(mana)
+                    .sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                        if (err || !results) { console.log(err || 'No cards for class'); }
+                        cards.class = results;
+                        callback();
+                    });
+                } else if (mana == '7+') {
+                    q.where('cost').gte(7)
+                    .sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                        if (err || !results) { console.log(err || 'No cards for class'); }
+                        cards.class = results;
+                        callback();
+                    });
+                } else {
+                    q.sort({ cost: 1, name: 1 }).exec(function (err, results) {
+                        if (err || !results) { console.log(err || 'No cards for class'); }
+                        cards.class = results;
+                        callback();
+                    });
+                }
             }
         
             function getNeutral(callback) {
-                Schemas.Card.find({ playerClass: 'Neutral' }).where({ deckable: true, active: true }).sort({ cost: 1, name: 1 }).exec(function (err, results) {
-                    if (err || !results) { console.log(err || 'No cards for neutral'); }
-                    cards.neutral = results;
-                    callback();
-                });
+                var q = Schemas.Card.find({ playerClass: 'Neutral' }).skip((perpage * page) - perpage).limit(perpage).where({ deckable: true, active: true }).where(where).where(mech)
+                if (mana > -1) {
+                    q.where('cost').equals(mana)
+                    .sort({ cost: 1, name: 1 })
+                    .exec(function (err, results) {
+                        if (err || !results) { console.log(err || 'No cards for neutral'); }
+                        cards.neutral = results;
+                        callback();
+                    });
+                } else if (mana == '7+') {
+                    q.where('cost').gte(7)
+                    .sort({ cost: 1, name: 1 })
+                    .exec(function (err, results) {
+                        if (err || !results) { console.log(err || 'No cards for neutral'); }
+                        cards.neutral = results;
+                        callback();
+                    });
+                } else {
+                    q.sort({ cost: 1, name: 1 })
+                    .exec(function (err, results) {
+                        if (err || !results) { console.log(err || 'No cards for neutral'); }
+                        cards.neutral = results;
+                        callback();
+                    });
+                }
             }
     
             getClass(function (){
                 getNeutral(function () {
-                    return res.json({
-                        success: true,
-                        className: playerClass,
-                        cards: cards
+                    getNeutralTotal(function () {
+                        getClassTotal(function () {
+                            return res.json({
+                                success: true,
+                                className: playerClass,
+                                cards: cards,
+                                neutralTotal: neutralTotal,
+                                classTotal: classTotal
+                            }); 
+                        });
                     });
                 });
             });
@@ -1179,8 +1426,10 @@ module.exports = {
             
             function createDeck(callback) {
                 // setup cards
-                var cards = [];
+                var cards = [],
+                    dust = 0;
                 for (var i = 0; i < req.body.cards.length; i++) {
+                    dust += (req.body.cards[i].qty < 2) ? req.body.cards[i].dust : (req.body.cards[i].dust * 2);
                     cards.push({
                         card: req.body.cards[i]._id,
                         qty: req.body.cards[i].qty
@@ -1223,9 +1472,10 @@ module.exports = {
                         slug: Util.slugify(req.body.name),
                         deckType: req.body.deckType,
                         description: req.body.description,
-                        contentEarly: req.body.contentEarly,
-                        contentMid: req.body.contentMid,
-                        contentLate: req.body.contentLate,
+                        chapters: req.body.chapters,
+                        matches: req.body.matches,
+                        type: req.body.type,
+                        basic: req.body.basic,
                         author: req.user._id,
                         cards: cards,
                         playerClass: req.body.playerClass,
@@ -1241,14 +1491,14 @@ module.exports = {
                             userID: req.user._id,
                             direction: 1
                         }],
-                        arena: req.body.arena,
                         featured: featured,
                         allowComments: true,
                         createdDate: new Date().toISOString(),
-                        premium: premium
+                        premium: premium,
+                        dust: dust
                     });
 
-                newDeck.save(function(err, data){
+                newDeck.save(function(err, data) {
                     if (err) {
                         console.log(err);
                         return res.json({ success: false,
@@ -1409,9 +1659,10 @@ module.exports = {
                     deck.slug = Util.slugify(req.body.name);
                     deck.deckType = req.body.deckType;
                     deck.description = req.body.description;
-                    deck.contentEarly = req.body.contentEarly;
-                    deck.contentMid = req.body.contentMid;
-                    deck.contentLate = req.body.contentLate;
+                    deck.chapters = req.body.chapters;
+                    deck.type = req.body.type;
+                    deck.basic = req.body.basic;
+                    deck.matches = req.body.matches;
                     deck.cards = cards;
                     deck.public = req.body.public;
                     deck.mulligans = req.body.mulligans || [];
@@ -1485,20 +1736,19 @@ module.exports = {
     articles: function (Schemas) {
         return function (req, res, next) {
             var articleType = req.body.articleType || 'all',
-                filter = req.body.filter || 'all',
-                page = req.body.page || 1,
-                perpage = req.body.perpage || 5,
+                filter = (req.body.filter && req.body.filter.length) ? req.body.filter : 'all',
+                offset = req.body.offset || 0,
+                num = req.body.num || 5,
                 where = {},
                 search = req.body.search || '',
                 articles, total;
             
             // filtering articles
             if (articleType !== 'all') {
-                where.articleType = articleType;
-            } else {
-                if (filter !== 'all') {
-                    where.classTags = filter;
-                }
+                where.articleType = (articleType instanceof Array) ? { $in: articleType } : articleType;
+            }
+            if (filter !== 'all') {
+                where.classTags = (filter instanceof Array) ? { $in: filter } : filter;
             }
             
             // search
@@ -1529,8 +1779,8 @@ module.exports = {
                     select: 'username -_id'
                 })
                 .sort('-createdDate')
-                .skip((perpage * page) - perpage)
-                .limit(perpage)
+                .skip(offset)
+                .limit(num)
                 .exec(function (err, results) {
                     if (err) { return req.json({ success: false }); }
                     articles = results;
@@ -1540,7 +1790,7 @@ module.exports = {
             
             getArticles(function () {
                 getTotal(function () {
-                    return res.json({ success: true, articles: articles, total: total, articleType: articleType, filter: filter, page: page, perpage: perpage, search: search });
+                    return res.json({ success: true, articles: articles, total: total, articleType: articleType, filter: filter, offset: offset, num: num, search: search });
                 });
             });
         };
@@ -1554,29 +1804,43 @@ module.exports = {
                 .lean()
                 .populate([{
                         path: 'author',
-                        select: 'username -_id'
+                        select: 'username -_id email providerDescription about social'
                     },
                     {
                         path: 'related',
-                        select: 'title slug.url active -_id createdDate',
+                        select: 'title slug.url active -_id author votesCount photos.small articleType',
                     },
                     {
                         path: 'comments',
                         select: '_id author comment createdDate votesCount votes'
-                }])
+                    }
+                ])
                 .exec(function (err, article) {
                     if (err || !article) { return res.json({ success: false }); }
-                    
-                    Schemas.Comment.populate(article.comments, {
-                        path: 'author',
-                        select: 'username email'
-                    }, function (err, comments) {
-                        if (err || !comments) { return res.json({ success: false }); }
-                        article.comments = comments;
-                        return getDeck(article, callback);
-                    });
-                    
+                    return callback(article); 
                 });
+            }
+            
+            function getComments (article, callback) {
+                Schemas.Comment.populate(article.comments, {
+                    path: 'author',
+                    select: 'username email'
+                }, function (err, comments) {
+                    if (err || !comments) { return res.json({ success: false }); }
+                    article.comments = comments;
+                    return callback(article);
+                });
+            }
+            
+            function getRelated(article, callback) {
+                Schemas.Article.populate(article.related, {
+                    path: 'author',
+                    select: 'username'
+                }, function (err, related) {
+                    if (err || !related) { return res.json({ success: false }); }
+                    article.related = related;
+                    return callback(article);
+                })
             }
             
             function getDeck (article, callback) {
@@ -1594,7 +1858,13 @@ module.exports = {
             }
             
             getArticle(function (article) {
-                return res.json({ success: true, article: article });
+                getDeck(article, function (article) {
+                    getComments(article, function (article) {
+                        getRelated(article, function(article) {
+                            return res.json({ success: true, article: article });
+                        });
+                    });
+                });
             });
         };
     },
@@ -1604,7 +1874,7 @@ module.exports = {
                 userID = req.user._id,
                 comment = req.body.comment,
                 newCommentID = mongoose.Types.ObjectId();
-            req.assert('comment.comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
+            req.assert('comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
             
             var errors = req.validationErrors();
             if (errors) {
@@ -1615,7 +1885,7 @@ module.exports = {
             var newComment = {
                 _id: newCommentID,
                 author: userID,
-                comment: comment.comment,
+                comment: comment,
                 votesCount: 1,
                 votes: [{
                     userID: userID,
@@ -1688,31 +1958,14 @@ module.exports = {
     },
     articleVote: function (Schemas) {
         return function (req, res, next) {
-            var id = req.body._id,
-                direction = req.body.direction;
+            var id = req.body._id;
             
             Schemas.Article.findOne({ _id: id }).select('author votesCount votes').exec(function (err, article) {
-                if (err || !article || article.author.toString() === req.user._id) { return res.json({ success: false }); }
-                var vote = article.votes.filter(function (vote) {
-                    if (vote.userID.toString() === req.user._id) {
-                        return vote;
-                    }
-                })[0];
-                if (vote) {
-                    if (vote.direction !== direction) {
-                        vote.direction = direction;
-                        article.votesCount = (direction === 1) ? article.votesCount + 2 : article.votesCount - 2;
-                    }
-                } else {
-                    article.votes.push({
-                        userID: req.user._id,
-                        direction: direction
-                    });
-                    article.votesCount += direction;
-                }
-                
+                if (err || !article) { return res.json({ success: false }); }
+                article.votes.push(req.user._id);
+                article.votesCount++;
                 article.save(function (err) {
-                    if (err) { return res.json({ success: false }); }
+                    if (err) { return res.json({ success: false }); console.log(err); }
                     return res.json({
                         success: true,
                         votesCount: article.votesCount
@@ -1723,11 +1976,25 @@ module.exports = {
     },
     decksFeatured: function (Schemas) {
         return function (req, res, next) {
-            var klass = req.body.klass || 'all',
+            var klass = req.body.klass || false,
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
-                where = (klass === 'all') ? {} : { 'playerClass': klass },
+                search = req.body.search || false,
+                where = {},
                 decks, total;
+            
+            if (klass && klass.length) {
+                where.playerClass = (klass instanceof Array) ? { $in: klass } : klass;
+            }
+            
+            if (search) {
+                where.$or = [];
+                where.$or.push({ name: new RegExp(search, "i") });
+                where.$or.push({ description: new RegExp(search, "i") });
+                where.$or.push({ contentEarly: new RegExp(search, "i") });
+                where.$or.push({ contentMid: new RegExp(search, "i") });
+                where.$or.push({ contentLate: new RegExp(search, "i") });
+            }
             
             // get total decks
             function getTotal (callback) {
@@ -1744,12 +2011,12 @@ module.exports = {
             function getDecks (callback) {
                 Schemas.Deck.find({ featured: true })
                 .where(where)
-                .select('premium playerClass slug name description author createdDate comments votesCount')
+                .select('premium playerClass slug name description author createdDate comments votesCount dust')
                 .populate({
                     path: 'author',
                     select: 'username -_id'
                 })
-                .sort({ votesCount: -1, createdDate: -1 })
+                .sort({ createdDate: -1 })
                 .skip((perpage * page) - perpage)
                 .limit(perpage)
                 .exec(function (err, results) {
@@ -1769,19 +2036,32 @@ module.exports = {
     },
     decksCommunity: function (Schemas) {
         return function (req, res, next) {
-            var klass = req.body.klass || 'all',
+            var klass = req.body.klass || false,
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
+                search = req.body.search || false,
+                daysLimit = (!req.body.daysLimit) ? false : parseInt(req.body.daysLimit) || 14,
                 where = {},
                 decks, total,
                 now = new Date().getTime(),
-                weekAgo = new Date(now - (60*60*24*7*1000));
+                ago = new Date(now - (60*60*24*daysLimit*1000));
             
-            if (klass !== 'all') {
-                where.playerClass = klass;
+            if (klass && klass.length) {
+                where.playerClass = (klass instanceof Array) ? { $in: klass } : klass;
             }
             
-            where.createdDate = { $gte: weekAgo };
+            if (search) {
+                where.$or = [];
+                where.$or.push({ name: new RegExp(search, "i") });
+                where.$or.push({ description: new RegExp(search, "i") });
+                where.$or.push({ contentEarly: new RegExp(search, "i") });
+                where.$or.push({ contentMid: new RegExp(search, "i") });
+                where.$or.push({ contentLate: new RegExp(search, "i") });
+            }
+                        
+            if (daysLimit) {
+                where.createdDate = { $gte: ago };
+            }
             
             // get total decks
             function getTotal (callback) {
@@ -1798,12 +2078,12 @@ module.exports = {
             function getDecks (callback) {
                 Schemas.Deck.find({ public: true, featured: false })
                 .where(where)
-                .select('premium playerClass slug name description author createdDate comments votesCount')
+                .select('premium playerClass slug name description author createdDate comments votesCount dust')
                 .populate({
                     path: 'author',
                     select: 'username -_id'
                 })
-                .sort({ votesCount: -1, createdDate: -1 })
+                .sort({ createdDate: -1 })
                 .skip((perpage * page) - perpage)
                 .limit(perpage)
                 .exec(function (err, results) {
@@ -1905,7 +2185,7 @@ module.exports = {
             // get decks
             function getDecks (callback) {
                 Schemas.Deck.find({ public: true })
-                .select('premium playerClass slug name description author createdDate comments votesCount')
+                .select('premium playerClass slug name description author createdDate comments votesCount dust')
                 .populate({
                     path: 'author',
                     select: 'username -_id'
@@ -2009,7 +2289,7 @@ module.exports = {
                 comment = req.body.comment,
                 newCommentID = mongoose.Types.ObjectId();
             
-            req.assert('comment.comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
+            req.assert('comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
             
             var errors = req.validationErrors();
             if (errors) {
@@ -2020,7 +2300,7 @@ module.exports = {
             var newComment = {
                 _id: newCommentID,
                 author: userID,
-                comment: comment.comment,
+                comment: comment,
                 votesCount: 1,
                 votes: [{
                     userID: userID,
@@ -2356,7 +2636,7 @@ module.exports = {
                 newComment = new Schemas.Comment({
                     _id: _id,
                     author: req.user._id,
-                    comment: req.body.comment.comment,
+                    comment: req.body.comment,
                     votesCount: 1,
                     votes: [{
                         userID: req.user._id,
@@ -2367,7 +2647,7 @@ module.exports = {
                 }),
                 dataComment;
             
-            req.assert('comment.comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
+            req.assert('comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
             
             var errors = req.validationErrors();
             if (errors) {
@@ -2777,7 +3057,6 @@ module.exports = {
 
                 });
             });
-            
         }
     },
     snapshotCommentAdd: function (Schemas, mongoose) {
@@ -2786,7 +3065,7 @@ module.exports = {
                 userID = req.user._id,
                 comment = req.body.comment,
                 newCommentID = mongoose.Types.ObjectId();
-            req.assert('comment.comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
+            req.assert('comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
             
             var errors = req.validationErrors();
             if (errors) {
@@ -2797,7 +3076,7 @@ module.exports = {
             var newComment = {
                 _id: newCommentID,
                 author: userID,
-                comment: comment.comment,
+                comment: comment,
                 votesCount: 1,
                 votes: [{
                     userID: userID,
@@ -2923,13 +3202,27 @@ module.exports = {
     },
     team: function (Schemas) {
         return function (req, res, next) {
-            var gm = req.body.gm;
+            var hsMembers = [],
+                hotsMembers = [],
+                csMembers = [],
+                fgcMembers = [],
+                fifaMembers = [];
             
             function getMembers (callback) {
-                Schemas.TeamMember.find({ game: gm})
+                Schemas.TeamMember.find()
                 .sort({ orderNum:1 })
                 .exec(function (err, results) {
                     if (err) { return req.json({ success: false }); }
+                    for (i=0; i != results.length; i++) {
+                        var type = results[i].game;
+                        switch (type) {
+                            case 'hs' : hsMembers.push(results[i]); break;
+                            case 'hots' : hotsMembers.push(results[i]); break;
+                            case 'cs' : csMembers.push(results[i]); break;
+                            case 'fifa' : fifaMembers.push(results[i]); break;
+                            case 'fgc' : fgcMembers.push(results[i]); break;
+                        }
+                    }
                     return callback(results);
                 });
             }
@@ -2937,6 +3230,36 @@ module.exports = {
             getMembers(function (gm) {
                 return res.json({ 
                     members: gm,
+                    hsMembers: hsMembers,
+                    hotsMembers: hotsMembers,
+                    csMembers: csMembers,
+                    fgcMembers: fgcMembers,
+                    fifaMembers: fifaMembers,
+                    success: true
+                });
+            });
+        }
+    },
+    vod: function (Schemas) {
+        return function(req, res, next) {
+            
+            var where = {},
+                now = new Date();
+            where.date = { $lte: now };
+            function getVod (callback) {
+                Schemas.Vod.find()
+                .where(where)
+                .sort('-date')
+                .limit(1)
+                .exec(function (err, results) {
+                    if (err) { return req.json({ success: false }); }
+                    return callback(results);
+                });
+            }
+            
+            getVod(function (vod) {
+                return res.json({
+                    vod: vod[0],
                     success: true
                 });
             });

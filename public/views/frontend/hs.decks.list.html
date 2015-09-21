@@ -1,172 +1,147 @@
-<!-- section banner -->
-<div class="container-fluid section-banner">
-    <div class="container section-decks clearfix">
-        <h1 class="section-title pull-left">DECKS</h1>
-        <div class="section-search pull-right">
-            <form name="search-form">
-            <div class="input-group">
-                <input type="text" class="form-control input-dark" placeholder="search..." ng-model="search">
-                <span class="input-group-btn">
-                    <button type="submit" class="btn input-dark" ng-click="getDecks()"><i class="fa fa-search"></i></button>
-                </span>
-            </div>
-            </form>
+<!-- sub nav -->
+<div class="sub-nav-wrapper sticky hidden-xs">
+    <div class="container-fluid sub-nav sticky">
+        <div class="now-streaming pull-left">
+            
+        </div>
+        <div class="swap-to pull-right">
+            
+        </div>
+        <div class="sub-nav-links">
+            <ul>
+                <li><a ui-sref="app.snapshot.redirect">META SNAPSHOT</a></li><li><a ui-sref="app.hs.deckBuilder.class">DECK BUILDER</a></li><li><a ui-sref="app.hs.decks.list">DECKS</a></li>
+            </ul>
         </div>
     </div>
 </div>
-<!-- / section banner -->
+<!-- /sub nav -->
 
-<!-- filter start -->
-<div class="container-fluid padding-none filter-bar filter-bar-decks">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12 clearfix">
-                <h1 class="pull-left">FILTER <br>CONTENT:</h1>
-                <ul class="filter-class pull-right">
-                    <li class="all" ng-class="{active:klass === 'all'}">
-                        <a href="#" ng-click="setKlass('all')" ng-tooltip title="All Classes">All Classes</a>
-                    </li>
-                    <li class="druid" ng-class="{active:klass === 'Druid'}">
-                        <a href="#" ng-click="setKlass('Druid')" ng-tooltip title="Druid">Druid</a>
-                    </li>
-                    <li class="hunter" ng-class="{active:klass === 'Hunter'}">
-                        <a href="#" ng-click="setKlass('Hunter')" ng-tooltip title="Hunter">Hunter</a>
-                    </li>
-                    <li class="mage" ng-class="{active:klass === 'Mage'}">
-                        <a href="#" ng-click="setKlass('Mage')" ng-tooltip title="Mage">Mage</a>
-                    </li>
-                    <li class="paladin" ng-class="{active:klass === 'Paladin'}">
-                        <a href="#" ng-click="setKlass('Paladin')" ng-tooltip title="Paladin">Paladin</a>
-                    </li>
-                    <li class="priest" ng-class="{active:klass === 'Priest'}">
-                        <a href="#" ng-click="setKlass('Priest')" ng-tooltip title="Priest">Priest</a>
-                    </li>
-                    <li class="rogue" ng-class="{active:klass === 'Rogue'}">
-                        <a href="#" ng-click="setKlass('Rogue')" ng-tooltip title="Rogue">Rogue</a>
-                    </li>
-                    <li class="shaman" ng-class="{active:klass === 'Shaman'}">
-                        <a href="#" ng-click="setKlass('Shaman')" ng-tooltip title="Shaman">Shaman</a>
-                    </li>
-                    <li class="warlock" ng-class="{active:klass === 'Warlock'}">
-                        <a href="#" ng-click="setKlass('Warlock')" ng-tooltip title="Warlock">Warlock</a>
-                    </li>
-                    <li class="warrior" ng-class="{active:klass === 'Warrior'}">
-                        <a href="#" ng-click="setKlass('Warrior')" ng-tooltip title="Warrior">Warrior</a>
+<!-- decks start -->
+<div class="container-fluid hs-bg">
+    <div class="container-fluid container-fluid-max">
+    
+        <!-- tempostorm decks -->
+        <div class="hs-list-decks-title clearfix">
+            <h1>TEMPOSTORM DECKS</h1>
+            <div class="hs-mini-filters hidden-xs">
+                <div hs-filter-class filters="filters" classes="classes"></div>
+                <div class="hs-filters-search">
+                    <form ng-submit="newSearch()">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-dark hs-search" ng-model="deckSearch">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="hs-list-ts-decks-wrapper">
+            <div class="hs-list-ts-decks">
+                <ul class="hs-decks row no-pad" ng-if="tempostormDecks.length">
+                    <li class="col-xs-12 col-sm-6 col-md-6 col-lg-3" ng-repeat="deck in tempostormDecks">
+                        <a ui-sref="app.hs.decks.deck({ slug: deck.slug })" class="hs-deck large {{deck.playerClass.toLowerCase()}}">
+                            <div class="inner"></div>
+                            <div class="hs-deck-premium" ng-if="isPremium(deck)"></div>
+                            <div class="bt-shadow"></div>
+                            <div class="hs-deck-details">
+                                <h1>{{deck.name}}</h1>
+                                <h3>by {{deck.author.username || '[Deleted User]'}} - <span am-time-ago="deck.createdDate"></span></h3>
+                            </div>
+                            <div class="hs-deck-votes">{{deck.votesCount}}</div>
+                        </a>
                     </li>
                 </ul>
             </div>
-        </div>
-    </div>
-</div>
-<!-- filter end -->
 
-<!-- filter advanced start -->
-<div class="container-fluid padding-none filter-bar-advanced hidden-sm">
-    <div class="container pos-rl">
-        <div class="filter-bar-advanced-options-wrapper pos-rl" ng-class="{ open: showAdvanced() }">
-            <div class="filter-bar-advanced-options clearfix">
-                <div class="pull-left m-r-sm">
-                    <div class="dropdown">
-                        <button class="btn input-dark" type="button" data-toggle="dropdown">
-                            <span>Age: {{filters.age.name}}</span>
-                            <b class="caret"></b>
-                        </button>
-                        <ul class="list-group dropdown-menu dropdown-dark">
-                            <li class="list-group-item" ng-class="{active: filter.value === filters.age.value}" ng-repeat="filter in filters.all.age">
-                                <a href="#" ng-click="filters.age = filter; pagination.setPage(1);">{{filter.name}}</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="pull-left m-r-sm">
-                    <div class="dropdown">
-                        <button class="btn input-dark" type="button" data-toggle="dropdown">
-                            <span>Order: {{filters.order.name}}</span>
-                            <b class="caret"></b>
-                        </button>
-                        <ul class="list-group dropdown-menu dropdown-dark">
-                            <li class="list-group-item" ng-class="{active: filter.value === filters.order.value}" ng-repeat="filter in filters.all.order">
-                                <a href="#" ng-click="filters.order = filter; pagination.setPage(1);">{{filter.name}}</a>
-                            </li>
-                        </ul>
-                    </div>
+            <!-- page flipping -->
+            <div pagination="tempostormPagination" class="default"></div>
+            <!-- / page flipping -->
+
+            <p class="darkbox white p-md" ng-if="!tempostormDecks.length">There are no decks for the filtering above.</p>
+        </div>
+        <!-- / tempostorm decks -->
+        
+        <!-- community decks -->
+        <div class="hs-list-decks-title clearfix">
+            <h1>COMMUNITY DECKS</h1>
+            <div class="hs-mini-filters hidden-xs">
+                <div hs-filter-class filters="filters" classes="classes"></div>
+                <div class="hs-filters-search">
+                    <form ng-submit="newSearch()">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-dark hs-search" ng-model="deckSearch">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-        <div class="filter-bar-advanced-tab clearfix">
-            <a href="#" class="pull-right clearfix" ng-click="toggleAdvanced()">
-                <span class="icon pull-left"><i class="fa fa-bars"></i></span>
-                <span class="text pull-right">ADVANCED<br>FILTERING</span>
-            </a>
-        </div>
-    </div>
-</div>
-<!-- filter advanced end -->
+        <div>
+            <!-- page flipping -->
+            <div pagination="communityPagination" class="default"></div>
+            <!-- / page flipping -->
 
-<!-- decks start -->
-<div class="container">
-    
-    <!-- page flipping -->
-    <div class="page-flipper page-flipper-top clearfix" ng-show="pagination.totalPages() > 1">
-        <div class="pull-right">
-            <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)" disabled="disabled"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() + 1 > pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)" disabled="disabled"><i class="fa fa-arrow-circle-right"></i></button>
-            </span>
-        </div>
-    </div>
-    <!-- / page flipping -->
-    
-    <!-- decks -->
-    <div class="row decks-list" ng-show="decks.length">
-        <!-- deck -->
-        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="deck in decks">
-        <div class="deck-wrapper">
-            <div class="deck large {{deck.playerClass.toLowerCase()}}" ng-class="{ premium: deck.premium.isPremium }">
-                <a href="./hearthstone/decks/{{deck.slug}}"></a>
-                <div class="deck-overlay"></div>
-                <div class="deck-premium" ng-if="deck.premium.isPremium"></div>
-                <div class="deck-title">{{deck.name}}</div>
-                <div class="deck-score"><span><em ng-if="deck.votesCount > 0">+</em>{{deck.votesCount}}</span></div>
-                <div class="deck-description">
-                    <p>{{deck.description}}</p>
+            <!-- decks titles -->
+            <div class="row hs-decks-long-title m-b-sm">
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <h1>DECK</h1>
                 </div>
-                <div class="deck-info clearfix">
-                    <div class="pull-left m-r-sm">
-                        <span>by <a href="./user/{{deck.author.username}}">@{{deck.author.username}}</a></span>
-                    </div>
-                    <div class="pull-right">
-                        <div class="pull-left m-r-sm">
-                            <span class="fa fa-clock-o"></span>
-                            <span>{{deck.createdDate | date : 'mediumDate'}}</span>
-                        </div>
-                        <div class="pull-left">
-                            <span class="fa fa-comment-o"></span>
-                            <span><a href="./hearthstone/decks/{{deck.slug}}">{{deck.comments.length}} Comment<span ng-hide="deck.comments.length === 1">s</span></a></span>
-                        </div>
-                    </div>
+                <div class="hidden-xs col-sm-6 col-md-4 col-lg-3">
+                    <h1>DUST COST</h1>
+                </div>
+                <div class="hidden-xs hidden-sm hidden-md col-lg-1">
+                    <h1 class="text-center">SCORE</h1>
+                </div>
+                <div class="hidden-xs hidden-sm col-md-4 col-lg-4">
+                    <h1>CLASS</h1>
                 </div>
             </div>
+            <!-- / decks titles -->
+
+            <!-- decks -->
+            <ul class="hs-decks" ng-if="communityDecks.length">
+                <li ng-repeat="deck in communityDecks">
+                    <a ui-sref="app.hs.decks.deck({ slug: deck.slug })" class="hs-deck long {{deck.playerClass.toLowerCase()}}">
+                        <div class="inner"></div>
+                        <div class="hs-deck-premium" ng-if="isPremium(deck)"></div>
+                        <div class="row row-flex">
+                            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                <div class="row-col">
+                                    <h1>{{deck.name}}</h1>
+                                    <h3>by {{deck.author.username || '[Deleted User]'}} - <span am-time-ago="deck.createdDate"></span></h3>
+                                </div>
+                            </div>
+                            <div class="hidden-xs col-sm-6 col-md-4 col-lg-3">
+                                <div class="row-col">
+                                    <p class="hs-deck-dust">{{dustFormatted(deck.dust)}}</p>
+                                </div>
+                            </div>
+                            <div class="hidden-xs hidden-sm hidden-md col-lg-1">
+                                <div class="row-col">
+                                    <p class="hs-deck-votes text-center">{{deck.votesCount}}</p>
+                                </div>
+                            </div>
+                            <div class="hidden-xs hidden-sm col-md-4 col-lg-4">
+                                <div class="row-col">
+                                    <p class="hs-deck-hero-name">{{deck.playerClass}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <p class="darkbox white p-md" ng-if="!communityDecks.length">There are no decks for the filtering above.</p>
+            <!-- / decks -->
+
+            <!-- page flipping -->
+            <div pagination="communityPagination" class="default"></div>
+            <!-- / page flipping -->
         </div>
-        </div>
-        <!-- / deck -->
+        <!-- / community decks -->
     </div>
-    <p ng-show="!decks.length && klass !== 'all' && !loading && !hasSearch()" class="decks-list-no-content">There are curently no decks under <strong>{{klass}}</strong> yet.</p>
-    <p ng-show="!decks.length && !loading && hasSearch()" class="decks-list-no-content">There are no results for your search.</p>
-    <!-- / decks -->
-    
-    <!-- page flipping -->
-    <div class="page-flipper page-flipper-bottom clearfix" ng-show="pagination.totalPages() > 1">
-        <div class="pull-right">
-            <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)" disabled="disabled"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() + 1 > pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)" disabled="disabled"><i class="fa fa-arrow-circle-right"></i></button>
-            </span>
-        </div>
-    </div>
-    <!-- / page flipping -->
-    
 </div>
 <!-- decks end -->

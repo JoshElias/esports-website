@@ -116,7 +116,7 @@ angular.module('app.services', [])
         }
     };
 }])
-.factory('UserService', ['$http', function($http) {
+.factory('UserService', ['$http', '$compile', function($http, $compile) {
     return {
         login: function (email, password) {
             return $http.post('/login', {email: email, password: password});
@@ -157,17 +157,44 @@ angular.module('app.services', [])
         }
     }
 }])
+.factory('LoginModalService', ['$rootScope', '$compile', function ($rootScope, $compile) {
+    var box = undefined;
+    return {
+        showModal: function (state, callback) {
+            $rootScope.LoginModalService.callback = callback;
+            $rootScope.LoginModalService.state = state;
+            
+            box = bootbox.dialog({
+                title: function() {
+                    switch(state) {
+                        case 'login':  return "User Login" ; break;
+                        case 'signup': return "User Signup"; break;
+                        case 'forgot': return "Forgot Password"; break;
+                        case 'verify': return "Verify Email"; break;
+                        default:       return "User Login"; break;
+                    }
+                },
+                className: 'login-modal',
+                message: $compile('<login-modal callback="LoginModalService.callback()"></login-modal>')($rootScope)
+            });
+            box.modal('show');
+        },
+        hideModal: function () {
+            box.modal('hide');
+        }
+    }
+}])
 .factory('ArticleService', ['$http', '$q', function ($http, $q) {
     return {
-        getArticles: function (articleType, filter, page, perpage, search) {
+        getArticles: function (articleType, filter, offset, num, search) {
             var d = $q.defer(),
                 articleType = articleType || 'all',
                 filter = filter || 'all',
-                page = page || 1,
-                perpage = perpage || 20,
+                offset = offset || 0,
+                num = num || 20,
                 search = search || '';
             
-            $http.post('/articles', { articleType: articleType, filter: filter, page: page, perpage: perpage, search: search }).success(function (data) {
+            $http.post('/articles', { articleType: articleType, filter: filter, offset: offset, num: num, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
@@ -260,7 +287,6 @@ angular.module('app.services', [])
             return $http.post('/api/snapshot/comment/add', { snapshotID: snapshot._id, comment: comment });
         },
         vote: function (snapshot) {
-            console.log(snapshot);
             return $http.post('/api/snapshot/vote', { snapshot: snapshot });
         },
         setStorage: function (isOpen) {
@@ -315,6 +341,13 @@ angular.module('app.services', [])
 }])
 .factory('ProfileService', ['$http', '$q', function ($http, $q) {
     return {
+//        loadActivities: function (length) {
+//            var d = $q.defer();
+//            $http.post('/profile/' + username + '/activity/load', { length: length }).success(function (data) {
+//                d.resolve(data);
+//            });
+//            return d.promise;
+//        },
         getUserProfile: function (username) {
             var d = $q.defer();
             $http.post('/api/profile/' + username, {}).success(function (data) {
@@ -329,11 +362,11 @@ angular.module('app.services', [])
             });
             return d.promise;
         },
-        getActivity: function (username, page, perpage) {
+        getActivity: function (username, length, page, perpage) {
             var d = $q.defer(),
                 page = page || 1,
                 perpage = perpage || 20;
-            $http.post('/profile/' + username + '/activity', { page: page, perpage: perpage }).success(function (data) {
+            $http.post('/profile/' + username + '/activity', { length: length, page: page, perpage: perpage }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
@@ -897,6 +930,45 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('AdminVodService', ['$http', '$q', function ($http, $q) {
+    return {
+        getVods: function () {
+            var d = $q.defer();
+            $http.post('/api/admin/vods').success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getVod: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/vod', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        vodAdd: function (vod) {
+            var d = $q.defer();
+            $http.post('/api/admin/vod/add', { vod: vod }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        vodEdit: function (vod) {
+            var d = $q.defer();
+            $http.post('/api/admin/vod/edit', { vod: vod }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        vodRemove: function (_id) {
+            var d = $q.defer();
+            $http.post('/api/admin/vod/delete', { _id: _id }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    }
+}])
 .service('Pagination', function () {
     
     var pagination = {};
@@ -953,6 +1025,94 @@ angular.module('app.services', [])
     
     return pagination;
 })
+.factory('AjaxPagination', [function () {
+    var pagination = {};
+    
+    pagination.new = function (perpage, total, callback) {
+        var paginate = {
+            page: 1,
+            perpage: perpage || 10,
+            total: total || 0,
+            loading: false,
+            callback: function (newTotal) {
+                this.loading = false;
+                this.total = newTotal;
+            }
+        };
+        
+        paginate.isLoading = function () {
+            return paginate.loading;
+        };
+        
+        paginate.getPage = function () {
+            return paginate.page;
+        };
+        
+        paginate.getPerpage = function () {
+            return paginate.perpage;
+        };
+        
+        paginate.getTotal = function () {
+            return paginate.total;
+        };
+        
+        paginate.setPage = function (page) {
+            if (paginate.isLoading()) { return false; }
+            paginate.page = page;
+            paginate.loading = true;
+            
+            return callback(paginate.page, paginate.perpage).then(function (newTotal) {
+                return paginate.callback(newTotal);
+            });
+        };
+        
+        paginate.pagesArray = function () {
+            var pages = [],
+                start = 1,
+                end = paginate.totalPages();
+
+            if (this.totalPages() > 5) {
+                if (paginate.getPage() < 3) {
+                    start = 1;
+                    end = start + 4;
+                } else if (paginate.getPage() > paginate.totalPages() - 2) {
+                    end = paginate.totalPages();
+                    start = end - 4;
+                } else {
+                    start = paginate.getPage() - 2;
+                    end = paginate.getPage() + 2;
+                }
+
+            }
+
+            for (var i = start; i <= end; i++) {
+                pages.push(i);
+            }
+
+            return pages;
+        };
+        
+        paginate.isPage = function (page) {
+            return (page === paginate.getPage());
+        };
+        
+        paginate.totalPages = function (page) {
+            return (paginate.getTotal() > 0) ? Math.ceil(paginate.getTotal() / paginate.getPerpage()) : 0;
+        };
+        
+        paginate.from = function () {
+            return (paginate.getPage() * paginate.getPerpage()) - paginate.getPerpage() + 1;
+        };
+        
+        paginate.to = function () {
+            return ((paginate.getPage() * paginate.getPerpage()) > paginate.getTotal()) ? paginate.getTotal() : paginate.getPage() * paginate.getPerpage();
+        };
+        
+        return paginate;
+    };
+    
+    return pagination;
+}])
 .factory('Util', ['$http', function ($http) {
     return {
         toSelect: function (arr) {
@@ -965,6 +1125,9 @@ angular.module('app.services', [])
         },
         slugify: function (str) {
             return (str) ? str.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') : '';
+        },
+        numberWithCommas : function (x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         },
         getObjectID: function () {
             return $http.post('/api/admin/id', {});
@@ -1065,12 +1228,12 @@ angular.module('app.services', [])
             name: data.name || '',
             description: data.description || '',
             deckType: data.deckType || 'None',
-            contentEarly: data.contentEarly || '',
-            contentMid: data.contentMid || '',
-            contentLate: data.contentLate || '',
+            chapters: data.chapters || [],
+            type: data.type || 1,
+            basic: data.basic || false,
+            matches: data.matches || [],
             cards: data.cards || [],
             playerClass: playerClass,
-            arena: data.arena || false,
             mulligans: data.mulligans || [{
                     klass: 'Mage',
                     withCoin: {
@@ -1162,65 +1325,6 @@ angular.module('app.services', [])
                         instructions: ''
                     }
             }],
-            against: data.against || {
-                strong: [{
-                        klass: 'Mage',
-                        isStrong: false
-                    },{
-                        klass: 'Shaman',
-                        isStrong: false
-                    },{
-                        klass: 'Warrior',
-                        isStrong: false
-                    },{
-                        klass: 'Rogue',
-                        isStrong: false
-                    },{
-                        klass: 'Paladin',
-                        isStrong: false
-                    },{
-                        klass: 'Priest',
-                        isStrong: false
-                    },{
-                        klass: 'Warlock',
-                        isStrong: false
-                    },{
-                        klass: 'Hunter',
-                        isStrong: false
-                    },{
-                        klass: 'Druid',
-                        isStrong: false
-                }],
-                weak: [{
-                        klass: 'Mage',
-                        isWeak: false
-                    },{
-                        klass: 'Shaman',
-                        isWeak: false
-                    },{
-                        klass: 'Warrior',
-                        isWeak: false
-                    },{
-                        klass: 'Rogue',
-                        isWeak: false
-                    },{
-                        klass: 'Paladin',
-                        isWeak: false
-                    },{
-                        klass: 'Priest',
-                        isWeak: false
-                    },{
-                        klass: 'Warlock',
-                        isWeak: false
-                    },{
-                        klass: 'Hunter',
-                        isWeak: false
-                    },{
-                        klass: 'Druid',
-                        isWeak: false
-                }],
-                instructions: ''
-            },
             video: data.video || '',
             premium: data.premium || {
                 isPremium: false,
@@ -1231,8 +1335,9 @@ angular.module('app.services', [])
         };
         
         db.validVideo = function () {
-            var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
-            return (db.video.length) ? db.video.match(r) : true;
+            //var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+            //return (db.video.length) ? db.video.match(r) : true;
+            return true;
         };
         
         db.isStrong = function (strong) {
@@ -1367,9 +1472,11 @@ angular.module('app.services', [])
                     _id: card._id,
                     cost: card.cost,
                     name: card.name,
+                    cardType: card.cardType,
                     dust: card.dust,
                     photos: {
                         small: card.photos.small,
+                        medium: card.photos.medium,
                         large: card.photos.large
                     },
                     legendary: isLegendary,
@@ -1381,10 +1488,21 @@ angular.module('app.services', [])
         };
 
         db.sortDeck = function () {
+            var weights = {
+                'Weapon' : 0,
+                'Spell': 1,
+                'Minion': 2
+            };
+            
             function dynamicSort(property) { 
                 return function (a, b) {
-                    if (a[property] < b[property]) return -1;
-                    if (a[property] > b[property]) return 1;
+                    if (property == 'cardType') {
+                        if (weights[a[property]] < weights[b[property]]) return -1;
+                        if (weights[a[property]] > weights[b[property]]) return 1;
+                    } else {
+                        if (a[property] < b[property]) return -1;
+                        if (a[property] > b[property]) return 1;
+                    }
                     return 0;
                 }
             }
@@ -1403,7 +1521,7 @@ angular.module('app.services', [])
                 }
             }
 
-            db.cards.sort(dynamicSortMultiple('cost', 'name'));
+            db.cards.sort(dynamicSortMultiple('cost', 'cardType', 'name'));
         };
 
         db.removeCardFromDeck = function (card) {
@@ -1439,7 +1557,7 @@ angular.module('app.services', [])
 
             if (big === 0) return 0;
 
-            return Math.ceil(db.manaCount(mana) / big * 98);
+            return Math.ceil(db.manaCount(mana) / big * 100);
         };
 
         db.manaCount = function (mana) {
@@ -1485,13 +1603,59 @@ angular.module('app.services', [])
 
             return true;
         };
+        
+        db.moveChapterUp = function (chapter) {
+            var oldIndex = db.chapters.indexOf(chapter),
+                newIndex = oldIndex - 1;
+            
+            if (newIndex < 0) { return false; }
+            
+            db.chapters.splice(oldIndex, 1);
+            db.chapters.splice(newIndex, 0, chapter);
+        };
+        
+        db.moveChapterDown = function (chapter) {
+            var oldIndex = db.chapters.indexOf(chapter),
+                newIndex = oldIndex + 1;
+            
+            if (newIndex < 0) { return false; }
+            
+            db.chapters.splice(oldIndex, 1);
+            db.chapters.splice(newIndex, 0, chapter);
+        };
+        
+        db.addChapter = function () {
+            db.chapters.push({
+                title: '',
+                content: ''
+            });
+        }
+        
+        db.removeChapter = function (index) {
+            db.chapters.splice(index,1);
+        }
+        
+        db.newMatch = function (klass) {
+            var m = {
+                deckName: '',
+                klass: '',
+                match: 0
+            };
+            
+            m.klass = klass;
+            db.matches.push(m);
+        }
+        
+        db.removeMatch = function (index) {
+            db.matches.splice(index,1);
+        }
 
         return db;
     }
 
-    deckBuilder.loadCards = function (playerClass) {
+    deckBuilder.loadCards = function (page, perpage, search, mechanics, mana, playerClass) {
         var d = $q.defer();
-        $http.post('/deckbuilder', { playerClass: playerClass }).success(function (data) {
+        $http.post('/deckbuilder', { page: page, perpage: perpage, search: search, mechanics: mechanics, mana: mana, playerClass: playerClass }).success(function (data) {
             d.resolve(data);
         });
         return d.promise;
@@ -1502,9 +1666,10 @@ angular.module('app.services', [])
             name: deck.name,
             deckType: deck.deckType,
             description: deck.description,
-            contentEarly: deck.contentEarly,
-            contentMid: deck.contentMid,
-            contentLate: deck.contentLate,
+            chapters: deck.chapters,
+            matches: deck.matches,
+            type: deck.type,
+            basic: deck.basic,
             cards: deck.cards,
             playerClass: deck.playerClass,
             arena: deck.arena,
@@ -1523,9 +1688,10 @@ angular.module('app.services', [])
             name: deck.name,
             deckType: deck.deckType,
             description: deck.description,
-            contentEarly: deck.contentEarly,
-            contentMid: deck.contentMid,
-            contentLate: deck.contentLate,
+            chapters: deck.chapters,
+            matches: deck.matches,
+            type: deck.type,
+            basic: deck.basic,
             cards: deck.cards,
             playerClass: deck.playerClass,
             arena: deck.arena,
@@ -1579,8 +1745,9 @@ angular.module('app.services', [])
         }
         
         gb.validVideo = function () {
-            var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
-            return (gb.video.length) ? gb.video.match(r) : true;
+            //var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+            //return (gb.video.length) ? gb.video.match(r) : true;
+            return true;
         };
         
         gb.getContent = function (content) {
@@ -1820,24 +1987,26 @@ angular.module('app.services', [])
 }])
 .factory('DeckService', ['$http', '$q', function ($http, $q) {
     return {
-        getDecksCommunity: function (klass, page, perpage) {
-            klass = klass || 'all';
+        getDecksCommunity: function (klass, page, perpage, search) {
+            klass = klass || false;
             page = page || 1;
             perpage = perpage || 24;
+            search = search || false;
             
             var d = $q.defer();
-            $http.post('/decks/community', { klass: klass, page: page, perpage: perpage }).success(function (data) {
+            $http.post('/decks/community', { klass: klass, page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
         },
-        getDecksFeatured: function (klass, page, perpage) {
-            klass = klass || 'all';
+        getDecksFeatured: function (klass, page, perpage, search) {
+            klass = klass || false;
             page = page || 1;
             perpage = perpage || 24;
+            search = search || false;
             
             var d = $q.defer();
-            $http.post('/decks/featured', { klass: klass, page: page, perpage: perpage }).success(function (data) {
+            $http.post('/decks/featured', { klass: klass, page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
@@ -1880,40 +2049,40 @@ angular.module('app.services', [])
 }])
 .factory('HOTSGuideService', ['$http', '$q', function ($http, $q) {
     return {
-        getGuidesCommunity: function (hero, page, perpage) {
-            hero = hero || 'all';
-            page = page || 1;
+        getGuidesCommunity: function (filters, offset, perpage, search, daysLimit) {
+            filters = filters || false;
+            offset = offset || 0;
             perpage = perpage || 10;
+            search = search || false;
+            daysLimit = daysLimit || false;
             
             var d = $q.defer();
-            $http.post('/hots/guides/community', { hero: hero, page: page, perpage: perpage }).success(function (data) {
+            $http.post('/hots/guides/community', { filters: filters, offset: offset, perpage: perpage, search: search, daysLimit: daysLimit }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
         },
-        getGuidesFeatured: function (hero, page, perpage) {
-            hero = hero || 'all';
-            page = page || 1;
+        getGuidesFeatured: function (filters, offset, perpage, search) {
+            filters = filters || false;
+            offset = offset || 0;
             perpage = perpage || 10;
+            search = search || false;
             
             var d = $q.defer();
-            $http.post('/hots/guides/featured', { hero: hero, page: page, perpage: perpage }).success(function (data) {
+            $http.post('/hots/guides/featured', { filters: filters, offset: offset, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
         },
-        getGuides: function (guideType, hero, map, page, perpage, search, age, order) {
+        getGuides: function (guideType, filters, page, perpage, search) {
             guideType = guideType || 'all';
-            hero = hero || 'all';
-            map = map || 'all';
+            filters = filters || false;
             page = page || 1;
             perpage = perpage || 24;
             search = search || '';
-            age = age || 'all';
-            order = order || 'high';
             
             var d = $q.defer();
-            $http.post('/hots/guides', { guideType: guideType, hero: hero, map: map, page: page, perpage: perpage, search: search, age: age, order: order }).success(function (data) {
+            $http.post('/hots/guides', { guideType: guideType, filters: filters, page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
@@ -1987,9 +2156,9 @@ angular.module('app.services', [])
 }])
 .factory('VoteService', ['$http', '$q', function ($http, $q) {
     return {
-        voteArticle: function (direction, article) {
+        voteArticle: function (article) {
             var d = $q.defer();
-            $http.post('/api/article/vote', { _id: article._id, direction: direction }).success(function (data) {
+            $http.post('/api/article/vote', { _id: article._id }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
@@ -2098,7 +2267,7 @@ angular.module('app.services', [])
     return {
         getFeed: function () {
             var d = $q.defer();
-            $http.post('/twitterFeed', { limit: 10 }).success(function (data) {
+            $http.post('/twitterFeed', { limit: 6 }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
@@ -2123,6 +2292,17 @@ angular.module('app.services', [])
             return d.promise;
         }
     };
+}])
+.factory('VodService', ['$http', '$q', function ($http, $q) {
+    return {
+        getLatestVod: function () {
+            var d = $q.defer();
+            $http.post('/vod').success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    }
 }])
 .factory('markitupSettings', [
   function() {

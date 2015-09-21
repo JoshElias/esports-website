@@ -6,8 +6,9 @@ var app = angular.module('app', [
     'angular-bootbox',
     'angularMoment',
     'angularPayments',
+    'youtube-embed',
     'dndLists',
-    'ngAnimate',
+    /*'ngAnimate',*/
     'ngCookies',
     'ngStorage',
     'ngSanitize',
@@ -25,12 +26,13 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage",
-        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies, $localStorage) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage", "LoginModalService",
+        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies, $localStorage, LoginModalService) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
-            
+            $rootScope.UserService = UserService;
+            $rootScope.LoginModalService = LoginModalService;
             
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
@@ -111,7 +113,8 @@ var app = angular.module('app', [
                 url: '/',
                 views: {
                     root: {
-                        templateUrl: tpl + 'views/frontend/index.html'
+                        templateUrl: tpl + 'views/frontend/index.html',
+                        controller: 'RootCtrl'
                     }
                 },
                 resolve: {
@@ -169,12 +172,9 @@ var app = angular.module('app', [
                         resolve: {
                             dataArticles: ['ArticleService', function (ArticleService) {
                                 var klass = 'all',
-                                    page = 1,
-                                    perpage = 3;
-                                return ArticleService.getArticles('ts', klass, page, perpage);
-                            }],
-                            dataBanners: ['BannerService', function (BannerService) {
-                                 return BannerService.getBanners('ts');
+                                    offset = 0,
+                                    num = 6;
+                                return ArticleService.getArticles('all', klass, offset, num);
                             }]
                         }
                     }
@@ -201,10 +201,10 @@ var app = angular.module('app', [
                                 var articleType = $stateParams.t || 'all',
                                     filter = $stateParams.f || 'all',
                                     page = $stateParams.p || 1,
-                                    perpage = 10,
+                                    perpage = 12,
                                     search = $stateParams.s || '';
                                 
-                                return ArticleService.getArticles(articleType, filter, page, perpage, search);
+                                return ArticleService.getArticles(articleType, filter, ((perpage*page)-perpage), perpage, search);
                             }]
                         }
                     }
@@ -248,7 +248,6 @@ var app = angular.module('app', [
                     data: ['SnapshotService', '$q', function (SnapshotService, $q) {
                         return SnapshotService.getLatest().then(function (result) {
                             if (result.success === true) {
-                                console.log(result);
                                 return result;
                             } else {
                                 return $q.reject('unable to find snapshot');
@@ -313,23 +312,14 @@ var app = angular.module('app', [
                             dataArticles: ['ArticleService', function (ArticleService) {
                                 var klass = 'all',
                                     page = 1,
-                                    perpage = 9;
+                                    perpage = 6;
                                 return ArticleService.getArticles('hs', klass, page, perpage);
                             }],
-                            dataDecks: ['DeckService', function (DeckService) {
-                                var klass = 'all',
-                                    page = 1,
-                                    perpage = 10;
-                                return DeckService.getDecksCommunity(klass, page, perpage);
+                            dataDecksTempostorm: ['DeckService', function (DeckService) {
+                                return DeckService.getDecksFeatured(false, 1, 10);
                             }],
-                            dataDecksFeatured: ['DeckService', function (DeckService) {
-                                var klass = 'all',
-                                    page = 1,
-                                    perpage = 10;
-                                return DeckService.getDecksFeatured(klass, page, perpage);
-                            }],
-                            dataBanners: ['BannerService', function (BannerService) {
-                                return BannerService.getBanners('hs');
+                            dataDecksCommunity: ['DeckService', function (DeckService) {
+                                return DeckService.getDecksCommunity(false, 1, 10);
                             }]
                         }
                     }
@@ -353,15 +343,25 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.decks.list.html',
                         controller: 'DecksCtrl',
                         resolve: {
-                            data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
-                                var klass = $stateParams.k || 'all',
+                            dataDecksTempostorm: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
+                                var klass = $stateParams.k || false,
                                     page = $stateParams.p || 1,
-                                    perpage = 24,
+                                    perpage = 4,
                                     search = $stateParams.s || '',
                                     age = $stateParams.a || '',
                                     order = $stateParams.o || '';
                                 
-                                return DeckService.getDecks(klass, page, perpage, search, age, order);
+                                return DeckService.getDecksFeatured(klass, page, perpage, search, age, order);
+                            }],
+                            dataDecksCommunity: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
+                                var klass = $stateParams.k || false,
+                                    page = $stateParams.p || 1,
+                                    perpage = 12,
+                                    search = $stateParams.s || '',
+                                    age = $stateParams.a || '',
+                                    order = $stateParams.o || '';
+                                
+                                return DeckService.getDecksCommunity(klass, page, perpage, search);
                             }]
                         }
                     }
@@ -402,7 +402,8 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     deckBuilder: {
-                        templateUrl: tpl + 'views/frontend/hs.deck-builder.class.html'
+                        templateUrl: tpl + 'views/frontend/hs.deck-builder.class.html',
+                        controller: 'DeckBuilderClassCtrl'
                     }
                 },
                 seo: { title: 'Deck Builder', description: 'Deck building tool for Hearthstone.', keywords: '' }
@@ -415,8 +416,19 @@ var app = angular.module('app', [
                         controller: 'DeckBuilderCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
-                                var playerClass = $stateParams.playerClass;
-                                return DeckBuilder.loadCards(playerClass);
+                                var playerClass = $stateParams.playerClass,
+                                    page = 1,
+                                    perpage = 15,
+                                    mechanics = [],
+                                    mana = 'all',
+                                    search = "";
+                                
+                                return DeckBuilder.loadCards(page, perpage, search, mechanics, mana, playerClass);
+                            }],
+                            toStep: ['$stateParams', function ($stateParams) {
+                                if ($stateParams.goTo) {
+                                    return $stateParams.goTo;
+                                }
                             }]
                         }
                     }
@@ -455,10 +467,10 @@ var app = angular.module('app', [
                         controller: 'HOTSHomeCtrl',
                         resolve: {
                             dataArticles: ['ArticleService', function (ArticleService) {
-                                var hero = 'all',
-                                    page = 1,
-                                    perpage = 9;
-                                return ArticleService.getArticles('hots', hero, page, perpage);
+                                var filters = 'all',
+                                    offset = 0,
+                                    perpage = 6;
+                                return ArticleService.getArticles('hots', filters, offset, perpage);
                             }],
                             dataGuidesCommunity: ['HOTSGuideService', function (HOTSGuideService) {
                                 return HOTSGuideService.getGuidesCommunity();
@@ -466,8 +478,11 @@ var app = angular.module('app', [
                             dataGuidesFeatured: ['HOTSGuideService', function (HOTSGuideService) {
                                 return HOTSGuideService.getGuidesFeatured();
                             }],
-                            dataBanners: ['BannerService', function (BannerService) {
-                                return BannerService.getBanners('hots');
+                            dataHeroes: ['HeroService', function (HeroService) {
+                                return HeroService.getHeroesList();
+                            }],
+                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getMaps();
                             }]
                         }
                     }
@@ -490,17 +505,18 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-                            data: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                            dataCommunityGuides: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                                return HOTSGuideService.getGuidesCommunity(false, 0, 10, false, false);
+                            }],
+                            dataTopGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
                                 var guideType = $stateParams.t || 'all',
-                                    hero = $stateParams.h || 'all',
-                                    map = $stateParams.m || 'all',
-                                    page = $stateParams.p || 1,
-                                    perpage = 24,
-                                    search = $stateParams.s || '',
-                                    age = $stateParams.a || '',
-                                    order = $stateParams.o || '';
+                                    filters = $stateParams.h || false,
+                                    order = $stateParams.o || 'high';
                                 
-                                return HOTSGuideService.getGuides(guideType, hero, map, page, perpage, search, age, order);
+                                return HOTSGuideService.getGuides('hero', filters, 1, 1, '', '', order);
+                            }],
+                            dataTempostormGuides: ['HOTSGuideService', function (HOTSGuideService) {
+                                return HOTSGuideService.getGuidesFeatured(false, 0, 4);
                             }],
                             dataHeroes: ['HeroService', function (HeroService) {
                                 return HeroService.getHeroes();
@@ -678,7 +694,7 @@ var app = angular.module('app', [
                         controller: 'HOTSTalentCalculatorCtrl',
                         resolve: {
                             dataHeroesList: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroesList();2
+                                return HeroService.getHeroesList();
                             }]
                         }
                     }
@@ -815,98 +831,26 @@ var app = angular.module('app', [
                 },
                 og: true
             })
-            .state('app.team', {
-                abstract: true,
-                url: 'team',
+            .state('app.teams', {
+                url: 'teams',
                 views: {
                     content: {
-                        templateUrl: tpl + 'views/frontend/team.html'
-                    }
-                }
-            })
-            .state('app.team.hearthstone', {
-                url: '/hearthstone',
-                views: {
-                    team: {
-                        controller: 'TeamPageCtrl',
-                        templateUrl: tpl + 'views/frontend/team.hearthstone.html',
+                        controller: 'TeamCtrl',
+                        templateUrl: tpl + 'views/frontend/teams.html',
                         resolve: {
-                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
-                                return TeamService.getMembers('hs').then(function (result) {
+                            data: ['TeamService', '$q', function (TeamService, $q) {
+                                return TeamService.getMembers().then(function (result) {
                                     if (result.success === true) {
                                         return result;
                                     } else {
-                                        return $q.reject('unable to find post');
+                                        return $q.reject('Unable to find members');
                                     }
                                 });
                             }]
                         }
                     }
                 },
-                seo: { title: 'Hearthstone', description: 'TempoStorm Hearthstone team.', keywords: '' }
-            })
-            .state('app.team.heroes', {
-                url: '/hots',
-                views: {
-                    team: {
-                        controller: 'TeamPageCtrl',
-                        templateUrl: tpl + 'views/frontend/team.hots.html',
-                        resolve: {
-                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
-                                return TeamService.getMembers('hots').then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find post');
-                                    }
-                                });
-                            }]
-                        }
-                    }
-                },
-                seo: { title: 'Heroes of the Storm', description: 'TempoStorm Heroes of the Storm team.', keywords: '' }
-            })
-            .state('app.team.fifa', {
-                url: '/fifa',
-                views: {
-                    team: {
-                        controller: 'TeamPageCtrl',
-                        templateUrl: tpl + 'views/frontend/team.fifa.html',
-                        resolve: {
-                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
-                                return TeamService.getMembers('fifa').then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find post');
-                                    }
-                                });
-                            }]
-                        }
-                    }
-                },
-                seo: { title: 'FIFA', description: 'TempoStorm FIFA team.', keywords: '' }
-            })
-            .state('app.team.fgc', {
-                url: '/fgc',
-                views: {
-                    team: {
-                        controller: 'TeamPageCtrl',
-                        templateUrl: tpl + 'views/frontend/team.fgc.html',
-                        resolve: {
-                            data: ['$stateParams', 'TeamService', '$q', function ($stateParams, TeamService, $q) {
-                                return TeamService.getMembers('fgc').then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find post');
-                                    }
-                                });
-                            }]
-                        }
-                    }
-                },
-                seo: { title: 'FGC', description: 'TempoStorm FGC team.', keywords: '' }
+                seo: { title: 'Teams', description: 'Teams on Tempostorm', keywords: '' }
             })
             .state('app.polls', {
                 url: 'vote',
@@ -1079,7 +1023,6 @@ var app = angular.module('app', [
                         resolve: {
                             dataDecks: ['User', '$stateParams', 'ProfileService', 'AuthenticationService', function (User, $stateParams, ProfileService, AuthenticationService) {
                                 var username = $stateParams.username;
-                                console.log(AuthenticationService.isLogged());
                                 if (AuthenticationService.isLogged()) {
                                     return ProfileService.getDecksLoggedIn(username);
                                 } else {
@@ -1354,7 +1297,8 @@ var app = angular.module('app', [
                 url: '/add',
                 views: {
                     decks: {
-                        templateUrl: tpl + 'views/admin/decks.add.class.html'
+                        templateUrl: tpl + 'views/admin/decks.add.class.html',
+                        controller: 'AdminDeckBuilderClassCtrl'
                     }
                 },
                 access: { auth: true, admin: true },
@@ -1368,8 +1312,14 @@ var app = angular.module('app', [
                         controller: 'AdminDeckAddCtrl',
                         resolve: {
                             data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
-                                var playerClass = $stateParams.playerClass;
-                                return DeckBuilder.loadCards(playerClass);
+                                var page = 1,
+                                    perpage = 15, 
+                                    search = "",
+                                    mechanics = [],
+                                    mana = 'all',
+                                    playerClass = $stateParams.playerClass;
+                                
+                                return DeckBuilder.loadCards(page, perpage, search, mechanics, mana, playerClass);
                             }]
                         }
                     }
@@ -2138,6 +2088,57 @@ var app = angular.module('app', [
                 },
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.vod', {
+                abstract: true,
+                url: '/vod',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/vod.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.vod.list', {
+                url: '',
+                views: {
+                    vod: {
+                        templateUrl: tpl + 'views/admin/vod.list.html',
+                        controller: 'AdminVodListCtrl',
+                        resolve: {
+                            data: ['AdminVodService', function (AdminVodService) {
+                                return AdminVodService.getVods();
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.vod.add', {
+                url: '/add',
+                views: {
+                    vod: {
+                        templateUrl: tpl + 'views/admin/vod.add.html',
+                        controller: 'AdminVodAddCtrl'
+                    }
+                }
+            })
+            .state('app.admin.vod.edit', {
+                url: '/:id',
+                views: {
+                    vod: {
+                        templateUrl: tpl + 'views/admin/vod.edit.html',
+                        controller: 'AdminVodEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminVodService', function ($stateParams, AdminVodService) {
+                                var id = $stateParams.id;
+                                return AdminVodService.getVod(id);
+                            }]
+                        }
+                    }
+                }
             })
             .state('app.admin.streams', {
                 url: '/streams',

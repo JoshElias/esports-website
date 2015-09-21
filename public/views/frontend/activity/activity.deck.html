@@ -1,5 +1,11 @@
-<span ng-if="!activity.exists">deleted a deck.</span>
-<span ng-if="activity.exists">
-    <span ng-if="activity.deck.public">created a new deck! <a href="./decks/{{activity.deck.slug}}">{{activity.deck.name}}</a></span>
-    <span ng-if="!activity.deck.public">created a private deck!</span>
+<span  class="activity-content">
+    <span ng-if="activity.deck && activity.exists">
+        <span class="activity-header clearfix"><h2 class="pull-left"><span class="color-wrapper">{{user.username}} created a new deck </span> <a target="_blank" ui-sref="app.decks.deck({slug:activity.deck.slug})">{{activity.deck.name}}</a></h2><span class="pull-right" am-time-ago="activity.createdDate"></span></span>
+        <div class="activity-body m-t-md">{{activity.deck.description}}</div>
+        <div class="activity-foot m-t-md pull-right">Comments {{activity.deck.comments.length}}</div>
+    </span>
+    <span ng-if="!activity.deck && activity.exists">
+        <span class="activity-header clearfix"><h2 class="pull-left"><span class="color-wrapper">{{user.username}} created a private deck.</span></h2><span class="pull-right" am-time-ago="activity.createdDate"></span></span>
+    </span>
+    <span ng-if="!activity.deck && !activity.exists" class="activity-header"><h2 class="deleted">{{user.username}} removed their deck.</h2></span>
 </span>

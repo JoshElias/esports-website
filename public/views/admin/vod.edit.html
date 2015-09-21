@@ -1,0 +1,83 @@
+<div class="panel panel-danger error-modal animated" ng-show="showError">
+    <div class="panel-heading">
+        <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+        <strong>Unable to video</strong>
+    </div>
+    <div class="panel-body">
+        <ul class="error text-danger">
+            <li ng-repeat="error in errors">{{error.msg}}</li>
+        </ul>
+    </div>
+</div>
+<div class="panel panel-success animated" ng-show="showSuccess">
+    <div class="panel-heading">
+        <button type="button" class="close" aria-hidden="true" ng-click="showSuccess = false">&times;</button>
+        <strong>New Video of the Day added successfully</strong>
+    </div>
+</div>
+<div class="panel panel-default br-none">
+    <form name="form" role="form" class="form-horizontal">
+    <div class="panel-heading">
+        Edit Video of the Day
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label for="vodDate" class="col-sm-2 control-label">Date</label>
+            <div class="col-sm-10">
+                <div date-picker data-id="vodDate" data-name="vodDate" ng-model="vod.date"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="vodSub" class="col-sm-2 control-label">Sub-title</label>
+            <div class="col-sm-10">
+                <div class="input-group social-addon-group">
+                    <input type="text" id="vodSub" class="form-control" ng-model="vod.subTitle" placeholder="Sub-title" required>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <span ng-if="!isPlaylist">
+                <label for="youtube" class="col-sm-2 control-label">Video</label>
+                <div class="col-sm-10">
+                    <div class="input-group social-addon-group">
+                        <span class="input-group-addon social-addon">youtube.com/watch?v=</span>
+                        <input type="text" id="youtube" name="youtube" class="form-control" ng-model="vod.url" placeholder="VIDEO ID" required>
+                    </div>
+                </div>
+            </span>
+            <span ng-if="isPlaylist">
+                <label for="youtube" class="col-sm-2 control-label">Playlist</label>
+                <div ng-if="isPlaylist" class="col-sm-10">
+                    <div class="input-group social-addon-group">
+                        <span class="input-group-addon social-addon">youtube.com/playlist?list=</span>
+                        <input type="text" id="youtube" name="youtube" class="form-control" ng-model="vod.vars.list" placeholder="PLAYLIST ID" required>
+                    </div>
+                </div>
+            </span>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2 control-label"></div>
+            <div class="col-sm-10 wrapper-none">
+                <span class="btn m-l-none">
+                    <button ng-disabled="vod.url || vod.vars.list" ng-click="isPlaylist = !isPlaylist" class="btn btn-default">
+                        <i class="fa fa-refresh"></i> Toggle Video Type
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-10">
+                <youtube-video ng-if="vod.url" video-url="vod.url"></youtube-video>
+                <youtube-video ng-if="vod.vars.list" player-vars="vod.vars"></youtube-video>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="col-sm-10 col-sm-offset-2">
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || !vod.date" ng-click="saveVod()">Edit Video of the Day</button>
+        </div>
+    </div>
+    </form>
+    </div>
+</div>

@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('app.controllers', ['ngCookies'])
-  .controller('AppCtrl', ['$scope', '$localStorage', '$cookies', '$window', '$location', 'SubscriptionService', 'AuthenticationService', 'UserService', 
-    function($scope, $localStorage, $cookies, $window, $location, SubscriptionService, AuthenticationService, UserService) {
+  .controller('AppCtrl', ['$scope', '$localStorage', '$cookies', '$window', '$location', 'SubscriptionService', 'AuthenticationService', 'UserService', '$rootScope',
+    function($scope, $localStorage, $cookies, $window, $location, SubscriptionService, AuthenticationService, UserService, $rootScope) {
       var isIE = !!navigator.userAgent.match(/MSIE/i);
       isIE && angular.element($window.document.body).addClass('ie');
       isSmartDevice( $window ) && angular.element($window.document.body).addClass('smart');
@@ -12,7 +12,7 @@ angular.module('app.controllers', ['ngCookies'])
         name: 'TempoStorm',
         version: '0.0.1',
         copyright: new Date().getFullYear(),
-        cdn: (tpl && tpl.length) ? tpl : '.',
+        cdn: (tpl && tpl.length) ? tpl : './',
         settings: {
             token: $cookies.token || null,
             deck: null,
@@ -20,7 +20,8 @@ angular.module('app.controllers', ['ngCookies'])
                 deck: null,
                 article: null,
                 decks: null
-            }
+            },
+            secondaryPortrait: []
         },
         user: {
             getUserEmail: function () {
@@ -58,10 +59,12 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.app.settings.token = null;
                     delete $cookies.token;
                 }
-                return $location.path("/login");
+//                return $location.path("/login");
             }
         }
       };
+        
+      $rootScope.app = $scope.app;
         
       // save settings to local storage
       if ( angular.isDefined($localStorage.settings) ) {
@@ -100,12 +103,37 @@ angular.module('app.controllers', ['ngCookies'])
           return (/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/).test(ua);
       }
 
-  }])
+}])
+.controller('RootCtrl', ['$scope', 'LoginModalService', function ($scope, LoginModalService) {
+    $scope.loginModal = function (state) {
+        LoginModalService.showModal(state);
+    }
+}])
 .controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
     MetaService.setStatusCode(404);
 }])
-.controller('UserCtrl', ['$scope', '$location', '$window', '$state', 'UserService', 'AuthenticationService', 'AlertService', 'SubscriptionService', 
-    function ($scope, $location, $window, $state, UserService, AuthenticationService, AlertService, SubscriptionService) {
+.controller('UserCtrl', ['$scope', '$location', '$window', '$state', '$cookies', 'UserService', 'AuthenticationService', 'AlertService', 'SubscriptionService', 
+    function ($scope, $location, $window, $state, $cookies, UserService, AuthenticationService, AlertService, SubscriptionService) {
+        
+        $scope.remember;
+        $scope.loginInfo = {
+            email: "",
+            password: ""
+        };
+        $scope.verify = {
+            email: "",
+            code: ""
+        }
+
+        var cookMail = $cookies.rememberEmail;
+        var cookPass = $cookies.rememberPassword;
+
+        if (cookMail != undefined && cookPass != undefined) {
+            $scope.remember = true;
+            $scope.loginInfo.email = cookMail;
+            $scope.loginInfo.password = cookPass;
+        }
+        
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
@@ -134,31 +162,6 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         }
-        
-        $scope.signup = function signup(email, username, password, cpassword) {
-            if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
-                UserService.signup(email, username, password, cpassword).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                    } else {
-                        return $state.transitionTo('app.verify', { email: email });
-                    }
-                });
-            }
-        }
-        
-        $scope.forgotPassword = function () {
-            UserService.forgotPassword($scope.forgot.email).success(function (data) {
-                if (!data.success) {
-                    $scope.errors = data.errors;
-                    $scope.showError = true;
-                } else {
-                    $scope.showSuccess = true;
-                    $scope.forgot.email = '';
-                }
-            });
-        };
     }
 ])
 .controller('UserVerifyCtrl', ['$scope', '$location', '$window', '$state', '$stateParams', 'UserService', 'AuthenticationService', 'SubscriptionService', 
@@ -220,117 +223,154 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', '$sce', 'dataBanners', 'dataArticles', 'TwitchService', 'TwitterService',
-    function ($scope, $sce, dataBanners, dataArticles, TwitchService, TwitterService) {
+.controller('HomeCtrl', ['$scope', '$sce', 'dataArticles', 'ArticleService', 
+    function ($scope, $sce, dataArticles, ArticleService) {
+        // data
+        $scope.articles = {
+            loading: false,
+            viewable: function () {
+                switch ($scope.app.bootstrapWidth) {
+                    case 'xs':
+                        return 1;
+                    case 'sm':
+                        return 3;
+                    case 'md':
+                        return 4;
+                    case 'lg':
+                    case 'default':
+                        return 6;
+                }
+            },
+            perpage: function () {
+                switch ($scope.app.bootstrapWidth) {
+                    case 'xs':
+                        return 1;
+                    case 'sm':
+                        return 3;
+                    case 'md':
+                        return 4;
+                    case 'lg':
+                    case 'default':
+                        return 6;
+                }
+            },
+            offset: 0,
+            total: dataArticles.total,
+            data: dataArticles.articles
+        };
+                
+        // articles
+        $scope.getArticleDesc = function (desc, limit) {
+            var words = desc.split(' ');
+            return (words.length > limit) ? words.slice(0, limit).join(' ') + '...' : words.join(' ');
+        };
+        
+        $scope.isArticleActive = function (index) {
+            //if ($scope.articles.offset == 0 && index == 0) { return true; }
+            //if ($scope.articles.viewable() == 1 && index == $scope.articles.offset) { return true; } 
+            //if ($scope.viewable() == 6) {
+            //    if (index >= ($scope.articles.offset + 1) && index <= ($scope.articles.offset + $scope.articles.viewable() - 2)) { return true; }
+            //}
+            return true;
+        };
+        
+        $scope.canArticlePrev = function () {
+            return ($scope.articles.offset > 0);
+        };
+        
+        $scope.canArticleNext = function () {
+            return ($scope.articles.data.length < $scope.articles.total);
+        };
+        
+        $scope.prevArticles = function () {
+            $scope.articles.offset = ($scope.articles.offset - $scope.articles.perpage() >= 0) ? $scope.articles.offset - $scope.articles.perpage() : 0;
+        };
+        
+        $scope.nextArticles = function () {
+            if ($scope.articles.offset + $scope.articles.viewable() + $scope.articles.perpage() <= $scope.articles.data.length) {
+                $scope.articles.offset += $scope.articles.perpage();
+            } else {
+                var num = ($scope.articles.data.length + $scope.articles.perpage() <= $scope.articles.total) ? $scope.articles.perpage() : $scope.articles.total - $scope.articles.data.length;
+                if (num > 0) {
+                    $scope.articles.loading = 'next';
+                    
+                    ArticleService.getArticles('all', 'all', $scope.articles.data.length, num).then(function (data) {
+                        $scope.articles.data = $scope.articles.data.concat(data.articles);
+                        $scope.articles.offset += num;
+                        $scope.articles.loading = false;
+                    });
+                }
+            }
+        };
+    }
+])
+.controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'ArticleService', 'DeckService', 'Hearthstone',
+    function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, ArticleService, DeckService, Hearthstone) {
         // data
         $scope.articles = dataArticles.articles;
-        $scope.streamWheel = false;
-        $scope.twitWheel = false;
-        $scope.streams = undefined;
-        $scope.tweets = undefined;
+        $scope.tempostormDecks = dataDecksTempostorm.decks;
+        $scope.communityDecks = dataDecksCommunity.decks;
+        $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
         
+        // filters
+        $scope.filters = {
+            classes: [],
+            search: ''
+        };
         
-        TwitchService.getStreams().then(function(data) {
-            for (var i = 0; i < data.data.length; i++) {
-                var log = data.data[i].logoUrl;
-                var sub = log.substr(4);
-                var im = "https" + sub;
-                data.data[i].logoUrl = im;
+        var initializing = true;
+        $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            if (initializing) {
+                $timeout(function () {
+                    initializing = false;
+                });
+            } else {
+                updateArticles(0, 6);
+                updateTempostormDecks(1, 10);
+                updateCommunityDecks(1, 10);
             }
-            $scope.streamWheel = true;
-            $scope.streams = data.data;
-        });
+        }, true);
         
-        TwitterService.getFeed().then(function(data) {
-            $scope.twitWheel = true;
-            $scope.tweets = data.data;
-        });
-        
-        $scope.getContent = function (c) {
-            return $sce.trustAsHtml(c);
+        function updateArticles (offset, perpage) {
+            ArticleService.getArticles('hs', $scope.filters.classes, offset, perpage).then(function (data) {
+                $timeout(function () {
+                    $scope.articles = data.articles;
+                });
+            });
         }
         
-        // banner
+        // update decks
+        function updateTempostormDecks (page, perpage) {
+            DeckService.getDecksFeatured($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
+                $timeout(function () {
+                    $scope.tempostormDecks = data.decks;
+                });
+            });
+        }
         
-        $scope.banner = {
-            current: 0,
-            direction: 'left',
-            slides: dataBanners.banners,
-            setCurrent: function (current) {
-                this.direction = 'right';
-                this.current = current;
-            },
-            next: function () {
-                this.direction = 'right';
-                this.current = (this.current < (this.slides.length - 1)) ? ++this.current : 0;
-            },
-            prev: function () {
-                this.direction = 'left';
-                this.current = (this.current > 0) ? --this.current : this.slides.length - 1;
+        function updateCommunityDecks (page, perpage) {
+            DeckService.getDecksCommunity($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
+                $timeout(function () {
+                    $scope.communityDecks = data.decks;
+                });
+            });
+        }
+        
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
             }
-        };
+        }
     }
 ])
-.controller('HearthstoneHomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataDecks', 'dataDecksFeatured', 'ArticleService', 'DeckService', 
-    function ($scope, dataBanners, dataArticles, dataDecks, dataDecksFeatured, ArticleService, DeckService) {
-        // data
-        $scope.articles = dataArticles.articles;
-        $scope.decks = dataDecks.decks;
-        $scope.decksFeatured = dataDecksFeatured.decks;
-        $scope.loading = {
-            articles: false,
-            community: false,
-            featured: false
-        };
-        
-        // banner
-        $scope.banner = {
-            current: 0,
-            direction: 'left',
-            slides: dataBanners.banners,
-            setCurrent: function (current) {
-                this.direction = 'right';
-                this.current = current;
-            },
-            next: function () {
-                this.direction = 'right';
-                this.current = (this.current < (this.slides.length - 1)) ? ++this.current : 0;
-            },
-            prev: function () {
-                this.direction = 'left';
-                this.current = (this.current > 0) ? --this.current : this.slides.length - 1;
-            }
-        };
-        
-        // content
-        $scope.klass = 'all';
-        $scope.setKlass = function (klass) {
-            $scope.klass = klass;
-            $scope.loading = {
-                articles: true,
-                community: true,
-                featured: true
-            };
-            
-            ArticleService.getArticles('hs', klass, 1, 9).then(function (data) {
-                $scope.articles = data.articles;
-                $scope.loading.articles = false;
-            });
-
-            DeckService.getDecksCommunity(klass, 1, 10).then(function (data) {
-                $scope.decks = data.decks;
-                $scope.loading.community = false;
-            });
-            
-            DeckService.getDecksFeatured(klass, 1, 10).then(function (data) {
-                $scope.decksFeatured = data.decks;
-                $scope.loading.featured = false;
-            });
-        };
-    }
-])
-.controller('PremiumCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'UserService', 'AuthenticationService', 'SubscriptionService', 
-    function ($scope, $state, $window, $compile, bootbox, UserService, AuthenticationService, SubscriptionService) {
+.controller('PremiumCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'UserService', 'LoginModalService',
+    function ($scope, $state, $window, $compile, bootbox, UserService, LoginModalService) {
         var box,
             callback;
         
@@ -341,14 +381,9 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
                 }
             } else {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal('login', function () {
                     $scope.getPremium(plan);
-                };
+                });
             }
         }
         
@@ -377,10 +412,15 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 
-    function ($scope, dataProfile, MetaService) {
+.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 'HOTSGuideService',
+    function ($scope, dataProfile, MetaService, HOTSGuideService) {
         $scope.user = dataProfile.user;
+        $scope.postCount = dataProfile.postCount;
+        $scope.deckCount = dataProfile.deckCount;
+        $scope.guideCount = dataProfile.guideCount;
+        $scope.activities = dataProfile.activities;
         
+
         function isMyProfile() {
             if($scope.app.user.getUsername() == $scope.user.username) {
                 return 'My Profile';
@@ -391,14 +431,16 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set(isMyProfile());
         
-        $scope.socialExists = function () {
-            if (!$scope.user.social) { return false; }
-            return ($scope.user.social.twitter && $scope.user.social.twitter.length) || 
-            ($scope.user.social.facebook && $scope.user.social.facebook.length) || 
-            ($scope.user.social.twitch && $scope.user.social.twitch.length) || 
-            ($scope.user.social.instagram && $scope.user.social.instagram.length) || 
-            ($scope.user.social.youtube && $scope.user.social.youtube.length);
-        };
+        
+        
+//        $scope.socialExists = function () {
+//            if (!$scope.user.social) { return false; }
+//            return ($scope.user.social.twitter && $scope.user.social.twitter.length) || 
+//            ($scope.user.social.facebook && $scope.user.social.facebook.length) || 
+//            ($scope.user.social.twitch && $scope.user.social.twitch.length) || 
+//            ($scope.user.social.instagram && $scope.user.social.instagram.length) || 
+//            ($scope.user.social.youtube && $scope.user.social.youtube.length);
+//        };
     }
 ])
 .controller('ProfileEditCtrl', ['$scope', '$state', 'ProfileService', 'AlertService', 'dataProfileEdit',  
@@ -585,15 +627,126 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity',  
-    function ($scope, $sce, dataActivity) {
+.controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity', 'ProfileService', 'HOTSGuideService', 'DeckService',
+    function ($scope, $sce, dataActivity, ProfileService, HOTSGuideService, DeckService) {
         $scope.activities = dataActivity.activities;
+        $scope.total = dataActivity.total;
+        $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
+        
+        $scope.getActivityType = function (activity) {
+            switch (activity.activityType) {
+                case 'articleComment':
+                case 'deckComment':
+                case 'forumComment':
+                case 'guideComment':
+                case 'snapshotComment':
+                    return 'comments'; break;
+                case 'createArticle':
+                    return 'articles'; break;
+                case 'createDeck':
+                    return 'decks'; break;
+                case 'createGuide':
+                    return 'guides'; break;
+                case 'forumPost':
+                    return 'forumposts'; break;
+            }
+        }
+        
+        $scope.isFiltered = function(type) {
+            for (var i = 0; i < $scope.filterActivities.length; i++) {
+                if ($scope.filterActivities[i] == type) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        $scope.toggleFilter = function (filter) {
+            for (var i = 0; i < $scope.filterActivities.length; i++) {
+                if (filter == $scope.filterActivities[i]) {
+                    $scope.filterActivities.splice(i,1);
+                    return;
+                }
+            }
+            $scope.filterActivities.push(filter);
+        }
         
         $scope.activities.forEach(function (activity) {
             activity.getActivity = function () {
                 return $sce.trustAsHtml(activity.activity);
             };
         });
+        
+        $scope.loadActivities = function () {
+            ProfileService.getActivity($scope.user.username, $scope.activities.length).then(function (data) {
+                $scope.activities = $scope.activities.concat(data.activities);
+            });
+        }
+        
+        // delete guide
+        $scope.deleteGuide = function deleteGuide(activity) {
+            var box = bootbox.dialog({
+                title: 'Delete guide: ' + activity.guide.name + '?',
+                message: 'Are you sure you want to delete <strong>' + activity.guide.name + '</strong>? All the data will be permanently deleted!',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            HOTSGuideService.guideDelete(activity.guide._id).success(function (data) {
+                                if (data.success) {
+                                    activity.exists = false;
+                                    $scope.success = {
+                                        show: true,
+                                        msg: 'guide "' + activity.guide.name + '" deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
+        
+        $scope.deleteDeck = function deleteDeck(activity) {
+            var box = bootbox.dialog({
+                title: 'Delete deck: ' + activity.deck.name + '?',
+                message: 'Are you sure you want to delete <strong>' + activity.deck.name + '</strong>? All the data will be permanently deleted!',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            DeckService.deckDelete(activity.deck._id).success(function (data) {
+                                if (data.success) {
+                                    activity.exists = false;
+                                    $scope.success = {
+                                        show: true,
+                                        msg: 'deck "' + activity.deck.name + '" deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
     }
 ])
 .controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',  
@@ -601,12 +754,34 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.articles = dataArticles.articles;
     }
 ])
-.controller('ProfileDecksCtrl', ['$scope', 'bootbox', 'DeckService', 'dataDecks',  
-    function ($scope, bootbox, DeckService, dataDecks) {
+.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'dataDecks',  
+    function ($scope, $state, bootbox, DeckService, dataDecks) {
         $scope.decks = dataDecks.decks;
         
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        $scope.deckEdit = function ($event, deck) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            return $state.transitionTo('app.hs.deckBuilder.edit', { slug: deck.slug });
+        };
+        
         // delete deck
-        $scope.deckDelete = function deleteDeck(deck) {
+        $scope.deckDelete = function deleteDeck($event, deck) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
             var box = bootbox.dialog({
                 title: 'Delete deck: ' + deck.name + '?',
                 message: 'Are you sure you want to delete the deck <strong>' + deck.name + '</strong>?',
@@ -642,11 +817,107 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileGuidesCtrl', ['$scope', 'bootbox', 'HOTSGuideService', 'dataGuides',  
-    function ($scope, bootbox, HOTSGuideService, dataGuides) {
+.controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'dataGuides',  
+    function ($scope, $state, bootbox, HOTSGuideService, dataGuides) {
         $scope.guides = dataGuides.guides;
-        // delete guide
-        $scope.guideDelete = function deleteGuide(guide) {
+        
+        // guides
+        $scope.getGuideCurrentHero = function (guide) {
+            return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
+        };
+        
+        $scope.getGuideClass = function (guide) {
+            return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
+        };
+        
+        $scope.guidePrevHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+            
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
+            }
+            
+            guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
+        };
+
+        $scope.guideNextHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+            
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
+            }
+            
+            guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
+        };
+        
+        $scope.getTalents = function (hero, tier) {
+            var out = [];
+            
+            for (var i = 0; i < hero.hero.talents.length; i++) {
+                if (hero.hero.talents[i].tier === tier) {
+                    out.push(hero.hero.talents[i]);
+                }
+            }
+            
+            return out;
+        };
+        
+        $scope.selectedTalent = function (hero, tier, talent) {
+            return (hero.talents['tier' + tier]._id == talent._id);
+        };
+        
+        $scope.getTalent = function (hero, tier) {
+            for (var i = 0; i < hero.hero.talents.length; i++) {
+                if (hero.talents['tier' + tier] == hero.hero.talents[i]._id) {
+                    return hero.hero.talents[i];
+                }
+            }
+            return false;
+        };
+        
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        $scope.guideEdit = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            if (guide.guideType == 'hero') {
+                return $state.transitionTo('app.hots.guideBuilder.edit.hero', { slug: guide.slug });
+            } else {
+                return $state.transitionTo('app.hots.guideBuilder.edit.map', { slug: guide.slug });
+            }
+        };
+        
+        $scope.guideDelete = function deleteGuide($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+
             var box = bootbox.dialog({
                 title: 'Delete guide: ' + guide.name + '?',
                 message: 'Are you sure you want to delete the guide <strong>' + guide.name + '</strong>?',
@@ -679,7 +950,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             });
             box.modal('show');
-        }
+        };
     }
 ])
 .controller('ProfilePostsCtrl', ['$scope', 'dataPosts',  
@@ -1859,22 +2130,15 @@ angular.module('app.controllers', ['ngCookies'])
                 tierLength = $scope.snapshot.tiers.length,
                 maxTierLength = (tierLength > 2) ? 2 : tierLength;
             
-//            console.log('Populating matches', tierLength, maxTierLength);
-//            console.log("///////////////////////////////////////////////////////////////////////////////////");
             for (var i = 0; i < maxTierLength; i++) {
                 for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
-                    console.log($scope.snapshot.tiers[i].decks[j]);
                     out.push($scope.snapshot.tiers[i].decks[j]);
                 }
             }
-//            console.log(out);
-//            console.log("END POPULATEMATCHES");
             return out;
         }
         
         $scope.updateDND = function (list, index, d) {
-//            console.log("updateDND firing", d);
-//            console.log("///////////////////////////////////////////////////////////////////////////////////");
             list.splice(index, 1);
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
@@ -1886,35 +2150,27 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.removedDecks = [];
                 $scope.deckRanks();
             }, false);
-//            console.log("END UPDATEDND");
         }
         
         function updateMatchesDND (d) {
             var tierLength = $scope.snapshot.tiers.length;
             var maxTierLength = (tierLength > 2) ? 2 : tierLength;
-//            console.log('updateMatchesDND');
-//            console.log("///////////////////////////////////////////////////////////////////////////////////");
-
             
             for (var i = 0; i < maxTierLength; i++) {
                 for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
                     if ($scope.snapshot.tiers[i].decks[j].deck._id == d.deck._id) {
                         for (var k = 0; k < $scope.snapshot.matches.length; k++) {
                             if ($scope.snapshot.matches[k].for._id == d.deck._id || $scope.snapshot.matches[k].against._id == d.deck._id) {
-//                                console.log("END UPDATEMATCHESDND//exists", d.deck._id, $scope.snapshot.matches[k]);
                                 return;
                             }
                         }
                         $scope.selectedDecks.push(d);
                         $scope.tier = $scope.snapshot.tiers[i].tier;
-//                        console.log("END UPDATEMATCHESDND//adding");
                         return;
                     }
                 }
             }
             removeMatch(d.deck);
-            
-//            console.log("END UPDATEMATCHESDND//remove");
         }
         
         
@@ -2063,7 +2319,6 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 var dauthor = angular.copy(defaultAuthor);
                 dauthor.user = a;
-                console.log(dauthor);
                 $scope.snapshot.authors.push(dauthor);
             }
             
@@ -2136,7 +2391,6 @@ angular.module('app.controllers', ['ngCookies'])
                     if ($scope.tier < 3) {
                         $scope.matches.push($scope.selectedDecks[i]);
                         for (var j = 0; j < $scope.matches.length; j++) {
-//                            console.log(j);
                             $scope.snapshot.matches.push({
                                 'for': $scope.selectedDecks[i].deck,
                                 'against': $scope.matches[j].deck,
@@ -2472,7 +2726,6 @@ angular.module('app.controllers', ['ngCookies'])
                     if ($scope.snapshot.tiers[i].decks[j].deck._id == d.deck._id) {
                         for (var k = 0; k < $scope.snapshot.matches.length; k++) {
                             if ($scope.snapshot.matches[k].for._id == d.deck._id || $scope.snapshot.matches[k].against._id == d.deck._id) {
-                                console.log('hello');
                                 return;
                             }
                         }
@@ -2667,7 +2920,6 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 var dauthor = angular.copy(defaultAuthor);
                 dauthor.user = a;
-                console.log(dauthor);
                 $scope.snapshot.authors.push(dauthor);
             }
             
@@ -2691,7 +2943,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.removePrompt = function (t) {
                 var alertBox = bootbox.confirm("Are you sure you want to remove tier " + t.tier + "? All the deck data for this tier will be lost!", function (result) {
                     if (result) {
-                        console.log(result);    
                         $scope.$apply(function () {
                             $scope.removeTier(t);
                         });
@@ -2738,14 +2989,10 @@ angular.module('app.controllers', ['ngCookies'])
                     tierLength = tiers.length,
                     maxTierLength = (tierLength > 2) ? 2 : tierLength;
                 
-                console.log('Selected: ',$scope.selectedDecks);
-                console.log('Matches: ',$scope.matches);
-                
                 for (var i = 0; i < $scope.selectedDecks.length; i++) {
                     if ($scope.tier < 3) {
                         $scope.matches.push($scope.selectedDecks[i]);
                         for (var j = 0; j < $scope.matches.length; j++) {
-                            console.log(j);
                             $scope.snapshot.matches.push({
                                 'for': $scope.selectedDecks[i].deck,
                                 'against': $scope.matches[j].deck,
@@ -2759,7 +3006,6 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
                 for (var j = 0; j < $scope.removedDecks.length; j++) {
-                    console.log('Removing: ', $scope.removedDecks[j]);
                     $scope.removeDeck($scope.removedDecks[j]);
                 }
                 
@@ -2792,7 +3038,6 @@ angular.module('app.controllers', ['ngCookies'])
                     tierDeck = angular.copy(defaultTierDeck);
                     tierDeck.name = sel.name;
                 if (!$scope.isDeck(sel) && !$scope.isSelected(sel)) {
-                    console.log($scope.removedDecks);
                     for (var l = 0; l < $scope.removedDecks.length; l++) {
                         if (sel._id == $scope.removedDecks[l]._id) {
                             $scope.removedDecks.splice(l,1);
@@ -2903,7 +3148,6 @@ angular.module('app.controllers', ['ngCookies'])
                         for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].tech.length; j++) {
                             if (tech.orderNum == $scope.snapshot.tiers[i].decks[k].tech[j].orderNum) {
                                 if (!$scope.isCard(c)) {
-                                    console.log($scope.snapshot.tiers[i].decks[k].tech[j].cards.length);
                                     techCard.orderNum = $scope.snapshot.tiers[i].decks[k].tech[j].cards.length;
                                     $scope.snapshot.tiers[i].decks[k].tech[j].cards.push(techCard);
                                 } 
@@ -3043,7 +3287,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.updateDND = function (list, index) {
             list.splice(index, 1);
             for (var i = 0; i < list.length; i++) {
-                console.log(list[i].screenName, list[i].orderNum, i);
                 list[i].orderNum = i + 1;
             }
             AdminTeamService.updateOrder(list);
@@ -3051,7 +3294,6 @@ angular.module('app.controllers', ['ngCookies'])
         
         // delete member
         $scope.deleteMember = function deleteMember(member, arr) {
-            console.log(member);
             var box = bootbox.dialog({
                 title: 'Delete member: ' + member.screenName + ' - ' + member.fullName + '?',
                 message: 'Are you sure you want to delete the member <strong>' + member.screenName + ' - ' + member.fullName + '</strong>?',
@@ -3087,20 +3329,62 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('TeamPageCtrl', ['$scope', '$sce', 'data',
-    function ($scope, $sce, data) {
+.controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$templateCache', '$sce', 'data',
+    function ($scope, $compile, $timeout, $location, $anchorScroll, $templateCache, $sce, data) {
         $scope.members = data.members;
+        
+        $scope.hsMembers = data.hsMembers;
+        $scope.hotsMembers = data.hotsMembers;
+        $scope.csMembers = data.csMembers;
+        $scope.fgcMembers = data.fgcMembers;
+        $scope.fifaMembers = data.fifaMembers;
+        
+        if ($location.hash()) {
+            $timeout(function () {
+                $anchorScroll();
+            });
+        }
         
         for(var i = 0; i < $scope.members.length; i++) {
             $scope.members[i].description = $scope.members[i].description.replace(/(?:\r\n|\r|\n)/g, '<br />');
-;
+        }
+        
+        $scope.openLink = function ($event, link) {
+            $event.stopPropagation();
+            window.open(link, '_blank');
+        }
+        
+        $scope.getTitle = function (i) {
+            for (var j = 0; j < i.length && i[j] != "-"; j++) {}
+            i = i.slice(0,j);
+            return i;
         }
         
         $scope.getDescription = function (i) {
-            return $sce.trustAsHtml($scope.members[i].description);
+            var temp = i,
+                magicNumber = 180;
+            
+            if(i.length > magicNumber) {
+                if (i[magicNumber] != " ") {
+                    for (var j = 0; i[magicNumber+j] != " "; j++) {} 
+                    i = temp.slice(0,magicNumber+j);
+                } else {
+                    i = temp.slice(0,magicNumber);
+                }
+                i = i + "...";
+            }
+            return $sce.trustAsHtml(i);
         }
         
-        
+        $scope.showMember = function (member) {
+            $scope.member = member;
+            
+            var box = bootbox.dialog({
+                title: member.screenName,
+                className: 'member-modal',
+                message: $compile('<button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true">×</button><img class="responsive" src="../../img/team/{{member.photo}}" /><div class="wrapper-md content-wrapper "><h1 class="m-b-xs">{{member.screenName}}</h1><span class="btn-team-wrapper-modal"><a href="#" target="_blank" ng-click="openLink($event, \'https://twitter.com/\' + member.social.twitter)" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://twitch.tv/\' + member.social.twitch)" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://youtube.com/\' + member.social.youtube)" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://facebook.com/\' + member.social.facebook)" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://instagram.com/\' + member.social.instagram)" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a></span><h3>{{member.fullName}}</h3><p>{{member.description}}</p></div>')($scope)
+            });
+        }
         
 //        for (var i = 0; i < $scope.members.length; i++) {
 //            var str = $scope.members[i].description;
@@ -3183,8 +3467,6 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.member = data.member;
         
-        console.log($scope.member);
-        
         // photo upload
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
@@ -3228,6 +3510,129 @@ angular.module('app.controllers', ['ngCookies'])
                     AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' - ' + $scope.member.fullName + ' has been added successfully.' });
                     $state.go('app.admin.teams.list');
                 }
+            });
+        };
+    }
+])
+.controller('AdminVodListCtrl', ['$scope', 'data', 'AdminVodService',
+    function ($scope, data, AdminVodService) {
+        $scope.vods = data.vods;
+        
+        $scope.getDate = function (d) {
+            d = new Date(d);
+            return d;
+        }
+        
+        $scope.convertMonth = function (d) {
+            switch (d) {
+                case 0 : return "January"; break;
+                case 1 : return "February"; break;
+                case 2 : return "March"; break;
+                case 3 : return "April"; break;
+                case 4 : return "May"; break;
+                case 5 : return "June"; break;
+                case 6 : return "July"; break;
+                case 7 : return "August"; break;
+                case 8 : return "September"; break;
+                case 9 : return "October"; break;
+                case 10 : return "November"; break;
+                case 11 : return "December"; break;
+            }
+        }
+        
+        // delete deck
+        $scope.deleteVod = function deleteVos(vod) {
+            var box = bootbox.dialog({
+                title: 'Delete VOD: ' + vod.date + '?',
+                message: 'Are you sure you want to delete the VOD <strong>' + vod.date + '</strong>?',
+                buttons: {
+                    delete: {
+                        label: 'Delete',
+                        className: 'btn-danger',
+                        callback: function () {
+                            AdminVodService.vodRemove(vod._id).then(function (data) {
+                                if (data.success) {
+                                    var index = $scope.vods.indexOf(vod);
+                                    if (index !== -1) {
+                                        $scope.vods.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: vod.date + ' deleted successfully.'
+                                    };
+                                }
+                            });
+                        }
+                    },
+                    cancel: {
+                        label: 'Cancel',
+                        className: 'btn-default pull-left',
+                        callback: function () {
+                            box.modal('hide');
+                        }
+                    }
+                }
+            });
+            box.modal('show');
+        }
+    }
+])
+.controller('AdminVodAddCtrl', ['$scope', '$window', '$state', 'AdminVodService', 'AlertService',
+    function ($scope, $window, $state, AdminVodService, AlertService) {
+        
+        var defaultVod = {
+                date: {},
+                url: '',
+                subTitle: '',
+                vars: {
+                    list: ''
+                }
+            };
+        
+        $scope.isPlaylist = true;
+        $scope.vod = angular.copy(defaultVod);
+        
+        // save VOD
+        $scope.saveVod = function () {
+            AdminVodService.vodAdd($scope.vod).then(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                } else {
+                    AlertService.setSuccess({ show: true, msg: 'Video of the Day has been added successfully.' });
+                    $scope.showSuccess = true;
+                    $scope.vod = angular.copy(defaultVod);
+                    $scope.playlist = {
+                        vars: {
+                            list: ''
+                        }
+                    }
+                    $state.go('app.admin.vod.add');
+                }
+                $window.scrollTo(0,0);
+            });
+        };
+        
+    }
+])
+.controller('AdminVodEditCtrl', ['$scope', '$state', '$window', 'data', 'AdminVodService', 'AlertService',
+    function ($scope, $state, $window, data, AdminVodService, AlertService) {
+        data.vod.date = Date.parse(data.vod.date);
+        $scope.vod = data.vod;
+        $scope.isPlaylist = ($scope.vod.url != "") ? false : true;
+        
+        // save VOD
+        $scope.saveVod = function () {
+            AdminVodService.vodEdit($scope.vod).then(function (data) {
+                if (!data.success) {
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                } else {
+                    AlertService.setSuccess({ show: true, msg: 'Video of the Day has been edited successfully.' });
+                    $scope.showSuccess = true;
+                    $state.go('app.admin.vod.add');
+                }
+                $window.scrollTo(0,0);
             });
         };
     }
@@ -3351,15 +3756,69 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('AdminDeckAddCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data', 
-    function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, data) {
+.controller('AdminDeckBuilderClassCtrl', ['$scope', function ($scope) {
+    
+    var portraitSettings = ($scope.app.settings.secondaryPortrait != undefined) ? $scope.app.settings.secondaryPortrait : function() { 
+        $scope.app.settings.secondaryPortrait = [false,false,false,false,false,false,false,false,false];
+        return $scope.app.settings.secondaryPortrait;
+    };
+    
+    $scope.statdddde = 1;
+    
+    $scope.selectedHero = "";
+    $scope.klass = false;
+    $scope.heroes = [
+        { class: 'mage', hasSecondary: true, secondary: portraitSettings[0] },
+        { class: 'shaman', hasSecondary: false, secondary: portraitSettings[1] },
+        { class: 'warrior', hasSecondary: true, secondary: portraitSettings[2] },
+        { class: 'rogue', hasSecondary: false, secondary: portraitSettings[3] },
+        { class: 'paladin', hasSecondary: false, secondary: portraitSettings[4] },
+        { class: 'priest', hasSecondary: false, secondary: portraitSettings[5] },
+        { class: 'warlock', hasSecondary: false, secondary: portraitSettings[6] },
+        { class: 'hunter', hasSecondary: true, secondary: portraitSettings[7] },
+        { class: 'druid', hasSecondary: false, secondary: portraitSettings[8] }
+    ];
+    
+    $scope.selectHero = function (hero) {
+        (hero.class != $scope.selectedHero) ? $scope.selectedHero = hero.class : null;
+    }
+    
+    $scope.updateHero = function (secondary, index) {
+        portraitSettings[index] = secondary;
+        $scope.app.settings.secondaryPortrait[index] = secondary;
+    }
+}])
+.controller('AdminDeckAddCtrl', ['$state', '$scope', '$compile', '$q', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data', 
+    function ($state, $scope, $compile, $q, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, data) {
         // redirect back to class pick if no data
-        if (!data || !data.success) { $state.transitionTo('app.admin.hearthstone.decks.add'); return false; }
+        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
         
         // set default tab page
         $scope.step = 1;
         $scope.showManaCurve = false;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
+        
+        $scope.getDust = function (cards) {
+            var dust = 0;
+            for (var i = 0; i < cards.length; i++) {
+                dust += (cards[i].qty < 2) ? cards[i].dust : (cards[i].dust*2);
+            }
+            return dust
+        }
+        
+        $scope.isSecondary = function (klass) {
+            switch(klass) {
+                case 'mage': return $scope.app.settings.secondaryPortrait[0]; break;
+                case 'shaman': return $scope.app.settings.secondaryPortrait[1]; break;
+                case 'warrior': return $scope.app.settings.secondaryPortrait[2]; break;
+                case 'rogue': return $scope.app.settings.secondaryPortrait[3]; break;
+                case 'paladin': return $scope.app.settings.secondaryPortrait[4]; break;
+                case 'priest': return $scope.app.settings.secondaryPortrait[5]; break;
+                case 'warlock': return $scope.app.settings.secondaryPortrait[6]; break;
+                case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
+                case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
+            }
+        }
         
         // steps
         $scope.stepDesc = {
@@ -3370,6 +3829,8 @@ angular.module('app.controllers', ['ngCookies'])
             5: 'Provide a synopsis and title for your deck.'            
         };
         
+        $scope.type = 1;
+        $scope.basic = false;
         
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
@@ -3395,16 +3856,59 @@ angular.module('app.controllers', ['ngCookies'])
         };
 
         // load cards
+        var classCards = true;
+        
+        $scope.isClassCards = function () {
+            return classCards;
+        }
+        
         $scope.className = data.className;
         $scope.cards = data.cards;
         $scope.cards.current = $scope.cards.class;
-
+        
+        $scope.search = function() {
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+        }
+        
+        function updateCards (page, perpage, search, mechanics, mana, callback) {
+            $scope.fetching = true;
+            DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
+                $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+                $scope.classPagination.page = page;
+                $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+                $scope.neutralPagination.page = page;
+                $timeout(function () {
+                    $scope.cards.current = ($scope.isClassCards()) ? data.cards.class : data.cards.neutral;
+                    $scope.fetching = false;
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
         // page flipping
-        $scope.pagination = Pagination.new(6);
-        $scope.pagination.perpage = 10;
-        $scope.pagination.results = function () {
-            return ($scope.filtered) ? $scope.filtered.length : $scope.cards.current.length;
-        };
+        $scope.classPagination = AjaxPagination.new(15, data.classTotal,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
+                    d.resolve(data.classTotal);
+                });
+
+                return d.promise;
+            }
+        );
+        
+        $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
+            function (page, perpage) {
+                var d = $q.defer();
+                updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
+                    d.resolve(data.neutralTotal);
+                });
+                return d.promise;
+            }
+        );
         
         // filters
         $scope.filters = {
@@ -3413,11 +3917,17 @@ angular.module('app.controllers', ['ngCookies'])
             mana: 'all'
         };
         
+        $scope.setClassCards = function (b) {
+            classCards = b;
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+        }
+        
         $scope.mechanics = Hearthstone.mechanics;
         $scope.inMechanics = function (mechanic) {
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
         }
         $scope.toggleMechanic = function (mechanic) {
+            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
             var index = $scope.filters.mechanics.indexOf(mechanic);
             if (index === -1) {
                 $scope.filters.mechanics.push(mechanic);
@@ -3439,6 +3949,11 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // filter by mana
+        $scope.doFilterByMana = function (m) {
+            $scope.filters.mana = m;
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+        }
+        
         $scope.filters.byMana = function () {
             return function (item) {
                 switch ($scope.filters.mana) {
@@ -3460,42 +3975,35 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.getManaCost = function () {
             switch ($scope.filters.mana) {
-                    case 'all':
-                        return 'All';
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case '7+':
-                        return $scope.filters.mana;
-                }
+                case 'all':
+                    return 'All';
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case '7+':
+                    return $scope.filters.mana;
+            }
         }
         
         // deck
         $scope.deckTypes = Hearthstone.deckTypes;
         
-        // deck premium
-        $scope.deckPremium = [
-            { name: 'Yes', value: true },
-            { name: 'No', value: false }
-        ];
-        
-        // deck
+        //$scope.deck = DeckBuilder.new(data.className);
         $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && data.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new(data.className, $scope.app.settings.deck) : DeckBuilder.new(data.className);
         $scope.$watch('deck', function(){
             $scope.app.settings.deck = {
                 name: $scope.deck.name,
                 deckType: $scope.deck.deckType,
                 description: $scope.deck.description,
-                contentEarly: $scope.deck.contentEarly,
-                contentMid: $scope.deck.contentMid,
-                contentLate: $scope.deck.contentLate,
+                chapters: $scope.deck.chapters,
                 cards: $scope.deck.cards,
                 playerClass: $scope.deck.playerClass,
-                arena: $scope.deck.arena,
+                type: $scope.deck.type,
+                basic: $scope.deck.basic,
                 mulligans: $scope.deck.mulligans,
                 against: $scope.deck.against,
                 video: $scope.deck.video,
@@ -3504,7 +4012,7 @@ angular.module('app.controllers', ['ngCookies'])
         }, true);
         
         // current mulligan
-        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
+        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
         
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
@@ -3513,6 +4021,44 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.isMulliganSet = function (mulligan) {
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
+        
+        //chapters
+        var defaultChapter = {
+            title: '',
+            content: ''
+        };
+        
+        $scope.deck.chapters = [
+            defaultChapter
+        ]
+        
+        $scope.newChapter = function () {
+            var m = angular.copy(defaultChapter);
+            $scope.deck.chapters.push(m);
+        }
+        
+        $scope.removeChapter = function (index) {
+            $scope.deck.chapters.splice(index,1);
+        }
+        
+        //match-ups
+        var defaultMatchUp = {
+            deckName: '',
+            klass: '',
+            match: 0
+        };
+        
+        $scope.deck.matches = [];
+        
+        $scope.newMatch = function (klass) {
+            var m = angular.copy(defaultMatchUp);
+            m.klass = klass;
+            $scope.deck.matches.push(m);
+        }
+        
+        $scope.removeMatch = function (index) {
+            $scope.deck.matches.splice(index,1);
+        }
         
         // premium
         $scope.premiumTypes = [
@@ -3528,6 +4074,16 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
+        
+        $scope.getMulliganCards = function (coin) {
+            if (!$scope.currentMulligan) { return false; }
+            var m = $scope.currentMulligan;
+            return (coin) ? m.withCoin.cards : m.withoutCoin.cards;
+        };
+        
+        $scope.cardLeft = function ($index, coin) {
+            return (80 / ($scope.getMulliganCards(coin).length)) * $index;
+        };
         
         // featured
         $scope.featuredTypes = [
@@ -3545,26 +4101,54 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // save deck
+        var box;
         $scope.saveDeck = function () {
-            AdminDeckService.addDeck($scope.deck).success(function (data) {
-                if (!data.success) {
-                    $scope.errors = data.errors;
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
-                } else {
-                    $scope.app.settings.deck = null;
-                    AlertService.setSuccess({ show: true, msg: $scope.deck.name + ' has been added successfully.' });
-                    $state.go('app.admin.hearthstone.decks.list');
-                }
-            });
+            if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
+            if (!$scope.app.user.isLogged()) {
+                LoginModalService.showModal('login');
+            } else {
+                DeckBuilder.saveDeck($scope.deck).success(function (data) {
+                    if (data.success) {
+                        $scope.app.settings.deck = null;
+                        $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
+                    } else {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                        $window.scrollTo(0,0);
+                    }
+                });
+            }
         };
         
+        // login for modal
+        $scope.login = function login(email, password) {
+            if (email !== undefined && password !== undefined) {
+                UserService.login(email, password).success(function(data) {
+                    AuthenticationService.setLogged(true);
+                    AuthenticationService.setAdmin(data.isAdmin);
+                    AuthenticationService.setProvider(data.isProvider);
+                    
+                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+                    SubscriptionService.setTsPlan(data.subscription.plan);
+                    SubscriptionService.setExpiry(data.subscription.expiry);
+                    
+                    $window.sessionStorage.userID = data.userID;
+                    $window.sessionStorage.username = data.username;
+                    $window.sessionStorage.email = data.email;
+                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+                    box.modal('hide');
+                    $scope.saveDeck();
+                }).error(function() {
+                    $scope.showError = true;
+                });
+            }
+        }
     }
 ])
-.controller('AdminDeckEditCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data', 
-    function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, data) {
-        // redirect back to class pick if no data
-        if (!data || !data.success) { $state.transitionTo('app.admin.hearthstone.decks.list'); return false; }
+.controller('AdminDeckEditCtrl', ['$state', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data', 
+    function ($state, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, data) {
+          // redirect back to class pick if no data
+        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
         
         // set default tab page
         $scope.step = 1;
@@ -3580,7 +4164,28 @@ angular.module('app.controllers', ['ngCookies'])
             5: 'Provide a synopsis and title for your deck.'            
         };
         
-        // steps
+        $scope.isSecondary = function (klass) {
+            switch(klass) {
+                case 'mage': return $scope.app.settings.secondaryPortrait[0]; break;
+                case 'shaman': return $scope.app.settings.secondaryPortrait[1]; break;
+                case 'warrior': return $scope.app.settings.secondaryPortrait[2]; break;
+                case 'rogue': return $scope.app.settings.secondaryPortrait[3]; break;
+                case 'paladin': return $scope.app.settings.secondaryPortrait[4]; break;
+                case 'priest': return $scope.app.settings.secondaryPortrait[5]; break;
+                case 'warlock': return $scope.app.settings.secondaryPortrait[6]; break;
+                case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
+                case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
+            }
+        }
+        
+        $scope.getDust = function (cards) {
+            var dust = 0;
+            for (var i = 0; i < cards.length; i++) {
+                dust += cards[i].dust * cards[i].qty;
+            }
+            return dust
+        }
+        
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
         }
@@ -3605,16 +4210,66 @@ angular.module('app.controllers', ['ngCookies'])
         };
 
         // load cards
+        var classCards = true;
+        
+        $scope.isClassCards = function () {
+            return classCards;
+        }
+        
+        $scope.setClassCards = function (b) {
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+            $timeout(function () {
+                classCards = b;
+            });
+        }
+        
         $scope.className = data.deck.playerClass;
-        $scope.cards = data.cards;
-        $scope.cards.current = $scope.cards.class;
+        $scope.cards = {};
+//        $scope.cards.current = $scope.cards.class;
+        
+        $scope.search = function() {
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+        }
+        
+        function updateCards (page, perpage, search, mechanics, mana, callback) {
+            DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
+                $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+                $scope.classPagination.page = page;
+                $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+                $scope.neutralPagination.page = page;
+                $timeout(function () {
+                    $scope.cards.current = ($scope.isClassCards()) ? data.cards.class : data.cards.neutral;
 
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
         // page flipping
-        $scope.pagination = Pagination.new(6);
-        $scope.pagination.perpage = 10;
-        $scope.pagination.results = function () {
-            return ($scope.filtered) ? $scope.filtered.length : $scope.cards.current.length;
-        };
+        $scope.classPagination = AjaxPagination.new(15, data.classTotal,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
+                    d.resolve(data.classTotal);
+                });
+
+                return d.promise;
+            }
+        );
+        
+        $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
+                    d.resolve(data.neutralTotal);
+                });
+                return d.promise;
+            }
+        );
         
         // filters
         $scope.filters = {
@@ -3628,6 +4283,7 @@ angular.module('app.controllers', ['ngCookies'])
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
         }
         $scope.toggleMechanic = function (mechanic) {
+            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
             var index = $scope.filters.mechanics.indexOf(mechanic);
             if (index === -1) {
                 $scope.filters.mechanics.push(mechanic);
@@ -3649,6 +4305,11 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // filter by mana
+        $scope.doFilterByMana = function (m) {
+            $scope.filters.mana = m;
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+        }
+        
         $scope.filters.byMana = function () {
             return function (item) {
                 switch ($scope.filters.mana) {
@@ -3668,13 +4329,28 @@ angular.module('app.controllers', ['ngCookies'])
             }
         };
         
+        $scope.getManaCost = function () {
+            switch ($scope.filters.mana) {
+                case 'all':
+                    return 'All';
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case '7+':
+                    return $scope.filters.mana;
+            }
+        }
+        
         // deck
         $scope.deckTypes = Hearthstone.deckTypes;
-        
-        $scope.deck = DeckBuilder.new(data.deck.playerClass, data.deck);
+        $scope.deck = DeckBuilder.new(data.deck.className, data.deck);
         
         // current mulligan
-        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
+        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
         
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
@@ -3683,6 +4359,38 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.isMulliganSet = function (mulligan) {
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
+        
+        //chapters
+        var defaultChapter = {
+            title: '',
+            content: ''
+        };
+        
+        $scope.newChapter = function () {
+            var m = angular.copy(defaultChapter);
+            $scope.deck.chapters.push(m);
+        }
+        
+        $scope.removeChapter = function (index) {
+            $scope.deck.chapters.splice(index,1);
+        }
+        
+        //match-ups
+        var defaultMatchUp = {
+            deckName: '',
+            klass: '',
+            match: 0
+        };
+        
+        $scope.newMatch = function (klass) {
+            var m = angular.copy(defaultMatchUp);
+            m.klass = klass;
+            $scope.deck.matches.push(m);
+        }
+        
+        $scope.removeMatch = function (index) {
+            $scope.deck.matches.splice(index,1);
+        }
         
         // premium
         $scope.premiumTypes = [
@@ -3699,6 +4407,16 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
+        $scope.getMulliganCards = function (coin) {
+            if (!$scope.currentMulligan) { return false; }
+            var m = $scope.currentMulligan;
+            return (coin) ? m.withCoin.cards : m.withoutCoin.cards;
+        };
+        
+        $scope.cardLeft = function ($index, coin) {
+            return (80 / ($scope.getMulliganCards(coin).length)) * $index;
+        };
+        
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
@@ -3714,16 +4432,18 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
+        updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+        
         // save deck
         $scope.updateDeck = function () {
-            AdminDeckService.editDeck($scope.deck).success(function (data) {
-                if (!data.success) {
+            if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
+            DeckBuilder.updateDeck($scope.deck).success(function (data) {
+                if (data.success) {
+                    $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
+                } else {
                     $scope.errors = data.errors;
                     $scope.showError = true;
                     $window.scrollTo(0,0);
-                } else {
-                    AlertService.setSuccess({ show: true, msg: $scope.deck.name + ' has been updated successfully.' });
-                    $state.go('app.admin.hearthstone.decks.list');
                 }
             });
         };
@@ -3872,6 +4592,7 @@ angular.module('app.controllers', ['ngCookies'])
                 expiryDate: d
             },
             isProvider: false,
+            providerDescription: '',
             isAdmin: false,
             active: true
         };
@@ -4476,7 +5197,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.hasButton = false;
         
         $scope.summerNoteIsFull = function (e) {
-            console.log($scope.maxDescription - $scope.banner.description.length + ' ' + e);
         }
         
         $scope.options = {
@@ -4576,7 +5296,6 @@ angular.module('app.controllers', ['ngCookies'])
         
         
         $scope.summerNoteIsFull = function () {
-            console.log($scope.banner.description.length);
         }
         
         $scope.options = {
@@ -4644,15 +5363,67 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('DeckBuilderCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
-    function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data) {
+.controller('DeckBuilderClassCtrl', ['$scope', function ($scope) {
+    
+    if ($scope.app.settings.secondaryPortrait == undefined) {
+        $scope.app.settings.secondaryPortrait = [false,false,false,false,false,false,false,false,false];
+    }
+    var portraitSettings = $scope.app.settings.secondaryPortrait;
+
+    $scope.selectedHero = "";
+    $scope.klass = false;
+    $scope.heroes = [
+        { class: 'mage', hasSecondary: true, secondary: portraitSettings[0] },
+        { class: 'shaman', hasSecondary: false, secondary: portraitSettings[1] },
+        { class: 'warrior', hasSecondary: true, secondary: portraitSettings[2] },
+        { class: 'rogue', hasSecondary: false, secondary: portraitSettings[3] },
+        { class: 'paladin', hasSecondary: false, secondary: portraitSettings[4] },
+        { class: 'priest', hasSecondary: false, secondary: portraitSettings[5] },
+        { class: 'warlock', hasSecondary: false, secondary: portraitSettings[6] },
+        { class: 'hunter', hasSecondary: true, secondary: portraitSettings[7] },
+        { class: 'druid', hasSecondary: false, secondary: portraitSettings[8] }
+    ];
+    
+    $scope.selectHero = function (hero) {
+        (hero.class != $scope.selectedHero) ? $scope.selectedHero = hero.class : null;
+    }
+    
+    $scope.updateHero = function (secondary, index) {
+        portraitSettings[index] = secondary;
+        $scope.app.settings.secondaryPortrait[index] = secondary;
+    }
+}])
+.controller('DeckBuilderCtrl', ['$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data', 'toStep',
+    function ($q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data, toStep) {
         // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+        
+        $scope.isSecondary = function (klass) {
+            switch(klass) {
+                case 'mage': return $scope.app.settings.secondaryPortrait[0]; break;
+                case 'shaman': return $scope.app.settings.secondaryPortrait[1]; break;
+                case 'warrior': return $scope.app.settings.secondaryPortrait[2]; break;
+                case 'rogue': return $scope.app.settings.secondaryPortrait[3]; break;
+                case 'paladin': return $scope.app.settings.secondaryPortrait[4]; break;
+                case 'priest': return $scope.app.settings.secondaryPortrait[5]; break;
+                case 'warlock': return $scope.app.settings.secondaryPortrait[6]; break;
+                case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
+                case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
+            }
+        }
         
         // set default tab page
         $scope.step = 1;
         $scope.showManaCurve = false;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
+        
+        $scope.getDust = function (cards) {
+            var dust = 0;
+            for (var i = 0; i < cards.length; i++) {
+                dust += cards[i].dust * cards[i].qty;
+            }
+            return dust
+        }
         
         // steps
         $scope.stepDesc = {
@@ -4663,6 +5434,8 @@ angular.module('app.controllers', ['ngCookies'])
             5: 'Provide a synopsis and title for your deck.'            
         };
         
+        $scope.type = 1;
+        $scope.basic = false;
         
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
@@ -4688,16 +5461,59 @@ angular.module('app.controllers', ['ngCookies'])
         };
 
         // load cards
+        var classCards = true;
+        
+        $scope.isClassCards = function () {
+            return classCards;
+        }
+        
         $scope.className = data.className;
         $scope.cards = data.cards;
         $scope.cards.current = $scope.cards.class;
-
+        
+        $scope.search = function() {
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+        }
+        
+        function updateCards (page, perpage, search, mechanics, mana, callback) {
+            $scope.fetching = true;
+            DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
+                $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+                $scope.classPagination.page = page;
+                $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+                $scope.neutralPagination.page = page;
+                $timeout(function () {
+                    $scope.cards.current = ($scope.isClassCards()) ? data.cards.class : data.cards.neutral;
+                    $scope.fetching = false;
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
         // page flipping
-        $scope.pagination = Pagination.new(6);
-        $scope.pagination.perpage = 10;
-        $scope.pagination.results = function () {
-            return ($scope.filtered) ? $scope.filtered.length : $scope.cards.current.length;
-        };
+        $scope.classPagination = AjaxPagination.new(15, data.classTotal,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
+                    d.resolve(data.classTotal);
+                });
+
+                return d.promise;
+            }
+        );
+        
+        $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
+            function (page, perpage) {
+                var d = $q.defer();
+                updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
+                    d.resolve(data.neutralTotal);
+                });
+                return d.promise;
+            }
+        );
         
         // filters
         $scope.filters = {
@@ -4706,11 +5522,17 @@ angular.module('app.controllers', ['ngCookies'])
             mana: 'all'
         };
         
+        $scope.setClassCards = function (b) {
+            classCards = b;
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+        }
+        
         $scope.mechanics = Hearthstone.mechanics;
         $scope.inMechanics = function (mechanic) {
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
         }
         $scope.toggleMechanic = function (mechanic) {
+            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
             var index = $scope.filters.mechanics.indexOf(mechanic);
             if (index === -1) {
                 $scope.filters.mechanics.push(mechanic);
@@ -4732,6 +5554,11 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // filter by mana
+        $scope.doFilterByMana = function (m) {
+            $scope.filters.mana = m;
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+        }
+        
         $scope.filters.byMana = function () {
             return function (item) {
                 switch ($scope.filters.mana) {
@@ -4753,18 +5580,18 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.getManaCost = function () {
             switch ($scope.filters.mana) {
-                    case 'all':
-                        return 'All';
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case '7+':
-                        return $scope.filters.mana;
-                }
+                case 'all':
+                    return 'All';
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case '7+':
+                    return $scope.filters.mana;
+            }
         }
         
         // deck
@@ -4777,21 +5604,20 @@ angular.module('app.controllers', ['ngCookies'])
                 name: $scope.deck.name,
                 deckType: $scope.deck.deckType,
                 description: $scope.deck.description,
-                contentEarly: $scope.deck.contentEarly,
-                contentMid: $scope.deck.contentMid,
-                contentLate: $scope.deck.contentLate,
+                chapters: $scope.deck.chapters,
+                matches: $scope.deck.matches,
                 cards: $scope.deck.cards,
                 playerClass: $scope.deck.playerClass,
-                arena: $scope.deck.arena,
+                type: $scope.deck.type,
+                basic: $scope.deck.basic,
                 mulligans: $scope.deck.mulligans,
-                against: $scope.deck.against,
                 video: $scope.deck.video,
                 public: $scope.deck.public
             };
         }, true);
         
         // current mulligan
-        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
+        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
         
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
@@ -4801,6 +5627,22 @@ angular.module('app.controllers', ['ngCookies'])
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
         
+        $scope.isMulliganCard = function (coin, card) {
+            if (coin) {
+                for (var i = 0; i < $scope.currentMulligan.withCoin.cards.length; i++) {
+                    if ($scope.currentMulligan.withCoin.cards[i]._id == card._id) {
+                        return true;
+                    }
+                }
+            } else {
+                for (var i = 0; i < $scope.currentMulligan.withoutCoin.cards.length; i++) {
+                    if ($scope.currentMulligan.withoutCoin.cards[i]._id == card._id) {
+                        return true;
+                    }
+                }
+            }
+        }
+
         // premium
         $scope.premiumTypes = [
             { text: 'No', value: false },
@@ -4815,6 +5657,16 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
+        
+        $scope.getMulliganCards = function (coin) {
+            if (!$scope.currentMulligan) { return false; }
+            var m = $scope.currentMulligan;
+            return (coin) ? m.withCoin.cards : m.withoutCoin.cards;
+        };
+        
+        $scope.cardLeft = function ($index, coin) {
+            return (80 / ($scope.getMulliganCards(coin).length)) * $index;
+        };
         
         // featured
         $scope.featuredTypes = [
@@ -4836,11 +5688,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.saveDeck = function () {
             if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
+                LoginModalService.showModal('login');
             } else {
                 DeckBuilder.saveDeck($scope.deck).success(function (data) {
                     if (data.success) {
@@ -4856,34 +5704,48 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    $scope.saveDeck();
-                }).error(function() {
-                    $scope.showError = true;
-                });
-            }
-        }
+//        $scope.login = function login(email, password) {
+//            if (email !== undefined && password !== undefined) {
+//                UserService.login(email, password).success(function(data) {
+//                    AuthenticationService.setLogged(true);
+//                    AuthenticationService.setAdmin(data.isAdmin);
+//                    AuthenticationService.setProvider(data.isProvider);
+//                    
+//                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+//                    SubscriptionService.setTsPlan(data.subscription.plan);
+//                    SubscriptionService.setExpiry(data.subscription.expiry);
+//                    
+//                    $window.sessionStorage.userID = data.userID;
+//                    $window.sessionStorage.username = data.username;
+//                    $window.sessionStorage.email = data.email;
+//                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+//                    box.modal('hide');
+//                    $scope.saveDeck();
+//                }).error(function() {
+//                    $scope.showError = true;
+//                });
+//            }
+//        }
     }
 ])
-.controller('DeckEditCtrl', ['$state', '$scope', '$compile', '$window', 'Pagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'data',
-    function ($state, $scope, $compile, $window, Pagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, data) {
-        // redirect back to class pick if no data
-        if (!data || !data.success) { $state.transitionTo('app.home'); return false; }
+.controller('DeckEditCtrl', ['$state', '$scope', '$compile', '$window', '$timeout', '$q', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'data',
+    function ($state, $scope, $compile, $window, $timeout, $q, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, data) {
+          // redirect back to class pick if no data
+        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+        
+        $scope.isSecondary = function (klass) {
+            switch(klass) {
+                case 'mage': return $scope.app.settings.secondaryPortrait[0]; break;
+                case 'shaman': return $scope.app.settings.secondaryPortrait[1]; break;
+                case 'warrior': return $scope.app.settings.secondaryPortrait[2]; break;
+                case 'rogue': return $scope.app.settings.secondaryPortrait[3]; break;
+                case 'paladin': return $scope.app.settings.secondaryPortrait[4]; break;
+                case 'priest': return $scope.app.settings.secondaryPortrait[5]; break;
+                case 'warlock': return $scope.app.settings.secondaryPortrait[6]; break;
+                case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
+                case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
+            }
+        }
         
         // set default tab page
         $scope.step = 1;
@@ -4899,7 +5761,7 @@ angular.module('app.controllers', ['ngCookies'])
             5: 'Provide a synopsis and title for your deck.'            
         };
         
-        // steps
+        
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
         }
@@ -4924,16 +5786,66 @@ angular.module('app.controllers', ['ngCookies'])
         };
 
         // load cards
+        var classCards = true;
+        
+        $scope.isClassCards = function () {
+            return classCards;
+        }
+        
+        $scope.setClassCards = function (b) {
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+            $timeout(function () {
+                classCards = b;
+            });
+        }
+        
         $scope.className = data.deck.playerClass;
-        $scope.cards = data.cards;
-        $scope.cards.current = $scope.cards.class;
+        $scope.cards = {};
+//        $scope.cards.current = $scope.cards.class;
+        
+        $scope.search = function() {
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+        }
+        
+        function updateCards (page, perpage, search, mechanics, mana, callback) {
+            DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
+                $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+                $scope.classPagination.page = page;
+                $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+                $scope.neutralPagination.page = page;
+                $timeout(function () {
+                    $scope.cards.current = ($scope.isClassCards()) ? data.cards.class : data.cards.neutral;
 
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
         // page flipping
-        $scope.pagination = Pagination.new(6);
-        $scope.pagination.perpage = 10;
-        $scope.pagination.results = function () {
-            return ($scope.filtered) ? $scope.filtered.length : $scope.cards.current.length;
-        };
+        $scope.classPagination = AjaxPagination.new(15, data.classTotal,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
+                    d.resolve(data.classTotal);
+                });
+
+                return d.promise;
+            }
+        );
+        
+        $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
+                    d.resolve(data.neutralTotal);
+                });
+                return d.promise;
+            }
+        );
         
         // filters
         $scope.filters = {
@@ -4947,6 +5859,7 @@ angular.module('app.controllers', ['ngCookies'])
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
         }
         $scope.toggleMechanic = function (mechanic) {
+            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
             var index = $scope.filters.mechanics.indexOf(mechanic);
             if (index === -1) {
                 $scope.filters.mechanics.push(mechanic);
@@ -4968,6 +5881,11 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // filter by mana
+        $scope.doFilterByMana = function (m) {
+            $scope.filters.mana = m;
+            updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
+        }
+        
         $scope.filters.byMana = function () {
             return function (item) {
                 switch ($scope.filters.mana) {
@@ -4987,13 +5905,28 @@ angular.module('app.controllers', ['ngCookies'])
             }
         };
         
+        $scope.getManaCost = function () {
+            switch ($scope.filters.mana) {
+                case 'all':
+                    return 'All';
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case '7+':
+                    return $scope.filters.mana;
+            }
+        }
+        
         // deck
         $scope.deckTypes = Hearthstone.deckTypes;
-        
-        $scope.deck = DeckBuilder.new(data.deck.playerClass, data.deck);
+        $scope.deck = DeckBuilder.new(data.deck.className, data.deck);
         
         // current mulligan
-        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
+        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
         
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
@@ -5002,6 +5935,38 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.isMulliganSet = function (mulligan) {
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
+        
+        //chapters
+        var defaultChapter = {
+            title: '',
+            content: ''
+        };
+        
+        $scope.newChapter = function () {
+            var m = angular.copy(defaultChapter);
+            $scope.deck.chapters.push(m);
+        }
+        
+        $scope.removeChapter = function (index) {
+            $scope.deck.chapters.splice(index,1);
+        }
+        
+        //match-ups
+        var defaultMatchUp = {
+            deckName: '',
+            klass: '',
+            match: 0
+        };
+        
+        $scope.newMatch = function (klass) {
+            var m = angular.copy(defaultMatchUp);
+            m.klass = klass;
+            $scope.deck.matches.push(m);
+        }
+        
+        $scope.removeMatch = function (index) {
+            $scope.deck.matches.splice(index,1);
+        }
         
         // premium
         $scope.premiumTypes = [
@@ -5018,6 +5983,16 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
+        $scope.getMulliganCards = function (coin) {
+            if (!$scope.currentMulligan) { return false; }
+            var m = $scope.currentMulligan;
+            return (coin) ? m.withCoin.cards : m.withoutCoin.cards;
+        };
+        
+        $scope.cardLeft = function ($index, coin) {
+            return (80 / ($scope.getMulliganCards(coin).length)) * $index;
+        };
+        
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
@@ -5032,6 +6007,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
+        
+        updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
         
         // save deck
         $scope.updateDeck = function () {
@@ -5049,15 +6026,28 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'data', 'AuthenticationService', 'UserService', 'SubscriptionService', 'VoteService',
-    function ($scope, $state, $compile, $window, SnapshotService, data, AuthenticationService, UserService, SubscriptionService, VoteService) {
+.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'data', 'VoteService', 'LoginModalService',
+    function ($scope, $state, $compile, $window, SnapshotService, data, VoteService, LoginModalService) {
         
         $scope.snapshot = data;
         $scope.show = [];
         $scope.matchupName = [];
-        $scope.hasVoted = false;
+        $scope.voted = false;
+        $scope.hasVoted = function () {
+            for (var i = 0; i < $scope.snapshot.votes.length; i++) {
+                if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
+                    $scope.voted = true;
+                    break;
+                }
+            }
+        };
         $scope.show.comments = SnapshotService.getStorage();
-
+        $scope.$watch('app.user.isLogged()', function() {
+            updateCommentVotes();
+            $scope.hasVoted();
+        });
+        
+        $scope.SnapshotService = SnapshotService;
         
         var mouseOver = [],
             charts = [],
@@ -5084,10 +6074,6 @@ angular.module('app.controllers', ['ngCookies'])
         
         for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
             $scope.show[i+1] = false;
-        }
-        
-        $scope.log = function (a) {
-            console.log(a);
         }
         
         $scope.setView = function (height) {
@@ -5190,9 +6176,19 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.voteSnapshot = function () {
-            $scope.hasVoted = true;
-            $scope.snapshot.votesCount++;
-            SnapshotService.vote($scope.snapshot._id);
+            if (!$scope.app.user.isLogged()) {
+                LoginModalService.showModal('login', function() {
+                    if (!$scope.hasVoted()) {
+                        $scope.snapshot.votesCount++;
+                        SnapshotService.vote($scope.snapshot._id);
+                    }
+                });
+            } else {
+                $scope.snapshot.votesCount++;
+                SnapshotService.vote($scope.snapshot._id);
+                
+            }
+            $scope.voted = true;
         }
         
         // check for custom deck name or load normal name
@@ -5213,11 +6209,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             /******************************************* HAS VOTED *******************************************/
 
-            for (var i = 0; i < $scope.snapshot.votes.length; i++) {
-                if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
-                    $scope.hasVoted = true;
-                }
-            }
+            
 
             /******************************************* BUILD TIER MATCHES *******************************************/
             for (var j = 0; j < maxTierLength; j++) {
@@ -5250,14 +6242,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                var callback = function () {
+                LoginModalService.showModal('login', function () {
                     $scope.commentPost();
-                };
+                });
             } else {
                 SnapshotService.addComment($scope.snapshot, $scope.comment).success(function (data) {
                     if (data.success) {
@@ -5285,14 +6272,9 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                var callback = function () {
+                LoginModalService.showModal('login', function () {
                     $scope.voteComment(direction, snapshot);
-                };
+                });
             } else {
                 if (comment.author._id === $scope.app.user.getUserID()) {
                     bootbox.alert("You can't vote for your own content.");
@@ -5346,13 +6328,23 @@ angular.module('app.controllers', ['ngCookies'])
             return (match.for._id == id) ? match.against.playerClass : match.for.playerClass;
         }
         
-        init();
-        
         $scope.goToDeck = function ($event, slug) {
             $event.stopPropagation();
             var url = $state.href('app.hs.decks.deck', { slug: slug });
             window.open(url,'_blank');
         };
+        
+        $scope.goToTwitch = function ($event, usr) {
+            $event.stopPropagation();
+            var url = 'http://twitch.tv/' + usr
+            window.open(url, '_blank');
+        }
+        
+        $scope.goToTwitter = function ($event, usr) {
+            $event.stopPropagation();
+            var url = 'http://twitter.com/' + usr;
+            window.open(url, '_blank');
+        }
         
         $scope.toggleComments = function () {
             if (!SnapshotService.getStorage()) {
@@ -5363,29 +6355,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.show.comments = SnapshotService.getStorage();
         }
         
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    updateCommentVotes();
-                }).error(function() {
-                    $scope.showError = true;
-                });
-            }
-        }
+        init();
     }
 ])
 .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',
@@ -5451,8 +6421,8 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('ArticlesCtrl', ['$scope', '$state', 'ArticleService', 'data', 'MetaService',
-    function ($scope, $state, ArticleService, data, MetaService) {
+.controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'ArticleService', 'data', 'MetaService', 'AjaxPagination',
+    function ($scope, $state, $q, $timeout, ArticleService, data, MetaService, AjaxPagination) {
         //if (!data.success) { return $state.transitionTo('app.articles.list'); }
         
         // articles
@@ -5463,7 +6433,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.page = parseInt(data.page);
         $scope.perpage = data.perpage;
         $scope.search = data.search;
-        $scope.loading = false;
+        $scope.fetching = false;
         
         
         $scope.metaservice = MetaService;
@@ -5505,63 +6475,54 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // pagination
-        $scope.pagination = {
-            page: function () {
-                return $scope.page;
-            },
-            perpage: function () {
-                return $scope.perpage;
-            },
-            results: function () {
-                return $scope.total;
-            },
-            setPage: function (page) {
-                $scope.page = page;
-                $scope.getArticles();
-            },
-            pagesArray: function () {
-                var pages = [],
-                    start = 1,
-                    end = this.totalPages();
-                
-                if (this.totalPages() > 5) {
-                    if (this.page() < 3) {
-                        start = 1;
-                        end = start + 4;
-                    } else if (this.page() > this.totalPages() - 2) {
-                        end = this.totalPages();
-                        start = end - 4;
-                    } else {
-                        start = this.page() - 2;
-                        end = this.page() + 2;
+        function updateArticles (page, perpage, search, callback) {
+            $scope.fetching = true;
+            ArticleService.getArticles('all', 'all', ((page*perpage)-perpage), 12, search).then(function (data) {
+                $scope.articlePagination.total = data.total;
+                $scope.articlePagination.page = page;
+                $scope.articlePagination.perpage = perpage;
+                $timeout(function () {
+                    $scope.articles = data.articles;
+                    $scope.fetching = false;
+                    if (callback) {
+                        return callback(data);
                     }
-                    
-                }
-                
-                for (var i = start; i <= end; i++) {
-                    pages.push(i);
-                }
-                
-                return pages;
-            },
-            isPage: function (page) {
-                return (page === this.page());
-            },
-            totalPages: function (page) {
-                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 1;
-            },
-            
-        };
+                });
+            });
+        }
+        // page flipping
+        $scope.articlePagination = AjaxPagination.new(12, data.total,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateArticles(page, perpage, $scope.search, function (data) {
+                    d.resolve(data.total);
+                });
+
+                return d.promise;
+            }
+        );
         
         // verify valid page
-        if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
-            $scope.pagination.setPage(1);
-        }
+//        if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
+//            $scope.pagination.setPage(1);
+//        }
     }
 ])
-.controller('ArticleCtrl', ['$scope', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'UserService', 'ArticleService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'MetaService', 
-    function ($scope, $sce, data, $state, $compile, $window, bootbox, UserService, ArticleService, AuthenticationService, VoteService, SubscriptionService, MetaService) {
+.controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'ArticleService', 'VoteService', 'MetaService', 'LoginModalService',
+    function ($scope, $parse, $sce, data, $state, $compile, $window, bootbox, ArticleService, VoteService, MetaService, LoginModalService) {
+        
         $scope.article = data.article;
+        $scope.authorEmail = data.article.author.email;
+        $scope.ArticleService = ArticleService;
+        $scope.$watch('app.user.isLogged()', function() {
+            for (var i = 0; i < $scope.article.votes.length; i++) {
+                if ($scope.article.votes[i] == $scope.app.user.getUserID()) {
+                    checkVotes();
+                    updateCommentVotes();
+                }
+            }
+        });
         
         $scope.isPremium = function () {
             if (!$scope.article.premium.isPremium) { return false; }
@@ -5594,14 +6555,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.show = $scope.app.settings.show.article;
         $scope.$watch('show', function(){ $scope.app.settings.show.article = $scope.show; }, true);
         
-        // deck dust
-        $scope.getDust = function () {
-            var dust = 0;
-            for (var i = 0; i < $scope.article.deck.cards.length; i++) {
-                dust += $scope.article.deck.cards[i].qty * $scope.article.deck.cards[i].card.dust;
-            }
-            return dust;
-        };
         
         // related
         $scope.relatedActive = function () {
@@ -5613,58 +6566,60 @@ angular.module('app.controllers', ['ngCookies'])
             return false;
         };
         
-        // voting
-        $scope.voteDown = function (article) {
-            vote(-1, article);
-        };
+        $scope.getType = function (item) {
+            if (!item.articleType[1]) {
+                switch (item.articleType[0]) {
+                    case 'hs' : return 'hearthstone'; break;
+                    case 'ts' : return 'tempostorm'; break;
+                    case 'hots' : return 'heroes'; break;
+                }
+            } else {
+                return 'tempostorm';
+            }
+        }
         
-        $scope.voteUp = function (article) {
-            vote(1, article)       
-        };
-        
+        //vote
         var box,
             callback;
         
-        if ($scope.app.user.isLogged()) {
-            updateVotes();
-        }
-            
-        function updateVotes() {
-            checkVotes($scope.article);
-
-            function checkVotes (article) {
-                var vote = article.votes.filter(function (vote) {
-                    return ($scope.app.user.getUserID() === vote.userID);
-                })[0];
-
-                if (vote) {
-                    article.voted = vote.direction;
+        function checkVotes () {
+            for (var i = 0; i < $scope.article.votes.length; i++) {
+                if (typeof($scope.article.votes[i]) === 'object') {
+                    if ($scope.article.votes[i].userID == $scope.app.user.getUserID()) {
+                        $scope.hasVoted = true;
+                        break;
+                    }
+                } else {
+                    if ($scope.article.votes[i] == $scope.app.user.getUserID()) {
+                        $scope.hasVoted = true;
+                        break;
+                    }
                 }
             }
+            return $scope.hasVoted
         }
         
-        function vote(direction, article) {
+        $scope.voteArticle = function (article) {
+            vote(article);       
+        };
+        
+        function vote(article) {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
+                LoginModalService.showModal('login', function() {
+                    vote(article);
                 });
-                box.modal('show');
-                callback = function () {
-                    vote(direction, article);
-                };
             } else {
-                if (article.author._id === $scope.app.user.getUserID()) {
-                    bootbox.alert("You can't vote for your own content.");
-                    return false;
+                if (!$scope.hasVoted) {
+                    VoteService.voteArticle(article).then(function (data) {
+                        if (data.success) {
+                            $scope.hasVoted = true;
+                            article.votesCount = data.votesCount;
+                        }
+                    });
                 }
-                VoteService.voteArticle(direction, article).then(function (data) {
-                    if (data.success) {
-                        article.voted = direction;
-                        article.votesCount = data.votesCount;
-                    }
-                });
             }
+            checkVotes();
+            updateCommentVotes();
         };
         
         // comments
@@ -5675,14 +6630,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal('login', function () {
                     $scope.commentPost();
-                };
+                });
             } else {
                 ArticleService.addComment($scope.article, $scope.comment).success(function (data) {
                     if (data.success) {
@@ -5713,14 +6663,9 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
+                LoginModalService.showModal('login', function () {
+                    $scope.voteComment(direction, comment);
                 });
-                box.modal('show');
-                callback = function () {
-                    $scope.voteComment(direction, deck);
-                };
             } else {
                 if (comment.author._id === $scope.app.user.getUserID()) {
                     bootbox.alert("You can't vote for your own content.");
@@ -5733,6 +6678,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
+            checkVotes();
+            updateCommentVotes();
         };
         
         // get premium
@@ -5742,209 +6689,124 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
                 }
             } else {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
-                    $scope.getPremium(plan);
-                };
-            }
-        }
-        
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    updateVotes();
-                    updateCommentVotes();
-                    callback();
-                }).error(function() {
-                    $scope.showError = true;
+                LoginModalService.showModal('login', function () {
+                    if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
+                        $scope.getPremium(plan);
+                    }
                 });
             }
         }
     }
 ])
-.controller('DecksCtrl', ['$scope', '$state', 'Hearthstone', 'DeckService', 'data', 
-    function ($scope, $state, Hearthstone, DeckService, data) {
-        if (!data.success) { return $state.transitionTo('app.hs.decks.list'); }
+.controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'DeckService', 'dataDecksTempostorm', 'dataDecksCommunity', 
+    function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, DeckService, dataDecksTempostorm, dataDecksCommunity) {
+        $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
         
         // decks
-        $scope.decks = data.decks;
-        $scope.total = data.total;
-        $scope.klass = data.klass;
-        $scope.page = parseInt(data.page);
-        $scope.perpage = data.perpage;
-        $scope.search = data.search;
-        $scope.age = data.age;
-        $scope.order = data.order;
-
-        $scope.hasSearch = function () {
-            return (data.search) ? data.search.length : false;
-        }
-        
-        
-        $scope.metaservice.setOg('https://tempostorm.com/decks');
-        
-        
-        // advanced filters
-        if (!$scope.app.settings.show.decks) {
-            $scope.app.settings.show.decks = {
-                advanced: false
-            };
-        }
-
-        $scope.toggleAdvanced = function () {
-            $scope.app.settings.show.decks.advanced = !$scope.app.settings.show.decks.advanced;
-        }
-        
-        $scope.showAdvanced = function () {
-            return $scope.app.settings.show.decks.advanced;
-        }
-        
-        $scope.loading = false;
-
-        $scope.setKlass = function (klass) {
-            $scope.klass = klass;
-            $scope.page = 1;
-            $scope.getDecks();
-        };
+        $scope.deckSearch = '';
+        $scope.tempostormDecks = dataDecksTempostorm.decks;
+        $scope.communityDecks = dataDecksCommunity.decks;
         
         // filters
-        $scope.getFilter = function (name, value) {
-            var filter = $scope.filters.all[name];
-            for (var i = 0; i < filter.length; i++) {
-                if (filter[i].value == value) {
-                    return filter[i];
-                }
-            }
-            return filter[0];
-        }
-
         $scope.filters = {
-            all: {
-                age: [
-                    { name: 'All Decks', value: 'all' },
-                    { name: '7 Days', value: '7' },
-                    { name: '15 Days', value: '15' },
-                    { name: '30 Days', value: '30' },
-                    { name: '60 Days', value: '60' },
-                    { name: '90 Days', value: '90' }
-                ],
-                order: [
-                    { name: 'Highest Ranked', value: 'high' },
-                    { name: 'Lowest Ranked', value: 'low' },
-                    { name: 'Newest Decks', value: 'new' },
-                    { name: 'Oldest Decks', value: 'old' }
-                ]
-            }
+            classes: [],
+            search: ''
         };
-        $scope.filters.age = $scope.getFilter('age', $scope.age);
-        $scope.filters.order = $scope.getFilter('order', $scope.order);
+        $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
         
-        $scope.getDecks = function () {
-            var params = {};
-            
-            if ($scope.search) {
-                params.s = $scope.search;
+        var initializing = true;
+        $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            if (initializing) {
+                $timeout(function () {
+                    initializing = false;
+                });
+            } else {
+                updateTempostormDecks(1, 4);
+                updateCommunityDecks(1, 12);
             }
-            
-            if ($scope.page !== 1) {
-                params.p = $scope.page;
-            }
-            
-            if ($scope.klass != 'all') {
-                params.k = $scope.klass;
-            }
-            
-            if ($scope.filters.age.value !== 'all') {
-                params.a = $scope.filters.age.value;
-            }
-            
-            if ($scope.filters.order.value !== 'high') {
-                params.o = $scope.filters.order.value;
-            }
-            
-            $scope.loading = true;
-            $state.transitionTo('app.hs.decks.list', params);
+        }, true);
+        
+        $scope.dustFormatted = function (dust) {
+            return Util.numberWithCommas(dust);
+        }
+        
+        $scope.newSearch = function () {
+            $scope.filters.search = $scope.deckSearch;
         }
         
         // pagination
-        $scope.pagination = {
-            page: function () {
-                return $scope.page;
-            },
-            perpage: function () {
-                return $scope.perpage;
-            },
-            results: function () {
-                return $scope.total;
-            },
-            setPage: function (page) {
-                $scope.page = page;
-                $scope.getDecks();
-            },
-            pagesArray: function () {
-                var pages = [],
-                    start = 1,
-                    end = this.totalPages();
-                
-                if (this.totalPages() > 5) {
-                    if (this.page() < 3) {
-                        start = 1;
-                        end = start + 4;
-                    } else if (this.page() > this.totalPages() - 2) {
-                        end = this.totalPages();
-                        start = end - 4;
-                    } else {
-                        start = this.page() - 2;
-                        end = this.page() + 2;
-                    }
-                    
-                }
-                
-                for (var i = start; i <= end; i++) {
-                    pages.push(i);
-                }
-                
-                return pages;
-            },
-            isPage: function (page) {
-                return (page === this.page());
-            },
-            totalPages: function (page) {
-                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 1;
-            },
-            
-        };
+        function updateTempostormDecks (page, perpage, callback) {
+            DeckService.getDecksFeatured($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
+                $scope.tempostormPagination.total = data.total;
+                $scope.tempostormPagination.page = page;
+                $timeout(function () {
+                    $scope.tempostormDecks = data.decks;
 
-        // verify valid page
-        if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
-            $scope.pagination.setPage(1);
-        }   
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
+        $scope.tempostormPagination = AjaxPagination.new(4, dataDecksTempostorm.total,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateTempostormDecks(page, perpage, function (data) {
+                    d.resolve(data.total);
+                });
+
+                return d.promise;
+            }
+        );
+        
+        function updateCommunityDecks (page, perpage, callback) {
+            DeckService.getDecksCommunity($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
+                $scope.communityPagination.total = data.total;
+                $scope.communityPagination.page = page;
+                $timeout(function () {
+                    $scope.communityDecks = data.decks;
+
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
+        $scope.communityPagination = AjaxPagination.new(12, dataDecksCommunity.total,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateCommunityDecks(page, perpage, function (data) {
+                    d.resolve(data.total);
+                });
+
+                return d.promise;
+            }
+        );
+        
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 ])
-.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'UserService', 'DeckService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
-    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, UserService, DeckService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
+.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'DeckService', 'VoteService', 'data', 'MetaService', 'LoginModalService',
+    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, DeckService, VoteService, data, MetaService, LoginModalService) {
         if (!data || !data.success) { return $state.go('app.hs.decks.list'); }
 
         // load deck
         $scope.deck = data.deck;
+        $scope.DeckService = DeckService;
         
         $scope.premiumTypes = [
             { text: 'No', value: false },
@@ -5994,7 +6856,15 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.coin = !$scope.coin;
         }
         
-        $scope.currentMulligan = false;
+        $scope.getFirstMulligan = function () {
+            var mulligans = $scope.deck.mulligans;
+            for (var i = 0; i < mulligans.length; i++) {
+                if ($scope.isMulliganSet(mulligans[i]) === true) {
+                    return mulligans[i];
+                }
+            }
+            return false;
+        }
         
         $scope.getMulligan = function (klass) {
             var mulligans = $scope.deck.mulligans;
@@ -6028,11 +6898,11 @@ angular.module('app.controllers', ['ngCookies'])
             if (!$scope.anyMulliganSet()) { return false; }
             if (!$scope.currentMulligan) { return false; }
             var cards = ($scope.coin) ? $scope.currentMulligan.withCoin.cards : $scope.currentMulligan.withoutCoin.cards;
-            
+
             for (var i = 0; i < cards.length; i++) {
                 if (cards[i]._id === card.card._id) { return false; }
             }
-            
+
             return true;
         }
         
@@ -6056,28 +6926,6 @@ angular.module('app.controllers', ['ngCookies'])
             return $scope.getMulliganCards().length * 80 / 2;
         };
         
-        // strong / weak
-        $scope.hasStrong = function () {
-            var strong = $scope.deck.against.strong;
-            for (var i = 0; i < strong.length; i++) {
-                if (strong[i].isStrong) {
-                    return true;
-                }
-            }
-            
-            return false;
-        };
-        $scope.hasWeak = function () {
-            var weak = $scope.deck.against.weak;
-            for (var i = 0; i < weak.length; i++) {
-                if (weak[i].isWeak) {
-                    return true;
-                }
-            }
-            
-            return false;
-        };
-        
         // charts
         $scope.charts = {
             colors: ['rgba(151,187,205,1)', 'rgba(151,187,205,1)', 'rgba(151,187,205,1)', 'rgba(151,187,205,1)']
@@ -6093,6 +6941,17 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getContent = function (content) {
             return $sce.trustAsHtml(content);
         };
+        
+        
+        //matches
+        $scope.mouseOver = '';
+        $scope.setMouseOver = function (deck) {
+            (deck != false) ? $scope.mouseOver = deck : $scope.mouseOver = false;
+        }
+        
+        $scope.getMouseOver = function (deck) {
+            return $scope.mouseOver;
+        }
         
         // deck dust
         $scope.deck.getDust = function () {
@@ -6158,14 +7017,9 @@ angular.module('app.controllers', ['ngCookies'])
                 
         function vote(direction, deck) {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal('login', function () {
                     vote(direction, deck);
-                };
+                });
             } else {
                 if (deck.author._id === $scope.app.user.getUserID()) {
                     bootbox.alert("You can't vote for your own content.");
@@ -6178,71 +7032,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
-        };
-        
-        // comments
-        var defaultComment = {
-            comment: ''
-        };
-        $scope.comment = angular.copy(defaultComment);
-        
-        $scope.commentPost = function () {
-            if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
-                    $scope.commentPost();
-                };
-            } else {
-                DeckService.addComment($scope.deck, $scope.comment).success(function (data) {
-                    if (data.success) {
-                        $scope.deck.comments.push(data.comment);
-                        $scope.comment.comment = '';
-                    }
-                });
-            }
-        };
-                
-        updateCommentVotes();
-        function updateCommentVotes() {
-            $scope.deck.comments.forEach(checkVotes);
-            
-            function checkVotes (comment) {
-                var vote = comment.votes.filter(function (vote) {
-                    return ($scope.app.user.getUserID() === vote.userID);
-                })[0];
-                
-                if (vote) {
-                    comment.voted = vote.direction;
-                }
-            }
-        }
-                
-        $scope.voteComment = function (direction, comment) {
-            if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
-                    $scope.voteComment(direction, deck);
-                };
-            } else {
-                if (comment.author._id === $scope.app.user.getUserID()) {
-                    bootbox.alert("You can't vote for your own content.");
-                    return false;
-                }
-                VoteService.voteComment(direction, comment).then(function (data) {
-                    if (data.success) {
-                        comment.voted = direction;
-                        comment.votesCount = data.votesCount;
-                    }
-                });
-            }
+            updateCommentVotes();
+            updateVotes();
         };
         
         // get premium
@@ -6252,38 +7043,10 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
                 }
             } else {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
-                    $scope.getPremium(plan);
-                };
-            }
-        }
-        
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    updateVotes();
-                    callback();
-                }).error(function() {
-                    $scope.showError = true;
+                LoginModalService.showModal('login', function () {
+                    if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
+                        $scope.getPremium(plan);
+                    }
                 });
             }
         }
@@ -8123,243 +8886,471 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSHomeCtrl', ['$scope', 'dataBanners', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 
-    function ($scope, dataBanners, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService) {
+.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 
+    function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService) {
         // data
+        $scope.heroes = dataHeroes.heroes;
+        $scope.maps = dataMaps.maps;
         $scope.articles = dataArticles.articles;
         $scope.guidesCommunity = dataGuidesCommunity.guides;
         $scope.guidesFeatured = dataGuidesFeatured.guides;
-        $scope.loading = {
-            articles: false,
-            community: false,
-            featured: false
+        
+        $scope.filters = {
+            roles: [],
+            universes: [],
+            search: '',
+            heroes: [],
+            map: false
         };
         
-        // banner
-        $scope.banner = {
-            current: 0,
-            direction: 'left',
-            slides: dataBanners.banners,
-            setCurrent: function (current) {
-                this.direction = 'right';
-                this.current = current;
-            },
-            next: function () {
-                this.direction = 'right';
-                this.current = (this.current < (this.slides.length - 1)) ? ++this.current : 0;
-            },
-            prev: function () {
-                this.direction = 'left';
-                this.current = (this.current > 0) ? --this.current : this.slides.length - 1;
-            }
-        };
-        
-        // content
-        $scope.hero = 'all';
-        $scope.setHero = function (hero) {
-            $scope.hero = hero;
-            $scope.loading = {
-                articles: true,
-                community: true,
-                featured: true
-            };
-            
-            ArticleService.getArticles('hots', hero, 1, 9).then(function (data) {
-                $scope.articles = data.articles;
-                $scope.loading.articles = false;
-            });
-
-            HOTSGuideService.getGuidesCommunity(hero, 1, 10).then(function (data) {
-                $scope.guidesCommunity = data.guides;
-                $scope.loading.community = false;
-            });
-            
-            HOTSGuideService.getGuidesFeatured(hero, 1, 10).then(function (data) {
-                $scope.guidesFeatured = data.guides;
-                $scope.loading.featured = false;
-            });
-        };
-    }
-])
-.controller('HOTSGuidesListCtrl', ['$scope', '$state', 'data', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, data, dataHeroes, dataMaps) {
-        if (!data.success) { return $state.transitionTo('app.hots.guides.list'); }
-        
-        // guides
-        $scope.guides = data.guides;
-        $scope.total = data.total;
-        $scope.page = parseInt(data.page);
-        $scope.perpage = data.perpage;
-        $scope.search = data.search;
-        $scope.age = data.age;
-        $scope.order = data.order;
-        $scope.hero = data.hero;
-        $scope.guideType = data.guideType;
-        $scope.map = data.map;
-
-        $scope.hasSearch = function () {
-            return (data.search) ? data.search.length : false;
-        }
-        
-        // advanced filters
-        if (!$scope.app.settings.show.guides) {
-            $scope.app.settings.show.guides = {
-                advanced: false
-            };
-        }
-
-        $scope.toggleAdvanced = function () {
-            $scope.app.settings.show.guides.advanced = !$scope.app.settings.show.guides.advanced;
-        }
-        
-        $scope.showAdvanced = function () {
-            return $scope.app.settings.show.guides.advanced;
-        }
-        
-        $scope.loading = false;
-
-        // filters
-        $scope.getFilter = function (name, value) {
-            var filter = $scope.filters.all[name];
-            for (var i = 0; i < filter.length; i++) {
-                if (filter[i].value == value) {
-                    return filter[i];
+        // filtering
+        function hasFilterRole (role) {
+            for (var i = 0; i < $scope.filters.roles.length; i++) {
+                if ($scope.filters.roles[i] == role) {
+                    return true;
                 }
             }
-            return filter[0];
-        }
-        
-        function dataToFilter (heroes) {
-            var out = [];
-            for (var i = 0; i < heroes.length; i++) {
-                out.push({ name: heroes[i].name, value: heroes[i].className });
-            }
-            return out;
-        }
-
-        $scope.filters = {
-            all: {
-                age: [
-                    { name: 'All Guides', value: 'all' },
-                    { name: '7 Days', value: '7' },
-                    { name: '15 Days', value: '15' },
-                    { name: '30 Days', value: '30' },
-                    { name: '60 Days', value: '60' },
-                    { name: '90 Days', value: '90' }
-                ],
-                order: [
-                    { name: 'Highest Ranked', value: 'high' },
-                    { name: 'Lowest Ranked', value: 'low' },
-                    { name: 'Newest Decks', value: 'new' },
-                    { name: 'Oldest Decks', value: 'old' }
-                ],
-                heroes: [{ name: 'All Heroes', value: 'all' }].concat(dataToFilter(dataHeroes.heroes)),
-                guideType: [
-                    { name: 'All Guides', value: 'all' },
-                    { name: 'Hero', value: 'hero' },
-                    { name: 'Map', value: 'map' }
-                ],
-                maps: [{ name: 'All Maps', value: 'all' }].concat(dataToFilter(dataMaps.maps)),
-            }
+            return false;
         };
-        $scope.filters.age = $scope.getFilter('age', $scope.age);
-        $scope.filters.order = $scope.getFilter('order', $scope.order);
-        $scope.filters.hero = $scope.getFilter('heroes', $scope.hero);
-        $scope.filters.guideType = $scope.getFilter('guideType', $scope.guideType);
-        $scope.filters.map = $scope.getFilter('maps', $scope.map);
+
+        function hasFilterUniverse (universe) {
+            for (var i = 0; i < $scope.filters.universes.length; i++) {
+                if ($scope.filters.universes[i] == universe) {
+                    return true;
+                }
+            }
+            return false;
+        };
         
-        $scope.getGuides = function () {
-            var params = {};
+        function hasFilterSearch (hero) {
+            var filtered = ($scope.filters.search && $scope.filters.search.length) ? $filter('filter')($scope.heroes, { name: $scope.filters.search }) : $scope.heroes;
+            return (filtered.indexOf(hero) === -1);
+        }
+        
+        function getFilters () {
+            var filters = [];
             
-            if ($scope.search) {
-                params.s = $scope.search;
-            }
-            
-            if ($scope.page !== 1) {
-                params.p = $scope.page;
-            }
-            
-            if ($scope.filters.guideType != 'all') {
-                params.t = $scope.filters.guideType.value;
+            // check for no filters
+            if (!$scope.filters.roles.length && 
+                !$scope.filters.universes.length && 
+                !$scope.filters.heroes.length && 
+                !$scope.filters.map) {
+                return false;
             }
 
-            if ($scope.filters.hero != 'all') {
-                params.h = $scope.filters.hero.value;
+            // heroes
+            if ($scope.filters.heroes.length) {
+                for (var i = 0; i < $scope.filters.heroes.length; i++) {
+                    filters.push($scope.filters.heroes[i]._id);
+                }
+            } else if ($scope.filters.roles.length || $scope.filters.universes.length) {
+                for (var i = 0; i < $scope.heroes.length; i++) {
+                    if (!isFiltered($scope.heroes[i])) {
+                        filters.push($scope.heroes[i]._id);
+                    }
+                }
             }
             
-            if ($scope.filters.map != 'all') {
-                params.m = $scope.filters.map.value;
+            // maps
+            if ($scope.filters.map) {
+                filters.push($scope.filters.map._id);
             }
             
-            if ($scope.filters.age.value !== 'all') {
-                params.a = $scope.filters.age.value;
+            return filters;
+        }
+        
+        function isFiltered (hero) {
+            if ($scope.filters.roles.length && !hasFilterRole(hero.role)) {
+                return true;
+            }
+            if ($scope.filters.universes.length && !hasFilterUniverse(hero.universe)) {
+                return true;
+            }
+            if ($scope.filters.search.length && hasFilterSearch(hero)) {
+                return true;
+            }
+            return false;
+        };
+        
+        var initializing = true;
+        $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            if (initializing) {
+                $timeout(function () {
+                    initializing = false;
+                });
+            } else {
+                // article filters
+                var articleFilters = [];
+                for (var i = 0; i < $scope.heroes.length; i++) {
+                    if (!isFiltered($scope.heroes[i])) {
+                        articleFilters.push($scope.heroes[i].name);
+                    }
+                }
+                
+                // load articles
+                ArticleService.getArticles('hots', articleFilters, 0, 6).then(function (data) {
+                    $timeout(function () {
+                        $scope.articles = data.articles;
+                    });
+                });
+                
+                // load tempostorm guides
+                HOTSGuideService.getGuidesFeatured(getFilters(), 0, 10, $scope.filters.search).then(function (data) {
+                    $timeout(function () {
+                        $scope.guidesFeatured = data.guides;
+                    });
+                });
+                
+                // load community guides
+                HOTSGuideService.getGuidesCommunity(getFilters(), 0, 10, $scope.filters.search, false).then(function (data) {
+                    $timeout(function () {
+                        $scope.guidesCommunity = data.guides;
+                    });
+                });
+            }
+        }, true);
+        
+        // guides
+        $scope.getGuideCurrentHero = function (guide) {
+            return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
+        };
+        
+        $scope.getGuideClass = function (guide) {
+            return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
+        };
+        
+        $scope.guidePrevHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+            
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
             }
             
-            if ($scope.filters.order.value !== 'high') {
-                params.o = $scope.filters.order.value;
+            guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
+        };
+
+        $scope.guideNextHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+            
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
             }
             
-            $scope.loading = true;
-            $state.transitionTo('app.hots.guides.list', params);
+            guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
+        };
+        
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+])
+.controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
+    function ($q, $scope, $state, $timeout, $filter, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
+        $scope.communityGuides = dataCommunityGuides.guides;
+        $scope.topGuides = (dataTopGuide.total) ? dataTopGuide.guides : false;
+        $scope.tempostormGuides = dataTempostormGuides.guides;
+        
+        // filtering
+        $scope.heroes = dataHeroes.heroes;
+        $scope.maps = dataMaps.maps;
+        $scope.filters = {
+            roles: [],
+            universes: [],
+            search: '',
+            heroes: [],
+            map: false
+        };
+        
+        var initializing = true;
+        $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            if (initializing) {
+                $timeout(function () {
+                    initializing = false;
+                });
+            } else {
+                // generate filters
+                var guideFilters = [];
+                for (var i = 0; i < $scope.filters.heroes.length; i++) {
+                    guideFilters.push($scope.filters.heroes[i]._id);
+                }
+                if ($scope.filters.map) {
+                    guideFilters.push($scope.filters.map._id);
+                }
+                
+                updateTopGuide();
+                updateTempostormGuides(1, 4);
+                updateCommunityGuides(1, 10);
+            }
+        }, true);
+        
+        // top guide
+        $scope.getTopGuideHeroBg = function (guide) {
+            return ($scope.app.bootstrapWidth !== 'xs') ? $scope.getGuideCurrentHero(guide).hero.className : '';
+        };
+        
+        $scope.isLarge = function () {
+            var width = $scope.app.bootstrapWidth;
+            return (width === 'lg' || width === 'md') ? 'large' : '';
+        };
+        
+        // guides
+        $scope.getGuideCurrentHero = function (guide) {
+            return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
+        };
+        
+        $scope.getGuideClass = function (guide) {
+            return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
+        };
+        
+        $scope.guidePrevHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+            
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
+            }
+            
+            guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
+        };
+
+        $scope.guideNextHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+            
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
+            }
+            
+            guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
+        };
+        
+        $scope.getTalents = function (hero, tier) {
+            var out = [];
+            
+            for (var i = 0; i < hero.hero.talents.length; i++) {
+                if (hero.hero.talents[i].tier === tier) {
+                    out.push(hero.hero.talents[i]);
+                }
+            }
+            
+            return out;
+        };
+        
+        $scope.selectedTalent = function (hero, tier, talent) {
+            return (hero.talents['tier' + tier]._id == talent._id);
+        };
+        
+        $scope.getTalent = function (hero, tier) {
+            for (var i = 0; i < hero.hero.talents.length; i++) {
+                if (hero.talents['tier' + tier] == hero.hero.talents[i]._id) {
+                    return hero.hero.talents[i];
+                }
+            }
+            return false;
+        };
+        
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+                
+        // filtering
+        function hasFilterRole (role) {
+            for (var i = 0; i < $scope.filters.roles.length; i++) {
+                if ($scope.filters.roles[i] == role) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        function hasFilterUniverse (universe) {
+            for (var i = 0; i < $scope.filters.universes.length; i++) {
+                if ($scope.filters.universes[i] == universe) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        
+        function hasFilterSearch (hero) {
+            var filtered = ($scope.filters.search && $scope.filters.search.length) ? $filter('filter')($scope.heroes, { name: $scope.filters.search }) : $scope.heroes;
+            return (filtered.indexOf(hero) === -1);
+        }
+        
+        function isFiltered (hero) {
+            if ($scope.filters.roles.length && !hasFilterRole(hero.role)) {
+                return true;
+            }
+            if ($scope.filters.universes.length && !hasFilterUniverse(hero.universe)) {
+                return true;
+            }
+            if ($scope.filters.search.length && hasFilterSearch(hero)) {
+                return true;
+            }
+            return false;
+        };
+        
+        function getFilters () {
+            var filters = [];
+            
+            // check for no filters
+            if (!$scope.filters.roles.length && 
+                !$scope.filters.universes.length && 
+                !$scope.filters.heroes.length && 
+                !$scope.filters.map) {
+                return false;
+            }
+
+            // heroes
+            if ($scope.filters.heroes.length) {
+                for (var i = 0; i < $scope.filters.heroes.length; i++) {
+                    filters.push($scope.filters.heroes[i]._id);
+                }
+            } else if ($scope.filters.roles.length || $scope.filters.universes.length) {
+                for (var i = 0; i < $scope.heroes.length; i++) {
+                    if (!isFiltered($scope.heroes[i])) {
+                        filters.push($scope.heroes[i]._id);
+                    }
+                }
+            }
+            
+            // maps
+            if ($scope.filters.map) {
+                filters.push($scope.filters.map._id);
+            }
+            
+            return filters;
+        }
+        
+        function updateTopGuide () {
+            HOTSGuideService.getGuides('hero', getFilters(), 1, 1, $scope.filters.search).then(function (data) {
+                $timeout(function () {
+                    $scope.topGuides = (data.total) ? data.guides : false;
+                });
+            });
         }
         
         // pagination
-        $scope.pagination = {
-            page: function () {
-                return $scope.page;
-            },
-            perpage: function () {
-                return $scope.perpage;
-            },
-            results: function () {
-                return $scope.total;
-            },
-            setPage: function (page) {
-                $scope.page = page;
-                $scope.getGuides();
-            },
-            pagesArray: function () {
-                var pages = [],
-                    start = 1,
-                    end = this.totalPages();
-                
-                if (this.totalPages() > 5) {
-                    if (this.page() < 3) {
-                        start = 1;
-                        end = start + 4;
-                    } else if (this.page() > this.totalPages() - 2) {
-                        end = this.totalPages();
-                        start = end - 4;
-                    } else {
-                        start = this.page() - 2;
-                        end = this.page() + 2;
-                    }
-                    
-                }
-                
-                for (var i = start; i <= end; i++) {
-                    pages.push(i);
-                }
-                
-                return pages;
-            },
-            isPage: function (page) {
-                return (page === this.page());
-            },
-            totalPages: function (page) {
-                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 1;
-            },
+        function updateTempostormGuides (page, perpage, callback) {
+            var offset = ((page * perpage) - perpage);
             
-        };
+            HOTSGuideService.getGuidesFeatured(getFilters(), offset, perpage, $scope.filters.search).then(function (data) {
+                $scope.tempostormPagination.total = data.total;
+                $scope.tempostormPagination.page = page;
+                $timeout(function () {
+                    $scope.tempostormGuides = data.guides;
 
-        // verify valid page
-        if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
-            $scope.pagination.setPage(1);
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
+        $scope.tempostormPagination = AjaxPagination.new(4, dataTempostormGuides.total,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateTempostormGuides(page, perpage, function (data) {
+                    d.resolve(data.total);
+                });
+
+                return d.promise;
+            }
+        );
+        
+        function updateCommunityGuides (page, perpage, callback) {
+            var offset = ((page * perpage) - perpage);
+            
+            HOTSGuideService.getGuidesCommunity(getFilters(), offset, perpage, $scope.filters.search, false).then(function (data) {
+                $scope.communityPagination.total = data.total;
+                $scope.communityPagination.page = page;
+                $timeout(function () {
+                    $scope.communityGuides = data.guides;
+
+                    if (callback) {
+                        return callback(data);
+                    }
+                });
+            });
+        }
+        
+        $scope.communityPagination = AjaxPagination.new(10, dataCommunityGuides.total,
+            function (page, perpage) {
+                var d = $q.defer(),
+                    offset = ((page * perpage) - perpage);
+
+                HOTSGuideService.getGuidesCommunity(getFilters(), offset, perpage, $scope.filters.search, false).then(function (data) {
+                    $timeout(function () {
+                        $scope.communityGuides = data.guides;
+                        d.resolve(data.total);
+                    });
+                });
+                return d.promise;
+            }
+        );
+        
+        //is premium
+        $scope.isPremium = function (guide) {
+            if (!guide.premium.isPremium) { return false; }
+            var now = new Date().getTime(),
+                expiry = new Date(guide.premium.expiryDate).getTime();
+            if (expiry > now) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 ])
-.controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService', 'MetaService',
-    function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService, MetaService) {
+.controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'LoginModalService', 'MetaService',
+    function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps, LoginModalService, MetaService) {
         $scope.guide = data.guide;
         $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0].hero : false;
         $scope.heroes = dataHeroes.heroes;
@@ -8497,14 +9488,9 @@ angular.module('app.controllers', ['ngCookies'])
                 
         function vote(direction, guide) {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal('login', function () {
                     vote(direction, guide);
-                };
+                });
             } else {
                 if (guide.author._id === $scope.app.user.getUserID()) {
                     bootbox.alert("You can't vote for your own content.");
@@ -8517,6 +9503,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
+            updateVotes();
+            updateCommentVotes();
         };
         
         // comments
@@ -8527,14 +9515,9 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal('login', function () {
                     $scope.commentPost();
-                };
+                });
             } else {
                 HOTSGuideService.addComment($scope.guide, $scope.comment).success(function (data) {
                     if (data.success) {
@@ -8562,14 +9545,9 @@ angular.module('app.controllers', ['ngCookies'])
                 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal('login', function () {
                     $scope.voteComment(direction, deck);
-                };
+                });
             } else {
                 if (comment.author._id === $scope.app.user.getUserID()) {
                     bootbox.alert("You can't vote for your own content.");
@@ -8582,6 +9560,8 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
+            updateVotes();
+            updateCommentVotes();
         };
         
         //is premium
@@ -8603,45 +9583,15 @@ angular.module('app.controllers', ['ngCookies'])
                     $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
                 }
             } else {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
+                LoginModalService.showModal('login', function () {
                     $scope.getPremium(plan);
-                };
-            }
-        }
-        
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    updateVotes();
-                    callback();
-                }).error(function() {
-                    $scope.showError = true;
                 });
             }
         }
     }
 ])
-.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
-    function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
+.controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService',
+    function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService) {
         var box;
         
         // create guide
@@ -8765,39 +9715,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    $scope.saveGuide;
-                }).error(function() {
-                    $scope.showError = true;
-                });
-            }
-        }
-        
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
                 return false;
             }
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
+                LoginModalService.showModal('login');
             } else {
                 HOTSGuideService.addGuide($scope.guide).success(function (data) {
                     if (!data.success) {
@@ -8813,8 +9737,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'UserService', 'AuthenticationService', 'SubscriptionService',
-    function ($scope, $state, $window, $compile, HOTS, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps, UserService, AuthenticationService, SubscriptionService) {
+.controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'LoginModalService',
+    function ($scope, $state, $window, $compile, HOTS, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps, LoginModalService) {
         var box;
         
         // create guide
@@ -8906,40 +9830,14 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    $scope.saveGuide();
-                }).error(function() {
-                    $scope.showError = true;
-                });
-            }
-        }
-        
+
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                 return false;
             }
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
+                LoginModalService.showModal('login');
             } else {
                 HOTSGuideService.addGuide($scope.guide).success(function (data) {
                     if (!data.success) {
@@ -8960,8 +9858,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.guide = dataGuide.guide;
     }
 ])
-.controller('HOTSGuideBuilderEditHeroCtrl', ['$scope', '$state', '$window', 'GuideBuilder', 'HOTSGuideService', 'HOTS', 'dataGuide', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, GuideBuilder, HOTSGuideService, HOTS, dataGuide, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderEditHeroCtrl', ['$scope', '$state', '$window', 'GuideBuilder', 'HOTSGuideService', 'HOTS', 'dataGuide', 'dataHeroes', 'dataMaps', 'LoginModalService',
+    function ($scope, $state, $window, GuideBuilder, HOTSGuideService, HOTS, dataGuide, dataHeroes, dataMaps, LoginModalService) {
         // create guide
         $scope.guide = GuideBuilder.new('hero', dataGuide.guide);
         
@@ -9113,11 +10011,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
+                LoginModalService.showModal('login');
             } else {
                 HOTSGuideService.editGuide($scope.guide).success(function (data) {
                     if (!data.success) {
@@ -9132,8 +10026,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'HOTS', 'GuideBuilder', 'HOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
-    function ($scope, $state, $window, HOTS, GuideBuilder, HOTSGuideService, dataGuide, dataHeroes, dataMaps) {
+.controller('HOTSGuideBuilderEditMapCtrl', ['$scope', '$state', '$window', 'HOTS', 'GuideBuilder', 'HOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 'LoginModalService',
+    function ($scope, $state, $window, HOTS, GuideBuilder, HOTSGuideService, dataGuide, dataHeroes, dataMaps, LoginModalService) {
         // create guide
         $scope.guide = GuideBuilder.new('map', dataGuide.guide);
         
@@ -9221,40 +10115,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    $scope.saveGuide();
-                }).error(function() {
-                    $scope.showError = true;
-                });
-            }
-        }
-        
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                 return false;
             }
             if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
+                LoginModalService.showModal('login');
             } else {
                 HOTSGuideService.editGuide($scope.guide).success(function (data) {
                     if (!data.success) {
@@ -9570,8 +10437,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('PollsCtrl', ['$scope', '$sce', '$cookies', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 
-    function ($scope, $sce, $cookies, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
+.controller('PollsCtrl', ['$scope', '$sce', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 
+    function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
         
         var box;
         $scope.pollsMain = dataPollsMain.polls;
@@ -9685,11 +10552,6 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('twitchCtrl', ['$scope', 'dataTwitch',
     function($scope, dataTwitch) {
         $scope.streams = dataTwitch.stuff;
-    }
-])
-.controller('TeamCtrl', ['$scope',
-    function ($scope) {
-        
     }
 ])
 ;

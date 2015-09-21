@@ -306,9 +306,7 @@ module.exports = {
                         slug: results.slug,
                         deckType: results.deckType,
                         description: results.description,
-                        contentEarly: results.contentEarly,
-                        contentMid: results.contentMid,
-                        contentLate: results.contentLate,
+                        chapters: results.chapters,
                         cards: results.cards,
                         playerClass: results.playerClass,
                         public: results.public.toString(),
@@ -319,7 +317,8 @@ module.exports = {
                             instructions: results.against.instructions
                         },
                         video: results.video,
-                        arena: results.arena,
+                        type: results.type,
+                        basic: results.basic,
                         featured: results.featured,
                         premium: {
                             isPremium: results.premium.isPremium,
@@ -346,7 +345,7 @@ module.exports = {
                     return callback();
                 });
             }
-            
+                        
             getDeck(function () {
                 getClass(function () {
                     getNeutral(function () {
@@ -434,9 +433,7 @@ module.exports = {
                         slug: Util.slugify(req.body.name),
                         deckType: req.body.deckType,
                         description: req.body.description,
-                        contentEarly: req.body.contentEarly,
-                        contentMid: req.body.contentMid,
-                        contentLate: req.body.contentLate,
+                        chapters: req.body.chapters,
                         author: req.user._id,
                         cards: cards,
                         playerClass: req.body.playerClass,
@@ -452,7 +449,8 @@ module.exports = {
                             userID: req.user._id,
                             direction: 1
                         }],
-                        arena: req.body.arena,
+                        type: req.body.type,
+                        basic: req.body.basic,
                         featured: req.body.featured,
                         allowComments: true,
                         createdDate: new Date().toISOString(),
@@ -553,9 +551,7 @@ module.exports = {
                     deck.slug = Util.slugify(req.body.name);
                     deck.deckType = req.body.deckType;
                     deck.description = req.body.description;
-                    deck.contentEarly = req.body.contentEarly;
-                    deck.contentMid = req.body.contentMid;
-                    deck.contentLate = req.body.contentLate;
+                    deck.chapters = req.body.chapters;
                     deck.cards = cards;
                     deck.public = req.body.public;
                     deck.mulligans = req.body.mulligans || [];
@@ -569,7 +565,8 @@ module.exports = {
                         isPremium: req.body.premium.isPremium || false,
                         expiryDate: req.body.premium.expiryDate || new Date().toISOString()
                     };
-                    deck.arena = req.body.arena;
+                    deck.type = req.body.type;
+                    deck.basic = req.body.basic;
                     deck.featured = req.body.featured;
                     
                     deck.save(function(err, data){
@@ -1795,6 +1792,7 @@ module.exports = {
                                 verified: true,
                                 isAdmin: req.body.isAdmin,
                                 isProvider: req.body.isProvider,
+                                providerDescription: req.body.providerDescription,
                                 active: req.body.active,
                                 createdDate: new Date().toISOString()
                             });
@@ -1914,6 +1912,7 @@ module.exports = {
                         user.isAdmin = req.body.isAdmin || false;
                         user.active = req.body.active;
                         user.isProvider = req.body.isProvider || false;
+                        user.providerDescription = req.body.providerDescription;
 
                         user.save(function (err) {
                             if (err) {
@@ -3588,9 +3587,6 @@ module.exports = {
                 })
             }
             
-            
-            
-            
             function addNewMember(c, callback) {
                 var newMember = new Schemas.TeamMember({
                     game: member.game,
@@ -3724,6 +3720,144 @@ module.exports = {
                 });
             })
             
+        }
+    },
+    vod: function (Schemas) {
+        return function (req, res, next) {
+            var id = req.body._id;
+            
+            function getVod(callback) {
+                Schemas.Vod.findOne({ _id: id })
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }) }
+                    return callback(results);
+                });
+            }
+            
+            getVod(function(vod) {
+                return res.json({
+                    vod: vod,
+                    success: true
+                });
+            });
+        }    
+    },
+    vods: function (Schemas) {
+        return function (req, res, next) {
+            
+            function getVods(callback) {
+                Schemas.Vod.find()
+                .sort({ Date:1 })
+                .exec(function (err, results) {
+                    if (err) { return res.json({ success: false }); }
+                    return callback(results);
+                });
+            }
+            
+            getVods(function(results) {
+                return res.json({
+                    vods: results,
+                    success: true
+                });
+            }); 
+        }
+    },
+    vodAdd: function (Schemas) {
+        return function (req, res, next) {
+            
+            function createVod (callback) {
+                var newVod = new Schemas.Vod({
+                    date: req.body.vod.date,
+                    url: req.body.vod.url,
+                    vars: {
+                        list: req.body.vod.vars.list
+                    },
+                    subTitle: req.body.vod.subTitle,
+                    createdDate: new Date().toISOString()
+                });
+                newVod.save(function(err, data) {
+                    if (err) {
+                        return res.json({ 
+                            success: false,
+                            errors: { 
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                    return callback();
+                });
+            }
+            
+            createVod(function () {
+                return res.json({
+                    success: true
+                });
+            });
+        }    
+    },
+    vodEdit: function (Schemas) {
+        return function (req, res, next) {
+            var vod = req.body.vod;
+            
+            function editVod(callback) {
+                Schemas.Vod.findOne({ _id: vod._id }).exec(function(err, results) {
+                    if (err || !results) {
+                        console.log(err || 'VOD not found');
+                        return res.json({ success: false,
+                            errors: {
+                                unknown: {
+                                    msg: 'An unknown error occurred'
+                                }
+                            }
+                        });
+                    }
+                    
+                    results.date = vod.date;
+                    results.url = vod.url;
+                    results.vars = vod.vars;
+                    results.subTitle = vod.subTitle;
+                    
+                    results.save(function (err) {
+                        if (err || !results) {
+                            console.log(err || 'VOD not found');
+                            return res.json({ success: false,
+                                errors: {
+                                    unknown: {
+                                        msg: 'An unknown error occurred'
+                                    }
+                                }
+                            });
+                        }
+                        return callback();
+                    });
+                })
+            }
+            
+            editVod(function () {
+                return res.json({
+                    success: true
+                });
+            });
+        }
+    },
+    vodDelete: function (Schemas) {
+        return function (req, res, next) {
+            var _id = req.body._id;
+            Schemas.Vod.findOne({ _id: _id }).remove().exec(function (err) {
+                if (err) {
+                    console.log(err);
+                    return res.json({ success: false,
+                        errors: {
+                            unknown: {
+                                msg: 'An unknown error occurred'
+                            }
+                        }
+                    });
+                }
+                return res.json({ success: true });
+            });
         }
     },
     getObjectID: function (mongoose) {

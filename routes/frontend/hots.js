@@ -2,67 +2,37 @@ module.exports = {
     guides: function (Schemas) {
         return function (req, res, next) {
             var guideType = req.body.guideType || 'all',
-                hero = req.body.hero || 'all',
-                map = req.body.map || 'all',
+                filters = req.body.filters || false,
                 page = req.body.page || 1,
                 perpage = req.body.perpage || 10,
                 search = req.body.search || '',
                 age = req.body.age || 'all',
                 order = req.body.order || 'high',
                 where = {}, sort = {},
-                guides, total, heroID, mapID, 
+                guides, total, 
+                talents = [],
                 now = new Date().getTime();
-            
-            function getHeroID (callback) {
-                if (hero === 'all') { return callback(); }
-                Schemas.Hero.findOne({ className: hero, active: true })
-                .select('_id')
-                .exec(function (err, results) {
-                    if (err || !results) { return res.json({ success: false }); }
-                    heroID = results._id;
-                    return callback();
-                });
-            }
-            
-            function getMapID (callback) {
-                if (map === 'all') { return callback(); }
-                Schemas.Map.findOne({ className: map, active: true })
-                .select('_id')
-                .exec(function (err, results) {
-                    if (err || !results) { return res.json({ success: false }); }
-                    mapID = results._id;
-                    return callback();
-                });
-            }
-            
+                        
             function getFilters (callback) {
                 // guide type
                 if (guideType !== 'all') {
                     where.guideType = guideType;
                 }
                 
-                // hero
-                if (hero !== 'all') {
-                    if (guideType !== 'map') {
-                        where['heroes.hero'] = heroID;
-                    } else {
-                        where.synergy = heroID;
-                    }
+                // filters
+                if (filters) {
+                    var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
+                    where.$or = [];
+                    where.$or.push({ 'heroes.hero': dbFilters });
+                    where.$or.push({ 'maps': dbFilters });
                 }
 
-                // map
-                if (map !== 'all') {
-                    where.maps = mapID;
-                }
-                
                 // search
                 if (search) {
                     where.$or = [];
                     where.$or.push({ name: new RegExp(search, "i") });
                     where.$or.push({ description: new RegExp(search, "i") });
-                    where.$or.push({ contentEarly: new RegExp(search, "i") });
-                    where.$or.push({ contentMid: new RegExp(search, "i") });
-                    where.$or.push({ contentLate: new RegExp(search, "i") });
+                    where.$or.push({ content: new RegExp(search, "i") });
                 }
 
                 // age
@@ -124,16 +94,17 @@ module.exports = {
             // get guides
             function getGuides (callback) {
                 Schemas.Guide.find({ public: true })
+                .lean()
                 .select('premium heroes guideType maps slug name description author createdDate comments votesCount')
                 .populate([{
                         path: 'author',
                         select: 'username -_id'
                     }, {
                         path: 'heroes.hero',
-                        select: 'className'
+                        select: 'name className talents'
                     }, {
                         path: 'maps',
-                        select: 'className'
+                        select: 'name className'
                 }])
                 .where(where)
                 .sort(sort)
@@ -146,23 +117,64 @@ module.exports = {
                 });
             }
             
-            getHeroID(function () {
-                getMapID(function () {
-                    getFilters(function () {
-                        getGuides(function () {
-                            getTotal(function () {
+            // get talents
+            function getTalents (callback) {
+                var heroIDs = [];
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        if (heroIDs.indexOf() === -1) {
+                            heroIDs.push(guides[i].heroes[j].hero._id);
+                        }
+                    }
+                }
+                
+                if (!heroIDs.length) { return callback(); }
+                Schemas.Hero.find({ active: true, _id: { $in: heroIDs } })
+                .select('talents')
+                .exec(function (err, results) {
+                    if (err || !results) { return res.json({ success: false }); }
+                    
+                    for(var i = 0; i < results.length; i++) {
+                        for(var j = 0; j < results[i].talents.length; j++) {
+                            talents.push(results[i].talents[j]);
+                        }
+                    }
+                    return callback();
+                });
+            }
+            
+            function assignTalents (callback) {
+                if (!talents.length) { return callback(); }
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        for(var key in guides[i].heroes[j].talents) {
+                            for(var l = 0; l < talents.length; l++) {
+                                if (guides[i].heroes[j].talents[key].toString() === talents[l]._id.toString()) {
+                                    guides[i].heroes[j].talents[key] = {
+                                        _id: talents[l]._id,
+                                        name: talents[l].name,
+                                        className: talents[l].className
+                                    };
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return callback();
+            }
+            
+            getFilters(function () {
+                getGuides(function () {
+                    getTotal(function () {
+                        getTalents(function () {
+                            assignTalents(function () {
                                 return res.json({
                                     success: true,
                                     guides: guides,
-                                    total: total,
-                                    guideType: guideType,
-                                    hero: hero,
-                                    map: map,
-                                    page: page,
-                                    perpage: perpage,
-                                    search: search,
-                                    age: age,
-                                    order: order
+                                    total: total
                                 });
                             });
                         });
@@ -173,19 +185,26 @@ module.exports = {
     },
     guidesCommunity: function (Schemas) {
         return function (req, res, next) {
-            var hero = req.body.hero || 'all',
-                page = req.body.page || 1,
+            var filters = req.body.filters || false,
+                offset = req.body.offset || 0,
                 perpage = req.body.perpage || 10,
                 where = {},
                 guides, total,
+                talents = [],
+                daysLimit = (!req.body.daysLimit) ? 0 : parseInt(req.body.daysLimit) || 14,
                 now = new Date().getTime(),
-                weekAgo = new Date(now - (60*60*24*7*1000));
+                ago = new Date(now - (60*60*24*daysLimit*1000));
             
-            if (hero !== 'all') {
-                where.heroes = hero;
+            if (filters) {
+                var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
+                where.$or = [];
+                where.$or.push({ 'heroes.hero': dbFilters });
+                where.$or.push({ 'maps': dbFilters });
             }
             
-            where.createdDate = { $gte: weekAgo };
+            if (daysLimit > 0) {
+                where.createdDate = { $gte: ago };
+            }
             
             // get total guides
             function getTotal (callback) {
@@ -201,6 +220,7 @@ module.exports = {
             // get guides
             function getGuides (callback) {
                 Schemas.Guide.find({ public: true, featured: false })
+                .lean()
                 .where(where)
                 .select('premium heroes guideType maps slug name description author createdDate comments votesCount')
                 .populate([{
@@ -208,13 +228,13 @@ module.exports = {
                         select: 'username -_id'
                     }, {
                         path: 'heroes.hero',
-                        select: 'className'
+                        select: 'name className'
                     }, {
                         path: 'maps',
-                        select: 'className'
+                        select: 'name className'
                 }])
-                .sort({ votesCount: -1, createdDate: -1 })
-                .skip((perpage * page) - perpage)
+                .sort({ createdDate: -1 })
+                .skip(offset)
                 .limit(perpage)
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
@@ -223,20 +243,83 @@ module.exports = {
                 });
             }
             
+            // get talents
+            function getTalents (callback) {
+                var heroIDs = [];
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        if (heroIDs.indexOf() === -1) {
+                            heroIDs.push(guides[i].heroes[j].hero._id);
+                        }
+                    }
+                }
+                
+                if (!heroIDs.length) { return callback(); }
+                Schemas.Hero.find({ active: true, _id: { $in: heroIDs } })
+                .select('talents')
+                .exec(function (err, results) {
+                    if (err || !results) { return res.json({ success: false }); }
+                    
+                    for(var i = 0; i < results.length; i++) {
+                        for(var j = 0; j < results[i].talents.length; j++) {
+                            talents.push(results[i].talents[j]);
+                        }
+                    }
+                    return callback();
+                });
+            }
+            
+            function assignTalents (callback) {
+                if (!talents.length) { return callback(); }
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        for(var key in guides[i].heroes[j].talents) {
+                            for(var l = 0; l < talents.length; l++) {
+                                if (guides[i].heroes[j].talents[key].toString() === talents[l]._id.toString()) {
+                                    guides[i].heroes[j].talents[key] = {
+                                        _id: talents[l]._id,
+                                        name: talents[l].name,
+                                        className: talents[l].className
+                                    };
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return callback();
+            }
+            
             getGuides(function () {
-                getTotal(function () {
-                    return res.json({ success: true, guides: guides, total: total, hero: hero, page: page, perpage: perpage });
+                getTalents(function () {
+                    assignTalents(function () {
+                        getTotal(function () {
+                            return res.json({ success: true, guides: guides, total: total });
+                        });
+                    });
                 });
             });
         };
     },
     guidesFeatured: function (Schemas) {
         return function (req, res, next) {
-            var hero = req.body.hero || 'all',
-                page = req.body.page || 1,
+            var filters = req.body.filters || false,
+                offset = req.body.offset || 0,
                 perpage = req.body.perpage || 10,
-                where = (hero === 'all') ? {} : { 'heroes': hero },
-                guides, total;
+                where = {},
+                guides, total,
+                talents = [];
+            
+            console.log(req.body);
+            
+            if (filters) {
+                var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
+                where.$or = [];
+                where.$or.push({ 'heroes.hero': dbFilters });
+                where.$or.push({ 'maps': dbFilters });
+            }
             
             // get total guides
             function getTotal (callback) {
@@ -252,6 +335,7 @@ module.exports = {
             // get guides
             function getGuides (callback) {
                 Schemas.Guide.find({ featured: true })
+                .lean()
                 .where(where)
                 .select('premium heroes guideType maps slug name description author createdDate comments votesCount')
                 .populate([{
@@ -259,13 +343,13 @@ module.exports = {
                         select: 'username -_id'
                     }, {
                         path: 'heroes.hero',
-                        select: 'className'
+                        select: 'name className'
                     }, {
                         path: 'maps',
-                        select: 'className'
+                        select: 'name className'
                 }])
-                .sort({ votesCount: -1, createdDate: -1 })
-                .skip((perpage * page) - perpage)
+                .sort({ createdDate: -1 })
+                .skip(offset)
                 .limit(perpage)
                 .exec(function (err, results) {
                     if (err) { return res.json({ success: false }); }
@@ -274,9 +358,62 @@ module.exports = {
                 });
             }
             
+            // get talents
+            function getTalents (callback) {
+                var heroIDs = [];
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        if (heroIDs.indexOf() === -1) {
+                            heroIDs.push(guides[i].heroes[j].hero._id);
+                        }
+                    }
+                }
+                
+                if (!heroIDs.length) { return callback(); }
+                Schemas.Hero.find({ active: true, _id: { $in: heroIDs } })
+                .select('talents')
+                .exec(function (err, results) {
+                    if (err || !results) { return res.json({ success: false }); }
+                    
+                    for(var i = 0; i < results.length; i++) {
+                        for(var j = 0; j < results[i].talents.length; j++) {
+                            talents.push(results[i].talents[j]);
+                        }
+                    }
+                    return callback();
+                });
+            }
+            
+            function assignTalents (callback) {
+                if (!talents.length) { return callback(); }
+                for(var i = 0; i < guides.length; i++) {
+                    if (guides[i].guideType == 'map') { continue; }
+                    for(var j = 0; j < guides[i].heroes.length; j++) {
+                        for(var key in guides[i].heroes[j].talents) {
+                            for(var l = 0; l < talents.length; l++) {
+                                if (guides[i].heroes[j].talents[key].toString() === talents[l]._id.toString()) {
+                                    guides[i].heroes[j].talents[key] = {
+                                        _id: talents[l]._id,
+                                        name: talents[l].name,
+                                        className: talents[l].className
+                                    };
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return callback();
+            }
+            
             getGuides(function () {
-                getTotal(function () {
-                    return res.json({ success: true, guides: guides, total: total, hero: hero, page: page, perpage: perpage });
+                getTalents(function () {
+                    assignTalents(function () {
+                        getTotal(function () {
+                            return res.json({ success: true, guides: guides, total: total });
+                        });
+                    });
                 });
             });
         };
