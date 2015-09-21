@@ -665,17 +665,17 @@ angular.module('app.directives', ['ui.load'])
 ])
 .directive('snapshotAddAuthor', [function () {
     return {
-        templateUrl: "views/admin/snapshot.add.author.html"
+        templateUrl: tpl + "views/admin/snapshot.add.author.html"
     };
 }])
 .directive('snapshotAddDeck', [function () {
     return {
-        templateUrl: "views/admin/snapshot.add.deck.html"
+        templateUrl: tpl + "views/admin/snapshot.add.deck.html"
     }
 }])
 .directive('snapshotAddCard', [function () {
     return {
-        templateUrl: "views/admin/snapshot.add.card.html"
+        templateUrl: tpl + "views/admin/snapshot.add.card.html"
     };
 }])
 .directive("fbLikeButton", [function () {
