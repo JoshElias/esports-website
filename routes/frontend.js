@@ -1180,11 +1180,6 @@ module.exports = {
                         public: results.public.toString(),
                         mulligans: results.mulligans,
                         dust: dust,
-                        against: {
-                            strong: results.against.strong,
-                            weak: results.against.weak,
-                            instructions: results.against.instructions
-                        },
                         video: results.video,
                         featured: results.featured,
                         premium: {
@@ -1481,11 +1476,6 @@ module.exports = {
                         playerClass: req.body.playerClass,
                         public: req.body.public,
                         mulligans: req.body.mulligans || [],
-                        against: {
-                            strong: req.body.against.strong || [],
-                            weak: req.body.against.weak || [],
-                            instructions: req.body.against.instructions || ''
-                        },
                         video: req.body.video,
                         votes: [{
                             userID: req.user._id,
@@ -1666,11 +1656,6 @@ module.exports = {
                     deck.cards = cards;
                     deck.public = req.body.public;
                     deck.mulligans = req.body.mulligans || [];
-                    deck.against = {
-                        strong: req.body.against.strong || [],
-                        weak: req.body.against.weak || [],
-                        instructions: req.body.against.instructions || ''
-                    };
                     deck.video = req.body.video;
                     deck.premium = premium;
                     deck.arena = req.body.arena;
