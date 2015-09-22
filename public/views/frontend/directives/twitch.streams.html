@@ -1,5 +1,5 @@
 <ul class="tempostorm-tv" ng-if="streams.length">
-    <li ng-repeat="stream in streams">
+    <li ng-repeat="stream in streams | orderBy: '-viewerCount'">
         <a ng-href="{{stream.channelUrl}}" target="_blank" class="tempostorm-tv-stream">
             <div class="inner"></div>
             <div class="tempostorm-tv-wrapper clearfix">
