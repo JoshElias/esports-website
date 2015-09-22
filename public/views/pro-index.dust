@@ -27,6 +27,7 @@
         var tpl = '{cdnUrl}';
     </script>
     <!-- vendor -->
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script src="{cdnUrl}js/{assets.vendor_min_js}"></script>
     <!-- angular -->
     <script src="{cdnUrl}js/{assets.angular_min_js}"></script>
