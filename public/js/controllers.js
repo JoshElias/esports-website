@@ -663,6 +663,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.toggleFilter = function (filter) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
+                console.log($scope.filterActivities[i], filter);
                 if (filter == $scope.filterActivities[i]) {
                     $scope.filterActivities.splice(i,1);
                     return;
@@ -771,16 +772,20 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.deckEdit = function ($event, deck) {
-            $event.preventDefault();
-            $event.stopPropagation();
+            if ($event.stopPropagation) $event.stopPropagation();
+            if ($event.preventDefault) $event.preventDefault();
+            $event.cancelBubble = true;
+            $event.returnValue = false;
             
-            return $state.transitionTo('app.hs.deckBuilder.edit', { slug: deck.slug });
+            $state.transitionTo('app.hs.deckBuilder.edit', { slug: deck.slug });
         };
         
         // delete deck
         $scope.deckDelete = function deleteDeck($event, deck) {
-            $event.preventDefault();
-            $event.stopPropagation();
+            if ($event.stopPropagation) $event.stopPropagation();
+            if ($event.preventDefault) $event.preventDefault();
+            $event.cancelBubble = true;
+            $event.returnValue = false;
             
             var box = bootbox.dialog({
                 title: 'Delete deck: ' + deck.name + '?',
@@ -904,19 +909,23 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.guideEdit = function ($event, guide) {
-            $event.preventDefault();
-            $event.stopPropagation();
+            if ($event.stopPropagation) $event.stopPropagation();
+            if ($event.preventDefault) $event.preventDefault();
+            $event.cancelBubble = true;
+            $event.returnValue = false;
             
             if (guide.guideType == 'hero') {
-                return $state.transitionTo('app.hots.guideBuilder.edit.hero', { slug: guide.slug });
+                $state.transitionTo('app.hots.guideBuilder.edit.hero', { slug: guide.slug });
             } else {
-                return $state.transitionTo('app.hots.guideBuilder.edit.map', { slug: guide.slug });
+                $state.transitionTo('app.hots.guideBuilder.edit.map', { slug: guide.slug });
             }
         };
         
         $scope.guideDelete = function deleteGuide($event, guide) {
-            $event.preventDefault();
-            $event.stopPropagation();
+            if ($event.stopPropagation) $event.stopPropagation();
+            if ($event.preventDefault) $event.preventDefault();
+            $event.cancelBubble = true;
+            $event.returnValue = false;
 
             var box = bootbox.dialog({
                 title: 'Delete guide: ' + guide.name + '?',
@@ -4005,7 +4014,6 @@ angular.module('app.controllers', ['ngCookies'])
                 type: $scope.deck.type,
                 basic: $scope.deck.basic,
                 mulligans: $scope.deck.mulligans,
-                against: $scope.deck.against,
                 video: $scope.deck.video,
                 public: $scope.deck.public
             };
