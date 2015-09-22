@@ -1336,7 +1336,6 @@ var app = angular.module('app', [
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
                             data: ['$stateParams', 'AdminDeckService', function ($stateParams, AdminDeckService) {
-                                console.log('sup');
                                 var deckID = $stateParams.deckID;
                                 return AdminDeckService.getDeck(deckID);
                             }]
