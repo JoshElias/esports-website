@@ -1235,7 +1235,9 @@ angular.module('app.directives', ['ui.load'])
 .directive('videoOfTheDay', ['VodService', function (VodService) {
     return {
         restrict: 'A',
-        templateUrl: tpl + 'views/frontend/directives/video-of-the-day.html',
+        template: function () {
+            return '<h3 class="sub-title m-b-md">{{vod.subTitle}}</h3><youtube-video class="home-vod" ng-if="vod.url" video-url="vod.url"></youtube-video><youtube-video class="home-vod" ng-if="vod.vars.list" player-vars="vod.vars"></youtube-video>';
+        },
         link: function (scope, element, attrs) {
             VodService.getLatestVod().then(function (data) {
                 scope.vod = data.vod;
