@@ -7155,7 +7155,10 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
     function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
+        
+        
         $scope.post = data.post;
+        $scope.ForumService = ForumService;
         $scope.thread = data.thread;
         
         $scope.metaservice = MetaService;
@@ -9351,7 +9354,9 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'LoginModalService', 'MetaService',
     function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps, LoginModalService, MetaService) {
+        
         $scope.guide = data.guide;
+        $scope.HOTSGuideService = HOTSGuideService;
         $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0].hero : false;
         $scope.heroes = dataHeroes.heroes;
         $scope.maps = dataMaps.maps;

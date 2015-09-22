@@ -737,7 +737,7 @@ module.exports = {
                 comment = req.body.comment,
                 newCommentID = mongoose.Types.ObjectId();
             
-            req.assert('comment.comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
+//            req.assert('comment.comment', 'Comment cannot be longer than 1000 characters').len(1, 1000);
             
             var errors = req.validationErrors();
             if (errors) {
@@ -748,7 +748,7 @@ module.exports = {
             var newComment = {
                 _id: newCommentID,
                 author: userID,
-                comment: comment.comment,
+                comment: comment,
                 votesCount: 1,
                 votes: [{
                     userID: userID,

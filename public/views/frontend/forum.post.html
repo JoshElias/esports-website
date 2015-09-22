@@ -28,51 +28,7 @@
 
                 <div class="forum-post-content-html clearfix" ng-bind-html="post.getContent()"></div>
             </div>
-            <div class="forum-post-comments">
-                <h3>COMMENTS</h3>
-                <div class="comments">
-                    <p class="no-comments white darkbox m-b-sm wrapper-sm" ng-if="!post.comments || !post.comments.length">There are currently no comments on this post.</p>
-                    <div class="comment" ng-repeat="comment in post.comments">
-                        <div class="avatar">
-                            <a href="./user/{{comment.author.username}}"><img gravatar-src-once="comment.author.email" alt="" /></a>
-                        </div>
-                        <div class="panel">
-                            <div class="panel-heading pos-rl clearfix">
-                                <span class="arrow left"></span>
-                                <a href="./user/{{comment.author.username}}">@{{comment.author.username}}</a>
-                                <div class="pull-right">
-                                    <div class="comment-votes m-l-sm pull-right clearfix">
-                                        <div class="vote-count vote-small m-l-xs pull-right"><span><em ng-show="comment.votesCount > 0">+</em>{{comment.votesCount}}</span></div>
-                                        <div class="vote-count-btns vote-small pull-left">
-                                            <a href="#" class="btn-vote-up vote-small" ng-class="{active: comment.voted === 1}" ng-click="voteComment(1, comment)"><i class="fa fa-plus-square"></i></a>
-                                            <a href="#" class="btn-vote-down vote-small" ng-class="{active: comment.voted === -1}" ng-click="voteComment(-1, comment)"><i class="fa fa-minus-square"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="comment-ago hidden-xs">
-                                        <span class="fa fa-clock-o"></span>
-                                        <span am-time-ago="comment.createdDate"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel-body">{{comment.comment}}</div>
-                        </div>
-                    </div>
-                    <div class="comment-add">
-                        <div class="avatar">
-                            <a href="./user/{{app.user.getUsername()}}" ng-if="app.user.isLogged()"><img gravatar-src="app.user.getUserEmail()" alt="" /></a>
-                            <a href="#" ng-if="!app.user.isLogged()"><img ng-src="{{app.cdn}}img/profile.jpg" alt="" /></a>
-                        </div>
-                        <form class="form-horizontal" name="commentForm" novalidate>
-                            <div class="input-group">
-                                <input type="text" class="form-control input-dark" ng-model="comment.comment" placeholder="ADD A COMMENT" required>
-                                <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-default input-dark" ng-disabled="commentForm.$invalid" ng-click="commentPost()">POST</button>
-                                </span>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            <comment-section commentable="post" service="ForumService"></comment-section>
         </div>
     </div>
 </div>
