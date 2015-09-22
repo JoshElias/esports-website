@@ -663,6 +663,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.toggleFilter = function (filter) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
+                console.log($scope.filterActivities[i], filter);
                 if (filter == $scope.filterActivities[i]) {
                     $scope.filterActivities.splice(i,1);
                     return;
