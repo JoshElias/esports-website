@@ -229,7 +229,7 @@ angular.module('app.directives', ['ui.load'])
             commentable: "=",
             service:     "=", 
         },
-        controller: function ($scope) {
+        controller: ['$scope', function ($scope) {
             $scope.commentable;
             $scope.service;
             $scope.app = $rootScope.app;
@@ -287,7 +287,7 @@ angular.module('app.directives', ['ui.load'])
                 }
                 updateCommentVotes();
             }
-        },
+        }],
         link: function ($scope, el, attr) {
             
             $scope.addAreaFocus = false;
@@ -725,6 +725,9 @@ angular.module('app.directives', ['ui.load'])
                 return dust;
             };
         },
+        controller: ['$scope', function ($scope) {
+            $scope.cdn = $scope.$parent.$parent.$parent.$parent.$parent.app.cdn;
+        }],
         templateUrl: tpl + 'views/frontend/directives/db.deck.html'
     }
 }])
