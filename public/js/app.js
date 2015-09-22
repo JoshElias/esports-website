@@ -119,8 +119,9 @@ var app = angular.module('app', [
                 },
                 resolve: {
                     User: ['$window', '$cookies', '$state', '$q', 'AuthenticationService', 'SubscriptionService', 'UserService', function($window, $cookies, $state, $q, AuthenticationService, SubscriptionService, UserService) {
-                        if ($cookies.token) {
-                            $window.sessionStorage.token = $cookies.token;
+                        var token = $cookies.get("token");
+                        if (token) {
+                            $window.sessionStorage.token = token;
                             //delete $cookies.token;
                         }
                         if ($window.sessionStorage.token && !AuthenticationService.isLogged()) {
@@ -144,7 +145,7 @@ var app = angular.module('app', [
                                 delete $window.sessionStorage.token;
                                 delete $window.sessionStorage.email;
                                 //delete $localStorage.settings.token;
-                                delete $cookies.token;
+                                $cookies.remove("token");
                                 //$state.transitionTo('app.login');
                                 $q.reject();
                             });
