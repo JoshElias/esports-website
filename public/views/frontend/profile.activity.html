@@ -11,7 +11,7 @@
 </div>
 <div class="activity-list">
     <!-- activity -->
-    <div class="activity {{activity.activityType}} m-b-sm" ng-repeat="activity in activities">
+    <div ng-class="{ 'hidden' : !isFiltered(getActivityType(activity)) && activity.activityType != 'signup' }" class="activity {{activity.activityType}} m-b-sm" ng-repeat="activity in activities">
         <div class="activity-left">
             <div class="activity-img">
                 <img gravatar-src-once="user.email" class="img-circle">

@@ -663,6 +663,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.toggleFilter = function (filter) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
+                console.log($scope.filterActivities[i], filter);
                 if (filter == $scope.filterActivities[i]) {
                     $scope.filterActivities.splice(i,1);
                     return;
@@ -4013,7 +4014,6 @@ angular.module('app.controllers', ['ngCookies'])
                 type: $scope.deck.type,
                 basic: $scope.deck.basic,
                 mulligans: $scope.deck.mulligans,
-                against: $scope.deck.against,
                 video: $scope.deck.video,
                 public: $scope.deck.public
             };
