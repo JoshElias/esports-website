@@ -6,7 +6,7 @@ var app = angular.module('app', [
     'angular-bootbox',
     'angularMoment',
     'angularPayments',
-    /*'youtube-embed',*/
+    'youtube-embed',
     'dndLists',
     /*'ngAnimate',*/
     'ngCookies',
