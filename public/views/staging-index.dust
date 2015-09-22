@@ -25,14 +25,56 @@
     <script>
         var tpl = '{cdnUrl}';
     </script>
-    <!-- vendor -->
-    <script src="{cdnUrl}js/{assets.vendor_min_js}"></script>
-    <!-- angular -->
-    <script src="{cdnUrl}js/{assets.angular_min_js}"></script>
+        <script src="{cdnUrl}js/vendor/jquery/jquery-2.1.1.min.js"></script>
+    <script src="{cdnUrl}js/vendor/jquery/jquery-ui.min.js"></script>
+    <script src="{cdnUrl}js/vendor/bootstrap/bootstrap.js"></script>
+    <script src="{cdnUrl}js/vendor/jquery/bootbox.js"></script>
+    <script src="{cdnUrl}js/vendor/jquery/wtooltip.js"></script>
+    <script src="{cdnUrl}js/vendor/moment/moment.min.js"></script>
+    <script src="{cdnUrl}js/vendor/summernote/summernote.min.js"></script>
+    <script src="{cdnUrl}js/vendor/angular-file-upload-shim.min.js"></script>
+    <script src="{cdnUrl}js/vendor/TweenMax.min.js"></script>
+    <script src="{cdnUrl}js/vendor/d3/d3.min.js"></script>
+    <!-- angular {cdnUrl}>
+    <script src="{cdnUrl}js/angular/angular.js"></script>
+    <script src="{cdnUrl}js/angular/ui-bootstrap-tpls.min.js"></script>
+    <script src="{cdnUrl}js/angular/angular-ui-router.min.js"></script>
+    <script src="{cdnUrl}js/angular/angular-cookies.min.js"></script>
+    <script src="{cdnUrl}js/angular/ui-date.js"></script>
+    <script src="{cdnUrl}js/angular/ui-jq.js"></script>
+    <script src="{cdnUrl}js/angular/ui-load.js"></script>
+    <script src="{cdnUrl}js/angular/ui-validate.js"></script>
+    <script src="{cdnUrl}js/angular/angular-animate.min.js"></script>
+    <script src="{cdnUrl}js/angular/angular-bootbox.js"></script>
+    <script src="{cdnUrl}js/angular/angular-drag-and-drop-lists.js"></script>
+    <script src="{cdnUrl}js/angular/angular-file-upload.min.js"></script>
+    <script src="{cdnUrl}js/angular/angular-file-upload-html5-shim.min.js"></script>
+    <script src="{cdnUrl}js/angular/angular-gravatar.js"></script>
+    <script src="{cdnUrl}js/angular/angular-moment.min.js"></script>
+    <script src="{cdnUrl}js/angular/angular-payments.min.js"></script>
+    <script src="{cdnUrl}js/angular/angular-sanitize.js"></script>
+    <script src="{cdnUrl}js/angular/angular-summernote.min.js"></script>
+    <script src="{cdnUrl}js/angular/angular-translate.js"></script>
+    <script src="{cdnUrl}js/angular/md5.min.js"></script>
+    <script src="{cdnUrl}js/angular/ngProgress.js"></script>
+    <script src="{cdnUrl}js/angular/ngStorage.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="{cdnUrl}js/angular/angular-youtube-embed.js"></script>
     <!-- app -->
-    <script src="{cdnUrl}js/{assets.app_min_js}"></script>
+    <script src="{cdnUrl}js/app.js"></script>
+    <script src="{cdnUrl}js/controllers.js"></script>
+    <script src="{cdnUrl}js/services.js"></script>
+    <script src="{cdnUrl}js/directives.js"></script>
+    <script src="{cdnUrl}js/filters.js"></script>
+    <script src="{cdnUrl}js/animations.js"></script>
+    <!-- vendor -->
+    <!--<script src="{cdnUrl}js/{assets.vendor_min_js}"></script>-->
+    <!-- angular -->
+    <!--<script src="{cdnUrl}js/{assets.angular_min_js}"></script>-->
+    <!-- app -->
+    <!--<script src="{cdnUrl}js/{assets.app_min_js}"></script>-->
     <!-- stripe -->
-    <script src="https://js.stripe.com/v2/"></script>
+    <!--<script src="https://js.stripe.com/v2/"></script>-->
     <script>
         Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
     </script>
