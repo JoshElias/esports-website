@@ -4013,7 +4013,6 @@ angular.module('app.controllers', ['ngCookies'])
                 type: $scope.deck.type,
                 basic: $scope.deck.basic,
                 mulligans: $scope.deck.mulligans,
-                against: $scope.deck.against,
                 video: $scope.deck.video,
                 public: $scope.deck.public
             };
