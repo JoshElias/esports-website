@@ -312,8 +312,6 @@ module.exports = {
                 guides, total,
                 talents = [];
             
-            console.log(req.body);
-            
             if (filters) {
                 var dbFilters = (filters instanceof Array) ? { $in: filters } : filters;
                 where.$or = [];
