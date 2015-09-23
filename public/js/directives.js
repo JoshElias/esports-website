@@ -1204,10 +1204,10 @@ angular.module('app.directives', ['ui.load'])
 
             TwitchService.getStreams().then(function(data) {
                 for (var i = 0; i < data.data.length; i++) {
-                    var log = data.data[i].logoUrl;
+                    var log = data.data[i].screenshotUrl;
                     var sub = log.substr(4);
                     var im = "https" + sub;
-                    data.data[i].logoUrl = im;
+                    data.data[i].screenshotUrl = im;
                 }
                 scope.streamWheel = true;
                 scope.streams = data.data;
