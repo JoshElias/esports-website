@@ -1208,6 +1208,8 @@ angular.module('app.directives', ['ui.load'])
                     var sub = log.substr(4);
                     var im = "https" + sub;
                     data.data[i].screenshotUrl = im;
+                    
+                    data.data[i].viewerCount = +data.data[i].viewerCount;
                 }
                 scope.streamWheel = true;
                 scope.streams = data.data;
