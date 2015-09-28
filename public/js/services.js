@@ -1172,6 +1172,17 @@ angular.module('app.services', [])
     hs.rarities = ['Basic', 'Common', 'Rare', 'Epic', 'Legendary'];
     hs.races = ['', 'Beast', 'Demon', 'Dragon', 'Murloc', 'Pirate', 'Totem', 'Mech'];
     hs.classes = ['Neutral', 'Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
+    hs.heroNames = {
+        Mage: ['Jaina','Medivh'],
+        Shaman: ['Thrall'],
+        Warrior: ['Garrosh','Magni'],
+        Rogue: ['Valeera'],
+        Paladin: ['Uther'],
+        Priest: ['Anduin'],
+        Warlock: ['Guldan'],
+        Hunter: ['Rexxar', 'Alleria'],
+        Druid: ['Malfurion']
+    };
     hs.mechanics = ['Battlecry', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Divine Shield', 'Enrage', 'Freeze', 'Inspire', 'Jousting', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];
     hs.deckTypes = ['None', 'Aggro', 'Control', 'Midrange', 'Combo', 'Theory Craft'];
     hs.expansions = ['Basic', 'Naxxramas', 'Goblins Vs. Gnomes', 'Blackrock Mountain', 'The Grand Tournament'];
@@ -1233,6 +1244,7 @@ angular.module('app.services', [])
             basic: data.basic || false,
             matches: data.matches || [],
             cards: data.cards || [],
+            heroName: data.heroName || '',
             playerClass: playerClass,
             mulligans: data.mulligans || [{
                     klass: 'Mage',
@@ -1671,6 +1683,7 @@ angular.module('app.services', [])
             type: deck.type,
             basic: deck.basic,
             cards: deck.cards,
+            heroName: deck.heroName,
             playerClass: deck.playerClass,
             mulligans: deck.mulligans,
             video: deck.video,
@@ -1691,6 +1704,7 @@ angular.module('app.services', [])
             type: deck.type,
             basic: deck.basic,
             cards: deck.cards,
+            heroName: deck.heroName,
             playerClass: deck.playerClass,
             mulligans: deck.mulligans,
             video: deck.video,

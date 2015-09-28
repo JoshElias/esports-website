@@ -372,6 +372,29 @@ angular.module('app.directives', ['ui.load'])
         });
     };
 }])
+.directive("subNavStream", ['TwitchService', function (TwitchService) {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: "views/frontend/directives/subnav.stream.html",
+        controller: ['$scope', function ($scope) {
+            $scope.activeStream = 0;
+            
+            TwitchService.getStreams().then(function (data) {
+                $scope.data = data.data;
+            });
+            
+            $scope.inc = function () {
+                $scope.activeStream++;
+            }
+            
+            $scope.dec = function () {
+                $scope.activeStream--;
+            }
+            
+        }]
+    }
+}])
 .directive('ngBackground', function(){
     return function(scope, element, attrs){
         var url = attrs.ngBackground;

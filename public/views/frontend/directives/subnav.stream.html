@@ -1,0 +1,18 @@
+<div class="now-streaming">
+    <div class="row">
+        <div class="col-md-5 now-streaming-text">
+            NOW STREAMING
+        </div>
+        <div class="col-md-2 now-streaming-icon">
+            <img ng-src="{{data[activeStream].logoUrl}}" />
+        </div>
+        <div class="col-md-5 now-streaming-info">
+            <div class="name">
+                {{data[activeStream].displayName}}
+            </div>
+            <div class="viewers">
+                <i class="fa fa-eye"></i> {{data[activeStream].viewerCount}}
+            </div>
+        </div>
+    </div>
+</div>

@@ -42,9 +42,9 @@
                 </div>
                 <div class="db-mana-curve m-b-md">
                     <div class="db-mana-curve-title">
-                        MANA CURVE
+                        MANA CURVE<i class="fa pull-right show-toggle-caret" ng-class="{ 'fa-caret-down' : !show.mana, 'fa-caret-up' : show.mana  }" ng-click="show.mana = !show.mana"></i>
                     </div>
-                    <div class="db-mana-curve-content clearfix" >
+                    <div class="db-mana-curve-content clearfix" ng-show="show.mana">
                         <ul class="clearfix">
                             <li>
                                 <div class="db-mana-curve-amt">{{deck.manaCount(0)}}</div>
@@ -109,7 +109,7 @@
                 </div>
 
                 <div class="deck-info">
-                    <div class="db-deck-header db-deck-{{className.toLowerCase()}}" ng-class="{ 'secondary' : isSecondary(className.toLowerCase()) }">
+                    <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
                         <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                     </div>
                     <span ng-show="deck.basic">
@@ -128,7 +128,7 @@
                             <div ng-if="card.legendary" class="legendary pull-right"><i class="fa fa-star"></i></div>
                         </div>
                     </div>
-                    <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}}" ng-class="{ 'secondary' : isSecondary(className.toLowerCase()) }">
+                    <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
                         {{getDust(deck.cards)}}
                         <div class="dust-bottle-sm"></div>
                     </div>

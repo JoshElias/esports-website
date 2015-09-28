@@ -25,7 +25,7 @@
         <img class="article-photo-banner wrapper-none" src="{{app.cdn}}articles/{{article.photos.large}}" />
         <span class="title-wrapper">
             <h1>{{article.title}}</h1>
-            <h2>{{article.description}}</h2>
+<!--            <h2>{{article.description}}</h2>-->
         </span>
     
         <div class="row m-r-none m-l-none m-t-md">
@@ -71,7 +71,7 @@
                 
                 <!-- article related -->
                 <div class="article-related" ng-if="article.related && article.related.length && relatedActive()">
-                    <h3>RELATED ARTICLE</h3>
+                    <h3>RELATED ARTICLES</h3>
                     <div class="related" ng-repeat="item in article.related | orderBy: '-createdDate'" ng-if="item.active">
                         <a href="./articles/{{item.slug.url}}" title="{{item.title}}">
                             <div class="related-img pull-left" style="background-image: url('{{app.cdn}}articles/{{item.photos.small}}')"></div>
