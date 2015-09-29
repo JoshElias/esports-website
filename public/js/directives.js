@@ -376,6 +376,7 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'E',
         replace: true,
+        scope: false,
         templateUrl: "views/frontend/directives/subnav.stream.html",
         controller: ['$scope', function ($scope) {
             $scope.streams = [];
@@ -1246,6 +1247,7 @@ angular.module('app.directives', ['ui.load'])
 .directive('tempostormTv', ['TwitchService', 'Util', function (TwitchService, Util) {
     return {
         restrict: 'A',
+        scope: false,
         templateUrl: tpl + 'views/frontend/directives/twitch.streams.html',
         link: function (scope, element, attrs) {
             scope.streamWheel = false;
