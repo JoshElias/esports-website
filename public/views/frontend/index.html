@@ -56,8 +56,8 @@
                         <li ng-class="{active:$state.includes('app.polls')}"><a ui-sref="app.polls">Vote</a></li>
                         <li>
                             <span class="dropdown-grid">
-                                <li class="sub" class="hidden-sm hidden-md hidden-lg" ng-click="loginModal('login')" ng-hide="app.user.isLogged()"><a href="#">Login</a></li>
-                                <li class="sub" class="hidden-sm hidden-md hidden-lg" ng-click="loginModal('signup')" ng-hide="app.user.isLogged()"><a href="#">Signup</a></li>
+                                <li class="hidden-sm hidden-md hidden-lg sub" ng-click="loginModal('login')" ng-hide="app.user.isLogged()"><a href="#">Login</a></li>
+                                <li class="hidden-sm hidden-md hidden-lg sub" ng-click="loginModal('signup')" ng-hide="app.user.isLogged()"><a href="#">Signup</a></li>
                                 <li class="hidden-sm hidden-md hidden-lg" style="overflow: hidden" class="dropdown-short" ng-class="{active:$state.includes('app.profile')}" ng-if="app.user.isLogged()">
                                     <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                       <span class="profile-avatar profile-avatar-sm pull-right hidden-xs">
