@@ -7542,6 +7542,7 @@ p.white { color: #FFF; }
 .sub-nav-wrapper.sticky { height: 61px; }
 .sub-nav { background: #2766ad; box-shadow: inset 0px 4px 10px rgba(0,0,0,.7); border-bottom: 1px solid #000; }
 .sub-nav .now-streaming { position: absolute; width: 250px; margin: 15px 0px; }
+.sub-nav.sticky .now-streaming { margin: 10px 0px; }
 .sub-nav .now-streaming div { padding: 0; }
 .sub-nav .now-streaming .now-streaming-text { color: white; font-weight: bold; text-align: right; }
 .sub-nav .now-streaming .now-streaming-icon { padding: 0px 15px; }
