@@ -8,7 +8,7 @@
                     <h1>{{stream.title}}</h1>
                     <h3>PLAYING: {{stream.gameName}}</h3>
                     <div class="streamer">{{stream.displayName}}</div>
-                    <div class="viewers"><span class="fa fa-eye m-r-sm"></span>{{stream.viewerCount}}</div>
+                    <div class="viewers"><span class="fa fa-eye m-r-sm"></span>{{getNumber(stream.viewerCount)}}</div>
                 </div>
             </div>
         </a>

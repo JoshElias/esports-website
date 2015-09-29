@@ -43,7 +43,7 @@
                     <!-- / article content -->
 
                     <div class="article-author m-t-md">
-                        <a href="./user/{{article.author.username}}"><img gravatar-src-once="authorEmail" alt="" /></a>
+                        <a class="hidden-xs" href="./user/{{article.author.username}}"><img gravatar-src-once="authorEmail" alt="" /></a>
                         <span class="author-social">
                             <a target="_blank" href="http://twitter.com/{{article.author.social.twitter}}" ng-if="article.author.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
                             <a target="_blank" href="http://twitch.tv/{{article.author.social.twitch}}" ng-if="article.author.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>

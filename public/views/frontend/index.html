@@ -24,7 +24,7 @@
             <div class="container">
                 <div class="collapse navbar-collapse" id="MegaNavbar">
                     <ul class="nav navbar-nav navbar-center">
-                        <li ng-class="{active:$state.includes('app.articles')}"><a ui-sref="app.articles.list">Articles</a></li>
+                        <li class="sub" ng-class="{active:$state.includes('app.articles')}"><a ui-sref="app.articles.list">Articles</a></li>
                         <li class="dropdown-grid" ng-class="{active:$state.includes('app.hots') || $state.includes('app.hs') || $state.includes('app.snapshot')}">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Games<span class="caret"></span></a>
                             <div class="dropdown-grid-wrapper">
@@ -32,7 +32,7 @@
                                     <li>
                                         <ul class="col-xs-12 col-sm-6">
                                             <a class="game-head-link" ui-sref="app.hs.home" ng-class="{active:$state.includes('app.hs.home')}" class="dropdown-header">Hearthstone</a>
-                                            <li>
+                                            <li class="sub">
                                                 <a ui-sref="app.snapshot.redirect" ng-class="{active:$state.includes('app.snapshot')}">Meta Snapshot</a>
                                                 <a ui-sref="app.hs.decks.list" ng-class="{active:$state.includes('app.hs.decks')}">Decks</a>
                                                 <a ui-sref="app.hs.deckBuilder.class" class="hidden-xs" ng-class="{active:$state.includes('app.hs.deckBuilder')}">Deck Builder</a>
@@ -40,7 +40,7 @@
                                         </ul>
                                         <ul class="col-xs-12 col-sm-6">
                                             <a class="game-head-link" ui-sref="app.hots.home" ng-class="{active:$state.includes('app.hots.home')}" class="dropdown-header">Heroes of the Storm</a>
-                                            <li>
+                                            <li class="sub">
                                                 <a ui-sref="app.hots.guides.list" ng-class="{active:$state.includes('app.hots.guides')}">Guides</a>
                                                 <a ui-sref="app.hots.guideBuilder.step1" class="hidden-xs" ng-class="{active:$state.includes('app.hots.guideBuilder')}">Guide Builder</a>
                                                 <a ui-sref="app.hots.talentCalculator.redirect" ng-class="{active:$state.includes('app.hots.talentCalculator')}">Talent Calculator</a>
@@ -56,8 +56,8 @@
                         <li ng-class="{active:$state.includes('app.polls')}"><a ui-sref="app.polls">Vote</a></li>
                         <li>
                             <span class="dropdown-grid">
-                                <li class="hidden-sm hidden-md hidden-lg" ng-click="loginModal('login')" ng-hide="app.user.isLogged()"><a href="#">Login</a></li>
-                                <li class="hidden-sm hidden-md hidden-lg" ng-click="loginModal('signup')" ng-hide="app.user.isLogged()"><a href="#">Signup</a></li>
+                                <li class="sub" class="hidden-sm hidden-md hidden-lg" ng-click="loginModal('login')" ng-hide="app.user.isLogged()"><a href="#">Login</a></li>
+                                <li class="sub" class="hidden-sm hidden-md hidden-lg" ng-click="loginModal('signup')" ng-hide="app.user.isLogged()"><a href="#">Signup</a></li>
                                 <li class="hidden-sm hidden-md hidden-lg" style="overflow: hidden" class="dropdown-short" ng-class="{active:$state.includes('app.profile')}" ng-if="app.user.isLogged()">
                                     <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                       <span class="profile-avatar profile-avatar-sm pull-right hidden-xs">
@@ -66,9 +66,9 @@
                                       <span class="hidden-sm hidden-md">{{app.user.getUsername()}}</span><span class="caret"></span>
                                     </a>
                                     <ul class="dropdown-menu no-border-radius no-padding">
-                                      <li ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{app.user.getUsername()}}">Profile</a></li>
-                                      <li ng-class="{active: $state.includes('app.admin')}" ng-show="app.user.isAdmin()"><a ui-sref="app.admin.dashboard">Admin</a></li>
-                                      <li><a href="#" ng-click="app.user.logout()">Logout</a></li>
+                                      <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{app.user.getUsername()}}">Profile</a></li>
+                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="app.user.isAdmin()"><a ui-sref="app.admin.dashboard">Admin</a></li>
+                                      <li class="sub"><a href="#" ng-click="app.user.logout()">Logout</a></li>
                                     </ul>
                                 </li>
                             </span>
@@ -78,8 +78,8 @@
                 </div>
             </div>
             <ul class="nav navbar-nav navbar-right hidden-xs">
-                <li ng-click="loginModal('login')" ng-hide="app.user.isLogged()"><a href="#">Login</a></li>
-                <li ng-click="loginModal('signup')" ng-hide="app.user.isLogged()"><a href="#">Signup</a></li>
+                <li class="sub" ng-click="loginModal('login')" ng-hide="app.user.isLogged()"><a href="#">Login</a></li>
+                <li class="sub" ng-click="loginModal('signup')" ng-hide="app.user.isLogged()"><a href="#">Signup</a></li>
                 <li class="dropdown-short" ng-class="{active:$state.includes('app.profile')}" ng-if="app.user.isLogged()">
                     <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <span class="profile-avatar profile-avatar-sm pull-right hidden-xs">
@@ -88,9 +88,9 @@
                       <span class="hidden-sm hidden-md">{{app.user.getUsername()}}</span><span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu no-border-radius no-padding">
-                      <li ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{app.user.getUsername()}}">Profile</a></li>
-                      <li ng-class="{active: $state.includes('app.admin')}" ng-show="app.user.isAdmin()"><a ui-sref="app.admin.dashboard">Admin</a></li>
-                      <li><a href="#" ng-click="app.user.logout()">Logout</a></li>
+                      <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{app.user.getUsername()}}">Profile</a></li>
+                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="app.user.isAdmin()"><a ui-sref="app.admin.dashboard">Admin</a></li>
+                      <li class="sub"><a href="#" ng-click="app.user.logout()">Logout</a></li>
                     </ul>
                 </li>
             </ul>

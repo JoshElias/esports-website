@@ -172,7 +172,7 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('forgotPasswordForm', ['LoginModalService', function (LoginModalService) {
+.directive('forgotPasswordForm', ['LoginModalService', 'UserService', function (LoginModalService, UserService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/forgot.password.form.html',
         scope: true,
@@ -372,24 +372,50 @@ angular.module('app.directives', ['ui.load'])
         });
     };
 }])
-.directive("subNavStream", ['TwitchService', function (TwitchService) {
+.directive("subNavStream", ['TwitchService', '$timeout', 'Util', function (TwitchService, $timeout, Util) {
     return {
         restrict: 'E',
         replace: true,
         templateUrl: "views/frontend/directives/subnav.stream.html",
         controller: ['$scope', function ($scope) {
-            $scope.activeStream = 0;
+            $scope.streams = [];
+            $scope.show = false;
+//            TwitchService.getStreams().then(function (data) {
+//                $scope.data = data.data;
+//            });
             
-            TwitchService.getStreams().then(function (data) {
-                $scope.data = data.data;
+            TwitchService.getStreams().then(function(data) {
+//                data.data.sort(function(a,b) {return (b.viewerCount > a.viewerCount) ? 1 : ((a.viewerCount > b.viewerCount) ? -1 : 0);} );
+                for (var i = 0; i < data.data.length; i++) {
+                    var log = data.data[i].logoUrl;
+                    var sub = log.substr(4);
+                    var im = "https" + sub;
+                    data.data[i].logoUrl = im;
+//                    data.data[i].viewerCount = +data.data[i].viewerCount;
+                }
+                $scope.selectedStream = data.data.length-1;
+                $timeout(function() {
+                    if (data.data.length) {
+                        $scope.show = true;
+                    }
+                    $scope.streams = data.data;
+                });
             });
             
-            $scope.inc = function () {
-                $scope.activeStream++;
+            $scope.changeStream = function (direction) {
+                if (direction == 'increment') {
+                    if (++$scope.selectedStream == $scope.streams.length) {
+                        $scope.selectedStream = 0;
+                    }
+                } else if (direction == 'decrement') {
+                    if (--$scope.selectedStream < 0) {
+                        $scope.selectedStream = $scope.streams.length-1;
+                    }
+                }
             }
             
-            $scope.dec = function () {
-                $scope.activeStream--;
+            $scope.getNumber = function (x) {
+                return Util.numberWithCommas(x);
             }
             
         }]
@@ -1217,13 +1243,17 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
-.directive('tempostormTv', ['TwitchService', function (TwitchService) {
+.directive('tempostormTv', ['TwitchService', 'Util', function (TwitchService, Util) {
     return {
         restrict: 'A',
         templateUrl: tpl + 'views/frontend/directives/twitch.streams.html',
         link: function (scope, element, attrs) {
             scope.streamWheel = false;
             scope.streams = undefined;
+            
+            scope.getNumber = function (x) {
+                return Util.numberWithCommas(x);
+            }
 
             TwitchService.getStreams().then(function(data) {
                 for (var i = 0; i < data.data.length; i++) {

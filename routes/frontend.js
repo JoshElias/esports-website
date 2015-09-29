@@ -1176,6 +1176,7 @@ module.exports = {
                         type: results.type,
                         basic: results.basic,
                         cards: results.cards,
+                        heroName: results.heroName,
                         playerClass: results.playerClass,
                         public: results.public.toString(),
                         mulligans: results.mulligans,
@@ -1473,6 +1474,7 @@ module.exports = {
                         basic: req.body.basic,
                         author: req.user._id,
                         cards: cards,
+                        heroName: req.body.heroName,
                         playerClass: req.body.playerClass,
                         public: req.body.public,
                         mulligans: req.body.mulligans || [],
@@ -1655,6 +1657,7 @@ module.exports = {
                     deck.matches = req.body.matches;
                     deck.cards = cards;
                     deck.public = req.body.public;
+                    deck.heroName = req.body.heroName;
                     deck.mulligans = req.body.mulligans || [];
                     deck.video = req.body.video;
                     deck.premium = premium;

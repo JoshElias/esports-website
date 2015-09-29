@@ -5649,6 +5649,7 @@ angular.module('app.controllers', ['ngCookies'])
                 chapters: $scope.deck.chapters,
                 matches: $scope.deck.matches,
                 cards: $scope.deck.cards,
+                heroName: $scope.deck.heroName,
                 playerClass: $scope.deck.playerClass,
                 type: $scope.deck.type,
                 basic: $scope.deck.basic,

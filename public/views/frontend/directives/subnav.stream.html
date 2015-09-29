@@ -1,18 +1,22 @@
-<div class="now-streaming">
-    <div class="row">
+<div ng-if="show" class="now-streaming hidden-xs hidden-sm hidden-md">
+    <div class="row m-l-none m-r-none">
         <div class="col-md-5 now-streaming-text">
             NOW STREAMING
         </div>
-        <div class="col-md-2 now-streaming-icon">
-            <img ng-src="{{data[activeStream].logoUrl}}" />
+        <div class="col-md-3 now-streaming-icon">
+            <a target="_blank" ng-href="{{streams[selectedStream].channelUrl}}"><img ng-src="{{streams[selectedStream].logoUrl}}" /></a>
         </div>
-        <div class="col-md-5 now-streaming-info">
-            <div class="name">
-                {{data[activeStream].displayName}}
+        <div class="col-md-4 now-streaming-info">
+            <div class="name ell">
+                <a target="_blank" ng-href="{{streams[selectedStream].channelUrl}}">{{streams[selectedStream].displayName}}</a>
             </div>
             <div class="viewers">
-                <i class="fa fa-eye"></i> {{data[activeStream].viewerCount}}
+                <i class="fa fa-eye"></i> {{getNumber(streams[selectedStream].viewerCount)}}
             </div>
         </div>
+    </div>
+    <div class="pagination" ng-if="streams.length > 1">
+        <button class="left" ng-click="changeStream('decrement')"><i class="fa fa-caret-left"></i></button>
+        <button class="right" ng-click="changeStream('increment')"><i class="fa fa-caret-right"></i></button>
     </div>
 </div>
