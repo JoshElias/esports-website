@@ -11,22 +11,24 @@
 <div class="bg-override article container-fluid">
     <div class="article-page container">
         
-        <div class="article-votes pull-right clearfix"> 
-                
-            <span class="vote-wrap">
-                <div class="vote-count vote-large m-l-sm pull-right">
-                    {{article.votesCount}}
-                </div>
-                <a ng-if="!hasVoted" class="btn-vote-up vote-large" ng-click="voteArticle(article)"><p><i class="fa fa-thumbs-up"></i></p></a>
-            </span>
+        <div class="article-photo-banner clearfix" ng-background="{{app.cdn}}articles/{{article.photos.large}}">
+            <div class="article-votes pull-right"> 
+
+                <span class="vote-wrap">
+                    <div class="vote-count vote-large m-l-sm pull-right">
+                        {{article.votesCount}}
+                    </div>
+                    <a ng-if="!hasVoted" class="btn-vote-up vote-large" ng-click="voteArticle(article)"><p><i class="fa fa-thumbs-up"></i></p></a>
+                </span>
+
+            </div>
+
+            <div class="title-wrapper pull-left">
+                <h1>{{article.title}}</h1>
+    <!--            <h2>{{article.description}}</h2>-->
+            </div>
 
         </div>
-        
-        <img class="article-photo-banner wrapper-none" src="{{app.cdn}}articles/{{article.photos.large}}" />
-        <span class="title-wrapper">
-            <h1>{{article.title}}</h1>
-<!--            <h2>{{article.description}}</h2>-->
-        </span>
     
         <div class="row m-r-none m-l-none m-t-md">
             <div class="m-b-md article-left col-lg-8">

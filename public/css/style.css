@@ -1159,11 +1159,19 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .article-votes .vote-wrap i { margin-top: 10px; font-size: 24px }
 
 
-.article-photo-banner { width: 100%; height: 293; border-bottom: 1px solid rgba(255,255,255,.2); }
+.article-photo-banner { width: 100%; min-height: 293px; border-bottom: 1px solid rgba(255,255,255,.2); }
 .article-page { background: rgba(0,0,0,.5); border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid rgba(255,255,255,.2); padding: 0; position: relative; }
-.article-page .title-wrapper { position: absolute; top: 30px; left: 30px; max-width: 80%; }
+.article-page .title-wrapper { padding: 30px 90px 30px 30px; }
 .article-page .title-wrapper h1 { color: #FFFFFF; text-shadow: 1px 1px 1px black; font-weight: bold; letter-spacing: 3px; }
 .article-page .title-wrapper h2 { color: #FFFFFF; font-size: 18px; text-shadow: 1px 1px 1px black; }
+
+@media (min-width: 768px) and (max-width: 979px) {
+    .article-page .title-wrapper h1 { font-size: 24px; }
+}
+
+@media (max-width: 767px) {
+    .article-page .title-wrapper h1 { font-size: 20px; }
+}
 
 .article-comments h3,
 .article-related h3 { color: #FFF; font-family: 'Open Sans Bold'; }
@@ -3611,7 +3619,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .comment .panel-heading { color: #FFF; padding: 0; }
 .comment .panel-heading a { color: #9C9C9C; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; transition: .15s; }
 .comment .panel-body { color: #FFF; background: #1B1B1B; overflow: hidden; }
-.comment .comment-panel { color: white; border-radius: 0px; background: #262626; min-height: 100px; margin: 0; padding: 15px; transition: all .15s; -webkit-transition: all .15s; -moz-transition: all .15s; }
+.comment .comment-panel { color: white; border-radius: 0px; background: #262626; margin: 0; padding: 15px; transition: all .15s; -webkit-transition: all .15s; -moz-transition: all .15s; }
 .comment .comment-body { overflow: hidden; }
 .comment .comment-ago { float:right; color: #2267B2; transition: .15s; }
 .comment:hover .comment-panel { background-color: #2267B2; }
@@ -3651,8 +3659,9 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .no-comments { 
     font-size: 18px;
     font-weight: bold;
-    text-indent: 30px;
-    line-height: 95px;
+}
+.no-comments p {
+    padding: 30px;
 }
 .no-comments:hover .comment-panel { 
     background: #262626;
