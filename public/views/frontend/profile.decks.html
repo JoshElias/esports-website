@@ -2,7 +2,7 @@
 
 <ul class="hs-decks row" ng-if="decks.length">
     <li class="col-xs-12 col-sm-6 m-b-sm" ng-repeat="deck in decks">
-        <a ui-sref="app.hs.decks.deck({ slug: deck.slug })" class="hs-deck large {{deck.playerClass.toLowerCase()}}">
+        <a ui-sref="app.hs.decks.deck({ slug: deck.slug })" class="hs-deck large {{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
             <div class="inner"></div>
             <div class="hs-deck-premium" ng-if="isPremium(deck)"></div>
             <div class="bt-shadow"></div>
