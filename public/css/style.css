@@ -8006,7 +8006,7 @@ p.white { color: #FFF; }
 .tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content { margin-left: 200px; padding: 10px 15px; height: 112px; position: relative; }
 .tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content h1 { margin-bottom: 5px; font-size: 16px; color: #f7ef22; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
 .tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content h3 { font-size: 10px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content .streamer { position: absolute; bottom: 10px; left: 15px; font-size: 16px; color: #67a0d6; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
+.tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content .streamer { position: absolute; bottom: 10px; left: 0px; font-size: 16px; color: #67a0d6; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); max-width: 100%; padding: 0px 120px 0px 15px; }
 .tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content .viewers { position: absolute; bottom: 10px; right: 15px; font-size: 16px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
 
 @media (max-width: 767px) {
