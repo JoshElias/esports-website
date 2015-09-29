@@ -1452,8 +1452,6 @@ module.exports = {
                     });
                 }
                 
-                
-                
                 var premium = (author.isAdmin || author.isProvider) ? {
                         isPremium: req.body.premium.isPremium || false,
                         expiryDate: req.body.premium.expiryDate || new Date().toISOString()
