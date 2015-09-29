@@ -3766,35 +3766,62 @@ angular.module('app.controllers', ['ngCookies'])
     }
 ])
 .controller('AdminDeckBuilderClassCtrl', ['$scope', function ($scope) {
-    
-    var portraitSettings = ($scope.app.settings.secondaryPortrait != undefined) ? $scope.app.settings.secondaryPortrait : function() { 
+    if ($scope.app.settings.secondaryPortrait == undefined || $scope.app.settings.secondaryPortrait.length == 0) {
         $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
-        return $scope.app.settings.secondaryPortrait;
-    };
-    
-    $scope.statdddde = 1;
-    
-    $scope.selectedHero = "";
+    }
+    var portraitSettings = $scope.app.settings.secondaryPortrait;
+
+    $scope.heroNames = Hearthstone.heroNames;
     $scope.klass = false;
     $scope.heroes = [
-        { class: 'mage', hasSecondary: true, secondary: portraitSettings[0] },
-        { class: 'shaman', hasSecondary: false, secondary: portraitSettings[1] },
-        { class: 'warrior', hasSecondary: true, secondary: portraitSettings[2] },
-        { class: 'rogue', hasSecondary: false, secondary: portraitSettings[3] },
-        { class: 'paladin', hasSecondary: false, secondary: portraitSettings[4] },
-        { class: 'priest', hasSecondary: false, secondary: portraitSettings[5] },
-        { class: 'warlock', hasSecondary: false, secondary: portraitSettings[6] },
-        { class: 'hunter', hasSecondary: true, secondary: portraitSettings[7] },
-        { class: 'druid', hasSecondary: false, secondary: portraitSettings[8] }
+        { class: 'mage', hasSecondary: Hearthstone.heroNames.Mage.length > 1, secondary: portraitSettings[0] },
+        { class: 'shaman', hasSecondary: Hearthstone.heroNames.Shaman.length > 1, secondary: portraitSettings[1] },
+        { class: 'warrior', hasSecondary: Hearthstone.heroNames.Warrior.length > 1, secondary: portraitSettings[2] },
+        { class: 'rogue', hasSecondary: Hearthstone.heroNames.Rogue.length > 1, secondary: portraitSettings[3] },
+        { class: 'paladin', hasSecondary: Hearthstone.heroNames.Paladin.length > 1, secondary: portraitSettings[4] },
+        { class: 'priest', hasSecondary: Hearthstone.heroNames.Priest.length > 1, secondary: portraitSettings[5] },
+        { class: 'warlock', hasSecondary: Hearthstone.heroNames.Warlock.length > 1, secondary: portraitSettings[6] },
+        { class: 'hunter', hasSecondary: Hearthstone.heroNames.Hunter.length > 1, secondary: portraitSettings[7] },
+        { class: 'druid', hasSecondary: Hearthstone.heroNames.Druid.length > 1, secondary: portraitSettings[8] }
     ];
     
-    $scope.selectHero = function (hero) {
-        (hero.class != $scope.selectedHero) ? $scope.selectedHero = hero.class : null;
+    //return the upper case name of the hero based on index
+    function getClass (index) {
+        return $scope.heroes[index].class[0].toUpperCase() + $scope.heroes[index].class.slice(1);
+    }
+     
+    //increment the hero name selector and if at the end of hero name list, return 0
+    function calc (index) {
+        if(portraitSettings[index] == (Hearthstone.heroNames[getClass(index)].length - 1)) {
+            return 0;
+        } else {
+            return ++portraitSettings[index];
+        }
     }
     
-    $scope.updateHero = function (secondary, index) {
-        portraitSettings[index] = secondary;
-        $scope.app.settings.secondaryPortrait[index] = secondary;
+    //get the hero name based on the index of portraitSettings' index
+    $scope.getName = function (index, caps) {
+        if (caps) {
+            return Hearthstone.heroNames[getClass(index)][portraitSettings[index]];
+        } else {
+            var name = Hearthstone.heroNames[getClass(index)][portraitSettings[index]]
+            return name[0].toLowerCase() + name.slice(1);
+        }
+    }
+    
+    //update the hero selection on button press
+    $scope.updateHero = function (index) {
+        var numb = calc(index);
+        portraitSettings[index] = numb;
+        $scope.app.settings.secondaryPortrait[index] = numb;
+    }
+
+    //
+    for (var i = 0; i < $scope.app.settings.secondaryPortrait.length; i++) {
+        if ($scope.getName(i, true) == undefined || $scope.getName(i, true) == '') {
+            $scope.app.settings.secondaryPortrait[i] = 0;
+            portraitSettings[i] = 0;
+        }
     }
 }])
 .controller('AdminDeckAddCtrl', ['$state', '$scope', '$compile', '$q', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data', 
@@ -3827,6 +3854,10 @@ angular.module('app.controllers', ['ngCookies'])
                 case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
                 case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
             }
+        }
+        
+        $scope.getName = function () {
+            return Hearthstone.heroNames[$scope.deck.playerClass][$scope.isSecondary($scope.deck.playerClass.toLowerCase())];
         }
         
         // steps
@@ -4010,6 +4041,7 @@ angular.module('app.controllers', ['ngCookies'])
                 description: $scope.deck.description,
                 chapters: $scope.deck.chapters,
                 cards: $scope.deck.cards,
+                matches: $scope.deck.matches,
                 playerClass: $scope.deck.playerClass,
                 type: $scope.deck.type,
                 basic: $scope.deck.basic,
@@ -4115,6 +4147,7 @@ angular.module('app.controllers', ['ngCookies'])
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login');
             } else {
+                $scope.deck.heroName = $scope.getName();
                 DeckBuilder.saveDeck($scope.deck).success(function (data) {
                     if (data.success) {
                         $scope.app.settings.deck = null;
@@ -4127,30 +4160,6 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
-        // login for modal
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    $scope.saveDeck();
-                }).error(function() {
-                    $scope.showError = true;
-                });
-            }
-        }
     }
 ])
 .controller('AdminDeckEditCtrl', ['$state', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data', 
@@ -4185,6 +4194,8 @@ angular.module('app.controllers', ['ngCookies'])
                 case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
             }
         }
+        
+        console.log(data);
         
         $scope.getDust = function (cards) {
             var dust = 0;
@@ -5466,7 +5477,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getName = function () {
             return Hearthstone.heroNames[$scope.deck.playerClass][$scope.isSecondary($scope.deck.playerClass.toLowerCase())];
         }
-        
+
         // steps
         $scope.stepDesc = {
             1: 'Select the cards for your deck.',

@@ -307,6 +307,8 @@ module.exports = {
                         deckType: results.deckType,
                         description: results.description,
                         chapters: results.chapters,
+                        matches: results.matches,
+                        heroName: results.heroName,
                         cards: results.cards,
                         playerClass: results.playerClass,
                         public: results.public.toString(),
@@ -431,6 +433,8 @@ module.exports = {
                         chapters: req.body.chapters,
                         author: req.user._id,
                         cards: cards,
+                        matches: req.body.matches,
+                        heroName: req.body.heroName,
                         playerClass: req.body.playerClass,
                         public: req.body.public,
                         mulligans: req.body.mulligans || [],
@@ -542,6 +546,8 @@ module.exports = {
                     deck.deckType = req.body.deckType;
                     deck.description = req.body.description;
                     deck.chapters = req.body.chapters;
+                    deck.matches = req.body.matches;
+                    deck.heroName = req.body.heroName;
                     deck.cards = cards;
                     deck.public = req.body.public;
                     deck.mulligans = req.body.mulligans || [];
