@@ -541,35 +541,44 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .hs-deck.long .hs-deck-hero-name { text-shadow: 0px 0px 10px rgba(255,255,255,.6); }
 .hs-deck.long:hover { background-color: rgba(255,255,255,.2); }
 
-.hs-deck.small.druid { background: url('../img/decks/druid.png') center center no-repeat; background-size: cover; }
-.hs-deck.small.hunter { background: url('../img/decks/hunter.png') center center no-repeat; background-size: cover; }
-.hs-deck.small.mage { background: url('../img/decks/mage.png') center center no-repeat; background-size: cover; }
-.hs-deck.small.paladin { background: url('../img/decks/paladin.png') center center no-repeat; background-size: cover; }
-.hs-deck.small.priest { background: url('../img/decks/priest.png') center center no-repeat; background-size: cover; }
-.hs-deck.small.rogue { background: url('../img/decks/rogue.png') center center no-repeat; background-size: cover; }
-.hs-deck.small.shaman { background: url('../img/decks/shaman.png') center center no-repeat; background-size: cover; }
-.hs-deck.small.warlock { background: url('../img/decks/warlock.png') center center no-repeat; background-size: cover; }
-.hs-deck.small.warrior { background: url('../img/decks/warrior.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.druid.malfurion { background: url('../img/decks/druid.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.hunter.rexxar { background: url('../img/decks/hunter.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.hunter.alleria { background: url('../img/decks/alleria.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.mage.jaina { background: url('../img/decks/mage.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.mage.medivh { background: url('../img/decks/medivh.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.paladin.uther { background: url('../img/decks/paladin.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.priest.anduin { background: url('../img/decks/priest.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.rogue.valeera { background: url('../img/decks/rogue.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.shaman.thrall { background: url('../img/decks/shaman.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.warlock.guldan { background: url('../img/decks/warlock.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.warrior.garrosh { background: url('../img/decks/warrior.png') center center no-repeat; background-size: cover; }
+.hs-deck.small.warrior.magni { background: url('../img/decks/magni.png') center center no-repeat; background-size: cover; }
 
-.hs-deck.large.druid { background: url('../img/decks/druid-large.png') center center no-repeat; background-size: cover; }
-.hs-deck.large.hunter { background: url('../img/decks/hunter-large.png') center center no-repeat; background-size: cover; }
-.hs-deck.large.mage { background: url('../img/decks/mage-large.png') center center no-repeat; background-size: cover; }
-.hs-deck.large.paladin { background: url('../img/decks/paladin-large.png') center center no-repeat; background-size: cover; }
-.hs-deck.large.priest { background: url('../img/decks/priest-large.png') center center no-repeat; background-size: cover; }
-.hs-deck.large.rogue { background: url('../img/decks/rogue-large.png') center center no-repeat; background-size: cover; }
-.hs-deck.large.shaman { background: url('../img/decks/shaman-large.png') center center no-repeat; background-size: cover; }
-.hs-deck.large.warlock { background: url('../img/decks/warlock-large.png') center center no-repeat; background-size: cover; }
-.hs-deck.large.warrior { background: url('../img/decks/warrior-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.druid.malfurion { background: url('../img/decks/druid-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.hunter.rexxar { background: url('../img/decks/hunter-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.hunter.alleria { background: url('../img/decks/alleria_large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.mage.jaina { background: url('../img/decks/mage-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.mage.medivh { background: url('../img/decks/medivh_large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.paladin.uther { background: url('../img/decks/paladin-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.priest.anduin { background: url('../img/decks/priest-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.rogue.valeera { background: url('../img/decks/rogue-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.shaman.thrall { background: url('../img/decks/shaman-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.warlock.guldan { background: url('../img/decks/warlock-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.warrior.garrosh { background: url('../img/decks/warrior-large.png') center center no-repeat; background-size: cover; }
+.hs-deck.large.warrior.magni { background: url('../img/decks/warrior-large.png') center center no-repeat; background-size: cover; }
 
-.hs-deck.long.druid { background-image: url('../img/decks/long/malfurion.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.hunter { background-image: url('../img/decks/long/rexxar.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.mage { background-image: url('../img/decks/long/jaina.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.paladin { background-image: url('../img/decks/long/uther.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.priest { background-image: url('../img/decks/long/anduin.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.rogue { background-image: url('../img/decks/long/valeera.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.shaman { background-image: url('../img/decks/long/thrall.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.warlock { background-image: url('../img/decks/long/guldan.png'); background-position: right center; background-repeat: no-repeat; }
-.hs-deck.long.warrior { background-image: url('../img/decks/long/garrosh.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.druid.malfurion { background-image: url('../img/decks/long/malfurion.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.hunter.rexxar { background-image: url('../img/decks/long/rexxar.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.hunter.alleria { background-image: url('../img/decks/long/alleria.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.mage.jaina { background-image: url('../img/decks/long/jaina.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.mage.medivh { background-image: url('../img/decks/long/medivh.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.paladin.uther { background-image: url('../img/decks/long/uther.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.priest.anduin { background-image: url('../img/decks/long/anduin.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.rogue.valeera { background-image: url('../img/decks/long/valeera.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.shaman.thrall { background-image: url('../img/decks/long/thrall.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.warlock.guldan { background-image: url('../img/decks/long/guldan.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.warrior.garrosh { background-image: url('../img/decks/long/garrosh.png'); background-position: right center; background-repeat: no-repeat; }
+.hs-deck.long.warrior.magni { background-image: url('../img/decks/long/magni.png'); background-position: right center; background-repeat: no-repeat; }
 /* end decks */
 
 /* sections */
@@ -3134,18 +3143,18 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-mana-curve-title a { color: #FFF !important; text-decoration: none; }
 .db-mana-curve-content { border-top: 1px solid #000; }
 
-.db-mana-curve ul { display: block; width: 280px; padding: 0; margin: 9px auto; }
-.db-mana-curve ul li { float: left; list-style: none; width: 35px; }
+.db-mana-curve ul { display: block; width: 90%; padding: 0; margin: 9px auto; }
+.db-mana-curve ul li { float: left; list-style: none; width: 12.5%; }
 
-.db-mana-curve .db-mana-curve-amt { width: 35px; text-align: center; font-family: hs; font-size: 14px; color: #FFF; font-weight: bold; line-height: 20px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; margin-bottom: 5px; }
+.db-mana-curve .db-mana-curve-amt { width: 100%; text-align: center; font-family: hs; font-size: 14px; color: #FFF; font-weight: bold; line-height: 20px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; margin-bottom: 5px; }
 
-.db-mana-curve .db-mana-curve-bar { position: relative; width: 15px; margin: 0 10px; height: 100px; background: url('../img/black-60.png'); background: rgba(255,255,255,.15); }
+.db-mana-curve .db-mana-curve-bar { position: relative; width: 50%; margin: 0 auto; height: 100px; background: url('../img/black-60.png'); background: rgba(255,255,255,.15); }
 .db-mana-curve .db-mana-curve-bar span { position: absolute; left: 0px; right: 0px; bottom: 0px; height: 0px; -webkit-transition: height .25s; transition: height .25s; 
     background: #2268AD; /* Old browsers */
 }
 
-.db-mana-curve .db-mana-curve-num { position: relative; width: 35px; height: 20px; margin: 5px 0 0 0; line-height: 20px; text-align: center; font-family: hs; font-size: 14px; color: #FFF; font-weight: bold; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; }
-.db-mana-curve .db-mana-curve-num span { position: absolute; top: 1px; right: 3px; font-size: 10px; }
+.db-mana-curve .db-mana-curve-num { position: relative; width: 50%; height: 20px; margin: 5px auto 0 auto; line-height: 20px; text-align: center; font-family: hs; font-size: 14px; color: #FFF; font-weight: bold; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; }
+.db-mana-curve .db-mana-curve-num span { position: absolute; top: 1px; font-size: 10px; }
 
 
 /* deck builder- btns */
@@ -3232,18 +3241,18 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .db-deck-header { margin: 0 auto; position: relative; width: 100%; height: 100px; padding: 10px; border: 1px solid #000; }
 
-.db-deck-header.db-deck-mage.jaina { background: url('../img/mage-large.jpg') center -175px; background-size: cover; }
-.db-deck-header.db-deck-mage.medivh { background: url('../img/medivh-top.jpg') center; background-size: cover; }
-.db-deck-header.db-deck-shaman.thrall { background: url('../img/shaman-large.jpg') center -175px; background-size: cover; }
-.db-deck-header.db-deck-warrior.garrosh { background: url('../img/warrior-large.jpg') center -175px; background-size: cover; }
-.db-deck-header.db-deck-warrior.magni { background: url('../img/magni-top.jpg') center; background-size: cover; }
-.db-deck-header.db-deck-rogue.valeera { background: url('../img/rogue-large.jpg') center -175px; background-size: cover; }
-.db-deck-header.db-deck-paladin.uther { background: url('../img/paladin-large.jpg') center -175px; background-size: cover; }
-.db-deck-header.db-deck-priest.anduin { background: url('../img/priest-large.jpg') center -175px; background-size: cover; }
-.db-deck-header.db-deck-warlock.guldan { background: url('../img/warlock-large.jpg') center -175px; background-size: cover; }
-.db-deck-header.db-deck-hunter.rexxar { background: url('../img/hunter-large.jpg') center -175px; background-size: cover; }
-.db-deck-header.db-deck-hunter.alleria { background: url('../img/alleria-top.jpg') center; background-size: cover; }
-.db-deck-header.db-deck-druid.malfurion { background: url('../img/druid-large.jpg') center -175px; background-size: cover; }
+.db-deck-header.db-deck-mage.jaina { background: url('../img/decks/list/jaina-top.png') center; background-size: cover; }
+.db-deck-header.db-deck-mage.medivh { background: url('../img/decks/list/medivh-top.jpg') center; background-size: cover; }
+.db-deck-header.db-deck-shaman.thrall { background: url('../img/decks/list/thrall-top.png') center; background-size: cover; }
+.db-deck-header.db-deck-warrior.garrosh { background: url('../img/decks/list/garrosh-top.png') center; background-size: cover; }
+.db-deck-header.db-deck-warrior.magni { background: url('../img/decks/list/magni-top.jpg') center; background-size: cover; }
+.db-deck-header.db-deck-rogue.valeera { background: url('../img/decks/list/valeera-top.png') center; background-size: cover; }
+.db-deck-header.db-deck-paladin.uther { background: url('../img/decks/list/uther-top.png') center; background-size: cover; }
+.db-deck-header.db-deck-priest.anduin { background: url('../img/decks/list/anduin-top.png') center; background-size: cover; }
+.db-deck-header.db-deck-warlock.guldan { background: url('../img/decks/list/guldan-top.png') center; background-size: cover; }
+.db-deck-header.db-deck-hunter.rexxar { background: url('../img/decks/list/rexxar-top.png') center; background-size: cover; }
+.db-deck-header.db-deck-hunter.alleria { background: url('../img/decks/list/alleria-top.jpg') center; background-size: cover; }
+.db-deck-header.db-deck-druid.malfurion { background: url('../img/decks/list/malfurion-top.png') center; background-size: cover; }
  
 
 .db-arena { position: absolute; left: 5px; bottom: 5px; font-family: hs; font-size: 20px; line-height: 20px; color: #FFF; font-weight: bold; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; }
@@ -3273,18 +3282,18 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .db-deck-footer { position: absolute; left: 0px; bottom: 0px; width: 100%; height: 30px; }
 
-.db-deck-footer.db-deck-mage.jaina { background: url('../img/mage-large.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-mage.medivh { background: url('../img/medivh-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-shaman.thrall { background: url('../img/shaman-large.jpg') center bottom no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-warrior.garrosh { background: url('../img/warrior-large.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-warrior.magni { background: url('../img/magni-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-rogue.valeera { background: url('../img/rogue-large.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-paladin.uther { background: url('../img/paladin-large.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-priest.anduin { background: url('../img/priest-large.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-warlock.guldan { background: url('../img/warlock-large.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-hunter.rexxar { background: url('../img/hunter-large.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-hunter.alleria { background: url('../img/alleria-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-druid.malfurion { background: url('../img/druid-large.jpg') center bottom no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-mage.jaina { background: url('../img/decks/list/jaina-bottom.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-mage.medivh { background: url('../img/decks/list/medivh-bottom.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-shaman.thrall { background: url('../img/decks/list/thrall-bottom.jpg') center bottom no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-warrior.garrosh { background: url('../img/decks/list/garrosh-bottom.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-warrior.magni { background: url('../img/decks/list/magni-bottom.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-rogue.valeera { background: url('../img/decks/list/valeera-bottom.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-paladin.uther { background: url('../img/decks/list/uther-bottom.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-priest.anduin { background: url('../img/decks/list/anduin-bottom.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-warlock.guldan { background: url('../img/decks/list/guldan-bottom.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-hunter.rexxar { background: url('../img/decks/list/rexxar-bottom.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-hunter.alleria { background: url('../img/decks/list/alleria-bottom.jpg') center top no-repeat; background-size: cover; }
+.db-deck-footer.db-deck-druid.malfurion { background: url('../img/decks/list/malfurion-bottom.jpg') center bottom no-repeat; background-size: cover; }
  
 
 .db-deck-footer-wrapper { position: relative; height: 29px; }
@@ -7539,7 +7548,7 @@ p.white { color: #FFF; }
 .sub-nav .now-streaming div { padding: 0; }
 .sub-nav .now-streaming .now-streaming-text { color: white; font-weight: bold; text-align: right; }
 .sub-nav .now-streaming .now-streaming-icon { padding: 0px 15px; }
-.sub-nav .now-streaming .now-streaming-icon a { padding: 0px 15px; }
+.sub-nav .now-streaming .now-streaming-icon a {  }
 .sub-nav .now-streaming .now-streaming-icon img { width: 40px; height: 40px; border-radius: 50%; border: 2px white solid; }
 .sub-nav .now-streaming .now-streaming-info {  }
 .sub-nav .now-streaming .now-streaming-info a { color: #E6BE20; white-space: nowrap; }

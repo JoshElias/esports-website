@@ -1999,7 +1999,7 @@ module.exports = {
             function getDecks (callback) {
                 Schemas.Deck.find({ featured: true })
                 .where(where)
-                .select('premium playerClass slug name description author createdDate comments votesCount dust')
+                .select('premium playerClass slug name description author createdDate comments votesCount dust heroName')
                 .populate({
                     path: 'author',
                     select: 'username -_id'
@@ -2066,7 +2066,7 @@ module.exports = {
             function getDecks (callback) {
                 Schemas.Deck.find({ public: true, featured: false })
                 .where(where)
-                .select('premium playerClass slug name description author createdDate comments votesCount dust')
+                .select('premium playerClass slug name description author createdDate comments votesCount dust heroName')
                 .populate({
                     path: 'author',
                     select: 'username -_id'
