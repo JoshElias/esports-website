@@ -380,7 +380,7 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: "views/frontend/directives/subnav.stream.html",
         controller: ['$scope', function ($scope) {
             $scope.streams = [];
-            $scope.show = false;
+            $scope.showSubNavStream = false;
 //            TwitchService.getStreams().then(function (data) {
 //                $scope.data = data.data;
 //            });
@@ -397,7 +397,7 @@ angular.module('app.directives', ['ui.load'])
                 $scope.selectedStream = data.data.length-1;
                 $timeout(function() {
                     if (data.data.length) {
-                        $scope.show = true;
+                        $scope.showSubNavStream = true;
                     }
                     $scope.streams = data.data;
                 });
