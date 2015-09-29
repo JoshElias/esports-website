@@ -122,39 +122,46 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 }
 .navbar-tempo .navbar-nav .dropdown-menu { background: #1B1B1B; }
 .navbar-tempo .navbar-nav > li { margin-bottom: -1px; }
-.navbar-tempo .navbar-nav > li > a,
-.navbar-tempo .navbar-nav > li > a:hover {
-    color: rgba(255,255,255,.4);
+.navbar-tempo .navbar-nav > li > a {
+    color: rgba(255,255,255,.4) !important;
     font-weight:bold;
     letter-spacing: 1px;
     text-shadow: none;
-    background: #1B1B1B;
+    background: #1B1B1B !important;
+}
+
+.navbar-tempo .navbar-nav > li > a:hover {
+    color: rgba(255,255,255,.6) !important;
+    font-weight:bold;
+    letter-spacing: 1px;
+    text-shadow: none;
+    background: #1B1B1B !important;
 }
 
 .navbar-tempo .navbar-nav > .active > a,
 .navbar-tempo .navbar-nav > .active > a:hover,
 .navbar-tempo .navbar-nav > .active > a:focus {
-    color: #FFF;
-    background: #2766ad;
+    color: #FFF !important;
+    background: #2766ad !important;
 }
 
 .navbar-tempo .navbar-nav > .open > a,
 .navbar-tempo .navbar-nav > .open > a:focus {
-    color: #FFF;
-    background: #2766ad;
+    color: #FFF !important;
+    background: #2766ad !important;
 }
-
 
 .navbar-tempo .dropdown-menu { border-top: 2px solid #2766ad; }
 .navbar-tempo .dropdown-menu li a:focus,
-.navbar-tempo .dropdown-menu li a:hover { background: none;!important; color: white!important; }
+.navbar-tempo .dropdown-menu li a:hover { background: none; color: white!important; }
 
 .navbar-nav .dropdown-menu li { min-width: 200px; }
 
 .navbar-nav .dropdown-menu li,
 .navbar-nav .dropdown-menu li a { color: rgba(255,255,255,.4); }
 .navbar-nav .dropdown-menu li.sub a,
-.navbar-nav .dropdown-menu li.sub { color: rgba(255,255,255,.4)!important; }
+.navbar-nav .dropdown-menu li.sub { color: rgba(255,255,255,.4) !important; }
+.navbar-nav .dropdown-menu li.sub a:hover { color: rgba(255,255,255,.6) !important; }
 .navbar-nav .dropdown-menu li a:focus { color: rgba(255,255,255,.4) !important; border: none; outline: none; }
 .navbar-nav .dropdown-menu li.active a,
 .navbar-nav .dropdown-menu li a.active { background: #2766ad; color: #FFF !important; }
@@ -1213,27 +1220,17 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .article-page .article-author { background-color: #2268AE; width: 100%; padding-bottom: 15px; position: relative; margin-bottom: 50px; } 
 .article-page .article-author img {  width: 80px; height: 80px; border: 4px solid white; border-radius: 80px; background: white; position: absolute; top: 40px; left: 40px; } 
 
-.article-page .article-author .author-content { color: white; width: auto; margin: 25px 0px 0px 150px; display: inline-block; min-height: 120px; } 
-.article-page .article-author .author-content h2 { font-weight: bold; margin-bottom: 15px } 
+.article-page .article-author .author-content { color: white; margin: 25px 0px 0px 150px; padding: 25px; min-height: 120px; } 
+.article-page .article-author .author-content h2 { font-weight: bold; margin-bottom: 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; } 
 .article-page .article-author .author-content p { line-height: 1.25 } 
-.article-page .article-author .author-social { position:absolute; right: 25px; top: 25px } 
+.article-page .article-author .author-social { float: right; margin-left: 20px; } 
 .article-page .article-author .author-social a { width:36px; height: 36px; border-radius: 100%; } 
 .article-page .article-author .author-social a div { width:30px; height: 30px; border-radius: 100%; } 
 .article-page .article-author .author-social a div i { font-size: 16px; line-height: 2 } 
 
 @media (max-width: 767px) {
-    
-    .article-page .article-author .author-content { margin: 25px 0px 0px 25px; max-width: 570px; }
-    .article-page .article-author .author-content p { margin: 35px 0px 0px 0px; }
-    
-    
-/*
-    .article-page .article-author .author-social a { width:26px; height: 26px; margin-top: 5px; font-size: 14px; } 
-    .article-page .article-author .author-social a div { width:20px; height: 20px; }
-    .article-page .article-author .author-social a div i { font-size: 14px; line-height: .5 } 
-*/
-
-    
+    .article-page .article-author .author-content { margin: 25px 0px 0px 25px; }
+    .article-page .article-author .author-social { margin-left: 0px; }
 }
 
 .article-page .article-title { margin: 0; color: #2766ad; font-family: 'Open Sans Bold'; } 

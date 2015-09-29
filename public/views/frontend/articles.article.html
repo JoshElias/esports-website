@@ -40,22 +40,25 @@
                 </div>
                 
                 <div ng-if="!isPremium() || app.user.isSubscribed() || app.user.isAdmin() || app.user.isProvider()">
-                <!-- article content -->
+                    <!-- article content -->
                     <div class="article-page-content clearfix" ng-bind-html="getContent()" ts-article></div>
                     <!-- / article content -->
 
                     <div class="article-author m-t-md">
                         <a class="hidden-xs" href="./user/{{article.author.username}}"><img gravatar-src-once="authorEmail" alt="" /></a>
-                        <span class="author-social">
-                            <a target="_blank" href="http://twitter.com/{{article.author.social.twitter}}" ng-if="article.author.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
-                            <a target="_blank" href="http://twitch.tv/{{article.author.social.twitch}}" ng-if="article.author.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
-                            <a target="_blank" href="http://youtube.com/{{article.author.social.youtube}}" ng-if="article.author.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
-                            <a target="_blank" href="http://facebook.com/{{article.author.social.facebook}}" ng-if="article.author.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
-                            <a target="_blank" href="http://instagram.com/{{article.author.social.instagram}}" ng-if="article.author.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
-                            <a target="_blank" href="http://esea.com/{{article.author.social.esea}}" ng-if="article.author.social.esea" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="btn-team-esea"></i></div></a>
-                        </span>
+                        
                         <div class="author-content">
-                            <h2>{{article.author.username}}</h2>
+                            <div class="author-top-wrapper clearfix">
+                                <h2 class="pull-left m-b-md">{{article.author.username}}</h2>
+                                <div class="author-social m-b-md">
+                                    <a target="_blank" href="http://twitter.com/{{article.author.social.twitter}}" ng-if="article.author.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
+                                    <a target="_blank" href="http://twitch.tv/{{article.author.social.twitch}}" ng-if="article.author.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
+                                    <a target="_blank" href="http://youtube.com/{{article.author.social.youtube}}" ng-if="article.author.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
+                                    <a target="_blank" href="http://facebook.com/{{article.author.social.facebook}}" ng-if="article.author.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
+                                    <a target="_blank" href="http://instagram.com/{{article.author.social.instagram}}" ng-if="article.author.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
+                                    <a target="_blank" href="http://esea.com/{{article.author.social.esea}}" ng-if="article.author.social.esea" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="btn-team-esea"></i></div></a>
+                                </div>
+                            </div>
                             <p ng-if="article.author.about && !article.author.providerDescription">{{article.author.about}}</p>
                             <p ng-if="article.author.providerDescription">{{article.author.providerDescription}}</p>
                         </div>
