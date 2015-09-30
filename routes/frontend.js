@@ -1641,7 +1641,7 @@ module.exports = {
                     },
                     featured = (author.isAdmin || author.isProvider) ? req.body.featured : false;
                 
-                Schemas.Deck.findOne({ _id: req.body._id, author: req.user._id })
+                Schemas.Deck.findOne({ _id: req.body._id })
                 .exec(function (err, deck) {
                     if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
 
