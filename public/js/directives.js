@@ -379,38 +379,33 @@ angular.module('app.directives', ['ui.load'])
         scope: false,
         templateUrl: "views/frontend/directives/subnav.stream.html",
         controller: ['$scope', function ($scope) {
-            $scope.streams = [];
+            $scope.subNavStreams = [];
             $scope.showSubNavStream = false;
-//            TwitchService.getStreams().then(function (data) {
-//                $scope.data = data.data;
-//            });
             
             TwitchService.getStreams().then(function(data) {
-//                data.data.sort(function(a,b) {return (b.viewerCount > a.viewerCount) ? 1 : ((a.viewerCount > b.viewerCount) ? -1 : 0);} );
                 for (var i = 0; i < data.data.length; i++) {
                     var log = data.data[i].logoUrl;
                     var sub = log.substr(4);
                     var im = "https" + sub;
                     data.data[i].logoUrl = im;
-//                    data.data[i].viewerCount = +data.data[i].viewerCount;
                 }
                 $scope.selectedStream = data.data.length-1;
                 $timeout(function() {
                     if (data.data.length) {
                         $scope.showSubNavStream = true;
                     }
-                    $scope.streams = data.data;
+                    $scope.subNavStreams = data.data;
                 });
             });
             
             $scope.changeStream = function (direction) {
                 if (direction == 'increment') {
-                    if (++$scope.selectedStream == $scope.streams.length) {
+                    if (++$scope.selectedStream == $scope.subNavStreams.length) {
                         $scope.selectedStream = 0;
                     }
                 } else if (direction == 'decrement') {
                     if (--$scope.selectedStream < 0) {
-                        $scope.selectedStream = $scope.streams.length-1;
+                        $scope.selectedStream = $scope.subNavStreams.length-1;
                     }
                 }
             }
