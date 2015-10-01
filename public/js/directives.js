@@ -393,6 +393,8 @@ angular.module('app.directives', ['ui.load'])
                     var sub = log.substr(4);
                     var im = "https" + sub;
                     data.data[i].logoUrl = im;
+                    
+                    data.data[i].viewerCount = +data.data[i].viewerCount;
                 }
                 $scope.selectedStream = data.data.length-1;
                 $timeout(function() {
