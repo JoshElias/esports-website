@@ -7967,7 +7967,7 @@ p.white { color: #FFF; }
 .hots-article:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
 .hots-article .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 2; }
 .hots-article .hots-article-content { margin: -1px 1px 0px 1px; padding: 15px 20px 20px 20px; border-top: 1px solid rgba(255,255,255,.2); }
-.hots-article .hots-article-content h1 { margin-bottom: 20px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; color: #8968ad; }
+.hots-article .hots-article-content h1 { margin-bottom: 20px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; color: #8968ad; padding-right: 15px; }
 .hots-article .hots-article-content p { margin-bottom: 0px; color: #bababa; }
 
 /* hots - home guides list */
