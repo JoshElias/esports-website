@@ -3194,7 +3194,7 @@ module.exports = {
         return function (req, res, next) {
             var hsMembers = [],
                 hotsMembers = [],
-                csMembers = [],
+                wowMembers = [],
                 fgcMembers = [],
                 fifaMembers = [];
             
@@ -3208,7 +3208,7 @@ module.exports = {
                         switch (type) {
                             case 'hs' : hsMembers.push(results[i]); break;
                             case 'hots' : hotsMembers.push(results[i]); break;
-                            case 'cs' : csMembers.push(results[i]); break;
+                            case 'wow' : wowMembers.push(results[i]); break;
                             case 'fifa' : fifaMembers.push(results[i]); break;
                             case 'fgc' : fgcMembers.push(results[i]); break;
                         }
@@ -3218,11 +3218,11 @@ module.exports = {
             }
             
             getMembers(function (gm) {
-                return res.json({ 
+                return res.json({
                     members: gm,
                     hsMembers: hsMembers,
                     hotsMembers: hotsMembers,
-                    csMembers: csMembers,
+                    wowMembers: wowMembers,
                     fgcMembers: fgcMembers,
                     fifaMembers: fifaMembers,
                     success: true

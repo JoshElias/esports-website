@@ -3509,7 +3509,7 @@ module.exports = {
         return function (req, res, next) {
             var hsMembers = [],
                 hotsMembers = [],
-                csMembers = [],
+                wowMembers = [],
                 fifaMembers = [],
                 fgcMembers = [];
 
@@ -3523,7 +3523,7 @@ module.exports = {
                         switch (type) {
                             case 'hs' : hsMembers.push(results[i]); break;
                             case 'hots' : hotsMembers.push(results[i]); break;
-                            case 'cs' : csMembers.push(results[i]); break;
+                            case 'wow' : wowMembers.push(results[i]); break;
                             case 'fifa' : fifaMembers.push(results[i]); break;
                             case 'fgc' : fgcMembers.push(results[i]); break;
                         }
@@ -3537,7 +3537,7 @@ module.exports = {
                     members: members,
                     hsMembers: hsMembers,
                     hotsMembers: hotsMembers,
-                    csMembers: csMembers,
+                    wowMembers: wowMembers,
                     fifaMembers: fifaMembers,
                     fgcMembers: fgcMembers,
                     success: true
@@ -3597,7 +3597,6 @@ module.exports = {
                     active: member.active
                 });
                 newMember.save(function(err, data) {
-                    console.log(data);
                     if (err) {
                         console.log(err);
                         return res.json({ success: false,

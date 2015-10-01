@@ -62,16 +62,15 @@
     </div>
 </div>
 
-<!--
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
-        <h3 class="panel-heading m-b-none">CS:GO Members</h1>
+        <h3 class="panel-heading m-b-none">WoW Members</h1>
     </div>
-    <ul dnd-list="csMembers" class="list-group">
-        <li class="list-group-item admin-list-item clearfix" ng-repeat="member in csMembers" 
+    <ul dnd-list="wowMembers" class="list-group">
+        <li class="list-group-item admin-list-item clearfix" ng-repeat="member in wowMembers" 
                     dnd-draggable="member"
-                    dnd-moved="updateDND(csMembers, $index)"
-                    dnd-disable-if="csMembers.length < 2">
+                    dnd-moved="updateDND(wowMembers, $index)"
+                    dnd-disable-if="wowMembers.length < 2">
             <div class="row">
                 <div class="col-sm-6">
                     <span>{{member.screenName}}&nbsp;<span ng-if="member.screenName != '' && member.fullName != ''">-</span>&nbsp;{{member.fullName}}</span>
@@ -79,19 +78,18 @@
                 <div class="col-sm-6">
                     <div class="pull-right btn-toolbar">
                         <a ui-sref="app.admin.teams.edit({ memberID: member._id })" class="btn btn-default">Edit</a>
-                        <button class="btn btn-danger" ng-click="deleteMember(member, csMembers)">Delete</button>
+                        <button class="btn btn-danger" ng-click="deleteMember(member, wowMembers)">Delete</button>
                     </div>
                 </div>
             </div>
         </li>
-        <div class="list-group-item" ng-if="!csMembers.length">
+        <div class="list-group-item" ng-if="!wowMembers.length">
             There are no members yet.
         </div>
     </ul>
     <div class="panel-footer clearfix">
     </div>
 </div>
--->
 
 <div class="panel panel-default">
     <div class="panel-heading clearfix">

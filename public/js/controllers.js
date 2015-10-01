@@ -3282,7 +3282,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.members = data.members;
         $scope.hsMembers = data.hsMembers;
         $scope.hotsMembers = data.hotsMembers;
-        $scope.csMembers = data.csMembers;
+        $scope.wowMembers = data.wowMembers;
         $scope.fifaMembers = data.fifaMembers;
         $scope.fgcMembers = data.fgcMembers;
         
@@ -3344,7 +3344,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.hsMembers = data.hsMembers;
         $scope.hotsMembers = data.hotsMembers;
-        $scope.csMembers = data.csMembers;
+        $scope.wowMembers = data.wowMembers;
         $scope.fgcMembers = data.fgcMembers;
         $scope.fifaMembers = data.fifaMembers;
         
