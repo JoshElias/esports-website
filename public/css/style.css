@@ -467,12 +467,12 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-article .article-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
 
 .home-article img { width: 100%; height: auto; }
-.home-article .home-article-content { position: relative; bottom: 0px; margin: -1px 1px 0px 1px; padding: 15px 20px 20px 20px; border-top: 1px solid rgba(255,255,255,.2); z-index: 2; overflow: hidden; }
+.home-article .home-article-content { position: relative; bottom: 0px; margin: -1px 1px 0px 1px; padding: 15px 20px 20px 20px; border-top: 1px solid rgba(255,255,255,.2); z-index: 2; }
 .home-article .home-article-content h1 { margin-bottom: 20px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; padding-right: 15px; }
 .home-article .home-article-content h1.ts { color: #67a0d6; }
 .home-article .home-article-content h1.hs { color: #d07828; }
 .home-article .home-article-content h1.hots { color: #8968ad; }
-.home-article .article-icon { background-image: url(../img/article-type-icon.png); height:40px; width:40px; position: absolute; right: 5px; top: 53px; }
+.home-article .article-icon { background-image: url(../img/article-type-icon.png); height:40px; width:40px; position: absolute; right: 5px; top: -20px; z-index: 3; }
 .home-article .article-icon.ts { background-position: 0px; }
 .home-article .article-icon.hs { background-position: 80px; }
 .home-article .article-icon.hots { background-position: 40px; }
