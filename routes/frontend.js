@@ -1632,6 +1632,8 @@ module.exports = {
                     });
                 }
                 
+                console.log(req.body.name, req.body._id);
+                
                 var premium = (author.isAdmin || author.isProvider) ? {
                         isPremium: req.body.premium.isPremium || false,
                         expiryDate: req.body.premium.expiryDate || new Date().toISOString()
@@ -1644,7 +1646,9 @@ module.exports = {
                 Schemas.Deck.findOne({ _id: req.body._id })
                 .exec(function (err, deck) {
                     if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
-
+                    
+                    console.log(deck);
+                    
                     deck.name = req.body.name;
                     deck.slug = Util.slugify(req.body.name);
                     deck.deckType = req.body.deckType;

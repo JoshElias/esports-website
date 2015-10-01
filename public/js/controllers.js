@@ -3774,15 +3774,15 @@ angular.module('app.controllers', ['ngCookies'])
     $scope.heroNames = Hearthstone.heroNames;
     $scope.klass = false;
     $scope.heroes = [
-        { class: 'mage', hasSecondary: Hearthstone.heroNames.Mage.length > 1, secondary: portraitSettings[0] },
-        { class: 'shaman', hasSecondary: Hearthstone.heroNames.Shaman.length > 1, secondary: portraitSettings[1] },
-        { class: 'warrior', hasSecondary: Hearthstone.heroNames.Warrior.length > 1, secondary: portraitSettings[2] },
-        { class: 'rogue', hasSecondary: Hearthstone.heroNames.Rogue.length > 1, secondary: portraitSettings[3] },
-        { class: 'paladin', hasSecondary: Hearthstone.heroNames.Paladin.length > 1, secondary: portraitSettings[4] },
-        { class: 'priest', hasSecondary: Hearthstone.heroNames.Priest.length > 1, secondary: portraitSettings[5] },
-        { class: 'warlock', hasSecondary: Hearthstone.heroNames.Warlock.length > 1, secondary: portraitSettings[6] },
-        { class: 'hunter', hasSecondary: Hearthstone.heroNames.Hunter.length > 1, secondary: portraitSettings[7] },
-        { class: 'druid', hasSecondary: Hearthstone.heroNames.Druid.length > 1, secondary: portraitSettings[8] }
+        { class: 'druid', hasSecondary: Hearthstone.heroNames.Druid.length > 1, secondary: portraitSettings[0] },
+        { class: 'hunter', hasSecondary: Hearthstone.heroNames.Hunter.length > 1, secondary: portraitSettings[1] },
+        { class: 'mage', hasSecondary: Hearthstone.heroNames.Mage.length > 1, secondary: portraitSettings[2] },
+        { class: 'paladin', hasSecondary: Hearthstone.heroNames.Paladin.length > 1, secondary: portraitSettings[3] },
+        { class: 'priest', hasSecondary: Hearthstone.heroNames.Priest.length > 1, secondary: portraitSettings[4] },
+        { class: 'rogue', hasSecondary: Hearthstone.heroNames.Rogue.length > 1, secondary: portraitSettings[5] },
+        { class: 'shaman', hasSecondary: Hearthstone.heroNames.Shaman.length > 1, secondary: portraitSettings[6] },
+        { class: 'warlock', hasSecondary: Hearthstone.heroNames.Warlock.length > 1, secondary: portraitSettings[7] },
+        { class: 'warrior', hasSecondary: Hearthstone.heroNames.Warrior.length > 1, secondary: portraitSettings[8] }
     ];
     
     //return the upper case name of the hero based on index
@@ -3844,15 +3844,15 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.isSecondary = function (klass) {
             switch(klass) {
-                case 'mage': return $scope.app.settings.secondaryPortrait[0]; break;
-                case 'shaman': return $scope.app.settings.secondaryPortrait[1]; break;
-                case 'warrior': return $scope.app.settings.secondaryPortrait[2]; break;
-                case 'rogue': return $scope.app.settings.secondaryPortrait[3]; break;
-                case 'paladin': return $scope.app.settings.secondaryPortrait[4]; break;
-                case 'priest': return $scope.app.settings.secondaryPortrait[5]; break;
-                case 'warlock': return $scope.app.settings.secondaryPortrait[6]; break;
-                case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
-                case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
+                case 'druid': return $scope.app.settings.secondaryPortrait[0]; break;
+                case 'hunter': return $scope.app.settings.secondaryPortrait[1]; break;
+                case 'mage': return $scope.app.settings.secondaryPortrait[2]; break;
+                case 'paladin': return $scope.app.settings.secondaryPortrait[3]; break;
+                case 'priest': return $scope.app.settings.secondaryPortrait[4]; break;
+                case 'rogue': return $scope.app.settings.secondaryPortrait[5]; break;
+                case 'shaman': return $scope.app.settings.secondaryPortrait[6]; break;
+                case 'warlock': return $scope.app.settings.secondaryPortrait[7]; break;
+                case 'warrior': return $scope.app.settings.secondaryPortrait[8]; break;
             }
         }
         
@@ -4183,15 +4183,15 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.isSecondary = function (klass) {
             switch(klass) {
-                case 'mage': return $scope.app.settings.secondaryPortrait[0]; break;
-                case 'shaman': return $scope.app.settings.secondaryPortrait[1]; break;
-                case 'warrior': return $scope.app.settings.secondaryPortrait[2]; break;
-                case 'rogue': return $scope.app.settings.secondaryPortrait[3]; break;
-                case 'paladin': return $scope.app.settings.secondaryPortrait[4]; break;
-                case 'priest': return $scope.app.settings.secondaryPortrait[5]; break;
-                case 'warlock': return $scope.app.settings.secondaryPortrait[6]; break;
-                case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
-                case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
+                case 'druid': return $scope.app.settings.secondaryPortrait[0]; break;
+                case 'hunter': return $scope.app.settings.secondaryPortrait[1]; break;
+                case 'mage': return $scope.app.settings.secondaryPortrait[2]; break;
+                case 'paladin': return $scope.app.settings.secondaryPortrait[3]; break;
+                case 'priest': return $scope.app.settings.secondaryPortrait[4]; break;
+                case 'rogue': return $scope.app.settings.secondaryPortrait[5]; break;
+                case 'shaman': return $scope.app.settings.secondaryPortrait[6]; break;
+                case 'warlock': return $scope.app.settings.secondaryPortrait[7]; break;
+                case 'warrior': return $scope.app.settings.secondaryPortrait[8]; break;
             }
         }
         
@@ -5392,15 +5392,15 @@ angular.module('app.controllers', ['ngCookies'])
     $scope.heroNames = Hearthstone.heroNames;
     $scope.klass = false;
     $scope.heroes = [
-        { class: 'mage', hasSecondary: Hearthstone.heroNames.Mage.length > 1, secondary: portraitSettings[0] },
-        { class: 'shaman', hasSecondary: Hearthstone.heroNames.Shaman.length > 1, secondary: portraitSettings[1] },
-        { class: 'warrior', hasSecondary: Hearthstone.heroNames.Warrior.length > 1, secondary: portraitSettings[2] },
-        { class: 'rogue', hasSecondary: Hearthstone.heroNames.Rogue.length > 1, secondary: portraitSettings[3] },
-        { class: 'paladin', hasSecondary: Hearthstone.heroNames.Paladin.length > 1, secondary: portraitSettings[4] },
-        { class: 'priest', hasSecondary: Hearthstone.heroNames.Priest.length > 1, secondary: portraitSettings[5] },
-        { class: 'warlock', hasSecondary: Hearthstone.heroNames.Warlock.length > 1, secondary: portraitSettings[6] },
-        { class: 'hunter', hasSecondary: Hearthstone.heroNames.Hunter.length > 1, secondary: portraitSettings[7] },
-        { class: 'druid', hasSecondary: Hearthstone.heroNames.Druid.length > 1, secondary: portraitSettings[8] }
+        { class: 'druid', hasSecondary: Hearthstone.heroNames.Druid.length > 1, secondary: portraitSettings[0] },
+        { class: 'hunter', hasSecondary: Hearthstone.heroNames.Hunter.length > 1, secondary: portraitSettings[1] },
+        { class: 'mage', hasSecondary: Hearthstone.heroNames.Mage.length > 1, secondary: portraitSettings[2] },
+        { class: 'paladin', hasSecondary: Hearthstone.heroNames.Paladin.length > 1, secondary: portraitSettings[3] },
+        { class: 'priest', hasSecondary: Hearthstone.heroNames.Priest.length > 1, secondary: portraitSettings[4] },
+        { class: 'rogue', hasSecondary: Hearthstone.heroNames.Rogue.length > 1, secondary: portraitSettings[5] },
+        { class: 'shaman', hasSecondary: Hearthstone.heroNames.Shaman.length > 1, secondary: portraitSettings[6] },
+        { class: 'warlock', hasSecondary: Hearthstone.heroNames.Warlock.length > 1, secondary: portraitSettings[7] },
+        { class: 'warrior', hasSecondary: Hearthstone.heroNames.Warrior.length > 1, secondary: portraitSettings[8] }
     ];
     
     //return the upper case name of the hero based on index
@@ -5419,11 +5419,17 @@ angular.module('app.controllers', ['ngCookies'])
     
     //get the hero name based on the index of portraitSettings' index
     $scope.getName = function (index, caps) {
-        if (caps) {
-            return Hearthstone.heroNames[getClass(index)][portraitSettings[index]];
-        } else {
-            var name = Hearthstone.heroNames[getClass(index)][portraitSettings[index]]
-            return name[0].toLowerCase() + name.slice(1);
+        try {
+            if (caps) {
+                return Hearthstone.heroNames[getClass(index)][portraitSettings[index]];
+            } else {
+                var name = Hearthstone.heroNames[getClass(index)][portraitSettings[index]]
+                return name[0].toLowerCase() + name.slice(1);
+            }
+        } catch(err) {
+            $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
+            portraitSettings = $scope.app.settings.secondaryPortrait;
+            $scope.getName(index, caps);
         }
     }
     
@@ -5449,15 +5455,15 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.isSecondary = function (klass) {
             switch(klass) {
-                case 'mage': return $scope.app.settings.secondaryPortrait[0]; break;
-                case 'shaman': return $scope.app.settings.secondaryPortrait[1]; break;
-                case 'warrior': return $scope.app.settings.secondaryPortrait[2]; break;
-                case 'rogue': return $scope.app.settings.secondaryPortrait[3]; break;
-                case 'paladin': return $scope.app.settings.secondaryPortrait[4]; break;
-                case 'priest': return $scope.app.settings.secondaryPortrait[5]; break;
-                case 'warlock': return $scope.app.settings.secondaryPortrait[6]; break;
-                case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
-                case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
+                case 'druid': return $scope.app.settings.secondaryPortrait[0]; break;
+                case 'hunter': return $scope.app.settings.secondaryPortrait[1]; break;
+                case 'mage': return $scope.app.settings.secondaryPortrait[2]; break;
+                case 'paladin': return $scope.app.settings.secondaryPortrait[3]; break;
+                case 'priest': return $scope.app.settings.secondaryPortrait[4]; break;
+                case 'rogue': return $scope.app.settings.secondaryPortrait[5]; break;
+                case 'shaman': return $scope.app.settings.secondaryPortrait[6]; break;
+                case 'warlock': return $scope.app.settings.secondaryPortrait[7]; break;
+                case 'warrior': return $scope.app.settings.secondaryPortrait[8]; break;
             }
         }
         
@@ -5474,7 +5480,17 @@ angular.module('app.controllers', ['ngCookies'])
             return dust
         }
         
-        $scope.getName = function () {
+        //get the hero name based on the index of portraitSettings' index
+        $scope.getName = function (index, klass) {
+            try {
+                return Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
+            } catch(err) {
+                $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
+                $scope.getName(index, caps);
+            }
+        }
+        
+        $scope.getActiveDeckName = function () {
             return Hearthstone.heroNames[$scope.deck.playerClass][$scope.isSecondary($scope.deck.playerClass.toLowerCase())];
         }
 
@@ -5671,7 +5687,7 @@ angular.module('app.controllers', ['ngCookies'])
         }, true);
         
         // current mulligan
-        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
+        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
         
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
@@ -5744,7 +5760,7 @@ angular.module('app.controllers', ['ngCookies'])
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login');
             } else {
-                $scope.deck.heroName = $scope.getName();
+                $scope.deck.heroName = $scope.getActiveDeckName();
                 DeckBuilder.saveDeck($scope.deck).success(function (data) {
                     if (data.success) {
                         $scope.app.settings.deck = null;
@@ -5790,15 +5806,15 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.isSecondary = function (klass) {
             switch(klass) {
-                case 'mage': return $scope.app.settings.secondaryPortrait[0]; break;
-                case 'shaman': return $scope.app.settings.secondaryPortrait[1]; break;
-                case 'warrior': return $scope.app.settings.secondaryPortrait[2]; break;
-                case 'rogue': return $scope.app.settings.secondaryPortrait[3]; break;
-                case 'paladin': return $scope.app.settings.secondaryPortrait[4]; break;
-                case 'priest': return $scope.app.settings.secondaryPortrait[5]; break;
-                case 'warlock': return $scope.app.settings.secondaryPortrait[6]; break;
-                case 'hunter': return $scope.app.settings.secondaryPortrait[7]; break;
-                case 'druid': return $scope.app.settings.secondaryPortrait[8]; break;
+                case 'druid': return $scope.app.settings.secondaryPortrait[0]; break;
+                case 'hunter': return $scope.app.settings.secondaryPortrait[1]; break;
+                case 'mage': return $scope.app.settings.secondaryPortrait[2]; break;
+                case 'paladin': return $scope.app.settings.secondaryPortrait[3]; break;
+                case 'priest': return $scope.app.settings.secondaryPortrait[4]; break;
+                case 'rogue': return $scope.app.settings.secondaryPortrait[5]; break;
+                case 'shaman': return $scope.app.settings.secondaryPortrait[6]; break;
+                case 'warlock': return $scope.app.settings.secondaryPortrait[7]; break;
+                case 'warrior': return $scope.app.settings.secondaryPortrait[8]; break;
             }
         }
         
@@ -6241,7 +6257,6 @@ angular.module('app.controllers', ['ngCookies'])
             } else {
                 $scope.snapshot.votesCount++;
                 SnapshotService.vote($scope.snapshot._id);
-                
             }
             $scope.voted = true;
         }

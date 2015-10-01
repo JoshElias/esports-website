@@ -221,7 +221,7 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('commentSection', ['$rootScope', 'VoteService', 'LoginModalService', function ($rootScope, VoteService, LoginModalService) {
+.directive('commentSection', ['$rootScope', '$sce', 'VoteService', 'LoginModalService', function ($rootScope, $sce, VoteService, LoginModalService) {
     return {
         restrict: "E",
         templateUrl: tpl + 'views/frontend/directives/comments/commentSection.html',
@@ -237,20 +237,25 @@ angular.module('app.directives', ['ui.load'])
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
 
+            $scope.parseComment = function (c) {
+                return $sce.trustAsHtml(c);
+            }
+            
             $scope.commentPost = function () {
                 if (!$scope.app.user.isLogged()) {
                     LoginModalService.showModal('login', function () {
                         $scope.commentPost();
                     });
                 } else {
+                    console.log($scope.comment, $scope.comment.replace(/<[^>]+>/gm, ''));
                     $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
                         if (data.success) {
                             $scope.commentable.comments.push(data.comment);
                             $scope.comment = '';
+                            updateCommentVotes();
                         }
                     });
                 }
-                updateCommentVotes();
             };
 
             updateCommentVotes();
@@ -388,6 +393,8 @@ angular.module('app.directives', ['ui.load'])
                     var sub = log.substr(4);
                     var im = "https" + sub;
                     data.data[i].logoUrl = im;
+                    
+                    data.data[i].viewerCount = +data.data[i].viewerCount;
                 }
                 $scope.selectedStream = data.data.length-1;
                 $timeout(function() {
