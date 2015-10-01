@@ -5480,7 +5480,17 @@ angular.module('app.controllers', ['ngCookies'])
             return dust
         }
         
-        $scope.getName = function () {
+        //get the hero name based on the index of portraitSettings' index
+        $scope.getName = function (index, klass) {
+            try {
+                return Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
+            } catch(err) {
+                $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
+                $scope.getName(index, caps);
+            }
+        }
+        
+        $scope.getActiveDeckName = function () {
             return Hearthstone.heroNames[$scope.deck.playerClass][$scope.isSecondary($scope.deck.playerClass.toLowerCase())];
         }
 
@@ -5677,7 +5687,7 @@ angular.module('app.controllers', ['ngCookies'])
         }, true);
         
         // current mulligan
-        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
+        $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
         
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
@@ -5750,7 +5760,7 @@ angular.module('app.controllers', ['ngCookies'])
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login');
             } else {
-                $scope.deck.heroName = $scope.getName();
+                $scope.deck.heroName = $scope.getActiveDeckName();
                 DeckBuilder.saveDeck($scope.deck).success(function (data) {
                     if (data.success) {
                         $scope.app.settings.deck = null;
@@ -6247,7 +6257,6 @@ angular.module('app.controllers', ['ngCookies'])
             } else {
                 $scope.snapshot.votesCount++;
                 SnapshotService.vote($scope.snapshot._id);
-                
             }
             $scope.voted = true;
         }
