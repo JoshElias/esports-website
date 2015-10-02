@@ -1,0 +1,42 @@
+{
+  "name": "twitchFeed",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "channelUrl": {
+      "type": "string",
+      "required": true
+    },
+    "gameName": {
+      "type": "string",
+      "required": true
+    },
+    "viewerCount": {
+      "type": "number",
+      "required": true
+    },
+    "displayName": {
+      "type": "string",
+      "required": true
+    },
+    "logoUrl": {
+      "type": "string",
+      "required": true
+    },
+    "screenshotUrl": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

@@ -1,0 +1,51 @@
+{
+  "name": "comment",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "text": {
+      "type": "string"
+    },
+    "votes": {
+      "type": [
+        "object"
+      ]
+    },
+    "createdDate": {
+      "type": "date",
+      "required": true
+    },
+    "votesCount": {
+      "type": "number"
+    },
+    "authorId": {
+      "type": "string"
+    },
+    "articleId": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "article": {
+      "type": "belongsTo",
+      "model": "article",
+      "foreignKey": "articleId"
+    },
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "deck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deckId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

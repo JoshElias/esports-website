@@ -1,0 +1,71 @@
+{
+  "name": "user",
+  "plural": "users",
+  "base": "User",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "active": {
+      "type": "boolean"
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "photos": {
+      "type": "object"
+    },
+    "about": {
+      "type": "string"
+    },
+    "subscription": {
+      "type": "object"
+    },
+    "isProvider": {
+      "type": "boolean"
+    },
+    "isAdmin": {
+      "type": "boolean"
+    },
+    "loginCount": {
+      "type": "number"
+    },
+    "lastLoginDate": {
+      "type": "date"
+    },
+    "resetPasswordCode": {
+      "type": "string"
+    },
+    "newEmail": {
+      "type": "string"
+    },
+    "newEmailCode": {
+      "type": "string"
+    },
+    "verified": {
+      "type": "boolean"
+    },
+    "__v": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "articles": {
+      "type": "hasMany",
+      "model": "article",
+      "foreignKey": "authorId"
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "authorId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

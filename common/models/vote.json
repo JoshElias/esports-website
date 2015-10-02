@@ -1,0 +1,29 @@
+{
+  "name": "vote",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "direction": {
+      "type": "number"
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "parentName": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "ownerId": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

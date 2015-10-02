@@ -1,0 +1,14 @@
+{
+  "name": "userIdentity",
+  "base": "UserIdentity",
+  "plural": "userIdentities",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

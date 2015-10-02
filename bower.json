@@ -1,0 +1,59 @@
+{
+  "name": "new-tempostorm",
+  "version": "0.0.0",
+  "homepage": "https://github.com/JoshElias/new-tempostorm",
+  "authors": [
+    "Josh Elias <josh.elias.dev@gmail.com>"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "client/vendor",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-chart": "~0.3.2",
+    "angular-ui-router": "~0.2.15",
+    "angular-resource": "~1.4.3",
+    "bootstrap": "~3.3.5",
+    "jquery-ui": "~1.11.4",
+    "angular-ui": "~0.4.0",
+    "angular-ui-select": "~0.12.1",
+    "font-awesome": "~4.4.0",
+    "summernote": "~0.6.16",
+    "bootbox": "~4.4.0",
+    "moment": "~2.10.6",
+    "greensock": "~1.17.0",
+    "angular-ui-bootstrap": "~0.13.3",
+    "angular-bootstrap": "~0.13.3",
+    "angular-cookies": "~1.4.3",
+    "angular-ui-date": "~0.0.8",
+    "angular-ui-utils": "jq-0.2.3",
+    "angular-animate": "~1.4.3",
+    "angular-drag-and-drop-lists": "~1.2.0",
+    "angular-file-upload": "~2.1.1",
+    "angular-gravatar": "~0.4.1",
+    "angular-moment": "~0.10.2",
+    "angular-payments": "*",
+    "angular-summernote": "~0.4.0",
+    "angular-translate": "~2.7.2",
+    "ngprogress": "~1.1.2",
+    "ngstorage": "~0.3.9",
+    "angular-chart.js": "~0.7.3",
+    "angular-route": "~1.4.3",
+    "angular": "~1.4.3",
+    "angular-sanitize": "~1.4.3",
+    "angular-ui-validate": "~1.2.0",
+    "angular-youtube-embed": "~1.0.2"
+  },
+  "resolutions": {
+    "angular-ui-utils": "jq-0.2.3",
+    "angular": "~1.4.3"
+  }
+}

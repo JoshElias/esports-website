@@ -1,0 +1,102 @@
+{
+  "name": "deck",
+  "plural": "decks",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "against": {
+      "type": "object"
+    },
+    "allowComments": {
+      "type": "boolean"
+    },
+    "arena": {
+      "type": "boolean"
+    },
+    "cardQuantities": {
+      "type": "object"
+    },
+    "contentEarly": {
+      "type": "string"
+    },
+    "contentLate": {
+      "type": "string"
+    },
+    "contentMid": {
+      "type": "string"
+    },
+    "deckType": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "isFeatured": {
+      "type": "boolean"
+    },
+    "mulligans": {
+      "type": [
+        "object"
+      ],
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "playerClass": {
+      "type": "string",
+      "required": true
+    },
+    "isPremium": {
+      "type": "object"
+    },
+    "isPublic": {
+      "type": "boolean",
+      "required": true
+    },
+    "slug": {
+      "type": "string"
+    },
+    "viewCount": {
+      "type": "number"
+    },
+    "votes": {
+      "type": [
+        "object"
+      ]
+    },
+    "votesScore": {
+      "type": "number"
+    },
+    "cardIds": {
+      "type": [
+        "string"
+      ]
+    }
+  },
+  "validations": [],
+  "relations": {
+    "author": {
+      "type": "hasOne",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "cards": {
+      "type": "hasAndBelongsToMany",
+      "model": "card",
+      "foreignKey": ""
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "deckId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

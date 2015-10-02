@@ -1,0 +1,92 @@
+{
+  "name": "card",
+  "plural": "cards",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "cost": {
+      "type": "number",
+      "required": true
+    },
+    "rarity": {
+      "type": "string",
+      "required": true
+    },
+    "race": {
+      "type": "string"
+    },
+    "playerClass": {
+      "type": "string",
+      "required": true
+    },
+    "text": {
+      "type": "string",
+      "required": true
+    },
+    "flavor": {
+      "type": "string"
+    },
+    "artist": {
+      "type": "string"
+    },
+    "attack": {
+      "type": "number",
+      "required": true
+    },
+    "health": {
+      "type": "number"
+    },
+    "durability": {
+      "type": "number"
+    },
+    "dust": {
+      "type": "number"
+    },
+    "active": {
+      "type": "boolean",
+      "required": true
+    },
+    "mechanics": {
+      "type": [
+        "string"
+      ]
+    },
+    "cardType": {
+      "type": "string",
+      "required": true
+    },
+    "deckIds": {
+      "type": [
+        "string"
+      ]
+    },
+    "deckable": {
+      "type": "boolean"
+    },
+    "photos": {
+      "type": "object",
+      "required": true
+    },
+    "expansion": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "decks": {
+      "type": "hasAndBelongsToMany",
+      "model": "deck",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

@@ -1,0 +1,46 @@
+{
+  "name": "snapshot",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "snapNum": {
+      "type": "number"
+    },
+    "title": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "object"
+    },
+    "content": {
+      "type": "object"
+    },
+    "tiers": {
+      "type": "object"
+    },
+    "matches": {
+      "type": [
+        "object"
+      ]
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "photos": {
+      "type": "object"
+    },
+    "votesCount": {
+      "type": "number"
+    },
+    "active": {
+      "type": "boolean"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
