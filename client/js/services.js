@@ -2,15 +2,15 @@
 
 angular.module('app.services', [])
 .service('MetaService', function() {
-    
+
     var statusCode = undefined;
-    
+
     var ogType = '';
     var ogUrl = '';
     var ogImage = '';
     var ogTitle = 'They';
     var ogDescription = ''
-    
+
     var title = '';
     var metaDescription = '';
     var metaKeywords = '';
@@ -32,8 +32,8 @@ angular.module('app.services', [])
        },
        ogMetaType: function() { return ogType; },
        ogMetaUrl: function() { return ogUrl; },
-       ogMetaImage: function() { 
-           if(!ogImage || ogImage == '') { 
+       ogMetaImage: function() {
+           if(!ogImage || ogImage == '') {
                return tpl + 'img/100x100tsoglogo.png'
            }
            return ogImage.toLowerCase();
@@ -76,11 +76,11 @@ angular.module('app.services', [])
     var isSubscribed = false,
         tsPlan = false,
         expiry = false;
-    
+
     return {
         isSubscribed: function () {
             var now = new Date().getTime();
-            
+
             if (isSubscribed) { return true; }
             if (expiry) {
                 return (expiry > now);
@@ -103,7 +103,7 @@ angular.module('app.services', [])
         },
         setExpiry: function (value) {
             expiry = (value) ? new Date(value).getTime(): value;
-        },        
+        },
         setPlan: function (plan, cctoken) {
             cctoken = cctoken || false;
             return $http.post('/api/subscription/setplan', { plan: plan, cctoken: cctoken });
@@ -121,7 +121,7 @@ angular.module('app.services', [])
         login: function (email, password) {
             return $http.post('/login', {email: email, password: password});
         },
-        
+
         signup: function (email, username, password, cpassword) {
             return $http.post('/signup', {
                 email: email,
@@ -130,27 +130,27 @@ angular.module('app.services', [])
                 cpassword: cpassword
             });
         },
-        
+
         forgotPassword: function (email) {
             return $http.post('/forgot-password', { email: email });
         },
-        
+
         resetPassword: function (email, code, password, cpassword) {
             return $http.post('/forgot-password/reset', { email: email, code: code, password: password, cpassword: cpassword });
         },
-        
+
         verifyEmail: function (email, code) {
             return $http.post('/verify', { email: email, code: code });
         },
-        
+
         verify: function () {
             return $http.post('/api/verify', {});
         },
-        
+
         twitch: function () {
             return $http.post('/auth/twitch', {});
         },
-        
+
         logout: function () {
             username = '';
             profileImg = '';
@@ -163,7 +163,7 @@ angular.module('app.services', [])
         showModal: function (state, callback) {
             $rootScope.LoginModalService.callback = callback;
             $rootScope.LoginModalService.state = state;
-            
+
             box = bootbox.dialog({
                 title: function() {
                     switch(state) {
@@ -193,7 +193,7 @@ angular.module('app.services', [])
                 offset = offset || 0,
                 num = num || 20,
                 search = search || '';
-            
+
             $http.post('/articles', { articleType: articleType, filter: filter, offset: offset, num: num, search: search }).success(function (data) {
                 d.resolve(data);
             });
@@ -217,13 +217,13 @@ angular.module('app.services', [])
             var page = page || 1,
                 perpage = perpage || 10,
                 search = search || '';
-            
+
             var d = $q.defer();
             $http.post('/api/admin/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
             return d.promise;
-        }, 
+        },
         getSnapshot: function (_id) {
             var d = $q.defer();
             $http.post('/api/admin/snapshot', { _id: _id }).success(function (data) {
@@ -260,11 +260,11 @@ angular.module('app.services', [])
                 page = page || 1,
                 perpage = perpage || 10,
                 search = search || '';
-            
+
             $http.post('/snapshots', { page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
-            
+
             return d.promise;
         },
         getSnapshot: function (slug) {
@@ -272,7 +272,7 @@ angular.module('app.services', [])
             $http.post('/snapshot', {slug: slug}).success(function (data) {
                 d.resolve(data);
             });
-            
+
             return d.promise;
         },
         getLatest: function () {
@@ -280,7 +280,7 @@ angular.module('app.services', [])
             $http.post('/snapshot/latest', {}).success(function (data) {
                 d.resolve(data);
             });
-            
+
             return d.promise;
         },
         addComment: function (snapshot, comment) {
@@ -437,20 +437,20 @@ angular.module('app.services', [])
         }
     };
 }])
-.factory('TokenInterceptor', ['$q', '$window', function ($q, $window) {
-    return {
-        request: function (config) {
-            config.headers = config.headers || {};
-            if (config.method == "POST" && $window.sessionStorage.token) {
-                config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
+.factory('AuthInterceptor', ['$q', '$location', 'LoopBackAuth' function ($q, $location, LoopBackAuth) {
+  return {
+        responseError: function(rejection) {
+            if(rejection.status == 401) {
+                console.log(" triggered reponse error interceptor")
+                // Clearing the loopback values from the client browser for safe
+                LoopBackAuth.clearUser();
+                LoopBackAuth.clearStorage();
+                $location.nextAfterLogin = $location.path();
+                $location.path("/login");
             }
-            return config;
-        },
- 
-        response: function (response) {
-            return response || $q.when(response);
+            return $q.reject(rejection);
         }
-    };
+      }
 }])
 .factory('AdminCardService', ['$http', '$q', function ($http, $q) {
     return {
@@ -584,7 +584,7 @@ angular.module('app.services', [])
                 page = page || 1,
                 perpage = perpage || 50,
                 search = search || '';
-            
+
             $http.post('/api/admin/decks', { page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
@@ -619,7 +619,7 @@ angular.module('app.services', [])
                 page = page || 1,
                 perpage = perpage || 50,
                 search = search || '';
-            
+
             $http.post('/api/admin/heroes', { page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
@@ -661,7 +661,7 @@ angular.module('app.services', [])
                 page = page || 1,
                 perpage = perpage || 50,
                 search = search || '';
-            
+
             $http.post('/api/admin/maps', { page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
@@ -710,7 +710,7 @@ angular.module('app.services', [])
                 page = page || 1,
                 perpage = perpage || 50,
                 search = search || '';
-            
+
             $http.post('/api/admin/guides', { page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
             });
@@ -840,7 +840,7 @@ angular.module('app.services', [])
                 page = page,
                 perpage = perpage,
                 search = search;
-                
+
             $http.post('/api/admin/banners', {}).success(function (data) {
                 d.resolve(data);
             });
@@ -865,7 +865,7 @@ angular.module('app.services', [])
                 d.resolve(data);
             });
             return d.promise;
-        }, 
+        },
         updateOrder: function (banners) {
          var d = $q.defer();
             $http.post('/api/admin/banners/order', {banners: banners});
@@ -970,13 +970,13 @@ angular.module('app.services', [])
     }
 }])
 .service('Pagination', function () {
-    
+
     var pagination = {};
-    
+
     pagination.new = function (perpage) {
-        
+
         perpage = perpage || 50;
-        
+
         var paginate = {
             page: 1,
             perpage: perpage
@@ -985,7 +985,7 @@ angular.module('app.services', [])
         paginate.results = function () {
             return 0;
         };
-        
+
         paginate.pages = function () {
             return Math.ceil(paginate.results() / paginate.perpage);
         };
@@ -1019,15 +1019,15 @@ angular.module('app.services', [])
         paginate.setPage = function (page) {
             paginate.page = page;
         };
-        
+
         return paginate;
     }
-    
+
     return pagination;
 })
 .factory('AjaxPagination', [function () {
     var pagination = {};
-    
+
     pagination.new = function (perpage, total, callback) {
         var paginate = {
             page: 1,
@@ -1039,33 +1039,33 @@ angular.module('app.services', [])
                 this.total = newTotal;
             }
         };
-        
+
         paginate.isLoading = function () {
             return paginate.loading;
         };
-        
+
         paginate.getPage = function () {
             return paginate.page;
         };
-        
+
         paginate.getPerpage = function () {
             return paginate.perpage;
         };
-        
+
         paginate.getTotal = function () {
             return paginate.total;
         };
-        
+
         paginate.setPage = function (page) {
             if (paginate.isLoading()) { return false; }
             paginate.page = page;
             paginate.loading = true;
-            
+
             return callback(paginate.page, paginate.perpage).then(function (newTotal) {
                 return paginate.callback(newTotal);
             });
         };
-        
+
         paginate.pagesArray = function () {
             var pages = [],
                 start = 1,
@@ -1091,26 +1091,26 @@ angular.module('app.services', [])
 
             return pages;
         };
-        
+
         paginate.isPage = function (page) {
             return (page === paginate.getPage());
         };
-        
+
         paginate.totalPages = function (page) {
             return (paginate.getTotal() > 0) ? Math.ceil(paginate.getTotal() / paginate.getPerpage()) : 0;
         };
-        
+
         paginate.from = function () {
             return (paginate.getPage() * paginate.getPerpage()) - paginate.getPerpage() + 1;
         };
-        
+
         paginate.to = function () {
             return ((paginate.getPage() * paginate.getPerpage()) > paginate.getTotal()) ? paginate.getTotal() : paginate.getPage() * paginate.getPerpage();
         };
-        
+
         return paginate;
     };
-    
+
     return pagination;
 }])
 .factory('Util', ['$http', function ($http) {
@@ -1135,7 +1135,7 @@ angular.module('app.services', [])
     };
 }])
 .factory('Base64', function () {
-    var digitsStr = 
+    var digitsStr =
     //   0       8       16      24      32      40      48      56     63
     //   v       v       v       v       v       v       v       v      v
         "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-";
@@ -1167,7 +1167,7 @@ angular.module('app.services', [])
 })
 .factory('Hearthstone', function () {
     var hs = {};
-    
+
     hs.types = ['Minion', 'Spell', 'Weapon'];
     hs.rarities = ['Basic', 'Common', 'Rare', 'Epic', 'Legendary'];
     hs.races = ['', 'Beast', 'Demon', 'Dragon', 'Murloc', 'Pirate', 'Totem', 'Mech'];
@@ -1186,12 +1186,12 @@ angular.module('app.services', [])
     hs.mechanics = ['Battlecry', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Divine Shield', 'Enrage', 'Freeze', 'Inspire', 'Jousting', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];
     hs.deckTypes = ['None', 'Aggro', 'Control', 'Midrange', 'Combo', 'Theory Craft'];
     hs.expansions = ['Basic', 'Naxxramas', 'Goblins Vs. Gnomes', 'Blackrock Mountain', 'The Grand Tournament'];
-    
+
     return hs;
 })
 .factory('HOTS', function () {
     var hots = {};
-    
+
     hots.roles = ["Warrior", "Assassin", "Support", "Specialist"];
     hots.types = ["Melee", "Ranged"];
     hots.universes = ["Warcraft", "Starcraft", "Diablo", "Blizzard"];
@@ -1200,11 +1200,11 @@ angular.module('app.services', [])
     hots.tiers = [1,4,7,10,13,16,20];
     hots.heroRows = [9, 8, 9, 8, 7];
     hots.mapRows = [5,4];
-    
+
     hots.genStats = function () {
         var stats = [],
             obj;
-        
+
         for (var i = 0; i < 30; i++) {
             obj = {
                 level: i + 1,
@@ -1218,10 +1218,10 @@ angular.module('app.services', [])
             };
             stats.push(obj);
         }
-        
+
         return stats;
     };
-    
+
     return hots;
 })
 .factory('DeckBuilder', ['$sce', '$http', '$q', function ($sce, $http, $q) {
@@ -1230,10 +1230,10 @@ angular.module('app.services', [])
 
     deckBuilder.new = function (playerClass, data) {
         data = data || {};
-        
+
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
-        
+
         var db = {
             _id: data._id || null,
             name: data.name || '',
@@ -1345,13 +1345,13 @@ angular.module('app.services', [])
             featured: data.featured || false,
             public: data.public || 'true'
         };
-        
+
         db.validVideo = function () {
             //var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
             //return (db.video.length) ? db.video.match(r) : true;
             return true;
         };
-        
+
         db.isStrong = function (strong) {
             return strong.isStrong;
         }
@@ -1359,15 +1359,15 @@ angular.module('app.services', [])
         db.isWeak = function (weak) {
             return weak.isWeak;
         }
-        
+
         db.toggleStrong = function (strong) {
             strong.isStrong = !strong.isStrong;
         }
-        
+
         db.toggleWeak = function (weak) {
             weak.isWeak = !weak.isWeak;
         }
-        
+
         db.getStrong = function (klass) {
             var strong = db.against.strong;
             for (var i = 0; i < strong.length; i++) {
@@ -1398,12 +1398,12 @@ angular.module('app.services', [])
             }
             return false;
         }
-        
+
         db.toggleMulligan = function (mulligan, withCoin, card) {
             var c = (withCoin) ? mulligan.withCoin.cards : mulligan.withoutCoin.cards,
                 exists = false,
                 index = -1;
-            
+
             // check if card already exists
             for (var i = 0; i < c.length; i++) {
                 if (c[i]._id === card._id) {
@@ -1412,7 +1412,7 @@ angular.module('app.services', [])
                     break;
                 }
             }
-            
+
             if (exists) {
                 c.splice(index, 1);
             } else {
@@ -1421,7 +1421,7 @@ angular.module('app.services', [])
                 }
             }
         }
-        
+
         db.getMulligan = function (klass) {
             var mulligans = db.mulligans;
             for (var i = 0; i < mulligans.length; i++) {
@@ -1431,7 +1431,7 @@ angular.module('app.services', [])
             }
             return false;
         }
-        
+
         db.getContent = function () {
             return $sce.trustAsHtml(db.content);
         }
@@ -1505,8 +1505,8 @@ angular.module('app.services', [])
                 'Spell': 1,
                 'Minion': 2
             };
-            
-            function dynamicSort(property) { 
+
+            function dynamicSort(property) {
                 return function (a, b) {
                     if (property == 'cardType') {
                         if (weights[a[property]] < weights[b[property]]) return -1;
@@ -1548,7 +1548,7 @@ angular.module('app.services', [])
                 }
             }
         };
-        
+
         db.removeCard = function (card) {
             if (card.qty > 1) {
                 card.qty = card.qty - 1;
@@ -1615,49 +1615,49 @@ angular.module('app.services', [])
 
             return true;
         };
-        
+
         db.moveChapterUp = function (chapter) {
             var oldIndex = db.chapters.indexOf(chapter),
                 newIndex = oldIndex - 1;
-            
+
             if (newIndex < 0) { return false; }
-            
+
             db.chapters.splice(oldIndex, 1);
             db.chapters.splice(newIndex, 0, chapter);
         };
-        
+
         db.moveChapterDown = function (chapter) {
             var oldIndex = db.chapters.indexOf(chapter),
                 newIndex = oldIndex + 1;
-            
+
             if (newIndex < 0) { return false; }
-            
+
             db.chapters.splice(oldIndex, 1);
             db.chapters.splice(newIndex, 0, chapter);
         };
-        
+
         db.addChapter = function () {
             db.chapters.push({
                 title: '',
                 content: ''
             });
         }
-        
+
         db.removeChapter = function (index) {
             db.chapters.splice(index,1);
         }
-        
+
         db.newMatch = function (klass) {
             var m = {
                 deckName: '',
                 klass: '',
                 match: 0
             };
-            
+
             m.klass = klass;
             db.matches.push(m);
         }
-        
+
         db.removeMatch = function (index) {
             db.matches.splice(index,1);
         }
@@ -1692,7 +1692,7 @@ angular.module('app.services', [])
             public: deck.public
         });
     }
-    
+
     deckBuilder.updateDeck = function (deck) {
         return $http.post('/api/deck/update', {
             _id: deck._id,
@@ -1722,10 +1722,10 @@ angular.module('app.services', [])
 
     guideBuilder.new = function (guideType, data) {
         data = data || {};
-        
+
         var d = new Date();
         d.setMonth(d.getMonth() + 1);
-        
+
         var gb = {
             _id: data._id || null,
             name: data.name || '',
@@ -1748,42 +1748,42 @@ angular.module('app.services', [])
             featured: data.featured || false,
             public: (data.public) ? data.public.toString() : 'true'
         };
-        
+
         // constrain maps to 1 if map guide
         if (guideType === 'map' && gb.maps.length > 1) {
             gb.maps = [gb.maps[0]];
         }
-        
+
         gb.validVideo = function () {
             //var r = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
             //return (gb.video.length) ? gb.video.match(r) : true;
             return true;
         };
-        
+
         gb.getContent = function (content) {
             return $sce.trustAsHtml(content);
         };
-        
+
         gb.moveContentUp = function (content) {
             var oldIndex = gb.content.indexOf(content),
                 newIndex = oldIndex - 1;
-            
+
             if (newIndex < 0) { return false; }
-            
+
             gb.content.splice(oldIndex, 1);
             gb.content.splice(newIndex, 0, content);
         };
-        
+
         gb.moveContentDown = function (content) {
             var oldIndex = gb.content.indexOf(content),
                 newIndex = oldIndex + 1;
-            
+
             if (newIndex > (gb.content.length - 1)) { return false; }
-            
+
             gb.content.splice(oldIndex, 1);
             gb.content.splice(newIndex, 0, content);
         };
-        
+
         gb.toggleHero = function (hero) {
             if (gb.hasHero(hero)) {
                 for (var i = 0; i < gb.heroes.length; i++) {
@@ -1808,7 +1808,7 @@ angular.module('app.services', [])
                 gb.heroes.push(obj);
             }
         };
-        
+
         gb.hasHero = function (hero) {
             if (!hero) { return false; }
             for (var i = 0; i < gb.heroes.length; i++) {
@@ -1818,15 +1818,15 @@ angular.module('app.services', [])
             }
             return false;
         };
-        
+
         gb.hasAnyHero = function () {
             return gb.heroes.length;
         };
-        
+
         gb.tiers = function () {
             return [1, 4, 7, 10, 13, 16, 20];
         };
-        
+
         gb.talentsByTier = function (hero, tier) {
             var talents = [];
             for (var i = 0; i < hero.talents.length; i++) {
@@ -1836,7 +1836,7 @@ angular.module('app.services', [])
             }
             return talents;
         };
-        
+
         gb.toggleTalent = function (hero, talent) {
             if (gb.hasTalent(hero, talent)) {
                 hero.talents['tier'+talent.tier] = null;
@@ -1844,30 +1844,30 @@ angular.module('app.services', [])
                 hero.talents['tier'+talent.tier] = talent._id;
             }
         };
-        
+
         gb.hasAnyTalent = function (hero, talent) {
             return (hero.talents['tier'+talent.tier] !== null);
         }
-        
+
         gb.allTalentsDone = function () {
             for (var i = 0; i < gb.heroes.length; i++) {
-                if ( gb.heroes[i].talents.tier1 === null || 
-                    gb.heroes[i].talents.tier4 === null || 
-                    gb.heroes[i].talents.tier7 === null || 
-                    gb.heroes[i].talents.tier10 === null || 
-                    gb.heroes[i].talents.tier13 === null || 
-                    gb.heroes[i].talents.tier16 === null || 
+                if ( gb.heroes[i].talents.tier1 === null ||
+                    gb.heroes[i].talents.tier4 === null ||
+                    gb.heroes[i].talents.tier7 === null ||
+                    gb.heroes[i].talents.tier10 === null ||
+                    gb.heroes[i].talents.tier13 === null ||
+                    gb.heroes[i].talents.tier16 === null ||
                     gb.heroes[i].talents.tier20 === null ) {
                     return false;
                 }
             }
             return true;
         };
-        
+
         gb.hasTalent = function (hero, talent) {
             return (hero.talents['tier'+talent.tier] == talent._id);
         };
-        
+
         gb.toggleSynergy = function (hero) {
             if (gb.hasSynergy(hero)) {
                 for (var i = 0; i < gb.synergy.length; i++) {
@@ -1880,7 +1880,7 @@ angular.module('app.services', [])
                 gb.synergy.push(hero._id);
             }
         };
-        
+
         gb.hasSynergy = function (hero) {
             for (var i = 0; i < gb.synergy.length; i++) {
                 if (gb.synergy[i] === hero._id) {
@@ -1889,7 +1889,7 @@ angular.module('app.services', [])
             }
             return false;
         };
-        
+
         gb.toggleStrong = function (hero) {
             if (gb.hasStrong(hero)) {
                 for (var i = 0; i < gb.against.strong.length; i++) {
@@ -1902,7 +1902,7 @@ angular.module('app.services', [])
                 gb.against.strong.push(hero._id);
             }
         };
-        
+
         gb.hasStrong = function (hero) {
             for (var i = 0; i < gb.against.strong.length; i++) {
                 if (gb.against.strong[i] === hero._id) {
@@ -1911,7 +1911,7 @@ angular.module('app.services', [])
             }
             return false;
         };
-        
+
         gb.toggleWeak = function (hero) {
             if (gb.hasWeak(hero)) {
                 for (var i = 0; i < gb.against.weak.length; i++) {
@@ -1924,7 +1924,7 @@ angular.module('app.services', [])
                 gb.against.weak.push(hero._id);
             }
         };
-        
+
         gb.hasWeak = function (hero) {
             for (var i = 0; i < gb.against.weak.length; i++) {
                 if (gb.against.weak[i] === hero._id) {
@@ -1933,19 +1933,19 @@ angular.module('app.services', [])
             }
             return false;
         };
-        
+
         gb.hasAnyChapter = function () {
             return gb.content.length;
         };
-        
+
         gb.hasAnyMap = function () {
             return gb.maps.length;
         };
-        
+
         gb.setMap = function (map) {
             gb.maps = [map._id];
         };
-        
+
         gb.toggleMap = function (map) {
             if (gb.hasMap(map)) {
                 for (var i = 0; i < gb.maps.length; i++) {
@@ -1958,7 +1958,7 @@ angular.module('app.services', [])
                 gb.maps.push(map._id);
             }
         };
-        
+
         gb.hasMap = function (map) {
             for (var i = 0; i < gb.maps.length; i++) {
                 if (gb.maps[i] === map._id) {
@@ -1967,28 +1967,28 @@ angular.module('app.services', [])
             }
             return false;
         };
-        
+
         gb.addContent = function () {
             gb.content.push({
                 title: 'NEW CHAPTER',
                 body: ''
             });
         };
-        
+
         gb.deleteContent = function (content) {
             var index = gb.content.indexOf(content);
             if (index !== -1) {
                 gb.content.splice(index, 1);
             }
-        }; 
-        
+        };
+
         return gb;
     }
 
     guideBuilder.saveGuide = function (guide) {
         return $http.post('/api/guide/add', guide);
     }
-    
+
     guideBuilder.updateGuide = function (guide) {
         return $http.post('/api/guide/update', guide);
     }
@@ -2002,7 +2002,7 @@ angular.module('app.services', [])
             page = page || 1;
             perpage = perpage || 24;
             search = search || false;
-            
+
             var d = $q.defer();
             $http.post('/decks/community', { klass: klass, page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
@@ -2014,7 +2014,7 @@ angular.module('app.services', [])
             page = page || 1;
             perpage = perpage || 24;
             search = search || false;
-            
+
             var d = $q.defer();
             $http.post('/decks/featured', { klass: klass, page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
@@ -2028,7 +2028,7 @@ angular.module('app.services', [])
             search = search || '';
             age = age || 'all';
             order = order || 'high';
-            
+
             var d = $q.defer();
             $http.post('/decks', { klass: klass, page: page, perpage: perpage, search: search, age: age, order: order }).success(function (data) {
                 d.resolve(data);
@@ -2065,7 +2065,7 @@ angular.module('app.services', [])
             perpage = perpage || 10;
             search = search || false;
             daysLimit = daysLimit || false;
-            
+
             var d = $q.defer();
             $http.post('/hots/guides/community', { filters: filters, offset: offset, perpage: perpage, search: search, daysLimit: daysLimit }).success(function (data) {
                 d.resolve(data);
@@ -2077,7 +2077,7 @@ angular.module('app.services', [])
             offset = offset || 0;
             perpage = perpage || 10;
             search = search || false;
-            
+
             var d = $q.defer();
             $http.post('/hots/guides/featured', { filters: filters, offset: offset, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
@@ -2090,7 +2090,7 @@ angular.module('app.services', [])
             page = page || 1;
             perpage = perpage || 24;
             search = search || '';
-            
+
             var d = $q.defer();
             $http.post('/hots/guides', { guideType: guideType, filters: filters, page: page, perpage: perpage, search: search }).success(function (data) {
                 d.resolve(data);
@@ -2239,9 +2239,9 @@ angular.module('app.services', [])
         upload: function (file) {
             var d = $q.defer(),
                 data = new FormData();
-            
+
             data.append("file", file);
-            
+
             $http.post('/upload', data).success(function (data) {
                 d.resolve(data);
             });
@@ -2254,7 +2254,7 @@ angular.module('app.services', [])
         getBanners: function (bannerType) {
             var d = $q.defer(),
                 bannerType = bannerType || 'ts';
-            
+
             $http.post('/banners', { bannerType: bannerType }).success(function (data) {
                 d.resolve(data);
             });
@@ -2293,7 +2293,7 @@ angular.module('app.services', [])
 }])
 .factory('TeamService', ['$http', '$q', function ($http, $q) {
     return {
-        
+
         getMembers: function (gm) {
             var d = $q.defer();
             $http.post('/team', {gm: gm}).success(function (data) {
@@ -2330,5 +2330,20 @@ angular.module('app.services', [])
     };
     return factory;
   }
-]);
+])
+.factory('AuthInterceptor', ['$q','$location', 'LoopBackAuth', function($q, $location, LoopBackAuth) {
+  return {
+      responseError: function(rejection) {
+          if(rejection.status == 401) {
+              console.log(" triggered reponse error interceptor")
+              // Clearing the loopback values from the client browser for safe
+              LoopBackAuth.clearUser();
+              LoopBackAuth.clearStorage();
+              $location.nextAfterLogin = $location.path();
+              $location.path("/login");
+          }
+          return $q.reject(rejection);
+      }
+  }
+}]);
 ;
