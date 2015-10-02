@@ -437,7 +437,7 @@ angular.module('app.services', [])
         }
     };
 }])
-.factory('AuthInterceptor', ['$q', '$location', 'LoopBackAuth' function ($q, $location, LoopBackAuth) {
+.factory('AuthInterceptor', ['$q', '$location', 'LoopBackAuth', function ($q, $location, LoopBackAuth) {
   return {
         responseError: function(rejection) {
             if(rejection.status == 401) {
@@ -2330,20 +2330,20 @@ angular.module('app.services', [])
     };
     return factory;
   }
-])
-.factory('AuthInterceptor', ['$q','$location', 'LoopBackAuth', function($q, $location, LoopBackAuth) {
-  return {
-      responseError: function(rejection) {
-          if(rejection.status == 401) {
-              console.log(" triggered reponse error interceptor")
-              // Clearing the loopback values from the client browser for safe
-              LoopBackAuth.clearUser();
-              LoopBackAuth.clearStorage();
-              $location.nextAfterLogin = $location.path();
-              $location.path("/login");
-          }
-          return $q.reject(rejection);
-      }
-  }
-}]);
+]);
+//.factory('AuthInterceptor', ['$q','$location', 'LoopBackAuth', function($q, $location, LoopBackAuth) {
+//  return {
+//      responseError: function(rejection) {
+//          if(rejection.status == 401) {
+//              console.log(" triggered reponse error interceptor")
+//              // Clearing the loopback values from the client browser for safe
+//              LoopBackAuth.clearUser();
+//              LoopBackAuth.clearStorage();
+//              $location.nextAfterLogin = $location.path();
+//              $location.path("/login");
+//          }
+//          return $q.reject(rejection);
+//      }
+//  }
+//}]);
 ;
