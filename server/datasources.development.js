@@ -1,6 +1,6 @@
 module.exports = {
 	"mongodb": {
-	    "host": "127.0.0.1",
+	    "host": "54.68.67.60",
 	    "port": 27017,
 	    "database": "new-tempostorm",
 	    "name": "mongodb",
