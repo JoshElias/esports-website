@@ -50,7 +50,7 @@
     "angular": "~1.4.3",
     "angular-sanitize": "~1.4.3",
     "angular-ui-validate": "~1.2.0",
-    "angular-youtube-embed": "~1.0.2"
+    "angular-youtube-mb": "~1.1.0"
   },
   "resolutions": {
     "angular-ui-utils": "jq-0.2.3",

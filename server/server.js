@@ -27,30 +27,6 @@ app.start = function() {
   });
 };
 
-/*
-var https = require("https");
-var http = require("http");
-var fs = require("fs");
-app.start = function() {
-
-		var keyData = fs.readFileSync("/etc/ssl/certs/server.key").toString();
-		var certData = fs.readFileSync("/etc/ssl/certs/server.crt").toString();
-    var options = {
-      key: keyData,
-      cert: certData
-    };
-  var server = https.createServer(options, app);
-
-  server.listen(function() {
-    var baseUrl = 'https://' + app.get('host') + ':' + app.get('port');
-    app.emit('started', baseUrl);
-    console.log('LoopBack server listening @ %s%s', baseUrl, '/');
-  });
-  return server;
-};
-*/
-
-
 // start the server if `$ node server.js`
 if (require.main === module) {
   app.start();

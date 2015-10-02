@@ -76,7 +76,8 @@
     <script src="./vendor/angular-translate/angular-translate.min.js"></script>
     <script src="./vendor/ngprogress/build/ngprogress.min.js"></script>
     <script src="./vendor/ngstorage/ngStorage.min.js"></script>
-    <script src="./vendor/angular-youtube-embed/dist/angular-youtube-embed.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="./vendor/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
 
 
     <!-- app -->
