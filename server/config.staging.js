@@ -1,6 +1,6 @@
 module.exports = {
   "restApiRoot": "/api",
-  "host": "localhost",
+  "host": "52.26.75.137",
   "port": 8080,
   "remoting": {
     "context": {
