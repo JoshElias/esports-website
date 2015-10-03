@@ -77,7 +77,8 @@ var app = angular.module('app', [
                 }
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {
-                $state.transitionTo('app.404');
+                console.log('hey you don goofed. fag');
+//                $state.transitionTo('app.404');
             });
         }
     ]
@@ -107,7 +108,7 @@ var app = angular.module('app', [
             tpl + '**'
         ]);
 
-        $urlRouterProvider.otherwise('404');
+//        $urlRouterProvider.otherwise('404');
         $stateProvider
             .state('app', {
                 abstract: true,
@@ -145,11 +146,27 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/home.html',
                         controller: 'HomeCtrl',
                         resolve: {
-                            dataArticles: ['ArticleService', function (ArticleService) {
-                                var klass = 'all',
-                                    offset = 0,
+                            articles: ['Article', function (Article) {
+                                var offset = 1,
                                     num = 6;
-                                return ArticleService.getArticles('all', klass, offset, num);
+                                
+                                return Article.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true,
+                                        },
+                                        fields: {
+                                            content: false,
+                                            votes: false
+                                        },
+                                        order: "createdDate DESC",
+                                        skip: (offset * num) - num,
+                                        limit: num
+                                    }
+                                });
+                            }],
+                            articlesTotal: ['Article', function (Article) {
+                                return Article.count();
                             }]
                         }
                     }
