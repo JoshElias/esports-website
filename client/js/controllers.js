@@ -223,8 +223,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', '$sce', 'dataArticles', 'ArticleService', 
-    function ($scope, $sce, dataArticles, ArticleService) {
+.controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal',
+    function ($scope, $sce, articles, articlesTotal) {
         // data
         $scope.articles = {
             loading: false,
@@ -255,8 +255,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             },
             offset: 0,
-            total: dataArticles.total,
-            data: dataArticles.articles
+            total: articlesTotal,
+            data: articles
         };
                 
         // articles

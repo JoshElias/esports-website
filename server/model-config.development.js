@@ -101,5 +101,9 @@ module.exports = {
   "vote": {
     "dataSource": "mongodb",
     "public": true
+  },
+  "vod": {
+    "dataSource": "mongodb",
+    "public": true
   }
 }
