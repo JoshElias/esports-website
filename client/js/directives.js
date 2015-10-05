@@ -81,7 +81,7 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('loginForm', ['$window', '$cookies', '$state', 'AuthenticationService', 'LoginModalService', 'UserService', 'SubscriptionService', function ($window, $cookies, $state, AuthenticationService, LoginModalService, UserService, SubscriptionService) {
+.directive('loginForm', ['$window', '$cookies', '$state', 'AuthenticationService', 'LoginModalService', 'User', 'SubscriptionService', function ($window, $cookies, $state, AuthenticationService, LoginModalService, User, SubscriptionService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
         scope: true,
@@ -101,7 +101,10 @@ angular.module('app.directives', ['ui.load'])
 
             $scope.login = function login(email, password) {
                 if (email !== undefined && password !== undefined) {
-                    UserService.login(email, password).success(function(data) {
+                    User.login({}, { email, password }, function(data) {
+                        console.log(data);
+                        data = data.user;
+                        
                         AuthenticationService.setLogged(true);
                         AuthenticationService.setAdmin(data.isAdmin);
                         AuthenticationService.setProvider(data.isProvider);
@@ -133,10 +136,11 @@ angular.module('app.directives', ['ui.load'])
                             $scope.callback();
                         }
                             
-                    }).error(function() {
-                        $scope.showError = true;
+                    }, function(err) {
+                        console.log(err);
+                        //TODO: Login: Handle exceptions
                     });
-                }
+                };
             }
         }
     }
@@ -1274,17 +1278,28 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
-.directive('twitterFeed', ['$sce', 'TwitterService', function ($sce, TwitterService) {
+.directive('twitterFeed', ['$sce', 'TwitterPost', function ($sce, TwitterPost) {
     return {
         restrict: 'A',
         templateUrl: tpl + 'views/frontend/directives/twitter.tweets.html',
         link: function (scope, element, attrs) {
             scope.twitWheel = false;
             scope.tweets = undefined;
+            
+            var num = 6;
 
-            TwitterService.getFeed().then(function(data) {
+            TwitterPost.find({
+                filter: {
+                    order: "createdDate DESC"
+                },
+                limit: num
+            }, function(tweets) {
+                console.log(tweets);
                 scope.twitWheel = true;
-                scope.tweets = data.data;
+                scope.tweets = tweets[0].feed;
+            }, function (err) {
+                console.log("Sorry, we cannot get the twitter feed right now. Error: " + err);
+                //TODO : handle the exception    
             });
 
             scope.getContent = function (c) {
@@ -1294,16 +1309,24 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
-.directive('videoOfTheDay', ['VodService', function (VodService) {
+.directive('videoOfTheDay', ['Vod', function (Vod) {
     return {
         restrict: 'A',
         template: function () {
-            return '<h3 class="sub-title m-b-md">{{vod.subTitle}}</h3><youtube-video class="home-vod" ng-if="vod.url" video-url="vod.url"></youtube-video><youtube-video class="home-vod" ng-if="vod.vars.list" player-vars="vod.vars"></youtube-video>';
+            return '<h3 class="sub-title m-b-md">{{vod.subtitle}}</h3><youtube-video class="home-vod" ng-if="vod.youtubeId" video-url="vod.youtubeId"></youtube-video><youtube-video class="home-vod" ng-if="vod.youtubeVars.list" player-vars="vod.youtubeVars"></youtube-video>';
         },
         link: function (scope, element, attrs) {
-            VodService.getLatestVod().then(function (data) {
-                scope.vod = data.vod;
-            });
+            Vod.find({
+                filter: {
+                    where: {
+                        displayDate: { lte: new Date() }
+                    },
+                    order: "displayDate DESC",
+                    limit: 1
+                }
+            }, function (vod) {
+                scope.vod = vod[0];
+            })
         }
     };
 }])

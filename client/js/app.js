@@ -2099,8 +2099,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/vod.list.html',
                         controller: 'AdminVodListCtrl',
                         resolve: {
-                            data: ['AdminVodService', function (AdminVodService) {
-                                return AdminVodService.getVods();
+                            data: ['Vod', function (Vod) {
+                                return Vod.find();
                             }]
                         }
                     }

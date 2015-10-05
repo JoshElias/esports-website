@@ -6,7 +6,7 @@
     "validateUpsert": true
   },
   "properties": {
-    "expiryDate": {
+    "displayDate": {
       "type": "date",
       "required": true
     },

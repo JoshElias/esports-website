@@ -119,7 +119,7 @@ angular.module('app.services', [])
 .factory('UserService', ['$http', '$compile', function($http, $compile) {
     return {
         login: function (email, password) {
-            return $http.post('/login', {email: email, password: password});
+            return $http.post('/login', { email: email, password: password });
         },
 
         signup: function (email, username, password, cpassword) {
