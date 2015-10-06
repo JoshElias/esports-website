@@ -3,7 +3,7 @@
         <sub-nav-stream class="pull-left"></sub-nav-stream>
         <div class="sub-nav-links">
             <ul>
-                <li><a href="#hs">HEARTHSTONE</a></li><li><a href="#hots">HEROES OF THE STORM</a></li><li><a href="#fgc">FGC</a></li><li><a href="#fifa">FIFA</a></li>
+                <li><a href="#hs">HEARTHSTONE</a></li><li><a href="#hots">HEROES OF THE STORM</a></li><li><a href="#wow">WoW: ARENA</a></li><li><a href="#fgc">FGC</a></li><li><a href="#fifa">FIFA</a></li>
             </ul>
         </div>
     </div>
@@ -18,7 +18,7 @@
                     <div class="member m-b-sm col-lg-3 col-md-4 col-sm-6 col-xs-12 wrapper-none wrapper-none" ng-repeat="member in hsMembers">
                         <button ng-click="showMember(member)">
                             <div class="outline">
-                                <img class="img-responsive" src="../../img/team/{{member.photo}}" />
+                                <img class="img-responsive" src="{{app.cdn}}team/{{member.photo}}" />
                                 <div class="wrapper-md content-wrapper ">
                                     <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
 
@@ -48,7 +48,37 @@
                     <div class="member m-b-sm col-lg-3 col-md-4 col-sm-6 col-xs-12 wrapper-none wrapper-none" ng-repeat="member in hotsMembers">
                         <button ng-click="showMember(member)">
                             <div class="outline">
-                                <img class="img-responsive" src="../../img/team/{{member.photo}}" />
+                                <img class="img-responsive" src="{{app.cdn}}team/{{member.photo}}" />
+                                <div class="wrapper-md content-wrapper ">
+                                    <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
+
+                                    <h3 class="m-t-md">{{member.fullName}}</h3>
+                                    <p>{{getDescription(member.description)}}</p>
+                                </div>
+                                <span class="view-more-team">
+                                    <h3>View more</h3>
+                                </span>
+                            </div>
+                        </button>
+                        <span class="btn-team-wrapper">
+                            <a href="#" target="_blank" ng-click="openLink($event, 'https://twitter.com/' + member.social.twitter)" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a>
+                            <a href="#" target="_blank" ng-click="openLink($event, 'https://twitch.tv/' + member.social.twitch)" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a>
+                            <a href="#" target="_blank" ng-click="openLink($event, 'https://youtube.com/' + member.social.youtube)" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a>
+                            <a href="#" target="_blank" ng-click="openLink($event, 'https://facebook.com/' + member.social.facebook)" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a>
+                            <a href="#" target="_blank" ng-click="openLink($event, 'https://instagram.com/' + member.social.instagram)" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="team col-lg-12 m-b-lg">
+                    <a id="wow" class="anchor"></a>
+                    <h1>WORLD OF WARCRAFT: ARENA</h1>
+                    <div class="member m-b-sm col-lg-3 col-md-4 col-sm-6 col-xs-12 wrapper-none wrapper-none" ng-repeat="member in wowMembers">
+                        <button ng-click="showMember(member)">
+                            <div class="outline">
+                                <img class="img-responsive" src="{{app.cdn}}team/{{member.photo}}" />
                                 <div class="wrapper-md content-wrapper ">
                                     <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
 
@@ -78,7 +108,7 @@
                     <div class="member m-b-sm col-lg-3 col-md-4 col-sm-6 col-xs-12 wrapper-none wrapper-none" ng-repeat="member in fgcMembers">
                         <button ng-click="showMember(member)">
                             <div class="outline">
-                                <img class="img-responsive" src="../../img/team/{{member.photo}}" />
+                                <img class="img-responsive" src="{{app.cdn}}team/{{member.photo}}" />
                                 <div class="wrapper-md content-wrapper ">
                                     <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
 
@@ -108,7 +138,7 @@
                     <div class="member m-b-sm col-lg-3 col-md-4 col-sm-6 col-xs-12 wrapper-none wrapper-none" ng-repeat="member in fifaMembers">
                         <button ng-click="showMember(member)">
                             <div class="outline">
-                                <img class="img-responsive" src="../../img/team/{{member.photo}}" />
+                                <img class="img-responsive" src="{{app.cdn}}team/{{member.photo}}" />
                                 <div class="wrapper-md content-wrapper ">
                                     <h1 class="m-b-xs">{{getTitle(member.screenName)}}</h1>
 

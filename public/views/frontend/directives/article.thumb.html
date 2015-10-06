@@ -3,6 +3,7 @@
     <div class="article-premium" ng-if="isPremium(article)"></div>
     <img ng-src="{{$parent.app.cdn}}articles/{{article.photos.small}}" class="img-responsive">
     <div class="home-article-content">
+        <div class="article-icon {{article.articleType.join(' ')}}"></div>
         <h1 class="{{article.articleType.join(' ')}}">{{article.title}}</h1>
         <p>{{getDescription(article.description)}}</p>
     </div>

@@ -467,11 +467,15 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-article .article-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
 
 .home-article img { width: 100%; height: auto; }
-.home-article .home-article-content { position: relative; bottom: 0px; margin: -1px 1px 0px 1px; padding: 15px 20px 20px 20px; border-top: 1px solid rgba(255,255,255,.2); z-index: 2; overflow: hidden; }
-.home-article .home-article-content h1 { margin-bottom: 20px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; }
+.home-article .home-article-content { position: relative; bottom: 0px; margin: -1px 1px 0px 1px; padding: 15px 20px 20px 20px; border-top: 1px solid rgba(255,255,255,.2); z-index: 2; }
+.home-article .home-article-content h1 { margin-bottom: 20px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; padding-right: 15px; }
 .home-article .home-article-content h1.ts { color: #67a0d6; }
 .home-article .home-article-content h1.hs { color: #d07828; }
 .home-article .home-article-content h1.hots { color: #8968ad; }
+.home-article .article-icon { background-image: url(../img/article-type-icon.png); height:40px; width:40px; position: absolute; right: 5px; top: -20px; z-index: 3; }
+.home-article .article-icon.ts { background-position: 0px; }
+.home-article .article-icon.hs { background-position: 80px; }
+.home-article .article-icon.hots { background-position: 40px; }
 .home-article .home-article-content p { margin-bottom: 0px; color: #bababa; }
 
 .home-articles-prev,
@@ -2847,24 +2851,18 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-mulligans .class span { position: absolute; width: 100%; bottom: 0; left: 0; text-align: center; font-size: 16px; font-weight: bold; color: white; }
 .db-mulligans .class-select { width: 100%; }
 
-.db-mulligans .class-mage { background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-shaman { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-warrior { background: #C79C6E url('../img/warrior-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-rogue { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-paladin { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-priest { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-warlock { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-hunter { background: #ABD473 url('../img/hunter-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-druid { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-mage.secondary { background: #69CCF0 url('../img/medivh.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-shaman.secondary { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-warrior.secondary { background: #C79C6E url('../img/magni.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-rogue.secondary { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-paladin.secondary { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-priest.secondary { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-warlock.secondary { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-hunter.secondary { background: #ABD473 url('../img/alleria.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-druid.secondary { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-mage.jaina { background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-mage.medivh { background: #69CCF0 url('../img/medivh.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-shaman.thrall { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-warrior.garrosh { background: #C79C6E url('../img/warrior-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-warrior.magni { background: #C79C6E url('../img/magni.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-rogue.valeera { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-paladin.uther { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-priest.anduin { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-warlock.guldan { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-hunter.rexxar { background: #ABD473 url('../img/hunter-large.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-hunter.alleria { background: #ABD473 url('../img/alleria.jpg') center center no-repeat; background-size: 195%; }
+.db-mulligans .class-druid.malfurion { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 195%; }
 
 .db-mulligans .class.no-select { opacity: .4; }
 
@@ -3626,7 +3624,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .comment .panel-heading a { color: #9C9C9C; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; transition: .15s; }
 .comment .panel-body { color: #FFF; background: #1B1B1B; overflow: hidden; }
 .comment .comment-panel { color: white; border-radius: 0px; background: #262626; margin: 0; padding: 15px; transition: all .15s; -webkit-transition: all .15s; -moz-transition: all .15s; }
-.comment .comment-body { overflow: hidden; }
+.comment .comment-body { overflow: hidden; white-space:pre-wrap; }
 .comment .comment-ago { float:right; color: #2267B2; transition: .15s; }
 .comment:hover .comment-panel { background-color: #2267B2; }
 .comment:hover .panel-heading a { color: #FFF; }

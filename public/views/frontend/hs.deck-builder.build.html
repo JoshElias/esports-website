@@ -109,7 +109,7 @@
                     </div>
 
                     <div class="deck-info">
-                        <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{getName().toLowerCase()}}">
+                        <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{getActiveDeckName().toLowerCase()}}">
                             <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                         </div>
                         <span ng-show="deck.basic">
@@ -128,7 +128,7 @@
                                 <div ng-if="card.legendary" class="legendary pull-right"><i class="fa fa-star"></i></div>
                             </div>
                         </div>
-                        <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}} {{getName().toLowerCase()}}">
+                        <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}} {{getActiveDeckName().toLowerCase()}}">
                             {{getDust(deck.cards)}}
                             <div class="dust-bottle-sm"></div>
                         </div>
@@ -292,41 +292,41 @@
                 <div class="db-builder clearfix">
                     <div class="db-section db-mulligans" ng-hide="step !== 2">
                         <div class="class-select clearfix">
-                            <div ng-class="{'secondary': app.settings.secondaryPortrait[0], 'no-select': currentMulligan.klass != 'Mage' }" class="class class-mage">
-                                <button ng-click="setMulligan(deck.getMulligan('Mage'))"></button>
-                                <span>MAGE</span>
+                            <div ng-class="{'no-select': currentMulligan.klass != 'Druid'  }" class="class class-druid {{getName(0, 'Druid').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Druid'))"></button>
+                                <span>DRUID</span>
                             </div>
-                            <div ng-class="{'secondary': app.settings.secondaryPortrait[1], 'no-select': currentMulligan.klass != 'Shaman'  }" class="class class-shaman">
-                                <button ng-click="setMulligan(deck.getMulligan('Shaman'))"></button>
-                                <span>SHAMAN</span>
-                            </div>
-                            <div ng-class="{'secondary': app.settings.secondaryPortrait[2], 'no-select': currentMulligan.klass != 'Warrior'  }" class="class class-warrior">
-                                <button ng-click="setMulligan(deck.getMulligan('Warrior'))"></button>
-                                <span>WARRIOR</span>
-                            </div>
-                            <div ng-class="{'secondary': app.settings.secondaryPortrait[3], 'no-select': currentMulligan.klass != 'Rogue'  }" class="class class-rogue">
-                                <button ng-click="setMulligan(deck.getMulligan('Rogue'))"></button>
-                                <span>ROGUE</span>
-                            </div>
-                            <div ng-class="{'secondary': app.settings.secondaryPortrait[4], 'no-select': currentMulligan.klass != 'Paladin'  }" class="class class-paladin">
-                                <button ng-click="setMulligan(deck.getMulligan('Paladin'))"></button>
-                                <span>PALADIN</span>
-                            </div>
-                            <div ng-class="{'secondary': app.settings.secondaryPortrait[5], 'no-select': currentMulligan.klass != 'Priest'  }" class="class class-priest">
-                                <button ng-click="setMulligan(deck.getMulligan('Priest'))"></button>
-                                <span>PRIEST</span>
-                            </div>
-                            <div ng-class="{'secondary': app.settings.secondaryPortrait[6], 'no-select': currentMulligan.klass != 'Warlock'  }" class="class class-warlock">
-                                <button ng-click="setMulligan(deck.getMulligan('Warlock'))"></button>
-                                <span>WARLOCK</span>
-                            </div>
-                            <div ng-class="{'secondary': app.settings.secondaryPortrait[7], 'no-select': currentMulligan.klass != 'Hunter'  }" class="class class-hunter">
+                            <div ng-class="{'no-select': currentMulligan.klass != 'Hunter'  }" class="class class-hunter {{getName(0, 'Hunter').toLowerCase()}}">
                                 <button ng-click="setMulligan(deck.getMulligan('Hunter'))"></button>
                                 <span>HUNTER</span>
                             </div>
-                            <div ng-class="{'secondary': app.settings.secondaryPortrait[8], 'no-select': currentMulligan.klass != 'Druid'  }" class="class class-druid">
-                                <button ng-click="setMulligan(deck.getMulligan('Druid'))"></button>
-                                <span>DRUID</span>
+                            <div ng-class="{'no-select': currentMulligan.klass != 'Mage' }" class="class class-mage {{getName(0, 'Mage').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Mage'))"></button>
+                                <span>MAGE</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.klass != 'Paladin'  }" class="class class-paladin {{getName(0, 'Paladin').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Paladin'))"></button>
+                                <span>PALADIN</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.klass != 'Priest'  }" class="class class-priest {{getName(0, 'Priest').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Priest'))"></button>
+                                <span>PRIEST</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.klass != 'Rogue'  }" class="class class-rogue {{getName(0, 'Rogue').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Rogue'))"></button>
+                                <span>ROGUE</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.klass != 'Shaman'  }" class="class class-shaman {{getName(0, 'Shaman').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Shaman'))"></button>
+                                <span>SHAMAN</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.klass != 'Warlock'  }" class="class class-warlock {{getName(0, 'Warlock').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Warlock'))"></button>
+                                <span>WARLOCK</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.klass != 'Warrior'  }" class="class class-warrior {{getName(0, 'Warrior').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Warrior'))"></button>
+                                <span>WARRIOR</span>
                             </div>
                         </div>
 

@@ -1632,6 +1632,8 @@ module.exports = {
                     });
                 }
                 
+                console.log(req.body.name, req.body._id);
+                
                 var premium = (author.isAdmin || author.isProvider) ? {
                         isPremium: req.body.premium.isPremium || false,
                         expiryDate: req.body.premium.expiryDate || new Date().toISOString()
@@ -1644,7 +1646,9 @@ module.exports = {
                 Schemas.Deck.findOne({ _id: req.body._id })
                 .exec(function (err, deck) {
                     if (err) { return res.json({ success: false, errors: { unknown: { msg: 'An unknown error occurred' } } }); }
-
+                    
+                    console.log(deck);
+                    
                     deck.name = req.body.name;
                     deck.slug = Util.slugify(req.body.name);
                     deck.deckType = req.body.deckType;
@@ -3190,7 +3194,7 @@ module.exports = {
         return function (req, res, next) {
             var hsMembers = [],
                 hotsMembers = [],
-                csMembers = [],
+                wowMembers = [],
                 fgcMembers = [],
                 fifaMembers = [];
             
@@ -3204,7 +3208,7 @@ module.exports = {
                         switch (type) {
                             case 'hs' : hsMembers.push(results[i]); break;
                             case 'hots' : hotsMembers.push(results[i]); break;
-                            case 'cs' : csMembers.push(results[i]); break;
+                            case 'wow' : wowMembers.push(results[i]); break;
                             case 'fifa' : fifaMembers.push(results[i]); break;
                             case 'fgc' : fgcMembers.push(results[i]); break;
                         }
@@ -3214,11 +3218,11 @@ module.exports = {
             }
             
             getMembers(function (gm) {
-                return res.json({ 
+                return res.json({
                     members: gm,
                     hsMembers: hsMembers,
                     hotsMembers: hotsMembers,
-                    csMembers: csMembers,
+                    wowMembers: wowMembers,
                     fgcMembers: fgcMembers,
                     fifaMembers: fifaMembers,
                     success: true
