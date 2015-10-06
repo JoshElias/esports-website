@@ -3338,15 +3338,16 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'data',
-    function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, data) {
-        $scope.members = data.members;
+.controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'teams',
+    function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, teams) {
+
+        $scope.members = teams.members;
         
-        $scope.hsMembers = data.hsMembers;
-        $scope.hotsMembers = data.hotsMembers;
-        $scope.csMembers = data.csMembers;
-        $scope.fgcMembers = data.fgcMembers;
-        $scope.fifaMembers = data.fifaMembers;
+        $scope.hsMembers = teams.hsMembers;
+        $scope.hotsMembers = teams.hotsMembers;
+        $scope.wowMembers = teams.wowMembers;
+        $scope.fgcMembers = teams.fgcMembers;
+        $scope.fifaMembers = teams.fifaMembers;
         
         if ($location.hash()) {
             $timeout(function () {
@@ -3391,7 +3392,7 @@ angular.module('app.controllers', ['ngCookies'])
             var box = bootbox.dialog({
                 title: member.screenName,
                 className: 'member-modal',
-                message: $compile('<button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true">×</button><img class="responsive" src="../../img/team/{{member.photo}}" /><div class="wrapper-md content-wrapper "><h1 class="m-b-xs">{{member.screenName}}</h1><span class="btn-team-wrapper-modal"><a href="#" target="_blank" ng-click="openLink($event, \'https://twitter.com/\' + member.social.twitter)" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://twitch.tv/\' + member.social.twitch)" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://youtube.com/\' + member.social.youtube)" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://facebook.com/\' + member.social.facebook)" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://instagram.com/\' + member.social.instagram)" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a></span><h3>{{member.fullName}}</h3><p>{{member.description}}</p></div>')($scope)
+                message: $compile('<button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true">×</button><img class="responsive" src="https://cdn-tempostorm.netdna-ssl.com/team/{{member.photo}}" /><div class="wrapper-md content-wrapper "><h1 class="m-b-xs">{{member.screenName}}</h1><span class="btn-team-wrapper-modal"><a href="#" target="_blank" ng-click="openLink($event, \'https://twitter.com/\' + member.social.twitter)" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://twitch.tv/\' + member.social.twitch)" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://youtube.com/\' + member.social.youtube)" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://facebook.com/\' + member.social.facebook)" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://instagram.com/\' + member.social.instagram)" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a></span><h3>{{member.fullName}}</h3><p>{{member.description}}</p></div>')($scope)
             });
         }
         
@@ -6491,84 +6492,84 @@ angular.module('app.controllers', ['ngCookies'])
         
     }
 ])
-.controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'ArticleService', 'data', 'MetaService', 'AjaxPagination',
-    function ($scope, $state, $q, $timeout, ArticleService, data, MetaService, AjaxPagination) {
+.controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'Article', 'articles', 'articlesTotal', 'MetaService', 'AjaxPagination',
+    function ($scope, $state, $q, $timeout, Article, articles, articlesTotal, MetaService, AjaxPagination) {
         //if (!data.success) { return $state.transitionTo('app.articles.list'); }
         
         // articles
-        $scope.articles = data.articles;
-        $scope.total = data.total;
-        $scope.articleType = data.articleType;
-        $scope.filter = data.filter;
-        $scope.page = parseInt(data.page);
-        $scope.perpage = data.perpage;
-        $scope.search = data.search;
+        $scope.articles = articles;
+        $scope.total = articlesTotal.count;
+        $scope.page = parseInt(articles.page);
+        $scope.perpage = articles.perpage;
+        $scope.search = "";
         $scope.fetching = false;
-        
-        
         $scope.metaservice = MetaService;
-        
         $scope.metaservice.setOg('https://tempostorm.com/articles');
         
-        
-        $scope.hasSearch = function () {
-            return (data.search) ? data.search.length : false;
-        }
-        
-        $scope.setKlass = function (klass) {
-            $scope.filter = klass;
-            $scope.page = 1;
-            $scope.getArticles();
-        };
-
-        $scope.getArticles = function () {
-            var params = {};
-            
-            if ($scope.search) {
-                params.s = $scope.search;
-            }
-            
-            if ($scope.page !== 1) {
-                params.p = $scope.page;
-            }
-            
-            if ($scope.articleType != 'all') {
-                params.t = $scope.articleType;
-            }
-
-            if ($scope.filter != 'all') {
-                params.f = $scope.filter;
-            }
-            
-            $scope.loading = true;
-            $state.transitionTo('app.articles.list', params);
+        $scope.getArticles = function() {
+            updateArticles(1, $scope.perpage, $scope.search);
         }
         
         // pagination
         function updateArticles (page, perpage, search, callback) {
             $scope.fetching = true;
-            ArticleService.getArticles('all', 'all', ((page*perpage)-perpage), 12, search).then(function (data) {
-                $scope.articlePagination.total = data.total;
-                $scope.articlePagination.page = page;
-                $scope.articlePagination.perpage = perpage;
-                $timeout(function () {
-                    $scope.articles = data.articles;
-                    $scope.fetching = false;
-                    if (callback) {
-                        return callback(data);
-                    }
+            
+            var options = {},
+                countOptions = {};
+            
+            options.filter = {
+                isActive: true,
+                fields: {
+                    content: false,
+                    votes: false
+                },
+                order: "createdDate DESC",
+                skip: ((page*perpage)-perpage),
+                limit: 12
+            };
+            
+            if ($scope.search.length > 0) {
+                options.filter.where = {
+                    or: [
+                        { title: { regexp: search } },
+                        { description: { regexp: search } },
+                        { content: { regexp: search } }
+                    ]
+                }
+                countOptions.where = {
+                    or: [
+                        { title: { regexp: search } },
+                        { description: { regexp: search } },
+                        { content: { regexp: search } }
+                    ]
+                }
+            }
+            
+            Article.count(countOptions, function (count) {
+                Article.find(options, function (articles) {
+                    $scope.articlePagination.total = count.count;
+                    $scope.articlePagination.page = page;
+                    $scope.articlePagination.perpage = perpage;
+                    
+                    $timeout(function () {
+                        $scope.articles = articles;
+                        $scope.fetching = false;
+                        if (callback) {
+                            return callback(count.count);
+                        }
+                    });
                 });
             });
         }
+        
         // page flipping
-        $scope.articlePagination = AjaxPagination.new(12, data.total,
+        $scope.articlePagination = AjaxPagination.new($scope.perpage, $scope.total,
             function (page, perpage) {
                 var d = $q.defer();
 
                 updateArticles(page, perpage, $scope.search, function (data) {
-                    d.resolve(data.total);
+                    d.resolve(data);
                 });
-
                 return d.promise;
             }
         );
@@ -6579,12 +6580,13 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
     }
 ])
-.controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'data', '$state', '$compile', '$window', 'bootbox', 'ArticleService', 'VoteService', 'MetaService', 'LoginModalService',
-    function ($scope, $parse, $sce, data, $state, $compile, $window, bootbox, ArticleService, VoteService, MetaService, LoginModalService) {
+.controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService',
+    function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService) {
         
-        $scope.article = data.article;
-        $scope.authorEmail = data.article.author.email;
-        $scope.ArticleService = ArticleService;
+        $scope.ArticleService = Article;
+        $scope.article = article;
+        $scope.authorEmail = article.author.email;
+//        $scope.ArticleService = ArticleService;
         $scope.$watch('app.user.isLogged()', function() {
             for (var i = 0; i < $scope.article.votes.length; i++) {
                 if ($scope.article.votes[i] == $scope.app.user.getUserID()) {
@@ -6608,8 +6610,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
         
-        var ogImg = ($scope.article.photos.square != undefined) ? $scope.app.cdn + 'articles/' + $scope.article.photos.square : $scope.app.cdn + 'articles/' + $scope.article.photos.large;
-        $scope.metaservice.setOg('https://tempostorm.com/articles/' + data.article.slug.url, $scope.article.title, $scope.article.description, 'article', ogImg);
+        var ogImg = ($scope.article.photoNames.square != undefined) ? $scope.app.cdn + 'articles/' + $scope.article.photoNames.square : $scope.app.cdn + 'articles/' + $scope.article.photoNames.large;
+        $scope.metaservice.setOg('https://tempostorm.com/articles/' + article.slug.url, $scope.article.title, $scope.article.description, 'article', ogImg);
         
         $scope.getContent = function () {
             return $sce.trustAsHtml($scope.article.content);
@@ -6692,26 +6694,26 @@ angular.module('app.controllers', ['ngCookies'])
             updateCommentVotes();
         };
         
-        // comments
-        var defaultComment = {
-            comment: ''
-        };
-        $scope.comment = angular.copy(defaultComment);
-        
-        $scope.commentPost = function () {
-            if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal('login', function () {
-                    $scope.commentPost();
-                });
-            } else {
-                ArticleService.addComment($scope.article, $scope.comment).success(function (data) {
-                    if (data.success) {
-                        $scope.article.comments.push(data.comment);
-                        $scope.comment.comment = '';
-                    }
-                });
-            }
-        };
+//        // comments
+//        var defaultComment = {
+//            comment: ''
+//        };
+//        $scope.comment = angular.copy(defaultComment);
+//        
+//        $scope.commentPost = function () {
+//            if (!$scope.app.user.isLogged()) {
+//                LoginModalService.showModal('login', function () {
+//                    $scope.commentPost();
+//                });
+//            } else {
+//                ArticleService.addComment($scope.article, $scope.comment).success(function (data) {
+//                    if (data.success) {
+//                        $scope.article.comments.push(data.comment);
+//                        $scope.comment.comment = '';
+//                    }
+//                });
+//            }
+//        };
         
         if ($scope.app.user.isLogged()) {
             updateCommentVotes();
@@ -6768,14 +6770,14 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'DeckService', 'dataDecksTempostorm', 'dataDecksCommunity', 
-    function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, DeckService, dataDecksTempostorm, dataDecksCommunity) {
+.controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'DeckService', 'tempostormDecks', 'tempostormCount', 'communityDecks', 'communityCount', 
+    function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, DeckService, tempostormDecks, tempostormCount, communityDecks, communityCount) {
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
         
         // decks
         $scope.deckSearch = '';
-        $scope.tempostormDecks = dataDecksTempostorm.decks;
-        $scope.communityDecks = dataDecksCommunity.decks;
+        $scope.tempostormDecks = tempostormDecks.decks;
+        $scope.communityDecks = communityDecks.decks;
         
         // filters
         $scope.filters = {
@@ -6819,7 +6821,7 @@ angular.module('app.controllers', ['ngCookies'])
             });
         }
         
-        $scope.tempostormPagination = AjaxPagination.new(4, dataDecksTempostorm.total,
+        $scope.tempostormPagination = AjaxPagination.new(4, tempostormCount,
             function (page, perpage) {
                 var d = $q.defer();
 
@@ -6845,7 +6847,7 @@ angular.module('app.controllers', ['ngCookies'])
             });
         }
         
-        $scope.communityPagination = AjaxPagination.new(12, dataDecksCommunity.total,
+        $scope.communityPagination = AjaxPagination.new(12, communityCount,
             function (page, perpage) {
                 var d = $q.defer();
 

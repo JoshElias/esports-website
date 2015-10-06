@@ -62,6 +62,10 @@ module.exports = {
     "dataSource": "mongodb",
     "public": true
   },
+  "teamMember": {
+    "dataSource": "mongodb",
+    "public": true
+  },
   "twitchFeed": {
     "dataSource": "mongodb",
     "public": true

@@ -37,6 +37,7 @@ var app = angular.module('app', [
 
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
+                console.log('started state change');
                 //ngProgress.start();
                 if (toState.redirectTo) {
                     event.preventDefault();
@@ -77,6 +78,7 @@ var app = angular.module('app', [
                 }
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {
+                console.log(event);
                 console.log('hey you don goofed. fag');
 //                $state.transitionTo('app.404');
             });
@@ -153,7 +155,7 @@ var app = angular.module('app', [
                                 return Article.find({
                                     filter: {
                                         where: {
-                                            isActive: true,
+                                            isActive: true
                                         },
                                         fields: {
                                             content: false,
@@ -189,14 +191,40 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/articles.list.html',
                         controller: 'ArticlesCtrl',
                         resolve: {
-                            data: ['$stateParams', 'ArticleService', function ($stateParams, ArticleService) {
+                            articles: ['$stateParams', '$q', 'Article', function ($stateParams, $q, Article) {
                                 var articleType = $stateParams.t || 'all',
                                     filter = $stateParams.f || 'all',
                                     page = $stateParams.p || 1,
                                     perpage = 12,
                                     search = $stateParams.s || '';
-
-                                return ArticleService.getArticles(articleType, filter, ((perpage*page)-perpage), perpage, search);
+                                
+                                var d = $q.defer();
+                                
+                                Article.find({
+                                    filter: {
+                                        isActive: true,
+                                        fields: {
+                                            content: false,
+                                            votes: false
+                                        },
+                                        order: "createdDate DESC",
+                                        limit: perpage,
+                                        skip: ((perpage*page)-perpage)
+                                    }
+                                }, function (articles) {
+                                    articles.page = page;
+                                    articles.perpage = perpage;
+                                    d.resolve(articles);
+                                });
+                                
+                                return d.promise;
+                            }],
+                            articlesTotal: ['Article', function (Article) {
+                                return Article.count({
+                                    filter: {
+                                        isActive: true
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -211,15 +239,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/articles.article.html',
                         controller: 'ArticleCtrl',
                         resolve: {
-                            data: ['$stateParams', '$q', 'ArticleService', function ($stateParams, $q, ArticleService) {
+                            article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var slug = $stateParams.slug;
-                                return ArticleService.getArticle(slug).then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('Unable to find article');
+                                
+                                return Article.findOne({
+                                    filter: {
+                                        where: {
+                                            "slug.url": slug
+                                        },
+                                        include: ["author", "comments"]
+                                        //TODO: Filter author include
                                     }
-                                 });
+                                    
+                                }).$promise;
                             }]
                         }
                     }
@@ -335,17 +367,48 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.decks.list.html',
                         controller: 'DecksCtrl',
                         resolve: {
-                            dataDecksTempostorm: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
+                            tempostormDecks: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var klass = $stateParams.k || false,
                                     page = $stateParams.p || 1,
                                     perpage = 4,
                                     search = $stateParams.s || '',
                                     age = $stateParams.a || '',
                                     order = $stateParams.o || '';
-
-                                return DeckService.getDecksFeatured(klass, page, perpage, search, age, order);
+                                
+                                return Deck.find({
+                                    filter: {
+                                        where: {
+                                            isFeatured: true
+                                        },
+                                        fields: {
+                                            name: true,
+                                            description: true,
+                                            slug: true
+                                        },
+                                        order: "createdDate DESC",
+                                        skip: (page * perpage) - perpage,
+                                        limit: perpage
+                                    }
+                                })
+                                .$promise;
+                                
                             }],
-                            dataDecksCommunity: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
+                            tempostormCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
+                                var search = $stateParams.s || '';
+                                
+                                return Deck.count({
+                                    where: {
+                                        isFeatured: true,
+                                        or: [
+                                            { name: { regexp: search } },
+                                            { description: { regexp: search } }
+                                        ]
+                                    }
+                                })
+                                .$promise;
+                                
+                            }],
+                            communityDecks: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var klass = $stateParams.k || false,
                                     page = $stateParams.p || 1,
                                     perpage = 12,
@@ -353,7 +416,36 @@ var app = angular.module('app', [
                                     age = $stateParams.a || '',
                                     order = $stateParams.o || '';
 
-                                return DeckService.getDecksCommunity(klass, page, perpage, search);
+                                return Deck.find({
+                                    filter: {
+                                        where: {
+                                            isFeatured: false
+                                        },
+                                        fields: {
+                                            name: true,
+                                            description: true,
+                                            slug: true
+                                        },
+                                        order: "createdDate DESC",
+                                        skip: (page * perpage) - perpage,
+                                        limit: perpage
+                                    }
+                                })
+                                .$promise;
+                            }],
+                            communityCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
+                                var search = $stateParams.s || '';
+                                
+                                return Deck.count({
+                                    where: {
+                                        isFeatured: false,
+                                        or: [
+                                            { name: { regexp: search } },
+                                            { description: { regexp: search } }
+                                        ]
+                                    }
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -830,13 +922,32 @@ var app = angular.module('app', [
                         controller: 'TeamCtrl',
                         templateUrl: tpl + 'views/frontend/teams.html',
                         resolve: {
-                            data: ['TeamService', '$q', function (TeamService, $q) {
-                                return TeamService.getMembers().then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('Unable to find members');
+                            teams: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({})
+                                .$promise
+                                .then(function (results) {
+                                    var teams = {
+                                        members     : results,
+                                        hsMembers   : [],
+                                        hotsMembers : [],
+                                        wowMembers  : [],
+                                        fifaMembers : [],
+                                        fgcMembers  : []
                                     }
+                                    
+                                    for (var i=0; i != results.length; i++) {
+                                        console.log(results[i]);
+                                        var type = results[i].gameName;
+                                        switch (type) {
+                                            case 'hs' : teams.hsMembers.push(results[i]); break;
+                                            case 'hots' : teams.hotsMembers.push(results[i]); break;
+                                            case 'wow' : teams.wowMembers.push(results[i]); break;
+                                            case 'fifa' : teams.fifaMembers.push(results[i]); break;
+                                            case 'fgc' : teams.fgcMembers.push(results[i]); break;
+                                        }
+                                    }
+                                    
+                                    return teams;
                                 });
                             }]
                         }

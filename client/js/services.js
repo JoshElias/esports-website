@@ -1039,7 +1039,7 @@ angular.module('app.services', [])
                 this.total = newTotal;
             }
         };
-
+        
         paginate.isLoading = function () {
             return paginate.loading;
         };

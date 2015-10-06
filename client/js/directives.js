@@ -102,7 +102,6 @@ angular.module('app.directives', ['ui.load'])
             $scope.login = function login(email, password) {
                 if (email !== undefined && password !== undefined) {
                     User.login({}, { email, password }, function(data) {
-                        console.log(data);
                         data = data.user;
                         
                         AuthenticationService.setLogged(true);
@@ -155,6 +154,8 @@ angular.module('app.directives', ['ui.load'])
                 code: ""
             }
             
+            //TODO: SignupForm: Do signup
+            
             $scope.signup = function signup(email, username, password, cpassword) {
                 if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
                     UserService.signup(email, username, password, cpassword).success(function (data) {
@@ -181,6 +182,9 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/directives/login/forgot.password.form.html',
         scope: true,
         link: function ($scope, el, attr) {
+            
+            //TODO: ForgotPassword: Do forgotPassword
+            
             $scope.forgotPassword = function () {
                 UserService.forgotPassword($scope.forgot.email).success(function (data) {
                     if (!data.success) {
@@ -200,6 +204,9 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/directives/login/verify.form.html',
         scope: true,
         link: function ($scope, el, attr) {
+            
+            //TODO: VerifyForm: Do Verify
+            
             $scope.verifyEmail = function (email, code) {
                  UserService.verifyEmail(email, code).success(function (data) {
                     if (!data.success) {
@@ -234,6 +241,12 @@ angular.module('app.directives', ['ui.load'])
             service:     "=", 
         },
         controller: ['$scope', function ($scope) {
+            
+            //TODO: FIX COMMENTING
+            
+            console.log("user:", $scope)
+            console.log('article:', $scope.service.comments.create({}));
+            
             $scope.commentable;
             $scope.service;
             $scope.app = $rootScope.app;
@@ -251,7 +264,6 @@ angular.module('app.directives', ['ui.load'])
                         $scope.commentPost();
                     });
                 } else {
-                    console.log($scope.comment, $scope.comment.replace(/<[^>]+>/gm, ''));
                     $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
                         if (data.success) {
                             $scope.commentable.comments.push(data.comment);
@@ -1299,7 +1311,7 @@ angular.module('app.directives', ['ui.load'])
                 scope.tweets = tweets[0].feed;
             }, function (err) {
                 console.log("Sorry, we cannot get the twitter feed right now. Error: " + err);
-                //TODO : handle the exception    
+                //TODO: handle the exception    
             });
 
             scope.getContent = function (c) {
