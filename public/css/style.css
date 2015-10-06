@@ -4150,6 +4150,7 @@ ul[dnd-list] .dndPlaceholder {
 .icon-leoric { background: url('../img/hots/heroes/leoric-hex.png') no-repeat center center; }
 .icon-kharazim { background: url('../img/hots/heroes/kharazim-hex.png') no-repeat center center; }
 .icon-rexxar { background: url('../img/hots/heroes/rexxar-hex.png') no-repeat center center; }
+.icon-morales { background: url('../img/hots/heroes/morales-hex.png') no-repeat center center; }
 
 .hero-selection .hero .icon-wrap .icon:hover { background-color: rgba(88, 43, 128, 1); }
 .hero-selection .hero .icon-wrap .icon.active { background-color: #2766ad; }
@@ -4269,6 +4270,7 @@ p.white { color: #FFF; }
 .hero-list li a.leoric { background: url('../img/hots/heroes/28x/leoric28.png') no-repeat center right; }
 .hero-list li a.kharazim { background: url('../img/hots/heroes/28x/kharazim28.png') no-repeat center right; }
 .hero-list li a.rexxar { background: url('../img/hots/heroes/28x/rexxar28.png') no-repeat center right; }
+.hero-list li a.morales { background: url('../img/hots/heroes/28x/morales28.png') no-repeat center right; }
 
 /* guide steps */
 .gb-steps { margin: 0 0 20px 0; padding: 0 1px; }
@@ -4350,6 +4352,7 @@ p.white { color: #FFF; }
 .talents-title.leoric { background: url('../img/hots/heroes/60x/leoric60.png') no-repeat; }
 .talents-title.kharazim { background: url('../img/hots/heroes/60x/kharazim60.png') no-repeat; }
 .talents-title.rexxar { background: url('../img/hots/heroes/60x/rexxar60.png') no-repeat; }
+.talents-title.morales { background: url('../img/hots/heroes/60x/morales60.png') no-repeat; }
 
 /* talents icons */
 .talents-icon { display: block; width: 30px; height: 30px; overflow: hidden; white-space: nowrap; text-indent: -99999px; opacity: .5; transition: opacity .1s linear; }
@@ -4401,6 +4404,7 @@ p.white { color: #FFF; }
 .talents-icon.leoric { background: url('../img/hots/talents/leoric.png') no-repeat; }
 .talents-icon.kharazim { background: url('../img/hots/talents/kharazim.png') no-repeat; }
 .talents-icon.rexxar { background: url('../img/hots/talents/rexxar.png') no-repeat; }
+.talents-icon.morales { background: url('../img/hots/talents/morales.png') no-repeat; }
 
 /* talents - the-butcher - small */
 /* Tier 1 */
@@ -5810,6 +5814,78 @@ p.white { color: #FFF; }
 .talents-icon.leoric.large.death-march { background-position: -30px -816px; }
 .talents-icon.leoric.large.spectral-leech { background-position: -30px -1326px; }
 .talents-icon.leoric.large.hardened-shield { background-position: -30px -1224px; }
+
+/* talents - morales - small */
+/* Tier 1 */
+.talents-icon.morales.prolonged-safeguard { background-position: 0px 0px; }
+.talents-icon.morales.trauma-trigger { background-position: 0px -30px; }
+.talents-icon.morales.feedback-loop { background-position: 0px -60px; }
+.talents-icon.morales.scouting-drone { background-position: 0px -90px; }
+/* Tier 2 */
+.talents-icon.morales.bioshield { background-position: 0px -120px; }
+.talents-icon.morales.advanced-block { background-position: 0px -150px; }
+.talents-icon.morales.upgraded-ballistics { background-position: 0px -180px; }
+.talents-icon.morales.infused-grenade { background-position: 0px -210px; }
+/* Tier 3 */
+.talents-icon.morales.clear { background-position: 0px -180px; }
+.talents-icon.morales.irradiate { background-position: 0px -120px; }
+.talents-icon.morales.calldown-mule { background-position: 0px -240px; }
+.talents-icon.morales.cleanse { background-position: 0px -270px; }
+/* Tier 4 */
+.talents-icon.morales.stim-drone { background-position: 0px -300px; }
+.talents-icon.morales.medivac-dropship { background-position: 0px -330px; }
+/* Tier 5 */
+.talents-icon.morales.intensive-care { background-position: 0px -120px; }
+.talents-icon.morales.couples-therapy { background-position: 0px -360px; }
+.talents-icon.morales.preventative-care { background-position: 0px -390px; }
+.talents-icon.morales.spell-shield { background-position: 0px -420px; }
+/* Tier 6 */
+.talents-icon.morales.inoculation { background-position: 0px 0px; }
+.talents-icon.morales.shield-sequencer { background-position: 0px -60px; }
+.talents-icon.morales.system-shock { background-position: 0px -180px; }
+.talents-icon.morales.second-opinion { background-position: 0px -210px; }
+/* Tier 7 */
+.talents-icon.morales.transfusion { background-position: 0px -300px; }
+.talents-icon.morales.medbay { background-position: 0px -330px; }
+.talents-icon.morales.caduceus-reactor-2 { background-position: 0px -450px; }
+.talents-icon.morales.storm-shield { background-position: 0px -480px; }
+
+/* talents - morales - large */
+/* Tier 1 */
+.talents-icon.morales.large.prolonged-safeguard { background-position: -30px 0px; }
+.talents-icon.morales.large.trauma-trigger { background-position: -30px -102px; }
+.talents-icon.morales.large.feedback-loop { background-position: -30px -204px; }
+.talents-icon.morales.large.scouting-drone { background-position: -30px -306px; }
+/* Tier 2 */
+.talents-icon.morales.large.bioshield { background-position: -30px -408px; }
+.talents-icon.morales.large.advanced-block { background-position: -30px -510px; }
+.talents-icon.morales.large.upgraded-ballistics { background-position: -30px -612px; }
+.talents-icon.morales.large.infused-grenade { background-position: -30px -714px; }
+/* Tier 3 */
+.talents-icon.morales.large.clear { background-position: -30px -612px; }
+.talents-icon.morales.large.irradiate { background-position: -30px -408px; }
+.talents-icon.morales.large.calldown-mule { background-position: -30px -816px; }
+.talents-icon.morales.large.cleanse { background-position: -30px -918px; }
+/* Tier 4 */
+.talents-icon.morales.large.stim-drone { background-position: -30px -1020px; }
+.talents-icon.morales.large.medivac-dropship { background-position: -30px -1122px; }
+/* Tier 5 */
+.talents-icon.morales.large.intensive-care { background-position: -30px -408px; }
+.talents-icon.morales.large.couples-therapy { background-position: -30px -1224px; }
+.talents-icon.morales.large.preventative-care { background-position: -30px -1326px; }
+.talents-icon.morales.large.spell-shield { background-position: -30px -1428px; }
+/* Tier 6 */
+.talents-icon.morales.large.inoculation { background-position: -30px 0px; }
+.talents-icon.morales.large.shield-sequencer { background-position: -30px -204px; }
+.talents-icon.morales.large.system-shock { background-position: -30px -612px; }
+.talents-icon.morales.large.second-opinion { background-position: -30px -714px; }
+/* Tier 7 */
+.talents-icon.morales.large.transfusion { background-position: -30px -1020px; }
+.talents-icon.morales.large.medbay { background-position: -30px -1122px; }
+.talents-icon.morales.large.caduceus-reactor-2 { background-position: -30px -1530px; }
+.talents-icon.morales.large.storm-shield { background-position: -30px -1632px; }
+.talents-icon.morales.large.redirect-healing-beam { background-position: -30px -1734px; }
+
 
 /* talents - malfurion - small */
 /* Tier 1 */
@@ -7495,6 +7571,7 @@ p.white { color: #FFF; }
 .hots-modal .hero.leoric { background: url('../img/hots/modal/heroes/leoric.png') no-repeat center right; }
 .hots-modal .hero.kharazim { background: url('../img/hots/modal/heroes/kharazim.png') no-repeat center right; }
 .hots-modal .hero.rexxar { background: url('../img/hots/modal/heroes/rexxar.png') no-repeat center right; }
+.hots-modal .hero.morales { background: url('../img/hots/modal/heroes/morales.png') no-repeat center right; }
 
 .hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
 .hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
@@ -7812,28 +7889,29 @@ p.white { color: #FFF; }
 .hero-filters li button.leoric {width:75px; height:75px; background-position: -387px -79px}
 .hero-filters li button.lili {width:75px; height:75px; background-position: -387px -156px}
 .hero-filters li button.malfurion {width:75px; height:75px; background-position: -464px -2px}
-.hero-filters li button.muradin {width:75px; height:75px; background-position: -464px -79px}
-.hero-filters li button.murky {width:75px; height:75px; background-position: -464px -156px}
-.hero-filters li button.nazeebo {width:75px; height:75px; background-position: -541px -2px}
-.hero-filters li button.nova {width:75px; height:75px; background-position: -541px -79px}
-.hero-filters li button.raynor {width:75px; height:75px; background-position: -541px -156px}
-.hero-filters li button.rehgar {width:75px; height:75px; background-position: -618px -2px}
-.hero-filters li button.rexxar {width:75px; height:75px; background-position: -618px -79px}
-.hero-filters li button.sgthammer {width:75px; height:75px; background-position: -618px -156px}
-.hero-filters li button.sonya {width:75px; height:75px; background-position: -695px -2px}
-.hero-filters li button.stitches {width:75px; height:75px; background-position: -695px -79px}
-.hero-filters li button.sylvanas {width:75px; height:75px; background-position: -695px -156px}
-.hero-filters li button.tassadar {width:75px; height:75px; background-position: -772px -2px}
-.hero-filters li button.the-butcher {width:75px; height:75px; background-position: -772px -79px}
-.hero-filters li button.thelostvikings {width:75px; height:75px; background-position: -772px -156px}
-.hero-filters li button.thrall {width:75px; height:75px; background-position: -849px -2px}
-.hero-filters li button.tychus {width:75px; height:75px; background-position: -849px -79px}
-.hero-filters li button.tyrael {width:75px; height:75px; background-position: -849px -156px}
-.hero-filters li button.tyrande {width:75px; height:75px; background-position: -926px -2px}
-.hero-filters li button.uther {width:75px; height:75px; background-position: -1003px -2px}
-.hero-filters li button.valla {width:75px; height:75px; background-position: -926px -79px}
-.hero-filters li button.zagara {width:75px; height:75px; background-position: -926px -156px}
-.hero-filters li button.zeratul {width:75px; height:75px; background-position: -1003px -79px}
+.hero-filters li button.morales {width:75px; height:75px; background-position: -464px -79px}
+.hero-filters li button.muradin {width:75px; height:75px; background-position: -464px -156px}
+.hero-filters li button.murky {width:75px; height:75px; background-position: -541px -2px}
+.hero-filters li button.nazeebo {width:75px; height:75px; background-position: -541px -79px}
+.hero-filters li button.nova {width:75px; height:75px; background-position: -541px -156px}
+.hero-filters li button.raynor {width:75px; height:75px; background-position: -618px -2px}
+.hero-filters li button.rehgar {width:75px; height:75px; background-position: -618px -79px}
+.hero-filters li button.rexxar {width:75px; height:75px; background-position: -618px -156px}
+.hero-filters li button.sgthammer {width:75px; height:75px; background-position: -695px -2px}
+.hero-filters li button.sonya {width:75px; height:75px; background-position: -695px -79px}
+.hero-filters li button.stitches {width:75px; height:75px; background-position: -695px -156px}
+.hero-filters li button.sylvanas {width:75px; height:75px; background-position: -772px -2px}
+.hero-filters li button.tassadar {width:75px; height:75px; background-position: -772px -79px}
+.hero-filters li button.the-butcher {width:75px; height:75px; background-position: -772px -156px}
+.hero-filters li button.thelostvikings {width:75px; height:75px; background-position: -849px -2px}
+.hero-filters li button.thrall {width:75px; height:75px; background-position: -849px -79px}
+.hero-filters li button.tychus {width:75px; height:75px; background-position: -849px -156px}
+.hero-filters li button.tyrael {width:75px; height:75px; background-position: -926px -2px}
+.hero-filters li button.tyrande {width:75px; height:75px; background-position: -1003px -2px}
+.hero-filters li button.uther {width:75px; height:75px; background-position: -926px -79px}
+.hero-filters li button.valla {width:75px; height:75px; background-position: -926px -156px}
+.hero-filters li button.zagara {width:75px; height:75px; background-position: -1003px -79px}
+.hero-filters li button.zeratul {width:75px; height:75px; background-position: -1003px -156px}
 
 @media (max-width: 767px) {
     .hero-filters li button { width:43px; height:43px; background-image:url('../img/hots/heroes/hots-hero-select-small.png'); }
@@ -7857,28 +7935,29 @@ p.white { color: #FFF; }
     .hero-filters li button.leoric {width:43px; height:43px; background-position: -722px -2px}
     .hero-filters li button.lili {width:43px; height:43px; background-position: -767px -2px}
     .hero-filters li button.malfurion {width:43px; height:43px; background-position: -812px -2px}
-    .hero-filters li button.muradin {width:43px; height:43px; background-position: -857px -2px}
-    .hero-filters li button.murky {width:43px; height:43px; background-position: -902px -2px}
-    .hero-filters li button.nazeebo {width:43px; height:43px; background-position: -947px -2px}
-    .hero-filters li button.nova {width:43px; height:43px; background-position: -992px -2px}
-    .hero-filters li button.raynor {width:43px; height:43px; background-position: -1037px -2px}
-    .hero-filters li button.rehgar {width:43px; height:43px; background-position: -1082px -2px}
-    .hero-filters li button.rexxar {width:43px; height:43px; background-position: -1127px -2px}
-    .hero-filters li button.sgthammer {width:43px; height:43px; background-position: -1172px -2px}
-    .hero-filters li button.sonya {width:43px; height:43px; background-position: -1217px -2px}
-    .hero-filters li button.stitches {width:43px; height:43px; background-position: -1262px -2px}
-    .hero-filters li button.sylvanas {width:43px; height:43px; background-position: -1307px -2px}
-    .hero-filters li button.tassadar {width:43px; height:43px; background-position: -1352px -2px}
-    .hero-filters li button.the-butcher {width:43px; height:43px; background-position: -1397px -2px}
-    .hero-filters li button.thelostvikings {width:43px; height:43px; background-position: -1442px -2px}
-    .hero-filters li button.thrall {width:43px; height:43px; background-position: -1487px -2px}
-    .hero-filters li button.tychus {width:43px; height:43px; background-position: -1532px -2px}
-    .hero-filters li button.tyrael {width:43px; height:43px; background-position: -1577px -2px}
-    .hero-filters li button.tyrande {width:43px; height:43px; background-position: -1622px -2px}
-    .hero-filters li button.uther {width:43px; height:43px; background-position: -1667px -2px}
-    .hero-filters li button.valla {width:43px; height:43px; background-position: -1712px -2px}
-    .hero-filters li button.zagara {width:43px; height:43px; background-position: -1757px -2px}
-    .hero-filters li button.zeratul {width:43px; height:43px; background-position: -1802px -2px}
+    .hero-filters li button.morales {width:43px; height:43px; background-position: -857px -2px}
+    .hero-filters li button.muradin {width:43px; height:43px; background-position: -902px -2px}
+    .hero-filters li button.murky {width:43px; height:43px; background-position: -947px -2px}
+    .hero-filters li button.nazeebo {width:43px; height:43px; background-position: -992px -2px}
+    .hero-filters li button.nova {width:43px; height:43px; background-position: -1037px -2px}
+    .hero-filters li button.raynor {width:43px; height:43px; background-position: -1082px -2px}
+    .hero-filters li button.rehgar {width:43px; height:43px; background-position: -1127px -2px}
+    .hero-filters li button.rexxar {width:43px; height:43px; background-position: -1172px -2px}
+    .hero-filters li button.sgthammer {width:43px; height:43px; background-position: -1217px -2px}
+    .hero-filters li button.sonya {width:43px; height:43px; background-position: -1262px -2px}
+    .hero-filters li button.stitches {width:43px; height:43px; background-position: -1307px -2px}
+    .hero-filters li button.sylvanas {width:43px; height:43px; background-position: -1352px -2px}
+    .hero-filters li button.tassadar {width:43px; height:43px; background-position: -1397px -2px}
+    .hero-filters li button.the-butcher {width:43px; height:43px; background-position: -1442px -2px}
+    .hero-filters li button.thelostvikings {width:43px; height:43px; background-position: -1487px -2px}
+    .hero-filters li button.thrall {width:43px; height:43px; background-position: -1532px -2px}
+    .hero-filters li button.tychus {width:43px; height:43px; background-position: -1577px -2px}
+    .hero-filters li button.tyrael {width:43px; height:43px; background-position: -1622px -2px}
+    .hero-filters li button.tyrande {width:43px; height:43px; background-position: -1667px -2px}
+    .hero-filters li button.uther {width:43px; height:43px; background-position: -1712px -2px}
+    .hero-filters li button.valla {width:43px; height:43px; background-position: -1757px -2px}
+    .hero-filters li button.zagara {width:43px; height:43px; background-position: -1802px -2px}
+    .hero-filters li button.zeratul {width:43px; height:43px; background-position: -1847px -2px}
 }
 
 .hero-back { transition: background .25s ease-in-out; }
@@ -7924,6 +8003,7 @@ p.white { color: #FFF; }
 .hero-back.zagara { background: url('../img/hots/heroes/bgs/zagara.png') center center no-repeat; }
 .hero-back.zeratul { background: url('../img/hots/heroes/bgs/zeratul.png') center center no-repeat; }
 .hero-back.kharazim { background: url('../img/hots/heroes/bgs/kharazim.png') center center no-repeat; }
+.hero-back.morales { background: url('../img/hots/heroes/bgs/morales.png') center center no-repeat; }
 
 .filters-maps {}
 .filters-maps ul { margin: 0; padding: 0; }
