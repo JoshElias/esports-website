@@ -6776,8 +6776,8 @@ angular.module('app.controllers', ['ngCookies'])
         
         // decks
         $scope.deckSearch = '';
-        $scope.tempostormDecks = tempostormDecks.decks;
-        $scope.communityDecks = communityDecks.decks;
+        $scope.tempostormDecks = tempostormDecks;
+        $scope.communityDecks = communityDecks;
         
         // filters
         $scope.filters = {

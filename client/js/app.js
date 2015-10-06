@@ -383,7 +383,8 @@ var app = angular.module('app', [
                                         fields: {
                                             name: true,
                                             description: true,
-                                            slug: true
+                                            slug: true,
+                                            heroName: true
                                         },
                                         order: "createdDate DESC",
                                         skip: (page * perpage) - perpage,
@@ -424,7 +425,8 @@ var app = angular.module('app', [
                                         fields: {
                                             name: true,
                                             description: true,
-                                            slug: true
+                                            slug: true,
+                                            heroName: true
                                         },
                                         order: "createdDate DESC",
                                         skip: (page * perpage) - perpage,
