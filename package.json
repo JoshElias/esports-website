@@ -40,6 +40,7 @@
     "loopback-explorer": "^1.1.0"
   },
   "devDependencies": {
+    "grunt-contrib-sass": "^0.9.2",
     "jshint": "^2.5.6"
   },
   "repository": {

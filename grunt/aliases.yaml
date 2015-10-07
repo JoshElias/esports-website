@@ -5,6 +5,7 @@ default:
         - 'concurrent:second'
         - 'concurrent:third'
         - 'concurrent:fourth'
+        - 'concurrent:fifth'
 deploy-staging:
     description: 'Deploy - Staging'
     tasks:
@@ -16,4 +17,5 @@ deploy-production:
         - 'concurrent:second'
         - 'concurrent:third'
         - 'concurrent:fourth'
+        - 'concurrent:fifth'
         - 'aws_s3:production'
