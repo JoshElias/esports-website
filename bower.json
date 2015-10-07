@@ -50,7 +50,8 @@
     "angular": "~1.4.3",
     "angular-sanitize": "~1.4.3",
     "angular-ui-validate": "~1.2.0",
-    "angular-youtube-mb": "~1.1.0"
+    "angular-youtube-mb": "~1.1.0",
+    "angular-ui-load": "https://github.com/puxos/angular-ui-load.git#~0.1.1"
   },
   "resolutions": {
     "angular-ui-utils": "jq-0.2.3",

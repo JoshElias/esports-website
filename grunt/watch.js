@@ -4,19 +4,19 @@ module.exports = {
         atBegin: true,
     },
     js: {
-        files: ['public/js/**/*.js'],
+        files: ['client/js/**/*.js'],
         tasks: ['clean:js', 'newer:concat', 'newer:uglify', 'hash']
     },
     css: {
-        files: ['public/css/**/*.css'],
+        files: ['client/css/**/*.css'],
         tasks: ['clean:css', 'newer:cssmin', 'hash']
     },
     img: {
-        files: ['public/img/**/*.{png,jpg,gif}'],
+        files: ['client/img/**/*.{png,jpg,gif}'],
         tasks: ['newer:imagemin']
     },
     html: {
-        files: ['public/views/**/*.html'],
+        files: ['client/views/**/*.html'],
         tasks: ['newer:htmlmin:dist']
     }
 };

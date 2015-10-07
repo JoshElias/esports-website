@@ -2,15 +2,15 @@ module.exports = {
     fonts: {
         expand: true,
         flatten: true,
-        src: ['public/css/fonts/**/*'],
-        dest: 'dist/css/fonts',
+        src: ['client/css/fonts/**/*'],
+        dest: 'client/dist/css/fonts',
         filter: 'isFile'
     },
     jsAssets: {
         expand: true,
         flatten: true,
-        src: ['public/js/**/*', '!public/js/**/*.{js,map}'],
-        dest: 'dist/js',
+        src: ['client/js/**/*', '!client/js/**/*.{js,map}'],
+        dest: 'client/dist/js',
         filter: 'isFile'
     }
 };
