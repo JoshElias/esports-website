@@ -14,7 +14,8 @@ module.exports = function(server) {
     // More passport stuffs
     var passportProviders = {};
     try {
-      passportProviders = require("./../providers.json");
+      // TODO: make this dynamic with the provider env settings
+      passportProviders = require("../configs/providers."+process.env.NODE_ENV+".js");
     } catch(err) {
       console.error('Please configure your passport strategy in `providers.json`.');
       console.error('Copy `providers.json.template` to `providers.json` and replace the clientID/clientSecret values with your own.');
@@ -50,7 +51,7 @@ module.exports = function(server) {
 
 	function getPassportHandler(idName) {
 		return function(accessToken, refreshToken, profile, done) {
-  			
+
   			function findByIdName (callback) {
   				var query = {};
   				query[idName] = profile.id;
@@ -61,14 +62,14 @@ module.exports = function(server) {
             }
 
             function findByEmail (callback) {
-                if (!profile.email || !profile.email.length) { 
+                if (!profile.email || !profile.email.length) {
                 	callback();
                 	return;
                 }
 
                 User.findOne({email: profile.email}, function (err, user) {
-                    if (err || !user) { 
-                    	callback(); 
+                    if (err || !user) {
+                    	callback();
                     	return;
                     }
 
@@ -120,7 +121,7 @@ module.exports = function(server) {
 	}, getPassportHandler("twitchID")));
 
 	server.get('/auth/twitch', passport.authenticate('twitch'));
-	server.get('/auth/twitch/callback', passport.authenticate('twitch', 
+	server.get('/auth/twitch/callback', passport.authenticate('twitch',
 		{ failureRedirect: '/login' }), getPassportCallback);
 
 
@@ -132,7 +133,7 @@ module.exports = function(server) {
   	}, getPassportHandler("bnetID")));
 
   	server.get('/auth/bnet', passport.authenticate('bnet'));
-	server.get('/auth/bnet/callback', passport.authenticate('bnet', 
+	server.get('/auth/bnet/callback', passport.authenticate('bnet',
 		{ failureRedirect: '/login' }), getPassportCallback);
     */
 };

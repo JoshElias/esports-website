@@ -1,4 +1,4 @@
-module.exports = {
+{
   "_meta": {
     "sources": [
       "loopback/common/models",
@@ -107,6 +107,22 @@ module.exports = {
     "public": true
   },
   "vod": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "tweet": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "tweeter": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "stream": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "streamer": {
     "dataSource": "mongodb",
     "public": true
   }
