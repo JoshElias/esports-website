@@ -6,9 +6,9 @@ module.exports = {
         },
         files: [{
             expand: true,
-            cwd: 'public/views',
+            cwd: 'client/views',
             src: '**/*.html',
-            dest: 'dist/views'
+            dest: 'client/dist/views'
         }]
     }
 };

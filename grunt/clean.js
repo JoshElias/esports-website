@@ -1,4 +1,4 @@
 module.exports = {
-    js: 'dist/js/*.min.*.js',
-    css: 'dist/css/*.min.*.css'
+    js: 'client/dist/js/*.min.*.js',
+    css: 'client/dist/css/*.min.*.css'
 };

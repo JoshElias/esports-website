@@ -1,10 +1,11 @@
-var config = require('./../lib/config');
+var configStaging = require('./../server/config.staging');
+var configProduction = require('./../server/config.production');
 
 module.exports = {
     staging: {
         options: {
-            accessKeyId: config.AMAZON_KEY,
-            secretAccessKey: config.AMAZON_SECRET,
+            accessKeyId: configStaging.AMAZON_KEY,
+            secretAccessKey: configStaging.AMAZON_SECRET,
             bucket: 'staging-cdn.tempostorm.com',
             region: 'us-west-2',
             access: 'public-read',
@@ -17,37 +18,37 @@ module.exports = {
         files: [
             {
                 expand: true,
-                cwd: 'dist/js/',
+                cwd: 'client/dist/js/',
                 src: ['*.min.*.js'],
                 dest: 'js'
             },
             {
                 expand: true,
-                cwd: 'dist/js/',
+                cwd: 'client/dist/js/',
                 src: ['**/*', '!**/*.js'],
                 dest: 'js'
             },
             {
                 expand: true,
-                cwd: 'dist/css/',
+                cwd: 'client/dist/css/',
                 src: ['*.min.*.css'],
                 dest: 'css'
             },
             {
                 expand: true,
-                cwd: 'dist/css/fonts/',
+                cwd: 'client/dist/css/fonts/',
                 src: ['**/*'],
                 dest: 'css/fonts'
             },
             {
                 expand: true,
-                cwd: 'dist/views/',
+                cwd: 'client/dist/views/',
                 src: ['**/*'],
                 dest: 'views'
             },
             {
                 expand: true,
-                cwd: 'dist/img/',
+                cwd: 'client/dist/img/',
                 src: ['**/*'],
                 dest: 'img'
             }
@@ -55,8 +56,8 @@ module.exports = {
     },
     production: {
         options: {
-            accessKeyId: config.AMAZON_KEY,
-            secretAccessKey: config.AMAZON_SECRET,
+            accessKeyId: configProduction.AMAZON_KEY,
+            secretAccessKey: configProduction.AMAZON_SECRET,
             bucket: 'cdn.tempostorm.com',
             region: 'us-west-2',
             access: 'public-read',
@@ -70,37 +71,37 @@ module.exports = {
         files: [
             {
                 expand: true,
-                cwd: 'dist/js/',
+                cwd: 'client/dist/js/',
                 src: ['*.min.*.js'],
                 dest: 'js'
             },
             {
                 expand: true,
-                cwd: 'dist/js/',
+                cwd: 'client/dist/js/',
                 src: ['**/*', '!**/*.js'],
                 dest: 'js'
             },
             {
                 expand: true,
-                cwd: 'dist/css/',
+                cwd: 'client/dist/css/',
                 src: ['*.min.*.css'],
                 dest: 'css'
             },
             {
                 expand: true,
-                cwd: 'dist/css/fonts/',
+                cwd: 'client/dist/css/fonts/',
                 src: ['**/*'],
                 dest: 'css/fonts'
             },
             {
                 expand: true,
-                cwd: 'dist/views/',
+                cwd: 'client/dist/views/',
                 src: ['**/*'],
                 dest: 'views'
             },
             {
                 expand: true,
-                cwd: 'dist/img/',
+                cwd: 'client/dist/img/',
                 src: ['**/*'],
                 dest: 'img'
             }

@@ -6,9 +6,9 @@ module.exports = {
     dist: {
         files: [{
             expand: true,
-            cwd: 'public/img/',
+            cwd: 'client/img/',
             src: ['**/*.{png,jpg,gif}'],
-            dest: 'dist/img/'
+            dest: 'client/dist/img/'
         }]
     }
 };

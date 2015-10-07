@@ -6,9 +6,9 @@ module.exports = {
     },
     build: {
         files: {
-            'dist/js/vendor.min.js': ['dist/js/vendor.js'],
-            'dist/js/angular.min.js': ['dist/js/angular.js'],
-            'dist/js/app.min.js': ['dist/js/app.js'],
+            'client/dist/js/vendor.min.js': ['client/dist/js/vendor.js'],
+            'client/dist/js/angular.min.js': ['client/dist/js/angular.js'],
+            'client/dist/js/app.min.js': ['client/dist/js/app.js'],
         }
     }
 };
