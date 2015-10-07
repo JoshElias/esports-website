@@ -23,12 +23,12 @@ module.exports = {
    "callbackPath": "/auth/bnet/callback",
    "emailOptional": true,
    "successRedirect": "/",
-   "failureRedirect": "/login"
-   "customCallback": passportCallback,
+   "failureRedirect": "/login",
+   "customCallback": passportCallback
  }
 }
 
-  var passportCallback = function(req, res, next) {
+function passportCallback(req, res, next) {
 
     // The default callback
     passport.authenticate(name, _.defaults({session: session},

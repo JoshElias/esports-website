@@ -1,11 +1,11 @@
-{
+module.exports = {
   "_meta": {
     "sources": [
       "loopback/common/models",
       "loopback/server/models",
-      "../common/models",
-      "./models",
-      "../node_modules/loopback-component-passport/lib/models"
+      "../../common/models",
+      "./../models",
+      "../../node_modules/loopback-component-passport/lib/models"
     ],
     "mixins": [
       "loopback/common/mixins",

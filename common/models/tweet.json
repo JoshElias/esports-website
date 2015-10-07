@@ -1,41 +1,32 @@
 {
-  "name": "teamMember",
+  "name": "tweet",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
     "validateUpsert": true
   },
   "properties": {
-    "gameName": {
-      "type": "string",
-      "required": true
-    },
     "screenName": {
       "type": "string",
-      "required": false
+      "required": true
     },
     "fullName": {
       "type": "string",
-      "reqiured": true
+      "required": true
     },
-    "description": {
+    "authorUrl": {
       "type": "string",
       "required": true
     },
-    "isActive": {
-      "type": "boolean",
-      "required": true
+    "text": {
+      "type": "string"
     },
-    "socialUsernames": {
-      "type": "object",
-      "required": false
-    },
-    "orderNum": {
-      "type": "number",
-      "required": true
-    },
-    "photo": {
+    "logoUrl": {
       "type": "string",
+      "required": true
+    },
+    "timestamp": {
+      "type": "date",
       "required": true
     }
   },

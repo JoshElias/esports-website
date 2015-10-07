@@ -11,8 +11,8 @@
       "required": true
     },
     "createdDate": {
-        "type": "date",
-        "defaultFn": "now"
+      "type": "date",
+      "defaultFn": "now"
     },
     "youtubeId": {
       "type": "string"

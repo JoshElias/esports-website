@@ -3,9 +3,9 @@ module.exports = {
     "sources": [
       "loopback/common/models",
       "loopback/server/models",
-      "../common/models",
-      "./models",
-      "../node_modules/loopback-component-passport/lib/models"
+      "../../common/models",
+      "./../models",
+      "../../node_modules/loopback-component-passport/lib/models"
     ],
     "mixins": [
       "loopback/common/mixins",
@@ -107,6 +107,22 @@ module.exports = {
     "public": true
   },
   "vod": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "tweet": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "tweeter": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "stream": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "streamer": {
     "dataSource": "mongodb",
     "public": true
   }

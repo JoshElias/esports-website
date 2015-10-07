@@ -1,6 +1,6 @@
 module.exports = {
   "restApiRoot": "/api",
-  "host": "52.26.75.137",
+  "host": "localhost",
   "port": 8080,
   "remoting": {
     "context": {
@@ -28,5 +28,6 @@ module.exports = {
   "jwtSecret" : "83udfhjdsfh93HJKHel338283ru",
   "sessionSecret" : "kjadhKJHJKhsdjhd82387sjJK",
   "dbUrl": "mongodb://54.68.67.60:27017/tempostorm",
-  "cdnUrl" : "https://cdn-tempostorm.netdna-ssl.com/",
+  "cdnUrl" : "./", //TODO CHANGE CDN
+  "appIndex" : "staging-index"
 }

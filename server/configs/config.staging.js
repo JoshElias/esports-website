@@ -29,4 +29,5 @@ module.exports = {
   "sessionSecret" : "kjadhKJHJKhsdjhd82387sjJK",
   "dbUrl": "mongodb://54.68.67.60:27017/tempostorm",
   "cdnUrl" : "https://cdn-tempostorm.netdna-ssl.com/",
+  "appIndex" : "staging-index"
 }

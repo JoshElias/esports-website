@@ -47,7 +47,7 @@
                                 <h1>{{deck.name}}</h1>
                                 <h3>by {{deck.author.username || '[Deleted User]'}} - <span am-time-ago="deck.createdDate"></span></h3>
                             </div>
-                            <div class="hs-deck-votes">{{deck.votesCount}}</div>
+                            <div class="hs-deck-votes">{{deck.voteScore}}</div>
                         </a>
                     </li>
                 </ul>
@@ -120,7 +120,7 @@
                             </div>
                             <div class="hidden-xs hidden-sm hidden-md col-lg-1">
                                 <div class="row-col">
-                                    <p class="hs-deck-votes text-center">{{deck.votesCount}}</p>
+                                    <p class="hs-deck-votes text-center">{{deck.voteScore}}</p>
                                 </div>
                             </div>
                             <div class="hidden-xs hidden-sm col-md-4 col-lg-4">
