@@ -1127,6 +1127,7 @@ angular.module('app.services', [])
             return (str) ? str.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') : '';
         },
         numberWithCommas : function (x) {
+            x = x || 0;
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         },
         getObjectID: function () {

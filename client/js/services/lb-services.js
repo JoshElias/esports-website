@@ -100,24 +100,6 @@ module.factory(
           method: "GET"
         },
 
-        // INTERNAL. Use Deck.author.create() instead.
-        "prototype$__create__author": {
-          url: urlBase + "/decks/:id/author",
-          method: "POST"
-        },
-
-        // INTERNAL. Use Deck.author.update() instead.
-        "prototype$__update__author": {
-          url: urlBase + "/decks/:id/author",
-          method: "PUT"
-        },
-
-        // INTERNAL. Use Deck.author.destroy() instead.
-        "prototype$__destroy__author": {
-          url: urlBase + "/decks/:id/author",
-          method: "DELETE"
-        },
-
         // INTERNAL. Use Deck.comments.findById() instead.
         "prototype$__findById__comments": {
           params: {
@@ -1282,20 +1264,6 @@ module.factory(
           var action = TargetResource["::updateById::deck::cards"];
           return action.apply(R, arguments);
         };
-    /**
-     * @ngdoc object
-     * @name lbServices.Deck.author
-     * @header lbServices.Deck.author
-     * @object
-     * @description
-     *
-     * The object `Deck.author` groups methods
-     * manipulating `User` instances related to `Deck`.
-     *
-     * Call {@link lbServices.Deck#author Deck.author()}
-     * to query all related instances.
-     */
-
 
         /**
          * @ngdoc method
@@ -1304,7 +1272,7 @@ module.factory(
          *
          * @description
          *
-         * Fetches hasOne relation author.
+         * Fetches belongsTo relation author.
          *
          * @param {Object=} parameters Request parameters.
          *
@@ -1330,151 +1298,6 @@ module.factory(
         R.author = function() {
           var TargetResource = $injector.get("User");
           var action = TargetResource["::get::deck::author"];
-          return action.apply(R, arguments);
-        };
-
-        /**
-         * @ngdoc method
-         * @name lbServices.Deck.author#create
-         * @methodOf lbServices.Deck.author
-         *
-         * @description
-         *
-         * Creates a new instance in author of this model.
-         *
-         * @param {Object=} parameters Request parameters.
-         *
-         *  - `id` – `{*}` - PersistedModel id
-         *
-         * @param {Object} postData Request data.
-         *
-         * This method expects a subset of model properties as request parameters.
-         *
-         * @param {function(Object,Object)=} successCb
-         *   Success callback with two arguments: `value`, `responseHeaders`.
-         *
-         * @param {function(Object)=} errorCb Error callback with one argument:
-         *   `httpResponse`.
-         *
-         * @returns {Object} An empty reference that will be
-         *   populated with the actual data once the response is returned
-         *   from the server.
-         *
-         * <em>
-         * (The remote method definition does not provide any description.
-         * This usually means the response is a `User` object.)
-         * </em>
-         */
-        R.author.create = function() {
-          var TargetResource = $injector.get("User");
-          var action = TargetResource["::create::deck::author"];
-          return action.apply(R, arguments);
-        };
-
-        /**
-         * @ngdoc method
-         * @name lbServices.Deck.author#createMany
-         * @methodOf lbServices.Deck.author
-         *
-         * @description
-         *
-         * Creates a new instance in author of this model.
-         *
-         * @param {Object=} parameters Request parameters.
-         *
-         *  - `id` – `{*}` - PersistedModel id
-         *
-         * @param {Object} postData Request data.
-         *
-         * This method expects a subset of model properties as request parameters.
-         *
-         * @param {function(Array.<Object>,Object)=} successCb
-         *   Success callback with two arguments: `value`, `responseHeaders`.
-         *
-         * @param {function(Object)=} errorCb Error callback with one argument:
-         *   `httpResponse`.
-         *
-         * @returns {Array.<Object>} An empty reference that will be
-         *   populated with the actual data once the response is returned
-         *   from the server.
-         *
-         * <em>
-         * (The remote method definition does not provide any description.
-         * This usually means the response is a `User` object.)
-         * </em>
-         */
-        R.author.createMany = function() {
-          var TargetResource = $injector.get("User");
-          var action = TargetResource["::createMany::deck::author"];
-          return action.apply(R, arguments);
-        };
-
-        /**
-         * @ngdoc method
-         * @name lbServices.Deck.author#destroy
-         * @methodOf lbServices.Deck.author
-         *
-         * @description
-         *
-         * Deletes author of this model.
-         *
-         * @param {Object=} parameters Request parameters.
-         *
-         *  - `id` – `{*}` - PersistedModel id
-         *
-         * @param {function(Object,Object)=} successCb
-         *   Success callback with two arguments: `value`, `responseHeaders`.
-         *
-         * @param {function(Object)=} errorCb Error callback with one argument:
-         *   `httpResponse`.
-         *
-         * @returns {Object} An empty reference that will be
-         *   populated with the actual data once the response is returned
-         *   from the server.
-         *
-         * This method returns no data.
-         */
-        R.author.destroy = function() {
-          var TargetResource = $injector.get("User");
-          var action = TargetResource["::destroy::deck::author"];
-          return action.apply(R, arguments);
-        };
-
-        /**
-         * @ngdoc method
-         * @name lbServices.Deck.author#update
-         * @methodOf lbServices.Deck.author
-         *
-         * @description
-         *
-         * Update author of this model.
-         *
-         * @param {Object=} parameters Request parameters.
-         *
-         *  - `id` – `{*}` - PersistedModel id
-         *
-         * @param {Object} postData Request data.
-         *
-         * This method expects a subset of model properties as request parameters.
-         *
-         * @param {function(Object,Object)=} successCb
-         *   Success callback with two arguments: `value`, `responseHeaders`.
-         *
-         * @param {function(Object)=} errorCb Error callback with one argument:
-         *   `httpResponse`.
-         *
-         * @returns {Object} An empty reference that will be
-         *   populated with the actual data once the response is returned
-         *   from the server.
-         *
-         * <em>
-         * (The remote method definition does not provide any description.
-         * This usually means the response is a `User` object.)
-         * </em>
-         */
-        R.author.update = function() {
-          var TargetResource = $injector.get("User");
-          var action = TargetResource["::update::deck::author"];
           return action.apply(R, arguments);
         };
     /**
@@ -4452,31 +4275,6 @@ module.factory(
         "::get::deck::author": {
           url: urlBase + "/decks/:id/author",
           method: "GET"
-        },
-
-        // INTERNAL. Use Deck.author.create() instead.
-        "::create::deck::author": {
-          url: urlBase + "/decks/:id/author",
-          method: "POST"
-        },
-
-        // INTERNAL. Use Deck.author.createMany() instead.
-        "::createMany::deck::author": {
-          isArray: true,
-          url: urlBase + "/decks/:id/author",
-          method: "POST"
-        },
-
-        // INTERNAL. Use Deck.author.update() instead.
-        "::update::deck::author": {
-          url: urlBase + "/decks/:id/author",
-          method: "PUT"
-        },
-
-        // INTERNAL. Use Deck.author.destroy() instead.
-        "::destroy::deck::author": {
-          url: urlBase + "/decks/:id/author",
-          method: "DELETE"
         },
 
         // INTERNAL. Use Article.author() instead.

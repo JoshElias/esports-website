@@ -6770,9 +6770,11 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'DeckService', 'tempostormDecks', 'tempostormCount', 'communityDecks', 'communityCount', 
-    function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, DeckService, tempostormDecks, tempostormCount, communityDecks, communityCount) {
+.controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'Deck', 'tempostormDecks', 'tempostormCount', 'communityDecks', 'communityCount', 
+    function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, Deck, tempostormDecks, tempostormCount, communityDecks, communityCount) {
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
+        
+        console.log(tempostormDecks, communityDecks);
         
         // decks
         $scope.deckSearch = '';
@@ -6808,11 +6810,49 @@ angular.module('app.controllers', ['ngCookies'])
         
         // pagination
         function updateTempostormDecks (page, perpage, callback) {
-            DeckService.getDecksFeatured($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
+            var options = {
+                filter: {
+                    where: {
+                        isFeatured: true,
+                        playerClass: { inq: $scope.filters.classes }
+                    },
+                    fields: {
+                        name: true,
+                        description: true,
+                        slug: true,
+                        heroName: true,
+                        authorId: true,
+                        voteScore: true,
+                        playerClass: true
+                    },
+                    include: ["author"],
+                    order: "createdDate DESC",
+                    skip: (page * perpage) - perpage,
+                    limit: perpage
+                }
+            }
+            
+            if ($scope.filters.search.length > 0) {
+                var pattern = new RegExp('.*'+$scope.filters.search+'.*', "i");
+                
+                options.filter.where = {
+                    isFeatured: true,
+                    playerClass: { inq: $scope.filters.classes },
+                    or: [
+                        { name: { like: pattern } },
+                        { description: { like: pattern } },
+                        { deckType: { like: pattern } }
+                    ]
+                }
+            }
+            
+            Deck.find(options)
+            .$promise
+            .then(function (data) {
                 $scope.tempostormPagination.total = data.total;
                 $scope.tempostormPagination.page = page;
                 $timeout(function () {
-                    $scope.tempostormDecks = data.decks;
+                    $scope.tempostormDecks = data;
 
                     if (callback) {
                         return callback(data);
@@ -6832,13 +6872,56 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
-        
+        //TODO: MAKE CASE-INSENSITIVE QUERY WORK
         function updateCommunityDecks (page, perpage, callback) {
-            DeckService.getDecksCommunity($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
+            var options = {
+                filter: {
+                    where: {
+                        isFeatured: false,
+                        playerClass: { inq: $scope.filters.classes },
+                        or: [
+                            { name: { like: pattern } },
+                            { description: { like: pattern } },
+                            { deckType: { like: pattern } }
+                        ]
+                    },
+                    fields: {
+                        name: true,
+                        description: true,
+                        slug: true,
+                        heroName: true,
+                        authorId: true,
+                        voteScore: true,
+                        playerClass: true
+                    },
+                    include: ["author"],
+                    order: "createdDate DESC",
+                    skip: (page * perpage) - perpage,
+                    limit: perpage
+                }
+            }
+            
+            if ($scope.filters.search.length > 0) {
+                var pattern = new RegExp('.*'+$scope.filters.search+'.*', "i");
+                
+                options.filter.where = {
+                    isFeatured: false,
+                    playerClass: { inq: $scope.filters.classes },
+                    or: [
+                        { name: { like: pattern } },
+                        { description: { like: pattern } },
+                        { deckType: { like: pattern } }
+                    ]
+                }
+            }
+            
+            Deck.find(options)
+            .$promise
+            .then(function (data) {
                 $scope.communityPagination.total = data.total;
                 $scope.communityPagination.page = page;
                 $timeout(function () {
-                    $scope.communityDecks = data.decks;
+                    $scope.communityDecks = data;
 
                     if (callback) {
                         return callback(data);
@@ -6860,25 +6943,25 @@ angular.module('app.controllers', ['ngCookies'])
         );
         
         //is premium
-        $scope.isPremium = function (guide) {
-            if (!guide.premium.isPremium) { return false; }
-            var now = new Date().getTime(),
-                expiry = new Date(guide.premium.expiryDate).getTime();
-            if (expiry > now) {
-                return true;
-            } else {
-                return false;
-            }
-        }
+//        $scope.isPremium = function (guide) {
+//            if (!guide.premium.isPremium) { return false; }
+//            var now = new Date().getTime(),
+//                expiry = new Date(guide.premium.expiryDate).getTime();
+//            if (expiry > now) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        }
     }
 ])
-.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'DeckService', 'VoteService', 'data', 'MetaService', 'LoginModalService',
-    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, DeckService, VoteService, data, MetaService, LoginModalService) {
-        if (!data || !data.success) { return $state.go('app.hs.decks.list'); }
+.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'deck', 'Deck', 'MetaService', 'LoginModalService',
+    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, deck, Deck, MetaService, LoginModalService) {
+//        if (!data || !data.success) { return $state.go('app.hs.decks.list'); }
 
         // load deck
-        $scope.deck = data.deck;
-        $scope.DeckService = DeckService;
+        $scope.deck = deck;
+        $scope.deckService = Deck;
         
         $scope.premiumTypes = [
             { text: 'No', value: false },
@@ -6970,9 +7053,9 @@ angular.module('app.controllers', ['ngCookies'])
             if (!$scope.anyMulliganSet()) { return false; }
             if (!$scope.currentMulligan) { return false; }
             var cards = ($scope.coin) ? $scope.currentMulligan.withCoin.cards : $scope.currentMulligan.withoutCoin.cards;
-
+            
             for (var i = 0; i < cards.length; i++) {
-                if (cards[i]._id === card.card._id) { return false; }
+                if (cards[i] === card.id) { return false; }
             }
 
             return true;
@@ -7053,8 +7136,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.deck.manaCount = function (mana) {
             var cnt = 0;
             for (var i = 0; i < $scope.deck.cards.length; i++) {
-                if ($scope.deck.cards[i].card.cost === mana || (mana === 7 && $scope.deck.cards[i].card.cost >= 7)) {
-                    cnt += $scope.deck.cards[i].qty;
+                if ($scope.deck.cards[i].cost === mana || (mana === 7 && $scope.deck.cards[i].cost >= 7)) {
+                    cnt += $scope.deck.cardQuantities[$scope.deck.cards[i].id];
                 }
             }
             return cnt;
@@ -7076,13 +7159,14 @@ angular.module('app.controllers', ['ngCookies'])
         function updateVotes() {
             checkVotes($scope.deck);
             
-            function checkVotes (deck) {
-                var vote = deck.votes.filter(function (vote) {
+            function checkVotes (d) {
+                console.log(d.votes);
+                var vote = d.votes.filter(function (vote) {
                     return ($scope.app.user.getUserID() === vote.userID);
                 })[0];
                 
                 if (vote) {
-                    deck.voted = vote.direction;
+                    d.voted = vote.direction;
                 }
             }
         }

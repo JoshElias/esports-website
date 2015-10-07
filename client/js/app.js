@@ -384,8 +384,12 @@ var app = angular.module('app', [
                                             name: true,
                                             description: true,
                                             slug: true,
-                                            heroName: true
+                                            heroName: true,
+                                            authorId: true,
+                                            voteScore: true,
+                                            playerClass: true,
                                         },
+                                        include: ["author"],
                                         order: "createdDate DESC",
                                         skip: (page * perpage) - perpage,
                                         limit: perpage
@@ -400,10 +404,6 @@ var app = angular.module('app', [
                                 return Deck.count({
                                     where: {
                                         isFeatured: true,
-                                        or: [
-                                            { name: { regexp: search } },
-                                            { description: { regexp: search } }
-                                        ]
                                     }
                                 })
                                 .$promise;
@@ -426,8 +426,12 @@ var app = angular.module('app', [
                                             name: true,
                                             description: true,
                                             slug: true,
-                                            heroName: true
+                                            heroName: true,
+                                            authorId: true,
+                                            voteScore: true,
+                                            playerClass: true
                                         },
+                                        include: ["author"],
                                         order: "createdDate DESC",
                                         skip: (page * perpage) - perpage,
                                         limit: perpage
@@ -441,11 +445,8 @@ var app = angular.module('app', [
                                 return Deck.count({
                                     where: {
                                         isFeatured: false,
-                                        or: [
-                                            { name: { regexp: search } },
-                                            { description: { regexp: search } }
-                                        ]
-                                    }
+                                    },
+                                    include: ["comments"]
                                 })
                                 .$promise;
                             }]
@@ -461,15 +462,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.decks.deck.html',
                         controller: 'DeckCtrl',
                         resolve: {
-                            data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
-                                var slug = $stateParams.slug;
-                                return DeckService.getDeck(slug).then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find deck');
+                            deck: ['$stateParams', 'Deck', function ($stateParams, Deck) {
+                                var stateSlug = $stateParams.slug;
+                                return Deck.findOne({
+                                    filter: {
+                                        where: {
+                                            slug: stateSlug
+                                        },
+                                        include: {
+                                            cards: true
+                                        }
                                     }
-                                 });
+                                })
+                                .$promise;
                             }]
                         }
                     }

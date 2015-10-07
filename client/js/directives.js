@@ -244,8 +244,7 @@ angular.module('app.directives', ['ui.load'])
             
             //TODO: FIX COMMENTING
             
-            console.log("user:", $scope)
-            console.log('article:', $scope.service.comments.create({}));
+//            console.log("user:", $scope)
             
             $scope.commentable;
             $scope.service;
@@ -259,6 +258,11 @@ angular.module('app.directives', ['ui.load'])
             }
             
             $scope.commentPost = function () {
+                $scope.service.comments.create({}, {
+                    text: $scope.comment,
+                    articleId: $scope.commentable.id
+                });
+                
                 if (!$scope.app.user.isLogged()) {
                     LoginModalService.showModal('login', function () {
                         $scope.commentPost();
@@ -276,6 +280,7 @@ angular.module('app.directives', ['ui.load'])
 
             updateCommentVotes();
             function updateCommentVotes() {
+                console.log($scope.commentable);
                 $scope.commentable.comments.forEach(checkVotes);
 
                 function checkVotes (comment) {
@@ -784,17 +789,22 @@ angular.module('app.directives', ['ui.load'])
             mulliganHide: "=",
             deck: "=deck"
         },
-        link: function (scope,elem,attr) {
-            scope.getDust = function () {
+        controller: ['$scope', function ($scope) {
+            $scope.cdn = $scope.$parent.$parent.$parent.$parent.$parent.app.cdn;
+            
+            console.log($scope.deck);
+            
+            $scope.getQty = function (id) {
+                return $scope.deck.cardQuantities[id];
+            }
+            
+            $scope.getDust = function () {
                 var dust = 0;
-                for (var i = 0; i < scope.deck.cards.length; i++) {
-                    dust += scope.deck.cards[i].qty * scope.deck.cards[i].card.dust;
+                for (var i = 0; i < $scope.deck.cards.length; i++) {
+                    dust += $scope.deck.cards[i].qty * $scope.deck.cards[i].dust;
                 }
                 return dust;
             };
-        },
-        controller: ['$scope', function ($scope) {
-            $scope.cdn = $scope.$parent.$parent.$parent.$parent.$parent.app.cdn;
         }],
         templateUrl: tpl + 'views/frontend/directives/db.deck.html'
     }
