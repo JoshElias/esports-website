@@ -1,6 +1,6 @@
 module.exports = {
     options: {
-        mapping: 'assets.json',
+        mapping: 'server/configs/assets.json',
         flatten: true,
         hashLength: 8,
         hashFunction: function(source, encoding){
