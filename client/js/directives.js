@@ -101,7 +101,7 @@ angular.module('app.directives', ['ui.load'])
 
             $scope.login = function login(email, password) {
                 if (email !== undefined && password !== undefined) {
-                    User.login({}, { email, password }, function(data) {
+                    User.login({}, { email: email, password: password }, function(data) {
                         data = data.user;
                         
                         AuthenticationService.setLogged(true);
