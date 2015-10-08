@@ -47,6 +47,32 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 })
+.directive('bootstrapWidth', ['$window', '$timeout', function ($window, $timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            function updateBootstrapWidth () {
+                var width = $('body').innerWidth();
+                if (width < 768) {
+                    scope.app.bootstrapWidth = 'xs';
+                } else if (width < 993) {
+                    scope.app.bootstrapWidth = 'sm';
+                } else if (width < 1199) {
+                    scope.app.bootstrapWidth = 'md';
+                } else {
+                    scope.app.bootstrapWidth = 'lg';
+                }
+                $timeout(function () {
+                    scope.$apply();
+                });
+            }
+            updateBootstrapWidth();
+            angular.element($window).bind("resize", function() {
+                updateBootstrapWidth();
+            });
+        }
+    };
+}])
 .directive('loginModal', ['LoginModalService', '$rootScope', function (LoginModalService, $rootScope) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/login.modal.html',
@@ -819,33 +845,6 @@ angular.module('app.directives', ['ui.load'])
             angular.element($window).bind("resize", function() {
                 updateWidth();
                 updateOffset();
-            });
-        }
-    };
-}])
-.directive('bootstrapWidth', ['$window', '$timeout', function ($window, $timeout) {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs) {
-            function updateBootstrapWidth () {
-                var width = $('body').innerWidth();
-
-                if (width < 768) {
-                    scope.app.bootstrapWidth = 'xs';
-                } else if (width < 993) {
-                    scope.app.bootstrapWidth = 'sm';
-                } else if (width < 1199) {
-                    scope.app.bootstrapWidth = 'md';
-                } else {
-                    scope.app.bootstrapWidth = 'lg';
-                }
-                $timeout(function () {
-                    scope.$apply();
-                });
-            }
-            updateBootstrapWidth();
-            angular.element($window).bind("resize", function() {
-                updateBootstrapWidth();
             });
         }
     };

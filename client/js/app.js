@@ -163,7 +163,7 @@ var app = angular.module('app', [
                                         skip: (offset * num) - num,
                                         limit: num
                                     }
-                                });
+                                }).$promise;
                             }],
                             articlesTotal: ['Article', function (Article) {
                                 return Article.count();
