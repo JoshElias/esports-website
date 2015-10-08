@@ -24,8 +24,8 @@
     <link rel="stylesheet" href="./css/vendor/megamenu/simple-line-icons.css" type="text/css" />
     <link rel="stylesheet" href="./vendor/font-awesome/css/font-awesome.min.css" type="text/css" />
     <link rel="stylesheet" href="./vendor/summernote/dist/summernote.css" type="text/css" />
-    <link rel="stylesheet" href="./css/animations/animation.css" type="text/css" />
-    <link rel="stylesheet" href="./css/animations/animate.css" type="text/css" />
+    <link rel="stylesheet" href="./css/vendor/animations/animation.css" type="text/css" />
+    <link rel="stylesheet" href="./css/vendor/animate.css" type="text/css" />
     <link rel="stylesheet" href="./dist/css/style.css" type="text/css" />
 </head>
 <body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
@@ -54,7 +54,7 @@
     <script src="./vendor/angular-cookies/angular-cookies.min.js"></script>
     <script src="./vendor/angular-ui-date/src/date.js"></script>
     <script src="./vendor/angular-ui-utils/jq.min.js"></script>
-    <script src="./vendor/angular-ui-load/angular-ui-load/ui-load.js"></script>
+    <script src="./vendor/angular-ui-load/ui-load.js"></script>
     <script src="./vendor/angular-ui-validate/dist/validate.min.js"></script>
     <script src="./vendor/angular-animate/angular-animate.min.js"></script>
     <script src="./vendor/angular-route/angular-route.min.js"></script>

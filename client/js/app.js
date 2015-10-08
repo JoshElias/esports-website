@@ -9,11 +9,9 @@ var app = angular.module('app', [
     'angularPayments',
     'youtube-embed',
     'dndLists',
-    /*'ngAnimate',*/
     'ngCookies',
     'ngStorage',
     'ngSanitize',
-    'ngProgress',
     'ui.router',
     'ui.load',
     'ui.jq',
@@ -27,8 +25,8 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'ngProgress', 'MetaService', '$cookies', "$localStorage", "LoginModalService",
-        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, ngProgress, MetaService, $cookies, $localStorage, LoginModalService) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService",
+        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, MetaService, $cookies, $localStorage, LoginModalService) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
