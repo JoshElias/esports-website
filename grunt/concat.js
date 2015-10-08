@@ -45,6 +45,9 @@ module.exports = {
                 'client/js/filters.js',
                 'client/js/animations.js',                
             ],
+            'client/dist/css/sass.css': [
+                'client/dist/css/sass/*.css'
+            ],
             'client/dist/css/style.css': [
                 'client/css/style.css',
                 'client/dist/css/sass.css',

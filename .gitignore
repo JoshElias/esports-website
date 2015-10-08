@@ -22,3 +22,4 @@ client/vendor
 dist
 client/dist
 .sass-cache/*
+client/css/.sass-cache/*

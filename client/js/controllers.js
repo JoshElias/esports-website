@@ -225,6 +225,8 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal',
     function ($scope, $sce, articles, articlesTotal) {
+        console.log(articles);
+        
         // data
         $scope.articles = {
             loading: false,
@@ -255,22 +257,19 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             },
             offset: 0,
-            total: articlesTotal,
+            total: articlesTotal.count,
             data: articles
         };
-                
+
+        console.log($scope.articles.viewable());
+        
         // articles
         $scope.getArticleDesc = function (desc, limit) {
             var words = desc.split(' ');
-            return (words.length > limit) ? words.slice(0, limit).join(' ') + '...' : words.join(' ');
+            return desc;//(words.length > limit) ? words.slice(0, limit).join(' ') + '...' : words.join(' ');
         };
         
         $scope.isArticleActive = function (index) {
-            //if ($scope.articles.offset == 0 && index == 0) { return true; }
-            //if ($scope.articles.viewable() == 1 && index == $scope.articles.offset) { return true; } 
-            //if ($scope.viewable() == 6) {
-            //    if (index >= ($scope.articles.offset + 1) && index <= ($scope.articles.offset + $scope.articles.viewable() - 2)) { return true; }
-            //}
             return true;
         };
         
@@ -281,6 +280,9 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.canArticleNext = function () {
             return ($scope.articles.data.length < $scope.articles.total);
         };
+        
+        console.log('articles: ', $scope.articles.data.length);
+        console.log('total: ', $scope.articles.total);
         
         $scope.prevArticles = function () {
             $scope.articles.offset = ($scope.articles.offset - $scope.articles.perpage() >= 0) ? $scope.articles.offset - $scope.articles.perpage() : 0;
