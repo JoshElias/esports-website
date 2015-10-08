@@ -1,6 +1,5 @@
 {
   "name": "stream",
-  "plural": "y",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
