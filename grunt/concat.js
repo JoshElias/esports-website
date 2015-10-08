@@ -17,8 +17,10 @@ module.exports = {
             ],
             'client/dist/js/angular.js': [
                 'client/vendor/angular/angular.js',
+                'client/js/services/lb-services.js',
                 'client/vendor/angular-ui-router/angular-ui-router.js',
                 'client/vendor/angular-cookies/angular-cookies.js',
+                'client/vendor/angular-resource/angular-resource.js',
                 'client/vendor/angular-ui-date/src/date.js',
                 'client/vendor/angular-ui-utils/jq.js',
                 'client/vendor/angular-ui-load/ui-load.js',

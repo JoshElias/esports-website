@@ -1,7 +1,7 @@
 module.exports = {
     options: {
         report: 'min',
-        compress: true,
+        compress: {},
         mangle: true,
     },
     build: {
