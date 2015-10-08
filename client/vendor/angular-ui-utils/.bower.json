@@ -1,0 +1,17 @@
+{
+  "name": "angular-ui-jq",
+  "main": "./jq.js",
+  "dependencies": {
+    "angular": ">= 1.0.2"
+  },
+  "homepage": "https://github.com/angular-ui/ui-utils",
+  "_release": "jq-0.2.3",
+  "_resolution": {
+    "type": "tag",
+    "tag": "jq-0.2.3",
+    "commit": "89de02a73d156799430d8e94174becdcf0f9deb6"
+  },
+  "_source": "git://github.com/angular-ui/ui-utils.git",
+  "_target": "jq-0.2.3",
+  "_originalSource": "angular-ui-utils"
+}

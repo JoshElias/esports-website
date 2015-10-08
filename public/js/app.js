@@ -433,7 +433,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Deck Builder', description: 'Deck building tool for Hearthstone.', keywords: '' }
             })
             .state('app.hs.deckBuilder.edit', {
                 url: '/edit/:slug',

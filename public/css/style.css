@@ -3225,6 +3225,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-builder .deck-list .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-top: 1px; cursor: pointer; cursor: hand; position: relative; }
 .db-builder .deck-list .list-card .card-name { position: absolute; left: 28px; }
 .db-builder .deck-list .list-card .legendary { padding: 0px 7px; }
+.db-builder .deck-list .list-card img { position: absolute; right: 0; height: 28px; }
+.db-builder .deck-list .list-card img.multiple { right: 30px; }
 /*
 .db-builder .deck-list .list-card { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
 .db-builder .deck-list .list-card { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
