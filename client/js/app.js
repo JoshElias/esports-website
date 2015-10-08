@@ -196,7 +196,6 @@ var app = angular.module('app', [
                                     perpage = 12,
                                     search = $stateParams.s || '';
                                 
-                                var d = $q.defer();
                                 
                                 Article.find({
                                     filter: {
@@ -209,13 +208,13 @@ var app = angular.module('app', [
                                         limit: perpage,
                                         skip: ((perpage*page)-perpage)
                                     }
-                                }, function (articles) {
+                                })
+                                .promise
+                                .then(function (articles) {
                                     articles.page = page;
                                     articles.perpage = perpage;
-                                    d.resolve(articles);
                                 });
                                 
-                                return d.promise;
                             }],
                             articlesTotal: ['Article', function (Article) {
                                 return Article.count({
