@@ -1,5 +1,102 @@
-.hots {
-    .testing {
-        display: none;
-    }
+
+
+//custom mixins
+
+//HOTS Character Mixin
+
+@mixin hots-hero ($hero) {  /* Starting new Hots Hero */
+.icon-#{$hero} { background: url(../img/hots/heroes/#{$hero}-hex.png) no-repeat center center; }
+.hero-list li a.#{$hero} { background: url(../img/hots/heroes/28x/#{$hero}28.png) no-repeat center right; }
+.talents-title.#{$hero} { background: url(../img/hots/heroes/60x/#{$hero}60.png) no-repeat; }
+.talents-icon.#{$hero} { background: url(../img/hots/talents/#{$hero}.png) no-repeat; }
+.hots-modal .hero.#{$hero} { background: url(../img/hots/modal/heroes/#{$hero}.png) no-repeat center right; }
+.hero-back.#{$hero} { background: url(../img/hots/heroes/bgs/#{$hero}.png) center center no-repeat; }
+.hots-guide.large.#{$hero} { background: url('../img/hots/heroes/guide-images/1/#{$hero}.jpg') no-repeat center top; background-size: cover; }
+.hots-guide.small.#{$hero} { background: url('../img/hots/heroes/guide-images/side/1/#{$hero}.jpg') no-repeat center top; background-size: cover; }
+.hots-guide.long.#{$hero} { background-image: url('../img/hots/heroes/guide-images/long/#{$hero}.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-top-guide .hero.#{$hero} { background: url('../img/hots/modal/heroes/#{$hero}.png') no-repeat center right; }
+.guide-hero-image.#{$hero} { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/#{$hero}60.png') no-repeat right top; }
+.tc-hero.#{$hero} { background: url('../img/hots/modal/heroes/#{$hero}.png') no-repeat right 120px; }    
 }
+
+
+/* hots hero images */
+
+@include hots-hero(abathur);
+@include hots-hero(anub-arak);
+@include hots-hero(arthas);
+@include hots-hero(Azmodan);
+@include hots-hero(brightwing);
+@include hots-hero(chen);
+@include hots-hero(diablo);
+@include hots-hero(etc);
+@include hots-hero(falstad);
+@include hots-hero(gazlowe);
+@include hots-hero(illidan);
+@include hots-hero(jaina);
+@include hots-hero(johanna);
+@include hots-hero(kaelthas);
+@include hots-hero(kerrigan);
+@include hots-hero(kharazim);
+@include hots-hero(leoric);
+@include hots-hero(lili);
+@include hots-hero(morales);
+@include hots-hero(malfurion);
+@include hots-hero(muradin);
+@include hots-hero(murky);
+@include hots-hero(nazeebo);
+@include hots-hero(nova);
+@include hots-hero(raynor);
+@include hots-hero(rehgar);
+@include hots-hero(rexxar);
+@include hots-hero(sgthammer);
+@include hots-hero(sonya);
+@include hots-hero(stitches);
+@include hots-hero(sylvanas);
+@include hots-hero(tassadar);
+@include hots-hero(the-butcher);
+@include hots-hero(thelostvikings);
+@include hots-hero(thrall);
+@include hots-hero(tychus);
+@include hots-hero(tyrael);
+@include hots-hero(tyrande);
+@include hots-hero(uther);
+@include hots-hero(valla);
+@include hots-hero(zagara);
+@include hots-hero(zeratul);
+
+
+
+
+//.talents-icon.the-butcher.invigoration { background-position: 0px 0px; }
+//.talents-icon.the-butcher.block { background-position: 0px -30px; }
+//.talents-icon.the-butcher.chop-meat { background-position: 0px 0px; }
+//.talents-icon.the-butcher.victuals { background-position: 0px -60px; }
+
+
+/* talents - the-butcher - small */
+/* Tier 1 */
+
+
+//Default small icon positions
+
+$position1: 0px 0px;
+$position2: 0px -30px;
+$position3: 0px -60px;
+$position4: 0px -90px;
+
+
+
+@mixin hots-hero-talents ($hero, $small-tier1-1, $small-tier1-2, $small-tier1-3, $small-tier1-4, $position1, $position2, $position3, $position4 ) {
+.talents-icon.#{$hero}.#{$small-tier1-1} { background-position: $position1; }
+.talents-icon.#{$hero}.#{$small-tier1-2} { background-position: $position2; }
+.talents-icon.#{$hero}.#{$small-tier1-3} { background-position: $position3; }
+.talents-icon.#{$hero}.#{$small-tier1-4} { background-position: $position4; }
+}
+
+
+
+
+/* hots hero talents */
+
+@include hots-hero-talents(the-butcher, invigoration, block, chop-meat, victuals, $position1, $position2, $position1, $position4);
