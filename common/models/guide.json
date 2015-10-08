@@ -49,8 +49,7 @@
     },
     "against": {
         "type": "object"
-    },
-    
+    }
   },
   "validations": [],
   "relations": {},
