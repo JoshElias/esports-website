@@ -1,5 +1,5 @@
-var configStaging = require('./../server/config.staging');
-var configProduction = require('./../server/config.production');
+var configStaging = require('./../server/configs/config.staging');
+var configProduction = require('./../server/configs/config.production');
 
 module.exports = {
     staging: {

@@ -58,7 +58,7 @@ angular.module('app.directives', ['ui.load'])
             $scope.getState = function () {
                 return $scope.state;
             }
-            
+
             $scope.setState = function (s) {
                 switch(s) {
                     case 'login':  $scope.state = "login" ; $scope.title = "User Login"; break;
@@ -69,7 +69,7 @@ angular.module('app.directives', ['ui.load'])
                 }
             }
             $scope.setState($scope.state);
-            
+
             $scope.closeModal = function () {
                 LoginModalService.hideModal();
             }
@@ -81,69 +81,41 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('loginForm', ['$window', '$cookies', '$state', 'AuthenticationService', 'LoginModalService', 'User', 'SubscriptionService', function ($window, $cookies, $state, AuthenticationService, LoginModalService, User, SubscriptionService) {
+.directive('loginForm', ['$window', '$cookies', '$state', '$location', 'LoginModalService', 'User', 'LoopBackAuth',
+  function ($window, $cookies, $state, $location, LoginModalService, User, LoopBackAuth) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
         scope: true,
         link: function ($scope, el, attr) {
+
             $scope.remember;
             $scope.loginInfo = {
                 email: "",
                 password: ""
             };
-            var cook = $cookies.getObject('TSRememberMe');
-            
-            if (cook != undefined) {
-                $scope.remember = true;
-                $scope.loginInfo.email = cook.email;
-                $scope.loginInfo.password = cook.password;
-            }
 
             $scope.login = function login(email, password) {
-                if (email !== undefined && password !== undefined) {
-                    User.login({}, { email: email, password: password }, function(data) {
-                        data = data.user;
-                        
-                        AuthenticationService.setLogged(true);
-                        AuthenticationService.setAdmin(data.isAdmin);
-                        AuthenticationService.setProvider(data.isProvider);
-
-                        SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                        SubscriptionService.setTsPlan(data.subscription.plan);
-                        SubscriptionService.setExpiry(data.subscription.expiry);
-
-                        $window.sessionStorage.userID = data.userID;
-                        $window.sessionStorage.username = data.username;
-                        $window.sessionStorage.email = data.email;
-                        $window.sessionStorage.token = data.token;
-                        
-                        if ($scope.setState) {
-                            $scope.closeModal();
-                        } else {
-                            $state.go('app.home');
-                        }
-                            
-                        if ($scope.remember) {
-                            var expireDate = new Date();
-                            expireDate.setDate(expireDate.getDate() + 356);
-                            $cookies.putObject('TSRememberMe', { email: $scope.loginInfo.email, password: $scope.loginInfo.password }, { expires: expireDate });
-                        } else {
-                            $cookies.remove('TSRememberMe');
-                        }
-                        
-                        if ($scope.callback) {
-                            $scope.callback();
-                        }
-                            
-                    }, function(err) {
-                        console.log(err);
-                        //TODO: Login: Handle exceptions
-                    });
+                if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
+                  User.login({rememberMe:$scope.remember}, {email:$scope.loginInfo.email, password:$scope.loginInfo.password},
+                    function(accessToken) {
+                        console.log("Received access token:", accessToken);
+                        console.log("Current User:", LoopBackAuth.currentUserData);
+                        var next = $location.nextAfterLogin || "/";
+                        $location.nextAfterLogin = null;
+                        $location.path(next);
+                    },
+                    function(err) {
+                        $scope.showError = true;
+                    }
+                );
+              } else {
+                // TODO: Display modal for missing username and/or password
+              }
                 };
             }
         }
     }
-}])
+])
 .directive('signupForm', ['$state', 'UserService', 'LoginModalService', function ($state, UserService, LoginModalService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
@@ -153,9 +125,9 @@ angular.module('app.directives', ['ui.load'])
                 email: "",
                 code: ""
             }
-            
+
             //TODO: SignupForm: Do signup
-            
+
             $scope.signup = function signup(email, username, password, cpassword) {
                 if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
                     UserService.signup(email, username, password, cpassword).success(function (data) {
@@ -182,9 +154,9 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/directives/login/forgot.password.form.html',
         scope: true,
         link: function ($scope, el, attr) {
-            
+
             //TODO: ForgotPassword: Do forgotPassword
-            
+
             $scope.forgotPassword = function () {
                 UserService.forgotPassword($scope.forgot.email).success(function (data) {
                     if (!data.success) {
@@ -204,9 +176,9 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/directives/login/verify.form.html',
         scope: true,
         link: function ($scope, el, attr) {
-            
+
             //TODO: VerifyForm: Do Verify
-            
+
             $scope.verifyEmail = function (email, code) {
                  UserService.verifyEmail(email, code).success(function (data) {
                     if (!data.success) {
@@ -236,27 +208,27 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: "E",
         templateUrl: tpl + 'views/frontend/directives/comments/commentSection.html',
-        scope: { 
+        scope: {
             commentable: "=",
-            service:     "=", 
+            service:     "=",
         },
         controller: ['$scope', function ($scope) {
-            
+
             //TODO: FIX COMMENTING
-            
+
 //            console.log("user:", $scope)
-            
+
             $scope.commentable;
             $scope.service;
             $scope.app = $rootScope.app;
-            
+
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
 
             $scope.parseComment = function (c) {
                 return $sce.trustAsHtml(c);
             }
-            
+
             $scope.commentPost = function () {
                 $scope.service.comments.create({
                     filter: {}
@@ -264,7 +236,7 @@ angular.module('app.directives', ['ui.load'])
                     text: $scope.comment,
                     articleId: $scope.commentable.id
                 });
-                
+
                 if (!$scope.app.user.isLogged()) {
                     LoginModalService.showModal('login', function () {
                         $scope.commentPost();
@@ -317,9 +289,9 @@ angular.module('app.directives', ['ui.load'])
             }
         }],
         link: function ($scope, el, attr) {
-            
+
             $scope.addAreaFocus = false;
-            
+
         }
     }
 }])
@@ -345,7 +317,7 @@ angular.module('app.directives', ['ui.load'])
                     $input.trigger('focus');
                 }
             });
-        }    
+        }
     };
 })
 .directive('ngRightClick', ['$parse', function($parse) {
@@ -409,12 +381,14 @@ angular.module('app.directives', ['ui.load'])
         controller: ['$scope', function ($scope) {
             $scope.subNavStreams = [];
             $scope.showSubNavStream = false;
-            
+
             Stream.find({
                 filter: {
                     order: 'viewerCount DESC'
                 }
-            }).$promise.then(function(data) {
+            })
+            .$promise
+            .then(function(data) {
                 for (var i = 0; i < data.length; i++) {
                     var log = data[i].logoUrl;
                     var sub = log.substr(4);
@@ -431,7 +405,7 @@ angular.module('app.directives', ['ui.load'])
                     $scope.subNavStreams = data;
                 });
             });
-            
+
             $scope.changeStream = function (direction) {
                 if (direction == 'increment') {
                     if (++$scope.selectedStream == $scope.subNavStreams.length) {
@@ -443,11 +417,11 @@ angular.module('app.directives', ['ui.load'])
                     }
                 }
             }
-            
+
             $scope.getNumber = function (x) {
                 return Util.numberWithCommas(x);
             }
-            
+
         }]
     }
 }])
@@ -684,10 +658,10 @@ angular.module('app.directives', ['ui.load'])
 .directive('talentIconLg', ['$window', function ($window) {
     return {
         restrict: 'A',
-        link: function (scope, elem, attrs) {  
-            
+        link: function (scope, elem, attrs) {
+
             scope.isLarge = ($window.innerWidth >= 1200) ? ' large' : '';
-            
+
             angular.element($window).on('resize', function () {
                 scope.$apply(function(){
                     scope.isLarge = ($window.innerWidth >= 1200) ? ' large' : '';
@@ -699,10 +673,10 @@ angular.module('app.directives', ['ui.load'])
 .directive('talentIconMd', ['$window', function ($window) {
     return {
         restrict: 'A',
-        link: function (scope, elem, attrs) {  
-            
+        link: function (scope, elem, attrs) {
+
             scope.isLarge = ($window.innerWidth >= 992) ? ' large' : '';
-            
+
             angular.element($window).on('resize', function () {
                 scope.$apply(function(){
                     scope.isLarge = ($window.innerWidth >= 992) ? ' large' : '';
@@ -797,13 +771,13 @@ angular.module('app.directives', ['ui.load'])
         },
         controller: ['$scope', function ($scope) {
             $scope.cdn = $scope.$parent.$parent.$parent.$parent.$parent.app.cdn;
-            
+
             console.log($scope.deck);
-            
+
             $scope.getQty = function (id) {
                 return $scope.deck.cardQuantities[id];
             }
-            
+
             $scope.getDust = function () {
                 var dust = 0;
                 for (var i = 0; i < $scope.deck.cards.length; i++) {
@@ -829,13 +803,13 @@ angular.module('app.directives', ['ui.load'])
                 $(element).find('.home-articles-inner').css('width', newWidth + 'px');
                 $(element).find('.home-article-wrapper').css('width', Math.floor(newWidth / scope.size, 2) + 'px');
             }
-            
+
             function updateOffset () {
                 var newWidth = (((100 / scope.viewable()) * scope.size) / 100 * ($('body').innerWidth() - 20));
                 var offset = (scope.offset + scope.viewable() > scope.size) ? scope.size - scope.viewable() : scope.offset;
                 $(element).find('.home-articles-inner').css('left', (Math.floor(newWidth / scope.size) * offset * -1) + 'px');
             }
-            
+
             scope.$watch(
                 function ($scope) {
                     return $scope.viewable();
@@ -863,7 +837,7 @@ angular.module('app.directives', ['ui.load'])
         link: function(scope, element, attrs) {
             function updateBootstrapWidth () {
                 var width = $('body').innerWidth();
-                
+
                 if (width < 768) {
                     scope.app.bootstrapWidth = 'xs';
                 } else if (width < 993) {
@@ -896,11 +870,11 @@ angular.module('app.directives', ['ui.load'])
         link: function (scope, element, attrs) {
             var initializing = true,
                 randHeroIndex = false;
-            
+
             function randomIntFromInterval (min,max) {
                 return Math.floor(Math.random()*(max-min+1)+min);
             }
-            
+
             scope.$watch(function(){ return scope.filters; }, function (value) {
                 if (initializing) {
                     $timeout(function () {
@@ -911,11 +885,11 @@ angular.module('app.directives', ['ui.load'])
                     scope.filters = value;
                 }
             }, true);
-            
+
             scope.updateSearch = function () {
                 scope.filters.search = scope.searchHeroes;
             }
-            
+
             scope.hasFilterRole = function (role) {
                 for (var i = 0; i < scope.filters.roles.length; i++) {
                     if (scope.filters.roles[i] == role) {
@@ -924,7 +898,7 @@ angular.module('app.directives', ['ui.load'])
                 }
                 return false;
             };
-            
+
             scope.hasFilterUniverse = function (universe) {
                 for (var i = 0; i < scope.filters.universes.length; i++) {
                     if (scope.filters.universes[i] == universe) {
@@ -933,7 +907,7 @@ angular.module('app.directives', ['ui.load'])
                 }
                 return false;
             };
-            
+
             scope.toggleFilterHero = function (hero) {
                 var index = scope.filters.heroes.indexOf(hero);
                 if (index === -1) {
@@ -949,12 +923,12 @@ angular.module('app.directives', ['ui.load'])
                     scope.filters.heroes = [];
                     //scope.filters.heroes.splice(index, 1);
                 }
-                
+
                 if (!scope.filters.heroes.length) {
                     randHeroIndex = randomIntFromInterval(0, scope.heroes.length - 1);
                 }
             };
-            
+
             scope.isFiltered = function (hero) {
                 if (scope.hasFilterHero(hero)) {
                     return false;
@@ -973,7 +947,7 @@ angular.module('app.directives', ['ui.load'])
                 }
                 return false;
             };
-            
+
             scope.hasFilterHero = function (hero) {
                 return (scope.filters.heroes.indexOf(hero) !== -1);
             };
@@ -1019,7 +993,7 @@ angular.module('app.directives', ['ui.load'])
                     scope.heroDots.push({});
                 }
             }
-            
+
             function getRandomHero () {
                 var hero = scope.heroes[randHeroIndex];
                 return {
@@ -1028,7 +1002,7 @@ angular.module('app.directives', ['ui.load'])
                     className: hero.className
                 };
             }
-            
+
             // latest hero
             scope.hero = function () {
                 if (scope.filters.heroes.length) {
@@ -1042,7 +1016,7 @@ angular.module('app.directives', ['ui.load'])
                         className: 'default'
                     };
                 }
-            };            
+            };
         }
     };
 }])
@@ -1056,7 +1030,7 @@ angular.module('app.directives', ['ui.load'])
         replace: true,
         link: function (scope, element, attrs) {
             var initializing = true;
-            
+
             scope.$watch(function(){ return scope.filters; }, function (value) {
                 if (initializing) {
                     $timeout(function () {
@@ -1066,7 +1040,7 @@ angular.module('app.directives', ['ui.load'])
                     scope.filters = value;
                 }
             }, true);
-            
+
             scope.toggleFilterRole = function (role) {
                 var index = scope.filters.roles.indexOf(role);
                 if (index === -1) {
@@ -1097,7 +1071,7 @@ angular.module('app.directives', ['ui.load'])
         replace: true,
         link: function (scope, element, attrs) {
             var initializing = true;
-            
+
             scope.$watch(function(){ return scope.filters; }, function (value) {
                 if (initializing) {
                     $timeout(function () {
@@ -1107,7 +1081,7 @@ angular.module('app.directives', ['ui.load'])
                     scope.filters = value;
                 }
             }, true);
-            
+
             scope.toggleFilterUniverse = function (universe) {
                 var index = scope.filters.universes.indexOf(universe);
                 if (index === -1) {
@@ -1139,7 +1113,7 @@ angular.module('app.directives', ['ui.load'])
         replace: true,
         link: function (scope, element, attrs) {
             var initializing = true;
-            
+
             scope.$watch(function(){ return scope.filters; }, function (value) {
                 if (initializing) {
                     $timeout(function () {
@@ -1149,7 +1123,7 @@ angular.module('app.directives', ['ui.load'])
                     scope.filters = value;
                 }
             }, true);
-            
+
             scope.toggleFilterClass = function (klass) {
                 var index = scope.filters.classes.indexOf(klass);
                 if (index === -1) {
@@ -1163,7 +1137,7 @@ angular.module('app.directives', ['ui.load'])
                 if (!klass) {
                     return (scope.filters.classes.length > 0);
                 }
-                
+
                 for (var i = 0; i < scope.filters.classes.length; i++) {
                     if (scope.filters.classes[i] == klass) {
                         return true;
@@ -1197,7 +1171,7 @@ angular.module('app.directives', ['ui.load'])
                 }
                 return $sce.trustAsHtml(i);
             }
-            
+
             //is premium
             $scope.isPremium = function (guide) {
                 if (!guide.premium.isPremium) { return false; }
@@ -1223,7 +1197,7 @@ angular.module('app.directives', ['ui.load'])
         replace: true,
         link: function (scope, element, attrs) {
             var initializing = true;
-            
+
             scope.$watch(function(){ return scope.filters; }, function (value) {
                 if (initializing) {
                     $timeout(function () {
@@ -1233,7 +1207,7 @@ angular.module('app.directives', ['ui.load'])
                     scope.filters = value;
                 }
             }, true);
-            
+
             scope.toggleFilterClass = function (klass) {
                 var index = scope.filters.classes.indexOf(klass);
                 if (index === -1) {
@@ -1247,7 +1221,7 @@ angular.module('app.directives', ['ui.load'])
                 if (!klass) {
                     return (scope.filters.classes.length > 0);
                 }
-                
+
                 for (var i = 0; i < scope.filters.classes.length; i++) {
                     if (scope.filters.classes[i] == klass) {
                         return true;
@@ -1286,7 +1260,7 @@ angular.module('app.directives', ['ui.load'])
         link: function (scope, element, attrs) {
             scope.streamWheel = false;
             scope.streams = undefined;
-            
+
             scope.getNumber = function (x) {
                 return Util.numberWithCommas(x);
             }
@@ -1317,7 +1291,7 @@ angular.module('app.directives', ['ui.load'])
         link: function (scope, element, attrs) {
             scope.twitWheel = false;
             scope.tweets = undefined;
-            
+
             var num = 6;
 
             TwitterPost.find({
@@ -1331,7 +1305,7 @@ angular.module('app.directives', ['ui.load'])
                 scope.tweets = tweets[0].feed;
             }, function (err) {
                 console.log("Sorry, we cannot get the twitter feed right now. Error: " + err);
-                //TODO: handle the exception    
+                //TODO: handle the exception
             });
 
             scope.getContent = function (c) {
