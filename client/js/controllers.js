@@ -223,10 +223,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal',
-    function ($scope, $sce, articles, articlesTotal) {
-        console.log(articles);
-        
+.controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal', 'Article', 
+    function ($scope, $sce, articles, articlesTotal, Article) {
         // data
         $scope.articles = {
             loading: false,
@@ -261,8 +259,6 @@ angular.module('app.controllers', ['ngCookies'])
             data: articles
         };
 
-        console.log($scope.articles.viewable());
-        
         // articles
         $scope.getArticleDesc = function (desc, limit) {
             var words = desc.split(' ');
@@ -281,9 +277,6 @@ angular.module('app.controllers', ['ngCookies'])
             return ($scope.articles.data.length < $scope.articles.total);
         };
         
-        console.log('articles: ', $scope.articles.data.length);
-        console.log('total: ', $scope.articles.total);
-        
         $scope.prevArticles = function () {
             $scope.articles.offset = ($scope.articles.offset - $scope.articles.perpage() >= 0) ? $scope.articles.offset - $scope.articles.perpage() : 0;
         };
@@ -296,8 +289,21 @@ angular.module('app.controllers', ['ngCookies'])
                 if (num > 0) {
                     $scope.articles.loading = 'next';
                     
-                    ArticleService.getArticles('all', 'all', $scope.articles.data.length, num).then(function (data) {
-                        $scope.articles.data = $scope.articles.data.concat(data.articles);
+                    Article.find({
+                        filter: {
+                            where: {
+                                isActive: true
+                            },
+                            fields: {
+                                content: false,
+                                votes: false
+                            },
+                            order: "createdDate DESC",
+                            skip: $scope.articles.data.length,
+                            limit: num
+                        }
+                    }).$promise.then(function (data) {
+                        $scope.articles.data = $scope.articles.data.concat(data);
                         $scope.articles.offset += num;
                         $scope.articles.loading = false;
                     });
