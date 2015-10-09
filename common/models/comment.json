@@ -26,6 +26,9 @@
     },
     "articleId": {
       "type": "string"
+    },
+    "deckId": {
+        "type": "string"
     }
   },
   "validations": [],

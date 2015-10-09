@@ -196,10 +196,11 @@ var app = angular.module('app', [
                                     perpage = 12,
                                     search = $stateParams.s || '';
                                 
-                                
-                                Article.find({
+                                return Article.find({
                                     filter: {
-                                        isActive: true,
+                                        where: {
+                                            isActive: true
+                                        },
                                         fields: {
                                             content: false,
                                             votes: false
@@ -209,19 +210,21 @@ var app = angular.module('app', [
                                         skip: ((perpage*page)-perpage)
                                     }
                                 })
-                                .promise
+                                .$promise
                                 .then(function (articles) {
                                     articles.page = page;
                                     articles.perpage = perpage;
+                                    return articles;
                                 });
                                 
                             }],
                             articlesTotal: ['Article', function (Article) {
                                 return Article.count({
-                                    filter: {
+                                    where: {
                                         isActive: true
                                     }
-                                }).$promise;
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -466,12 +469,15 @@ var app = angular.module('app', [
                                         where: {
                                             slug: stateSlug
                                         },
-                                        include: {
-                                            cards: true
-                                        }
+                                        include: ["cards","comments"]
                                     }
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function (com) {
+                                    console.log(com);
+                                    return com;
+                                });
+                                
                             }]
                         }
                     }
@@ -503,15 +509,47 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.deck-builder.build.html',
                         controller: 'DeckBuilderCtrl',
                         resolve: {
-                            data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
-                                var playerClass = $stateParams.playerClass,
-                                    page = 1,
-                                    perpage = 15,
-                                    mechanics = [],
-                                    mana = 'all',
-                                    search = "";
+                            classCards: ['$stateParams', 'Card', function ($stateParams, Card) {
+                                var perpage = 15,
+                                    playerClass = $stateParams.playerClass;
 
-                                return DeckBuilder.loadCards(page, perpage, search, mechanics, mana, playerClass);
+                                return Card.find({
+                                    filter: {
+                                        where: {
+                                            playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1)
+                                        },
+                                        limit: perpage,
+                                    }
+                                })
+                                .$promise;
+                            }],
+                            neutralCards: ['Card', function (Card) {
+                                return Card.find({
+                                    filter: {
+                                        where: {
+                                            playerClass: 'Neutral'
+                                        }
+                                    }
+                                })
+                                .$promise;
+                            }],
+                            classCardsCount: ['$stateParams', 'Card', function ($stateParams, Card) {
+                                var playerClass = $stateParams.playerClass;
+                                
+                                return Card.count({
+                                    where: {
+                                        playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1)
+                                    }
+                                })
+                                .$promise;
+                            }],
+                            neutralCardsCount: ['Card', function (Card) {
+                                return Card.count({
+                                    where: {
+                                        playerClass: 'Neutral'
+                                    }
+                                })
+                                .$promise;
                             }],
                             toStep: ['$stateParams', function ($stateParams) {
                                 if ($stateParams.goTo) {

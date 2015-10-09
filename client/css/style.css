@@ -3623,7 +3623,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .comment .panel-heading { color: #FFF; padding: 0; }
 .comment .panel-heading a { color: #9C9C9C; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; transition: .15s; }
 .comment .panel-body { color: #FFF; background: #1B1B1B; overflow: hidden; }
-.comment .comment-panel { color: white; border-radius: 0px; background: #262626; margin: 0; padding: 15px; transition: all .15s; -webkit-transition: all .15s; -moz-transition: all .15s; }
+.comment .comment-panel { color: white; border-radius: 0px; background: #262626; margin: 0; padding: 25px; transition: all .15s; -webkit-transition: all .15s; -moz-transition: all .15s; }
 .comment .comment-body { overflow: hidden; white-space:pre-wrap; }
 .comment .comment-ago { float:right; color: #2267B2; transition: .15s; }
 .comment:hover .comment-panel { background-color: #2267B2; }
