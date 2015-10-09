@@ -21,3 +21,4 @@ npm-debug.log
 client/vendor
 dist
 client/dist
+.sass-cache/*
