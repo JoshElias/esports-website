@@ -47,6 +47,32 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 })
+.directive('bootstrapWidth', ['$window', '$timeout', function ($window, $timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            function updateBootstrapWidth () {
+                var width = $('body').innerWidth();
+                if (width < 768) {
+                    scope.app.bootstrapWidth = 'xs';
+                } else if (width < 993) {
+                    scope.app.bootstrapWidth = 'sm';
+                } else if (width < 1199) {
+                    scope.app.bootstrapWidth = 'md';
+                } else {
+                    scope.app.bootstrapWidth = 'lg';
+                }
+                $timeout(function () {
+                    scope.$apply();
+                });
+            }
+            updateBootstrapWidth();
+            angular.element($window).bind("resize", function() {
+                updateBootstrapWidth();
+            });
+        }
+    };
+}])
 .directive('loginModal', ['LoginModalService', '$rootScope', function (LoginModalService, $rootScope) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/login.modal.html',
@@ -204,7 +230,7 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('commentSection', ['$rootScope', '$sce', 'VoteService', 'LoginModalService', function ($rootScope, $sce, VoteService, LoginModalService) {
+.directive('commentSection', ['$rootScope', '$sce', 'VoteService', 'LoginModalService', 'Comment', function ($rootScope, $sce, VoteService, LoginModalService, Comment) {
     return {
         restrict: "E",
         templateUrl: tpl + 'views/frontend/directives/comments/commentSection.html',
@@ -230,7 +256,9 @@ angular.module('app.directives', ['ui.load'])
             }
 
             $scope.commentPost = function () {
-                $scope.service.comments.create({}, {
+                $scope.service.comments.create({
+                    filter: {}
+                }, {
                     text: $scope.comment,
                     articleId: $scope.commentable.id
                 });
@@ -240,13 +268,13 @@ angular.module('app.directives', ['ui.load'])
                         $scope.commentPost();
                     });
                 } else {
-                    $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
-                        if (data.success) {
-                            $scope.commentable.comments.push(data.comment);
-                            $scope.comment = '';
-                            updateCommentVotes();
-                        }
-                    });
+//                    $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
+//                        if (data.success) {
+//                            $scope.commentable.comments.push(data.comment);
+//                            $scope.comment = '';
+//                            updateCommentVotes();
+//                        }
+//                    });
                 }
             };
 
@@ -370,7 +398,7 @@ angular.module('app.directives', ['ui.load'])
         });
     };
 }])
-.directive("subNavStream", ['TwitchService', '$timeout', 'Util', function (TwitchService, $timeout, Util) {
+.directive("subNavStream", ['Stream', '$timeout', 'Util', function (Stream, $timeout, Util) {
     return {
         restrict: 'E',
         replace: true,
@@ -380,21 +408,27 @@ angular.module('app.directives', ['ui.load'])
             $scope.subNavStreams = [];
             $scope.showSubNavStream = false;
 
-            TwitchService.getStreams().then(function(data) {
-                for (var i = 0; i < data.data.length; i++) {
-                    var log = data.data[i].logoUrl;
+            Stream.find({
+                filter: {
+                    order: 'viewerCount DESC'
+                }
+            })
+            .$promise
+            .then(function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    var log = data[i].logoUrl;
                     var sub = log.substr(4);
                     var im = "https" + sub;
-                    data.data[i].logoUrl = im;
-
-                    data.data[i].viewerCount = +data.data[i].viewerCount;
+                    data[i].logoUrl = im;
+                    
+                    data[i].viewerCount = +data[i].viewerCount;
                 }
-                $scope.selectedStream = data.data.length-1;
+                $scope.selectedStream = 0;
                 $timeout(function() {
-                    if (data.data.length) {
+                    if (data.length) {
                         $scope.showSubNavStream = true;
                     }
-                    $scope.subNavStreams = data.data;
+                    $scope.subNavStreams = data;
                 });
             });
 
@@ -823,33 +857,6 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
-.directive('bootstrapWidth', ['$window', '$timeout', function ($window, $timeout) {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs) {
-            function updateBootstrapWidth () {
-                var width = $('body').innerWidth();
-
-                if (width < 768) {
-                    scope.app.bootstrapWidth = 'xs';
-                } else if (width < 993) {
-                    scope.app.bootstrapWidth = 'sm';
-                } else if (width < 1199) {
-                    scope.app.bootstrapWidth = 'md';
-                } else {
-                    scope.app.bootstrapWidth = 'lg';
-                }
-                $timeout(function () {
-                    scope.$apply();
-                });
-            }
-            updateBootstrapWidth();
-            angular.element($window).bind("resize", function() {
-                updateBootstrapWidth();
-            });
-        }
-    };
-}])
 .directive('hotsFiltering', ['$filter', '$timeout', function ($filter, $timeout) {
     return {
         restrict: 'A',
@@ -1244,7 +1251,7 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
-.directive('tempostormTv', ['TwitchService', 'Util', function (TwitchService, Util) {
+.directive('tempostormTv', ['Stream', 'Util', function (Stream, Util) {
     return {
         restrict: 'A',
         scope: false,
@@ -1257,17 +1264,21 @@ angular.module('app.directives', ['ui.load'])
                 return Util.numberWithCommas(x);
             }
 
-            TwitchService.getStreams().then(function(data) {
-                for (var i = 0; i < data.data.length; i++) {
-                    var log = data.data[i].screenshotUrl;
+            Stream.find({
+                filter: {
+                    order: 'viewerCount DESC'
+                }
+            }).$promise.then(function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    var log = data[i].screenshotUrl;
                     var sub = log.substr(4);
                     var im = "https" + sub;
-                    data.data[i].screenshotUrl = im;
-
-                    data.data[i].viewerCount = +data.data[i].viewerCount;
+                    data[i].screenshotUrl = im;
+                    
+                    data[i].viewerCount = +data[i].viewerCount;
                 }
                 scope.streamWheel = true;
-                scope.streams = data.data;
+                scope.streams = data;
             });
         }
     };

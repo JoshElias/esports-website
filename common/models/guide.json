@@ -1,0 +1,58 @@
+{
+  "name": "guide",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": true
+    },
+    "guideType": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "video": {
+        "type": "string"
+    },
+    "createdDate": {
+        "type": "date"
+    },
+    "premium": {
+        "type": "object"
+    },
+    "featured": {
+        "type": "boolean"
+    },
+    "votes": {
+      "type": [
+        "object"
+      ]
+    },
+    "votesCount": {
+        "type": "number"
+    },
+    "views": {
+        "type": "number"
+    },
+    "public": {
+        "type": "boolean"
+    },
+    "against": {
+        "type": "object"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
