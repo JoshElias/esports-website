@@ -125,5 +125,13 @@ module.exports = {
   "streamer": {
     "dataSource": "mongodb",
     "public": true
+  },
+  "talent": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "hero": {
+    "dataSource": "mongodb",
+    "public": true
   }
 }

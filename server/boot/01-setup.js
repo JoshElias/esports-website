@@ -23,13 +23,13 @@ module.exports = function(server) {
 
 
   server.use(require("prerender-node").set("prerenderToken", server.get("prerenderKey")));
-  server.use(favicon(path.join(__dirname, "..", "..", "favicon.ico")));
   server.use(compression({
   	threshold: 512
   }));
   server.use(bodyParser.json({limit: "1mb"}));
 
   server.use(methodOverride());
+  server.use(loopback.favicon());
   server.use(loopback.cookieParser(server.get("jwtSecret")));
   server.use(loopback.token({model:server.models.AccessToken}));
 

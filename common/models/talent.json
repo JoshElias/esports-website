@@ -1,0 +1,35 @@
+{
+  "name": "talent",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "className": {
+      "type": "string",
+      "required": true
+    },
+    "orderNum": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "heros": {
+      "type": "hasAndBelongsToMany",
+      "model": "talent"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
