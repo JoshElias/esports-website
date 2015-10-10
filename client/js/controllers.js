@@ -5457,10 +5457,10 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 }])
-.controller('DeckBuilderCtrl', ['$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data', 'toStep',
-    function ($q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data, toStep) {
+.controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'cards', 'classCardsCount', 'neutralCardsCount', 'toStep',
+    function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, cards, classCardsCount, neutralCardsCount, toStep) {
         // redirect back to class pick if no data
-        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+//        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
         
         $scope.isSecondary = function (klass) {
             switch(klass) {
@@ -5500,7 +5500,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.getActiveDeckName = function () {
-            return Hearthstone.heroNames[$scope.deck.playerClass][$scope.isSecondary($scope.deck.playerClass.toLowerCase())];
+            return Hearthstone.heroNames[$stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1)][$scope.isSecondary($stateParams.playerClass)];
         }
 
         // steps
@@ -5545,9 +5545,9 @@ angular.module('app.controllers', ['ngCookies'])
             return classCards;
         }
         
-        $scope.className = data.className;
-        $scope.cards = data.cards;
-        $scope.cards.current = $scope.cards.class;
+        $scope.className = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
+        $scope.cards = cards;
+        $scope.cards.current = cards;
         
         $scope.search = function() {
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
@@ -5571,7 +5571,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         // page flipping
-        $scope.classPagination = AjaxPagination.new(15, data.classTotal,
+        $scope.classPagination = AjaxPagination.new(15, classCardsCount,
             function (page, perpage) {
                 var d = $q.defer();
 
@@ -5583,7 +5583,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
         );
         
-        $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
+        $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount,
             function (page, perpage) {
                 var d = $q.defer();
                 updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
@@ -5676,7 +5676,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.deckTypes = Hearthstone.deckTypes;
         
         //$scope.deck = DeckBuilder.new(data.className);
-        $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && data.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new(data.className, $scope.app.settings.deck) : DeckBuilder.new(data.className);
+        $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
         $scope.$watch('deck', function(){
             $scope.app.settings.deck = {
                 name: $scope.deck.name,

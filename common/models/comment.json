@@ -29,6 +29,9 @@
     },
     "guideId": {
       "type": "string"
+    },
+    "deckId": {
+        "type": "string"
     }
   },
   "validations": [],
