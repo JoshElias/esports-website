@@ -273,8 +273,8 @@
                             <div class="db-cards-view-wrapper clearfix">
                                 <div class="db-cards-view clearfix" ng-if="!fetching">
                                     <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in cards.current">
-                                        <a href="#" data-tooltip-img="{{app.cdn}}cards/{{card.photos.large}}" ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
-                                            <img ng-src="{{app.cdn}}cards/{{card.photos.medium}}" alt="{{card.name}}">
+                                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
+                                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="{{card.name}}">
                                         </a>
                                     </div>
                                     <div class="db-cards-no-match" ng-show="!cards.current.length">No Matches Found</div>

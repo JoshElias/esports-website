@@ -5457,8 +5457,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 }])
-.controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'cards', 'classCardsCount', 'neutralCardsCount', 'toStep',
-    function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, cards, classCardsCount, neutralCardsCount, toStep) {
+.controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep',
+    function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep) {
         // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
         
@@ -5546,8 +5546,11 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.className = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
-        $scope.cards = cards;
-        $scope.cards.current = cards;
+        $scope.cards = {
+            neutral: neutralCardsList,
+            class: classCardsList,
+            current: classCardsList
+        };
         
         $scope.search = function() {
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
@@ -5555,40 +5558,127 @@ angular.module('app.controllers', ['ngCookies'])
         
         function updateCards (page, perpage, search, mechanics, mana, callback) {
             $scope.fetching = true;
-            DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
-                $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
-                $scope.classPagination.page = page;
-                $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
-                $scope.neutralPagination.page = page;
-                $timeout(function () {
-                    $scope.cards.current = ($scope.isClassCards()) ? data.cards.class : data.cards.neutral;
-                    $scope.fetching = false;
-                    if (callback) {
-                        return callback(data);
+            
+            var options = {
+                filter: {
+                    where: {
+                        playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
+                        deckable: true
+                    },
+                    order: ["cost ASC", "cardType ASC", "name ASC"],
+                    skip: ((page * perpage) - perpage),
+                    limit: perpage
+                }
+            }
+            var countOptionsClass = {
+                    where: {
+                        playerClass: $scope.className,
+                        deckable: true
                     }
+                }
+            var countOptionsNeutral = {
+                where: {
+                    playerClass: 'Neutral',
+                    deckable: true
+                }
+            }
+            
+            if ($scope.search.length > 0) {
+                options.filter.where.or = [
+                    { name: { regexp: search } },
+                    { description: { regexp: search } },
+                    { content: { regexp: search } }
+                ]
+                
+                countOptionsClass.where.or = [
+                    { name: { regexp: search } },
+                    { description: { regexp: search } },
+                    { content: { regexp: search } }
+                ]
+                
+                countOptionsNeutral.where.or = [
+                    { name: { regexp: search } },
+                    { description: { regexp: search } },
+                    { content: { regexp: search } }
+                ]
+            }
+            
+            if (mechanics.length == 1) {
+                options.filter.where.mechanics = {
+                    inq: mechanics
+                }
+                
+                countOptionsClass.where.mechanics = {
+                    inq: mechanics
+                }
+                
+                countOptionsNeutral.where.mechanics = {
+                    inq: mechanics
+                }
+            } else if (mechanics.length > 1) {
+                options.filter.where.mechanics = mechanics
+                countOptionsClass.where.mechanics = mechanics
+                countOptionsNeutral.where.mechanics = mechanics
+            }
+            
+            if (mana != 'all' && mana != '7+') {
+                options.filter.where.cost = mana;
+                countOptionsClass.where.cost = mana;
+                countOptionsNeutral.where.cost = mana;
+            } else if (mana == '7+') {
+                options.filter.where.cost = { gte: 7 };
+                countOptionsClass.where.cost = { gte: 7 };
+                countOptionsNeutral.where.cost = { gte: 7 };
+            }
+            
+            Card.count(countOptionsClass)
+            .$promise
+            .then(function (classCount) {
+                Card.count(countOptionsNeutral)
+                .$promise
+                .then(function (neutralCount) {
+                    Card.find(options)
+                    .$promise
+                    .then(function (data) {
+                        
+                        $scope.classPagination.total = classCount.count;
+                        $scope.classPagination.page = page;
+                        $scope.neutralPagination.total = neutralCount.count;
+                        $scope.neutralPagination.page = page;
+                        
+                        $timeout(function () {
+                            $scope.cards.current = data;
+                            $scope.fetching = false;
+                            if (callback) {
+                                return callback([classCount.count, neutralCount.count]);
+                            }
+                        });
+                    });
                 });
             });
         }
         
         // page flipping
-        $scope.classPagination = AjaxPagination.new(15, classCardsCount,
+        $scope.classPagination = AjaxPagination.new(15, classCardsCount.count,
             function (page, perpage) {
                 var d = $q.defer();
 
                 updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
-                    d.resolve(data.classTotal);
+                    d.resolve(data[0]);
                 });
 
                 return d.promise;
             }
         );
         
-        $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount,
+        $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount.count,
             function (page, perpage) {
+            
                 var d = $q.defer();
                 updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
-                    d.resolve(data.neutralTotal);
+                    d.resolve(data[1]);
                 });
+            
                 return d.promise;
             }
         );
@@ -5610,13 +5700,13 @@ angular.module('app.controllers', ['ngCookies'])
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
         }
         $scope.toggleMechanic = function (mechanic) {
-            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
             var index = $scope.filters.mechanics.indexOf(mechanic);
             if (index === -1) {
                 $scope.filters.mechanics.push(mechanic);
             } else {
                 $scope.filters.mechanics.splice(index, 1);
             }
+            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
         }
         
         // filter by mechanics
@@ -5677,7 +5767,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         //$scope.deck = DeckBuilder.new(data.className);
         $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
-        $scope.$watch('deck', function(){
+        $scope.$watch('deck', function() {
             $scope.app.settings.deck = {
                 name: $scope.deck.name,
                 deckType: $scope.deck.deckType,

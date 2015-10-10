@@ -250,7 +250,6 @@ var app = angular.module('app', [
                                         include: ["author", "comments"]
                                         //TODO: Filter author include
                                     }
-                                    
                                 }).$promise;
                             }]
                         }
@@ -509,26 +508,31 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.deck-builder.build.html',
                         controller: 'DeckBuilderCtrl',
                         resolve: {
-                            classCards: ['$stateParams', 'Card', function ($stateParams, Card) {
+                            classCardsList: ['$stateParams', 'Card', function ($stateParams, Card) {
                                 var perpage = 15,
                                     playerClass = $stateParams.playerClass;
 
                                 return Card.find({
                                     filter: {
                                         where: {
-                                            playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1)
+                                            playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1),
+                                            deckable: true
                                         },
+                                        order: ["cost ASC", "cardType ASC", "name ASC"],
                                         limit: perpage,
                                     }
                                 })
                                 .$promise;
                             }],
-                            neutralCards: ['Card', function (Card) {
+                            neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
                                         where: {
-                                            playerClass: 'Neutral'
-                                        }
+                                            playerClass: 'Neutral',
+                                            deckable: true
+                                        },
+                                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                                        limit: 15
                                     }
                                 })
                                 .$promise;
