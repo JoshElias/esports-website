@@ -23,7 +23,12 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "guides": {
+      "type": "hasAndBelongsToMany",
+      "model": "guide"
+    }
+  },
   "acls": [],
   "methods": {}
 }

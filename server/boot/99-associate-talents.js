@@ -1,7 +1,7 @@
 
 var async = require("async");
 
-
+var talentsAdded = 0;
 module.exports = function(server) {
   /*
 	 var Talent = server.models.talent;
@@ -18,11 +18,17 @@ module.exports = function(server) {
     		console.log("creating user identies");
     		async.eachSeries(heros, function(hero, callback) {
           async.eachSeries(hero.oldTalents, function(talent, innerCallback) {
-            Talent.findOne({_id:talent._id}, function(err, talentInstance) {
-                hero.talents.add(talentInstance, function(err) {
-                  console.log("added new herotalent")
-                  innerCallback(err);
+            console.log("searching on talent name:",talent.name)
+            Talent.findOne({where:{name:talent.name}}, function(err, talentInstance) {
+              if(err) innerCallback(err);
+              else {
+                console.log("added talent Instance:", talentInstance.name);
+                console.log("to hero:", hero.name);
+                talentInstance.heroes.add(hero, function(err) {
+                  if(err) console.log(err);
+                   innerCallback(err);
                 });
+              }
             });
           }, callback);
 			  }, seriesCallback);

@@ -133,5 +133,9 @@ module.exports = {
   "hero": {
     "dataSource": "mongodb",
     "public": true
+  },
+  "guide": {
+    "dataSource": "mongodb",
+    "public": true
   }
 }

@@ -22,16 +22,16 @@
       "type": "string"
     },
     "video": {
-        "type": "string"
+      "type": "string"
     },
     "createdDate": {
-        "type": "date"
+      "type": "date"
     },
     "premium": {
-        "type": "object"
+      "type": "object"
     },
     "featured": {
-        "type": "boolean"
+      "type": "boolean"
     },
     "votes": {
       "type": [
@@ -39,20 +39,57 @@
       ]
     },
     "votesCount": {
-        "type": "number"
+      "type": "number"
     },
     "views": {
-        "type": "number"
+      "type": "number"
     },
     "public": {
-        "type": "boolean"
+      "type": "boolean"
     },
     "against": {
-        "type": "object"
+      "type": "object"
+    },
+    "authorId": {
+      "type": "string"
+    },
+    "oldMaps": {
+      "type": [
+        "string"
+      ]
+    },
+    "oldComments": {
+      "type": [
+        "string"
+      ]
+    },
+    "oldHeroes": {
+      "type": [
+        "string"
+      ]
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "author": {
+      "type": "hasOne",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "guideId"
+    },
+    "maps": {
+      "type": "hasAndBelongsToMany",
+      "model": "map"
+    },
+    "heroes": {
+      "type": "hasAndBelongsToMany",
+      "model": "hero"
+    }
+  },
   "acls": [],
   "methods": {}
 }

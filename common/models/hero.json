@@ -1,5 +1,6 @@
 {
   "name": "hero",
+  "plural": "heroes",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
@@ -50,7 +51,12 @@
       "type": "string"
     },
     "oldTalents": {
-      "type": ["object"]
+      "type": [
+        "object"
+      ]
+    },
+    "talentTiers": {
+      "type": "object"
     }
   },
   "validations": [],
@@ -58,6 +64,10 @@
     "talents": {
       "type": "hasAndBelongsToMany",
       "model": "talent"
+    },
+    "guides": {
+      "type": "hasAndBelongsToMany",
+      "model": "guide"
     }
   },
   "acls": [],

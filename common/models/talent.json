@@ -25,9 +25,9 @@
   },
   "validations": [],
   "relations": {
-    "heros": {
+    "heroes": {
       "type": "hasAndBelongsToMany",
-      "model": "talent"
+      "model": "hero"
     }
   },
   "acls": [],
