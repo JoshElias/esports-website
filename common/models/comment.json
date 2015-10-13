@@ -31,7 +31,10 @@
       "type": "string"
     },
     "deckId": {
-        "type": "string"
+      "type": "string"
+    },
+    "snapshotId": {
+      "type": "string"
     }
   },
   "validations": [],
@@ -55,6 +58,11 @@
       "type": "belongsTo",
       "model": "guide",
       "foreignKey": "guideId"
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
     }
   },
   "acls": [],

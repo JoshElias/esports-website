@@ -137,5 +137,25 @@ module.exports = {
   "guide": {
     "dataSource": "mongodb",
     "public": true
+  },
+  "deckTier": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "deckTech": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "cardTech": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "snapshotAuthor": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "deckMatchup": {
+    "dataSource": "mongodb",
+    "public": true
   }
 }

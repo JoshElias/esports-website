@@ -40,7 +40,28 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "deckMatchups": {
+      "type": "hasMany",
+      "model": "deckMatchup",
+      "foreignKey": "snapshotId"
+    },
+    "authors": {
+      "type": "hasMany",
+      "model": "snapshotAuthor",
+      "foreignKey": "snapshotId"
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "snapshotId"
+    },
+    "deckTiers": {
+      "type": "hasMany",
+      "model": "deckTier",
+      "foreignKey": "deckId"
+    }
+  },
   "acls": [],
   "methods": {}
 }

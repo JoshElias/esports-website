@@ -3,6 +3,7 @@ var async = require("async");
 
 var talentsAdded = 0;
 module.exports = function(server) {
+	/*
 	  var Guide = server.models.guide;
     var Hero = server.models.hero;
 
@@ -37,4 +38,5 @@ module.exports = function(server) {
     	if(err) console.log("ERR creating user identities:", err);
     	else console.log("Donerino");
     });
+		*/
 };

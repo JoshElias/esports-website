@@ -1,0 +1,38 @@
+{
+  "name": "deckMatchup",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "deckName": {
+      "type": "string"
+    },
+    "className": {
+      "type": "string"
+    },
+    "forChance": {
+      "type": "number"
+    },
+    "againstChance": {
+      "type": "number"
+    },
+    "forDeckId": {
+      "type": "string"
+    },
+    "againstDeckId": {
+      "type": "string"
+    },
+    "snapshotId": {
+      "type": "string"
+    },
+    "deckId": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
