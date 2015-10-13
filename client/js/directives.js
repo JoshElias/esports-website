@@ -1287,34 +1287,32 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
-.directive('twitterFeed', ['$sce', 'TwitterPost', function ($sce, TwitterPost) {
+.directive('twitterFeed', ['$sce', 'Tweet', function ($sce, Tweet) {
     return {
         restrict: 'A',
         templateUrl: tpl + 'views/frontend/directives/twitter.tweets.html',
         link: function (scope, element, attrs) {
             scope.twitWheel = false;
             scope.tweets = undefined;
-
             var num = 6;
 
-            TwitterPost.find({
+            Tweet.find({
                 filter: {
+                    limit: 6,
                     order: "createdDate DESC"
-                },
-                limit: num
-            }, function(tweets) {
+                }
+            })
+            .$promise
+            .then(function(tweets) {
                 console.log(tweets);
+                
                 scope.twitWheel = true;
-                scope.tweets = tweets[0].feed;
-            }, function (err) {
-                console.log("Sorry, we cannot get the twitter feed right now. Error: " + err);
-                //TODO: handle the exception
+                scope.tweets = tweets;
             });
 
             scope.getContent = function (c) {
                 return $sce.trustAsHtml(c);
             };
-
         }
     };
 }])

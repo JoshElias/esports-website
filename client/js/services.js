@@ -1035,6 +1035,7 @@ angular.module('app.services', [])
             total: total || 0,
             loading: false,
             callback: function (newTotal) {
+                console.log(newTotal);
                 this.loading = false;
                 this.total = newTotal;
             }
@@ -1236,7 +1237,7 @@ angular.module('app.services', [])
         d.setMonth(d.getMonth() + 1);
 
         var db = {
-            _id: data._id || null,
+            id: data.id || null,
             name: data.name || '',
             description: data.description || '',
             deckType: data.deckType || 'None',
@@ -1393,7 +1394,7 @@ angular.module('app.services', [])
             var c = (withCoin) ? mulligan.withCoin.cards : mulligan.withoutCoin.cards;
             // check if card already exists
             for (var i = 0; i < c.length; i++) {
-                if (c[i]._id === card._id) {
+                if (c[i].id === card.id) {
                     return true;
                 }
             }
@@ -1407,7 +1408,7 @@ angular.module('app.services', [])
 
             // check if card already exists
             for (var i = 0; i < c.length; i++) {
-                if (c[i]._id === card._id) {
+                if (c[i].id === card.id) {
                     exists = true;
                     index = i;
                     break;
@@ -1444,7 +1445,7 @@ angular.module('app.services', [])
 
             // check if card already exists
             for (var i = 0; i < db.cards.length; i++) {
-                if (db.cards[i]._id === card._id) {
+                if (db.cards[i].id === card.id) {
                     exists = true;
                     index = i;
                     break;
@@ -1466,7 +1467,7 @@ angular.module('app.services', [])
 
             // check if card already exists
             for (var i = 0; i < db.cards.length; i++) {
-                if (db.cards[i]._id === card._id) {
+                if (db.cards[i].id === card.id) {
                     exists = true;
                     index = i;
                     break;
@@ -1482,15 +1483,15 @@ angular.module('app.services', [])
             } else {
                 // add new card
                 db.cards.push({
-                    _id: card._id,
+                    id: card.id,
                     cost: card.cost,
                     name: card.name,
                     cardType: card.cardType,
                     dust: card.dust,
                     photos: {
-                        small: card.photos.small,
-                        medium: card.photos.medium,
-                        large: card.photos.large
+                        small: card.photoNames.small,
+                        medium: card.photoNames.medium,
+                        large: card.photoNames.large
                     },
                     legendary: isLegendary,
                     qty: 1
@@ -1539,7 +1540,7 @@ angular.module('app.services', [])
 
         db.removeCardFromDeck = function (card) {
             for (var i = 0; i < db.cards.length; i++) {
-                if (card._id == db.cards[i]._id) {
+                if (card.id == db.cards[i].id) {
                     if (db.cards[i].qty > 1) {
                         db.cards[i].qty = db.cards[i].qty - 1;
                     } else {
@@ -1696,7 +1697,7 @@ angular.module('app.services', [])
 
     deckBuilder.updateDeck = function (deck) {
         return $http.post('/api/deck/update', {
-            _id: deck._id,
+            id: deck.id,
             name: deck.name,
             deckType: deck.deckType,
             description: deck.description,
