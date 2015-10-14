@@ -71,6 +71,13 @@
       "foreignKey": "authorId"
     }
   },
-  "acls": [],
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "findById"
+    }
+  ],
   "methods": {}
 }
