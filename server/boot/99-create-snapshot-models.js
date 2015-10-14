@@ -57,14 +57,14 @@ module.exports = function(server) {
 		}
 
 		function createDeckTier(snapshot, finalCallback) {
+			snapshot.deckTiers = [];
 			async.eachSeries(snapshot.tiers, function(tier, seriesCallback) {
-				snapshot.deckTiers = [];
 				async.eachSeries(tier.decks, function(deck, innerCallback) {
 					try {
 						var deckTier = {
 							description: deck.explanation,
 							weeklyNotes: deck.weeklyNotes,
-							deckId: deck.deck,
+							deckId: deck.deck.toString(),
 							tier: tier.tier,
 							ranks: deck.rank.last
 						}
@@ -73,8 +73,11 @@ module.exports = function(server) {
 					}
 
 					DeckTier.insert(deckTier, function(err, newDeckTier) {
-						if(newDeckTier) snapshot.deckTiers.push(newDeckTier);
-						innerCallback(err);
+						if(err) innerCallback(err);
+						else(newDeckTier) {
+								deck.deckTier = newDeckTier;
+								innerCallback();
+						}
 					});
 				}, seriesCallback);
 			}, finalCallback);
@@ -88,25 +91,53 @@ module.exports = function(server) {
 							var deckTech = {
 								title: tech.title,
 								orderNum: tech.orderNum,
-								deckId: deck.deck,
-
+								deckId: deck.deck.toString(),
+								deckTierId: deck.deckTier.id.toString()
 							}
 						} catch(err) {
 							innerCallback(err);
 						}
 
-						DeckTech.insert(deckTech, function(err) {
-							innerCallback(err);
+						DeckTech.insert(deckTech, function(err, newDeckTech) {
+							if(err) innerCallback(err);
+							else {
+								tech.deckTech = newDeckTech;
+								superInnerCallback();
+							}
 						});
-
-
 					}, innerCallback);
 				}, seriesCallback);
 			}, finalCallback);
 		}
 
 		function createCardTech(snapshot, finalCallback) {
+			async.eachSeries(snapshot.tiers, function(tier, seriesCallback) {
+				async.eachSeries(tier.decks, function(deck, innerCallback) {
+					async.eachSeries(deck.tech, function(tech, superInnerCallback) {
+						async.eachSeries(tech.cards, function(card, retardedInnerCallback) {
 
+						});
+						try {
+							var deckTech = {
+								title: tech.title,
+								orderNum: tech.orderNum,
+								deckId: deck.deck.toString(),
+								deckTierId: deck.deckTier.id.toString()
+							}
+						} catch(err) {
+							innerCallback(err);
+						}
+
+						DeckTech.insert(deckTech, function(err, newDeckTech) {
+							if(err) innerCallback(err);
+							else {
+								tech.deckTech = newDeckTech;
+								superInnerCallback();
+							}
+						});
+					}, innerCallback);
+				}, seriesCallback);
+			}, finalCallback);
 		}
 
 		function createSnapshotAuthor(snapshot, finalCallback) {
@@ -116,6 +147,5 @@ module.exports = function(server) {
 		function createDeckMatchup(snapshot, finalCallback) {
 
 		}
-*/
-
+		*/
 };

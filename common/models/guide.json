@@ -59,14 +59,13 @@
       ]
     },
     "oldComments": {
-      "type": [
-        "string"
-      ]
+      "type": [ "string" ]
     },
     "oldHeroes": {
-      "type": [
-        "string"
-      ]
+      "type": [ "object" ]
+    },
+    "talentTiers": {
+      "type": "object"
     }
   },
   "validations": [],
@@ -88,6 +87,10 @@
     "heroes": {
       "type": "hasAndBelongsToMany",
       "model": "hero"
+    },
+    "talents": {
+      "type": "hasAndBelongsToMany",
+      "model": "talent"
     }
   },
   "acls": [],
