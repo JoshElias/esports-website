@@ -9447,13 +9447,14 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
     function ($q, $scope, $state, $timeout, $filter, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
-        $scope.communityGuides = dataCommunityGuides.guides;
-        $scope.topGuides = (dataTopGuide.total) ? dataTopGuide.guides : false;
-        $scope.tempostormGuides = dataTempostormGuides.guides;
+      console.log(dataCommunityGuides);
+        $scope.communityGuides = dataCommunityGuides;
+        $scope.topGuides = dataTopGuide ? dataTopGuide : false;
+        $scope.tempostormGuides = dataTempostormGuides;
         
         // filtering
-        $scope.heroes = dataHeroes.heroes;
-        $scope.maps = dataMaps.maps;
+        $scope.heroes = dataHeroes;
+        $scope.maps = dataMaps;
         $scope.filters = {
             roles: [],
             universes: [],
@@ -9486,73 +9487,73 @@ angular.module('app.controllers', ['ngCookies'])
         
         // top guide
         $scope.getTopGuideHeroBg = function (guide) {
-            return ($scope.app.bootstrapWidth !== 'xs') ? $scope.getGuideCurrentHero(guide).hero.className : '';
+//            return ($scope.app.bootstrapWidth !== 'xs') ? $scope.getGuideCurrentHero(guide).className : '';
         };
         
         $scope.isLarge = function () {
-            var width = $scope.app.bootstrapWidth;
-            return (width === 'lg' || width === 'md') ? 'large' : '';
+//            var width = $scope.app.bootstrapWidth;
+//            return (width === 'lg' || width === 'md') ? 'large' : '';
         };
         
         // guides
         $scope.getGuideCurrentHero = function (guide) {
-            return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
+            // return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
         };
         
         $scope.getGuideClass = function (guide) {
-            return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
+            // return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
         };
         
         $scope.guidePrevHero = function ($event, guide) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            
-            var currentHero = $scope.getGuideCurrentHero(guide),
-                index = 0;
-            
-            // get index of current hero
-            for (var i = 0; i < guide.heroes.length; i++) {
-                if (currentHero.hero._id == guide.heroes[i].hero._id) {
-                    index = i;
-                    break;
-                }
-            }
-            
-            guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
+//            $event.preventDefault();
+//            $event.stopPropagation();
+//            
+//            var currentHero = $scope.getGuideCurrentHero(guide),
+//                index = 0;
+//            
+//            // get index of current hero
+//            for (var i = 0; i < guide.heroes.length; i++) {
+//                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+//                    index = i;
+//                    break;
+//                }
+//            }
+//            
+//            guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
         };
 
         $scope.guideNextHero = function ($event, guide) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            
-            var currentHero = $scope.getGuideCurrentHero(guide),
-                index = 0;
-            
-            // get index of current hero
-            for (var i = 0; i < guide.heroes.length; i++) {
-                if (currentHero.hero._id == guide.heroes[i].hero._id) {
-                    index = i;
-                    break;
-                }
-            }
-            
-            guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
+//            $event.preventDefault();
+//            $event.stopPropagation();
+//            
+//            var currentHero = $scope.getGuideCurrentHero(guide),
+//                index = 0;
+//            
+//            // get index of current hero
+//            for (var i = 0; i < guide.heroes.length; i++) {
+//                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+//                    index = i;
+//                    break;
+//                }
+//            }
+//            
+//            guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
         };
         
         $scope.getTalents = function (hero, tier) {
-            var out = [];
-            
-            for (var i = 0; i < hero.hero.talents.length; i++) {
-                if (hero.hero.talents[i].tier === tier) {
-                    out.push(hero.hero.talents[i]);
-                }
-            }
-            
-            return out;
+//            var out = [];
+//            
+//            for (var i = 0; i < hero.hero.talents.length; i++) {
+//                if (hero.hero.talents[i].tier === tier) {
+//                    out.push(hero.hero.talents[i]);
+//                }
+//            }
+//            
+//            return out;
         };
         
         $scope.selectedTalent = function (hero, tier, talent) {
-            return (hero.talents['tier' + tier]._id == talent._id);
+            // return (hero.talents['tier' + tier]._id == talent._id);
         };
         
         $scope.getTalent = function (hero, tier) {
