@@ -363,7 +363,6 @@ angular.module('app.controllers', ['ngCookies'])
           }
           
           Article.find(options).$promise.then(function (data) {
-            console.log(data);
               $timeout(function () {
                   $scope.articles = data;
               });
@@ -9327,6 +9326,33 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
                 
+              
+              var options = {
+                filter: {
+                  where: {
+                    
+                  }
+                }
+              };
+              
+              console.log($scope.filters);
+              
+              // check if a hero is selected, --> use that if selected
+              // check if any filters are present, --> use those
+              // check if map filters are present, --> use all filters at same time
+              
+//              var allFilters = $scope.getFilters();
+              
+//              // if filters exists
+//              if(allFilters) {
+//                if($scope.filters.heroes.length > 0) {
+//                  options.filter.where.heroes = {
+//                    inq: 
+//                  };
+//                }
+//                
+//              }
+              
                 // load articles
                 ArticleService.getArticles('hots', articleFilters, 0, 6).then(function (data) {
                     $timeout(function () {
@@ -9363,12 +9389,11 @@ angular.module('app.controllers', ['ngCookies'])
         
         // guides
         $scope.getGuideCurrentHero = function (guide) {
-          console.log(guide);
             return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
         };
         
         $scope.getGuideClass = function (guide) {
-            return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
+            return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
         };
         
         $scope.guidePrevHero = function ($event, guide) {

@@ -679,17 +679,13 @@ var app = angular.module('app', [
                                   fields: {
                                     name: true,
                                     votesCount: true,
-                                    description: true,
                                     authorId: true,
                                     createdDate: true,
                                     premium: true,
-                                    against: true,
-                                    oldHeroes: true,
                                     guideType: true,
-                                    synergy: true,
-                                    oldHeroes: true,
+                                    id: true
                                   },
-                                  include: ['author']
+                                  include: ['author', 'heroes']
                                 }
                               }).$promise;
                             }],
@@ -706,17 +702,13 @@ var app = angular.module('app', [
                                   fields: {
                                     name: true,
                                     votesCount: true,
-                                    description: true,
                                     authorId: true,
                                     createdDate: true,
                                     premium: true,
-                                    against: true,
-                                    oldHeroes: true,
                                     guideType: true,
-                                    synergy: true,
-                                    oldHeroes: true,
+                                    id: true
                                   },
-                                  include: ['author']
+                                  include: ['author', 'heroes']
                                 }
                               }).$promise;
                             }],
