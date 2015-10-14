@@ -9225,8 +9225,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'Guide', 
-    function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, Guide) {
+.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'Guide', 'Hero',
+    function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, Guide, Hero) {
         // data
         $scope.heroes = dataHeroes;
         $scope.maps = dataMaps;
@@ -9271,17 +9271,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         function getFilters (isTempostorm) {
-            var options = {
-                filter: {
-                    where: {
-                        featured: isTempostorm
-                    }
-                }
-            };
-            
-            if ($scope.filters.heroes.length > 0) {
-                options.filter.where.hero = { inq: $scope.filters.heroes }
-            }
+
 //            // check for no filters
 //            if (!$scope.filters.roles.length && 
 //                !$scope.filters.universes.length && 
@@ -9324,6 +9314,40 @@ angular.module('app.controllers', ['ngCookies'])
             return false;
         };
         
+        function getHeroQuery (isTempostorm) {
+            var temp = [],
+                options = {
+                    filter: {
+                        include: {
+                            relation: 'guides',
+                            scope: {
+                                where: {
+                                    featured: isTempostorm
+                                },
+                                include: [
+                                    {
+                                        relation: 'author'
+                                    },
+                                    {
+                                        relation: 'heroes'
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                };
+
+            for (var i = 0; i < $scope.filters.heroes.length; i++) {
+                temp.push($scope.filters.heroes[i].name);
+            }
+
+            options.filter.where = {
+                name: { inq: temp }
+            }
+            
+            return options;
+        }
+        
         var initializing = true;
         $scope.$watch(function(){ return $scope.filters; }, function (value) {
             if (initializing) {
@@ -9343,49 +9367,75 @@ angular.module('app.controllers', ['ngCookies'])
               // check if any filters are present, --> use those
               // check if map filters are present, --> use all filters at same time
               
-//              var allFilters = $scope.getFilters();
-              
-//              // if filters exists
-//              if(allFilters) {
-//                if($scope.filters.heroes.length > 0) {
-//                  options.filter.where.heroes = {
-//                    inq: 
-//                  };
-//                }
-//                
-//              }
-              
-                // load articles
-//                Article.find('hots', articleFilters, 0, 6).then(function (data) {
-//                    $timeout(function () {
-//                        $scope.articles = data.articles;
-//                    });
-//                });
-              
-//                Article.find({
-//                  filter: {
-//                    limit: 6,
-//                    where: {
-//                      or: articleFilters
-//                    }
-//                  }
-//                }).$promise.then(function (data) {
-//                  console.log(data);
-//                });
-                
-                // load tempostorm guides
-                Guide.find(getFilters(true)).$promise.then(function (data) {
-                    $timeout(function () {
-                        $scope.guidesFeatured = data.guides;
+                if ($scope.filters.heroes.length > 0) {
+                    // load tempostorm guides
+                    Hero.find(getHeroQuery(true))
+                    .$promise
+                    .then(function (data) {
+                        console.log(data);
+                        $timeout(function () {
+                            $scope.guidesFeatured = data[0].guides;
+                        });
+                    })
+                    .catch(function (err) {
+                        console.log("Error:", err);
                     });
-                });
-                
-                // load community guides
-                Guide.find(getFilters(false)).$promise.then(function (data) {
-                    $timeout(function () {
-                        $scope.guidesCommunity = data.guides;
+
+                    // load community guides
+                    Hero.find(getHeroQuery(false))
+                    .$promise
+                    .then(function (data) {
+                        console.log(data);
+                        $timeout(function () {
+                            $scope.guidesCommunity = data[0].guides;
+                        });
+                    })
+                    .catch(function (err) {
+                        console.log("Error:", err);
                     });
-                });
+                    
+                } else {
+                    var options = {
+                        filter: {
+                            fields: {
+                                name: true,
+                                votesCount: true,
+                                authorId: true,
+                                createdDate: true,
+                                premium: true,
+                                guideType: true,
+                                id: true
+                              },
+                            include: [
+                                {
+                                    relation: 'author'
+                                }, 
+                                {
+                                    relation: 'heroes',
+                                    scope: {
+                                        include: ['talents']
+                                    }
+                                }, 
+                                {
+                                    relation: 'maps'
+                                }
+                            ]
+                        }
+                    }
+                    Guide.find(options)
+                    .$promise
+                    .then(function (data) {
+                        console.log(data);
+                        $timeout(function () {
+                            $scope.guidesCommunity = data;
+                        });
+                    })
+                    .catch(function () {
+                        
+                    });
+                }
+                
+
             }
         }, true);
         
