@@ -77,7 +77,7 @@ var app = angular.module('app', [
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {
                 console.log(event);
-                console.log('hey you don goofed. fag');
+                console.log('hey you don goofed. lol k , (happy martin i removed fag)');
 //                $state.transitionTo('app.404');
             });
         }
@@ -823,8 +823,21 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.talentCalculator.html',
                         controller: 'HOTSTalentCalculatorCtrl',
                         resolve: {
-                            dataHeroesList: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroesList();
+                            heroes: ['Hero', function (Hero) {
+                                return Hero.find({
+                                    filter: {
+                                        fields: {
+                                            className: true,
+                                            description: true,
+                                            heroType: true,
+                                            name: true,
+                                            role: true,
+                                            title: true,
+                                            universe: true
+                                        }
+                                    }
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -833,17 +846,17 @@ var app = angular.module('app', [
             .state('app.hots.talentCalculator.redirect', {
                 url: '',
                 resolve: {
-                    dataHeroesList: ['HeroService', '$q', function (HeroService, $q) {
-                        return HeroService.getHeroesList().then(function (result) {
-                            if (result.success === true) {
-                                return result;
-                            } else {
-                                return $q.reject('unable to find hero');
+                    dataHeroesList: ['Hero', '$q', function (Hero, $q) {
+                        return Hero.find({
+                            filter: {
+                                fields: {
+                                    className: true
+                                }
                             }
-                        });
+                        }).$promise;
                     }],
                     redirect: ['$q', '$state', 'dataHeroesList', function ($q, $state, dataHeroesList) {
-                        $state.go('app.hots.talentCalculator.hero', { hero: dataHeroesList.heroes[0].className });
+                        $state.go('app.hots.talentCalculator.hero', { hero: dataHeroesList[0].className });
                         return $q.reject();
                     }]
                 },
@@ -856,14 +869,23 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.talentCalculator.hero.html',
                         controller: 'HOTSTalentCalculatorHeroCtrl',
                         resolve: {
-                            dataHero: ['$stateParams', '$q', 'HeroService', function ($stateParams, $q, HeroService) {
+                            hero: ['$stateParams', '$q', 'Hero', '$filter', '$state', function ($stateParams, $q, Hero, $filter, $state) {
                                 var hero = $stateParams.hero;
-                                return HeroService.getHeroByClass(hero).then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find hero');
+                                return Hero.findOne({
+                                    filter: {
+                                        where: {
+                                            className: hero
+                                        },
+                                        include: ['talents']
                                     }
+                                })
+                                .$promise
+                                .then(function (hero) {
+                                    return hero;
+                                })
+                                .catch(function(err) {
+                                    console.log(err.status, err.data.error.code, "REDIRECTING");
+                                    $state.go('app.hots.talentCalculator.redirect')
                                 });
                             }]
                         }
