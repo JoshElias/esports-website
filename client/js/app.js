@@ -679,17 +679,13 @@ var app = angular.module('app', [
                                   fields: {
                                     name: true,
                                     votesCount: true,
-                                    description: true,
                                     authorId: true,
                                     createdDate: true,
                                     premium: true,
-                                    against: true,
-                                    oldHeroes: true,
                                     guideType: true,
-                                    synergy: true,
-                                    oldHeroes: true,
+                                    id: true
                                   },
-                                  include: ['author']
+                                  include: ['author', 'heroes']
                                 }
                               }).$promise;
                             }],
@@ -706,17 +702,13 @@ var app = angular.module('app', [
                                   fields: {
                                     name: true,
                                     votesCount: true,
-                                    description: true,
                                     authorId: true,
                                     createdDate: true,
                                     premium: true,
-                                    against: true,
-                                    oldHeroes: true,
                                     guideType: true,
-                                    synergy: true,
-                                    oldHeroes: true,
+                                    id: true
                                   },
-                                  include: ['author']
+                                  include: ['author', 'heroes']
                                 }
                               }).$promise;
                             }],
@@ -753,24 +745,102 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-                            dataCommunityGuides: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
-                                return HOTSGuideService.getGuidesCommunity(false, 0, 10, false, false);
+//                            dataCommunityGuides: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+//                                return HOTSGuideService.getGuidesCommunity(false, 0, 10, false, false);
+//                            }],
+                            dataCommunityGuides: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                              return Guide.find({
+                                filter: {
+                                  limit: 10,
+                                  order: 'VotesCount DESC',
+                                  fields: {
+                                    authorId: true,
+                                    name: true,
+                                    votesCount: true,
+                                    createdDate: true,
+                                    premium: true,
+                                    guideType: true
+                                  },
+                                  where: {
+                                    featured: false
+                                  },
+                                  include: [
+                                    {
+                                      relation: 'author'
+                                    },
+                                    {
+                                      relation: 'heroes',
+                                      scope: {
+                                        include: ['talents']
+                                      }
+                                    },
+                                    {
+                                      relation: 'maps'
+                                    }
+                                  ]
+                                }
+                              }).$promise;
                             }],
-                            dataTopGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
-                                var guideType = $stateParams.t || 'all',
+//                            dataTopGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+//                                var guideType = $stateParams.t || 'all',
+//                                    filters = $stateParams.h || false,
+//                                    order = $stateParams.o || 'high';
+//
+//                                return HOTSGuideService.getGuides('hero', filters, 1, 1, '', '', order);
+//                            }],
+                            dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                              var guideType = $stateParams.t || 'all',
                                     filters = $stateParams.h || false,
                                     order = $stateParams.o || 'high';
-
-                                return HOTSGuideService.getGuides('hero', filters, 1, 1, '', '', order);
+                              
+                              return Guide.find({
+                                filter: {
+                                  order: 'votesCount DESC',
+                                  limit: 1,
+                                  fields: {
+                                    authorId: true,
+                                    createdDate: true,
+                                    votesCount: true,
+                                    name: true,
+                                    premium: true,
+                                  },
+                                  include: ['author']
+                                }
+                              }).$promise;
                             }],
-                            dataTempostormGuides: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getGuidesFeatured(false, 0, 4);
+//                            dataTempostormGuides: ['HOTSGuideService', function (HOTSGuideService) {
+//                                return HOTSGuideService.getGuidesFeatured(false, 0, 4);
+//                            }],
+                            dataTempostormGuides: ['Guide', function (Guide) {
+                              return Guide.find({
+                                filter: {
+                                  order: 'votesCount DESC',
+                                  limit: 4,
+                                  fields: {
+                                    authorId: true,
+                                    createdDate: true,
+                                    votesCount: true,
+                                    name: true,
+                                    premium: true
+                                  },
+                                  where: {
+                                    featured: true
+                                  },
+                                  include: ['author']
+                                }
+                              }).$promise;
                             }],
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+//                            dataHeroes: ['HeroService', function (HeroService) {
+//                                return HeroService.getHeroes();
+//                            }],
+                            dataHeroes: ['Hero', function (Hero) {
+                              return Hero.find({}).$promise;
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+//                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+//                                return HOTSGuideService.getMaps();
+//                            }]
+                            dataMaps: ['Map', function (Map) {
+                              return Map.find({}).$promise;
                             }]
                         }
                     }
@@ -1259,15 +1329,26 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.html',
                         controller: 'ProfileCtrl',
                         resolve: {
-                            dataProfile: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getProfile(username).then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('Unable to find profile');
-                                    }
-                                 });
+//                            dataProfile: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
+//                                var username = $stateParams.username;
+//                                return ProfileService.getProfile(username).then(function (result) {
+//                                    if (result.success === true) {
+//                                        return result;
+//                                    } else {
+//                                        return $q.reject('Unable to find profile');
+//                                    }
+//                                 });
+//                            }]
+                            dataProfile: ['$stateParams', 'User', function ($stateParams, User) {
+                              var username = $stateParams.username;
+                              console.log(username);
+                              return User.find({
+                                filter: {
+                                  where: {
+                                    username: username
+                                  }
+                                }
+                              }).$promise;
                             }]
                         }
                     }
