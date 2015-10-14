@@ -64,6 +64,11 @@
       "type": "hasMany",
       "model": "comment",
       "foreignKey": "authorId"
+    },
+    "guides": {
+      "type": "hasMany",
+      "model": "guide",
+      "foreignKey": "authorId"
     }
   },
   "acls": [],

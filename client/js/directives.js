@@ -230,20 +230,17 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('commentSection', ['$rootScope', '$sce', 'VoteService', 'LoginModalService', 'Comment', function ($rootScope, $sce, VoteService, LoginModalService, Comment) {
+.directive('commentSection', ['$rootScope', '$sce', 'VoteService', 'LoginModalService', 'Comment', 'LoopBackAuth', function ($rootScope, $sce, VoteService, LoginModalService, Comment, LoopBackAuth) {
     return {
         restrict: "E",
         templateUrl: tpl + 'views/frontend/directives/comments/commentSection.html',
         scope: {
             commentable: "=",
-            service:     "=",
+            service:     "="
         },
         controller: ['$scope', function ($scope) {
 
             //TODO: FIX COMMENTING
-
-//            console.log("user:", $scope)
-
             $scope.commentable;
             $scope.service;
             $scope.app = $rootScope.app;
@@ -257,30 +254,37 @@ angular.module('app.directives', ['ui.load'])
 
             $scope.commentPost = function () {
                 $scope.service.comments.create({
-                    filter: {}
+                    id: $scope.commentable.id
                 }, {
                     text: $scope.comment,
-                    articleId: $scope.commentable.id
+                    authorId: LoopBackAuth.currentUserData,
+                    createdDate: new Date(),
+                    votes: []
+                })
+                .$promise
+                .then(function (com) {
+                    $scope.commentable.comments.push(com);
+                    $scope.comment = '';
+                    updateCommentVotes();
+                }, function (err) {
+                    console.log("failed!", err);
                 });
-
-                if (!$scope.app.user.isLogged()) {
-                    LoginModalService.showModal('login', function () {
-                        $scope.commentPost();
-                    });
-                } else {
+//                if (!$scope.app.user.isLogged()) {
+//                    LoginModalService.showModal('login', function () {
+//                        $scope.commentPost();
+//                    });
+//                } else {
 //                    $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
 //                        if (data.success) {
-//                            $scope.commentable.comments.push(data.comment);
-//                            $scope.comment = '';
-//                            updateCommentVotes();
+//                            
+//                            
 //                        }
 //                    });
-                }
+//                }
             };
 
             updateCommentVotes();
             function updateCommentVotes() {
-                console.log($scope.commentable);
                 $scope.commentable.comments.forEach(checkVotes);
 
                 function checkVotes (comment) {
@@ -1283,34 +1287,32 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
-.directive('twitterFeed', ['$sce', 'TwitterPost', function ($sce, TwitterPost) {
+.directive('twitterFeed', ['$sce', 'Tweet', function ($sce, Tweet) {
     return {
         restrict: 'A',
         templateUrl: tpl + 'views/frontend/directives/twitter.tweets.html',
         link: function (scope, element, attrs) {
             scope.twitWheel = false;
             scope.tweets = undefined;
-
             var num = 6;
 
-            TwitterPost.find({
+            Tweet.find({
                 filter: {
+                    limit: 6,
                     order: "createdDate DESC"
-                },
-                limit: num
-            }, function(tweets) {
+                }
+            })
+            .$promise
+            .then(function(tweets) {
                 console.log(tweets);
+                
                 scope.twitWheel = true;
-                scope.tweets = tweets[0].feed;
-            }, function (err) {
-                console.log("Sorry, we cannot get the twitter feed right now. Error: " + err);
-                //TODO: handle the exception
+                scope.tweets = tweets;
             });
 
             scope.getContent = function (c) {
                 return $sce.trustAsHtml(c);
             };
-
         }
     };
 }])

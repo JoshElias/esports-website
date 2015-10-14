@@ -223,10 +223,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal',
-    function ($scope, $sce, articles, articlesTotal) {
-        console.log(articles);
-        
+.controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal', 'Article', 
+    function ($scope, $sce, articles, articlesTotal, Article) {
         // data
         $scope.articles = {
             loading: false,
@@ -261,8 +259,6 @@ angular.module('app.controllers', ['ngCookies'])
             data: articles
         };
 
-        console.log($scope.articles.viewable());
-        
         // articles
         $scope.getArticleDesc = function (desc, limit) {
             var words = desc.split(' ');
@@ -281,9 +277,6 @@ angular.module('app.controllers', ['ngCookies'])
             return ($scope.articles.data.length < $scope.articles.total);
         };
         
-        console.log('articles: ', $scope.articles.data.length);
-        console.log('total: ', $scope.articles.total);
-        
         $scope.prevArticles = function () {
             $scope.articles.offset = ($scope.articles.offset - $scope.articles.perpage() >= 0) ? $scope.articles.offset - $scope.articles.perpage() : 0;
         };
@@ -296,8 +289,21 @@ angular.module('app.controllers', ['ngCookies'])
                 if (num > 0) {
                     $scope.articles.loading = 'next';
                     
-                    ArticleService.getArticles('all', 'all', $scope.articles.data.length, num).then(function (data) {
-                        $scope.articles.data = $scope.articles.data.concat(data.articles);
+                    Article.find({
+                        filter: {
+                            where: {
+                                isActive: true
+                            },
+                            fields: {
+                                content: false,
+                                votes: false
+                            },
+                            order: "createdDate DESC",
+                            skip: $scope.articles.data.length,
+                            limit: num
+                        }
+                    }).$promise.then(function (data) {
+                        $scope.articles.data = $scope.articles.data.concat(data);
                         $scope.articles.offset += num;
                         $scope.articles.loading = false;
                     });
@@ -306,12 +312,12 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'ArticleService', 'DeckService', 'Hearthstone',
-    function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, ArticleService, DeckService, Hearthstone) {
+.controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'Article', 'Deck', 'Hearthstone',
+    function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, Article, Deck, Hearthstone) {
         // data
-        $scope.articles = dataArticles.articles;
-        $scope.tempostormDecks = dataDecksTempostorm.decks;
-        $scope.communityDecks = dataDecksCommunity.decks;
+        $scope.articles = dataArticles;
+        $scope.tempostormDecks = dataDecksTempostorm;
+        $scope.communityDecks = dataDecksCommunity;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
         
         // filters
@@ -334,32 +340,115 @@ angular.module('app.controllers', ['ngCookies'])
         }, true);
         
         function updateArticles (offset, perpage) {
-            ArticleService.getArticles('hs', $scope.filters.classes, offset, perpage).then(function (data) {
-                $timeout(function () {
-                    $scope.articles = data.articles;
-                });
-            });
+          var options = {
+            filter: {
+                limit: 6,
+                where: {
+                  articleType: ['hs']
+                },
+                fields: {
+                  content: false
+                }
+              }
+          };
+          
+          if($scope.filters.classes.length > 0) {
+            options.filter.where.classTags = {
+              inq: $scope.filters.classes
+            }
+          } else {
+            options.filter.where.classTags = {
+              inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
+            }
+          }
+          
+          Article.find(options).$promise.then(function (data) {
+            console.log(data);
+              $timeout(function () {
+                  $scope.articles = data;
+              });
+          });
         }
         
         // update decks
         function updateTempostormDecks (page, perpage) {
-            DeckService.getDecksFeatured($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
+          
+          var options = {
+            filter: {
+              limit: 10,
+              where: {
+                isFeatured: true
+              },
+              fields: {
+                name: true,
+                authorId: true,
+                description: true,
+                playerClass: true,
+                premium: true,
+                voteScore: true,
+                heroName: true
+              },
+              include: ['author']
+            }
+          };
+          
+          if($scope.filters.classes.length > 0) {
+            options.filter.where.playerClass = {
+              inq: $scope.filters.classes
+            }
+          } else {
+            options.filter.where.playerClass = {
+              inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
+            }
+          }
+          
+            Deck.find(options).$promise.then(function (data) {
                 $timeout(function () {
-                    $scope.tempostormDecks = data.decks;
+                    $scope.tempostormDecks = data;
                 });
             });
         }
         
         function updateCommunityDecks (page, perpage) {
-            DeckService.getDecksCommunity($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
-                $timeout(function () {
-                    $scope.communityDecks = data.decks;
-                });
-            });
+          var options = {
+            filter: {
+              limit: 10,
+              where: {
+                isFeatured: false
+              },
+              fields: {
+                name: true,
+                authorId: true,
+                description: true,
+                playerClass: true,
+                premium: true,
+                voteScore: true,
+                heroName: true
+              },
+              include: ['author']
+            }
+          };
+          
+          if($scope.filters.classes.length > 0) {
+            options.filter.where.playerClass = {
+              inq: $scope.filters.classes
+            }
+          } else {
+            options.filter.where.playerClass = {
+              inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
+            }
+          }
+          
+          Deck.find(options).$promise.then(function (data) {
+              $timeout(function () {
+                  $scope.communityDecks = data;
+              });
+          });
         }
-        
+      
         //is premium
         $scope.isPremium = function (guide) {
+          
             if (!guide.premium.isPremium) { return false; }
             var now = new Date().getTime(),
                 expiry = new Date(guide.premium.expiryDate).getTime();
@@ -5451,10 +5540,10 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 }])
-.controller('DeckBuilderCtrl', ['$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data', 'toStep',
-    function ($q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, data, toStep) {
+.controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep',
+    function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep) {
         // redirect back to class pick if no data
-        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+//        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
         
         $scope.isSecondary = function (klass) {
             switch(klass) {
@@ -5494,7 +5583,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
         
         $scope.getActiveDeckName = function () {
-            return Hearthstone.heroNames[$scope.deck.playerClass][$scope.isSecondary($scope.deck.playerClass.toLowerCase())];
+            return Hearthstone.heroNames[$stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1)][$scope.isSecondary($stateParams.playerClass)];
         }
 
         // steps
@@ -5539,9 +5628,12 @@ angular.module('app.controllers', ['ngCookies'])
             return classCards;
         }
         
-        $scope.className = data.className;
-        $scope.cards = data.cards;
-        $scope.cards.current = $scope.cards.class;
+        $scope.className = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
+        $scope.cards = {
+            neutral: neutralCardsList,
+            class: classCardsList,
+            current: classCardsList
+        };
         
         $scope.search = function() {
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
@@ -5549,40 +5641,127 @@ angular.module('app.controllers', ['ngCookies'])
         
         function updateCards (page, perpage, search, mechanics, mana, callback) {
             $scope.fetching = true;
-            DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
-                $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
-                $scope.classPagination.page = page;
-                $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
-                $scope.neutralPagination.page = page;
-                $timeout(function () {
-                    $scope.cards.current = ($scope.isClassCards()) ? data.cards.class : data.cards.neutral;
-                    $scope.fetching = false;
-                    if (callback) {
-                        return callback(data);
+            
+            var options = {
+                filter: {
+                    where: {
+                        playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
+                        deckable: true
+                    },
+                    order: ["cost ASC", "cardType ASC", "name ASC"],
+                    skip: ((page * perpage) - perpage),
+                    limit: perpage
+                }
+            }
+            var countOptionsClass = {
+                    where: {
+                        playerClass: $scope.className,
+                        deckable: true
                     }
+                }
+            var countOptionsNeutral = {
+                where: {
+                    playerClass: 'Neutral',
+                    deckable: true
+                }
+            }
+            
+            if ($scope.search.length > 0) {
+                options.filter.where.or = [
+                    { name: { regexp: search } },
+                    { description: { regexp: search } },
+                    { content: { regexp: search } }
+                ]
+                
+                countOptionsClass.where.or = [
+                    { name: { regexp: search } },
+                    { description: { regexp: search } },
+                    { content: { regexp: search } }
+                ]
+                
+                countOptionsNeutral.where.or = [
+                    { name: { regexp: search } },
+                    { description: { regexp: search } },
+                    { content: { regexp: search } }
+                ]
+            }
+            
+            if (mechanics.length == 1) {
+                options.filter.where.mechanics = {
+                    inq: mechanics
+                }
+                
+                countOptionsClass.where.mechanics = {
+                    inq: mechanics
+                }
+                
+                countOptionsNeutral.where.mechanics = {
+                    inq: mechanics
+                }
+            } else if (mechanics.length > 1) {
+                options.filter.where.mechanics = mechanics
+                countOptionsClass.where.mechanics = mechanics
+                countOptionsNeutral.where.mechanics = mechanics
+            }
+            
+            if (mana != 'all' && mana != '7+') {
+                options.filter.where.cost = mana;
+                countOptionsClass.where.cost = mana;
+                countOptionsNeutral.where.cost = mana;
+            } else if (mana == '7+') {
+                options.filter.where.cost = { gte: 7 };
+                countOptionsClass.where.cost = { gte: 7 };
+                countOptionsNeutral.where.cost = { gte: 7 };
+            }
+            
+            Card.count(countOptionsClass)
+            .$promise
+            .then(function (classCount) {
+                Card.count(countOptionsNeutral)
+                .$promise
+                .then(function (neutralCount) {
+                    Card.find(options)
+                    .$promise
+                    .then(function (data) {
+                        
+                        $scope.classPagination.total = classCount.count;
+                        $scope.classPagination.page = page;
+                        $scope.neutralPagination.total = neutralCount.count;
+                        $scope.neutralPagination.page = page;
+                        
+                        $timeout(function () {
+                            $scope.cards.current = data;
+                            $scope.fetching = false;
+                            if (callback) {
+                                return callback([classCount.count, neutralCount.count]);
+                            }
+                        });
+                    });
                 });
             });
         }
         
         // page flipping
-        $scope.classPagination = AjaxPagination.new(15, data.classTotal,
+        $scope.classPagination = AjaxPagination.new(15, classCardsCount.count,
             function (page, perpage) {
                 var d = $q.defer();
 
                 updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
-                    d.resolve(data.classTotal);
+                    d.resolve(data[0]);
                 });
 
                 return d.promise;
             }
         );
         
-        $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
+        $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount.count,
             function (page, perpage) {
+            
                 var d = $q.defer();
                 updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
-                    d.resolve(data.neutralTotal);
+                    d.resolve(data[1]);
                 });
+            
                 return d.promise;
             }
         );
@@ -5604,13 +5783,13 @@ angular.module('app.controllers', ['ngCookies'])
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
         }
         $scope.toggleMechanic = function (mechanic) {
-            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
             var index = $scope.filters.mechanics.indexOf(mechanic);
             if (index === -1) {
                 $scope.filters.mechanics.push(mechanic);
             } else {
                 $scope.filters.mechanics.splice(index, 1);
             }
+            updateCards(1,15,$scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
         }
         
         // filter by mechanics
@@ -5670,8 +5849,8 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.deckTypes = Hearthstone.deckTypes;
         
         //$scope.deck = DeckBuilder.new(data.className);
-        $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && data.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new(data.className, $scope.app.settings.deck) : DeckBuilder.new(data.className);
-        $scope.$watch('deck', function(){
+        $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
+        $scope.$watch('deck', function() {
             $scope.app.settings.deck = {
                 name: $scope.deck.name,
                 deckType: $scope.deck.deckType,
@@ -9050,11 +9229,11 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 
     function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService) {
         // data
-        $scope.heroes = dataHeroes.heroes;
-        $scope.maps = dataMaps.maps;
-        $scope.articles = dataArticles.articles;
-        $scope.guidesCommunity = dataGuidesCommunity.guides;
-        $scope.guidesFeatured = dataGuidesFeatured.guides;
+        $scope.heroes = dataHeroes;
+        $scope.maps = dataMaps;
+        $scope.articles = dataArticles;
+        $scope.guidesCommunity = dataGuidesCommunity;
+        $scope.guidesFeatured = dataGuidesFeatured;
         
         $scope.filters = {
             roles: [],
@@ -9154,6 +9333,17 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.articles = data.articles;
                     });
                 });
+              
+//                Article.find({
+//                  filter: {
+//                    limit: 6,
+//                    where: {
+//                      or: articleFilters
+//                    }
+//                  }
+//                }).$promise.then(function (data) {
+//                  console.log(data);
+//                });
                 
                 // load tempostorm guides
                 HOTSGuideService.getGuidesFeatured(getFilters(), 0, 10, $scope.filters.search).then(function (data) {
@@ -9173,6 +9363,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // guides
         $scope.getGuideCurrentHero = function (guide) {
+          console.log(guide);
             return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
         };
         
@@ -10299,9 +10490,10 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSTalentCalculatorCtrl', ['$scope', 'dataHeroesList', 
-    function ($scope, dataHeroesList) {
-        $scope.heroes = dataHeroesList.heroes;
+.controller('HOTSTalentCalculatorCtrl', ['$scope', 'heroes', 
+    function ($scope, heroes) {
+        $scope.heroes = heroes;
+        
         $scope.currentHero = false;
         
         $scope.setCurrentHero = function (hero) {
@@ -10313,11 +10505,11 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', '$window', 'HOTS', 'Base64', 'dataHero', 'MetaService',
-    function ($scope, $state, $stateParams, $location, $window, HOTS, Base64, dataHero, MetaService) {
-        if (!dataHero.success) { return $state.go('app.hots.talentCalculator.hero', { hero: $scope.heroes[0].className }); }
-
-        $scope.setCurrentHero(dataHero.hero);
+.controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', '$window', 'HOTS', 'Base64', 'hero', 'MetaService',
+    function ($scope, $state, $stateParams, $location, $window, HOTS, Base64, hero, MetaService) {
+//        if (!dataHero.success) { return $state.go('app.hots.talentCalculator.hero', { hero: $scope.heroes[0].className }); }
+        
+        $scope.setCurrentHero(hero);
         $scope.currentCharacter = $scope.currentHero.characters[0];
         $scope.currentAbility = false;
         $scope.level = 1;
@@ -10333,10 +10525,10 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.metaservice = MetaService;
-        $scope.metaservice.set(dataHero.hero.name + ' - Talent Calculator', dataHero.hero.description);
+        $scope.metaservice.set(hero.name + ' - Talent Calculator', hero.description);
         
         var ogImg = $scope.app.cdn + 'img/hots/hots-logo.png';
-        $scope.metaservice.setOg($location.absUrl(), dataHero.hero.name, dataHero.hero.description, 'article', ogImg);
+        $scope.metaservice.setOg($location.absUrl(), hero.name, hero.description, 'article', ogImg);
         
         $scope.getCurrentCharacter = function () {
             return $scope.currentCharacter;
@@ -10399,6 +10591,8 @@ angular.module('app.controllers', ['ngCookies'])
                 talents = [];
             
             for (var i = 0; i < hero.talents.length; i++) {
+                hero.talents[i].tier = parseInt(hero.talentTiers[hero.talents[i].id]);
+                
                 if (hero.talents[i].tier === tier) {
                     talents.push(hero.talents[i]);
                 }
@@ -10407,7 +10601,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.hasTalent = function (talent) {
-            return ($scope.currentTalents['tier'+talent.tier] == talent._id) ? ' active' : '';
+            return ($scope.currentTalents['tier'+talent.tier] == talent.id) ? ' active' : '';
         }
         
         $scope.hasAnyTalent = function (talent) {
@@ -10418,7 +10612,7 @@ angular.module('app.controllers', ['ngCookies'])
             if ($scope.hasTalent(talent)) {
                 $scope.currentTalents['tier'+talent.tier] = null;
             } else {
-                $scope.currentTalents['tier'+talent.tier] = talent._id;
+                $scope.currentTalents['tier'+talent.tier] = talent.id;
             }
             
             // set hash
@@ -10471,7 +10665,7 @@ angular.module('app.controllers', ['ngCookies'])
             if (checkHash(hash)) {
                 for (var i = 1; i <= 7; i++) {
                     var num = +hash[i - 1];
-                    out['tier' + $scope.tiers[i - 1]] = (num > 1) ? $scope.talentsByTier($scope.tiers[i - 1])[num - 2]._id : null;
+                    out['tier' + $scope.tiers[i - 1]] = (num > 1) ? $scope.talentsByTier($scope.tiers[i - 1])[num - 2].id : null;
                 }
                 return out;
             } else {
@@ -10491,7 +10685,7 @@ angular.module('app.controllers', ['ngCookies'])
         function getTalentByID (id) {
             var hero = $scope.getCurrentHero();
             for (var i = 0; i < hero.talents.length; i++) {
-                if (hero.talents[i]._id == id) {
+                if (hero.talents[i].id == id) {
                     return hero.talents[i];
                 }
             }

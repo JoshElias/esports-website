@@ -1,5 +1,5 @@
 {
-  "name": "map",
+  "name": "talent",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
@@ -7,26 +7,27 @@
   },
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "description": {
-      "type": "string"
-    },
-    "orderNum": {
-      "type": "number"
+      "type": "string",
+      "required": true
     },
     "className": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
-    "active": {
-      "type": "boolean"
+    "orderNum": {
+      "type": "number",
+      "required": true
     }
   },
   "validations": [],
   "relations": {
-    "guides": {
+    "heroes": {
       "type": "hasAndBelongsToMany",
-      "model": "guide"
+      "model": "hero"
     }
   },
   "acls": [],

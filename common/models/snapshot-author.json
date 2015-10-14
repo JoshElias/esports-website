@@ -1,34 +1,23 @@
 {
-  "name": "map",
+  "name": "snapshotAuthor",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
     "validateUpsert": true
   },
   "properties": {
-    "name": {
-      "type": "string"
-    },
     "description": {
       "type": "string"
-    },
-    "orderNum": {
-      "type": "number"
     },
     "className": {
       "type": "string"
     },
-    "active": {
-      "type": "boolean"
+    "snapshotId": {
+      "type": "string"
     }
   },
   "validations": [],
-  "relations": {
-    "guides": {
-      "type": "hasAndBelongsToMany",
-      "model": "guide"
-    }
-  },
+  "relations": {},
   "acls": [],
   "methods": {}
 }

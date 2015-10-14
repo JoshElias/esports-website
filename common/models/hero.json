@@ -1,0 +1,75 @@
+{
+  "name": "hero",
+  "plural": "heroes",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "active": {
+      "type": "boolean"
+    },
+    "abilities": {
+      "type": [
+        "object"
+      ]
+    },
+    "characters": {
+      "type": [
+        "object"
+      ]
+    },
+    "className": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "heroType": {
+      "type": "string"
+    },
+    "manaType": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "orderNum": {
+      "type": "number"
+    },
+    "price": {
+      "type": "object"
+    },
+    "role": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "universe": {
+      "type": "string"
+    },
+    "oldTalents": {
+      "type": [
+        "object"
+      ]
+    },
+    "talentTiers": {
+      "type": "object"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "talents": {
+      "type": "hasAndBelongsToMany",
+      "model": "talent"
+    },
+    "guides": {
+      "type": "hasAndBelongsToMany",
+      "model": "guide"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

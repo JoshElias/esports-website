@@ -1,0 +1,40 @@
+{
+  "name": "cardTech",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "orderNum": {
+      "type": "number"
+    },
+    "both": {
+      "type": "boolean"
+    },
+    "toss": {
+      "type": "boolean"
+    },
+    "cardId": {
+      "type": "string"
+    },
+    "deckTechId": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "deckTech": {
+      "type": "belongsTo",
+      "model": "deckTech",
+      "foreignKey": "deckTechId"
+    },
+    "card": {
+      "type": "hasOne",
+      "model": "card",
+      "foreignKey": "cardId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

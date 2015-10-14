@@ -26,6 +26,15 @@
     },
     "articleId": {
       "type": "string"
+    },
+    "guideId": {
+      "type": "string"
+    },
+    "deckId": {
+      "type": "string"
+    },
+    "snapshotId": {
+      "type": "string"
     }
   },
   "validations": [],
@@ -44,6 +53,16 @@
       "type": "belongsTo",
       "model": "deck",
       "foreignKey": "deckId"
+    },
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
     }
   },
   "acls": [],

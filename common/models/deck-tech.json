@@ -1,32 +1,35 @@
 {
-  "name": "map",
+  "name": "deckTech",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
     "validateUpsert": true
   },
   "properties": {
-    "name": {
-      "type": "string"
-    },
-    "description": {
+    "title": {
       "type": "string"
     },
     "orderNum": {
       "type": "number"
     },
-    "className": {
+    "deckId": {
       "type": "string"
     },
-    "active": {
-      "type": "boolean"
+    "deckTierId": {
+      "type": "string"
     }
   },
   "validations": [],
   "relations": {
-    "guides": {
-      "type": "hasAndBelongsToMany",
-      "model": "guide"
+    "deckTier": {
+      "type": "belongsTo",
+      "model": "deckTier",
+      "foreignKey": "deckTierId"
+    },
+    "cardTech": {
+      "type": "hasMany",
+      "model": "cardTech",
+      "foreignKey": "deckTechId"
     }
   },
   "acls": [],

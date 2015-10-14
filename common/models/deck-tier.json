@@ -1,0 +1,42 @@
+{
+  "name": "deckTier",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "weeklyNotes": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "tier": {
+      "type": "number"
+    },
+    "ranks": {
+      "type": [
+        "number"
+      ]
+    }
+  },
+  "validations": [],
+  "relations": {
+    "deck": {
+      "type": "hasOne",
+      "model": "deck",
+      "foreignKey": "deckId"
+    },
+    "deckTech": {
+      "type": "hasMany",
+      "model": "deckTech",
+      "foreignKey": "deckTierId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

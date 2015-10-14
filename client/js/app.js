@@ -77,7 +77,7 @@ var app = angular.module('app', [
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {
                 console.log(event);
-                console.log('hey you don goofed. fag');
+                console.log('hey you don goofed. lol k , (happy martin i removed fag)');
 //                $state.transitionTo('app.404');
             });
         }
@@ -196,10 +196,11 @@ var app = angular.module('app', [
                                     perpage = 12,
                                     search = $stateParams.s || '';
                                 
-                                
-                                Article.find({
+                                return Article.find({
                                     filter: {
-                                        isActive: true,
+                                        where: {
+                                            isActive: true
+                                        },
                                         fields: {
                                             content: false,
                                             votes: false
@@ -209,19 +210,21 @@ var app = angular.module('app', [
                                         skip: ((perpage*page)-perpage)
                                     }
                                 })
-                                .promise
+                                .$promise
                                 .then(function (articles) {
                                     articles.page = page;
                                     articles.perpage = perpage;
+                                    return articles;
                                 });
                                 
                             }],
                             articlesTotal: ['Article', function (Article) {
                                 return Article.count({
-                                    filter: {
+                                    where: {
                                         isActive: true
                                     }
-                                }).$promise;
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -247,7 +250,6 @@ var app = angular.module('app', [
                                         include: ["author", "comments"]
                                         //TODO: Filter author include
                                     }
-                                    
                                 }).$promise;
                             }]
                         }
@@ -330,17 +332,63 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.home.html',
                         controller: 'HearthstoneHomeCtrl',
                         resolve: {
-                            dataArticles: ['ArticleService', function (ArticleService) {
+                            dataArticles: ['Article', function (Article) {
                                 var klass = 'all',
                                     page = 1,
                                     perpage = 6;
-                                return ArticleService.getArticles('hs', klass, page, perpage);
+                                return Article.find({
+                                  filter: {
+                                    limit: 6,
+                                    where: {
+                                      articleType: ['hs']
+                                    },
+                                    fields: {
+                                      content: false
+                                    }
+                                  }
+                                }).$promise;
                             }],
-                            dataDecksTempostorm: ['DeckService', function (DeckService) {
-                                return DeckService.getDecksFeatured(false, 1, 10);
+                            dataDecksTempostorm: ['Deck', function (Deck) {
+                                return Deck.find({
+                                  filter: {
+                                    limit: 10,
+                                    where: {
+                                      isFeatured: true
+                                    },
+                                    fields: {
+                                      name: true,
+                                      description: true,
+                                      deckType: true,
+                                      playerClass: true,
+                                      heroName: true,
+                                      premium: true,
+                                      voteScore: true,
+                                      authorId: true
+                                    },
+                                    include: ['author']
+                                  }
+                                }).$promise;
                             }],
-                            dataDecksCommunity: ['DeckService', function (DeckService) {
-                                return DeckService.getDecksCommunity(false, 1, 10);
+                            dataDecksCommunity: ['Deck', function (Deck) {
+                                return Deck.find({
+                                  filter: {
+                                    limit: 10,
+                                    where: {
+                                      isFeatured: false
+                                    },
+                                    fields: {
+                                      name: true,
+                                      description: true,
+                                      deckType: true,
+                                      playerClass: true,
+                                      heroName: true,
+                                      premium: true,
+                                      voteScore: true,
+                                      authorId: true
+                                    },
+                                    include: ['author']
+                                  }
+                                }).$promise;
                             }]
                         }
                     }
@@ -466,12 +514,15 @@ var app = angular.module('app', [
                                         where: {
                                             slug: stateSlug
                                         },
-                                        include: {
-                                            cards: true
-                                        }
+                                        include: ["cards","comments"]
                                     }
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function (com) {
+                                    console.log(com);
+                                    return com;
+                                });
+                                
                             }]
                         }
                     }
@@ -503,15 +554,52 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.deck-builder.build.html',
                         controller: 'DeckBuilderCtrl',
                         resolve: {
-                            data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
-                                var playerClass = $stateParams.playerClass,
-                                    page = 1,
-                                    perpage = 15,
-                                    mechanics = [],
-                                    mana = 'all',
-                                    search = "";
+                            classCardsList: ['$stateParams', 'Card', function ($stateParams, Card) {
+                                var perpage = 15,
+                                    playerClass = $stateParams.playerClass;
 
-                                return DeckBuilder.loadCards(page, perpage, search, mechanics, mana, playerClass);
+                                return Card.find({
+                                    filter: {
+                                        where: {
+                                            playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1),
+                                            deckable: true
+                                        },
+                                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                                        limit: perpage,
+                                    }
+                                })
+                                .$promise;
+                            }],
+                            neutralCardsList: ['Card', function (Card) {
+                                return Card.find({
+                                    filter: {
+                                        where: {
+                                            playerClass: 'Neutral',
+                                            deckable: true
+                                        },
+                                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                                        limit: 15
+                                    }
+                                })
+                                .$promise;
+                            }],
+                            classCardsCount: ['$stateParams', 'Card', function ($stateParams, Card) {
+                                var playerClass = $stateParams.playerClass;
+                                
+                                return Card.count({
+                                    where: {
+                                        playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1)
+                                    }
+                                })
+                                .$promise;
+                            }],
+                            neutralCardsCount: ['Card', function (Card) {
+                                return Card.count({
+                                    where: {
+                                        playerClass: 'Neutral'
+                                    }
+                                })
+                                .$promise;
                             }],
                             toStep: ['$stateParams', function ($stateParams) {
                                 if ($stateParams.goTo) {
@@ -554,23 +642,95 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.home.html',
                         controller: 'HOTSHomeCtrl',
                         resolve: {
-                            dataArticles: ['ArticleService', function (ArticleService) {
-                                var filters = 'all',
-                                    offset = 0,
-                                    perpage = 6;
-                                return ArticleService.getArticles('hots', filters, offset, perpage);
+//                            dataArticles: ['ArticleService', function (ArticleService) {
+//                                var filters = 'all',
+//                                    offset = 0,
+//                                    perpage = 6;
+//                              
+//                                return ArticleService.getArticles('hots', filters, offset, perpage);
+//                            }],
+                            dataArticles: ['Article', function (Article) {
+                              var filters = 'all',
+                                  offset = 0,
+                                  perpage = 6;
+                              
+                              return Article.find({
+                                filter: {
+                                  limit: 6,
+                                  where: {
+                                    articleType: ['hots']
+                                  },
+                                  fields: {
+                                    content: false
+                                  }
+                                }
+                              }).$promise;
                             }],
-                            dataGuidesCommunity: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getGuidesCommunity();
+//                            dataGuidesCommunity: ['HOTSGuideService', function (HOTSGuideService) {
+//                                return HOTSGuideService.getGuidesCommunity();
+//                            }],
+                            dataGuidesCommunity: ['Guide', function (Guide) {
+                              return Guide.find({
+                                filter: {
+                                  limit: 10,
+                                  where: {
+                                    featured: false
+                                  },
+                                  fields: {
+                                    name: true,
+                                    votesCount: true,
+                                    description: true,
+                                    authorId: true,
+                                    createdDate: true,
+                                    premium: true,
+                                    against: true,
+                                    oldHeroes: true,
+                                    guideType: true,
+                                    synergy: true,
+                                    oldHeroes: true,
+                                  },
+                                  include: ['author']
+                                }
+                              }).$promise;
                             }],
-                            dataGuidesFeatured: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getGuidesFeatured();
+//                            dataGuidesFeatured: ['HOTSGuideService', function (HOTSGuideService) {
+//                                return HOTSGuideService.getGuidesFeatured();
+//                            }],
+                            dataGuidesFeatured: ['Guide', function (Guide) {
+                              return Guide.find({
+                                filter: {
+                                  limit: 10,
+                                  where: {
+                                    featured: true
+                                  },
+                                  fields: {
+                                    name: true,
+                                    votesCount: true,
+                                    description: true,
+                                    authorId: true,
+                                    createdDate: true,
+                                    premium: true,
+                                    against: true,
+                                    oldHeroes: true,
+                                    guideType: true,
+                                    synergy: true,
+                                    oldHeroes: true,
+                                  },
+                                  include: ['author']
+                                }
+                              }).$promise;
                             }],
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroesList();
+//                            dataHeroes: ['HeroService', function (HeroService) {
+//                                return HeroService.getHeroesList();
+//                            }],
+                            dataHeroes: ['Hero', function (Hero) {
+                              return Hero.find({}).$promise;
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+//                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+//                                return HOTSGuideService.getMaps();
+//                            }]
+                            dataMaps: ['Map', function (Map) {
+                              return Map.find({}).$promise;
                             }]
                         }
                     }
@@ -781,8 +941,21 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.talentCalculator.html',
                         controller: 'HOTSTalentCalculatorCtrl',
                         resolve: {
-                            dataHeroesList: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroesList();
+                            heroes: ['Hero', function (Hero) {
+                                return Hero.find({
+                                    filter: {
+                                        fields: {
+                                            className: true,
+                                            description: true,
+                                            heroType: true,
+                                            name: true,
+                                            role: true,
+                                            title: true,
+                                            universe: true
+                                        }
+                                    }
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -791,17 +964,17 @@ var app = angular.module('app', [
             .state('app.hots.talentCalculator.redirect', {
                 url: '',
                 resolve: {
-                    dataHeroesList: ['HeroService', '$q', function (HeroService, $q) {
-                        return HeroService.getHeroesList().then(function (result) {
-                            if (result.success === true) {
-                                return result;
-                            } else {
-                                return $q.reject('unable to find hero');
+                    dataHeroesList: ['Hero', '$q', function (Hero, $q) {
+                        return Hero.find({
+                            filter: {
+                                fields: {
+                                    className: true
+                                }
                             }
-                        });
+                        }).$promise;
                     }],
                     redirect: ['$q', '$state', 'dataHeroesList', function ($q, $state, dataHeroesList) {
-                        $state.go('app.hots.talentCalculator.hero', { hero: dataHeroesList.heroes[0].className });
+                        $state.go('app.hots.talentCalculator.hero', { hero: dataHeroesList[0].className });
                         return $q.reject();
                     }]
                 },
@@ -814,14 +987,23 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.talentCalculator.hero.html',
                         controller: 'HOTSTalentCalculatorHeroCtrl',
                         resolve: {
-                            dataHero: ['$stateParams', '$q', 'HeroService', function ($stateParams, $q, HeroService) {
+                            hero: ['$stateParams', '$q', 'Hero', '$filter', '$state', function ($stateParams, $q, Hero, $filter, $state) {
                                 var hero = $stateParams.hero;
-                                return HeroService.getHeroByClass(hero).then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find hero');
+                                return Hero.findOne({
+                                    filter: {
+                                        where: {
+                                            className: hero
+                                        },
+                                        include: ['talents']
                                     }
+                                })
+                                .$promise
+                                .then(function (hero) {
+                                    return hero;
+                                })
+                                .catch(function(err) {
+                                    console.log(err.status, err.data.error.code, "REDIRECTING");
+                                    $state.go('app.hots.talentCalculator.redirect')
                                 });
                             }]
                         }
