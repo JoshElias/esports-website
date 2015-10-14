@@ -10490,9 +10490,10 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSTalentCalculatorCtrl', ['$scope', 'dataHeroesList', 
-    function ($scope, dataHeroesList) {
-        $scope.heroes = dataHeroesList.heroes;
+.controller('HOTSTalentCalculatorCtrl', ['$scope', 'heroes', 
+    function ($scope, heroes) {
+        $scope.heroes = heroes;
+        
         $scope.currentHero = false;
         
         $scope.setCurrentHero = function (hero) {
@@ -10504,11 +10505,11 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', '$window', 'HOTS', 'Base64', 'dataHero', 'MetaService',
-    function ($scope, $state, $stateParams, $location, $window, HOTS, Base64, dataHero, MetaService) {
-        if (!dataHero.success) { return $state.go('app.hots.talentCalculator.hero', { hero: $scope.heroes[0].className }); }
-
-        $scope.setCurrentHero(dataHero.hero);
+.controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', '$window', 'HOTS', 'Base64', 'hero', 'MetaService',
+    function ($scope, $state, $stateParams, $location, $window, HOTS, Base64, hero, MetaService) {
+//        if (!dataHero.success) { return $state.go('app.hots.talentCalculator.hero', { hero: $scope.heroes[0].className }); }
+        
+        $scope.setCurrentHero(hero);
         $scope.currentCharacter = $scope.currentHero.characters[0];
         $scope.currentAbility = false;
         $scope.level = 1;
@@ -10524,10 +10525,10 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.metaservice = MetaService;
-        $scope.metaservice.set(dataHero.hero.name + ' - Talent Calculator', dataHero.hero.description);
+        $scope.metaservice.set(hero.name + ' - Talent Calculator', hero.description);
         
         var ogImg = $scope.app.cdn + 'img/hots/hots-logo.png';
-        $scope.metaservice.setOg($location.absUrl(), dataHero.hero.name, dataHero.hero.description, 'article', ogImg);
+        $scope.metaservice.setOg($location.absUrl(), hero.name, hero.description, 'article', ogImg);
         
         $scope.getCurrentCharacter = function () {
             return $scope.currentCharacter;
@@ -10590,6 +10591,8 @@ angular.module('app.controllers', ['ngCookies'])
                 talents = [];
             
             for (var i = 0; i < hero.talents.length; i++) {
+                hero.talents[i].tier = parseInt(hero.talentTiers[hero.talents[i].id]);
+                
                 if (hero.talents[i].tier === tier) {
                     talents.push(hero.talents[i]);
                 }
@@ -10598,7 +10601,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         $scope.hasTalent = function (talent) {
-            return ($scope.currentTalents['tier'+talent.tier] == talent._id) ? ' active' : '';
+            return ($scope.currentTalents['tier'+talent.tier] == talent.id) ? ' active' : '';
         }
         
         $scope.hasAnyTalent = function (talent) {
@@ -10609,7 +10612,7 @@ angular.module('app.controllers', ['ngCookies'])
             if ($scope.hasTalent(talent)) {
                 $scope.currentTalents['tier'+talent.tier] = null;
             } else {
-                $scope.currentTalents['tier'+talent.tier] = talent._id;
+                $scope.currentTalents['tier'+talent.tier] = talent.id;
             }
             
             // set hash
@@ -10662,7 +10665,7 @@ angular.module('app.controllers', ['ngCookies'])
             if (checkHash(hash)) {
                 for (var i = 1; i <= 7; i++) {
                     var num = +hash[i - 1];
-                    out['tier' + $scope.tiers[i - 1]] = (num > 1) ? $scope.talentsByTier($scope.tiers[i - 1])[num - 2]._id : null;
+                    out['tier' + $scope.tiers[i - 1]] = (num > 1) ? $scope.talentsByTier($scope.tiers[i - 1])[num - 2].id : null;
                 }
                 return out;
             } else {
@@ -10682,7 +10685,7 @@ angular.module('app.controllers', ['ngCookies'])
         function getTalentByID (id) {
             var hero = $scope.getCurrentHero();
             for (var i = 0; i < hero.talents.length; i++) {
-                if (hero.talents[i]._id == id) {
+                if (hero.talents[i].id == id) {
                     return hero.talents[i];
                 }
             }

@@ -13,7 +13,7 @@
                     <h3>HERO SELECT</h3>
                 </div>
                 <ul class="hero-list">
-                    <li ng-repeat="hero in heroes" ng-class="{ active: hero._id == currentHero._id }"><a href="./heroes-of-the-storm/talent-calculator/{{hero.className}}" class="{{hero.className}}" hots-hero tooltip-pos="left">{{hero.name}}</a></li>
+                    <li ng-repeat="hero in heroes" ng-class="{ active: hero.name == currentHero.name }"><a href="./heroes-of-the-storm/talent-calculator/{{hero.className}}" class="{{hero.className}}" hots-hero tooltip-pos="left">{{hero.name}}</a></li>
                 </ul>
             </div>
             <!-- guide builder -->
