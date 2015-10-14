@@ -685,7 +685,20 @@ var app = angular.module('app', [
                                     guideType: true,
                                     id: true
                                   },
-                                  include: ['author', 'heroes']
+                                  include: [
+                                        {
+                                            relation: 'author'
+                                        }, 
+                                        {
+                                            relation: 'heroes',
+                                            scope: {
+                                                include: ['talents']
+                                            }
+                                        }, 
+                                        {
+                                            relation: 'maps'
+                                        }
+                                    ]
                                 }
                               }).$promise;
                             }],
@@ -708,7 +721,20 @@ var app = angular.module('app', [
                                     guideType: true,
                                     id: true
                                   },
-                                  include: ['author', 'heroes']
+                                  include: [
+                                        {
+                                            relation: 'author'
+                                        }, 
+                                        {
+                                            relation: 'heroes',
+                                            scope: {
+                                                include: ['talents']
+                                            }
+                                        }, 
+                                        {
+                                            relation: 'maps'
+                                        }
+                                    ]
                                 }
                               }).$promise;
                             }],

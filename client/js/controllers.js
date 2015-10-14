@@ -9225,8 +9225,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 
-    function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService) {
+.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'Guide', 
+    function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, Guide) {
         // data
         $scope.heroes = dataHeroes;
         $scope.maps = dataMaps;
@@ -9266,36 +9266,49 @@ angular.module('app.controllers', ['ngCookies'])
             return (filtered.indexOf(hero) === -1);
         }
         
-        function getFilters () {
-            var filters = [];
-            
-            // check for no filters
-            if (!$scope.filters.roles.length && 
-                !$scope.filters.universes.length && 
-                !$scope.filters.heroes.length && 
-                !$scope.filters.map) {
-                return false;
-            }
-
-            // heroes
-            if ($scope.filters.heroes.length) {
-                for (var i = 0; i < $scope.filters.heroes.length; i++) {
-                    filters.push($scope.filters.heroes[i]._id);
-                }
-            } else if ($scope.filters.roles.length || $scope.filters.universes.length) {
-                for (var i = 0; i < $scope.heroes.length; i++) {
-                    if (!isFiltered($scope.heroes[i])) {
-                        filters.push($scope.heroes[i]._id);
+        $scope.log = function (m) {
+            console.log(m);
+        }
+        
+        function getFilters (isTempostorm) {
+            var options = {
+                filter: {
+                    where: {
+                        featured: isTempostorm
                     }
                 }
-            }
+            };
             
-            // maps
-            if ($scope.filters.map) {
-                filters.push($scope.filters.map._id);
+            if ($scope.filters.heroes.length > 0) {
+                options.filter.where.hero = { inq: $scope.filters.heroes }
             }
+//            // check for no filters
+//            if (!$scope.filters.roles.length && 
+//                !$scope.filters.universes.length && 
+//                !$scope.filters.heroes.length && 
+//                !$scope.filters.map) {
+//                return false;
+//            }
+//
+//            // heroes
+//            if ($scope.filters.heroes.length) {
+//                for (var i = 0; i < $scope.filters.heroes.length; i++) {
+//                    filters.push($scope.filters.heroes[i]._id);
+//                }
+//            } else if ($scope.filters.roles.length || $scope.filters.universes.length) {
+//                for (var i = 0; i < $scope.heroes.length; i++) {
+//                    if (!isFiltered($scope.heroes[i])) {
+//                        filters.push($scope.heroes[i]._id);
+//                    }
+//                }
+//            }
+//            
+//            // maps
+//            if ($scope.filters.map) {
+//                filters.push($scope.filters.map._id);
+//            }
             
-            return filters;
+            return options;
         }
         
         function isFiltered (hero) {
@@ -9326,17 +9339,6 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
                 
-              
-              var options = {
-                filter: {
-                  where: {
-                    
-                  }
-                }
-              };
-              
-              console.log($scope.filters);
-              
               // check if a hero is selected, --> use that if selected
               // check if any filters are present, --> use those
               // check if map filters are present, --> use all filters at same time
@@ -9354,11 +9356,11 @@ angular.module('app.controllers', ['ngCookies'])
 //              }
               
                 // load articles
-                ArticleService.getArticles('hots', articleFilters, 0, 6).then(function (data) {
-                    $timeout(function () {
-                        $scope.articles = data.articles;
-                    });
-                });
+//                Article.find('hots', articleFilters, 0, 6).then(function (data) {
+//                    $timeout(function () {
+//                        $scope.articles = data.articles;
+//                    });
+//                });
               
 //                Article.find({
 //                  filter: {
@@ -9372,14 +9374,14 @@ angular.module('app.controllers', ['ngCookies'])
 //                });
                 
                 // load tempostorm guides
-                HOTSGuideService.getGuidesFeatured(getFilters(), 0, 10, $scope.filters.search).then(function (data) {
+                Guide.find(getFilters(true)).$promise.then(function (data) {
                     $timeout(function () {
                         $scope.guidesFeatured = data.guides;
                     });
                 });
                 
                 // load community guides
-                HOTSGuideService.getGuidesCommunity(getFilters(), 0, 10, $scope.filters.search, false).then(function (data) {
+                Guide.find(getFilters(false)).$promise.then(function (data) {
                     $timeout(function () {
                         $scope.guidesCommunity = data.guides;
                     });
