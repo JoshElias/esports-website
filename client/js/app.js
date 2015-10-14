@@ -332,17 +332,63 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.home.html',
                         controller: 'HearthstoneHomeCtrl',
                         resolve: {
-                            dataArticles: ['ArticleService', function (ArticleService) {
+                            dataArticles: ['Article', function (Article) {
                                 var klass = 'all',
                                     page = 1,
                                     perpage = 6;
-                                return ArticleService.getArticles('hs', klass, page, perpage);
+                                return Article.find({
+                                  filter: {
+                                    limit: 6,
+                                    where: {
+                                      articleType: ['hs']
+                                    },
+                                    fields: {
+                                      content: false
+                                    }
+                                  }
+                                }).$promise;
                             }],
-                            dataDecksTempostorm: ['DeckService', function (DeckService) {
-                                return DeckService.getDecksFeatured(false, 1, 10);
+                            dataDecksTempostorm: ['Deck', function (Deck) {
+                                return Deck.find({
+                                  filter: {
+                                    limit: 10,
+                                    where: {
+                                      isFeatured: true
+                                    },
+                                    fields: {
+                                      name: true,
+                                      description: true,
+                                      deckType: true,
+                                      playerClass: true,
+                                      heroName: true,
+                                      premium: true,
+                                      voteScore: true,
+                                      authorId: true
+                                    },
+                                    include: ['author']
+                                  }
+                                }).$promise;
                             }],
-                            dataDecksCommunity: ['DeckService', function (DeckService) {
-                                return DeckService.getDecksCommunity(false, 1, 10);
+                            dataDecksCommunity: ['Deck', function (Deck) {
+                                return Deck.find({
+                                  filter: {
+                                    limit: 10,
+                                    where: {
+                                      isFeatured: false
+                                    },
+                                    fields: {
+                                      name: true,
+                                      description: true,
+                                      deckType: true,
+                                      playerClass: true,
+                                      heroName: true,
+                                      premium: true,
+                                      voteScore: true,
+                                      authorId: true
+                                    },
+                                    include: ['author']
+                                  }
+                                }).$promise;
                             }]
                         }
                     }
@@ -596,23 +642,95 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.home.html',
                         controller: 'HOTSHomeCtrl',
                         resolve: {
-                            dataArticles: ['ArticleService', function (ArticleService) {
-                                var filters = 'all',
-                                    offset = 0,
-                                    perpage = 6;
-                                return ArticleService.getArticles('hots', filters, offset, perpage);
+//                            dataArticles: ['ArticleService', function (ArticleService) {
+//                                var filters = 'all',
+//                                    offset = 0,
+//                                    perpage = 6;
+//                              
+//                                return ArticleService.getArticles('hots', filters, offset, perpage);
+//                            }],
+                            dataArticles: ['Article', function (Article) {
+                              var filters = 'all',
+                                  offset = 0,
+                                  perpage = 6;
+                              
+                              return Article.find({
+                                filter: {
+                                  limit: 6,
+                                  where: {
+                                    articleType: ['hots']
+                                  },
+                                  fields: {
+                                    content: false
+                                  }
+                                }
+                              }).$promise;
                             }],
-                            dataGuidesCommunity: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getGuidesCommunity();
+//                            dataGuidesCommunity: ['HOTSGuideService', function (HOTSGuideService) {
+//                                return HOTSGuideService.getGuidesCommunity();
+//                            }],
+                            dataGuidesCommunity: ['Guide', function (Guide) {
+                              return Guide.find({
+                                filter: {
+                                  limit: 10,
+                                  where: {
+                                    featured: false
+                                  },
+                                  fields: {
+                                    name: true,
+                                    votesCount: true,
+                                    description: true,
+                                    authorId: true,
+                                    createdDate: true,
+                                    premium: true,
+                                    against: true,
+                                    oldHeroes: true,
+                                    guideType: true,
+                                    synergy: true,
+                                    oldHeroes: true,
+                                  },
+                                  include: ['author']
+                                }
+                              }).$promise;
                             }],
-                            dataGuidesFeatured: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getGuidesFeatured();
+//                            dataGuidesFeatured: ['HOTSGuideService', function (HOTSGuideService) {
+//                                return HOTSGuideService.getGuidesFeatured();
+//                            }],
+                            dataGuidesFeatured: ['Guide', function (Guide) {
+                              return Guide.find({
+                                filter: {
+                                  limit: 10,
+                                  where: {
+                                    featured: true
+                                  },
+                                  fields: {
+                                    name: true,
+                                    votesCount: true,
+                                    description: true,
+                                    authorId: true,
+                                    createdDate: true,
+                                    premium: true,
+                                    against: true,
+                                    oldHeroes: true,
+                                    guideType: true,
+                                    synergy: true,
+                                    oldHeroes: true,
+                                  },
+                                  include: ['author']
+                                }
+                              }).$promise;
                             }],
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroesList();
+//                            dataHeroes: ['HeroService', function (HeroService) {
+//                                return HeroService.getHeroesList();
+//                            }],
+                            dataHeroes: ['Hero', function (Hero) {
+                              return Hero.find({}).$promise;
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+//                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+//                                return HOTSGuideService.getMaps();
+//                            }]
+                            dataMaps: ['Map', function (Map) {
+                              return Map.find({}).$promise;
                             }]
                         }
                     }

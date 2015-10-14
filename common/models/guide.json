@@ -72,7 +72,7 @@
   "validations": [],
   "relations": {
     "author": {
-      "type": "hasOne",
+      "type": "belongsTo",
       "model": "user",
       "foreignKey": "authorId"
     },

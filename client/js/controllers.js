@@ -312,12 +312,12 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'ArticleService', 'DeckService', 'Hearthstone',
-    function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, ArticleService, DeckService, Hearthstone) {
+.controller('HearthstoneHomeCtrl', ['$scope', '$timeout', 'dataArticles', 'dataDecksCommunity', 'dataDecksTempostorm', 'Article', 'Deck', 'Hearthstone',
+    function ($scope, $timeout, dataArticles, dataDecksCommunity, dataDecksTempostorm, Article, Deck, Hearthstone) {
         // data
-        $scope.articles = dataArticles.articles;
-        $scope.tempostormDecks = dataDecksTempostorm.decks;
-        $scope.communityDecks = dataDecksCommunity.decks;
+        $scope.articles = dataArticles;
+        $scope.tempostormDecks = dataDecksTempostorm;
+        $scope.communityDecks = dataDecksCommunity;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
         
         // filters
@@ -340,32 +340,115 @@ angular.module('app.controllers', ['ngCookies'])
         }, true);
         
         function updateArticles (offset, perpage) {
-            ArticleService.getArticles('hs', $scope.filters.classes, offset, perpage).then(function (data) {
-                $timeout(function () {
-                    $scope.articles = data.articles;
-                });
-            });
+          var options = {
+            filter: {
+                limit: 6,
+                where: {
+                  articleType: ['hs']
+                },
+                fields: {
+                  content: false
+                }
+              }
+          };
+          
+          if($scope.filters.classes.length > 0) {
+            options.filter.where.classTags = {
+              inq: $scope.filters.classes
+            }
+          } else {
+            options.filter.where.classTags = {
+              inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
+            }
+          }
+          
+          Article.find(options).$promise.then(function (data) {
+            console.log(data);
+              $timeout(function () {
+                  $scope.articles = data;
+              });
+          });
         }
         
         // update decks
         function updateTempostormDecks (page, perpage) {
-            DeckService.getDecksFeatured($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
+          
+          var options = {
+            filter: {
+              limit: 10,
+              where: {
+                isFeatured: true
+              },
+              fields: {
+                name: true,
+                authorId: true,
+                description: true,
+                playerClass: true,
+                premium: true,
+                voteScore: true,
+                heroName: true
+              },
+              include: ['author']
+            }
+          };
+          
+          if($scope.filters.classes.length > 0) {
+            options.filter.where.playerClass = {
+              inq: $scope.filters.classes
+            }
+          } else {
+            options.filter.where.playerClass = {
+              inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
+            }
+          }
+          
+            Deck.find(options).$promise.then(function (data) {
                 $timeout(function () {
-                    $scope.tempostormDecks = data.decks;
+                    $scope.tempostormDecks = data;
                 });
             });
         }
         
         function updateCommunityDecks (page, perpage) {
-            DeckService.getDecksCommunity($scope.filters.classes, page, perpage, $scope.filters.search).then(function (data) {
-                $timeout(function () {
-                    $scope.communityDecks = data.decks;
-                });
-            });
+          var options = {
+            filter: {
+              limit: 10,
+              where: {
+                isFeatured: false
+              },
+              fields: {
+                name: true,
+                authorId: true,
+                description: true,
+                playerClass: true,
+                premium: true,
+                voteScore: true,
+                heroName: true
+              },
+              include: ['author']
+            }
+          };
+          
+          if($scope.filters.classes.length > 0) {
+            options.filter.where.playerClass = {
+              inq: $scope.filters.classes
+            }
+          } else {
+            options.filter.where.playerClass = {
+              inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
+            }
+          }
+          
+          Deck.find(options).$promise.then(function (data) {
+              $timeout(function () {
+                  $scope.communityDecks = data;
+              });
+          });
         }
-        
+      
         //is premium
         $scope.isPremium = function (guide) {
+          
             if (!guide.premium.isPremium) { return false; }
             var now = new Date().getTime(),
                 expiry = new Date(guide.premium.expiryDate).getTime();
@@ -9146,11 +9229,11 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 
     function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService) {
         // data
-        $scope.heroes = dataHeroes.heroes;
-        $scope.maps = dataMaps.maps;
-        $scope.articles = dataArticles.articles;
-        $scope.guidesCommunity = dataGuidesCommunity.guides;
-        $scope.guidesFeatured = dataGuidesFeatured.guides;
+        $scope.heroes = dataHeroes;
+        $scope.maps = dataMaps;
+        $scope.articles = dataArticles;
+        $scope.guidesCommunity = dataGuidesCommunity;
+        $scope.guidesFeatured = dataGuidesFeatured;
         
         $scope.filters = {
             roles: [],
@@ -9250,6 +9333,17 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.articles = data.articles;
                     });
                 });
+              
+//                Article.find({
+//                  filter: {
+//                    limit: 6,
+//                    where: {
+//                      or: articleFilters
+//                    }
+//                  }
+//                }).$promise.then(function (data) {
+//                  console.log(data);
+//                });
                 
                 // load tempostorm guides
                 HOTSGuideService.getGuidesFeatured(getFilters(), 0, 10, $scope.filters.search).then(function (data) {
@@ -9269,6 +9363,7 @@ angular.module('app.controllers', ['ngCookies'])
         
         // guides
         $scope.getGuideCurrentHero = function (guide) {
+          console.log(guide);
             return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
         };
         
