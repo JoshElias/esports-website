@@ -1,0 +1,23 @@
+// map guide img mixin
+
+// map=map name, filename= (file).jpg
+
+@mixin hots-map-images ($map, $filename) {
+
+    .hots-guide.large.#{$map} { background: url('../img/hots/maps/guides/#{$filename}.jpg') no-repeat center top; background-size: cover; }
+    .hots-guide.small.#{$map} { background: url('../img/hots/maps/guides/#{$filename}-tab.jpg') no-repeat center top; background-size: cover; }
+    .hots-guide.long.#{$map} { background-image: url('../img/hots/maps/guides/long/#{$map}.png'); background-repeat: no-repeat; background-position: right top; }
+
+}
+
+
+@include hots-map-images (blackheartsbay, bhb);
+@include hots-map-images (cursedhollow, curse);
+@include hots-map-images (dragonshrine, ds);
+@include hots-map-images (gardenofterror, garden);
+@include hots-map-images (hauntedmines, hm);
+@include hots-map-images (skytemple, st);
+@include hots-map-images (tomb-of-the-spider-queen, sq);
+@include hots-map-images (battlefield-of-eternity, bfoe);
+@include hots-map-images (infernal-shrine, shrine);
+

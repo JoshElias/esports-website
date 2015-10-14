@@ -1,0 +1,1085 @@
+//custom mixins
+
+//HOTS Character image Mixin
+
+@mixin hots-hero ($hero) {  /* Starting new Hots Hero */
+.icon-#{$hero} { background: url(../img/hots/heroes/#{$hero}-hex.png) no-repeat center center; }
+.hero-list li a.#{$hero} { background: url(../img/hots/heroes/28x/#{$hero}28.png) no-repeat center right; }
+.talents-title.#{$hero} { background: url(../img/hots/heroes/60x/#{$hero}60.png) no-repeat; }
+.hots-modal .hero.#{$hero} { background: url(../img/hots/modal/heroes/#{$hero}.png) no-repeat center right; }
+.hero-back.#{$hero} { background: url(../img/hots/heroes/bgs/#{$hero}.png) center center no-repeat; }
+    // guide images
+.hots-guide.large.#{$hero} { background: url('../img/hots/heroes/guide-images/1/#{$hero}.jpg') no-repeat center top; background-size: cover; }
+.hots-guide.small.#{$hero} { background: url('../img/hots/heroes/guide-images/side/1/#{$hero}.jpg') no-repeat center top; background-size: cover; }
+.hots-guide.long.#{$hero} { background-image: url('../img/hots/heroes/guide-images/long/#{$hero}.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-top-guide .hero.#{$hero} { background: url('../img/hots/modal/heroes/#{$hero}.png') no-repeat center right; }
+.guide-hero-image.#{$hero} { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/#{$hero}60.png') no-repeat right top; }
+.tc-hero.#{$hero} { background: url('../img/hots/modal/heroes/#{$hero}.png') no-repeat right 120px; }    
+}
+
+//HOTS Character Talent Mixin
+
+@mixin hots-hero-talents ($hero, $talents) {
+    
+    $smallInc: -30;
+    $largeInc: -102;
+    
+    .talents-icon {
+        
+        &.#{$hero} { 
+            
+            background: url('../img/hots/talents/#{$hero}.png') no-repeat;
+    
+            @each $talent in $talents {
+                
+                $small: $smallInc*map-get($talent, pos);
+                $large: $largeInc*map-get($talent, pos);
+
+                @each $talentName in map-get($talent, class) {
+
+                    &.#{$talentName} { background-position: 0px #{$small}px; }
+                    &.large.#{$talentName} { background-position: -30px #{$large}px; }
+                    
+                }
+                
+            }
+
+        }
+    }
+}
+
+
+// .....Original styles
+
+/* talents icons */
+.talents-icon { 
+    display: block; 
+    width: 30px; 
+    height: 30px; 
+    overflow: hidden; 
+    white-space: nowrap; 
+    text-indent: -99999px; 
+    opacity: .5; 
+    transition: opacity .1s linear; 
+
+    &.tier-selected { opacity: .3; }
+    &:hover { opacity: .9; }
+    &.active { opacity: 1; }
+    &.large { width: 102px; height: 102px; }
+
+}
+
+/* talents - titles */
+.talents-title { 
+    background-position: right top !important; 
+}
+
+
+/* This is the template for hots-hero-talents
+
+@include hots-hero-talents ( heroName, (
+    ( class: (), pos: 0 ), // 0
+    ( class: (), pos: 1 ), // -30
+    ( class: (), pos: 2 ), // -60
+    ( class: (), pos: 3 ), // -90
+    ( class: (), pos: 4 ), // -120
+    ( class: (), pos: 5 ), // -150
+    ( class: (), pos: 6 ), // -180
+    ( class: (), pos: 7 ), // -210
+    ( class: (), pos: 8 ), // -240
+    ( class: (), pos: 9 ), // -270
+    ( class: (), pos: 10 ), // -300
+    ( class: (), pos: 11 ), // -330
+    ( class: (), pos: 12 ), // -360
+    ( class: (), pos: 13 ), // -390
+    ( class: (), pos: 14 ), // -420
+    ( class: (), pos: 15 ), // -450
+    ( class: (), pos: 16 ), // -480
+    ( class: (), pos: 17 ), // -510
+    ( class: (), pos: 18 ) // -540
+) );
+
+*/
+
+/* hots hero images */
+
+@include hots-hero(abathur);
+@include hots-hero(anub-arak);
+@include hots-hero(arthas);
+@include hots-hero(Azmodan);
+@include hots-hero(brightwing);
+@include hots-hero(chen);
+@include hots-hero(diablo);
+@include hots-hero(etc);
+@include hots-hero(falstad);
+@include hots-hero(gazlowe);
+@include hots-hero(illidan);
+@include hots-hero(jaina);
+@include hots-hero(johanna);
+@include hots-hero(kaelthas);
+@include hots-hero(kerrigan);
+@include hots-hero(kharazim);
+@include hots-hero(leoric);
+@include hots-hero(lili);
+@include hots-hero(morales);
+@include hots-hero(malfurion);
+@include hots-hero(muradin);
+@include hots-hero(murky);
+@include hots-hero(nazeebo);
+@include hots-hero(nova);
+@include hots-hero(raynor);
+@include hots-hero(rehgar);
+@include hots-hero(rexxar);
+@include hots-hero(sgthammer);
+@include hots-hero(sonya);
+@include hots-hero(stitches);
+@include hots-hero(sylvanas);
+@include hots-hero(tassadar);
+@include hots-hero(the-butcher);
+@include hots-hero(thelostvikings);
+@include hots-hero(thrall);
+@include hots-hero(tychus);
+@include hots-hero(tyrael);
+@include hots-hero(tyrande);
+@include hots-hero(uther);
+@include hots-hero(valla);
+@include hots-hero(zagara);
+@include hots-hero(zeratul);
+
+//abathur Talents
+
+@include hots-hero-talents ( abathur, (
+    ( class: (pressurized-glands, soma-transferance, envenomed-spikes), pos: 0 ), // 0
+    ( class: (survival-instincts, bombard-strain, assault-strain, locust-brood), pos: 1 ), // -30
+    ( class: (regenerative-microbes, sustained-carapace, networked-carapace, adrenaline-boost), pos: 2 ), // -60
+    ( class: (envenomed-nest, prolific-dispersal, ballistrospores, vile-nest), pos: 3 ), // -90
+    ( class: (adrenal-overload, hivemind), pos: 4 ), // -120
+    ( class: (needlespine, spatial-efficiency, ultimate-evolution, evolutionary-link), pos: 5 ), // -150
+    ( class: (calldown-mule, evolve-monstrosity, evolution-complete), pos: 6 ), // -180
+    ( class: (ultimate-evolution, evolutionary-link), pos: 7 ), // -210
+    ( class: (evolve-monstrosity, evolution-complete), pos: 8 ), // -240
+    ( class: (volatile-mutation), pos: 9 ), // -270
+    ( class: (locust-nest), pos: 10 ) // -300
+) );
+
+//anub-arak Talents
+
+@include hots-hero-talents ( anub-arak, (
+    ( class: (extended-spikes, bed-of-barbs, ), pos: 0 ), // 0
+    ( class: (persistent-carapace, shed-exoskeleton, urtricating-spines, chitinous-plating, symbiotic-armor), pos: 1 ), // -30
+    ( class: (assault-scarab, legion-of-beetles, leeching-scarabs, beetle-juiced), pos: 2 ), // -60
+    ( class: (regeneration-master), pos: 3 ), // -90
+    ( class: (underking, epicenter), pos: 4 ), // -120
+    ( class: (mercenary-lord), pos: 5 ), // -150
+    ( class: (locust-needles), pos: 6 ), // -180
+    ( class: (mercenary-lord), pos: 7 ), // -210
+    ( class: (locust-swarm, hive-master), pos: 8 ), // -240
+    ( class: (web-blast, cryptweave), pos: 9 ), // -270
+    ( class: (burning-rage), pos: 10 ), // -300
+    ( class: (spell-shield), pos: 11 ), // -330
+    ( class: (imposing-presence), pos: 12 ), // -360
+    ( class: (blood-for-blood), pos: 13 ), // -390
+    ( class: (hardened-shield), pos: 14 ), // -420
+    ( class: (rewind), pos: 15 ) // -450
+) );
+
+//arthas talents
+
+@include hots-hero-talents ( arthas, (
+    ( class: (block), pos: 0 ), // 0
+    ( class: (eternal-hunger, destruction, obliterate, frost-strike, frostmourne-feeds), pos: 1 ), // -30
+    ( class: (frost-presence, trail-of-frost), pos: 2 ), // -60
+    ( class: (regeneration-master), pos: 3 ), // -90
+    ( class: (mercenary-lord), pos: 4 ), // -120
+    ( class: (frozen-wastes, biting-cold), pos: 5 ), // -150
+    ( class: (rune-tap), pos: 6 ), // -180
+    ( class: (death-touch, immortal-coil, embrace-death, death-touch), pos: 7 ), // -210
+    ( class: (army-of-the-dead, legion-of-northrend), pos: 8 ), // -240
+    ( class: (absolute-zero, summon-sindragosa), pos: 9 ), // -270
+    ( class: (spell-shield), pos: 10 ), // -300
+    ( class: (relentless), pos: 11 ), // -330
+    ( class: (stoneskin), pos: 12 ), // -360
+    ( class: (rewind), pos: 13 ), // -390
+    ( class: (hardened-shield), pos: 14 ) // -420
+) );
+
+//talents: Azmodan
+
+@include hots-hero-talents ( azmodan, (
+    ( class: (taste-for-blood, sieging-wrath, battleborn, infernal-globe), pos: 0 ), // 0
+    ( class: (spare-nothing, burn-the-weak, gluttony, master-of-destruction, march-of-sin), pos: 1 ), // -30
+    ( class: (healing-ward), pos: 2 ), // -60
+    ( class: (bribe), pos: 3 ), // -90
+    ( class: (enduring-warriors, army-of-hell, hellforged-armor, blazing-demons), pos: 4 ), // -120
+    ( class: (bound-minion, demonic-smite ), pos: 5 ), // -150
+    ( class: (mercenary-lord), pos: 6 ), // -180
+    ( class: (mercenary-lord), pos: 7 ), // -210
+    ( class: (first-aid), pos: 8 ), // -240
+    ( class: (demonic-invasion, perishing-flame), pos: 9 ), // -270
+    ( class: (black-pool, fifth-circle), pos: 10 ), // -300
+    ( class: (relentless), pos: 11 ), // -330
+    ( class: (imposing-presence), pos: 12 ), // -360
+    ( class: (blood-for-blood), pos: 13 ), // -390
+    ( class: (bolt-of-the-storm), pos: 14 ), // -420
+    ( class: (storm-shield), pos: 15 ) // -450
+) );
+
+//talents: Brightwing
+
+@include hots-hero-talents ( brightwing, (
+    ( class: (arcane-precision, sticky-flare), pos: 0 ), // 0
+    ( class: (shield-dust, anti-magic-powder), pos: 1 ), // -30
+    ( class: (bribe), pos: 2 ), // -60
+    ( class: (scouting-drone), pos: 3 ), // -90
+    ( class: (protective-shield), pos: 4 ), // -120
+    ( class: (envenom), pos: 5 ), // -150
+    ( class: (promote), pos: 6 ), // -180
+    ( class: (regenerative-rains, gust-of-healing ), pos: 7 ), // -210
+    ( class: (calldown-mule), pos: 8 ), // -240
+    ( class: (clense), pos: 9 ), // -270
+    ( class: (blink-heal, yseras-blessing ), pos: 10 ), // -300
+    ( class: (emerald-wind, continuous-winds), pos: 11 ), // -330
+    ( class: (phase-shield), pos: 12 ), // -360
+    ( class: (sprint), pos: 13 ), // -390
+    ( class: (ice-block), pos: 14 ), // -420
+    ( class: (hardened-focus), pos: 15 ), // -450
+    ( class: (sticky-powder, critterize), pos: 16 ), // -480
+    ( class: (stoneskin), pos: 17 ), // -510
+    ( class: (storm-shield), pos: 18 ), // -540
+    ( class: (rewind), pos: 19 ) // -570
+) );
+
+//talents: Chen
+
+@include hots-hero-talents ( chen, (
+    ( class: (bottomless-mug, combat-stance, brewmasters-balance, enough-to-share, chug, bolder-flavor), pos: 0 ), // 0
+    ( class: (full-keg, keg-toss, a-touch-of-honey), pos: 1 ), // -30
+    ( class: (consuming-flame, deep-breath, ring-of-fire), pos: 2 ), // -60
+    ( class: (regeneration-master), pos: 3 ), // -90
+    ( class: (swift-reflexes), pos: 4 ), // -120
+    ( class: (deadly-strike, brew-strike, combination-attack, pressure-point), pos: 5 ), // -150
+    ( class: (amplified-healing), pos: 6 ), // -180
+    ( class: (wandering-keg, untapped-potential), pos: 7 ), // -210
+    ( class: (storm-earth-fire, elemental-conduit), pos: 8 ), // -240
+    ( class: (hardened-shield), pos: 9 ), // -270
+    ( class: (bolt-of-the-storm), pos: 10 ), // -300
+    ( class: (relentless), pos: 11 ) // -330
+) );
+
+//talents: diablo
+
+@include hots-hero-talents ( diablo, (
+    ( class: (devils-due, soul-feast, soul-catcher, essence-of-the-slain, soul-steal, siphon-the-dead), pos: 0 ), // 0
+    ( class: (block), pos: 1 ), // -30
+    ( class: (overwhelming-force, from-the-shadows, devastating-charge), pos: 2 ), // -60
+    ( class: (demonic-strength, continuous-overpower, domination), pos: 3 ), // -90
+    ( class: (fire-devil, firestorm, rampage), pos: 4 ), // -120
+    ( class: (battle-momentum), pos: 5 ), // -150
+    ( class: (apocalypse, dying-breath), pos: 6 ), // -180
+    ( class: (lightning-breath, hellstorm), pos: 7 ), // -210
+    ( class: (spell-shield), pos: 8 ), // -240
+    ( class: (life-leech), pos: 9 ), // -270
+    ( class: (imposing-presence), pos: 10 ), // -300
+    ( class: (lord-of-terror), pos: 11 ), // -330
+    ( class: (bolt-of-the-storm), pos: 12 ) // -360
+  
+) );
+
+//talents: ETC
+
+@include hots-hero-talents ( etc, (
+    ( class: (rolling-like-a-stone, double-necked-guitar, double-necked-guitar, show-stopper), pos: 0 ), // 0
+    ( class: (pwn-shop-guitar, prog-rock, guitar-hero, just-keep-rockin, groupies), pos: 1 ), // -30
+    ( class: (block), pos: 2 ), // -60
+    ( class: (mic-check, pinball-wizard, loud-speakers, face-smelt, encore), pos: 3 ), // -90
+    ( class: (hammer-on, speed-metal), pos: 4 ), // -120
+    ( class: (follow-through), pos: 5 ), // -150
+    ( class: (mosh-pit, tour-bus, death-metal), pos: 6 ), // -180
+    ( class: (stage-dive, crowd-pleaser), pos: 7 ), // -210
+    ( class: (spell-shield), pos: 8 ), // -240
+    ( class: (echo-pedal), pos: 9 ), // -270
+    ( class: (imposing-presence), pos: 10 ), // -300
+    ( class: (storm-shield), pos: 11 ), // -330
+    ( class: (bolt-of-the-storm), pos: 12 ) // -360
+) );
+
+//talents: Falstad
+
+@include hots-hero-talents ( falstad, (
+    ( class: (power-throw, secret-weapon, boomerang, crippling-hammer, hammer-time), pos: 0 ), // 0
+    ( class: (updraft, flow-rider, free-roll, afterburner), pos: 1 ), // -30
+    ( class: (seasoned-marksman), pos: 2 ), // -60
+    ( class: (conjurers-pursuit), pos: 3 ), // -90
+    ( class: (bribe), pos: 4 ), // -120
+    ( class: (charged-up, thunderstrikes, static-shield), pos: 5 ), // -150
+    ( class: (vampiric-assault), pos: 6 ), // -180
+    ( class: (gathering-power), pos: 7 ), // -210
+    ( class: (battle-momentum), pos: 8 ), // -240
+    ( class: (first-aid), pos: 9 ), // -270
+    ( class: (hinterland-blast, call-of-the-wildhammer), pos: 10 ), // -300
+    ( class: (mighty-gust, wind-tunnel), pos: 11 ), // -330
+    ( class: (giant-killer), pos: 12 ), // -360
+    ( class: (aerie-gusts), pos: 13 ), // -390
+    ( class: (overdrive), pos: 14 ), // -420
+    ( class: (nexus-frenzy), pos: 15 ), // -450
+    ( class: (epic-mount), pos: 16 ) // -480
+) );
+
+//talents: Gazlowe
+
+@include hots-hero-talents ( gazlowe, (
+    ( class: (regeneration-master, ), pos: 0 ), // 0
+    ( class: (scrap-o-matic-smelter, break-it-down, reduce-reuse-recycle), pos: 1 ), // -30
+    ( class: (extra-tnt, kwik-release-charge), pos: 2 ), // -60
+    ( class: (demolitionist), pos: 3 ), // -90
+    ( class: (mercenary-lord), pos: 4 ), // -120
+    ( class: (clockwerk-steam-fists, rock-it-turret-xl, engine-gunk, long-ranged-turrets, turret-storage, turret-storage), pos: 5 ), // -150
+    ( class: (promote), pos: 6 ), // -180
+    ( class: (mercenary-lord), pos: 7 ), // -210
+    ( class: (first-aid), pos: 8 ), // -240
+    ( class: (calldown-mule), pos: 9 ), // -270
+    ( class: (robo-goblin, mecha-lord), pos: 10 ), // -300
+    ( class: (grav-o-bomb-3000, miniature-black-hole), pos: 11 ), // -330
+    ( class: (burning-rage), pos: 12 ), // -360
+    ( class: (ez-pz-dimensional-ripper, hyperfocus-coils, goblin-fusion), pos: 13 ), // -390
+    ( class: (sprint), pos: 14 ), // -420
+    ( class: (stoneskin), pos: 15 ), // -450
+    ( class: (fury-of-the-storm), pos: 16 ), // -480
+    ( class: (hardened-shield), pos: 17 ) // -510
+) );
+
+//talents: illidan
+
+@include hots-hero-talents ( illidan, (
+    ( class: (battered-assault, fel-reach, immolation, unbound, second-sweep), pos: 0 ), // 0
+    ( class: (shadow-shield, rapid-chase, reflexive-block, sixth-sense), pos: 1 ), // -30
+    ( class: (regeneration-master), pos: 2 ), // -60
+    ( class: (seasoned-marksman), pos: 3 ), // -90
+    ( class: (marked-for-death, lunge, friend-or-foe), pos: 4 ), // -120
+    ( class: (thirsting-blade, thrill-of-battle, hunters-onslaught), pos: 5 ), // -150
+    ( class: (follow-through), pos: 6 ), // -180
+    ( class: (first-aid), pos: 7 ), // -210
+    ( class: (metamorphosis, demonic-form), pos: 8 ), // -240
+    ( class: (the-hunt, nowhere-to-hide), pos: 9 ), // -270
+    ( class: (giant-killer), pos: 10 ), // -300
+    ( class: (blood-for-blood), pos: 11 ), // -330
+    ( class: (stoneskin), pos: 12 ), // -360
+    ( class: (nexus-blades), pos: 13 ), // -390
+    ( class: (bolt-of-the-storm), pos: 14 ) // -420
+) );
+
+//talents: jaina
+
+@include hots-hero-talents ( jaina, (
+    ( class: (winters-reach, frost-shards, ice-lance), pos: 0 ), // 0
+    ( class: (lingering-chill, deep-chill, frostbitten, ice-barrier), pos: 1 ), // -30
+    ( class: (conjurers-pursuit), pos: 2 ), // -60
+    ( class: (snowstorm, storm-front, snow-crash), pos: 3 ), // -90
+    ( class: (arcane-intellect), pos: 4 ), // -120
+    ( class: (envenom), pos: 5 ), // -150
+    ( class: (frost-armor ), pos: 6 ), // -180
+    ( class: (ring-of-frost, cold-snap), pos: 7 ), // -210
+    ( class: (summon-water-elemental, wintermute), pos: 8 ), // -240
+    ( class: (improved-ice-block), pos: 9 ), // -270
+    ( class: (icy-veins), pos: 10 ), // -300
+    ( class: (sprint), pos: 11 ), // -330
+    ( class: (ice-floes, northern-exposure, numbing-blast), pos: 12 ), // -360
+    ( class: (arcane-power), pos: 13 ), // -390
+    ( class: (bolt-of-the-storm), pos: 14 ) // -420
+) );
+
+//talents: johanna
+
+
+@include hots-hero-talents ( johanna, (
+    ( class: (reinforce), pos: 0 ), // 0
+    ( class: (knight-takes-pawn, eternal-retaliation, conviction, blessed-hammer), pos: 1 ), // -30
+    ( class: (righteous-smash, roar, subdue), pos: 2 ), // -60
+    ( class: (regeneration-master), pos: 3 ), // -90
+    ( class: (amplified-healing), pos: 4 ), // -120
+    ( class: (laws-of-hope), pos: 5 ), // -150
+    ( class: (battle-momentum), pos: 6 ), // -180
+    ( class: (sins-exposed, holy-renewal), pos: 7 ), // -210
+    ( class: (the-crusade-marches-on, hold-your-ground, fanaticism), pos: 8 ), // -240
+    ( class: (falling-sword, heavens-fury), pos: 9 ), // -270
+    ( class: (blessed-shield, radiating-faith), pos: 10 ), // -300
+    ( class: (burning-rage), pos: 11 ), // -330
+    ( class: (spell-shield), pos: 12 ), // -360
+    ( class: (imposing-presence), pos: 13 ), // -390
+    ( class: (indestructible), pos: 14 ), // -420
+    ( class: (storm-shield), pos: 15 ) // -450
+) );
+
+//talents: kerrigan
+
+@include hots-hero-talents ( kerrigan, (
+    ( class: (siphoning-impact, clean-kill, adaptation, eviscerate), pos: 0 ), // 0
+    ( class: (sharpened-blades, impaling-blades, blade-torrent ), pos: 1 ), // -30
+    ( class: (sweeping-grasp, psionic-pulse), pos: 2 ), // -60
+    ( class: (block), pos: 3 ), // -90
+    ( class: (seasoned-marksman), pos: 4 ), // -120
+    ( class: (focused-attack), pos: 5 ), // -150
+    ( class: (fury-of-the-swarm), pos: 6 ), // -180
+    ( class: (envenom), pos: 7 ), // -210
+    ( class: (battle-momentum), pos: 8 ), // -240
+    ( class: (searing-attacks), pos: 9 ), // -270
+    ( class: (maelstrom, omegastorm), pos: 10 ), // -300
+    ( class: (summon-ultralisk, torrasque), pos: 11 ), // -330
+    ( class: (lingering-essence, aggressive-defense), pos: 12 ), // -360
+    ( class: (double-strike), pos: 13 ), // -390
+    ( class: (sprint), pos: 14 ), // -420
+    ( class: (blood-for-blood), pos: 15 ), // -450
+    ( class: (overdrive), pos: 16 ), // -480
+    ( class: (nexus-blades), pos: 17 ), // -510
+    ( class: (bolt-of-the-storm), pos: 18 ) // -540
+) );
+
+//talents: kaelthas
+
+@include hots-hero-talents ( kaelthas, (
+    ( class: (mana-addict), pos: 0 ), // 0
+    ( class: (convection, mana-tap, flamethrower, ignite), pos: 1 ), // -30
+    ( class: (energy-roil, nether-wind, tri-optimal, gravity-throw), pos: 2 ), // -60
+    ( class: (fel-infusion, sunfire-enchantment), pos: 3 ), // -90
+    ( class: (gathering-power), pos: 4 ), // -120
+    ( class: (envenom), pos: 5 ), // -150
+    ( class: (fission-bomb, chain-bomb, pyromaniac, backdraft), pos: 6 ), // -180
+    ( class: (clairvoyance), pos: 7 ), // -210
+    ( class: (phoenix, rebirth), pos: 8 ), // -240
+    ( class: (pyroblast, presence-of-mind), pos: 9 ), // -270
+    ( class: (spell-shield), pos: 10 ), // -300
+    ( class: (arcane-barrier), pos: 11 ), // -330
+    ( class: (bolt-of-the-storm), pos: 12 ), // -360
+    ( class: (arcane-power), pos: 13 ) // -390
+) );
+
+//talents: kharazim
+
+@include hots-hero-talents ( kharazim, (
+    ( class: (transcendence), pos: 0 ), // 0
+    ( class: (iron-fists), pos: 1 ), // -30
+    ( class: (insight), pos: 2 ), // -60
+    ( class: (foresight, way-of-the-hundred-fists, quicksilver, blinding-speed), pos: 3 ), // -90
+    ( class: (overtake, fists-of-fury, blazing-fists), pos: 4 ), // -120
+    ( class: (healing-ward), pos: 5 ), // -150
+    ( class: (protective-shield), pos: 6 ), // -180
+    ( class: (echo-of-heaven, soothing-breeze, circle-of-life), pos: 7 ), // -210
+    ( class: (clairvoyance), pos: 8 ), // -240
+    ( class: (cleanse), pos: 9 ), // -270
+    ( class: (seven-sided-strike, transgression), pos: 10 ), // -300
+    ( class: (divine-palm, peaceful-repose), pos: 11 ), // -330
+    ( class: (spell-shield), pos: 12 ), // -360
+    ( class: (relentless), pos: 13 ), // -390
+    ( class: (storm-shield), pos: 14 ), // -420
+    ( class: (epiphany), pos: 15 ) // -450    
+) );
+    
+    .talents-icon.kharazim.pick-your-trait { -webkit-animation: kharazim-traits 6s infinite; animation: kharazim-traits 6s infinite; }
+        @-webkit-keyframes kharazim-traits {
+          0% { background-position: 0px 0px; }
+          33% { background-position: 0px -30px; }
+          66% { background-position: 0px -60px; }
+          100% { background-position: 0px 0px; }
+        }
+
+        @-moz-keyframes kharazim-traits {
+          0% { background-position: 0px 0px; }
+          33% { background-position: 0px -30px; }
+          66% { background-position: 0px -60px; }
+          100% { background-position: 0px 0px; }
+        }
+
+        @keyframes kharazim-traits {
+          0% { background-position: 0px 0px; }
+          33% { background-position: 0px -30px; }
+          66% { background-position: 0px -60px; }
+          100% { background-position: 0px 0px; }
+        }
+
+    .talents-icon.kharazim.large.pick-your-trait { -webkit-animation: kharazim-traits-large 6s infinite; animation: kharazim-traits-large 6s infinite; }
+        @-webkit-keyframes kharazim-traits-large {
+          0% { background-position: -30px 0px; }
+          33% { background-position: -30px -102px; }
+          66% { background-position: -30px -204px; }
+          100% { background-position: -30px 0px; }
+        }
+
+        @-moz-keyframes kharazim-traits-large {
+          0% { background-position: -30px 0px; }
+          33% { background-position: -30px -102px; }
+          66% { background-position: -30px -204px; }
+          100% { background-position: -30px 0px; }
+        }
+
+        @keyframes kharazim-traits-large {
+          0% { background-position: -30px 0px; }
+          33% { background-position: -30px -102px; }
+          66% { background-position: -30px -204px; }
+          100% { background-position: -30px 0px; }
+        }
+
+//talents: leoric
+
+@include hots-hero-talents ( leoric, (
+    ( class: (block), pos: 0 ), // 0
+    ( class: (reanimation), pos: 1 ), // -30
+    ( class: (hopelessness, willing-vessel, crushing-hope, drain-momentum, unyielding-despair), pos: 2 ), // -60
+    ( class: (mana-thirst, ghastly-reach, paralyzing-rage, renewed-swing, consume-vitality), pos: 3 ), // -90
+    ( class: (hardened-bones, royal-focus, lingering-apparition), pos: 4 ), // -120
+    ( class: (fealty-unto-death), pos: 5 ), // -150
+    ( class: (ossein-renewal), pos: 6 ), // -180
+    ( class: (entomb, buried-alive), pos: 7 ), // -210
+    ( class: (march-of-the-black-king, death-march), pos: 8 ), // -240
+    ( class: (burning-rage), pos: 9 ), // -270
+    ( class: (spell-shield), pos: 10 ), // -300
+    ( class: (imposing-presence), pos: 11 ), // -330
+    ( class: (hardened-shield), pos: 12 ), // -360
+    ( class: (spectral-leech), pos: 13 ) // -390
+   
+) );
+
+//talents: lili
+
+@include hots-hero-talents ( lili, (
+    ( class: (conjurers-pursuit), pos: 0 ), // 0
+    ( class: (pro-toss, pitch-perfect, the-good-stuff, two-for-one, herbal-clense), pos: 1 ), // -30
+    ( class: (timeless-creature, mending-serpent, lightning-serpent, serpent-sidekick), pos: 2 ), // -60
+    ( class: (gale-force, mass-vortex, lingering-blind, hindering-winds, surging-winds), pos: 3 ), // -90
+    ( class: (healing-ward), pos: 4 ), // -120
+    ( class: (shake-it-off), pos: 5 ), // -150
+    ( class: (jug-of-1000-cups), pos: 6 ), // -180
+    ( class: (water-dragon, double-dragon), pos: 7 ), // -210
+    ( class: (elusive-feet, safety-sprint), pos: 8 ), // -240
+    ( class: (shrink-ray), pos: 9 ), // -270
+    ( class: (kung-fu-hustle), pos: 10 ), // -300
+    ( class: (storm-shield), pos: 11 ), // -330
+    ( class: (bolt-of-the-storm), pos: 12 ) // -360
+) );
+
+//talents: morales
+
+@include hots-hero-talents ( morales, (
+    ( class: (prolonged-safeguard, inoculation), pos: 0 ), // 0
+    ( class: (trauma-trigger), pos: 1 ), // -30
+    ( class: (feedback-loop, shield-sequencer), pos: 2 ), // -60
+    ( class: (scouting-drone), pos: 3 ), // -90
+    ( class: (bioshield, irradiate, intensive-care), pos: 4 ), // -120
+    ( class: (advanced-block), pos: 5 ), // -150
+    ( class: (upgraded-ballistics, clear, system-shock), pos: 6 ), // -180
+    ( class: (infused-grenade, second-opinion), pos: 7 ), // -210
+    ( class: (calldown-mule), pos: 8 ), // -240
+    ( class: (cleanse), pos: 9 ), // -270
+    ( class: (stim-drone, transfusion), pos: 10 ), // -300
+    ( class: (medivac-dropship, medbay), pos: 11 ), // -330
+    ( class: (couples-therapy), pos: 12 ), // -360
+    ( class: (preventative-care), pos: 13 ), // -390
+    ( class: (spell-shield), pos: 14 ), // -420
+    ( class: (caduceus-reactor-2), pos: 15 ), // -450
+    ( class: (storm-shield), pos: 16 ) // -480
+) );
+
+//talents: malfurion
+
+@include hots-hero-talents ( malfurion, (
+    ( class: (conjurers-pursuit), pos: 0 ), // 0
+    ( class: (moonburn, full-moonfire, hindering-moonfire, lunar-shower), pos: 1 ), // -30
+    ( class: (harmony, enduring-growth, life-seed), pos: 2 ), // -60
+    ( class: (scouting-drone), pos: 3 ), // -90
+    ( class: (vengeful-roots, strangling-vines, tenacious-roots), pos: 4 ), // -120
+    ( class: (versatile), pos: 5 ), // -150
+    ( class: (protective-shield), pos: 6 ), // -180
+    ( class: (cleanse), pos: 7 ), // -210
+    ( class: (battle-momentum), pos: 8 ), // -240
+    ( class: (elunes-grace), pos: 9 ), // -270
+    ( class: (calldown-mule), pos: 10 ), // -300
+    ( class: (tranquility, serenity), pos: 11 ), // -330
+    ( class: (twilight-dream, nightmare), pos: 12 ), // -360
+    ( class: (shrink-ray), pos: 13 ), // -390
+    ( class: (ice-block), pos: 14 ), // -420
+    ( class: (hardened-focus ), pos: 15 ), // -450
+    ( class: (storm-shield), pos: 16 ), // -480
+    ( class: (rewind), pos: 17 ), // -510
+    ( class: (bolt-of-the-storm), pos: 18 ) // -540
+) );
+
+//talents: muradin
+
+@include hots-hero-talents ( muradin, (
+    ( class: (block), pos: 0 ), // 0
+    ( class: (infused-hammer, perfect-storm, sledgehammer, piercing-bolt), pos: 1 ), // -30
+    ( class: (reverberation, crowd-control, thunderburn, healing-static, thunderstrike), pos: 2 ), // -60
+    ( class: (skullcracker), pos: 3 ), // -90
+    ( class: (third-wind, stoneform), pos: 4 ), // -120
+    ( class: (landing-momentum, dwarf-launch, heavy-impact), pos: 5 ), // -150
+    ( class: (battle-momentum), pos: 6 ), // -180
+    ( class: (follow-through), pos: 7 ), // -210
+    ( class: (avatar, unstoppable-force), pos: 8 ), // -240
+    ( class: (haymaker, grand-slam), pos: 9 ), // -270
+    ( class: (burning-rage), pos: 10 ), // -300
+    ( class: (spellshield), pos: 11 ), // -330
+    ( class: (executioner), pos: 12 ), // -360
+    ( class: (imposing-presence), pos: 13 ), // -390
+    ( class: (hardened-shield), pos: 14 ), // -420
+    ( class: (rewind), pos: 15 ) // -450
+) );
+
+//talents: murky
+
+@include hots-hero-talents ( murky, (
+    ( class: (block), pos: 0 ), // 0
+    ( class: (bubble-breeze, bubble-machine, rejuvenating-bubble), pos: 1 ), // -30
+    ( class: (assault-egg, hidden-assault), pos: 2 ), // -60
+    ( class: (bribe), pos: 3 ), // -90
+    ( class: (bigger-slime, slime-advantage, hindering-slime, continuous-slime, slimy-end), pos: 4 ), // -120
+    ( class: (tufferfish, compressed-air, wrath-of-cod, slimy-pufferfish), pos: 5 ), // -150
+    ( class: (living-the-dream), pos: 6 ), // -180
+    ( class: (envenom), pos: 7 ), // -210
+    ( class: (clairvoyance), pos: 8 ), // -240
+    ( class: (march-of-the-murlocs, never-ending-murlocs), pos: 9 ), // -270
+    ( class: (octo-grab, and-a-shark-too), pos: 10 ), // -300
+    ( class: (blood-for-blood), pos: 11 ), // -330
+    ( class: (rewind), pos: 12 ), // -360
+    ( class: (bolt-of-the-storm), pos: 13 ) // -390
+) );
+
+//talents: nazeebo
+
+@include hots-hero-talents ( nazeebo, (
+    ( class: (blood-ritual, death-ritual, specialized-toxin), pos: 0 ), // 0
+    ( class: (demolitionist), pos: 1 ), // -30
+    ( class: (bribe), pos: 2 ), // -60
+    ( class: (spider-cluster, leaping-spiders), pos: 3 ), // -90
+    ( class: (gathering-power), pos: 4 ), // -120
+    ( class: (envenom), pos: 5 ), // -150
+    ( class: (promote), pos: 6 ), // -180
+    ( class: (gidbinn), pos: 7 ), // -210
+    ( class: (fresh-corpses, dead-rush), pos: 8 ), // -240
+    ( class: (mercenary-lord), pos: 9 ), // -270
+    ( class: (calldown-mule), pos: 10 ), // -300
+    ( class: (clairvoyance), pos: 11 ), // -330
+    ( class: (gargantuan, humongoid), pos: 12 ), // -360
+    ( class: (ravenous-spirit, annihilating-spirit), pos: 13 ), // -390
+    ( class: (toads-of-hugeness, infested-toads), pos: 14 ), // -420
+    ( class: (sprint), pos: 15 ), // -450
+    ( class: (ice-block), pos: 16 ), // -480
+    ( class: (stoneskin), pos: 17 ), // -510
+    ( class: (fury-of-the-storm), pos: 18 ), // -540
+    ( class: (bolt-of-the-storm), pos: 19 ) // -570
+) );
+
+//talents: nova
+
+@include hots-hero-talents ( nova, (
+    ( class: (conjurers-pursuit), pos: 0 ), // 0
+    ( class: (psi-op-rangefinder, ambush-snipe, perfect-shot, explosive-round, railgun), pos: 1 ), // -30
+    ( class: (tazer-rounds, covert-ops, crippling-shot), pos: 2 ), // -60
+    ( class: (remote-delivery, lethal-decoy, double-fake), pos: 3 ), // -90
+    ( class: (gathering-power ), pos: 4 ), // -120
+    ( class: (envenom), pos: 5 ), // -150
+    ( class: (one-in-the-chamber), pos: 6 ), // -180
+    ( class: (anti-armor-shells), pos: 7 ), // -210
+    ( class: (triple-tap, fast-reload), pos: 8 ), // -240
+    ( class: (precision-strike, precision-barrage), pos: 9 ), // -270
+    ( class: (advanced-cloaking), pos: 10 ), // -300
+    ( class: (headshot), pos: 11 ), // -330
+    ( class: (spell-shield), pos: 12 ), // -360
+    ( class: (overdrive), pos: 13 ), // -390
+    ( class: (rewind), pos: 14 ), // -420
+    ( class: (bolt-of-the-storm), pos: 15 ) // -450
+) );
+
+//talents: raynor
+
+@include hots-hero-talents ( raynor, (
+    ( class: (give-me-more, activated-rush, fight-or-flight), pos: 0 ), // 0
+    ( class: (seasoned-marksman), pos: 1 ), // -30
+    ( class: (raiders-recruitment), pos: 2 ), // -60
+    ( class: (scouting-drone), pos: 3 ), // -90
+    ( class: (focused-attack), pos: 4 ), // -120
+    ( class: (vampiric-assault), pos: 5 ), // -150
+    ( class: (confident-aim, hamstring-shot, double-barreled, cluster-round, bullseye), pos: 6 ), // -180
+    ( class: (revolution-overdrive, steel-resolve), pos: 7 ), // -210
+    ( class: (mercenary-lord), pos: 8 ), // -240
+    ( class: (hyperion, scorched-earth), pos: 9 ), // -270
+    ( class: (raynors-raiders, dust-wings), pos: 10 ), // -300
+    ( class: (giant-killer), pos: 11 ), // -330
+    ( class: (puttin-on-a-clinic), pos: 12 ), // -360
+    ( class: (executioner), pos: 13 ), // -390
+    ( class: (relentless-leader), pos: 14 ), // -420
+    ( class: (berserk), pos: 15 ), // -450
+    ( class: (a-card-to-play), pos: 16 ), // -480
+    ( class: (nexus-frenzy), pos: 17 ), // -510
+    ( class: (bolt-of-the-storm), pos: 18 ), // -540
+    ( class: (advanced-optics), pos: 19 ) // -570
+) );
+
+//talents: rehgar
+
+@include hots-hero-talents ( rehgar, (
+    ( class: (spiritwalkers-grace, chain-reaction, healing-surge), pos: 0 ), // 0
+    ( class: (empowering-charge, reactive-spark, earth-shield, stormcaller, lightning-bond), pos: 1 ), // -30
+    ( class: (colossal-totem, lightning-totem, earthgrasp-totem), pos: 2 ), // -60
+    ( class: (healing-totem), pos: 3 ), // -90
+    ( class: (feral-heart, shadow-wolf, feral-lunge), pos: 4 ), // -120
+    ( class: (focused-attack, cleanse), pos: 5 ), // -150
+    ( class: (farsight), pos: 6 ), // -180
+    ( class: (battle-momentum), pos: 7 ), // -210
+    ( class: (ancestral-healing, farseers-blessing), pos: 9 ), // -270
+    ( class: (bloodlust, gladiators-war-shout), pos: 10 ), // -300
+    ( class: (spell-shield, blood-for-blood), pos: 11 ), // -330
+    ( class: (berserk), pos: 12 ), // -360
+    ( class: (rewind), pos: 14 ), // -420
+    ( class: (storm-shield), pos: 15 ) // -450
+) );
+
+//talents: rexxar
+
+@include hots-hero-talents ( rexxar, (
+    ( class: (grizzled-bear), pos: 0 ), // 0
+    ( class: (hunter-gatherer), pos: 1 ), // -30
+    ( class: (survivalist-training), pos: 2 ), // -60
+    ( class: (flare), pos: 3 ), // -90
+    ( class: (hungry-bear, easy-prey, thrill-of-the-hunt), pos: 4 ), // -120
+    ( class: (crippling-talons, taking-flight, bird-of-prey, aspect-of-the-hawk), pos: 5 ), // -150
+    ( class: (blood-of-the-rhino, critical-care), pos: 6 ), // -180
+    ( class: (throwing-axes), pos: 7 ), // -210
+    ( class: (aspect-of-the-beast, bear-necessities, barkskin), pos: 8 ), // -240
+    ( class: (bird-of-prey, spirit-bond), pos: 9 ), // -270
+    ( class: (unleash-the-boars, kill-command), pos: 10 ), // -300
+    ( class: (wildfire-bear), pos: 11 ), // -330
+    ( class: (primal-intimidation), pos: 12 ), // -360
+    ( class: (feign-death), pos: 13 ), // -390
+    ( class: (frenzy-of-kalimdor), pos: 14 ), // -420
+    ( class: (hardened-skin), pos: 15 ) // -450
+) );
+
+
+//talents: sgthammer
+
+@include hots-hero-talents ( sgthammer, (
+    ( class: (advanced-artillery, maelstrom-shells, first-strike), pos: 0 ), // 0
+    ( class: (lethal-blast, excessive-force, barricade), pos: 1 ), // -30
+    ( class: (resistant, ambush, hover-siege-mode, graduating-range), pos: 2 ), // -60
+    ( class: (regeneration-master), pos: 3 ), // -90
+    ( class: (cleanse), pos: 4 ), // -120
+    ( class: (vampiric-assault), pos: 5 ), // -150
+    ( class: (slowing-mines, bullhead-mines, mine-field), pos: 6 ), // -180
+    ( class: (hyper-cooling-engines), pos: 7 ), // -210
+    ( class: (first-aid), pos: 8 ), // -240
+    ( class: (blunt-force-gun, orbital-bfg), pos: 9 ), // -270
+    ( class: (napalm-strike, advanced-lava-strike), pos: 10 ), // -300
+    ( class: (giant-killer), pos: 11 ), // -330
+    ( class: (executioner), pos: 12 ), // -360
+    ( class: (stoneskin), pos: 13 ), // -390
+    ( class: (fury-of-the-storm), pos: 14 ), // -420
+    ( class: (nexus-frenzy), pos: 15 ) // -450
+) );
+
+//talents: sonya
+
+@include hots-hero-talents ( sonya, (
+    ( class: (war-paint), pos: 0 ), // 0
+    ( class: (block), pos: 1 ), // -30
+    ( class: (endless-fury, shot-of-fury, no-escape), pos: 2 ), // -60
+    ( class: (mercenary-lord), pos: 3 ), // -90
+    ( class: (focused-attack), pos: 4 ), // -120
+    ( class: (boon-of-the-ancients, poisoned-spear, composite-spear, mystical-spear), pos: 5 ), // -150
+    ( class: (furious-blow, shattered-ground, aftershock), pos: 6 ), // -180
+    ( class: (ferocious-healing), pos: 7 ), // -210
+    ( class: (leap, arreat-crater), pos: 8 ), // -240
+    ( class: (wrath-of-the-berserker, anger-management), pos: 9 ), // -270
+    ( class: (life-funnel, dust-devils, enduring-whirlwind), pos: 10 ), // -300
+    ( class: (spell-shield), pos: 11 ), // -330
+    ( class: (mystical-spear, imposing-presence), pos: 12 ), // -360
+    ( class: (stoneskin), pos: 13 ), // -390
+    ( class: (nexus-blades), pos: 14 ), // -420
+    ( class: (hardened-shield), pos: 15 ), // -450
+    ( class: (follow-through), pos: 16 ) // -480
+) );
+
+//talents: stitches
+
+@include hots-hero-talents ( stitches, (
+    ( class: (block), pos: 0 ), // 0
+    ( class: (chew-your-food, last-bite, savor-the-flavor, indigestion), pos: 1 ), // -30
+    ( class: (heavy-slam, putrid-ground, mega-smash, pulverize), pos: 2 ), // -60
+    ( class: (regeneration-master), pos: 3 ), // -90
+    ( class: (amplified-healing), pos: 4 ), // -120
+    ( class: (mercenary-lord), pos: 5 ), // -150
+    ( class: (vile-cleaver, toxic-gas), pos: 6 ), // -180
+    ( class: (tenderizer), pos: 7 ), // -210
+    ( class: (putrid-bile, regenerative-bile), pos: 8 ), // -240
+    ( class: (gorge, hungry-hungry-stitches), pos: 9 ), // -270
+    ( class: (relentless), pos: 10 ), // -300
+    ( class: (helping-hand, fishing-hook, shish-kabob), pos: 11 ), // -330
+    ( class: (imposing-presence), pos: 12 ), // -360
+    ( class: (hardened-shield), pos: 13 ), // -390
+    ( class: (bolt-of-the-storm), pos: 14 ) // -420
+) );
+
+
+//talents: sylvanas
+
+@include hots-hero-talents ( sylvanas, (
+    ( class: (with-the-wind, barbed-shot, overflowing-quiver, evasive-fire, splinter-shot), pos: 0 ), // 0
+    ( class: (lost-soul, life-drain, cold-embrace), pos: 1 ), // -30
+    ( class: (corruption, paralysis, unstable-poison, overwhelming-affliction), pos: 2 ), // -60
+    ( class: (rangers-ambush, shade-form, windrunner), pos: 3 ), // -90
+    ( class: (envenom), pos: 4 ), // -120
+    ( class: (follow-through), pos: 5 ), // -150
+    ( class: (mercenary-lord), pos: 6 ), // -180
+    ( class: (wailing-arrow, deafening-blast), pos: 7 ), // -210
+    ( class: (possession, dark-ladys-call), pos: 8 ), // -240
+    ( class: (spell-shield), pos: 9 ), // -270
+    ( class: (will-of-the-forsaken), pos: 10 ), // -300
+    ( class: (blood-for-blood), pos: 11 ), // -330
+    ( class: (fury-of-the-storm), pos: 12 ), // -360
+    ( class: (bolt-of-the-storm), pos: 13 ) // -390
+) );
+
+//talents: tassadar
+
+@include hots-hero-talents ( tassadar, (
+    ( class: (conjurers-pursuit, evasive-shielding), pos: 0 ), // 0
+    ( class: (psionic-storm, overload, psi-infusion, static-charge, resonation, second-strike), pos: 1 ), // -30
+    ( class: (plasma-shield, minion-bulwark, leeching-plasma, reinforce-structure, khalas-embrace), pos: 2 ), // -60
+    ( class: (oracle, mental-acuity, scryer), pos: 3 ), // -90
+    ( class: (promote), pos: 4 ), // -120
+    ( class: (healing-ward), pos: 5 ), // -150
+    ( class: (dimensional-shift, deep-shift, prescience, dimensional-warp), pos: 6 ), // -180
+    ( class: (calldown-mule), pos: 7 ), // -210
+    ( class: (archon, twilight-archon), pos: 8 ), // -240
+    ( class: (force-wall, force-barrier), pos: 9 ), // -270
+    ( class: (distortion-beam), pos: 10 ), // -300
+    ( class: (spell-shield), pos: 11 ), // -330
+    ( class: (shrink-ray), pos: 12 ), // -360
+    ( class: (storm-shield), pos: 13 ), // -390
+    ( class: (rewind), pos: 14 ) // -420
+) );
+
+//talents: the-butcher
+
+@include hots-hero-talents ( the-butcher, (
+    ( class: (invigoration, chop-meat, flail-axe, cheap-shot, brutal-strike, crippling-slam), pos: 0 ), // 0
+    ( class: (block), pos: 1 ), // -30
+    ( class: (victuals, abattoir, blood-frenzy), pos: 2 ), // -60
+    ( class: (unrelenting-pursuit, final-assault, savage-charge), pos: 3 ), // -90
+    ( class: (envenom), pos: 4 ), // -120
+    ( class: (insatiable-blade, crave-flesh), pos: 5 ), // -150
+    ( class: (furnace-blast, fires-of-hell), pos: 6 ), // -180
+    ( class: (lamb-to-the-slaughter, slaughterhouse), pos: 7 ), // -210
+    ( class: (burning-rage), pos: 8 ), // -240
+    ( class: (spell-shield), pos: 9 ), // -270
+    ( class: (enraged), pos: 10 ), // -300
+    ( class: (nexus-blades), pos: 11 ), // -330
+    ( class: (bolt-of-the-storm), pos: 12 ) // -360
+) );
+
+//talents: thelostvikings
+
+@include hots-hero-talents ( heroName, (
+    ( class: (olaf-the-stout, hunka-burning-olaf, large-and-in-charge), pos: 0 ), // 0
+    ( class: (spy-games, its-a-sabotage, hardheaded-redhead, erik-the-swift), pos: 1 ), // -30
+    ( class: (viking-hoard), pos: 2 ), // -60
+    ( class: (pain-dont-hurt, baelog-the-fierce), pos: 3 ), // -90
+    ( class: (spin-to-win), pos: 4 ), // -120
+    ( class: (mercenary-lord), pos: 5 ), // -150
+    ( class: (jump), pos: 6 ), // -180
+    ( class: (longboat-raid, ragnarok-n-roll), pos: 7 ), // -210
+    ( class: (play-again, checkpoint-reached), pos: 8 ), // -240
+    ( class: (executioner), pos: 9 ), // -270
+    ( class: (impatience-is-a-virtue), pos: 10 ), // -300
+    ( class: (sixtyfour-kb-marathon), pos: 11 ), // -330
+    ( class: (norse-force), pos: 12 ), // -360
+    ( class: (the-sequel), pos: 13 ), // -390
+    ( class: (viking-fury-of-the-storm), pos: 14 ), // -420
+    ( class: (nordic-attack-squad), pos: 15 ) // -450
+) );
+
+//talents: thrall
+
+@include hots-hero-talents ( thrall, (
+    ( class: (block), pos: 0 ), // 0
+    ( class: (rolling-thunder, ride-the-lightning, forked-lightning), pos: 1 ), // -30
+    ( class: (rabid-wolves, spirit-journey, stone-wolves, relentless-wolves), pos: 2 ), // -60
+    ( class: (seasoned-marksman), pos: 3 ), // -90
+    ( class: (mana-tide, frostwolfs-grace), pos: 4 ), // -120
+    ( class: (envenom), pos: 5 ), // -150
+    ( class: (wind-shear, grace-of-air, tempest-fury, ride-the-wind), pos: 6 ), // -180
+    ( class: (follow-through), pos: 7 ), // -210
+    ( class: (sundering, worldbreaker), pos: 8 ), // -240
+    ( class: (earthquake, earthen-shields), pos: 9 ), // -270
+    ( class: (giant-killer), pos: 10 ), // -300
+    ( class: (spell-shield), pos: 11 ), // -330
+    ( class: (blood-for-blood), pos: 12 ), // -360
+    ( class: (nexus-blades), pos: 13 ), // -390
+    ( class: (bolt-of-the-storm), pos: 14 ) // -420
+) );
+
+//talents: tychus
+
+@include hots-hero-talents ( tychus, (
+    ( class: (armor-piercing-rounds, spray-n-pray, lead-rain), pos: 0 ), // 0
+    ( class: (shredder-grenade, melting-point, quarterback, concussion-grenade), pos: 1 ), // -30
+    ( class: (dash, stim-pack), pos: 2 ), // -60
+    ( class: (regeneration-master), pos: 3 ), // -90
+    ( class: (scouting-drone), pos: 4 ), // -120
+    ( class: (vampiric-assault), pos: 5 ), // -150
+    ( class: (focused-attack), pos: 6 ), // -180
+    ( class: (rapid-fire, lock-and-load), pos: 7 ), // -210
+    ( class: (first-aid), pos: 8 ), // -240
+    ( class: (searing-attacks), pos: 9 ), // -270
+    ( class: (commandeer-odin, big-red-button), pos: 10 ), // -300
+    ( class: (drakken-laser-drill, focusing-diodes), pos: 11 ), // -330
+    ( class: (giant-killer), pos: 12 ), // -360
+    ( class: (relentless), pos: 13 ), // -390
+    ( class: (executioner), pos: 14 ), // -420
+    ( class: (stoneskin), pos: 15 ), // -450
+    ( class: (nexus-frenzy), pos: 16 ), // -480
+    ( class: (bolt-of-the-storm), pos: 17 ) // -510
+) );
+
+
+//talents: tyrael
+
+@include hots-hero-talents ( tyrael, (
+    ( class: (protection-in-death, even-in-death), pos: 0 ), // 0
+    ( class: (horadric-reforging, angels-grace, blade-of-justice, holy-ground), pos: 1 ), // -30
+    ( class: (purge-evil, retribution, angelic-might), pos: 2 ), // -60
+    ( class: (regeneration-master), pos: 3 ), // -90
+    ( class: (amplified-healing), pos: 4 ), // -120
+    ( class: (vampiric-assault), pos: 5 ), // -150
+    ( class: (battle-momentum), pos: 6 ), // -180
+    ( class: (reciprocate, zealotry, angelic-absorption, imposing-will, salvation), pos: 7 ), // -210
+    ( class: (searing-attacks), pos: 8 ), // -240
+    ( class: (judgement, angel-of-justice), pos: 9 ), // -270
+    ( class: (sanctification, holy-arena), pos: 10 ), // -300
+    ( class: (burning-rage), pos: 11 ), // -330
+    ( class: (blood-for-blood), pos: 12 ), // -360
+    ( class: (hardened-shield), pos: 13 ), // -390
+    ( class: (nexus-blades), pos: 14 ) // -420
+) );
+
+
+//talents: tyrande
+
+@include hots-hero-talents ( tyrande, (
+    ( class: (rangers-mark, focused-attack, huntress-fury, mark-of-mending), pos: 0 ), // 0
+    ( class: (celestial-attunement, quickening-blessing, overflowing-light ), pos: 1 ), // -30
+    ( class: (empower, pierce, ranger), pos: 2 ), // -60
+    ( class: (seasoned-marksman), pos: 3 ), // -90
+    ( class: (protective-shield), pos: 4 ), // -120
+    ( class: (searing-arrows), pos: 5 ), // -150
+    ( class: (healing-ward), pos: 6 ), // -180
+    ( class: (lunar-blaze, shooting-star), pos: 7 ), // -210
+    ( class: (battle-momentum), pos: 8 ), // -240
+    ( class: (calldown-mule), pos: 9 ), // -270
+    ( class: (starfall, celestial-wrath), pos: 10 ), // -300
+    ( class: (shadowstalk, hunters-prey), pos: 11 ), // -330
+    ( class: (shrink-ray), pos: 12 ), // -360
+    ( class: (sprint), pos: 13 ), // -390
+    ( class: (trueshot-aura), pos: 14 ), // -420
+    ( class: (nexus-frenzy), pos: 15 ), // -450
+    ( class: (storm-shield), pos: 16 ), // -480
+    ( class: (rewind), pos: 17 ) // -510
+) );
+
+
+
+//talents: uther
+
+@include hots-hero-talents ( uther, (
+    ( class: (conjurers-pursuit), pos: 0 ), // 0
+    ( class: (reach, blessed-champion, holy-shock), pos: 1 ), // -30
+    ( class: (fist-of-justice, burden-of-guilt), pos: 2 ), // -60
+    ( class: (block), pos: 3 ), // -90
+    ( class: (boundless-conviction, wave-of-light, gathering-radiance), pos: 4 ), // -120
+    ( class: (hammer-of-the-lightbringer), pos: 5 ), // -150
+    ( class: (amplified-healing), pos: 6 ), // -180
+    ( class: (protective-shield), pos: 7 ), // -210
+    ( class: (holy-fire), pos: 8 ), // -240
+    ( class: (cleanse), pos: 9 ), // -270
+    ( class: (clairvoyance), pos: 10 ), // -300
+    ( class: (divine-shield, bulwark-of-light), pos: 11 ), // -330
+    ( class: (divine-storm, divine-hurricane), pos: 12 ), // -360
+    ( class: (spell-shield), pos: 13 ), // -390
+    ( class: (shrink-ray), pos: 14 ), // -420
+    ( class: (hardened-focus), pos: 15 ), // -450
+    ( class: (imposing-presence), pos: 16 ), // -480
+    ( class: (benediction), pos: 17 ), // -510
+    ( class: (redemption), pos: 18 ), // -540
+    ( class: (storm-shield), pos: 19 ) // -570
+) );
+
+//talents: valla
+
+@include hots-hero-talents ( valla, (
+    ( class: (cost-effective-materials, siphoning-arrow, puncturing-arrow), pos: 0 ), // 0
+    ( class: (composite-arrows, arsenal, frost-shot), pos: 1 ), // -30
+    ( class: (rancor, punishment, manticore, hot-pursuit, tempered-by-discipline), pos: 2 ), // -60
+    ( class: (vampiric-assault), pos: 3 ), // -90
+    ( class: (caltrops, repeating-arrow, tumble), pos: 4 ), // -120
+    ( class: (searing-attacks), pos: 6 ), // -180
+    ( class: (strafe, vengeance), pos: 7 ), // -210
+    ( class: (rain-of-vengeance, storm-of-vengeance), pos: 8 ), // -240
+    ( class: (giant-killer), pos: 9 ), // -270
+    ( class: (spell-shield), pos: 10 ), // -300
+    ( class: (executioner), pos: 11 ), // -330
+    ( class: (blood-for-blood), pos: 12 ), // -360
+    ( class: (stoneskin), pos: 13 ), // -390
+    ( class: (nexus-frenzy), pos: 14 ), // -420
+    ( class: (bolt-of-the-storm), pos: 15 ) // -450
+) );
+
+
+//talents: zagara
+
+@include hots-hero-talents ( zagara, (
+    ( class: (centrifugal-hooks, volatile-acid, baneling-massacre), pos: 0 ), // 0
+    ( class: (corpse-feeders, ventral-sacs, bile-drop), pos: 1 ), // -30
+    ( class: (reconstitution, tumor-clutch, endless-creep, metabolic-boost), pos: 2 ), // -60
+    ( class: (demolitionist), pos: 3 ), // -90
+    ( class: (envenomed-spines), pos: 4 ), // -120
+    ( class: (medusa-blades), pos: 5 ), // -150
+    ( class: (envenom), pos: 6 ), // -180
+    ( class: (infest), pos: 7 ), // -210
+    ( class: (battle-momentum), pos: 8 ), // -240
+    ( class: (rapid-incubation), pos: 9 ), // -270
+    ( class: (devouring-maw, tyrant-maw), pos: 10 ), // -300
+    ( class: (nydus-network, broodling-nest), pos: 11 ), // -330
+    ( class: (mutalisk), pos: 12 ), // -360
+    ( class: (grooved-spines, brood-expansion), pos: 13 ), // -390
+    ( class: (giant-killer), pos: 14 ), // -420
+    ( class: (spell-shield), pos: 15 ), // -450
+    ( class: (stoneskin), pos: 16 ), // -480
+    ( class: (fury-of-the-storm), pos: 17 ), // -510
+    ( class: (bolt-of-the-storm), pos: 18 ) // -540
+) );
+
+//talents: zeratul
+
+@include hots-hero-talents ( zeratul, (
+    ( class: (block), pos: 0 ), // 0
+    ( class: (greater-cleave, void-slash, rending-cleave), pos: 1 ), // -30
+    ( class: (rapid-displacement, wormhole), pos: 2 ), // -60
+    ( class: (regeneration-master), pos: 3 ), // -90
+    ( class: (seasoned-marksman), pos: 4 ), // -120
+    ( class: (focused-attack), pos: 5 ), // -150
+    ( class: (vampiric-assault), pos: 6 ), // -180
+    ( class: (gathering-power), pos: 7 ), // -210
+    ( class: (sustained-anomaly, shadow-spike, double-bombs), pos: 8 ), // -240
+    ( class: (vorpal-blade, nexus-blades), pos: 9 ), // -270
+    ( class: (follow-through), pos: 10 ), // -300
+    ( class: (first-aid), pos: 11 ), // -330
+    ( class: (searing-attacks), pos: 12 ), // -360
+    ( class: (shadow-assault, nerazim-fury), pos: 13 ), // -390
+    ( class: (void-prison, protective-prison), pos: 14 ), // -420
+    ( class: (giant-killer), pos: 15 ), // -450
+    ( class: (burning-rage), pos: 16 ), // -480
+    ( class: (assassins-blade), pos: 18 ), // -540
+    ( class: (spell-shield), pos: 19 ), // -570
+    ( class: (stoneskin), pos: 20 ), // -600
+    ( class: (berserk), pos: 21 ), // -630
+    ( class: (rewind), pos: 22 ) // -660
+) );
+
