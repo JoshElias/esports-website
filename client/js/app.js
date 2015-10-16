@@ -76,7 +76,9 @@ var app = angular.module('app', [
                 }
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {
-                console.log(event);
+                console.log("Event:", event);
+                console.log("To State:", toState);
+                console.log("From State", fromState);
                 console.log('hey you don goofed. lol k , (happy martin i removed fag)');
 //                $state.transitionTo('app.404');
             });
@@ -120,7 +122,8 @@ var app = angular.module('app', [
                     }
                 },
                 resolve: {
-                    userLoad: ['User', 'LoopBackAuth',
+                    
+                    CurrentUser: ['User', 'LoopBackAuth',
                       function(User, LoopBackAuth) {
                           if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
                              return User.getCurrent();
@@ -145,8 +148,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/home.html',
                         controller: 'HomeCtrl',
                         resolve: {
-                            articles: ['Article', 'user', function (Article, user) {
-                              console.log("app home's user: ", user);
+                            articles: ['Article', 'CurrentUser', function (Article, CurrentUser) {
+                              console.log("app home's user: ", CurrentUser);
                                 var offset = 1,
                                     num = 6;
 
