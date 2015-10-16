@@ -9152,8 +9152,9 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService',
-    function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService) {
+.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'Guide', 'Hero', 'featuredTalentDict', 'communityTalentDict',
+    function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, Guide, Hero, featuredTalentDict, communityTalentDict) {
+
         // data
         $scope.heroes = dataHeroes;
         $scope.maps = dataMaps;
@@ -9192,6 +9193,7 @@ angular.module('app.controllers', ['ngCookies'])
             var filtered = ($scope.filters.search && $scope.filters.search.length) ? $filter('filter')($scope.heroes, { name: $scope.filters.search }) : $scope.heroes;
             return (filtered.indexOf(hero) === -1);
         }
+<<<<<<< HEAD
 
         function getFilters () {
             var filters = [];
@@ -9223,6 +9225,42 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             return filters;
+=======
+
+        $scope.log = function (m) {
+            console.log(m);
+        }
+
+        function getFilters (isTempostorm) {
+
+//            // check for no filters
+//            if (!$scope.filters.roles.length &&
+//                !$scope.filters.universes.length &&
+//                !$scope.filters.heroes.length &&
+//                !$scope.filters.map) {
+//                return false;
+//            }
+//
+//            // heroes
+//            if ($scope.filters.heroes.length) {
+//                for (var i = 0; i < $scope.filters.heroes.length; i++) {
+//                    filters.push($scope.filters.heroes[i]._id);
+//                }
+//            } else if ($scope.filters.roles.length || $scope.filters.universes.length) {
+//                for (var i = 0; i < $scope.heroes.length; i++) {
+//                    if (!isFiltered($scope.heroes[i])) {
+//                        filters.push($scope.heroes[i]._id);
+//                    }
+//                }
+//            }
+//
+//            // maps
+//            if ($scope.filters.map) {
+//                filters.push($scope.filters.map._id);
+//            }
+
+            return options;
+>>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         }
 
         function isFiltered (hero) {
@@ -9237,7 +9275,131 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
+<<<<<<< HEAD
 
+=======
+
+        function getHeroQuery (isTempostorm) {
+            console.log("getHeroQuery");
+            var temp = [],
+                options = {
+                    filter: {
+                        include: {
+                            relation: 'guides',
+                            scope: {
+                                where: {
+                                    featured: isTempostorm
+                                },
+                                include: [
+                                    {
+                                        relation: 'author'
+                                    },
+                                    {
+                                        relation: 'heroes',
+                                        scope: {
+                                            include: {
+                                                relation: 'talents'
+                                            }
+                                        }
+                                    },
+                                    {
+                                        relation: 'maps'
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                };
+
+            if ($scope.filters.map) {
+                console.log("map string type:", typeof $scope.filters.map.className, $scope.filters.map.className);
+                options.filter.include.scope.where = {
+                    and: [
+                        {
+                            featured: isTempostorm
+                        },
+                        {
+                            maps: { inq: [$scope.filters.map] } //joshtodo: FUCKING FIX THIS
+                        }
+                    ]
+                }
+            }
+
+
+
+            for (var i = 0; i < $scope.filters.heroes.length; i++) {
+                temp.push($scope.filters.heroes[i].name);
+            }
+
+            options.filter.where = {
+                name: { inq: temp }
+            }
+
+            return options;
+        }
+
+        function getGuideQuery (isTempostorm) {
+            var temp = [],
+                options = {
+                    filter: {
+                        limit: 10,
+                        where: {
+                            featured: isTempostorm
+                        },
+                        fields: {
+                            name: true,
+                            votesCount: true,
+                            authorId: true,
+                            createdDate: true,
+                            premium: true,
+                            guideType: true,
+                            id: true,
+                            talentTiers: true
+                          },
+                        include: [
+                            {
+                                relation: 'author'
+                            },
+                            {
+                                relation: 'heroes',
+                                scope: {
+                                    include: ['talents']
+                                }
+                            },
+                            {
+                                relation: 'maps'
+                            }
+                        ]
+                    }
+                }
+
+//            for (var i = 0; i < $scope.filters.heroes.length; i++) {
+//                temp.push($scope.filters.heroes[i].name);
+//            }
+//
+//            options.filter.where = {
+//                name: { inq: temp }
+//            }
+
+            return options;
+        }
+
+        function getDict (guides) {
+            console.log(guides);
+            var dict = {};
+            for (var i = 0; i < guides.length; i++) {
+                for (var k = 0; k < guides[i].heroes.length; k++) {
+                    for (var l = 0; l < guides[i].heroes[k].talents.length; l++) {
+                        var temp = guides[i].heroes[k].talents[l].id;
+                        dict[temp] = guides[i].heroes[k].talents[l];
+                    }
+                }
+            }
+            console.log(dict);
+            return dict;
+        }
+
+>>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         var initializing = true;
         $scope.$watch(function(){ return $scope.filters; }, function (value) {
             if (initializing) {
@@ -9252,6 +9414,7 @@ angular.module('app.controllers', ['ngCookies'])
                         articleFilters.push($scope.heroes[i].name);
                     }
                 }
+<<<<<<< HEAD
 
 
               var options = {
@@ -9309,8 +9472,70 @@ angular.module('app.controllers', ['ngCookies'])
                 HOTSGuideService.getGuidesCommunity(getFilters(), 0, 10, $scope.filters.search, false).then(function (data) {
                     $timeout(function () {
                         $scope.guidesCommunity = data.guides;
+=======
+
+              // check if a hero is selected, --> use that if selected
+              // check if any filters are present, --> use those
+              // check if map filters are present, --> use all filters at same time
+
+                if ($scope.filters.heroes.length > 0) {
+                    // load tempostorm guides
+                    Hero.find(getHeroQuery(true))
+                    .$promise
+                    .then(function (data) {
+                        console.log("results featured:",data);
+                        featuredTalentDict = getDict(data[0].guides);
+                        $timeout(function () {
+                            $scope.guidesFeatured = data[0].guides;
+                        });
+                    })
+                    .catch(function (err) {
+                        console.log("Error:", err);
                     });
-                });
+
+                    // load community guides
+                    Hero.find(getHeroQuery(false))
+                    .$promise
+                    .then(function (data) {
+                        console.log("results community:",data);
+                        communityTalentDict = getDict(data[0].guides);
+
+                        $timeout(function () {
+                            $scope.guidesCommunity = data[0].guides;
+                        });
+                    })
+                    .catch(function (err) {
+                        console.log("Error:", err);
+                    });
+
+                } else {
+                    Guide.find(getGuideQuery(true))
+                    .$promise
+                    .then(function (data) {
+                        featuredTalentDict = getDict(data);
+                        $timeout(function () {
+                            $scope.guidesFeatured = data;
+                        });
+                    })
+                    .catch(function () {
+
+>>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
+                    });
+
+                    Guide.find(getGuideQuery(false))
+                    .$promise
+                    .then(function (data) {
+                        communityTalentDict = getDict(data);
+                        $timeout(function () {
+                            $scope.guidesCommunity = data;
+                        });
+                    })
+                    .catch(function () {
+
+                    });
+                }
+
+
             }
         }, true);
 
@@ -9322,7 +9547,20 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getGuideClass = function (guide) {
             return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
         };
+<<<<<<< HEAD
 
+=======
+
+        $scope.getTierTalent = function (hero, guide, tier, isFeatured) {
+            if (isFeatured) {
+                return (featuredTalentDict[guide.talentTiers[hero.id][tier]] == undefined) ? 'missing' : featuredTalentDict[guide.talentTiers[hero.id][tier]].className;
+            } else {
+                return (communityTalentDict[guide.talentTiers[hero.id][tier]] == undefined) ? 'missing' : communityTalentDict[guide.talentTiers[hero.id][tier]].className;
+            }
+
+        }
+
+>>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         $scope.guidePrevHero = function ($event, guide) {
             $event.preventDefault();
             $event.stopPropagation();
@@ -9372,6 +9610,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
+<<<<<<< HEAD
 .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps',
     function ($q, $scope, $state, $timeout, $filter, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
       console.log(dataCommunityGuides);
@@ -9379,6 +9618,24 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.topGuides = dataTopGuide ? dataTopGuide : false;
         $scope.tempostormGuides = dataTempostormGuides;
 
+=======
+.controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'communityTalents', 'tempostormTalents', 'topGuideTalents',
+    function ($q, $scope, $state, $timeout, $filter, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, communityTalents, tempostormTalents, topGuideTalents) {
+      console.log('top guides: ', dataTopGuide);
+      console.log('community guide: ', dataCommunityGuides);
+      console.log('tempostorm guide: ', dataTempostormGuides);
+      console.log('top guide talents: ', topGuideTalents);
+
+        $scope.communityGuides = dataCommunityGuides;
+        $scope.topGuides = dataTopGuide ? dataTopGuide : false;
+        $scope.tempostormGuides = dataTempostormGuides;
+//      var talentId = $scope.communityGuides[0].heroes[0].talents[0].id;
+//      var heroId = $scope.communityGuides[0].heroes[0].id;
+//      console.log('talentId: ', talentId);
+//      console.log('heroId: ', heroId);
+//      console.log($scope.talents[talentId]);
+
+>>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         // filtering
         $scope.heroes = dataHeroes;
         $scope.maps = dataMaps;
@@ -9414,22 +9671,34 @@ angular.module('app.controllers', ['ngCookies'])
 
         // top guide
         $scope.getTopGuideHeroBg = function (guide) {
-//            return ($scope.app.bootstrapWidth !== 'xs') ? $scope.getGuideCurrentHero(guide).className : '';
+            return ($scope.app.bootstrapWidth !== 'xs') ? $scope.getGuideCurrentHero(guide).className : '';
         };
 
         $scope.isLarge = function () {
-//            var width = $scope.app.bootstrapWidth;
-//            return (width === 'lg' || width === 'md') ? 'large' : '';
+            var width = $scope.app.bootstrapWidth;
+            return (width === 'lg' || width === 'md') ? 'large' : '';
         };
 
         // guides
+//        $scope.getGuideCurrentHero = function (guide) {
+//            return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
+//        };
         $scope.getGuideCurrentHero = function (guide) {
-            // return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
+          return guide.heroes[0];
         };
+<<<<<<< HEAD
 
+=======
+
+//        $scope.getGuideClass = function (guide) {
+//            return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
+//        };
+
+>>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         $scope.getGuideClass = function (guide) {
-            // return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
+          return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
         };
+<<<<<<< HEAD
 
         $scope.guidePrevHero = function ($event, guide) {
 //            $event.preventDefault();
@@ -9447,9 +9716,100 @@ angular.module('app.controllers', ['ngCookies'])
 //            }
 //
 //            guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
+=======
+
+        $scope.getHeroId = function (guide) {
+          return $scope.getGuideCurrentHero(guide).id;
+        };
+
+        $scope.getCommunityTalentName = function (guide, tier) {
+          var heroId = $scope.getHeroId(guide);
+          var talentId = guide.talentTiers[heroId][tier];
+          if(angular.isUndefined(talentId)) {
+            return 'Missing Talent';
+          }
+          var talent = communityTalents[talentId];
+          var talentName = talent.name;
+          return talentName;
+        };
+
+        $scope.getCommunityTalentClassName = function (guide, tier) {
+          var heroId = $scope.getHeroId(guide);
+          var talentId = guide.talentTiers[heroId][tier];
+          if(angular.isUndefined(talentId)) {
+            return 'Missing';
+          }
+          var talent = communityTalents[talentId];
+          var talentName = talent.className;
+          return talentName;
+        };
+
+        $scope.getTempostormTalentName = function (guide, tier) {
+          var heroId = $scope.getHeroId(guide);
+          var talentId = guide.talentTiers[heroId][tier];
+          if(angular.isUndefined(talentId)) {
+            return 'Missing Talent';
+          }
+          var talent = tempostormTalents[talentId];
+          var talentName = talent.name;
+          return talentName;
+        };
+
+        $scope.getTempostormTalentClassName = function (guide, tier) {
+          var heroId = $scope.getHeroId(guide);
+          var talentId = guide.talentTiers[heroId][tier];
+          if(angular.isUndefined(talentId)) {
+            return 'Missing';
+          }
+          var talent = tempostormTalents[talentId];
+          var talentName = talent.className;
+          return talentName;
+        };
+
+        $scope.getTopGuideTalentName = function (guide, tier) {
+          var heroId = $scope.getHeroId(guide);
+          var talentId = guide.talentTiers[heroId][tier];
+          if(angular.isUndefined(talentId)) {
+            return 'Missing Talent';
+          }
+          var talent = topGuideTalents[talentId];
+          var talentName = talent.name;
+          return talentName;
+        };
+
+        $scope.getTopGuideClassName = function (guide, tier) {
+          var heroId = $scope.getHeroId(guide);
+          var talentId = guide.talentTiers[heroId][tier];
+          if(angular.isUndefined(talentId)) {
+            return 'Missing';
+          }
+          var talent = topGuideTalents[talentId];
+          var talentName = talent.className;
+          return talentName;
+        };
+
+
+        $scope.guidePrevHero = function ($event, guide) {
+            $event.preventDefault();
+            $event.stopPropagation();
+
+            var currentHero = $scope.getGuideCurrentHero(guide),
+                index = 0;
+
+            // get index of current hero
+            for (var i = 0; i < guide.heroes.length; i++) {
+                if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                    index = i;
+                    break;
+                }
+            }
+
+            guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
+>>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         };
 
         $scope.guideNextHero = function ($event, guide) {
+<<<<<<< HEAD
 //            $event.preventDefault();
 //            $event.stopPropagation();
 //
@@ -9492,6 +9852,99 @@ angular.module('app.controllers', ['ngCookies'])
             return false;
         };
 
+=======
+              $event.preventDefault();
+              $event.stopPropagation();
+
+              var currentHero = $scope.getGuideCurrentHero(guide),
+                  index = 0;
+
+              // get index of current hero
+              for (var i = 0; i < guide.heroes.length; i++) {
+                  if (currentHero.hero._id == guide.heroes[i].hero._id) {
+                      index = i;
+                      break;
+                  }
+              }
+
+              guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
+        };
+
+          $scope.getTalents = function (hero, tier) {
+                var out = [];
+
+                for (var i = 0; i < hero.hero.talents.length; i++) {
+                    if (hero.hero.talents[i].tier === tier) {
+                        out.push(hero.hero.talents[i]);
+                    }
+                }
+
+                return out;
+        };
+
+        $scope.getTopGuideTalents = function (hero) {
+          $scope.topGuideTalents = {
+            topGuideTalentsT1: [],
+            topGuideTalentsT4: [],
+            topGuideTalentsT7: [],
+            topGuideTalentsT10: [],
+            topGuideTalentsT13: [],
+            topGuideTalentsT16: [],
+            topGuideTalentsT20: []
+          };
+
+          // TODO! JOSH: LOOK OVER THIS
+          angular.forEach(hero.heroes[0].talentTiers, function(value, key) {
+            switch(value) {
+              case 1:
+                $scope.topGuideTalents.topGuideTalentsT1.push({talentId: key});
+                break;
+              case 4:
+                $scope.topGuideTalents.topGuideTalentsT4.push({talentId: key});
+                break;
+              case 7:
+                $scope.topGuideTalents.topGuideTalentsT7.push({talentId: key});
+                break;
+              case 10:
+                $scope.topGuideTalents.topGuideTalentsT10.push({talentId: key});
+                break;
+              case 13:
+                $scope.topGuideTalents.topGuideTalentsT13.push({talentId: key});
+                break;
+              case 16:
+                $scope.topGuideTalents.topGuideTalentsT16.push({talentId: key});
+                break;
+              case 20:
+                $scope.topGuideTalents.topGuideTalentsT20.push({talentId: key});
+                break;
+            };
+          });
+          console.log($scope.topGuideTalents);
+        };
+
+        // Generate Top Guide Talent Object
+        $scope.getTopGuideTalents(dataTopGuide[0]);
+
+//        $scope.selectedTalent = function (hero, tier, talent) {
+//            // return (hero.talents['tier' + tier]._id == talent._id);
+//        };
+
+        $scope.activeTalent = function (guide, tier, talent) {
+          var hero = $scope.getGuideCurrentHero(guide);
+          var heroId = hero.id;
+          return guide.talentTiers[heroId][tier] === talent.talentId;
+        };
+
+//        $scope.getTalent = function (hero, tier) {
+//            for (var i = 0; i < hero.hero.talents.length; i++) {
+//                if (hero.talents['tier' + tier] == hero.hero.talents[i]._id) {
+//                    return hero.hero.talents[i];
+//                }
+//            }
+//            return false;
+//        };
+
+>>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         //is premium
         $scope.isPremium = function (guide) {
             if (!guide.premium.isPremium) { return false; }

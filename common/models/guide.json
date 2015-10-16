@@ -87,10 +87,6 @@
     "heroes": {
       "type": "hasAndBelongsToMany",
       "model": "hero"
-    },
-    "talents": {
-      "type": "hasAndBelongsToMany",
-      "model": "talent"
     }
   },
   "acls": [],
