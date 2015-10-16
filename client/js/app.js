@@ -120,13 +120,12 @@ var app = angular.module('app', [
                     }
                 },
                 resolve: {
-                    User: ['$window', '$cookies', '$state', '$q', 'User', 'LoopBackAuth', function($window, $cookies, $state, $q, User, LoopBackAuth) {
-                      console.log("App State");
-                      console.log("Cached user:", User.getCachedCurrent());
-                        if (User.isAuthenticated() && !User.getCachedCurrent()) {
-                            return User.getCurrentId();
-                        }
-                    }]
+                    userLoad: ['User', 'LoopBackAuth',
+                      function(User, LoopBackAuth) {
+                          if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
+                             return User.getCurrent();
+                          }
+                      }]
                 }
             })
             .state('app.404', {
@@ -146,10 +145,11 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/home.html',
                         controller: 'HomeCtrl',
                         resolve: {
-                            articles: ['Article', function (Article) {
+                            articles: ['Article', 'user', function (Article, user) {
+                              console.log("app home's user: ", user);
                                 var offset = 1,
                                     num = 6;
-                                
+
                                 return Article.find({
                                     filter: {
                                         where: {
@@ -195,7 +195,7 @@ var app = angular.module('app', [
                                     page = $stateParams.p || 1,
                                     perpage = 12,
                                     search = $stateParams.s || '';
-                                
+
                                 return Article.find({
                                     filter: {
                                         where: {
@@ -216,7 +216,7 @@ var app = angular.module('app', [
                                     articles.perpage = perpage;
                                     return articles;
                                 });
-                                
+
                             }],
                             articlesTotal: ['Article', function (Article) {
                                 return Article.count({
@@ -241,7 +241,7 @@ var app = angular.module('app', [
                         resolve: {
                             article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var slug = $stateParams.slug;
-                                
+
                                 return Article.findOne({
                                     filter: {
                                         where: {
@@ -419,7 +419,7 @@ var app = angular.module('app', [
                                     search = $stateParams.s || '',
                                     age = $stateParams.a || '',
                                     order = $stateParams.o || '';
-                                
+
                                 return Deck.find({
                                     filter: {
                                         where: {
@@ -441,18 +441,18 @@ var app = angular.module('app', [
                                     }
                                 })
                                 .$promise;
-                                
+
                             }],
                             tempostormCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var search = $stateParams.s || '';
-                                
+
                                 return Deck.count({
                                     where: {
                                         isFeatured: true,
                                     }
                                 })
                                 .$promise;
-                                
+
                             }],
                             communityDecks: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var klass = $stateParams.k || false,
@@ -486,7 +486,7 @@ var app = angular.module('app', [
                             }],
                             communityCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var search = $stateParams.s || '';
-                                
+
                                 return Deck.count({
                                     where: {
                                         isFeatured: false,
@@ -522,7 +522,7 @@ var app = angular.module('app', [
                                     console.log(com);
                                     return com;
                                 });
-                                
+
                             }]
                         }
                     }
@@ -585,7 +585,7 @@ var app = angular.module('app', [
                             }],
                             classCardsCount: ['$stateParams', 'Card', function ($stateParams, Card) {
                                 var playerClass = $stateParams.playerClass;
-                                
+
                                 return Card.count({
                                     where: {
                                         playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1)
@@ -646,14 +646,14 @@ var app = angular.module('app', [
 //                                var filters = 'all',
 //                                    offset = 0,
 //                                    perpage = 6;
-//                              
+//
 //                                return ArticleService.getArticles('hots', filters, offset, perpage);
 //                            }],
                             dataArticles: ['Article', function (Article) {
                               var filters = 'all',
                                   offset = 0,
                                   perpage = 6;
-                              
+
                               return Article.find({
                                 filter: {
                                   limit: 6,
@@ -792,7 +792,7 @@ var app = angular.module('app', [
                               var guideType = $stateParams.t || 'all',
                                     filters = $stateParams.h || false,
                                     order = $stateParams.o || 'high';
-                              
+
                               return Guide.find({
                                 filter: {
                                   order: 'votesCount DESC',
@@ -1190,7 +1190,7 @@ var app = angular.module('app', [
                                         fifaMembers : [],
                                         fgcMembers  : []
                                     }
-                                    
+
                                     for (var i=0; i != results.length; i++) {
                                         console.log(results[i]);
                                         var type = results[i].gameName;
@@ -1202,7 +1202,7 @@ var app = angular.module('app', [
                                             case 'fgc' : teams.fgcMembers.push(results[i]); break;
                                         }
                                     }
-                                    
+
                                     return teams;
                                 });
                             }]

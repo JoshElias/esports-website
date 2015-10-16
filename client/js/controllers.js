@@ -1,20 +1,16 @@
 'use strict';
 
 angular.module('app.controllers', ['ngCookies'])
-  .controller('AppCtrl', ['$scope', '$localStorage', '$cookies', '$window', '$location', 'SubscriptionService', 'AuthenticationService', 'UserService', '$rootScope',
-    function($scope, $localStorage, $cookies, $window, $location, SubscriptionService, AuthenticationService, UserService, $rootScope) {
+  .controller('AppCtrl', ['$scope', '$localStorage', '$cookies', '$window', '$location', 'User', '$rootScope',
+    function($scope, $localStorage, $cookies, $window, $location, User, $rootScope) {
       var isIE = !!navigator.userAgent.match(/MSIE/i);
       isIE && angular.element($window.document.body).addClass('ie');
       isSmartDevice( $window ) && angular.element($window.document.body).addClass('smart');
 
       // config
+      // TODO: Destroy bad structure! Destroy!
       $scope.app = {
-        name: 'TempoStorm',
-        version: '0.0.1',
-        copyright: new Date().getFullYear(),
-        cdn: (tpl && tpl.length) ? tpl : './',
         settings: {
-            token: $cookies.token || null,
             deck: null,
             show: {
                 deck: null,
@@ -22,54 +18,15 @@ angular.module('app.controllers', ['ngCookies'])
                 decks: null
             },
             secondaryPortrait: []
-        },
-        user: {
-            getUserEmail: function () {
-                return $window.sessionStorage.email || false;
-            },
-            getUserID: function () {
-                return $window.sessionStorage.userID;
-            },
-            getUsername: function () {
-                return $window.sessionStorage.username;
-            },
-            isSubscribed: function () {
-                return SubscriptionService.isSubscribed();
-            },
-            getSubscription: function () {
-                return SubscriptionService.getSubscription();
-            },
-            isAdmin: AuthenticationService.isAdmin,
-            isProvider: AuthenticationService.isProvider,
-            isLogged: AuthenticationService.isLogged,
-            logout: function () {
-                if (AuthenticationService.isLogged()) {
-                    AuthenticationService.setLogged(false);
-                    AuthenticationService.setAdmin(false);
-                    AuthenticationService.setProvider(false);
-                    
-                    SubscriptionService.setSubscribed(false);
-                    SubscriptionService.setTsPlan(false);
-                    SubscriptionService.setExpiry(false);
-                    
-                    delete $window.sessionStorage.userID;
-                    delete $window.sessionStorage.username;
-                    delete $window.sessionStorage.token;
-                    delete $window.sessionStorage.email;
-                    $scope.app.settings.token = null;
-                    delete $cookies.token;
-                }
-//                return $location.path("/login");
-            }
         }
       };
-        
+
       $rootScope.app = $scope.app;
-        
+
       // save settings to local storage
       if ( angular.isDefined($localStorage.settings) ) {
         $scope.app.settings = $localStorage.settings;
-        
+
         // show
         if (!$scope.app.settings.show) {
             $scope.app.settings.show = {
@@ -87,11 +44,11 @@ angular.module('app.controllers', ['ngCookies'])
         if (!$scope.app.settings.show.decks) {
             $scope.app.settings.show.decks = null;
         }
-        
+
       } else {
         $localStorage.settings = $scope.app.settings;
       }
-      $scope.$watch('app.settings', function(){ 
+      $scope.$watch('app.settings', function(){
           $localStorage.settings = $scope.app.settings;
       }, true);
 
@@ -103,6 +60,11 @@ angular.module('app.controllers', ['ngCookies'])
           return (/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/).test(ua);
       }
 
+      var currentUser = User.getCachedCurrent();
+      if(currentUser) {
+        $scope.email = currentUser.email;
+        $scope.username = currentUser.username;
+      }
 }])
 .controller('RootCtrl', ['$scope', 'LoginModalService', function ($scope, LoginModalService) {
     $scope.loginModal = function (state) {
@@ -112,65 +74,30 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
     MetaService.setStatusCode(404);
 }])
-.controller('UserCtrl', ['$scope', '$location', '$window', '$state', '$cookies', 'UserService', 'AuthenticationService', 'AlertService', 'SubscriptionService', 
-    function ($scope, $location, $window, $state, $cookies, UserService, AuthenticationService, AlertService, SubscriptionService) {
-        
-        $scope.remember;
-        $scope.loginInfo = {
-            email: "",
-            password: ""
-        };
-        $scope.verify = {
-            email: "",
-            code: ""
-        }
+.controller('UserCtrl', ['$scope', '$location', '$window', '$state', '$cookies',  'AlertService', 'LoopBackAuth', 'User',
+    function ($scope, $location, $window, $state, $cookies, AlertService, LoopBackAuth, User) {
 
-        var cookMail = $cookies.rememberEmail;
-        var cookPass = $cookies.rememberPassword;
+      $scope.user = LoopBackAuth.currentUserData;
 
-        if (cookMail != undefined && cookPass != undefined) {
-            $scope.remember = true;
-            $scope.loginInfo.email = cookMail;
-            $scope.loginInfo.password = cookPass;
-        }
-        
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         // user controller
         $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-                    
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-                    
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    $location.path("/");
-                }).error(function(status, data) {
-                    $scope.showError = true;
-                });
-            }
+
         }
     }
 ])
-.controller('UserVerifyCtrl', ['$scope', '$location', '$window', '$state', '$stateParams', 'UserService', 'AuthenticationService', 'SubscriptionService', 
+.controller('UserVerifyCtrl', ['$scope', '$location', '$window', '$state', '$stateParams', 'UserService', 'AuthenticationService', 'SubscriptionService',
     function ($scope, $location, $window, $state, $stateParams, UserService, AuthenticationService, SubscriptionService) {
         $scope.verify = {
             email: $stateParams.email || '',
             code: $stateParams.code || ''
         };
-        
+
         $scope.verifyEmail = function () {
              UserService.verifyEmail($scope.verify.email, $scope.verify.code).success(function (data) {
                 if (!data.success) {
@@ -180,11 +107,11 @@ angular.module('app.controllers', ['ngCookies'])
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
                     AuthenticationService.setProvider(data.isProvider);
-                    
+
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);
                     SubscriptionService.setExpiry(data.subscription.expiry);
-                    
+
                     $window.sessionStorage.userID = data.userID;
                     $window.sessionStorage.username = data.username;
                     $window.sessionStorage.email = data.email;
@@ -193,15 +120,15 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             });
         };
-        
+
         // post form if preloaded
         if ($scope.verify.email !== undefined && $scope.verify.email.length && $scope.verify.code !== undefined && $scope.verify.code.length) {
             $scope.verifyEmail();
         }
-        
+
     }
 ])
-.controller('UserResetPasswordCtrl', ['$scope', '$state', '$stateParams', 'UserService', 'AlertService', 
+.controller('UserResetPasswordCtrl', ['$scope', '$state', '$stateParams', 'UserService', 'AlertService',
     function ($scope, $state, $stateParams, UserService, AlertService) {
         $scope.reset = {
             email: $stateParams.email || '',
@@ -209,7 +136,7 @@ angular.module('app.controllers', ['ngCookies'])
             password: '',
             cpassword: ''
         };
-        
+
         $scope.resetPassword = function () {
              UserService.resetPassword($scope.reset.email, $scope.reset.code, $scope.reset.password, $scope.reset.cpassword).success(function (data) {
                 if (!data.success) {
@@ -223,7 +150,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal', 'Article', 
+.controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal', 'Article',
     function ($scope, $sce, articles, articlesTotal, Article) {
         // data
         $scope.articles = {
@@ -264,23 +191,23 @@ angular.module('app.controllers', ['ngCookies'])
             var words = desc.split(' ');
             return desc;//(words.length > limit) ? words.slice(0, limit).join(' ') + '...' : words.join(' ');
         };
-        
+
         $scope.isArticleActive = function (index) {
             return true;
         };
-        
+
         $scope.canArticlePrev = function () {
             return ($scope.articles.offset > 0);
         };
-        
+
         $scope.canArticleNext = function () {
             return ($scope.articles.data.length < $scope.articles.total);
         };
-        
+
         $scope.prevArticles = function () {
             $scope.articles.offset = ($scope.articles.offset - $scope.articles.perpage() >= 0) ? $scope.articles.offset - $scope.articles.perpage() : 0;
         };
-        
+
         $scope.nextArticles = function () {
             if ($scope.articles.offset + $scope.articles.viewable() + $scope.articles.perpage() <= $scope.articles.data.length) {
                 $scope.articles.offset += $scope.articles.perpage();
@@ -288,7 +215,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var num = ($scope.articles.data.length + $scope.articles.perpage() <= $scope.articles.total) ? $scope.articles.perpage() : $scope.articles.total - $scope.articles.data.length;
                 if (num > 0) {
                     $scope.articles.loading = 'next';
-                    
+
                     Article.find({
                         filter: {
                             where: {
@@ -319,13 +246,13 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.tempostormDecks = dataDecksTempostorm;
         $scope.communityDecks = dataDecksCommunity;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
-        
+
         // filters
         $scope.filters = {
             classes: [],
             search: ''
         };
-        
+
         var initializing = true;
         $scope.$watch(function(){ return $scope.filters; }, function (value) {
             if (initializing) {
@@ -338,7 +265,7 @@ angular.module('app.controllers', ['ngCookies'])
                 updateCommunityDecks(1, 10);
             }
         }, true);
-        
+
         function updateArticles (offset, perpage) {
           var options = {
             filter: {
@@ -351,7 +278,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
               }
           };
-          
+
           if($scope.filters.classes.length > 0) {
             options.filter.where.classTags = {
               inq: $scope.filters.classes
@@ -361,17 +288,17 @@ angular.module('app.controllers', ['ngCookies'])
               inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
             }
           }
-          
+
           Article.find(options).$promise.then(function (data) {
               $timeout(function () {
                   $scope.articles = data;
               });
           });
         }
-        
+
         // update decks
         function updateTempostormDecks (page, perpage) {
-          
+
           var options = {
             filter: {
               limit: 10,
@@ -390,7 +317,7 @@ angular.module('app.controllers', ['ngCookies'])
               include: ['author']
             }
           };
-          
+
           if($scope.filters.classes.length > 0) {
             options.filter.where.playerClass = {
               inq: $scope.filters.classes
@@ -400,14 +327,14 @@ angular.module('app.controllers', ['ngCookies'])
               inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
             }
           }
-          
+
             Deck.find(options).$promise.then(function (data) {
                 $timeout(function () {
                     $scope.tempostormDecks = data;
                 });
             });
         }
-        
+
         function updateCommunityDecks (page, perpage) {
           var options = {
             filter: {
@@ -427,7 +354,7 @@ angular.module('app.controllers', ['ngCookies'])
               include: ['author']
             }
           };
-          
+
           if($scope.filters.classes.length > 0) {
             options.filter.where.playerClass = {
               inq: $scope.filters.classes
@@ -437,17 +364,17 @@ angular.module('app.controllers', ['ngCookies'])
               inq: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']
             }
           }
-          
+
           Deck.find(options).$promise.then(function (data) {
               $timeout(function () {
                   $scope.communityDecks = data;
               });
           });
         }
-      
+
         //is premium
         $scope.isPremium = function (guide) {
-          
+
             if (!guide.premium.isPremium) { return false; }
             var now = new Date().getTime(),
                 expiry = new Date(guide.premium.expiryDate).getTime();
@@ -463,7 +390,7 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $state, $window, $compile, bootbox, UserService, LoginModalService) {
         var box,
             callback;
-        
+
         // get premium
         $scope.getPremium = function (plan) {
             if ($scope.app.user.isLogged()) {
@@ -476,7 +403,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         }
-        
+
         // login for modal
         $scope.login = function login(email, password) {
             if (email !== undefined && password !== undefined) {
@@ -484,11 +411,11 @@ angular.module('app.controllers', ['ngCookies'])
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
                     AuthenticationService.setProvider(data.isProvider);
-                    
+
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);
                     SubscriptionService.setExpiry(data.subscription.expiry);
-                    
+
                     $window.sessionStorage.userID = data.userID;
                     $window.sessionStorage.username = data.username;
                     $window.sessionStorage.email = data.email;
@@ -509,7 +436,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.deckCount = dataProfile.deckCount;
         $scope.guideCount = dataProfile.guideCount;
         $scope.activities = dataProfile.activities;
-        
+
 
         function isMyProfile() {
             if($scope.app.user.getUsername() == $scope.user.username) {
@@ -520,29 +447,29 @@ angular.module('app.controllers', ['ngCookies'])
         }
         $scope.metaservice = MetaService;
         $scope.metaservice.set(isMyProfile());
-        
-        
-        
+
+
+
 //        $scope.socialExists = function () {
 //            if (!$scope.user.social) { return false; }
-//            return ($scope.user.social.twitter && $scope.user.social.twitter.length) || 
-//            ($scope.user.social.facebook && $scope.user.social.facebook.length) || 
-//            ($scope.user.social.twitch && $scope.user.social.twitch.length) || 
-//            ($scope.user.social.instagram && $scope.user.social.instagram.length) || 
+//            return ($scope.user.social.twitter && $scope.user.social.twitter.length) ||
+//            ($scope.user.social.facebook && $scope.user.social.facebook.length) ||
+//            ($scope.user.social.twitch && $scope.user.social.twitch.length) ||
+//            ($scope.user.social.instagram && $scope.user.social.instagram.length) ||
 //            ($scope.user.social.youtube && $scope.user.social.youtube.length);
 //        };
     }
 ])
-.controller('ProfileEditCtrl', ['$scope', '$state', 'ProfileService', 'AlertService', 'dataProfileEdit',  
+.controller('ProfileEditCtrl', ['$scope', '$state', 'ProfileService', 'AlertService', 'dataProfileEdit',
     function ($scope, $state, ProfileService, AlertService, dataProfileEdit) {
         $scope.profile = dataProfileEdit.user;
-        
+
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         $scope.editProfile = function () {
             ProfileService.updateProfile($scope.profile).success(function (data) {
                 if (!data.success) {
@@ -559,7 +486,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('ProfileEmailChangeCtrl', ['$scope', '$state', '$stateParams', 'AlertService', 'data', 
+.controller('ProfileEmailChangeCtrl', ['$scope', '$state', '$stateParams', 'AlertService', 'data',
     function ($scope, $state, $stateParams, AlertService, data) {
         if (data.success) {
             AlertService.setSuccess({ show: true, msg: 'An email has been sent to the new address. Please confirm your new email before changes take effect.' });
@@ -567,7 +494,7 @@ angular.module('app.controllers', ['ngCookies'])
         return $state.transitionTo('app.profile.edit', { username: $stateParams.username });
     }
 ])
-.controller('ProfileEmailConfirmCtrl', ['$scope', '$state', '$stateParams', 'AlertService', 'data', 
+.controller('ProfileEmailConfirmCtrl', ['$scope', '$state', '$stateParams', 'AlertService', 'data',
     function ($scope, $state, $stateParams, AlertService, data) {
         if (data.success) {
             AlertService.setSuccess({ show: true, msg: 'Your email address has been updated successfully.' });
@@ -575,13 +502,13 @@ angular.module('app.controllers', ['ngCookies'])
         return $state.transitionTo('app.profile.edit', { username: $stateParams.username });
     }
 ])
-.controller('ProfileSubscriptionCtrl', ['$scope', '$stateParams', 'SubscriptionService', 'dataProfileEdit',  
+.controller('ProfileSubscriptionCtrl', ['$scope', '$stateParams', 'SubscriptionService', 'dataProfileEdit',
     function ($scope, $stateParams, SubscriptionService, dataProfileEdit) {
         $scope.loading = false;
         $scope.profile = dataProfileEdit.user;
         $scope.error = '';
         $scope.success = '';
-        
+
         if ($scope.profile.subscription.isSubscribed) {
             $scope.plan = dataProfileEdit.user.subscription.plan || 'tempostorm_semi';
         } else {
@@ -600,29 +527,29 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.plan = plan;
         }
-        
+
         $scope.isLoading = function () {
             return $scope.loading;
         }
-        
+
         $scope.setLoading = function (bool) {
             $scope.loading = bool;
         }
-        
+
         $scope.setSuccess = function (s) {
             $scope.error = '';
             $scope.success = s;
         }
-        
+
         $scope.setError = function (s) {
             $scope.success = '';
             $scope.error = s;
         }
-        
+
         $scope.setErrorCode = function (c) {
             $scope.error = 'An error has occured. Code: ' + c + ': ' + $scope.getError(c);
         }
-        
+
         $scope.getError = function (c) {
             switch (c) {
                 case 400 : return 'Missing a required parameter.'; break;
@@ -633,21 +560,21 @@ angular.module('app.controllers', ['ngCookies'])
 
             }
         }
-        
+
         $scope.getExpiryDate = function () {
             var expiryISO = $scope.profile.subscription.expiryDate;
             if (!expiryISO) { return false; }
-            
+
             var now = new Date().getTime(),
                 expiryTS = new Date(expiryISO).getTime();
 
             return (expiryTS > now) ? expiryTS : false;
         };
-        
+
         $scope.isSubscribed = function () {
             return $scope.profile.subscription.isSubscribed;
         }
-        
+
         $scope.subscribe = function (code, result) {
             $scope.setLoading(true);
             if (result.error) {
@@ -658,10 +585,10 @@ angular.module('app.controllers', ['ngCookies'])
                     if (data.success) {
                         SubscriptionService.setSubscribed(true);
                         SubscriptionService.setTsPlan(data.plan);
-                        
+
                         $scope.profile.subscription.isSubscribed = true;
                         $scope.profile.subscription.plan = data.plan;
-                        
+
                         $scope.number = '';
                         $scope.cvc = '';
                         $scope.expiry = '';
@@ -674,7 +601,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         $scope.updateCard = function (code, result) {
             if (result.error) {
                 console.log(result);
@@ -708,7 +635,7 @@ angular.module('app.controllers', ['ngCookies'])
                 if (data.success) {
                     SubscriptionService.setSubscribed(false);
                     SubscriptionService.setExpiry(data.subscription.expiryDate);
-                    
+
                     $scope.profile.subscription.isSubscribed = false;
                     $scope.profile.subscription.expiryDate = data.subscription.expiryDate;
                 }
@@ -722,7 +649,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.activities = dataActivity.activities;
         $scope.total = dataActivity.total;
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
-        
+
         $scope.getActivityType = function (activity) {
             switch (activity.activityType) {
                 case 'articleComment':
@@ -741,7 +668,7 @@ angular.module('app.controllers', ['ngCookies'])
                     return 'forumposts'; break;
             }
         }
-        
+
         $scope.isFiltered = function(type) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
                 if ($scope.filterActivities[i] == type) {
@@ -750,7 +677,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         }
-        
+
         $scope.toggleFilter = function (filter) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
                 console.log($scope.filterActivities[i], filter);
@@ -761,19 +688,19 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.filterActivities.push(filter);
         }
-        
+
         $scope.activities.forEach(function (activity) {
             activity.getActivity = function () {
                 return $sce.trustAsHtml(activity.activity);
             };
         });
-        
+
         $scope.loadActivities = function () {
             ProfileService.getActivity($scope.user.username, $scope.activities.length).then(function (data) {
                 $scope.activities = $scope.activities.concat(data.activities);
             });
         }
-        
+
         // delete guide
         $scope.deleteGuide = function deleteGuide(activity) {
             var box = bootbox.dialog({
@@ -806,7 +733,7 @@ angular.module('app.controllers', ['ngCookies'])
             });
             box.modal('show');
         }
-        
+
         $scope.deleteDeck = function deleteDeck(activity) {
             var box = bootbox.dialog({
                 title: 'Delete deck: ' + activity.deck.name + '?',
@@ -840,15 +767,15 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',  
+.controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',
     function ($scope, dataArticles) {
         $scope.articles = dataArticles.articles;
     }
 ])
-.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'dataDecks',  
+.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'dataDecks',
     function ($scope, $state, bootbox, DeckService, dataDecks) {
         $scope.decks = dataDecks.decks;
-        
+
         //is premium
         $scope.isPremium = function (guide) {
             if (!guide.premium.isPremium) { return false; }
@@ -860,23 +787,23 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
-        
+
         $scope.deckEdit = function ($event, deck) {
             if ($event.stopPropagation) $event.stopPropagation();
             if ($event.preventDefault) $event.preventDefault();
             $event.cancelBubble = true;
             $event.returnValue = false;
-            
+
             $state.transitionTo('app.hs.deckBuilder.edit', { slug: deck.slug });
         };
-        
+
         // delete deck
         $scope.deckDelete = function deleteDeck($event, deck) {
             if ($event.stopPropagation) $event.stopPropagation();
             if ($event.preventDefault) $event.preventDefault();
             $event.cancelBubble = true;
             $event.returnValue = false;
-            
+
             var box = bootbox.dialog({
                 title: 'Delete deck: ' + deck.name + '?',
                 message: 'Are you sure you want to delete the deck <strong>' + deck.name + '</strong>?',
@@ -912,26 +839,26 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'dataGuides',  
+.controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'dataGuides',
     function ($scope, $state, bootbox, HOTSGuideService, dataGuides) {
         $scope.guides = dataGuides.guides;
-        
+
         // guides
         $scope.getGuideCurrentHero = function (guide) {
             return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
         };
-        
+
         $scope.getGuideClass = function (guide) {
             return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
         };
-        
+
         $scope.guidePrevHero = function ($event, guide) {
             $event.preventDefault();
             $event.stopPropagation();
-            
+
             var currentHero = $scope.getGuideCurrentHero(guide),
                 index = 0;
-            
+
             // get index of current hero
             for (var i = 0; i < guide.heroes.length; i++) {
                 if (currentHero.hero._id == guide.heroes[i].hero._id) {
@@ -939,17 +866,17 @@ angular.module('app.controllers', ['ngCookies'])
                     break;
                 }
             }
-            
+
             guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
         };
 
         $scope.guideNextHero = function ($event, guide) {
             $event.preventDefault();
             $event.stopPropagation();
-            
+
             var currentHero = $scope.getGuideCurrentHero(guide),
                 index = 0;
-            
+
             // get index of current hero
             for (var i = 0; i < guide.heroes.length; i++) {
                 if (currentHero.hero._id == guide.heroes[i].hero._id) {
@@ -957,26 +884,26 @@ angular.module('app.controllers', ['ngCookies'])
                     break;
                 }
             }
-            
+
             guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
         };
-        
+
         $scope.getTalents = function (hero, tier) {
             var out = [];
-            
+
             for (var i = 0; i < hero.hero.talents.length; i++) {
                 if (hero.hero.talents[i].tier === tier) {
                     out.push(hero.hero.talents[i]);
                 }
             }
-            
+
             return out;
         };
-        
+
         $scope.selectedTalent = function (hero, tier, talent) {
             return (hero.talents['tier' + tier]._id == talent._id);
         };
-        
+
         $scope.getTalent = function (hero, tier) {
             for (var i = 0; i < hero.hero.talents.length; i++) {
                 if (hero.talents['tier' + tier] == hero.hero.talents[i]._id) {
@@ -985,7 +912,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-        
+
         //is premium
         $scope.isPremium = function (guide) {
             if (!guide.premium.isPremium) { return false; }
@@ -997,20 +924,20 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
-        
+
         $scope.guideEdit = function ($event, guide) {
             if ($event.stopPropagation) $event.stopPropagation();
             if ($event.preventDefault) $event.preventDefault();
             $event.cancelBubble = true;
             $event.returnValue = false;
-            
+
             if (guide.guideType == 'hero') {
                 $state.transitionTo('app.hots.guideBuilder.edit.hero', { slug: guide.slug });
             } else {
                 $state.transitionTo('app.hots.guideBuilder.edit.map', { slug: guide.slug });
             }
         };
-        
+
         $scope.guideDelete = function deleteGuide($event, guide) {
             if ($event.stopPropagation) $event.stopPropagation();
             if ($event.preventDefault) $event.preventDefault();
@@ -1052,7 +979,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('ProfilePostsCtrl', ['$scope', 'dataPosts',  
+.controller('ProfilePostsCtrl', ['$scope', 'dataPosts',
     function ($scope, dataPosts) {
         $scope.posts = dataPosts.activity;
     }
@@ -1084,12 +1011,12 @@ angular.module('app.controllers', ['ngCookies'])
             deckable: true,
             active: true
         };
-        
+
         $scope.cardImg = $scope.deckImg = $scope.app.cdn + 'img/blank.png';
-        
+
         // load card
         $scope.card = angular.copy(defaultCard);
-        
+
         // HS options
         $scope.cardTypes = Util.toSelect(Hearthstone.types);
         $scope.cardRarities = Util.toSelect(Hearthstone.rarities);
@@ -1097,12 +1024,12 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.cardClasses = Util.toSelect(Hearthstone.classes);
         $scope.cardMechanics = Util.toSelect(Hearthstone.mechanics);
         $scope.cardExpansions = Util.toSelect(Hearthstone.expansions);
-        
+
         $scope.cardActive = $scope.cardDeckable = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         // card upload
         $scope.cardUpload = function ($files) {
             if (!$files.length) return false;
@@ -1129,7 +1056,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         // deck upload
         $scope.deckUpload = function ($files) {
             if (!$files.length) return false;
@@ -1155,7 +1082,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         // add card
         $scope.addCard = function addCard() {
             $scope.showError = false;
@@ -1176,14 +1103,14 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminCardEditCtrl', ['$location', '$scope', '$window', '$state', '$upload', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'data', 
+.controller('AdminCardEditCtrl', ['$location', '$scope', '$window', '$state', '$upload', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'data',
     function ($location, $scope, $window, $state, $upload, $compile, bootbox, Util, Hearthstone, AdminCardService, AlertService, data) {
         // no card, go back to list
         if (!data || !data.success) { return $location.path('/admin/cards'); }
-        
+
         // load card
         $scope.card = data.card;
-        
+
         // HS options
         $scope.cardTypes = Util.toSelect(Hearthstone.types);
         $scope.cardRarities = Util.toSelect(Hearthstone.rarities);
@@ -1191,15 +1118,15 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.cardClasses = Util.toSelect(Hearthstone.classes);
         $scope.cardMechanics = Util.toSelect(Hearthstone.mechanics);
         $scope.cardExpansions = Util.toSelect(Hearthstone.expansions);
-        
+
         $scope.cardActive = $scope.cardDeckable = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         $scope.cardImg = ($scope.card.photos.large.length) ? $scope.app.cdn + 'cards/' + $scope.card.photos.large : $scope.app.cdn + 'img/blank.png';
         $scope.deckImg = ($scope.card.photos.small.length) ? $scope.app.cdn + 'cards/' + $scope.card.photos.small : $scope.app.cdn + 'img/blank.png';
-        
+
         // card upload
         $scope.cardUpload = function ($files) {
             if (!$files.length) return false;
@@ -1226,7 +1153,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         // deck upload
         $scope.deckUpload = function ($files) {
             if (!$files.length) return false;
@@ -1252,12 +1179,12 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         // edit card
         $scope.editCard = function editCard() {
             $scope.showError = false;
             $scope.showSuccess = false;
-            
+
             AdminCardService.editCard($scope.card).success(function (data) {
                 if (!data.success) {
                     $scope.errors = data.errors;
@@ -1271,33 +1198,33 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('AdminCardListCtrl', ['$scope', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'Pagination', 'data', 
+.controller('AdminCardListCtrl', ['$scope', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'Pagination', 'data',
     function ($scope, bootbox, Util, Hearthstone, AdminCardService, AlertService, Pagination, data) {
-        
+
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         // load cards
         $scope.cards = data.cards;
-        
+
         // filters
         $scope.expansions = [{ name: 'All Expansions', value: ''}].concat(Util.toSelect(Hearthstone.expansions));
         $scope.classes = [{ name: 'All Classes', value: ''}].concat(Util.toSelect(Hearthstone.classes));
         $scope.types = [{ name: 'All Types', value: ''}].concat(Util.toSelect(Hearthstone.types));
         $scope.rarities = [{ name: 'All Rarities', value: ''}].concat(Util.toSelect(Hearthstone.rarities));
-        
+
         // default filters
         $scope.filterExpansion = $scope.filterClass = $scope.filterType = $scope.filterRarity = '';
-        
+
         // page flipping
         $scope.pagination = Pagination.new();
         $scope.pagination.results = function () {
             return ($scope.filtered) ? $scope.filtered.length : $scope.cards.length;
         };
-        
+
         // delete card
         $scope.deleteCard = function deleteCard(card) {
             var box = bootbox.dialog({
@@ -1333,15 +1260,15 @@ angular.module('app.controllers', ['ngCookies'])
             });
             box.modal('show');
         }
-        
+
     }
 ])
-.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'AdminDeckService', 'AdminHOTSGuideService', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes', 'dataDecks', 
+.controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'AdminDeckService', 'AdminHOTSGuideService', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes', 'dataDecks',
     function ($scope, $state, $window, $upload, $compile, bootbox, Hearthstone, Util, AlertService, AdminArticleService, AdminDeckService, AdminHOTSGuideService, dataGuides, dataArticles, dataProviders, dataHeroes, dataDecks) {
         // default article
         var d = new Date();
         d.setMonth(d.getMonth()+1);
-        
+
         var defaultArticle = {
             author: $scope.app.user.getUserID(),
             title : '',
@@ -1372,22 +1299,22 @@ angular.module('app.controllers', ['ngCookies'])
         },
         deckID,
         itemAddBox;
-        
+
         $scope.search = '';
-        
-        
+
+
         //search functions
         function escapeStr( str ) {
             return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         }
-        
-        
+
+
         //search functions
         $scope.getDecks = function () {
             AdminDeckService.getDecks(1, 10, escapeStr($scope.search)).then(function (data) {
                 $scope.decks = data.decks;
             });
-        } 
+        }
 
         $scope.getArticles = function () {
             AdminArticleService.getArticles(1, 10, escapeStr($scope.search)).then(function (data) {
@@ -1401,7 +1328,7 @@ angular.module('app.controllers', ['ngCookies'])
             });
         }
         //!search functions
-        
+
         //open the modal to choose what item to add
         $scope.addItemArticle = function () {
             itemAddBox = bootbox.dialog({
@@ -1420,10 +1347,10 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.getArticles();
             });
         }
-        
+
         $scope.closeBox = function () {
             itemAddBox.modal('hide');
-        }; 
+        };
 
         //change the article item
         $scope.modifyItem = function (item) {
@@ -1434,9 +1361,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = '';
             itemAddBox.modal('hide');
         }
-        
-        
-        
+
+
+
         //this is for the related article modal
         $scope.addRelatedArticle = function () {
             itemAddBox = bootbox.dialog({
@@ -1450,7 +1377,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.getArticles();
             });
         }
-        
+
         $scope.isRelated = function (a) {
             for (var i = 0; i < $scope.article.related.length; i++) {
                 if (a._id == $scope.article.related[i]._id) {
@@ -1459,7 +1386,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         }
-        
+
         $scope.modifyRelated = function (a) {
             if ($scope.isRelated(a)) {
                 $scope.removeRelatedArticle(a);
@@ -1467,7 +1394,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.article.related.push(a);
         }
-        
+
         $scope.removeRelatedArticle = function (a) {
             for (var i = 0; i < $scope.article.related.length; i++) {
                 if (a._id === $scope.article.related[i]._id) {
@@ -1475,46 +1402,46 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // load article
         $scope.article = angular.copy(defaultArticle);
-        
+
         // load decks
         $scope.decks = dataDecks.decks;
 
         // load guides
         $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);
-        
+
         // load articles
         $scope.articles = dataArticles.articles;
-        
+
         // load providers
         $scope.providers = dataProviders.users;
-        
+
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }
             $scope.article.slug.url = Util.slugify($scope.article.title);
         };
-        
+
         $scope.toggleSlugLink = function () {
             $scope.article.slug.linked = !$scope.article.slug.linked;
             $scope.setSlug();
         };
-        
+
         // tags
         $scope.hasTags = function () {
             var type = $scope.article.articleType,
                 isHS = (type.indexOf('hs') !== -1) ? true : false,
                 isHOTS = (type.indexOf('hots') !== -1) ? true : false;
-            
+
             return ((isHS && !isHOTS) || (isHOTS && !isHS));
         }
-        
+
         $scope.getTags = function () {
             var type = $scope.article.articleType,
                 isHS = (type.indexOf('hs') !== -1) ? true : false,
                 isHOTS = (type.indexOf('hots') !== -1) ? true : false;
-            
+
             if (isHS && !isHOTS) {
                 return ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
             }
@@ -1526,10 +1453,10 @@ angular.module('app.controllers', ['ngCookies'])
                 return out;
             }
         };
-        
+
         // article types
         $scope.articleTypes = AdminArticleService.articleTypes();
-        
+
         // select options
         $scope.articleFeatured =
         $scope.articlePremium =
@@ -1537,15 +1464,15 @@ angular.module('app.controllers', ['ngCookies'])
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         $scope.articleTheme = [
             { name: 'None', value: 'none' },
             { name: 'Overcast', value: 'overcast' }
         ];
-        
+
         // date picker options
         $scope.dateOptions = {};
-        
+
         // summernote options
         $scope.options = {
           disableDragAndDrop: true,
@@ -1564,7 +1491,7 @@ angular.module('app.controllers', ['ngCookies'])
             ['misc', ['undo', 'redo', 'codeview']]
           ]
         };
-        
+
         // photo upload
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
@@ -1595,15 +1522,15 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
-        
+
+
         $scope.getImage = function () {
             $scope.imgPath = 'articles/';
             if (!$scope.article) { return 'img/blank.png'; }
             return ($scope.article.photos && $scope.article.photos.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photos.small;
         };
-        
-        
+
+
         $scope.addArticle = function () {
             $scope.showError = false;
             AdminArticleService.addArticle($scope.article).success(function (data) {
@@ -1619,40 +1546,40 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'AdminDeckService', 'AdminHOTSGuideService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes',  
+.controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'AdminDeckService', 'AdminHOTSGuideService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes',
     function ($scope, $state, $window, $upload, $compile, $filter, bootbox, Hearthstone, Util, AlertService, AdminArticleService, AdminDeckService, AdminHOTSGuideService, data, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
         var itemAddBox,
             deckID;
-        
+
         // load article
         $scope.article = data.article;
-        
+
         // load decks
         $scope.decks = [{_id: undefined, name: 'No deck'}].concat(dataDecks.decks);
 
         // load guides
-        $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);       
-        
+        $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);
+
         // load articles
         $scope.articles = dataArticles.articles;
 
         // load providers
         $scope.providers = dataProviders.users;
-        
+
         $scope.search = '';
 
         //search functions
         function escapeStr( str ) {
             return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         }
-        
-        
+
+
         //search functions
         $scope.getDecks = function () {
             AdminDeckService.getDecks(1, 10, escapeStr($scope.search)).then(function (data) {
                 $scope.decks = data.decks;
             });
-        } 
+        }
 
         $scope.getArticles = function () {
             AdminArticleService.getArticles(1, 10, escapeStr($scope.search)).then(function (data) {
@@ -1666,7 +1593,7 @@ angular.module('app.controllers', ['ngCookies'])
             });
         }
         //!search functions
-        
+
         //open the modal to choose what item to add
         $scope.addItemArticle = function () {
             itemAddBox = bootbox.dialog({
@@ -1695,9 +1622,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = '';
             itemAddBox.modal('hide');
         }
-        
-        
-        
+
+
+
         //this is for the related article modal
         $scope.addRelatedArticle = function () {
             itemAddBox = bootbox.dialog({
@@ -1711,7 +1638,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.getArticles();
             });
         }
-        
+
         $scope.isRelated = function (a) {
             for (var i = 0; i < $scope.article.related.length; i++) {
                 if (a._id == $scope.article.related[i]._id) {
@@ -1720,7 +1647,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         }
-        
+
         $scope.modifyRelated = function (a) {
             if ($scope.isRelated(a)) {
                 $scope.removeRelatedArticle(a);
@@ -1728,7 +1655,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.article.related.push(a);
         }
-        
+
         $scope.removeRelatedArticle = function (a) {
             for (var i = 0; i < $scope.article.related.length; i++) {
                 if (a._id === $scope.article.related[i]._id) {
@@ -1736,39 +1663,39 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         $scope.closeBox = function () {
             itemAddBox.modal('hide');
-        }; 
-        
+        };
+
         $scope.setSlug = function () {
             if (!$scope.article.slug.linked) { return false; }
             $scope.article.slug.url = Util.slugify($scope.article.title);
         };
-        
+
         $scope.toggleSlugLink = function () {
             $scope.article.slug.linked = !$scope.article.slug.linked;
             $scope.setSlug();
         };
-        
-        
+
+
         // photo
         $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? $scope.app.cdn + 'articles/' + $scope.article.photos.small : $scope.app.cdn + 'img/blank.png';
-        
+
         // tags
         $scope.hasTags = function () {
             var type = $scope.article.articleType,
                 isHS = (type.indexOf('hs') !== -1) ? true : false,
                 isHOTS = (type.indexOf('hots') !== -1) ? true : false;
-            
+
             return ((isHS && !isHOTS) || (isHOTS && !isHS));
         }
-        
+
         $scope.getTags = function () {
             var type = $scope.article.articleType,
                 isHS = (type.indexOf('hs') !== -1) ? true : false,
                 isHOTS = (type.indexOf('hots') !== -1) ? true : false;
-            
+
             if (isHS && !isHOTS) {
                 return ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'];
             }
@@ -1780,10 +1707,10 @@ angular.module('app.controllers', ['ngCookies'])
                 return out;
             }
         };
-        
+
         // article types
         $scope.articleTypes = AdminArticleService.articleTypes();
-        
+
         // select options
         $scope.articleFeatured =
         $scope.articlePremium =
@@ -1791,18 +1718,18 @@ angular.module('app.controllers', ['ngCookies'])
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         $scope.articleTheme = [
             { name: 'None', value: 'none' },
             { name: 'Overcast', value: 'overcast' }
         ];
-        
+
         // make date object
         $scope.article.premium.expiryDate = new Date($scope.article.premium.expiryDate);
-        
+
         // date picker options
         $scope.dateOptions = {};
-        
+
         // summernote options
         $scope.options = {
           disableDragAndDrop: true,
@@ -1821,7 +1748,7 @@ angular.module('app.controllers', ['ngCookies'])
             ['misc', ['undo', 'redo', 'codeview']]
           ]
         };
-        
+
         // photo upload
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
@@ -1852,13 +1779,13 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         $scope.getImage = function () {
             $scope.imgPath = 'articles/';
             if (!$scope.article) { return 'img/blank.png'; }
             return ($scope.article.photos && $scope.article.photos.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photos.small;
         };
-        
+
         $scope.editArticle = function () {
             $scope.showError = false;
             AdminArticleService.editArticle($scope.article).success(function (data) {
@@ -1872,7 +1799,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             });
         };
-        
+
         $scope.getNames = function () {
             AdminArticleService.getNames($scope.article).success(function (data) {
                 if (!data.success) { console.log(data); }
@@ -1881,7 +1808,7 @@ angular.module('app.controllers', ['ngCookies'])
                     for (var i = 0; i < data.names.length; i++) {
                         content = content + data.names[i] + '<br>';
                     }
-                    
+
                     var box = bootbox.dialog({
                         message: content,
                         animate: false
@@ -1894,20 +1821,20 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('AdminArticleListCtrl', ['$scope', 'AdminArticleService', 'AlertService', 'Pagination', 'data',
     function ($scope, AdminArticleService, AlertService, Pagination, data) {
-        
+
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         // load articles
         $scope.articles = data.articles;
         $scope.page = data.page;
         $scope.perpage = data.perpage;
         $scope.total = data.total;
         $scope.search = data.search;
-        
+
         $scope.getArticles = function () {
             AdminArticleService.getArticles($scope.page, $scope.perpage, $scope.search).then(function (data) {
                 $scope.articles = data.articles;
@@ -1915,12 +1842,12 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.total = data.total;
             });
         }
-        
+
         $scope.searchArticles = function () {
             $scope.page = 1;
             $scope.getArticles();
         }
-        
+
         // pagination
         $scope.pagination = {
             page: function () {
@@ -1940,7 +1867,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var pages = [],
                     start = 1,
                     end = this.totalPages();
-                
+
                 if (this.totalPages() > 5) {
                     if (this.page() < 3) {
                         start = 1;
@@ -1952,13 +1879,13 @@ angular.module('app.controllers', ['ngCookies'])
                         start = this.page() - 2;
                         end = this.page() + 2;
                     }
-                    
+
                 }
-                
+
                 for (var i = start; i <= end; i++) {
                     pages.push(i);
                 }
-                
+
                 return pages;
             },
             isPage: function (page) {
@@ -1974,7 +1901,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
             }
         };
-        
+
         // delete article
         $scope.deleteArticle = function deleteArticle(article) {
             var box = bootbox.dialog({
@@ -2010,25 +1937,25 @@ angular.module('app.controllers', ['ngCookies'])
             });
             box.modal('show');
         }
-        
+
     }
 ])
 .controller('AdminSnapshotListCtrl', [ '$scope', 'data', 'AdminSnapshotService', 'AlertService',
     function ($scope, data, AdminSnapshotService, AlertService) {
-        
+
                 // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         // load articles
         $scope.snapshots = data.snapshots;
         $scope.page = data.page;
         $scope.perpage = data.perpage;
         $scope.total = data.total;
         $scope.search = data.search;
-        
+
         $scope.getSnapshots = function () {
             AdminSnapshotService.getSnapshots($scope.page, $scope.perpage, $scope.search).then(function (data) {
                 $scope.snapshots = data.snapshots;
@@ -2036,12 +1963,12 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.total = data.total;
             });
         }
-        
+
         $scope.searchSnapshots = function () {
             $scope.page = 1;
             $scope.getSnapshots();
         }
-        
+
         // pagination
         $scope.pagination = {
             page: function () {
@@ -2061,7 +1988,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var pages = [],
                     start = 1,
                     end = this.totalPages();
-                
+
                 if (this.totalPages() > 5) {
                     if (this.page() < 3) {
                         start = 1;
@@ -2073,13 +2000,13 @@ angular.module('app.controllers', ['ngCookies'])
                         start = this.page() - 2;
                         end = this.page() + 2;
                     }
-                    
+
                 }
-                
+
                 for (var i = start; i <= end; i++) {
                     pages.push(i);
                 }
-                
+
                 return pages;
             },
             isPage: function (page) {
@@ -2095,7 +2022,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
             }
         };
-        
+
         // delete article
         $scope.deleteSnapshot = function deleteSnapshot(snapshot) {
             var box = bootbox.dialog({
@@ -2131,14 +2058,14 @@ angular.module('app.controllers', ['ngCookies'])
             });
             box.modal('show');
         }
-        
-        
+
+
     }
 ])
 .controller('AdminSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', '$upload', 'data', 'AlertService', 'Util', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
     function ($scope, $compile, $timeout, $state, $window, $upload, data, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
-        
-        
+
+
         var deckBootBox = undefined,
             authorBootBox = undefined,
             cardBootBox = undefined,
@@ -2158,7 +2085,7 @@ angular.module('app.controllers', ['ngCookies'])
                 tech : []
             },
             defaultAuthor = {
-                user: undefined, 
+                user: undefined,
                 description: "",
                 klass: []
             },
@@ -2186,7 +2113,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.matching = false;
         $scope.selectedDecks = [];
         $scope.removedDecks = [];
-        
+
         // photo upload
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
@@ -2217,18 +2144,18 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         }
-        
+
         $scope.getImage = function () {
             $scope.imgPath = 'snapshots/';
             if (!$scope.snapshot) { return '/img/blank.png'; }
             return ($scope.snapshot.photos && $scope.snapshot.photos.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photos.small;
         };
-        
+
         function populateMatches () {
             var out = [],
                 tierLength = $scope.snapshot.tiers.length,
                 maxTierLength = (tierLength > 2) ? 2 : tierLength;
-            
+
             for (var i = 0; i < maxTierLength; i++) {
                 for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
                     out.push($scope.snapshot.tiers[i].decks[j]);
@@ -2236,25 +2163,25 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return out;
         }
-        
+
         $scope.updateDND = function (list, index, d) {
             list.splice(index, 1);
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
             }
             updateMatchesDND(d);
-            
+
             doUpdateMatches(function () {
                 $scope.selectedDecks = [];
                 $scope.removedDecks = [];
                 $scope.deckRanks();
             }, false);
         }
-        
+
         function updateMatchesDND (d) {
             var tierLength = $scope.snapshot.tiers.length;
             var maxTierLength = (tierLength > 2) ? 2 : tierLength;
-            
+
             for (var i = 0; i < maxTierLength; i++) {
                 for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
                     if ($scope.snapshot.tiers[i].decks[j].deck._id == d.deck._id) {
@@ -2271,12 +2198,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
             removeMatch(d.deck);
         }
-        
-        
+
+
         function escapeStr( str ) {
             return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         }
-        
+
         /* GET METHODS */
             function getDecks (callback) {
                 AdminDeckService.getDecks(1, 10, escapeStr($scope.search)).then(function (data) {
@@ -2293,7 +2220,7 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 });
             }
-        
+
             function getCards (callback) {
                 AdminCardService.getDeckableCards().then(function (data) {
                     $timeout(function () {
@@ -2302,14 +2229,14 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         /* GET METHODS */
-        
-        
+
+
         /* BOOTBOX METHODS */
             $scope.openAddBox = function (type, tier, deck, tech) {
                 $scope.tier = tier;
                 $scope.deck = deck;
                 $scope.tech = tech;
-                
+
                 switch (type) {
                     case 'author' : //this is to display data in the bootbox for authors
                         getProviders(function (data) {
@@ -2317,7 +2244,7 @@ angular.module('app.controllers', ['ngCookies'])
                             authorBox(data, type);
                         });
                     break;
-                        
+
                     case 'deck' : //this is to display data in the bootbox for decks
                         getDecks(function (data) {
                             $scope.deckData = data.decks;
@@ -2325,14 +2252,14 @@ angular.module('app.controllers', ['ngCookies'])
                             deckBox(data, type);
                         });
                     break;
-                        
+
                     case 'card' :
                         getCards(function (data) {
                             $scope.cardData = data.cards;
                             cardBox(data, type);
-                        }); 
+                        });
                     break;
-                        
+
                     default : console.log('That does not exist!'); break;
                 }
             }
@@ -2346,7 +2273,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 deckBootBox.modal('show');
             }
-        
+
             function authorBox () {
                 authorBootBox = bootbox.dialog({
                     message: $compile('<div snapshot-add-author></div>')($scope),
@@ -2355,7 +2282,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 authorBootBox.modal('show');
             }
-        
+
             function cardBox(data, type) {
                 $scope.type = type;
                 cardBootBox = bootbox.dialog({
@@ -2365,17 +2292,17 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 cardBootBox.modal('show');
             }
-        
+
             $scope.closeCardBox = function () {
                 cardBox.modal('hide');
                 cardBox = undefined;
             }
-        
+
             $scope.closeBox = function () {
                 bootbox.hideAll();
                 $scope.search = "";
             }
-            
+
             $scope.closeDeckBox = function () {
                 doUpdateMatches(function () {
                     bootbox.hideAll();
@@ -2386,9 +2313,9 @@ angular.module('app.controllers', ['ngCookies'])
                 }, true);
             }
         /* BOOTBOX METHODS */
-        
-        /* URL METHOD */    
-        
+
+        /* URL METHOD */
+
             $scope.setSlug = function () {
                 if (!$scope.snapshot.slug.linked) { return false; }
                 $scope.snapshot.slug.url = "meta-snapshot-" + $scope.snapshot.snapNum + "-" + Util.slugify($scope.snapshot.title);
@@ -2398,9 +2325,9 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.snapshot.slug.linked = !$scope.snapshot.slug.linked;
                 $scope.setSlug();
             };
-            
-        /* !URL METHOD */    
-            
+
+        /* !URL METHOD */
+
         /* AUTHOR METHODS */
             $scope.isAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
@@ -2410,7 +2337,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             }
-            
+
             $scope.addAuthor = function (a) {
                 if ($scope.isAuthor(a)) {
                     $scope.removeAuthor(a);
@@ -2420,7 +2347,7 @@ angular.module('app.controllers', ['ngCookies'])
                 dauthor.user = a;
                 $scope.snapshot.authors.push(dauthor);
             }
-            
+
             $scope.removeAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
                     if (a._id === $scope.snapshot.authors[i].user._id) {
@@ -2430,14 +2357,14 @@ angular.module('app.controllers', ['ngCookies'])
             }
         /* AUTHOR METHODS */
 
-            
+
         /* TIERS METHODS */
             $scope.addTier = function () {
                 var newTier = angular.copy(defaultTier);
                 newTier.tier = $scope.snapshot.tiers.length + 1;
                 $scope.snapshot.tiers.push(newTier);
             }
-            
+
             $scope.removePrompt = function (t) {
                 var alertBox = bootbox.confirm("Are you sure you want to remove tier " + t.tier + "? All the deck data for this tier will be lost!", function (result) {
                     if (result) {
@@ -2447,7 +2374,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
-            
+
             $scope.removeTier = function (t) {
                 for (var j = 0; j < t.decks.length; j++) {
                     $scope.removedDecks.push(t.decks[j].deck);
@@ -2473,15 +2400,15 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             $scope.changeAgainstChance = function (match) {
                 match.forChance = (100 - match.againstChance);
             }
-            
+
             $scope.changeForChance = function (match) {
                 match.againstChance = (100 - match.forChance);
             }
-            
+
             function doUpdateMatches (callback, addDecksToTier) {
                 var tiers = $scope.snapshot.tiers,
                     tierLength = tiers.length,
@@ -2505,14 +2432,14 @@ angular.module('app.controllers', ['ngCookies'])
                 for (var j = 0; j < $scope.removedDecks.length; j++) {
                     $scope.removeDeck($scope.removedDecks[j]);
                 }
-                
+
                 return callback();
             }
-        
+
             $scope.getMatches = function (deckID) {
                 var matches = $scope.snapshot.matches,
                     out = [];
-                
+
                 for (var i = 0; i < matches.length; i++) {
                     if (deckID == matches[i].for._id || deckID == matches[i].against._id) {
                         out.push(matches[i]);
@@ -2520,8 +2447,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return out;
             }
-            
-            function trimDeck (deck) {                
+
+            function trimDeck (deck) {
                 deck.deck = {
                     _id: deck.deck._id,
                     name: deck.deck.name
@@ -2533,7 +2460,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var tiers = $scope.snapshot.tiers,
                     decks = $scope.selectedDecks,
                     tierDeck = angular.copy(defaultTierDeck);
-                
+
                 if (!$scope.isDeck(sel) && !$scope.isSelected(sel)) {
                     for (var l = 0; l < $scope.removedDecks.length; l++) {
                         if (sel._id == $scope.removedDecks[l]._id) {
@@ -2557,7 +2484,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 $scope.deckRanks();
             }
-            
+
             $scope.isDeck = function (d) {
                 for (var j = 0; j < $scope.matches.length; j++) {
                     if (d._id == $scope.matches[j].deck._id) {
@@ -2566,7 +2493,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             }
-            
+
             $scope.isSelected = function (d) {
                 for (var j = 0; j < $scope.selectedDecks.length; j++) {
                     if (d._id == $scope.selectedDecks[j].deck._id) {
@@ -2575,7 +2502,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             }
-            
+
             $scope.removeDeckPrompt = function (d) {
                 var alertBox = bootbox.confirm("Are you sure you want to remove deck " + d.name + "? All the data for this deck will be lost!", function (result) {
                     if (result) {
@@ -2585,7 +2512,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
-            
+
             $scope.removeDeck = function (d) {
                 for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                     for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
@@ -2598,7 +2525,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 $scope.deckRanks();
             }
-            
+
             function removeMatch(d) {
                 for (var j = 0; j < $scope.snapshot.matches.length; j++) {
                     if (d._id == $scope.snapshot.matches[j].for._id || d._id == $scope.snapshot.matches[j].against._id) {
@@ -2606,7 +2533,7 @@ angular.module('app.controllers', ['ngCookies'])
                         j--;
                     }
                 }
-                
+
                 for (var l = 0; l < $scope.matches.length; l++) {
                     if (d._id == $scope.matches[l].deck._id) {
                         $scope.matches.splice(l,1);
@@ -2614,16 +2541,16 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             $scope.searchDecks = function (s) {
                 $scope.search = s;
                 getDecks(function (data) {
                     $scope.deckData = data.decks;
                 });
             }
-            
+
             //////////////////////////////////////////////////////////////////////
-            
+
             $scope.addCard = function (c, t) {
                 var tech = $scope.tech,
                     deck = $scope.deck,
@@ -2631,8 +2558,8 @@ angular.module('app.controllers', ['ngCookies'])
                     techCard = angular.copy(defaultTechCards);
                 techCard.toss = t;
                 techCard.card = c;
-                
-                
+
+
                 for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                     for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
                         for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].tech.length; j++) {
@@ -2640,13 +2567,13 @@ angular.module('app.controllers', ['ngCookies'])
                                 if (!$scope.isCard(c)) {
                                     techCard.orderNum = $scope.snapshot.tiers[i].decks[k].tech[j].cards.length;
                                     $scope.snapshot.tiers[i].decks[k].tech[j].cards.push(techCard);
-                                } 
+                                }
                             }
                         }
                     }
                 }
             }
-            
+
             $scope.isCard = function (c) {
                 var tech = $scope.tech;
                 if (tech) {
@@ -2658,11 +2585,11 @@ angular.module('app.controllers', ['ngCookies'])
                     return false;
                 }
             }
-            
+
             $scope.addTech = function (d, t) {
                 var deckTech = angular.copy(defaultDeckTech);
                 var curNum = 0;
-                
+
                 for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                     for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
                         if (d.rank.current == $scope.snapshot.tiers[i].decks[k].rank.current) {
@@ -2674,7 +2601,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             $scope.removeTech = function (t) {
                 for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                     for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
@@ -2687,7 +2614,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             $scope.removeTechCard = function (tech, c) {
                 for (var card in tech.cards) {
                     if (c._id == tech.cards[card]._id) {
@@ -2696,7 +2623,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             $scope.setBoth = function (c) {
                 if (!c.both) {
                     c.both = true;
@@ -2704,7 +2631,7 @@ angular.module('app.controllers', ['ngCookies'])
                     c.both = false;
                 }
             }
-            
+
         $scope.trendsLength = 12;
         $scope.trends = function(num) {
             return new Array(num);
@@ -2728,7 +2655,7 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', '$upload', 'dataPrevious', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
     function ($scope, $compile, $timeout, $upload, dataPrevious, $state, $window, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
-        
+
         var deckBootBox = undefined,
             authorBootBox = undefined,
             cardBootBox = undefined,
@@ -2756,7 +2683,7 @@ angular.module('app.controllers', ['ngCookies'])
                 active : false
             },
             defaultAuthor = {
-                user: undefined, 
+                user: undefined,
                 description: "",
                 klass: []
             },
@@ -2802,7 +2729,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.removedDecks = [];
         $scope.lockDND = true;
         $scope.loaded = false;
-        
+
         $scope.updateDND = function (list, index, d) {
             list.splice(index, 1);
             for (var i = 0; i < list.length; i++) {
@@ -2815,11 +2742,11 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.deckRanks();
             }, false);
         };
-        
+
         function updateMatchesDND (d) {
             var tierLength = $scope.snapshot.tiers.length;
             var maxTierLength = (tierLength > 2) ? 2 : tierLength;
-            
+
             for (var i = 0; i < maxTierLength; i++) {
                 for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
                     if ($scope.snapshot.tiers[i].decks[j].deck._id == d.deck._id) {
@@ -2836,7 +2763,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             removeMatch(d.deck);
         }
-        
+
         // photo upload
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
@@ -2867,17 +2794,17 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         $scope.getImage = function () {
             $scope.imgPath = '/snapshots/';
             if (!$scope.snapshot) { return '/img/blank.png'; }
             return ($scope.snapshot.photos && $scope.snapshot.photos.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photos.small;
         };
-        
+
         function escapeStr( str ) {
             return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         }
-                
+
         /* GET METHODS */
             function getDecks (callback) {
                 AdminDeckService.getDecks(1, 10, escapeStr($scope.search)).then(function (data) {
@@ -2894,7 +2821,7 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 });
             }
-        
+
             function getCards (callback) {
                 AdminCardService.getDeckableCards().then(function (data) {
                     $timeout(function () {
@@ -2903,14 +2830,14 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         /* GET METHODS */
-        
-        
+
+
         /* BOOTBOX METHODS */
             $scope.openAddBox = function (type, tier, deck, tech) {
                 $scope.tier = tier;
                 $scope.deck = deck;
                 $scope.tech = tech;
-                
+
                 switch (type) {
                     case 'author' : //this is to display data in the bootbox for authors
                         getProviders(function (data) {
@@ -2918,7 +2845,7 @@ angular.module('app.controllers', ['ngCookies'])
                             authorBox(data, type);
                         });
                     break;
-                        
+
                     case 'deck' : //this is to display data in the bootbox for decks
                         getDecks(function (data) {
                             $scope.deckData = data.decks;
@@ -2926,14 +2853,14 @@ angular.module('app.controllers', ['ngCookies'])
                             deckBox(data, type);
                         });
                     break;
-                        
+
                     case 'card' :
                         getCards(function (data) {
                             $scope.cardData = data.cards;
                             cardBox(data, type);
-                        }); 
+                        });
                     break;
-                        
+
                     default : console.log('That does not exist!'); break;
                 }
             }
@@ -2947,7 +2874,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 deckBootBox.modal('show');
             }
-        
+
             function authorBox () {
                 authorBootBox = bootbox.dialog({
                     message: $compile('<div snapshot-add-author></div>')($scope),
@@ -2956,7 +2883,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 authorBootBox.modal('show');
             }
-        
+
             function cardBox(data, type) {
                 $scope.type = type;
                 cardBootBox = bootbox.dialog({
@@ -2966,17 +2893,17 @@ angular.module('app.controllers', ['ngCookies'])
                 });
                 cardBootBox.modal('show');
             }
-        
+
             $scope.closeCardBox = function () {
                 cardBox.modal('hide');
                 cardBox = undefined;
             }
-        
+
             $scope.closeBox = function () {
                 bootbox.hideAll();
                 $scope.search = "";
             }
-            
+
             $scope.closeDeckBox = function () {
                 doUpdateMatches(function () {
                     bootbox.hideAll();
@@ -2987,9 +2914,9 @@ angular.module('app.controllers', ['ngCookies'])
                 }, true);
             }
         /* BOOTBOX METHODS */
-        
-        /* URL METHOD */    
-        
+
+        /* URL METHOD */
+
             $scope.setSlug = function () {
                 if (!$scope.snapshot.slug.linked) { return false; }
                 $scope.snapshot.slug.url = "meta-snapshot-" + $scope.snapshot.snapNum + "-" + Util.slugify($scope.snapshot.title);
@@ -2999,9 +2926,9 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.snapshot.slug.linked = !$scope.snapshot.slug.linked;
                 $scope.setSlug();
             };
-            
-        /* !URL METHOD */    
-            
+
+        /* !URL METHOD */
+
         /* AUTHOR METHODS */
             $scope.isAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
@@ -3011,7 +2938,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             }
-            
+
             $scope.addAuthor = function (a) {
                 if ($scope.isAuthor(a)) {
                     $scope.removeAuthor(a);
@@ -3021,7 +2948,7 @@ angular.module('app.controllers', ['ngCookies'])
                 dauthor.user = a;
                 $scope.snapshot.authors.push(dauthor);
             }
-            
+
             $scope.removeAuthor = function (a) {
                 for (var i = 0; i < $scope.snapshot.authors.length; i++) {
                     if (a._id === $scope.snapshot.authors[i].user._id) {
@@ -3031,14 +2958,14 @@ angular.module('app.controllers', ['ngCookies'])
             }
         /* AUTHOR METHODS */
 
-            
+
         /* TIERS METHODS */
             $scope.addTier = function () {
                 var newTier = angular.copy(defaultTier);
                 newTier.tier = $scope.snapshot.tiers.length + 1;
                 $scope.snapshot.tiers.push(newTier);
             }
-            
+
             $scope.removePrompt = function (t) {
                 var alertBox = bootbox.confirm("Are you sure you want to remove tier " + t.tier + "? All the deck data for this tier will be lost!", function (result) {
                     if (result) {
@@ -3048,7 +2975,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
-            
+
             $scope.removeTier = function (t) {
                 for (var j = 0; j < t.decks.length; j++) {
                     $scope.removedDecks.push(t.decks[j].deck);
@@ -3074,20 +3001,20 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             $scope.changeAgainstChance = function (match) {
                 match.forChance = (100 - match.againstChance);
             }
-            
+
             $scope.changeForChance = function (match) {
                 match.againstChance = (100 - match.forChance);
             }
-            
+
             function doUpdateMatches (callback, addDecksToTier) {
                 var tiers = $scope.snapshot.tiers,
                     tierLength = tiers.length,
                     maxTierLength = (tierLength > 2) ? 2 : tierLength;
-                
+
                 for (var i = 0; i < $scope.selectedDecks.length; i++) {
                     if ($scope.tier < 3) {
                         $scope.matches.push($scope.selectedDecks[i]);
@@ -3107,14 +3034,14 @@ angular.module('app.controllers', ['ngCookies'])
                 for (var j = 0; j < $scope.removedDecks.length; j++) {
                     $scope.removeDeck($scope.removedDecks[j]);
                 }
-                
+
                 return callback();
             }
-            
+
             $scope.getMatches = function (deckID) {
                 var matches = $scope.snapshot.matches,
                     out = [];
-                
+
                 for (var i = 0; i < matches.length; i++) {
                     if (deckID == matches[i].for._id || deckID == matches[i].against._id) {
                         out.push(matches[i]);
@@ -3122,8 +3049,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return out;
             }
-            
-            function trimDeck (deck) {                
+
+            function trimDeck (deck) {
                 deck.deck = {
                     _id: deck.deck._id,
                     name: deck.deck.name
@@ -3159,7 +3086,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 $scope.deckRanks();
             }
-            
+
             $scope.isDeck = function (d) {
                 for (var j = 0; j < $scope.matches.length; j++) {
                     if (d._id == $scope.matches[j].deck._id) {
@@ -3175,7 +3102,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             }
-            
+
             $scope.isSelected = function (d) {
                 for (var j = 0; j < $scope.selectedDecks.length; j++) {
                     if (d._id == $scope.selectedDecks[j].deck._id) {
@@ -3184,7 +3111,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             }
-            
+
             $scope.removeDeckPrompt = function (d) {
                 var alertBox = bootbox.confirm("Are you sure you want to remove deck " + d.name + "? All the data for this deck will be lost!", function (result) {
                     if (result) {
@@ -3194,7 +3121,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
-            
+
             $scope.removeDeck = function (d) {
                 for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                     for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
@@ -3207,7 +3134,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 $scope.deckRanks();
             }
-            
+
             function removeMatch(d) {
                 for (var j = 0; j < $scope.snapshot.matches.length; j++) {
                     if (d._id == $scope.snapshot.matches[j].for._id || d._id == $scope.snapshot.matches[j].against._id) {
@@ -3215,7 +3142,7 @@ angular.module('app.controllers', ['ngCookies'])
                         j--;
                     }
                 }
-                
+
                 for (var l = 0; l < $scope.matches.length; l++) {
                     if (d._id == $scope.matches[l].deck._id) {
                         $scope.matches.splice(l,1);
@@ -3223,16 +3150,16 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             $scope.searchDecks = function (s) {
                 $scope.search = s;
                 getDecks(function (data) {
                     $scope.deckData = data.decks;
                 });
             }
-            
+
             //////////////////////////////////////////////////////////////////////
-            
+
             $scope.addCard = function (c, t) {
                 var tech = $scope.tech,
                     deck = $scope.deck,
@@ -3240,8 +3167,8 @@ angular.module('app.controllers', ['ngCookies'])
                     techCard = angular.copy(defaultTechCards);
                 techCard.toss = t;
                 techCard.card = c;
-                
-                
+
+
                 for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                     for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
                         for (var j = 0; j < $scope.snapshot.tiers[i].decks[k].tech.length; j++) {
@@ -3249,13 +3176,13 @@ angular.module('app.controllers', ['ngCookies'])
                                 if (!$scope.isCard(c)) {
                                     techCard.orderNum = $scope.snapshot.tiers[i].decks[k].tech[j].cards.length;
                                     $scope.snapshot.tiers[i].decks[k].tech[j].cards.push(techCard);
-                                } 
+                                }
                             }
                         }
                     }
                 }
             }
-            
+
             $scope.isCard = function (c) {
                 var tech = $scope.tech;
                 if (tech) {
@@ -3267,11 +3194,11 @@ angular.module('app.controllers', ['ngCookies'])
                     return false;
                 }
             }
-            
+
             $scope.addTech = function (d, t) {
                 var deckTech = angular.copy(defaultDeckTech);
                 var curNum = 0;
-                
+
                 for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                     for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
                         if (d.rank.current == $scope.snapshot.tiers[i].decks[k].rank.current) {
@@ -3283,7 +3210,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             $scope.removeTech = function (t) {
                 for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                     for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
@@ -3296,7 +3223,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             $scope.removeTechCard = function (tech, c) {
                 for (var card in tech.cards) {
                     if (c._id == tech.cards[card]._id) {
@@ -3305,7 +3232,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             $scope.setBoth = function (c) {
                 if (!c.both) {
                     c.both = true;
@@ -3313,15 +3240,15 @@ angular.module('app.controllers', ['ngCookies'])
                     c.both = false;
                 }
             }
-            
-            
+
+
         $scope.trendsLength = 12;
         $scope.trends = function(num) {
             return new Array(num);
         }
         /* TIERS METHODS */
-            
-    
+
+
         $scope.loadLatest = function () {
             AdminSnapshotService.getLatest().then(function (data) {
                 if (!data.success) {
@@ -3349,8 +3276,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             });
         }
-        
-        
+
+
         $scope.addSnapshot = function () {
             $scope.showError = false;
             AdminSnapshotService.addSnapshot($scope.snapshot).success(function (data) {
@@ -3368,21 +3295,21 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('AdminTeamListCtrl', ['$scope', 'data', 'AdminTeamService', 'AlertService',
     function ($scope, data, AdminTeamService, AlertService) {
-        
+
         $scope.members = data.members;
         $scope.hsMembers = data.hsMembers;
         $scope.hotsMembers = data.hotsMembers;
         $scope.csMembers = data.csMembers;
         $scope.fifaMembers = data.fifaMembers;
         $scope.fgcMembers = data.fgcMembers;
-        
-        
+
+
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         $scope.updateDND = function (list, index) {
             list.splice(index, 1);
             for (var i = 0; i < list.length; i++) {
@@ -3390,7 +3317,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             AdminTeamService.updateOrder(list);
         };
-        
+
         // delete member
         $scope.deleteMember = function deleteMember(member, arr) {
             var box = bootbox.dialog({
@@ -3432,41 +3359,41 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, teams) {
 
         $scope.members = teams.members;
-        
+
         $scope.hsMembers = teams.hsMembers;
         $scope.hotsMembers = teams.hotsMembers;
         $scope.wowMembers = teams.wowMembers;
         $scope.fgcMembers = teams.fgcMembers;
         $scope.fifaMembers = teams.fifaMembers;
-        
+
         if ($location.hash()) {
             $timeout(function () {
                 $anchorScroll();
             });
         }
-        
+
         for(var i = 0; i < $scope.members.length; i++) {
             $scope.members[i].description = $scope.members[i].description.replace(/(?:\r\n|\r|\n)/g, '<br />');
         }
-        
+
         $scope.openLink = function ($event, link) {
             $event.stopPropagation();
             window.open(link, '_blank');
         }
-        
+
         $scope.getTitle = function (i) {
             for (var j = 0; j < i.length && i[j] != "-"; j++) {}
             i = i.slice(0,j);
             return i;
         }
-        
+
         $scope.getDescription = function (i) {
             var temp = i,
                 magicNumber = 180;
-            
+
             if(i.length > magicNumber) {
                 if (i[magicNumber] != " ") {
-                    for (var j = 0; i[magicNumber+j] != " "; j++) {} 
+                    for (var j = 0; i[magicNumber+j] != " "; j++) {}
                     i = temp.slice(0,magicNumber+j);
                 } else {
                     i = temp.slice(0,magicNumber);
@@ -3475,17 +3402,17 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return $sce.trustAsHtml(i);
         }
-        
+
         $scope.showMember = function (member) {
             $scope.member = member;
-            
+
             var box = bootbox.dialog({
                 title: member.screenName,
                 className: 'member-modal',
                 message: $compile('<button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true">×</button><img class="responsive" src="https://cdn-tempostorm.netdna-ssl.com/team/{{member.photo}}" /><div class="wrapper-md content-wrapper "><h1 class="m-b-xs">{{member.screenName}}</h1><span class="btn-team-wrapper-modal"><a href="#" target="_blank" ng-click="openLink($event, \'https://twitter.com/\' + member.social.twitter)" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://twitch.tv/\' + member.social.twitch)" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://youtube.com/\' + member.social.youtube)" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://facebook.com/\' + member.social.facebook)" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://instagram.com/\' + member.social.instagram)" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a></span><h3>{{member.fullName}}</h3><p>{{member.description}}</p></div>')($scope)
             });
         }
-        
+
 //        for (var i = 0; i < $scope.members.length; i++) {
 //            var str = $scope.members[i].description;
 //            str.replace(/(?:\r\n|\r|\n)/g, '<br />');
@@ -3495,7 +3422,7 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('AdminTeamAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'AdminTeamService', 'AlertService',
     function ($scope, $state, $window, $upload, $compile, AdminTeamService, AlertService) {
-    
+
         var defaultMember = {
             game: '',
             screenName: '',
@@ -3512,9 +3439,9 @@ angular.module('app.controllers', ['ngCookies'])
             photo: '',
             active: true
         }
-        
+
         $scope.member = angular.copy(defaultMember);
-        
+
         // photo upload
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
@@ -3540,13 +3467,13 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         $scope.getImage = function () {
             $scope.imgPath = '/team/';
             if (!$scope.member) { return '/img/blank.png'; }
             return ($scope.member.photo && $scope.member.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.member.photo;
         };
-        
+
         // save member
         $scope.saveMember = function () {
             AdminTeamService.addMember($scope.member).then(function (data) {
@@ -3564,9 +3491,9 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('AdminTeamEditCtrl', ['$scope', '$state', '$window', '$compile', '$upload', 'data', 'AdminTeamService', 'AlertService',
     function ($scope, $state, $window, $compile, $upload, data, AdminTeamService, AlertService) {
-        
+
         $scope.member = data.member;
-        
+
         // photo upload
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
@@ -3592,13 +3519,13 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         $scope.getImage = function () {
             $scope.imgPath = '/team/';
             if (!$scope.team) { return '/img/blank.png'; }
             return ($scope.snapshot.photo && $scope.snapshot.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photo;
         };
-        
+
         // save member
         $scope.saveMember = function () {
             AdminTeamService.editMember($scope.member).then(function (data) {
@@ -3617,12 +3544,12 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('AdminVodListCtrl', ['$scope', 'data', 'AdminVodService',
     function ($scope, data, AdminVodService) {
         $scope.vods = data.vods;
-        
+
         $scope.getDate = function (d) {
             d = new Date(d);
             return d;
         }
-        
+
         $scope.convertMonth = function (d) {
             switch (d) {
                 case 0 : return "January"; break;
@@ -3639,7 +3566,7 @@ angular.module('app.controllers', ['ngCookies'])
                 case 11 : return "December"; break;
             }
         }
-        
+
         // delete deck
         $scope.deleteVod = function deleteVos(vod) {
             var box = bootbox.dialog({
@@ -3679,7 +3606,7 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('AdminVodAddCtrl', ['$scope', '$window', '$state', 'AdminVodService', 'AlertService',
     function ($scope, $window, $state, AdminVodService, AlertService) {
-        
+
         var defaultVod = {
                 date: {},
                 url: '',
@@ -3688,10 +3615,10 @@ angular.module('app.controllers', ['ngCookies'])
                     list: ''
                 }
             };
-        
+
         $scope.isPlaylist = true;
         $scope.vod = angular.copy(defaultVod);
-        
+
         // save VOD
         $scope.saveVod = function () {
             AdminVodService.vodAdd($scope.vod).then(function (data) {
@@ -3712,7 +3639,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $window.scrollTo(0,0);
             });
         };
-        
+
     }
 ])
 .controller('AdminVodEditCtrl', ['$scope', '$state', '$window', 'data', 'AdminVodService', 'AlertService',
@@ -3720,7 +3647,7 @@ angular.module('app.controllers', ['ngCookies'])
         data.vod.date = Date.parse(data.vod.date);
         $scope.vod = data.vod;
         $scope.isPlaylist = ($scope.vod.url != "") ? false : true;
-        
+
         // save VOD
         $scope.saveVod = function () {
             AdminVodService.vodEdit($scope.vod).then(function (data) {
@@ -3737,21 +3664,21 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminDeckListCtrl', ['$scope', 'AdminDeckService', 'AlertService', 'Pagination', 'data', 
+.controller('AdminDeckListCtrl', ['$scope', 'AdminDeckService', 'AlertService', 'Pagination', 'data',
     function ($scope, AdminDeckService, AlertService, Pagination, data) {
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         // load decks
         $scope.decks = data.decks;
         $scope.page = data.page;
         $scope.perpage = data.perpage;
         $scope.total = data.total;
         $scope.search = data.search;
-        
+
         $scope.getDecks = function () {
             AdminDeckService.getDecks($scope.page, $scope.perpage, $scope.search).then(function (data) {
                 $scope.decks = data.decks;
@@ -3759,12 +3686,12 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.total = data.total;
             });
         }
-        
+
         $scope.searchDecks = function () {
             $scope.page = 1;
             $scope.getDecks();
         }
-        
+
         // pagination
         $scope.pagination = {
             page: function () {
@@ -3784,7 +3711,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var pages = [],
                     start = 1,
                     end = this.totalPages();
-                
+
                 if (this.totalPages() > 5) {
                     if (this.page() < 3) {
                         start = 1;
@@ -3796,13 +3723,13 @@ angular.module('app.controllers', ['ngCookies'])
                         start = this.page() - 2;
                         end = this.page() + 2;
                     }
-                    
+
                 }
-                
+
                 for (var i = start; i <= end; i++) {
                     pages.push(i);
                 }
-                
+
                 return pages;
             },
             isPage: function (page) {
@@ -3818,7 +3745,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
             }
         };
-        
+
         // delete deck
         $scope.deleteDeck = function deleteDeck(deck) {
             var box = bootbox.dialog({
@@ -3875,12 +3802,12 @@ angular.module('app.controllers', ['ngCookies'])
         { class: 'warlock', hasSecondary: Hearthstone.heroNames.Warlock.length > 1, secondary: portraitSettings[7] },
         { class: 'warrior', hasSecondary: Hearthstone.heroNames.Warrior.length > 1, secondary: portraitSettings[8] }
     ];
-    
+
     //return the upper case name of the hero based on index
     function getClass (index) {
         return $scope.heroes[index].class[0].toUpperCase() + $scope.heroes[index].class.slice(1);
     }
-     
+
     //increment the hero name selector and if at the end of hero name list, return 0
     function calc (index) {
         if(portraitSettings[index] == (Hearthstone.heroNames[getClass(index)].length - 1)) {
@@ -3889,7 +3816,7 @@ angular.module('app.controllers', ['ngCookies'])
             return ++portraitSettings[index];
         }
     }
-    
+
     //get the hero name based on the index of portraitSettings' index
     $scope.getName = function (index, caps) {
         if (caps) {
@@ -3899,7 +3826,7 @@ angular.module('app.controllers', ['ngCookies'])
             return name[0].toLowerCase() + name.slice(1);
         }
     }
-    
+
     //update the hero selection on button press
     $scope.updateHero = function (index) {
         var numb = calc(index);
@@ -3915,16 +3842,16 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 }])
-.controller('AdminDeckAddCtrl', ['$state', '$scope', '$compile', '$q', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data', 
+.controller('AdminDeckAddCtrl', ['$state', '$scope', '$compile', '$q', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data',
     function ($state, $scope, $compile, $q, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, data) {
         // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
-        
+
         // set default tab page
         $scope.step = 1;
         $scope.showManaCurve = false;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
-        
+
         $scope.getDust = function (cards) {
             var dust = 0;
             for (var i = 0; i < cards.length; i++) {
@@ -3932,7 +3859,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return dust
         }
-        
+
         $scope.isSecondary = function (klass) {
             switch(klass) {
                 case 'druid': return $scope.app.settings.secondaryPortrait[0]; break;
@@ -3946,30 +3873,30 @@ angular.module('app.controllers', ['ngCookies'])
                 case 'warrior': return $scope.app.settings.secondaryPortrait[8]; break;
             }
         }
-        
+
         $scope.getName = function () {
             return Hearthstone.heroNames[$scope.deck.playerClass][$scope.isSecondary($scope.deck.playerClass.toLowerCase())];
         }
-        
+
         // steps
         $scope.stepDesc = {
             1: 'Select the cards for your deck.',
             2: 'Select which cards to mulligan for.',
             3: 'Provide a description for how to play your deck.',
             4: 'Select how your deck preforms against other classes.',
-            5: 'Provide a synopsis and title for your deck.'            
+            5: 'Provide a synopsis and title for your deck.'
         };
-        
+
         $scope.type = 1;
         $scope.basic = false;
-        
+
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
         }
         $scope.nextStep = function () {
             if ($scope.step < 5) $scope.step = $scope.step + 1;
         }
-        
+
         // summernote options
         $scope.options = {
           disableDragAndDrop: true,
@@ -3988,19 +3915,19 @@ angular.module('app.controllers', ['ngCookies'])
 
         // load cards
         var classCards = true;
-        
+
         $scope.isClassCards = function () {
             return classCards;
         }
-        
+
         $scope.className = data.className;
         $scope.cards = data.cards;
         $scope.cards.current = $scope.cards.class;
-        
+
         $scope.search = function() {
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
         }
-        
+
         function updateCards (page, perpage, search, mechanics, mana, callback) {
             $scope.fetching = true;
             DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
@@ -4017,7 +3944,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             });
         }
-        
+
         // page flipping
         $scope.classPagination = AjaxPagination.new(15, data.classTotal,
             function (page, perpage) {
@@ -4030,7 +3957,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
-        
+
         $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
             function (page, perpage) {
                 var d = $q.defer();
@@ -4040,19 +3967,19 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
-        
+
         // filters
         $scope.filters = {
             search: '',
             mechanics: [],
             mana: 'all'
         };
-        
+
         $scope.setClassCards = function (b) {
             classCards = b;
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
         }
-        
+
         $scope.mechanics = Hearthstone.mechanics;
         $scope.inMechanics = function (mechanic) {
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
@@ -4066,7 +3993,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.filters.mechanics.splice(index, 1);
             }
         }
-        
+
         // filter by mechanics
         $scope.filters.byMechanics = function () {
             return function (item) {
@@ -4078,13 +4005,13 @@ angular.module('app.controllers', ['ngCookies'])
                 return (matched === $scope.filters.mechanics.length);
             }
         }
-        
+
         // filter by mana
         $scope.doFilterByMana = function (m) {
             $scope.filters.mana = m;
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
         }
-        
+
         $scope.filters.byMana = function () {
             return function (item) {
                 switch ($scope.filters.mana) {
@@ -4103,7 +4030,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         };
-        
+
         $scope.getManaCost = function () {
             switch ($scope.filters.mana) {
                 case 'all':
@@ -4119,10 +4046,10 @@ angular.module('app.controllers', ['ngCookies'])
                     return $scope.filters.mana;
             }
         }
-        
+
         // deck
         $scope.deckTypes = Hearthstone.deckTypes;
-        
+
         //$scope.deck = DeckBuilder.new(data.className);
         $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && data.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new(data.className, $scope.app.settings.deck) : DeckBuilder.new(data.className);
         $scope.$watch('deck', function(){
@@ -4141,62 +4068,62 @@ angular.module('app.controllers', ['ngCookies'])
                 public: $scope.deck.public
             };
         }, true);
-        
+
         // current mulligan
         $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
-        
+
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
         };
-        
+
         $scope.isMulliganSet = function (mulligan) {
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
-        
+
         //chapters
         var defaultChapter = {
             title: '',
             content: ''
         };
-        
+
         $scope.deck.chapters = [
             defaultChapter
         ]
-        
+
         $scope.newChapter = function () {
             var m = angular.copy(defaultChapter);
             $scope.deck.chapters.push(m);
         }
-        
+
         $scope.removeChapter = function (index) {
             $scope.deck.chapters.splice(index,1);
         }
-        
+
         //match-ups
         var defaultMatchUp = {
             deckName: '',
             klass: '',
             match: 0
         };
-        
+
         $scope.deck.matches = [];
-        
+
         $scope.newMatch = function (klass) {
             var m = angular.copy(defaultMatchUp);
             m.klass = klass;
             $scope.deck.matches.push(m);
         }
-        
+
         $scope.removeMatch = function (index) {
             $scope.deck.matches.splice(index,1);
         }
-        
+
         // premium
         $scope.premiumTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isPremium = function () {
             var premium = $scope.deck.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
@@ -4205,23 +4132,23 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         $scope.getMulliganCards = function (coin) {
             if (!$scope.currentMulligan) { return false; }
             var m = $scope.currentMulligan;
             return (coin) ? m.withCoin.cards : m.withoutCoin.cards;
         };
-        
+
         $scope.cardLeft = function ($index, coin) {
             return (80 / ($scope.getMulliganCards(coin).length)) * $index;
         };
-        
+
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isFeatured = function () {
             var featured = $scope.deck.featured;
             for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -4230,7 +4157,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // save deck
         var box;
         $scope.saveDeck = function () {
@@ -4253,25 +4180,25 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminDeckEditCtrl', ['$state', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data', 
+.controller('AdminDeckEditCtrl', ['$state', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data',
     function ($state, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, data) {
           // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
-        
+
         // set default tab page
         $scope.step = 1;
         $scope.showManaCurve = false;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
-        
+
         // steps
         $scope.stepDesc = {
             1: 'Select the cards for your deck.',
             2: 'Select which cards to mulligan for.',
             3: 'Provide a description for how to play your deck.',
             4: 'Select how your deck preforms against other classes.',
-            5: 'Provide a synopsis and title for your deck.'            
+            5: 'Provide a synopsis and title for your deck.'
         };
-        
+
         $scope.isSecondary = function (klass) {
             switch(klass) {
                 case 'druid': return $scope.app.settings.secondaryPortrait[0]; break;
@@ -4285,9 +4212,9 @@ angular.module('app.controllers', ['ngCookies'])
                 case 'warrior': return $scope.app.settings.secondaryPortrait[8]; break;
             }
         }
-        
+
         console.log(data);
-        
+
         $scope.getDust = function (cards) {
             var dust = 0;
             for (var i = 0; i < cards.length; i++) {
@@ -4295,14 +4222,14 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return dust
         }
-        
+
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
         }
         $scope.nextStep = function () {
             if ($scope.step < 5) $scope.step = $scope.step + 1;
         }
-        
+
         // summernote options
         $scope.options = {
           disableDragAndDrop: true,
@@ -4321,26 +4248,26 @@ angular.module('app.controllers', ['ngCookies'])
 
         // load cards
         var classCards = true;
-        
+
         $scope.isClassCards = function () {
             return classCards;
         }
-        
+
         $scope.setClassCards = function (b) {
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
             $timeout(function () {
                 classCards = b;
             });
         }
-        
+
         $scope.className = data.deck.playerClass;
         $scope.cards = {};
 //        $scope.cards.current = $scope.cards.class;
-        
+
         $scope.search = function() {
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
         }
-        
+
         function updateCards (page, perpage, search, mechanics, mana, callback) {
             DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
                 $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
@@ -4356,7 +4283,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             });
         }
-        
+
         // page flipping
         $scope.classPagination = AjaxPagination.new(15, data.classTotal,
             function (page, perpage) {
@@ -4369,7 +4296,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
-        
+
         $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
             function (page, perpage) {
                 var d = $q.defer();
@@ -4380,14 +4307,14 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
-        
+
         // filters
         $scope.filters = {
             search: '',
             mechanics: [],
             mana: 'all'
         };
-        
+
         $scope.mechanics = Hearthstone.mechanics;
         $scope.inMechanics = function (mechanic) {
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
@@ -4401,7 +4328,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.filters.mechanics.splice(index, 1);
             }
         }
-        
+
         // filter by mechanics
         $scope.filters.byMechanics = function () {
             return function (item) {
@@ -4413,13 +4340,13 @@ angular.module('app.controllers', ['ngCookies'])
                 return (matched === $scope.filters.mechanics.length);
             }
         }
-        
+
         // filter by mana
         $scope.doFilterByMana = function (m) {
             $scope.filters.mana = m;
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
         }
-        
+
         $scope.filters.byMana = function () {
             return function (item) {
                 switch ($scope.filters.mana) {
@@ -4438,7 +4365,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         };
-        
+
         $scope.getManaCost = function () {
             switch ($scope.filters.mana) {
                 case 'all':
@@ -4454,60 +4381,60 @@ angular.module('app.controllers', ['ngCookies'])
                     return $scope.filters.mana;
             }
         }
-        
+
         // deck
         $scope.deckTypes = Hearthstone.deckTypes;
         $scope.deck = DeckBuilder.new(data.deck.className, data.deck);
-        
+
         // current mulligan
         $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
-        
+
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
         };
-        
+
         $scope.isMulliganSet = function (mulligan) {
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
-        
+
         //chapters
         var defaultChapter = {
             title: '',
             content: ''
         };
-        
+
         $scope.newChapter = function () {
             var m = angular.copy(defaultChapter);
             $scope.deck.chapters.push(m);
         }
-        
+
         $scope.removeChapter = function (index) {
             $scope.deck.chapters.splice(index,1);
         }
-        
+
         //match-ups
         var defaultMatchUp = {
             deckName: '',
             klass: '',
             match: 0
         };
-        
+
         $scope.newMatch = function (klass) {
             var m = angular.copy(defaultMatchUp);
             m.klass = klass;
             $scope.deck.matches.push(m);
         }
-        
+
         $scope.removeMatch = function (index) {
             $scope.deck.matches.splice(index,1);
         }
-        
+
         // premium
         $scope.premiumTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isPremium = function () {
             var premium = $scope.deck.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
@@ -4516,23 +4443,23 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         $scope.getMulliganCards = function (coin) {
             if (!$scope.currentMulligan) { return false; }
             var m = $scope.currentMulligan;
             return (coin) ? m.withCoin.cards : m.withoutCoin.cards;
         };
-        
+
         $scope.cardLeft = function ($index, coin) {
             return (80 / ($scope.getMulliganCards(coin).length)) * $index;
         };
-        
+
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isFeatured = function () {
             var featured = $scope.deck.featured;
             for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -4541,9 +4468,9 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
-        
+
         // save deck
         $scope.updateDeck = function () {
             if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
@@ -4559,21 +4486,21 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminUserListCtrl', ['$scope', 'bootbox', 'Pagination', 'AlertService', 'AdminUserService', 'data', 
+.controller('AdminUserListCtrl', ['$scope', 'bootbox', 'Pagination', 'AlertService', 'AdminUserService', 'data',
     function ($scope, bootbox, Pagination, AlertService, AdminUserService, data) {
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         // load users
         $scope.users = data.users;
         $scope.page = data.page;
         $scope.perpage = data.perpage;
         $scope.total = data.total;
         $scope.search = data.search;
-        
+
         $scope.getUsers = function () {
             AdminUserService.getUsers($scope.page, $scope.perpage, $scope.search).then(function (data) {
                 $scope.users = data.users;
@@ -4581,12 +4508,12 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.total = data.total;
             });
         }
-        
+
         $scope.searchUsers = function () {
             $scope.page = 1;
             $scope.getUsers();
         }
-                
+
         // pagination
         $scope.pagination = {
             page: function () {
@@ -4606,7 +4533,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var pages = [],
                     start = 1,
                     end = this.totalPages();
-                
+
                 if (this.totalPages() > 5) {
                     if (this.page() < 3) {
                         start = 1;
@@ -4618,13 +4545,13 @@ angular.module('app.controllers', ['ngCookies'])
                         start = this.page() - 2;
                         end = this.page() + 2;
                     }
-                    
+
                 }
-                
+
                 for (var i = start; i <= end; i++) {
                     pages.push(i);
                 }
-                
+
                 return pages;
             },
             isPage: function (page) {
@@ -4639,8 +4566,8 @@ angular.module('app.controllers', ['ngCookies'])
             to: function () {
                 return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
             }
-        };  
-        
+        };
+
         // delete user
         $scope.deleteUser = function (user) {
             var box = bootbox.dialog({
@@ -4678,12 +4605,12 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminUserAddCtrl', ['$scope', '$state', '$window', 'AdminUserService', 'AlertService', 
+.controller('AdminUserAddCtrl', ['$scope', '$state', '$window', 'AdminUserService', 'AlertService',
     function ($scope, $state, $window, AdminUserService, AlertService) {
         // default user
         var d = new Date();
         d.setMonth(d.getMonth()+1);
-            
+
         var defaultUser = {
             email : '',
             username: '',
@@ -4706,10 +4633,10 @@ angular.module('app.controllers', ['ngCookies'])
             isAdmin: false,
             active: true
         };
-        
+
         // load user
         $scope.user = angular.copy(defaultUser);
-        
+
         // select options
         $scope.userSubscription =
         $scope.userProvider =
@@ -4718,10 +4645,10 @@ angular.module('app.controllers', ['ngCookies'])
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         // date picker options
         $scope.dateOptions = {};
-        
+
         // add user
         $scope.addUser = function () {
             AdminUserService.addUser($scope.user).success(function (data) {
@@ -4737,13 +4664,13 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminUserEditCtrl', ['$scope', '$state', '$window', 'AdminUserService', 'AlertService', 'data', 
+.controller('AdminUserEditCtrl', ['$scope', '$state', '$window', 'AdminUserService', 'AlertService', 'data',
     function ($scope, $state, $window, AdminUserService, AlertService, data) {
         if (!data || !data.success) { return $state.go('app.admin.users.list'); }
-        
+
         // load user
         $scope.user = data.user;
-        
+
         // select options
         $scope.userSubscription =
         $scope.userProvider =
@@ -4752,10 +4679,10 @@ angular.module('app.controllers', ['ngCookies'])
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         // date picker options
         $scope.dateOptions = {};
-        
+
         // edit user
         $scope.editUser = function () {
             AdminUserService.editUser($scope.user).success(function (data) {
@@ -4771,22 +4698,22 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminPollListCtrl', ['$scope', '$compile', 'bootbox', 'Pagination', 'AlertService', 'AdminPollService', 'data', 
+.controller('AdminPollListCtrl', ['$scope', '$compile', 'bootbox', 'Pagination', 'AlertService', 'AdminPollService', 'data',
     function ($scope, $compile, bootbox, Pagination, AlertService, AdminPollService, data) {
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         // load polls
         $scope.polls = data.polls;
         $scope.page = data.page;
         $scope.perpage = data.perpage;
         $scope.total = data.total;
         $scope.search = data.search;
-        
-        
+
+
         $scope.getPolls = function () {
             AdminPollService.getPolls($scope.page, $scope.perpage, $scope.search).then(function (data) {
                 $scope.polls = data.polls;
@@ -4794,12 +4721,12 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.total = data.total;
             });
         }
-        
+
         $scope.searchPolls = function () {
             $scope.page = 1;
             $scope.getPolls();
         }
-            
+
         // pagination
         $scope.pagination = {
             page: function () {
@@ -4819,7 +4746,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var pages = [],
                     start = 1,
                     end = this.totalPages();
-                
+
                 if (this.totalPages() > 5) {
                     if (this.page() < 3) {
                         start = 1;
@@ -4831,13 +4758,13 @@ angular.module('app.controllers', ['ngCookies'])
                         start = this.page() - 2;
                         end = this.page() + 2;
                     }
-                    
+
                 }
-                
+
                 for (var i = start; i <= end; i++) {
                     pages.push(i);
                 }
-                
+
                 return pages;
             },
             isPage: function (page) {
@@ -4852,9 +4779,9 @@ angular.module('app.controllers', ['ngCookies'])
             to: function () {
                 return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
             }
-        };  
-        
-        
+        };
+
+
         // delete poll
         $scope.deletePoll = function (poll) {
             var box = bootbox.dialog({
@@ -4912,7 +4839,7 @@ angular.module('app.controllers', ['ngCookies'])
                     thumb: ''
                 }
             }
-        
+
         $scope.options = {
           disableDragAndDrop: true,
           height: 300,
@@ -4930,39 +4857,39 @@ angular.module('app.controllers', ['ngCookies'])
             ['misc', ['undo', 'redo', 'codeview']]
           ]
         };
-        
+
         // load Poll
         $scope.poll = angular.copy(defaultPoll);
         $scope.item = angular.copy(defaultItem);
         $scope.currentItem = angular.copy(defaultItem);
         $scope.imgPath = 'polls/';
-        
+
         $scope.pollType = [
             { name: 'Image', value: 'img' },
             { name: 'Text', value: 'txt' }
         ];
-        
+
         $scope.pollView = [
             { name: 'Main', value: 'main' },
             { name: 'Sidebar', value: 'side' },
             { name: 'Hide', value: 'hide'}
         ];
-        
+
         $scope.pollActive = [
             { name: 'Yes', value: 'true'},
             { name: 'No', value: 'false'}
         ];
-        
+
         $scope.voteLimit = function() {
             var out = [];
-            
+
             for (var i = 0; i < $scope.poll.items.length; i++) {
                 out.push(i + 1);
             }
-            
+
             return out;
         }
-        
+
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
             var uploadBox = bootbox.dialog({
@@ -4989,7 +4916,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         $scope.itemEditWnd = function (item) {
             $scope.currentItem = item;
                 box = bootbox.dialog({
@@ -4997,12 +4924,12 @@ angular.module('app.controllers', ['ngCookies'])
                 message: $compile('<div poll-item-edit-form></div>')($scope)
             });
         };
-        
+
         $scope.editItem = function () {
             box.modal('hide');
             $scope.currentItem = false;
         };
-        
+
         $scope.deleteItem = function (item) {
             var index = $scope.poll.items.indexOf(item);
             $scope.poll.items.splice(index, 1);
@@ -5010,7 +4937,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.poll.items[i].orderNum = i + 1;
             }
         };
-        
+
         $scope.itemAddWnd = function () {
             $scope.currentItem = angular.copy($scope.item);
             box = bootbox.dialog({
@@ -5018,25 +4945,25 @@ angular.module('app.controllers', ['ngCookies'])
                 message: $compile('<div poll-item-add-form></div>')($scope)
             });
         };
-        
+
         $scope.addItem = function () {
             $scope.currentItem.orderNum = $scope.poll.items.length + 1;
             $scope.poll.items.push($scope.currentItem);
             box.modal('hide');
             $scope.currentItem = false;
         };
-        
+
         $scope.updateDND = function (list, index) {
             list.splice(index, 1);
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
             }
         };
-        
+
         $scope.getImage = function () {
             return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
         };
-        
+
         // add Poll
         $scope.addPoll = function () {
             AdminPollService.addPoll($scope.poll).success(function (data) {
@@ -5052,7 +4979,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminPollEditCtrl', ['$scope', '$state', '$window', '$compile', '$upload', 'AdminPollService', 'AlertService', 'data', 
+.controller('AdminPollEditCtrl', ['$scope', '$state', '$window', '$compile', '$upload', 'AdminPollService', 'AlertService', 'data',
     function ($scope, $state, $window, $compile, $upload, AdminPollService, AlertService, data) {
         var box,
             defaultPoll = {
@@ -5072,7 +4999,7 @@ angular.module('app.controllers', ['ngCookies'])
                     thumb: ''
                 }
             }
-            
+
         $scope.options = {
           disableDragAndDrop: true,
           height: 300,
@@ -5090,39 +5017,39 @@ angular.module('app.controllers', ['ngCookies'])
             ['misc', ['undo', 'redo', 'codeview']]
           ]
         };
-        
+
         // load Poll
         $scope.poll = data.poll;
         $scope.item = angular.copy(defaultItem);
         $scope.currentItem = angular.copy(defaultItem);
         $scope.imgPath = 'polls/';
-        
+
         $scope.pollType = [
             { name: 'Image', value: 'img' },
             { name: 'Text', value: 'txt' }
         ];
-        
+
         $scope.pollView = [
             { name: 'Main', value: 'main' },
             { name: 'Sidebar', value: 'side' },
             { name: 'Hide', value: 'hide'}
         ];
-        
+
         $scope.pollActive = [
             { name: 'Yes', value: 'true'},
             { name: 'No', value: 'false'}
         ];
-        
+
         $scope.voteLimit = function() {
             var out = [];
-            
+
             for (var i = 0; i < $scope.poll.items.length; i++) {
                 out.push(i + 1);
             }
-            
+
             return out;
         }
-        
+
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
             var uploadBox = bootbox.dialog({
@@ -5149,7 +5076,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         $scope.itemEditWnd = function (item) {
             $scope.currentItem = item;
                 box = bootbox.dialog({
@@ -5157,12 +5084,12 @@ angular.module('app.controllers', ['ngCookies'])
                 message: $compile('<div poll-item-edit-form></div>')($scope)
             });
         };
-        
+
         $scope.editItem = function () {
             box.modal('hide');
             $scope.currentItem = false;
         };
-        
+
         $scope.deleteItem = function (item) {
             var index = $scope.poll.items.indexOf(item);
             $scope.poll.items.splice(index, 1);
@@ -5170,7 +5097,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.poll.items[i].orderNum = i + 1;
             }
         };
-        
+
         $scope.itemAddWnd = function () {
             $scope.currentItem = angular.copy($scope.item);
             box = bootbox.dialog({
@@ -5178,26 +5105,26 @@ angular.module('app.controllers', ['ngCookies'])
                 message: $compile('<div poll-item-add-form></div>')($scope)
             });
         };
-        
+
         $scope.addItem = function () {
             $scope.currentItem.orderNum = $scope.poll.items.length + 1;
             $scope.poll.items.push($scope.currentItem);
             box.modal('hide');
             $scope.currentItem = false;
         };
-        
+
         $scope.updateDND = function (list, index) {
             list.splice(index, 1);
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
             }
         };
-        
+
         $scope.getImage = function () {
             if (!$scope.currentItem) { return 'img/blank.png'; }
             return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
         };
-        
+
         $scope.editPoll = function () {
             $scope.showError = false;
 
@@ -5214,14 +5141,14 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminBannerListCtrl', ['$scope', '$compile', 'bootbox', 'Pagination', 'AlertService', 'AdminBannerService', 'data', 
+.controller('AdminBannerListCtrl', ['$scope', '$compile', 'bootbox', 'Pagination', 'AlertService', 'AdminBannerService', 'data',
     function ($scope, $compile, bootbox, Pagination, AlertService, AdminBannerService, data) {
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         $scope.updateDND = function (list, index) {
             list.splice(index, 1);
             for (var i = 0; i < list.length; i++) {
@@ -5229,8 +5156,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
             AdminBannerService.updateOrder(list);
         };
-        
-        
+
+
         // load banners
         $scope.tsBanners = data.tsBanners;
         $scope.hsBanners = data.hsBanners;
@@ -5239,7 +5166,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.perpage = data.perpage;
         $scope.total = data.total;
         $scope.search = data.search;
-        
+
         $scope.getBanners = function () {
             AdminBannerService.getBanners($scope.page, $scope.perpage, $scope.search).then(function (data) {
                 $scope.banners = data.banners;
@@ -5247,7 +5174,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.total = data.total;
             });
         }
-        
+
         // delete banner
         $scope.deleteBanner = function (page, banner) {
             var box = bootbox.dialog({
@@ -5302,13 +5229,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             };
         $scope.descriptionMax = 250;
-        
-        
+
+
         $scope.hasButton = false;
-        
+
         $scope.summerNoteIsFull = function (e) {
         }
-        
+
         $scope.options = {
           disableDragAndDrop: true,
           height: 100,
@@ -5326,22 +5253,22 @@ angular.module('app.controllers', ['ngCookies'])
             ['misc', ['undo', 'redo', 'codeview']]
           ]
         };
-        
+
         // load Poll
         $scope.banner = angular.copy(defaultBanner);
         $scope.imgPath = 'banners/';
-        
+
         $scope.bannerTypes = [
             { name: 'TempoStorm', value: 'ts' },
             { name: 'Hearthstone', value: 'hs' },
             { name: 'Heroes of the Storm', value: 'hots'}
         ];
-        
+
         $scope.bannerActive = [
             { name: 'Yes', value: 'true'},
             { name: 'No', value: 'false'}
         ];
-        
+
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
             var uploadBox = bootbox.dialog({
@@ -5366,12 +5293,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
         };
 
-        
+
         $scope.getImage = function () {
             $scope.imgPath = 'banners/';
             return ($scope.banner.photo === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.banner.photo;
         };
-        
+
         // add Poll
         $scope.addBanner = function () {
             AdminBannerService.addBanner($scope.banner).success(function (data) {
@@ -5390,8 +5317,8 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('AdminBannerEditCtrl', ['$window', '$scope', '$state', '$compile', '$upload', 'AlertService', 'data', 'AdminBannerService', '$q',
     function($window, $scope, $state, $compile, $upload, AlertService, data, AdminBannerService, $q) {
         $scope.banner = data.banner;
-        
-        
+
+
         $scope.bannerTypes = [
             { name: 'TempoStorm', value: 'ts' },
             { name: 'Hearthstone', value: 'hs' },
@@ -5403,11 +5330,11 @@ angular.module('app.controllers', ['ngCookies'])
             { name: 'No', value: 'false'}
         ];
         $scope.descriptionMax = 250;
-        
-        
+
+
         $scope.summerNoteIsFull = function () {
         }
-        
+
         $scope.options = {
             disableDragAndDrop: true,
             height: 100,
@@ -5424,8 +5351,8 @@ angular.module('app.controllers', ['ngCookies'])
             ['format', ['hr']],
             ['misc', ['undo', 'redo', 'codeview']]
             ]
-        };  
-        
+        };
+
         $scope.photoUpload = function ($files) {
             if (!$files.length) return false;
             var uploadBox = bootbox.dialog({
@@ -5450,13 +5377,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
         };
 
-        
+
         $scope.getImage = function () {
             $scope.imgPath = 'banners/';
             return ($scope.banner.photo === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.banner.photo;
         };
-        
-        
+
+
          $scope.editBanner = function () {
             $scope.showError = false;
 
@@ -5474,7 +5401,7 @@ angular.module('app.controllers', ['ngCookies'])
     }
 ])
 .controller('DeckBuilderClassCtrl', ['$scope', 'Hearthstone', function ($scope, Hearthstone) {
-    
+
     if ($scope.app.settings.secondaryPortrait == undefined || $scope.app.settings.secondaryPortrait.length == 0) {
         $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
     }
@@ -5493,12 +5420,12 @@ angular.module('app.controllers', ['ngCookies'])
         { class: 'warlock', hasSecondary: Hearthstone.heroNames.Warlock.length > 1, secondary: portraitSettings[7] },
         { class: 'warrior', hasSecondary: Hearthstone.heroNames.Warrior.length > 1, secondary: portraitSettings[8] }
     ];
-    
+
     //return the upper case name of the hero based on index
     function getClass (index) {
         return $scope.heroes[index].class[0].toUpperCase() + $scope.heroes[index].class.slice(1);
     }
-     
+
     //increment the hero name selector and if at the end of hero name list, return 0
     function calc (index) {
         if(portraitSettings[index] == (Hearthstone.heroNames[getClass(index)].length - 1)) {
@@ -5507,7 +5434,7 @@ angular.module('app.controllers', ['ngCookies'])
             return ++portraitSettings[index];
         }
     }
-    
+
     //get the hero name based on the index of portraitSettings' index
     $scope.getName = function (index, caps) {
         try {
@@ -5523,7 +5450,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getName(index, caps);
         }
     }
-    
+
     //update the hero selection on button press
     $scope.updateHero = function (index) {
         var numb = calc(index);
@@ -5543,7 +5470,7 @@ angular.module('app.controllers', ['ngCookies'])
     function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep) {
         // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
-        
+
         $scope.isSecondary = function (klass) {
             switch(klass) {
                 case 'druid': return $scope.app.settings.secondaryPortrait[0]; break;
@@ -5557,12 +5484,12 @@ angular.module('app.controllers', ['ngCookies'])
                 case 'warrior': return $scope.app.settings.secondaryPortrait[8]; break;
             }
         }
-        
+
         // set default tab page
         $scope.step = 1;
         $scope.showManaCurve = false;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
-        
+
         $scope.getDust = function (cards) {
             var dust = 0;
             for (var i = 0; i < cards.length; i++) {
@@ -5570,7 +5497,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return dust
         }
-        
+
         //get the hero name based on the index of portraitSettings' index
         $scope.getName = function (index, klass) {
             try {
@@ -5580,7 +5507,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.getName(index, caps);
             }
         }
-        
+
         $scope.getActiveDeckName = function () {
             return Hearthstone.heroNames[$stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1)][$scope.isSecondary($stateParams.playerClass)];
         }
@@ -5591,19 +5518,19 @@ angular.module('app.controllers', ['ngCookies'])
             2: 'Select which cards to mulligan for.',
             3: 'Provide a description for how to play your deck.',
             4: 'Select how your deck preforms against other classes.',
-            5: 'Provide a synopsis and title for your deck.'            
+            5: 'Provide a synopsis and title for your deck.'
         };
-        
+
         $scope.type = 1;
         $scope.basic = false;
-        
+
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
         }
         $scope.nextStep = function () {
             if ($scope.step < 5) $scope.step = $scope.step + 1;
         }
-        
+
         // summernote options
         $scope.options = {
           disableDragAndDrop: true,
@@ -5622,25 +5549,25 @@ angular.module('app.controllers', ['ngCookies'])
 
         // load cards
         var classCards = true;
-        
+
         $scope.isClassCards = function () {
             return classCards;
         }
-        
+
         $scope.className = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
         $scope.cards = {
             neutral: neutralCardsList,
             class: classCardsList,
             current: classCardsList
         };
-        
+
         $scope.search = function() {
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
         }
-        
+
         function updateCards (page, perpage, search, mechanics, mana, callback) {
             $scope.fetching = true;
-            
+
             var options = {
                 filter: {
                     where: {
@@ -5664,36 +5591,36 @@ angular.module('app.controllers', ['ngCookies'])
                     deckable: true
                 }
             }
-            
+
             if ($scope.search.length > 0) {
                 options.filter.where.or = [
                     { name: { regexp: search } },
                     { description: { regexp: search } },
                     { content: { regexp: search } }
                 ]
-                
+
                 countOptionsClass.where.or = [
                     { name: { regexp: search } },
                     { description: { regexp: search } },
                     { content: { regexp: search } }
                 ]
-                
+
                 countOptionsNeutral.where.or = [
                     { name: { regexp: search } },
                     { description: { regexp: search } },
                     { content: { regexp: search } }
                 ]
             }
-            
+
             if (mechanics.length == 1) {
                 options.filter.where.mechanics = {
                     inq: mechanics
                 }
-                
+
                 countOptionsClass.where.mechanics = {
                     inq: mechanics
                 }
-                
+
                 countOptionsNeutral.where.mechanics = {
                     inq: mechanics
                 }
@@ -5702,7 +5629,7 @@ angular.module('app.controllers', ['ngCookies'])
                 countOptionsClass.where.mechanics = mechanics
                 countOptionsNeutral.where.mechanics = mechanics
             }
-            
+
             if (mana != 'all' && mana != '7+') {
                 options.filter.where.cost = mana;
                 countOptionsClass.where.cost = mana;
@@ -5712,7 +5639,7 @@ angular.module('app.controllers', ['ngCookies'])
                 countOptionsClass.where.cost = { gte: 7 };
                 countOptionsNeutral.where.cost = { gte: 7 };
             }
-            
+
             Card.count(countOptionsClass)
             .$promise
             .then(function (classCount) {
@@ -5722,12 +5649,12 @@ angular.module('app.controllers', ['ngCookies'])
                     Card.find(options)
                     .$promise
                     .then(function (data) {
-                        
+
                         $scope.classPagination.total = classCount.count;
                         $scope.classPagination.page = page;
                         $scope.neutralPagination.total = neutralCount.count;
                         $scope.neutralPagination.page = page;
-                        
+
                         $timeout(function () {
                             $scope.cards.current = data;
                             $scope.fetching = false;
@@ -5739,7 +5666,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             });
         }
-        
+
         // page flipping
         $scope.classPagination = AjaxPagination.new(15, classCardsCount.count,
             function (page, perpage) {
@@ -5752,31 +5679,31 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
-        
+
         $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount.count,
             function (page, perpage) {
-            
+
                 var d = $q.defer();
                 updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
                     d.resolve(data[1]);
                 });
-            
+
                 return d.promise;
             }
         );
-        
+
         // filters
         $scope.filters = {
             search: '',
             mechanics: [],
             mana: 'all'
         };
-        
+
         $scope.setClassCards = function (b) {
             classCards = b;
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
         }
-        
+
         $scope.mechanics = Hearthstone.mechanics;
         $scope.inMechanics = function (mechanic) {
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
@@ -5790,7 +5717,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             updateCards(1,15,$scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
         }
-        
+
         // filter by mechanics
         $scope.filters.byMechanics = function () {
             return function (item) {
@@ -5802,13 +5729,13 @@ angular.module('app.controllers', ['ngCookies'])
                 return (matched === $scope.filters.mechanics.length);
             }
         }
-        
+
         // filter by mana
         $scope.doFilterByMana = function (m) {
             $scope.filters.mana = m;
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
         }
-        
+
         $scope.filters.byMana = function () {
             return function (item) {
                 switch ($scope.filters.mana) {
@@ -5827,7 +5754,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         };
-        
+
         $scope.getManaCost = function () {
             switch ($scope.filters.mana) {
                 case 'all':
@@ -5843,10 +5770,10 @@ angular.module('app.controllers', ['ngCookies'])
                     return $scope.filters.mana;
             }
         }
-        
+
         // deck
         $scope.deckTypes = Hearthstone.deckTypes;
-        
+
         //$scope.deck = DeckBuilder.new(data.className);
         $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
         $scope.$watch('deck', function() {
@@ -5866,18 +5793,18 @@ angular.module('app.controllers', ['ngCookies'])
                 public: $scope.deck.public
             };
         }, true);
-        
+
         // current mulligan
         $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
-        
+
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
         };
-        
+
         $scope.isMulliganSet = function (mulligan) {
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
-        
+
         $scope.isMulliganCard = function (coin, card) {
             if (coin) {
                 for (var i = 0; i < $scope.currentMulligan.withCoin.cards.length; i++) {
@@ -5899,7 +5826,7 @@ angular.module('app.controllers', ['ngCookies'])
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isPremium = function () {
             var premium = $scope.deck.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
@@ -5908,23 +5835,23 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         $scope.getMulliganCards = function (coin) {
             if (!$scope.currentMulligan) { return false; }
             var m = $scope.currentMulligan;
             return (coin) ? m.withCoin.cards : m.withoutCoin.cards;
         };
-        
+
         $scope.cardLeft = function ($index, coin) {
             return (80 / ($scope.getMulliganCards(coin).length)) * $index;
         };
-        
+
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isFeatured = function () {
             var featured = $scope.deck.featured;
             for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -5933,7 +5860,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // save deck
         var box;
         $scope.saveDeck = function () {
@@ -5954,7 +5881,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         // login for modal
 //        $scope.login = function login(email, password) {
 //            if (email !== undefined && password !== undefined) {
@@ -5962,11 +5889,11 @@ angular.module('app.controllers', ['ngCookies'])
 //                    AuthenticationService.setLogged(true);
 //                    AuthenticationService.setAdmin(data.isAdmin);
 //                    AuthenticationService.setProvider(data.isProvider);
-//                    
+//
 //                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
 //                    SubscriptionService.setTsPlan(data.subscription.plan);
 //                    SubscriptionService.setExpiry(data.subscription.expiry);
-//                    
+//
 //                    $window.sessionStorage.userID = data.userID;
 //                    $window.sessionStorage.username = data.username;
 //                    $window.sessionStorage.email = data.email;
@@ -5984,7 +5911,7 @@ angular.module('app.controllers', ['ngCookies'])
     function ($state, $scope, $compile, $window, $timeout, $q, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, data) {
           // redirect back to class pick if no data
         if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
-        
+
         $scope.isSecondary = function (klass) {
             switch(klass) {
                 case 'druid': return $scope.app.settings.secondaryPortrait[0]; break;
@@ -5998,29 +5925,29 @@ angular.module('app.controllers', ['ngCookies'])
                 case 'warrior': return $scope.app.settings.secondaryPortrait[8]; break;
             }
         }
-        
+
         // set default tab page
         $scope.step = 1;
         $scope.showManaCurve = false;
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
-        
+
         // steps
         $scope.stepDesc = {
             1: 'Select the cards for your deck.',
             2: 'Select which cards to mulligan for.',
             3: 'Provide a description for how to play your deck.',
             4: 'Select how your deck preforms against other classes.',
-            5: 'Provide a synopsis and title for your deck.'            
+            5: 'Provide a synopsis and title for your deck.'
         };
-        
-        
+
+
         $scope.prevStep = function () {
             if ($scope.step > 1) $scope.step = $scope.step - 1;
         }
         $scope.nextStep = function () {
             if ($scope.step < 5) $scope.step = $scope.step + 1;
         }
-        
+
         // summernote options
         $scope.options = {
           disableDragAndDrop: true,
@@ -6039,26 +5966,26 @@ angular.module('app.controllers', ['ngCookies'])
 
         // load cards
         var classCards = true;
-        
+
         $scope.isClassCards = function () {
             return classCards;
         }
-        
+
         $scope.setClassCards = function (b) {
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
             $timeout(function () {
                 classCards = b;
             });
         }
-        
+
         $scope.className = data.deck.playerClass;
         $scope.cards = {};
 //        $scope.cards.current = $scope.cards.class;
-        
+
         $scope.search = function() {
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
         }
-        
+
         function updateCards (page, perpage, search, mechanics, mana, callback) {
             DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
                 $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
@@ -6074,7 +6001,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             });
         }
-        
+
         // page flipping
         $scope.classPagination = AjaxPagination.new(15, data.classTotal,
             function (page, perpage) {
@@ -6087,7 +6014,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
-        
+
         $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
             function (page, perpage) {
                 var d = $q.defer();
@@ -6098,14 +6025,14 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
-        
+
         // filters
         $scope.filters = {
             search: '',
             mechanics: [],
             mana: 'all'
         };
-        
+
         $scope.mechanics = Hearthstone.mechanics;
         $scope.inMechanics = function (mechanic) {
             return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
@@ -6119,7 +6046,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.filters.mechanics.splice(index, 1);
             }
         }
-        
+
         // filter by mechanics
         $scope.filters.byMechanics = function () {
             return function (item) {
@@ -6131,13 +6058,13 @@ angular.module('app.controllers', ['ngCookies'])
                 return (matched === $scope.filters.mechanics.length);
             }
         }
-        
+
         // filter by mana
         $scope.doFilterByMana = function (m) {
             $scope.filters.mana = m;
             updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
         }
-        
+
         $scope.filters.byMana = function () {
             return function (item) {
                 switch ($scope.filters.mana) {
@@ -6156,7 +6083,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         };
-        
+
         $scope.getManaCost = function () {
             switch ($scope.filters.mana) {
                 case 'all':
@@ -6172,60 +6099,60 @@ angular.module('app.controllers', ['ngCookies'])
                     return $scope.filters.mana;
             }
         }
-        
+
         // deck
         $scope.deckTypes = Hearthstone.deckTypes;
         $scope.deck = DeckBuilder.new(data.deck.className, data.deck);
-        
+
         // current mulligan
         $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
-        
+
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
         };
-        
+
         $scope.isMulliganSet = function (mulligan) {
             return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
         };
-        
+
         //chapters
         var defaultChapter = {
             title: '',
             content: ''
         };
-        
+
         $scope.newChapter = function () {
             var m = angular.copy(defaultChapter);
             $scope.deck.chapters.push(m);
         }
-        
+
         $scope.removeChapter = function (index) {
             $scope.deck.chapters.splice(index,1);
         }
-        
+
         //match-ups
         var defaultMatchUp = {
             deckName: '',
             klass: '',
             match: 0
         };
-        
+
         $scope.newMatch = function (klass) {
             var m = angular.copy(defaultMatchUp);
             m.klass = klass;
             $scope.deck.matches.push(m);
         }
-        
+
         $scope.removeMatch = function (index) {
             $scope.deck.matches.splice(index,1);
         }
-        
+
         // premium
         $scope.premiumTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isPremium = function () {
             var premium = $scope.deck.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
@@ -6234,23 +6161,23 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         $scope.getMulliganCards = function (coin) {
             if (!$scope.currentMulligan) { return false; }
             var m = $scope.currentMulligan;
             return (coin) ? m.withCoin.cards : m.withoutCoin.cards;
         };
-        
+
         $scope.cardLeft = function ($index, coin) {
             return (80 / ($scope.getMulliganCards(coin).length)) * $index;
         };
-        
+
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isFeatured = function () {
             var featured = $scope.deck.featured;
             for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -6259,9 +6186,9 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
-        
+
         // save deck
         $scope.updateDeck = function () {
             if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
@@ -6275,12 +6202,12 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             });
         };
-        
+
     }
 ])
 .controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'data', 'VoteService', 'LoginModalService',
     function ($scope, $state, $compile, $window, SnapshotService, data, VoteService, LoginModalService) {
-        
+
         $scope.snapshot = data;
         $scope.show = [];
         $scope.matchupName = [];
@@ -6298,40 +6225,40 @@ angular.module('app.controllers', ['ngCookies'])
             updateCommentVotes();
             $scope.hasVoted();
         });
-        
+
         $scope.SnapshotService = SnapshotService;
-        
+
         var mouseOver = [],
             charts = [],
             viewHeight = 0,
             box = undefined;
-        
+
         $scope.getImage = function () {
             return ($scope.snapshot.photos.large == "") ? $scope.app.cdn + 'snapshots/default-banner.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photos.large;
         }
-        
+
         $scope.getMouseOver = function (deckID) {
             return mouseOver[deckID] || false;
         }
-        
+
         $scope.setMouseOver = function (deckID, isOver, deckName) {
             mouseOver[deckID] = isOver;
             $scope.matchupName[deckID] = deckName || false;
         }
-        
+
         $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
-        
+
         var ogImg = ($scope.snapshot.photos.square == "") ? $scope.app.cdn + 'snapshots/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photos.square;
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article', ogImg);
-        
+
         for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
             $scope.show[i+1] = false;
         }
-        
+
         $scope.setView = function (height) {
             viewHeight = height*350;
         }
-        
+
         $scope.getView = function () {
             return viewHeight;
         }
@@ -6340,7 +6267,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.currentTier = 1;
         $scope.currentDeck = false;
         $scope.tierRange = [];
-        
+
         $scope.snapshotTimeline = function () {
             var out = [];
             for (var i = $scope.snapshot.snapNum; i > $scope.snapshot.snapNum - 13; i--) {
@@ -6348,7 +6275,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return out;
         }
-        
+
         $scope.getTier = function (tier) {
             for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
                 if ($scope.snapshot.tiers[i].tier == tier) {
@@ -6357,13 +6284,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         }
-        
+
         function getTierRange (tierNum) {
             var tier = $scope.getTier(tierNum),
                 out = [],
                 highestRank = 0,
                 lowestRank = 0;
-            
+
             // find highest and lowest in tier
             for (var i = 0; i < tier.decks.length; i++) {
                 var history = tier.decks[i].rank.all;
@@ -6372,61 +6299,61 @@ angular.module('app.controllers', ['ngCookies'])
                     if ((history[j] < lowestRank && history[j] != 0) || lowestRank == 0) { lowestRank = history[j]; }
                 }
             }
-            
+
             // generate range
             for (var i = lowestRank; i <= highestRank; i++) {
                 out.push(i);
             }
-            
+
             return out;
         };
-        
+
         // init tier ranges
         for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
             var tierNum = $scope.snapshot.tiers[i].tier;
             $scope.tierRange[tierNum] = getTierRange(tierNum);
         }
-        
+
         $scope.toggleCurrentDeck = function (deckNum) {
             $scope.currentDeck = ($scope.currentDeck == deckNum) ? false : deckNum;
         };
-        
+
         $scope.hasDeckSelected = function () {
             return $scope.currentDeck;
         };
-        
+
         $scope.setCurrentTier = function (tierNum) {
             $scope.currentTier = tierNum;
             $scope.toggleCurrentDeck(false);
         };
-        
+
         $scope.getPositionY = function (tierNum, deckIndex, height, padding) {
             var size = $scope.tierRange[tierNum].length;
             return Math.round(((height - padding)/size*deckIndex) + padding, 2);
         }
-        
+
         $scope.getPositionX = function (index, padding) {
             return Math.round(100 - padding - ((100 - padding)/12*index) + (padding / 2), 2);
         }
-        
+
         $scope.getRanks = function (deck) {
             var ranks = deck.rank.all;
             return ranks;
         };
-        
+
         $scope.getRankIndex = function (tierNum, rank) {
             var range = $scope.tierRange[tierNum];
             return range.indexOf(rank);
         };
-        
+
         $scope.getNextRank = function (deck, index) {
             return deck.rank.all[index + 1];
         };
-        
+
         $scope.hasNextRank = function (deck, index) {
             return (deck.rank.all[index + 1]);
         };
-        
+
         $scope.voteSnapshot = function () {
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login', function() {
@@ -6441,7 +6368,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.voted = true;
         }
-        
+
         // check for custom deck name or load normal name
         function getDeckName (deckID) {
             for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
@@ -6453,14 +6380,14 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         }
-        
+
         function init () {
             var tierLength = $scope.snapshot.tiers.length,
                 maxTierLength = (tierLength > 2) ? 2 : tierLength;
-            
+
             /******************************************* HAS VOTED *******************************************/
 
-            
+
 
             /******************************************* BUILD TIER MATCHES *******************************************/
             for (var j = 0; j < maxTierLength; j++) {
@@ -6481,16 +6408,16 @@ angular.module('app.controllers', ['ngCookies'])
                     charts[$scope.snapshot.tiers[j].decks[k].deck._id] = matches;
                 }
             }
-            
+
         }
-        
-        
+
+
         /******************************************* COMMENTS *******************************************/
         var defaultComment = {
             comment: ''
         };
         $scope.comment = angular.copy(defaultComment);
-        
+
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login', function () {
@@ -6505,22 +6432,22 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-                
+
         updateCommentVotes();
         function updateCommentVotes() {
             $scope.snapshot.comments.forEach(checkVotes);
-            
+
             function checkVotes (comment) {
                 var vote = comment.votes.filter(function (vote) {
                     return ($scope.app.user.getUserID() === vote.userID);
                 })[0];
-                
+
                 if (vote) {
                     comment.voted = vote.direction;
                 }
             }
         }
-                
+
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login', function () {
@@ -6539,64 +6466,64 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
-        
+
+
         $scope.scrollToDeck = function (deck) {
             $('html, body').animate({
                 scrollTop: (deck.offset().top - 100)
             }, 400);
         }
-        
+
         $scope.findDeck = function (tier, deck) {
             var t = $('#collapseTier' + tier),
                 d = $('#collapseDeck-' + deck);
-            t.collapse('show');   
+            t.collapse('show');
             d.collapse('show');
-            $scope.scrollToDeck(d);  
+            $scope.scrollToDeck(d);
         }
-        
+
         $scope.goToTwitch = function ($event, usr) {
             $event.stopPropagation();
             var url = 'http://twitch.tv/' + usr
             window.open(url, '_blank');
         }
-        
+
         $scope.goToTwitter = function ($event, usr) {
             $event.stopPropagation();
             var url = 'http://twitter.com/' + usr;
             window.open(url, '_blank');
         }
-        
+
         $scope.getMatches = function (id) {
             return charts[id];
         }
-        
+
         function getClass(deck) {
             return deck.playerClass;
         }
-        
+
         $scope.getMatchClass = function (match, id) {
             return (match.for._id == id) ? match.against.playerClass : match.for.playerClass;
         }
-        
+
         $scope.goToDeck = function ($event, slug) {
             $event.stopPropagation();
             var url = $state.href('app.hs.decks.deck', { slug: slug });
             window.open(url,'_blank');
         };
-        
+
         $scope.goToTwitch = function ($event, usr) {
             $event.stopPropagation();
             var url = 'http://twitch.tv/' + usr
             window.open(url, '_blank');
         }
-        
+
         $scope.goToTwitter = function ($event, usr) {
             $event.stopPropagation();
             var url = 'http://twitter.com/' + usr;
             window.open(url, '_blank');
         }
-        
+
         $scope.toggleComments = function () {
             if (!SnapshotService.getStorage()) {
                 SnapshotService.setStorage(true);
@@ -6605,23 +6532,23 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.show.comments = SnapshotService.getStorage();
         }
-        
+
         init();
     }
 ])
 .controller('SnapshotsCtrl', ['$scope', 'SnapshotService', 'data', 'MetaService',
     function ($scope, SnapshotService, data, MetaService) {
-    
+
         $scope.snapshots = data.snapshots;
         $scope.total = data.total;
         $scope.page = parseInt(data.page);
         $scope.perpage = data.perpage;
         $scope.search = data.search;
-        
+
         $scope.metaservice = MetaService;
-        
+
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/snapshots');
-        
+
         $scope.pagination = {
             page: function () {
                 return $scope.page;
@@ -6640,7 +6567,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var pages = [],
                     start = 1,
                     end = this.totalPages();
-                
+
                 if (this.totalPages() > 5) {
                     if (this.page() < 3) {
                         start = 1;
@@ -6652,13 +6579,13 @@ angular.module('app.controllers', ['ngCookies'])
                         start = this.page() - 2;
                         end = this.page() + 2;
                     }
-                    
+
                 }
-                
+
                 for (var i = start; i <= end; i++) {
                     pages.push(i);
                 }
-                
+
                 return pages;
             },
             isPage: function (page) {
@@ -6667,15 +6594,15 @@ angular.module('app.controllers', ['ngCookies'])
             totalPages: function (page) {
                 return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 1;
             },
-            
+
         };
-        
+
     }
 ])
 .controller('ArticlesCtrl', ['$scope', '$state', '$q', '$timeout', 'Article', 'articles', 'articlesTotal', 'MetaService', 'AjaxPagination',
     function ($scope, $state, $q, $timeout, Article, articles, articlesTotal, MetaService, AjaxPagination) {
         //if (!data.success) { return $state.transitionTo('app.articles.list'); }
-        
+
         // articles
         $scope.articles = articles;
         $scope.total = articlesTotal.count;
@@ -6685,18 +6612,18 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.fetching = false;
         $scope.metaservice = MetaService;
         $scope.metaservice.setOg('https://tempostorm.com/articles');
-        
+
         $scope.getArticles = function() {
             updateArticles(1, $scope.perpage, $scope.search);
         }
-        
+
         // pagination
         function updateArticles (page, perpage, search, callback) {
             $scope.fetching = true;
-            
+
             var options = {},
                 countOptions = {};
-            
+
             options.filter = {
                 isActive: true,
                 fields: {
@@ -6707,7 +6634,7 @@ angular.module('app.controllers', ['ngCookies'])
                 skip: ((page*perpage)-perpage),
                 limit: 12
             };
-            
+
             if ($scope.search.length > 0) {
                 options.filter.where = {
                     or: [
@@ -6724,13 +6651,13 @@ angular.module('app.controllers', ['ngCookies'])
                     ]
                 }
             }
-            
+
             Article.count(countOptions, function (count) {
                 Article.find(options, function (articles) {
                     $scope.articlePagination.total = count.count;
                     $scope.articlePagination.page = page;
                     $scope.articlePagination.perpage = perpage;
-                    
+
                     $timeout(function () {
                         $scope.articles = articles;
                         $scope.fetching = false;
@@ -6741,7 +6668,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             });
         }
-        
+
         // page flipping
         $scope.articlePagination = AjaxPagination.new($scope.perpage, $scope.total,
             function (page, perpage) {
@@ -6753,7 +6680,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
-        
+
         // verify valid page
 //        if ($scope.page < 1 || $scope.page > $scope.pagination.totalPages()) {
 //            $scope.pagination.setPage(1);
@@ -6762,7 +6689,7 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService',
     function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService) {
-        
+
         $scope.ArticleService = Article;
         $scope.article = article;
         $scope.authorEmail = article.author.email;
@@ -6775,7 +6702,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         });
-        
+
         $scope.isPremium = function () {
             if (!$scope.article.premium.isPremium) { return false; }
             var now = new Date().getTime(),
@@ -6786,17 +6713,17 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
-        
+
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.article.title + ' - Articles', $scope.article.description);
-        
+
         var ogImg = ($scope.article.photoNames.square != undefined) ? $scope.app.cdn + 'articles/' + $scope.article.photoNames.square : $scope.app.cdn + 'articles/' + $scope.article.photoNames.large;
         $scope.metaservice.setOg('https://tempostorm.com/articles/' + article.slug.url, $scope.article.title, $scope.article.description, 'article', ogImg);
-        
+
         $scope.getContent = function () {
             return $sce.trustAsHtml($scope.article.content);
         };
-        
+
         // show
         if (!$scope.app.settings.show.article) {
             $scope.app.settings.show['article'] = {
@@ -6806,8 +6733,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
         $scope.show = $scope.app.settings.show.article;
         $scope.$watch('show', function(){ $scope.app.settings.show.article = $scope.show; }, true);
-        
-        
+
+
         // related
         $scope.relatedActive = function () {
             var related = $scope.article.related;
@@ -6817,7 +6744,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-        
+
         $scope.getType = function (item) {
             if (!item.articleType[1]) {
                 switch (item.articleType[0]) {
@@ -6829,11 +6756,11 @@ angular.module('app.controllers', ['ngCookies'])
                 return 'tempostorm';
             }
         }
-        
+
         //vote
         var box,
             callback;
-        
+
         function checkVotes () {
             for (var i = 0; i < $scope.article.votes.length; i++) {
                 if (typeof($scope.article.votes[i]) === 'object') {
@@ -6850,11 +6777,11 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return $scope.hasVoted
         }
-        
+
         $scope.voteArticle = function (article) {
-            vote(article);       
+            vote(article);
         };
-        
+
         function vote(article) {
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login', function() {
@@ -6873,13 +6800,13 @@ angular.module('app.controllers', ['ngCookies'])
             checkVotes();
             updateCommentVotes();
         };
-        
+
 //        // comments
 //        var defaultComment = {
 //            comment: ''
 //        };
 //        $scope.comment = angular.copy(defaultComment);
-//        
+//
 //        $scope.commentPost = function () {
 //            if (!$scope.app.user.isLogged()) {
 //                LoginModalService.showModal('login', function () {
@@ -6894,25 +6821,25 @@ angular.module('app.controllers', ['ngCookies'])
 //                });
 //            }
 //        };
-        
+
         if ($scope.app.user.isLogged()) {
             updateCommentVotes();
         }
-        
+
         function updateCommentVotes() {
             $scope.article.comments.forEach(checkVotes);
-            
+
             function checkVotes (comment) {
                 var vote = comment.votes.filter(function (vote) {
                     return ($scope.app.user.getUserID() === vote.userID);
                 })[0];
-                
+
                 if (vote) {
                     comment.voted = vote.direction;
                 }
             }
         }
-                
+
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login', function () {
@@ -6933,7 +6860,7 @@ angular.module('app.controllers', ['ngCookies'])
             checkVotes();
             updateCommentVotes();
         };
-        
+
         // get premium
         $scope.getPremium = function (plan) {
             if ($scope.app.user.isLogged()) {
@@ -6950,24 +6877,24 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'Deck', 'tempostormDecks', 'tempostormCount', 'communityDecks', 'communityCount', 
+.controller('DecksCtrl', ['$scope', '$state', '$timeout', '$q', 'AjaxPagination', 'Hearthstone', 'Util', 'Deck', 'tempostormDecks', 'tempostormCount', 'communityDecks', 'communityCount',
     function ($scope, $state, $timeout, $q, AjaxPagination, Hearthstone, Util, Deck, tempostormDecks, tempostormCount, communityDecks, communityCount) {
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks');
-        
+
         console.log(tempostormDecks, communityDecks);
-        
+
         // decks
         $scope.deckSearch = '';
         $scope.tempostormDecks = tempostormDecks;
         $scope.communityDecks = communityDecks;
-        
+
         // filters
         $scope.filters = {
             classes: [],
             search: ''
         };
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
-        
+
         var initializing = true;
         $scope.$watch(function(){ return $scope.filters; }, function (value) {
             if (initializing) {
@@ -6979,15 +6906,15 @@ angular.module('app.controllers', ['ngCookies'])
                 updateCommunityDecks(1, 12);
             }
         }, true);
-        
+
         $scope.dustFormatted = function (dust) {
             return Util.numberWithCommas(dust);
         }
-        
+
         $scope.newSearch = function () {
             $scope.filters.search = $scope.deckSearch;
         }
-        
+
         // pagination
         function updateTempostormDecks (page, perpage, callback) {
             var options = {
@@ -7011,10 +6938,10 @@ angular.module('app.controllers', ['ngCookies'])
                     limit: perpage
                 }
             }
-            
+
             if ($scope.filters.search.length > 0) {
                 var pattern = new RegExp('.*'+$scope.filters.search+'.*', "i");
-                
+
                 options.filter.where = {
                     isFeatured: true,
                     playerClass: { inq: $scope.filters.classes },
@@ -7025,7 +6952,7 @@ angular.module('app.controllers', ['ngCookies'])
                     ]
                 }
             }
-            
+
             Deck.find(options)
             .$promise
             .then(function (data) {
@@ -7040,7 +6967,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             });
         }
-        
+
         $scope.tempostormPagination = AjaxPagination.new(4, tempostormCount,
             function (page, perpage) {
                 var d = $q.defer();
@@ -7080,10 +7007,10 @@ angular.module('app.controllers', ['ngCookies'])
                     limit: perpage
                 }
             }
-            
+
             if ($scope.filters.search.length > 0) {
                 var pattern = new RegExp('.*'+$scope.filters.search+'.*', "i");
-                
+
                 options.filter.where = {
                     isFeatured: false,
                     playerClass: { inq: $scope.filters.classes },
@@ -7094,7 +7021,7 @@ angular.module('app.controllers', ['ngCookies'])
                     ]
                 }
             }
-            
+
             Deck.find(options)
             .$promise
             .then(function (data) {
@@ -7109,7 +7036,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             });
         }
-        
+
         $scope.communityPagination = AjaxPagination.new(12, communityCount,
             function (page, perpage) {
                 var d = $q.defer();
@@ -7121,7 +7048,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
-        
+
         //is premium
 //        $scope.isPremium = function (guide) {
 //            if (!guide.premium.isPremium) { return false; }
@@ -7142,12 +7069,12 @@ angular.module('app.controllers', ['ngCookies'])
         // load deck
         $scope.deck = deck;
         $scope.deckService = Deck;
-        
+
         $scope.premiumTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isPremium = function () {
             if (!$scope.deck.premium.isPremium) { return false; }
             var now = new Date().getTime(),
@@ -7158,16 +7085,16 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
-        
+
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.deck.name + ' - Decks', $scope.deck.description);
-        
+
         var ogImg = $scope.app.cdn + 'img/decks/' + $scope.deck.playerClass + '.png';
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/decks/' + $scope.deck.slug, $scope.deck.name, $scope.deck.description, 'article', ogImg.toLowerCase());
-        
+
         // classes
         $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
-        
+
         // show
         if (!$scope.app.settings.show.deck) {
             $scope.app.settings.show['deck'] = {
@@ -7183,14 +7110,14 @@ angular.module('app.controllers', ['ngCookies'])
         }
         $scope.show = $scope.app.settings.show.deck;
         $scope.$watch('show', function(){ $scope.app.settings.show.deck = $scope.show; }, true);
-        
+
         // mulligans
         $scope.coin = true;
-        
+
         $scope.toggleCoin = function () {
             $scope.coin = !$scope.coin;
         }
-        
+
         $scope.getFirstMulligan = function () {
             var mulligans = $scope.deck.mulligans;
             for (var i = 0; i < mulligans.length; i++) {
@@ -7200,7 +7127,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         }
-        
+
         $scope.getMulligan = function (klass) {
             var mulligans = $scope.deck.mulligans;
             for (var i = 0; i < mulligans.length; i++) {
@@ -7210,15 +7137,15 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         }
-        
+
         $scope.setMulligan = function (mulligan) {
             $scope.currentMulligan = mulligan;
         };
-        
+
         $scope.isMulliganSet = function (mulligan) {
             return (mulligan.withCoin.cards.length > 0 || mulligan.withCoin.instructions.length > 0 || mulligan.withoutCoin.cards.length > 0 || mulligan.withoutCoin.instructions.length > 0);
         };
-        
+
         $scope.anyMulliganSet = function () {
             var mulligans = $scope.deck.mulligans;
             for (var i = 0; i < mulligans.length; i++) {
@@ -7228,66 +7155,66 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-        
+
         $scope.mulliganHide = function (card) {
             if (!$scope.anyMulliganSet()) { return false; }
             if (!$scope.currentMulligan) { return false; }
             var cards = ($scope.coin) ? $scope.currentMulligan.withCoin.cards : $scope.currentMulligan.withoutCoin.cards;
-            
+
             for (var i = 0; i < cards.length; i++) {
                 if (cards[i] === card.id) { return false; }
             }
 
             return true;
         }
-        
+
         $scope.getMulliganInstructions = function () {
             if (!$scope.currentMulligan) { return false; }
             var m = $scope.currentMulligan;
             return ($scope.coin) ? m.withCoin.instructions : m.withoutCoin.instructions;
         };
-        
+
         $scope.getMulliganCards = function () {
             if (!$scope.currentMulligan) { return false; }
             var m = $scope.currentMulligan;
             return ($scope.coin) ? m.withCoin.cards : m.withoutCoin.cards;
         };
-        
+
         $scope.cardLeft = function ($index) {
             return (80 / ($scope.getMulliganCards().length)) * $index;
         };
-        
+
         $scope.cardRight = function () {
             return $scope.getMulliganCards().length * 80 / 2;
         };
-        
+
         // charts
         $scope.charts = {
             colors: ['rgba(151,187,205,1)', 'rgba(151,187,205,1)', 'rgba(151,187,205,1)', 'rgba(151,187,205,1)']
         };
-        
+
         $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
         $scope.data = [300, 500, 100];
-        
+
         $scope.getVideo = function () {
             return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.deck.video + '" frameborder="0" height="360" width="100%" allowfullscreen></iframe>');
         };
-        
+
         $scope.getContent = function (content) {
             return $sce.trustAsHtml(content);
         };
-        
-        
+
+
         //matches
         $scope.mouseOver = '';
         $scope.setMouseOver = function (deck) {
             (deck != false) ? $scope.mouseOver = deck : $scope.mouseOver = false;
         }
-        
+
         $scope.getMouseOver = function (deck) {
             return $scope.mouseOver;
         }
-        
+
         // deck dust
         $scope.deck.getDust = function () {
             var dust = 0;
@@ -7296,7 +7223,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return dust;
         };
-        
+
         // mana curve
         $scope.deck.manaCurve = function (mana) {
             var big = 0,
@@ -7322,35 +7249,35 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return cnt;
         };
-        
+
         // voting
         $scope.voteDown = function (deck) {
             vote(-1, deck);
         };
-        
+
         $scope.voteUp = function (deck) {
-            vote(1, deck)       
+            vote(1, deck)
         };
-        
+
         var box,
             callback;
-        
+
         updateVotes();
         function updateVotes() {
             checkVotes($scope.deck);
-            
+
             function checkVotes (d) {
                 console.log(d.votes);
                 var vote = d.votes.filter(function (vote) {
                     return ($scope.app.user.getUserID() === vote.userID);
                 })[0];
-                
+
                 if (vote) {
                     d.voted = vote.direction;
                 }
             }
         }
-                
+
         function vote(direction, deck) {
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login', function () {
@@ -7371,7 +7298,7 @@ angular.module('app.controllers', ['ngCookies'])
             updateCommentVotes();
             updateVotes();
         };
-        
+
         // get premium
         $scope.getPremium = function (plan) {
             if ($scope.app.user.isLogged()) {
@@ -7397,12 +7324,12 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('ForumThreadCtrl', ['$scope', 'Pagination', 'data', 'MetaService',
     function ($scope, Pagination, data, MetaService) {
         $scope.thread = data.thread;
-        
+
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.thread.title + ' - Forum');
-        
+
         $scope.metaservice.setOg('https://tempostorm.com/forum/' + $scope.thread.slug.url, $scope.thread.title);
-        
+
         // page flipping
         $scope.pagination = Pagination.new(20);
         $scope.pagination.results = function () {
@@ -7410,19 +7337,19 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('ForumAddCtrl', ['$scope', '$location', '$window', '$compile', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data', 
+.controller('ForumAddCtrl', ['$scope', '$location', '$window', '$compile', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
     function ($scope, $location, $window, $compile, bootbox, ForumService, UserService, AuthenticationService, SubscriptionService, data) {
         // thread
         $scope.thread = data.thread;
-        
+
         // post
         var defaultPost = {
             title: '',
             content: ''
         };
-        
+
         $scope.post = angular.copy(defaultPost);
-        
+
         // summernote options
         $scope.options = {
           disableDragAndDrop: true,
@@ -7437,7 +7364,7 @@ angular.module('app.controllers', ['ngCookies'])
             ['misc', ['undo', 'redo']]
           ]
         };
-        
+
         var box,
             callback;
         $scope.addPost = function () {
@@ -7470,11 +7397,11 @@ angular.module('app.controllers', ['ngCookies'])
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
                     AuthenticationService.setProvider(data.isProvider);
-                    
+
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);
                     SubscriptionService.setExpiry(data.subscription.expiry);
-                    
+
                     $window.sessionStorage.userID = data.userID;
                     $window.sessionStorage.username = data.username;
                     $window.sessionStorage.email = data.email;
@@ -7491,27 +7418,27 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
     function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
-        
-        
+
+
         $scope.post = data.post;
         $scope.ForumService = ForumService;
         $scope.thread = data.thread;
-        
+
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.post.title + ' - ' + $scope.thread.title);
-        
+
         $scope.metaservice.setOg('https://tempostorm.com/forum/' + $scope.thread.slug.url + '/' + $scope.post.slug.url, $scope.post.title, $scope.post.content);
-        
-        
+
+
         var defaultComment = {
             comment: ''
         };
         $scope.comment = angular.copy(defaultComment);
-        
+
         $scope.post.getContent = function () {
             return $sce.trustAsHtml($scope.post.content);
         };
-        
+
         var box,
             callback;
         $scope.commentPost = function () {
@@ -7534,24 +7461,24 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         if ($scope.app.user.isLogged()) {
             updateVotes();
         }
         function updateVotes() {
             $scope.post.comments.forEach(checkVotes);
-            
+
             function checkVotes (comment) {
                 var vote = comment.votes.filter(function (vote) {
                     return ($scope.app.user.getUserID() === vote.userID);
                 })[0];
-                
+
                 if (vote) {
                     comment.voted = vote.direction;
                 }
             }
         }
-                
+
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
                 box = bootbox.dialog({
@@ -7575,7 +7502,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         // login for modal
         $scope.login = function login(email, password) {
             if (email !== undefined && password !== undefined) {
@@ -7583,11 +7510,11 @@ angular.module('app.controllers', ['ngCookies'])
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
                     AuthenticationService.setProvider(data.isProvider);
-                    
+
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);
                     SubscriptionService.setExpiry(data.subscription.expiry);
-                    
+
                     $window.sessionStorage.userID = data.userID;
                     $window.sessionStorage.username = data.username;
                     $window.sessionStorage.email = data.email;
@@ -7601,17 +7528,17 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('AdminForumStructureListCtrl', ['$scope', 'bootbox', 'AlertService', 'AdminForumService', 'data', 
+.controller('AdminForumStructureListCtrl', ['$scope', 'bootbox', 'AlertService', 'AdminForumService', 'data',
     function ($scope, bootbox, AlertService, AdminForumService, data) {
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         // load categories
         $scope.categories = data.categories;
-        
+
         // delete category
         $scope.deleteCategory = function (category) {
             var box = bootbox.dialog({
@@ -7685,23 +7612,23 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminForumCategoryAddCtrl', ['$scope', '$state', '$window', 'AdminForumService', 'AlertService', 
+.controller('AdminForumCategoryAddCtrl', ['$scope', '$state', '$window', 'AdminForumService', 'AlertService',
     function ($scope, $state, $window, AdminForumService, AlertService) {
         // default category
         var defaultCategory = {
             title : '',
             active: true
         };
-        
+
         // load category
         $scope.category = angular.copy(defaultCategory);
-        
+
         // select options
         $scope.categoryActive = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         $scope.addCategory = function () {
             $scope.showError = false;
 
@@ -7718,17 +7645,17 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminForumCategoryEditCtrl', ['$scope', '$state', '$window', 'AdminForumService', 'AlertService', 'data', 
+.controller('AdminForumCategoryEditCtrl', ['$scope', '$state', '$window', 'AdminForumService', 'AlertService', 'data',
     function ($scope, $state, $window, AdminForumService, AlertService, data) {
         // load category
         $scope.category = data.category;
-        
+
         // select options
         $scope.categoryActive = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         $scope.editCategory = function () {
             $scope.showError = false;
 
@@ -7745,7 +7672,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminForumThreadAddCtrl', ['$scope', '$state', '$window', 'Util', 'AdminForumService', 'AlertService', 'data', 
+.controller('AdminForumThreadAddCtrl', ['$scope', '$state', '$window', 'Util', 'AdminForumService', 'AlertService', 'data',
     function ($scope, $state, $window, Util, AdminForumService, AlertService, data) {
         // default thread
         var defaultThread = {
@@ -7758,27 +7685,27 @@ angular.module('app.controllers', ['ngCookies'])
             },
             active: true
         };
-        
+
         // load thread
         $scope.thread = angular.copy(defaultThread);
-        
+
         $scope.setSlug = function () {
             if (!$scope.thread.slug.linked) { return false; }
             $scope.thread.slug.url = Util.slugify($scope.thread.title);
         };
-        
+
         $scope.toggleSlugLink = function () {
             $scope.thread.slug.linked = !$scope.thread.slug.linked;
             $scope.setSlug();
         };
-        
+
         // select options
         $scope.selectCategories = data.categories;
         $scope.threadActive = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         $scope.addThread = function () {
             $scope.showError = false;
 
@@ -7795,28 +7722,28 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminForumThreadEditCtrl', ['$scope', '$state', '$window', 'Util', 'AdminForumService', 'AlertService', 'dataCategories', 'dataThread', 
+.controller('AdminForumThreadEditCtrl', ['$scope', '$state', '$window', 'Util', 'AdminForumService', 'AlertService', 'dataCategories', 'dataThread',
     function ($scope, $state, $window, Util, AdminForumService, AlertService, dataCategories, dataThread) {
         // load thread
         $scope.thread = dataThread.thread;
-        
+
         $scope.setSlug = function () {
             if (!$scope.thread.slug.linked) { return false; }
             $scope.thread.slug.url = Util.slugify($scope.thread.title);
         };
-        
+
         $scope.toggleSlugLink = function () {
             $scope.thread.slug.linked = !$scope.thread.slug.linked;
             $scope.setSlug();
         };
-        
+
         // select options
         $scope.selectCategories = dataCategories.categories;
         $scope.threadActive = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         $scope.editThread = function () {
             $scope.showError = false;
 
@@ -7833,18 +7760,18 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('Twitch', ['$scope', 
+.controller('Twitch', ['$scope',
     function ($scope) {
         $scope.login = function () {
             window.location.replace('/auth/twitch');
         };
-        
+
         $scope.signup = function () {
             window.location.replace('/auth/twitch');
         };
     }
 ])
-.controller('Bnet', ['$scope', 
+.controller('Bnet', ['$scope',
     function ($scope) {
         $scope.login = function () {
             window.location.replace('/auth/bnet');
@@ -7852,21 +7779,21 @@ angular.module('app.controllers', ['ngCookies'])
     }
 ])
 /* admin hots */
-.controller('AdminHeroListCtrl', ['$scope', 'AdminHeroService', 'AlertService', 'Pagination', 'data', 
+.controller('AdminHeroListCtrl', ['$scope', 'AdminHeroService', 'AlertService', 'Pagination', 'data',
     function ($scope, AdminHeroService, AlertService, Pagination, data) {
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         // load heroes
         $scope.heroes = data.heroes;
         $scope.page = data.page;
         $scope.perpage = data.perpage;
         $scope.total = data.total;
         $scope.search = data.search;
-        
+
         $scope.getHeroes = function () {
             AdminHeroService.getHeroes($scope.page, $scope.perpage, $scope.search).then(function (data) {
                 $scope.heroes = data.heroes;
@@ -7874,12 +7801,12 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.total = data.total;
             });
         }
-        
+
         $scope.searchHeroes = function () {
             $scope.page = 1;
             $scope.getHeroes();
         }
-        
+
         // pagination
         $scope.pagination = {
             page: function () {
@@ -7899,7 +7826,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var pages = [],
                     start = 1,
                     end = this.totalPages();
-                
+
                 if (this.totalPages() > 5) {
                     if (this.page() < 3) {
                         start = 1;
@@ -7911,13 +7838,13 @@ angular.module('app.controllers', ['ngCookies'])
                         start = this.page() - 2;
                         end = this.page() + 2;
                     }
-                    
+
                 }
-                
+
                 for (var i = start; i <= end; i++) {
                     pages.push(i);
                 }
-                
+
                 return pages;
             },
             isPage: function (page) {
@@ -7933,7 +7860,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
             }
         };
-        
+
         // delete hero
         $scope.deleteHero = function deleteHero(hero) {
             var box = bootbox.dialog({
@@ -7971,7 +7898,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService', 
+.controller('AdminHeroAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService',
     function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, AdminHeroService) {
         // default hero
         var defaultHero = {
@@ -8033,28 +7960,28 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             };
-        
+
         // load hero
         $scope.hero = angular.copy(defaultHero);
-        
+
         // roles
         $scope.roles = HOTS.roles;
-        
+
         // types
         $scope.heroTypes = HOTS.types;
-        
+
         // universe
         $scope.universes = HOTS.universes;
-        
+
         // mana types
         $scope.manaTypes = HOTS.manaTypes;
-        
+
         // select options
         $scope.heroActive = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         // abilities
         $scope.abilityTypes = HOTS.abilityTypes;
         var box;
@@ -8085,21 +8012,21 @@ angular.module('app.controllers', ['ngCookies'])
             box.modal('hide');
             $scope.currentAbility = false;
         };
-        
+
         $scope.editAbility = function (ability) {
             box.modal('hide');
             $scope.currentAbility = false;
         };
-        
+
         $scope.deleteAbility = function (ability) {
             var index = $scope.hero.abilities.indexOf(ability);
             $scope.hero.abilities.splice(index, 1);
-            
+
             for (var i = 0; i < $scope.hero.abilities.length; i++) {
                 $scope.hero.abilities[i].orderNum = i + 1;
             }
         };
-        
+
         // talents
         $scope.talentTiers = HOTS.tiers;
         $scope.talentAddWnd = function () {
@@ -8119,28 +8046,28 @@ angular.module('app.controllers', ['ngCookies'])
                 message: $compile('<div talent-edit-form></div>')($scope)
             });
         };
-        
+
         $scope.addTalent = function () {
             $scope.currentTalent.orderNum = $scope.hero.talents.length + 1;
             $scope.hero.talents.push($scope.currentTalent);
             box.modal('hide');
             $scope.currentTalent = false;
         };
-        
+
         $scope.editTalent = function (talent) {
             box.modal('hide');
             $scope.currentAbility = false;
         };
-        
+
         $scope.deleteTalent = function (talent) {
             var index = $scope.hero.talents.indexOf(talent);
             $scope.hero.talents.splice(index, 1);
-            
+
             for (var i = 0; i < $scope.hero.talents.length; i++) {
                 $scope.hero.talents[i].orderNum = i + 1;
             }
         };
-                
+
         // characters
         $scope.charAddWnd = function () {
             $scope.currentCharacter = angular.copy(defaultCharacter);
@@ -8163,12 +8090,12 @@ angular.module('app.controllers', ['ngCookies'])
             box.modal('hide');
             $scope.currentCharacter = false;
         };
-        
+
         $scope.editCharacter = function (character) {
             box.modal('hide');
             $scope.currentCharacter = false;
         };
-        
+
         $scope.deleteChar = function (character) {
             var index = $scope.hero.characters.indexOf(character);
             $scope.hero.characters.splice(index, 1);
@@ -8176,12 +8103,12 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.updateDND = function (list, index) {
             list.splice(index, 1);
-            
+
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
             }
         };
-        
+
         $scope.addHero = function () {
             $scope.showError = false;
 
@@ -8198,7 +8125,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService', 'data', 
+.controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService', 'data',
     function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, AdminHeroService, data) {
         // defaults
         var defaultAbility = {
@@ -8243,16 +8170,16 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             };
-        
+
         // load hero
         $scope.hero = data.hero;
-        
+
         // roles
         $scope.roles = HOTS.roles;
-        
+
         // types
         $scope.heroTypes = HOTS.types;
-        
+
         // universe
         $scope.universes = HOTS.universes;
 
@@ -8264,7 +8191,7 @@ angular.module('app.controllers', ['ngCookies'])
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         // abilities
         $scope.abilityTypes = HOTS.abilityTypes;
         var box;
@@ -8295,21 +8222,21 @@ angular.module('app.controllers', ['ngCookies'])
             box.modal('hide');
             $scope.currentAbility = false;
         };
-        
+
         $scope.editAbility = function (ability) {
             box.modal('hide');
             $scope.currentAbility = false;
         };
-        
+
         $scope.deleteAbility = function (ability) {
             var index = $scope.hero.abilities.indexOf(ability);
             $scope.hero.abilities.splice(index, 1);
-            
+
             for (var i = 0; i < $scope.hero.abilities.length; i++) {
                 $scope.hero.abilities[i].orderNum = i + 1;
             }
         };
-        
+
         // talents
         $scope.talentTiers = HOTS.tiers;
         $scope.talentAddWnd = function () {
@@ -8336,21 +8263,21 @@ angular.module('app.controllers', ['ngCookies'])
             box.modal('hide');
             $scope.currentTalent = false;
         };
-        
+
         $scope.editTalent = function (talent) {
             box.modal('hide');
             $scope.currentTalent = false;
         };
-        
+
         $scope.deleteTalent = function (talent) {
             var index = $scope.hero.talents.indexOf(talent);
             $scope.hero.talents.splice(index, 1);
-            
+
             for (var i = 0; i < $scope.hero.talents.length; i++) {
                 $scope.hero.talents[i].orderNum = i + 1;
             }
         };
-        
+
         // characters
         $scope.charAddWnd = function () {
             $scope.currentCharacter = angular.copy(defaultCharacter);
@@ -8373,25 +8300,25 @@ angular.module('app.controllers', ['ngCookies'])
             box.modal('hide');
             $scope.currentCharacter = false;
         };
-        
+
         $scope.editCharacter = function (character) {
             box.modal('hide');
             $scope.currentCharacter = false;
         };
-        
+
         $scope.deleteChar = function (character) {
             var index = $scope.hero.characters.indexOf(character);
             $scope.hero.characters.splice(index, 1);
         };
-        
+
         $scope.updateDND = function (list, index) {
             list.splice(index, 1);
-            
+
             for (var i = 0; i < list.length; i++) {
                 list[i].orderNum = i + 1;
             }
         };
-        
+
         $scope.editHero = function () {
             $scope.showError = false;
 
@@ -8408,21 +8335,21 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminMapsListCtrl', ['$scope', 'AdminMapService', 'AlertService', 'Pagination', 'data', 
+.controller('AdminMapsListCtrl', ['$scope', 'AdminMapService', 'AlertService', 'Pagination', 'data',
     function ($scope, AdminMapService, AlertService, Pagination, data) {
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         // load maps
         $scope.maps = data.maps;
         $scope.page = data.page;
         $scope.perpage = data.perpage;
         $scope.total = data.total;
         $scope.search = data.search;
-        
+
         $scope.getMaps = function () {
             AdminMapService.getMaps($scope.page, $scope.perpage, $scope.search).then(function (data) {
                 $scope.maps = data.maps;
@@ -8430,12 +8357,12 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.total = data.total;
             });
         }
-        
+
         $scope.searchMaps = function () {
             $scope.page = 1;
             $scope.getMaps();
         }
-        
+
         // pagination
         $scope.pagination = {
             page: function () {
@@ -8455,7 +8382,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var pages = [],
                     start = 1,
                     end = this.totalPages();
-                
+
                 if (this.totalPages() > 5) {
                     if (this.page() < 3) {
                         start = 1;
@@ -8467,13 +8394,13 @@ angular.module('app.controllers', ['ngCookies'])
                         start = this.page() - 2;
                         end = this.page() + 2;
                     }
-                    
+
                 }
-                
+
                 for (var i = start; i <= end; i++) {
                     pages.push(i);
                 }
-                
+
                 return pages;
             },
             isPage: function (page) {
@@ -8489,7 +8416,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
             }
         };
-        
+
         // delete map
         $scope.deleteMap = function deleteMap(map) {
             var box = bootbox.dialog({
@@ -8527,7 +8454,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('AdminMapAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'AdminMapService', 
+.controller('AdminMapAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'AdminMapService',
     function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, AdminMapService) {
         // default map
         var defaultMap = {
@@ -8536,16 +8463,16 @@ angular.module('app.controllers', ['ngCookies'])
                 className: '',
                 active: true
             };
-        
+
         // load map
         $scope.map = angular.copy(defaultMap);
-        
+
         // select options
         $scope.mapActive = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-                
+
         $scope.addMap = function () {
             $scope.showError = false;
 
@@ -8562,17 +8489,17 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminMapEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'AdminMapService', 'data', 
+.controller('AdminMapEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'AdminMapService', 'data',
     function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, AdminMapService, data) {
         // load map
         $scope.map = data.map;
-        
+
         // select options
         $scope.mapActive = [
             { name: 'Yes', value: true },
             { name: 'No', value: false }
         ];
-        
+
         $scope.editMap = function () {
             $scope.showError = false;
 
@@ -8589,21 +8516,21 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminHOTSGuideListCtrl', ['$scope', '$state', 'AdminHOTSGuideService', 'AlertService', 'Pagination', 'data', 
+.controller('AdminHOTSGuideListCtrl', ['$scope', '$state', 'AdminHOTSGuideService', 'AlertService', 'Pagination', 'data',
     function ($scope, $state, AdminHOTSGuideService, AlertService, Pagination, data) {
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
-        
+
         // load guides
         $scope.guides = data.guides;
         $scope.page = data.page;
         $scope.perpage = data.perpage;
         $scope.total = data.total;
         $scope.search = data.search;
-        
+
         $scope.getGuides = function () {
             AdminHOTSGuideService.getGuides($scope.page, $scope.perpage, $scope.search).then(function (data) {
                 $scope.guides = data.guides;
@@ -8611,12 +8538,12 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.total = data.total;
             });
         }
-        
+
         $scope.searchGuides = function () {
             $scope.page = 1;
             $scope.getGuides();
         }
-        
+
         // pagination
         $scope.pagination = {
             page: function () {
@@ -8636,7 +8563,7 @@ angular.module('app.controllers', ['ngCookies'])
                 var pages = [],
                     start = 1,
                     end = this.totalPages();
-                
+
                 if (this.totalPages() > 5) {
                     if (this.page() < 3) {
                         start = 1;
@@ -8649,11 +8576,11 @@ angular.module('app.controllers', ['ngCookies'])
                         end = this.page() + 2;
                     }
                 }
-                
+
                 for (var i = start; i <= end; i++) {
                     pages.push(i);
                 }
-                
+
                 return pages;
             },
             isPage: function (page) {
@@ -8669,7 +8596,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
             }
         };
-        
+
         // edit guide
         $scope.editGuide = function (guide) {
             if (guide.guideType === 'hero') {
@@ -8678,7 +8605,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return $state.go('app.admin.hots.guides.edit.map', { guideID: guide._id });
             }
         };
-        
+
         // delete guide
         $scope.deleteGuide = function deleteGuide(guide) {
             var box = bootbox.dialog({
@@ -8716,7 +8643,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', 'AlertService', 'AdminHOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 
+.controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', 'AlertService', 'AdminHOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps',
     function ($scope, $state, AlertService, AdminHOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
@@ -8726,10 +8653,10 @@ angular.module('app.controllers', ['ngCookies'])
 
         // heroes
         $scope.heroes = dataHeroes.heroes;
-        
+
         // maps
         $scope.maps = dataMaps.maps;
-        
+
         // steps
         $scope.step = 2;
         $scope.prevStep = function () {
@@ -8739,11 +8666,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.nextStep = function () {
             if ($scope.step < 7) $scope.step = $scope.step + 1;
         }
-        
+
         $scope.stepOne = function () {
             $state.go('app.admin.hots.guides.add.step1', {});
         };
-        
+
         // draw hero rows
         var heroRows = HOTS.heroRows;
         $scope.heroRows = [];
@@ -8760,15 +8687,15 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.heroRows.push(heroes);
         }
-        
+
         $scope.tooltipPos = function (row, $index) {
             return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
         };
-        
+
         $scope.tooltipPosTalent = function ($index) {
             return ($index === 2) ? 'left' : 'right';
-        };        
-        
+        };
+
         // draw map rows
         var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
@@ -8783,12 +8710,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.mapRows.push(maps);
         }
-        
+
         // talents
         $scope.getTalents = function (hero) {
             return $scope.guide.sortTalents(hero);
         }
-        
+
         // summernote options
         $scope.options = {
           disableDragAndDrop: true,
@@ -8810,7 +8737,7 @@ angular.module('app.controllers', ['ngCookies'])
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isPremium = function () {
             var premium = $scope.guide.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
@@ -8819,13 +8746,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isFeatured = function () {
             var featured = $scope.guide.featured;
             for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -8834,13 +8761,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
                 return false;
             }
-            
+
             AdminHOTSGuideService.addGuide($scope.guide).success(function (data) {
                 if (!data.success) {
                     $scope.errors = data.errors;
@@ -8855,7 +8782,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'HOTS', 'AdminHOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 
+.controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'HOTS', 'AdminHOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps',
     function ($scope, $state, AlertService, HOTS, AdminHOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
@@ -8865,10 +8792,10 @@ angular.module('app.controllers', ['ngCookies'])
 
         // heroes
         $scope.heroes = dataHeroes.heroes;
-        
+
         // maps
         $scope.maps = dataMaps.maps;
-        
+
         // steps
         $scope.step = 2;
         $scope.prevStep = function () {
@@ -8878,11 +8805,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.nextStep = function () {
             if ($scope.step < 5) $scope.step = $scope.step + 1;
         }
-        
+
         $scope.stepOne = function () {
             $state.go('app.admin.hots.guides.add.step1', {});
         };
-        
+
         // draw map rows
         var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
@@ -8901,7 +8828,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.tooltipPos = function (row, $index) {
             return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
         };
-        
+
         // summernote options
         $scope.options = {
           disableDragAndDrop: true,
@@ -8923,7 +8850,7 @@ angular.module('app.controllers', ['ngCookies'])
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isPremium = function () {
             var premium = $scope.guide.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
@@ -8932,13 +8859,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isFeatured = function () {
             var featured = $scope.guide.featured;
             for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -8947,13 +8874,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                 return false;
             }
-            
+
             AdminHOTSGuideService.addGuide($scope.guide).success(function (data) {
                 if (!data.success) {
                     $scope.errors = data.errors;
@@ -8968,22 +8895,22 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminHOTSGuideEditStep1Ctrl', ['$scope', 'dataGuide', 
+.controller('AdminHOTSGuideEditStep1Ctrl', ['$scope', 'dataGuide',
     function ($scope, dataGuide) {
         $scope.guide = dataGuide.guide;
     }
 ])
-.controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'AdminHOTSGuideService', 'HOTS', 'dataGuide', 'dataHeroes', 'dataMaps', 
+.controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'AdminHOTSGuideService', 'HOTS', 'dataGuide', 'dataHeroes', 'dataMaps',
     function ($scope, $state, $window, AlertService, GuideBuilder, AdminHOTSGuideService, HOTS, dataGuide, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = GuideBuilder.new('hero', dataGuide.guide);
-        
+
         // heroes
         $scope.heroes = dataHeroes.heroes;
-        
+
         // maps
         $scope.maps = dataMaps.maps;
-        
+
         // steps
         $scope.step = 2;
         $scope.prevStep = function () {
@@ -8993,11 +8920,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.nextStep = function () {
             if ($scope.step < 7) $scope.step = $scope.step + 1;
         }
-        
+
         $scope.stepOne = function () {
             $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide._id });
         };
-        
+
         // draw hero rows
         var heroRows = HOTS.heroRows;
         $scope.heroRows = [];
@@ -9014,7 +8941,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.heroRows.push(heroes);
         }
-        
+
         // draw map rows
         var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
@@ -9033,7 +8960,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.tooltipPos = function (row, $index) {
             return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
         };
-        
+
         $scope.tooltipPosTalent = function ($index) {
             return ($index === 2) ? 'left' : 'right';
         };
@@ -9042,15 +8969,15 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getTalents = function (hero) {
             return $scope.guide.sortTalents(hero);
         }
-        
+
         $scope.hasTalent = function (hero, talent) {
             return ($scope.guide.hasTalent(hero, talent)) ? ' active' : '';
         }
-        
+
         $scope.hasAnyTalent = function (hero, talent) {
             return ($scope.guide.hasAnyTalent(hero, talent)) ? ' tier-selected' : '';
         }
-        
+
         // summernote options
         $scope.options = {
           disableDragAndDrop: true,
@@ -9072,7 +8999,7 @@ angular.module('app.controllers', ['ngCookies'])
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isPremium = function () {
             var premium = $scope.guide.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
@@ -9081,13 +9008,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isFeatured = function () {
             var featured = $scope.guide.featured;
             for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -9096,13 +9023,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
                 return false;
             }
-            
+
             AdminHOTSGuideService.editGuide($scope.guide).success(function (data) {
                 if (!data.success) {
                     $scope.errors = data.errors;
@@ -9116,17 +9043,17 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'HOTS', 'GuideBuilder', 'AdminHOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps', 
+.controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'HOTS', 'GuideBuilder', 'AdminHOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps',
     function ($scope, $state, $window, AlertService, HOTS, GuideBuilder, AdminHOTSGuideService, dataGuide, dataHeroes, dataMaps) {
         // create guide
         $scope.guide = GuideBuilder.new('map', dataGuide.guide);
-        
+
         // heroes
         $scope.heroes = dataHeroes.heroes;
-        
+
         // maps
         $scope.maps = dataMaps.maps;
-        
+
         // steps
         $scope.step = 2;
         $scope.prevStep = function () {
@@ -9136,11 +9063,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.nextStep = function () {
             if ($scope.step < 5) $scope.step = $scope.step + 1;
         }
-        
+
         $scope.stepOne = function () {
             $state.go('app.admin.hots.guides.edit.step1', { guideID: $scope.guide._id });
         };
-        
+
         // draw map rows
         var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
@@ -9159,7 +9086,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.tooltipPos = function (row, $index) {
             return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
         };
-        
+
         // summernote options
         $scope.options = {
           disableDragAndDrop: true,
@@ -9181,7 +9108,7 @@ angular.module('app.controllers', ['ngCookies'])
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isPremium = function () {
             var premium = $scope.guide.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
@@ -9190,13 +9117,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isFeatured = function () {
             var featured = $scope.guide.featured;
             for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -9205,13 +9132,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                 return false;
             }
-            
+
             AdminHOTSGuideService.editGuide($scope.guide).success(function (data) {
                 if (!data.success) {
                     $scope.errors = data.errors;
@@ -9225,7 +9152,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService', 
+.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'ArticleService', 'HOTSGuideService',
     function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, ArticleService, HOTSGuideService) {
         // data
         $scope.heroes = dataHeroes;
@@ -9233,7 +9160,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.articles = dataArticles;
         $scope.guidesCommunity = dataGuidesCommunity;
         $scope.guidesFeatured = dataGuidesFeatured;
-        
+
         $scope.filters = {
             roles: [],
             universes: [],
@@ -9241,7 +9168,7 @@ angular.module('app.controllers', ['ngCookies'])
             heroes: [],
             map: false
         };
-        
+
         // filtering
         function hasFilterRole (role) {
             for (var i = 0; i < $scope.filters.roles.length; i++) {
@@ -9260,19 +9187,19 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-        
+
         function hasFilterSearch (hero) {
             var filtered = ($scope.filters.search && $scope.filters.search.length) ? $filter('filter')($scope.heroes, { name: $scope.filters.search }) : $scope.heroes;
             return (filtered.indexOf(hero) === -1);
         }
-        
+
         function getFilters () {
             var filters = [];
-            
+
             // check for no filters
-            if (!$scope.filters.roles.length && 
-                !$scope.filters.universes.length && 
-                !$scope.filters.heroes.length && 
+            if (!$scope.filters.roles.length &&
+                !$scope.filters.universes.length &&
+                !$scope.filters.heroes.length &&
                 !$scope.filters.map) {
                 return false;
             }
@@ -9289,15 +9216,15 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             // maps
             if ($scope.filters.map) {
                 filters.push($scope.filters.map._id);
             }
-            
+
             return filters;
         }
-        
+
         function isFiltered (hero) {
             if ($scope.filters.roles.length && !hasFilterRole(hero.role)) {
                 return true;
@@ -9310,7 +9237,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-        
+
         var initializing = true;
         $scope.$watch(function(){ return $scope.filters; }, function (value) {
             if (initializing) {
@@ -9325,41 +9252,41 @@ angular.module('app.controllers', ['ngCookies'])
                         articleFilters.push($scope.heroes[i].name);
                     }
                 }
-                
-              
+
+
               var options = {
                 filter: {
                   where: {
-                    
+
                   }
                 }
               };
-              
+
               console.log($scope.filters);
-              
+
               // check if a hero is selected, --> use that if selected
               // check if any filters are present, --> use those
               // check if map filters are present, --> use all filters at same time
-              
+
 //              var allFilters = $scope.getFilters();
-              
+
 //              // if filters exists
 //              if(allFilters) {
 //                if($scope.filters.heroes.length > 0) {
 //                  options.filter.where.heroes = {
-//                    inq: 
+//                    inq:
 //                  };
 //                }
-//                
+//
 //              }
-              
+
                 // load articles
                 ArticleService.getArticles('hots', articleFilters, 0, 6).then(function (data) {
                     $timeout(function () {
                         $scope.articles = data.articles;
                     });
                 });
-              
+
 //                Article.find({
 //                  filter: {
 //                    limit: 6,
@@ -9370,14 +9297,14 @@ angular.module('app.controllers', ['ngCookies'])
 //                }).$promise.then(function (data) {
 //                  console.log(data);
 //                });
-                
+
                 // load tempostorm guides
                 HOTSGuideService.getGuidesFeatured(getFilters(), 0, 10, $scope.filters.search).then(function (data) {
                     $timeout(function () {
                         $scope.guidesFeatured = data.guides;
                     });
                 });
-                
+
                 // load community guides
                 HOTSGuideService.getGuidesCommunity(getFilters(), 0, 10, $scope.filters.search, false).then(function (data) {
                     $timeout(function () {
@@ -9386,23 +9313,23 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         }, true);
-        
+
         // guides
         $scope.getGuideCurrentHero = function (guide) {
             return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
         };
-        
+
         $scope.getGuideClass = function (guide) {
             return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
         };
-        
+
         $scope.guidePrevHero = function ($event, guide) {
             $event.preventDefault();
             $event.stopPropagation();
-            
+
             var currentHero = $scope.getGuideCurrentHero(guide),
                 index = 0;
-            
+
             // get index of current hero
             for (var i = 0; i < guide.heroes.length; i++) {
                 if (currentHero.hero._id == guide.heroes[i].hero._id) {
@@ -9410,17 +9337,17 @@ angular.module('app.controllers', ['ngCookies'])
                     break;
                 }
             }
-            
+
             guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
         };
 
         $scope.guideNextHero = function ($event, guide) {
             $event.preventDefault();
             $event.stopPropagation();
-            
+
             var currentHero = $scope.getGuideCurrentHero(guide),
                 index = 0;
-            
+
             // get index of current hero
             for (var i = 0; i < guide.heroes.length; i++) {
                 if (currentHero.hero._id == guide.heroes[i].hero._id) {
@@ -9428,10 +9355,10 @@ angular.module('app.controllers', ['ngCookies'])
                     break;
                 }
             }
-            
+
             guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
         };
-        
+
         //is premium
         $scope.isPremium = function (guide) {
             if (!guide.premium.isPremium) { return false; }
@@ -9445,13 +9372,13 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 
+.controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps',
     function ($q, $scope, $state, $timeout, $filter, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
       console.log(dataCommunityGuides);
         $scope.communityGuides = dataCommunityGuides;
         $scope.topGuides = dataTopGuide ? dataTopGuide : false;
         $scope.tempostormGuides = dataTempostormGuides;
-        
+
         // filtering
         $scope.heroes = dataHeroes;
         $scope.maps = dataMaps;
@@ -9462,7 +9389,7 @@ angular.module('app.controllers', ['ngCookies'])
             heroes: [],
             map: false
         };
-        
+
         var initializing = true;
         $scope.$watch(function(){ return $scope.filters; }, function (value) {
             if (initializing) {
@@ -9478,39 +9405,39 @@ angular.module('app.controllers', ['ngCookies'])
                 if ($scope.filters.map) {
                     guideFilters.push($scope.filters.map._id);
                 }
-                
+
                 updateTopGuide();
                 updateTempostormGuides(1, 4);
                 updateCommunityGuides(1, 10);
             }
         }, true);
-        
+
         // top guide
         $scope.getTopGuideHeroBg = function (guide) {
 //            return ($scope.app.bootstrapWidth !== 'xs') ? $scope.getGuideCurrentHero(guide).className : '';
         };
-        
+
         $scope.isLarge = function () {
 //            var width = $scope.app.bootstrapWidth;
 //            return (width === 'lg' || width === 'md') ? 'large' : '';
         };
-        
+
         // guides
         $scope.getGuideCurrentHero = function (guide) {
             // return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
         };
-        
+
         $scope.getGuideClass = function (guide) {
             // return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
         };
-        
+
         $scope.guidePrevHero = function ($event, guide) {
 //            $event.preventDefault();
 //            $event.stopPropagation();
-//            
+//
 //            var currentHero = $scope.getGuideCurrentHero(guide),
 //                index = 0;
-//            
+//
 //            // get index of current hero
 //            for (var i = 0; i < guide.heroes.length; i++) {
 //                if (currentHero.hero._id == guide.heroes[i].hero._id) {
@@ -9518,17 +9445,17 @@ angular.module('app.controllers', ['ngCookies'])
 //                    break;
 //                }
 //            }
-//            
+//
 //            guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
         };
 
         $scope.guideNextHero = function ($event, guide) {
 //            $event.preventDefault();
 //            $event.stopPropagation();
-//            
+//
 //            var currentHero = $scope.getGuideCurrentHero(guide),
 //                index = 0;
-//            
+//
 //            // get index of current hero
 //            for (var i = 0; i < guide.heroes.length; i++) {
 //                if (currentHero.hero._id == guide.heroes[i].hero._id) {
@@ -9536,26 +9463,26 @@ angular.module('app.controllers', ['ngCookies'])
 //                    break;
 //                }
 //            }
-//            
+//
 //            guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
         };
-        
+
         $scope.getTalents = function (hero, tier) {
 //            var out = [];
-//            
+//
 //            for (var i = 0; i < hero.hero.talents.length; i++) {
 //                if (hero.hero.talents[i].tier === tier) {
 //                    out.push(hero.hero.talents[i]);
 //                }
 //            }
-//            
+//
 //            return out;
         };
-        
+
         $scope.selectedTalent = function (hero, tier, talent) {
             // return (hero.talents['tier' + tier]._id == talent._id);
         };
-        
+
         $scope.getTalent = function (hero, tier) {
             for (var i = 0; i < hero.hero.talents.length; i++) {
                 if (hero.talents['tier' + tier] == hero.hero.talents[i]._id) {
@@ -9564,7 +9491,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-        
+
         //is premium
         $scope.isPremium = function (guide) {
             if (!guide.premium.isPremium) { return false; }
@@ -9576,7 +9503,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
-                
+
         // filtering
         function hasFilterRole (role) {
             for (var i = 0; i < $scope.filters.roles.length; i++) {
@@ -9595,12 +9522,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-        
+
         function hasFilterSearch (hero) {
             var filtered = ($scope.filters.search && $scope.filters.search.length) ? $filter('filter')($scope.heroes, { name: $scope.filters.search }) : $scope.heroes;
             return (filtered.indexOf(hero) === -1);
         }
-        
+
         function isFiltered (hero) {
             if ($scope.filters.roles.length && !hasFilterRole(hero.role)) {
                 return true;
@@ -9613,14 +9540,14 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-        
+
         function getFilters () {
             var filters = [];
-            
+
             // check for no filters
-            if (!$scope.filters.roles.length && 
-                !$scope.filters.universes.length && 
-                !$scope.filters.heroes.length && 
+            if (!$scope.filters.roles.length &&
+                !$scope.filters.universes.length &&
+                !$scope.filters.heroes.length &&
                 !$scope.filters.map) {
                 return false;
             }
@@ -9637,15 +9564,15 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             // maps
             if ($scope.filters.map) {
                 filters.push($scope.filters.map._id);
             }
-            
+
             return filters;
         }
-        
+
         function updateTopGuide () {
             HOTSGuideService.getGuides('hero', getFilters(), 1, 1, $scope.filters.search).then(function (data) {
                 $timeout(function () {
@@ -9653,11 +9580,11 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             });
         }
-        
+
         // pagination
         function updateTempostormGuides (page, perpage, callback) {
             var offset = ((page * perpage) - perpage);
-            
+
             HOTSGuideService.getGuidesFeatured(getFilters(), offset, perpage, $scope.filters.search).then(function (data) {
                 $scope.tempostormPagination.total = data.total;
                 $scope.tempostormPagination.page = page;
@@ -9670,7 +9597,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             });
         }
-        
+
         $scope.tempostormPagination = AjaxPagination.new(4, dataTempostormGuides.total,
             function (page, perpage) {
                 var d = $q.defer();
@@ -9682,10 +9609,10 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
-        
+
         function updateCommunityGuides (page, perpage, callback) {
             var offset = ((page * perpage) - perpage);
-            
+
             HOTSGuideService.getGuidesCommunity(getFilters(), offset, perpage, $scope.filters.search, false).then(function (data) {
                 $scope.communityPagination.total = data.total;
                 $scope.communityPagination.page = page;
@@ -9698,7 +9625,7 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             });
         }
-        
+
         $scope.communityPagination = AjaxPagination.new(10, dataCommunityGuides.total,
             function (page, perpage) {
                 var d = $q.defer(),
@@ -9713,7 +9640,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return d.promise;
             }
         );
-        
+
         //is premium
         $scope.isPremium = function (guide) {
             if (!guide.premium.isPremium) { return false; }
@@ -9729,20 +9656,20 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'LoginModalService', 'MetaService',
     function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps, LoginModalService, MetaService) {
-        
+
         $scope.guide = data.guide;
         $scope.HOTSGuideService = HOTSGuideService;
         $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0].hero : false;
         $scope.heroes = dataHeroes.heroes;
         $scope.maps = dataMaps.maps;
-        
-        
+
+
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.guide.name + ' - Guides', $scope.guide.description);
-        
+
         var ogImg = $scope.app.cdn + 'img/hots/hots-logo.png';
         $scope.metaservice.setOg('https://tempostorm.com/heroes-of-the-storm/guides/' + data.guide.slug, $scope.guide.name, $scope.guide.description, 'article', ogImg);
-        
+
         // show
         if (!$scope.app.settings.show.guide) {
             $scope.app.settings.show['guide'] = {
@@ -9757,11 +9684,11 @@ angular.module('app.controllers', ['ngCookies'])
         }
         $scope.show = $scope.app.settings.show.guide;
         $scope.$watch('show', function(){ $scope.app.settings.show.guide = $scope.show; }, true);
-        
+
         $scope.setCurrentHero = function (hero) {
             $scope.currentHero = hero;
         };
-        
+
         $scope.getCurrentHero = function () {
             for (var i = 0; i < $scope.guide.heroes.length; i++) {
                 if ($scope.guide.heroes[i].hero._id === $scope.currentHero._id) {
@@ -9770,37 +9697,37 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-        
+
         $scope.justHeroes = function () {
             var out = [];
-            
+
             for (var i = 0; i < $scope.guide.heroes.length; i++) {
                 out.push($scope.guide.heroes[i].hero);
             }
-            
+
             return out;
         };
-        
+
         $scope.getTiers = function () {
             return [1, 4, 7, 10, 13, 16, 20];
         };
-        
+
         $scope.getTalents = function (hero, tier) {
             var out = [];
-            
+
             for (var i = 0; i < hero.hero.talents.length; i++) {
                 if (hero.hero.talents[i].tier === tier) {
                     out.push(hero.hero.talents[i]);
                 }
             }
-            
+
             return out;
         };
-        
+
         $scope.selectedTalent = function (hero, tier, talent) {
             return (hero.talents['tier' + tier] == talent._id);
         };
-        
+
         $scope.getTalent = function (hero, tier) {
             for (var i = 0; i < hero.hero.talents.length; i++) {
                 if (hero.talents['tier' + tier] == hero.hero.talents[i]._id) {
@@ -9809,7 +9736,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-        
+
         // matchups
         $scope.hasSynergy = function (hero) {
             return ($scope.guide.synergy.indexOf(hero._id) !== -1);
@@ -9820,7 +9747,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.hasWeak = function (hero) {
             return ($scope.guide.against.weak.indexOf(hero._id) !== -1);
         };
-        
+
         // maps
         $scope.hasMap = function (map) {
             for (var i = 0; i < $scope.guide.maps.length; i++) {
@@ -9830,11 +9757,11 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-        
+
         $scope.getVideo = function () {
             return $scope.getContent('<iframe src="//www.youtube.com/embed/' + $scope.guide.video + '" frameborder="0" height="360" width="100%" allowfullscreen></iframe>');
         };
-        
+
         $scope.getContent = function (content) {
             return $sce.trustAsHtml(content);
         };
@@ -9843,29 +9770,29 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.voteDown = function (guide) {
             vote(-1, guide);
         };
-        
+
         $scope.voteUp = function (guide) {
-            vote(1, guide)       
+            vote(1, guide)
         };
-        
+
         var box,
             callback;
-        
+
         updateVotes();
         function updateVotes() {
             checkVotes($scope.guide);
-            
+
             function checkVotes (guide) {
                 var vote = guide.votes.filter(function (vote) {
                     return ($scope.app.user.getUserID() === vote.userID);
                 })[0];
-                
+
                 if (vote) {
                     guide.voted = vote.direction;
                 }
             }
         }
-                
+
         function vote(direction, guide) {
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login', function () {
@@ -9886,13 +9813,13 @@ angular.module('app.controllers', ['ngCookies'])
             updateVotes();
             updateCommentVotes();
         };
-        
+
         // comments
         var defaultComment = {
             comment: ''
         };
         $scope.comment = angular.copy(defaultComment);
-        
+
         $scope.commentPost = function () {
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login', function () {
@@ -9907,22 +9834,22 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         };
-        
+
         updateCommentVotes();
         function updateCommentVotes() {
             $scope.guide.comments.forEach(checkVotes);
-            
+
             function checkVotes (comment) {
                 var vote = comment.votes.filter(function (vote) {
                     return ($scope.app.user.getUserID() === vote.userID);
                 })[0];
-                
+
                 if (vote) {
                     comment.voted = vote.direction;
                 }
             }
         }
-                
+
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
                 LoginModalService.showModal('login', function () {
@@ -9943,7 +9870,7 @@ angular.module('app.controllers', ['ngCookies'])
             updateVotes();
             updateCommentVotes();
         };
-        
+
         //is premium
         $scope.isPremium = function () {
             if (!$scope.guide.premium.isPremium) { return false; }
@@ -9955,7 +9882,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
-        
+
         // get premium
         $scope.getPremium = function (plan) {
             if ($scope.app.user.isLogged()) {
@@ -9973,7 +9900,7 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService',
     function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService) {
         var box;
-        
+
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
         $scope.$watch('guide', function(){
@@ -9982,10 +9909,10 @@ angular.module('app.controllers', ['ngCookies'])
 
         // heroes
         $scope.heroes = dataHeroes.heroes;
-        
+
         // maps
         $scope.maps = dataMaps.maps;
-        
+
         // steps
         $scope.step = 2;
         $scope.prevStep = function () {
@@ -9995,11 +9922,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.nextStep = function () {
             if ($scope.step < 7) $scope.step = $scope.step + 1;
         }
-        
+
         $scope.stepOne = function () {
             $state.go('app.hots.guideBuilder.step1', {});
         };
-        
+
         // draw hero rows
         var heroRows = HOTS.heroRows;
         $scope.heroRows = [];
@@ -10016,15 +9943,15 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.heroRows.push(heroes);
         }
-        
+
         $scope.tooltipPos = function (row, $index) {
             return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
         };
-        
+
         $scope.tooltipPosTalent = function ($index) {
             return ($index === 2) ? 'left' : 'right';
-        };        
-        
+        };
+
         // draw map rows
         var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
@@ -10039,20 +9966,20 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.mapRows.push(maps);
         }
-        
+
         // talents
         $scope.getTalents = function (hero) {
             return $scope.guide.sortTalents(hero);
         }
-        
+
         $scope.hasTalent = function (hero, talent) {
             return ($scope.guide.hasTalent(hero, talent)) ? ' active' : '';
         }
-        
+
         $scope.hasAnyTalent = function (hero, talent) {
             return ($scope.guide.hasAnyTalent(hero, talent)) ? ' tier-selected' : '';
         }
-        
+
         // summernote options
         $scope.options = {
           height: 100,
@@ -10079,13 +10006,13 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
-        
+
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isFeatured = function () {
             var featured = $scope.guide.featured;
             for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -10094,7 +10021,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
@@ -10120,7 +10047,7 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'HOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'LoginModalService',
     function ($scope, $state, $window, $compile, HOTS, HOTSGuideService, GuideBuilder, dataHeroes, dataMaps, LoginModalService) {
         var box;
-        
+
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
         $scope.$watch('guide', function(){
@@ -10129,10 +10056,10 @@ angular.module('app.controllers', ['ngCookies'])
 
         // heroes
         $scope.heroes = dataHeroes.heroes;
-        
+
         // maps
         $scope.maps = dataMaps.maps;
-        
+
         // steps
         $scope.step = 2;
         $scope.prevStep = function () {
@@ -10142,11 +10069,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.nextStep = function () {
             if ($scope.step < 5) $scope.step = $scope.step + 1;
         }
-        
+
         $scope.stepOne = function () {
             $state.go('app.hots.guideBuilder.step1', {});
         };
-        
+
         // draw map rows
         var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
@@ -10165,7 +10092,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.tooltipPos = function (row, $index) {
             return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
         };
-        
+
         // summernote options
         $scope.options = {
           height: 100,
@@ -10186,7 +10113,7 @@ angular.module('app.controllers', ['ngCookies'])
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isPremium = function () {
             var premium = $scope.guide.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
@@ -10195,13 +10122,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isFeatured = function () {
             var featured = $scope.guide.featured;
             for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -10233,7 +10160,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSGuideBuilderEditStep1Ctrl', ['$scope', 'dataGuide', 
+.controller('HOTSGuideBuilderEditStep1Ctrl', ['$scope', 'dataGuide',
     function ($scope, dataGuide) {
         $scope.guide = dataGuide.guide;
     }
@@ -10242,13 +10169,13 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $state, $window, GuideBuilder, HOTSGuideService, HOTS, dataGuide, dataHeroes, dataMaps, LoginModalService) {
         // create guide
         $scope.guide = GuideBuilder.new('hero', dataGuide.guide);
-        
+
         // heroes
         $scope.heroes = dataHeroes.heroes;
-        
+
         // maps
         $scope.maps = dataMaps.maps;
-        
+
         // steps
         $scope.step = 2;
         $scope.prevStep = function () {
@@ -10258,11 +10185,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.nextStep = function () {
             if ($scope.step < 7) $scope.step = $scope.step + 1;
         }
-        
+
         $scope.stepOne = function () {
             $state.go('app.hots.guideBuilder.edit.step1', { slug: $scope.guide.slug });
         };
-        
+
         // draw hero rows
         var heroRows = HOTS.heroRows;
         $scope.heroRows = [];
@@ -10279,7 +10206,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             $scope.heroRows.push(heroes);
         }
-        
+
         // draw map rows
         var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
@@ -10298,7 +10225,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.tooltipPos = function (row, $index) {
             return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
         };
-        
+
         $scope.tooltipPosTalent = function ($index) {
             return ($index === 2) ? 'left' : 'right';
         };
@@ -10307,15 +10234,15 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getTalents = function (hero) {
             return $scope.guide.sortTalents(hero);
         }
-        
+
         $scope.hasTalent = function (hero, talent) {
             return ($scope.guide.hasTalent(hero, talent)) ? ' active' : '';
         }
-        
+
         $scope.hasAnyTalent = function (hero, talent) {
             return ($scope.guide.hasAnyTalent(hero, talent)) ? ' tier-selected' : '';
         }
-        
+
         // summernote options
         $scope.options = {
           height: 100,
@@ -10336,7 +10263,7 @@ angular.module('app.controllers', ['ngCookies'])
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isPremium = function () {
             var premium = $scope.guide.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
@@ -10345,13 +10272,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isFeatured = function () {
             var featured = $scope.guide.featured;
             for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -10360,18 +10287,18 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         $scope.login = function login(email, password) {
             if (email !== undefined && password !== undefined) {
                 UserService.login(email, password).success(function(data) {
                     AuthenticationService.setLogged(true);
                     AuthenticationService.setAdmin(data.isAdmin);
                     AuthenticationService.setProvider(data.isProvider);
-                    
+
                     SubscriptionService.setSubscribed(data.subscription.isSubscribed);
                     SubscriptionService.setTsPlan(data.subscription.plan);
                     SubscriptionService.setExpiry(data.subscription.expiry);
-                    
+
                     $window.sessionStorage.userID = data.userID;
                     $window.sessionStorage.username = data.username;
                     $window.sessionStorage.email = data.email;
@@ -10383,8 +10310,8 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
         }
-        
-        
+
+
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
@@ -10410,13 +10337,13 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $state, $window, HOTS, GuideBuilder, HOTSGuideService, dataGuide, dataHeroes, dataMaps, LoginModalService) {
         // create guide
         $scope.guide = GuideBuilder.new('map', dataGuide.guide);
-        
+
         // heroes
         $scope.heroes = dataHeroes.heroes;
-        
+
         // maps
         $scope.maps = dataMaps.maps;
-        
+
         // steps
         $scope.step = 2;
         $scope.prevStep = function () {
@@ -10426,11 +10353,11 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.nextStep = function () {
             if ($scope.step < 5) $scope.step = $scope.step + 1;
         }
-        
+
         $scope.stepOne = function () {
             $state.go('app.hots.guideBuilder.edit.step1', { slug: $scope.guide.slug });
         };
-        
+
         // draw map rows
         var mapRows = HOTS.mapRows;
         $scope.mapRows = [];
@@ -10449,7 +10376,7 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.tooltipPos = function (row, $index) {
             return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
         };
-        
+
         // summernote options
         $scope.options = {
           height: 100,
@@ -10470,7 +10397,7 @@ angular.module('app.controllers', ['ngCookies'])
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isPremium = function () {
             var premium = $scope.guide.premium.isPremium;
             for (var i = 0; i < $scope.premiumTypes.length; i++) {
@@ -10479,13 +10406,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // featured
         $scope.featuredTypes = [
             { text: 'No', value: false },
             { text: 'Yes', value: true }
         ];
-        
+
         $scope.isFeatured = function () {
             var featured = $scope.guide.featured;
             for (var i = 0; i < $scope.featuredTypes.length; i++) {
@@ -10494,7 +10421,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         // save guide
         $scope.saveGuide = function () {
             if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
@@ -10516,12 +10443,12 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSTalentCalculatorCtrl', ['$scope', 'heroes', 
+.controller('HOTSTalentCalculatorCtrl', ['$scope', 'heroes',
     function ($scope, heroes) {
         $scope.heroes = heroes;
-        
+
         $scope.currentHero = false;
-        
+
         $scope.setCurrentHero = function (hero) {
             $scope.currentHero = hero;
         }
@@ -10534,12 +10461,12 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', '$window', 'HOTS', 'Base64', 'hero', 'MetaService',
     function ($scope, $state, $stateParams, $location, $window, HOTS, Base64, hero, MetaService) {
 //        if (!dataHero.success) { return $state.go('app.hots.talentCalculator.hero', { hero: $scope.heroes[0].className }); }
-        
+
         $scope.setCurrentHero(hero);
         $scope.currentCharacter = $scope.currentHero.characters[0];
         $scope.currentAbility = false;
         $scope.level = 1;
-        
+
         var defaultTalents = {
             tier1: null,
             tier4: null,
@@ -10549,21 +10476,21 @@ angular.module('app.controllers', ['ngCookies'])
             tier16: null,
             tier20: null
         };
-        
+
         $scope.metaservice = MetaService;
         $scope.metaservice.set(hero.name + ' - Talent Calculator', hero.description);
-        
+
         var ogImg = $scope.app.cdn + 'img/hots/hots-logo.png';
         $scope.metaservice.setOg($location.absUrl(), hero.name, hero.description, 'article', ogImg);
-        
+
         $scope.getCurrentCharacter = function () {
             return $scope.currentCharacter;
         };
-        
+
         $scope.setCurrentCharacter = function (character) {
             $scope.currentCharacter = character;
         };
-        
+
         $scope.getAbilities = function () {
             var abilities = $scope.getCurrentHero().abilities,
                 out = [];
@@ -10574,7 +10501,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return out;
         };
-        
+
         $scope.getHeroics = function () {
             var abilities = $scope.getCurrentHero().abilities,
                 out = [];
@@ -10585,7 +10512,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return out;
         };
-        
+
         $scope.getTrait = function () {
             var abilities = $scope.getCurrentHero().abilities;
             for (var i = 0; i < abilities.length; i++) {
@@ -10595,12 +10522,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-        
+
         // abilities
         $scope.getCurrentAbility = function () {
             return $scope.currentAbility;
         };
-        
+
         $scope.toggleAbility = function (ability) {
             if (!$scope.getCurrentAbility() || $scope.getCurrentAbility() !== ability) {
                 $scope.currentAbility = ability;
@@ -10608,46 +10535,46 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.currentAbility = false;
             }
         };
-        
+
         // talents
         $scope.tiers = HOTS.tiers;
 
         $scope.talentsByTier = function (tier) {
             var hero = $scope.currentHero,
                 talents = [];
-            
+
             for (var i = 0; i < hero.talents.length; i++) {
                 hero.talents[i].tier = parseInt(hero.talentTiers[hero.talents[i].id]);
-                
+
                 if (hero.talents[i].tier === tier) {
                     talents.push(hero.talents[i]);
                 }
             }
             return talents;
         };
-        
+
         $scope.hasTalent = function (talent) {
             return ($scope.currentTalents['tier'+talent.tier] == talent.id) ? ' active' : '';
         }
-        
+
         $scope.hasAnyTalent = function (talent) {
             return ($scope.currentTalents['tier'+talent.tier] !== null) ? ' tier-selected' : '';
         }
-        
+
         $scope.toggleTalent = function (talent, tierIndex, talentIndex) {
             if ($scope.hasTalent(talent)) {
                 $scope.currentTalents['tier'+talent.tier] = null;
             } else {
                 $scope.currentTalents['tier'+talent.tier] = talent.id;
             }
-            
+
             // set hash
             $scope.hash[tierIndex] = ($scope.hasTalent(talent)) ? talentIndex + 2 : 1;
             if (checkHash($scope.hash)) {
                 setHash();
             }
         };
-                
+
         // hash
         $scope.hash = [1,1,1,1,1,1,1];
 
@@ -10655,11 +10582,11 @@ angular.module('app.controllers', ['ngCookies'])
             hash = hash || $location.hash();
             var hashInt = Base64.toInt(hash),
                 arr = (hashInt+'').split('');
-            
+
             for (var i = 0; i < arr.length; i++) {
                 arr[i] = +arr[i];
             }
-            
+
             if (checkHash(arr)) {
                 $scope.hash =  arr;
             } else {
@@ -10668,23 +10595,23 @@ angular.module('app.controllers', ['ngCookies'])
             setHash();
         }
         getHash();
-        
+
         function checkHash (hash) {
             if (hash.length !== 7) { return false; }
-            
+
             for (var i = 1; i <= 7; i++) {
                 var num = +hash[i - 1];
                 if ((num < 1) || (num > $scope.talentsByTier($scope.tiers[i - 1]).length + 1)) { return false; }
             }
             return true;
         }
-        
+
         function setHash() {
             var hashInt = +$scope.hash.join(''),
                 hash = (hashInt > 1111111) ? Base64.fromInt(hashInt) : '';
             $location.hash(hash);
         }
-        
+
         function getTalents () {
             var hash = $scope.hash,
                 out = {};
@@ -10699,7 +10626,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
         $scope.currentTalents = getTalents();
-        
+
         $scope.$watch(function () {
             return location.hash;
         }, function (value) {
@@ -10707,7 +10634,7 @@ angular.module('app.controllers', ['ngCookies'])
             getHash(newHash);
             $scope.currentTalents = getTalents();
         });
-        
+
         function getTalentByID (id) {
             var hero = $scope.getCurrentHero();
             for (var i = 0; i < hero.talents.length; i++) {
@@ -10717,16 +10644,16 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         }
-        
+
         $scope.getAbilityTalents = function () {
             var ability = $scope.getCurrentAbility(),
                 currentTalents = $scope.currentTalents,
                 tiers = $scope.tiers,
                 out = [],
                 talent;
-            
+
             if (!ability) { return out; }
-            
+
             for (var i = 0; i < tiers.length; i++) {
                 if (currentTalents['tier' + tiers[i]] !== null) {
                     talent = getTalentByID(currentTalents['tier' + tiers[i]]);
@@ -10735,101 +10662,101 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-            
+
             return out;
         };
-        
+
         // url
         $scope.url = function () {
             return $location.absUrl();
         }
-        
+
         // stats
         function isNum (num) {
             return (num % 1 == 0);
         }
-        
+
         $scope.getHealth = function () {
             var char = $scope.getCurrentCharacter(),
                 level = $scope.level;
-            
+
             return (char.stats.base.health + ((level * char.stats.gain.health) - char.stats.gain.health));
         };
         $scope.getHealthRegen = function () {
             var char = $scope.getCurrentCharacter(),
                 level = $scope.level,
                 val = (char.stats.base.healthRegen + ((level * char.stats.gain.healthRegen) - char.stats.gain.healthRegen));
-            
+
             return (isNum(val)) ? val : +val.toFixed(2);
         };
         $scope.getMana = function () {
             var char = $scope.getCurrentCharacter(),
                 level = $scope.level;
-            
+
             return (char.stats.base.mana + ((level * char.stats.gain.mana) - char.stats.gain.mana)) || 'N/A';
         };
         $scope.getManaRegen = function () {
             var char = $scope.getCurrentCharacter(),
                 level = $scope.level,
                 val = (char.stats.base.manaRegen + ((level * char.stats.gain.manaRegen) - char.stats.gain.manaRegen));
-            
+
             return (isNum(val)) ? val || 'N/A' : +val.toFixed(2);
         };
         $scope.getSpeed = function () {
             var char = $scope.getCurrentCharacter(),
                 level = $scope.level,
                 val = (char.stats.base.attackSpeed + ((level * char.stats.gain.attackSpeed) - char.stats.gain.attackSpeed));
-            
+
             return (isNum(val)) ? val : +val.toFixed(2);
         };
         $scope.getRange = function () {
             var char = $scope.getCurrentCharacter(),
                 level = $scope.level,
                 val = (char.stats.base.range + ((level * char.stats.gain.range) - char.stats.gain.range));
-            
+
             return (isNum(val)) ? val : +val.toFixed(2);
         };
         $scope.getDamage = function () {
             var char = $scope.getCurrentCharacter(),
                 level = $scope.level;
-            
+
             return (char.stats.base.damage + ((level * char.stats.gain.damage) - char.stats.gain.damage));
         };
         $scope.getDPS = function () {
             var val = ($scope.getSpeed() * $scope.getDamage());
             return (isNum(val)) ? val : +val.toFixed(2);
         };
-        
+
         // copy
         $scope.copyUrl = function () {
-            var url = document.querySelector('.tc-url');  
+            var url = document.querySelector('.tc-url');
             url.select();
 
-            try {  
-                var successful = document.execCommand('copy');  
-            } catch(err) {  
+            try {
+                var successful = document.execCommand('copy');
+            } catch(err) {
                 alert('Your browser does not support this feature.');
             }
-            
+
             window.getSelection().removeAllRanges();
         };
-        
+
         // reset
         $scope.reset = function () {
             $location.hash('');
         };
     }
 ])
-.controller('PollsCtrl', ['$scope', '$sce', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide', 
+.controller('PollsCtrl', ['$scope', '$sce', '$compile', 'bootbox', 'PollService', 'dataPollsMain', 'dataPollsSide',
     function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
-        
+
         var box;
         $scope.pollsMain = dataPollsMain.polls;
         $scope.pollsSide = dataPollsSide.polls;
-        
+
         $scope.toggleItem = function (poll, item) {
             if (!poll.votes) { poll.votes = []; }
-            
+
             if ($scope.hasVoted(poll, item)) {
                 poll.votes.splice(poll.votes.indexOf(item._id), 1);
             } else {
@@ -10837,15 +10764,15 @@ angular.module('app.controllers', ['ngCookies'])
                 poll.votes.push(item._id);
             }
         };
-        
+
         $scope.getContent = function (content) {
             return $sce.trustAsHtml(content);
         };
-        
+
         $scope.btnText = function (poll, item) {
             return ($scope.hasVoted(poll, item)) ? 'Unpick' : 'Pick';
         }
-        
+
         $scope.voteCurve = function (item, poll) {
             var v = item.votes,
                 big = 0,
@@ -10858,8 +10785,8 @@ angular.module('app.controllers', ['ngCookies'])
             if (big === 0) { return 0; }
             return Math.ceil(v / big * 100);
         };
-        
-        $scope.votePercentage = function (item, poll) {            
+
+        $scope.votePercentage = function (item, poll) {
             var v = item.votes,
                 cnt = 0;
             for (var i = 0; i < poll.items.length; i++) {
@@ -10868,28 +10795,28 @@ angular.module('app.controllers', ['ngCookies'])
             if (cnt === 0) { return 0; }
             return Math.ceil(v / cnt * 100);
         };
-        
+
         $scope.hasVoted = function (poll, item) {
             if (!poll.votes) { return false; }
             return (poll.votes.indexOf(item._id) !== -1);
         };
-        
-        
+
+
         $scope.isDoneVoting = function (poll) {
             if (PollService.getStorage(poll)) {
                 return PollService.getStorage(poll);
             }
             return null;
         };
-        
+
         $scope.setDoneVoting = function (poll, votes) {
             return PollService.setStorage(poll._id, votes);
         };
-        
+
         $scope.getVotes = function (poll) {
             return poll.votes
         };
-        
+
         $scope.getLocalVotes = function (poll, item) {
             var localVotes = PollService.getStorage(poll._id).split(',');
             for (var i = 0; i < localVotes.length; i++) {
@@ -10898,21 +10825,21 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         }
-        
+
         $scope.bigImg = function (img, title) {
                 box = bootbox.dialog({
                 title: title,
                 message: $compile('<a ng-click="closeBox()"><img class="img-responsive" ng-src="' + $scope.app.cdn + 'polls/' +img+ '" alt=""></a>')($scope),
                 backdrop: true
             });
-            
+
             box.modal('show');
         };
-        
+
         $scope.closeBox = function () {
             box.modal('hide');
         }
-        
+
         $scope.submitVote = function (poll) {
             PollService.postVote(poll, poll.votes).success(function (data) {
                 if(!data.success) {
@@ -10930,7 +10857,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             })
         };
-    }                                         
+    }
 ])
 .controller('twitchCtrl', ['$scope', 'dataTwitch',
     function($scope, dataTwitch) {

@@ -9,15 +9,29 @@
     "description": {
       "type": "string"
     },
-    "className": {
-      "type": "string"
+    "expertClasses": {
+      "type": ["string"]
     },
     "snapshotId": {
+      "type": "string"
+    },
+    "userId": {
       "type": "string"
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "user": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "userId"
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
+    }
+  },
   "acls": [],
   "methods": {}
 }

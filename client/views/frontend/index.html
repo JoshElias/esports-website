@@ -61,13 +61,13 @@
                                 <li class="hidden-sm hidden-md hidden-lg" style="overflow: hidden" class="dropdown-short" ng-class="{active:$state.includes('app.profile')}" ng-if="app.user.isLogged()">
                                     <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                       <span class="profile-avatar profile-avatar-sm pull-right hidden-xs">
-                                        <img gravatar-src="app.user.getUserEmail()" alt="">
+                                        <img gravatar-src="app.email" alt="">
                                       </span>
-                                      <span class="hidden-sm hidden-md">{{app.user.getUsername()}}</span><span class="caret"></span>
+                                      <span class="hidden-sm hidden-md">{{app.user.username()}}</span><span class="caret"></span>
                                     </a>
                                     <ul class="dropdown-menu no-border-radius no-padding">
-                                      <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{app.user.getUsername()}}">Profile</a></li>
-                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="app.user.isAdmin()"><a ui-sref="app.admin.dashboard">Admin</a></li>
+                                      <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{user.username}}">Profile</a></li>
+                                      <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="app.user.isAdmin"><a ui-sref="app.admin.dashboard">Admin</a></li>
                                       <li class="sub"><a href="#" ng-click="app.user.logout()">Logout</a></li>
                                     </ul>
                                 </li>
@@ -83,7 +83,7 @@
                 <li class="dropdown-short" ng-class="{active:$state.includes('app.profile')}" ng-if="app.user.isLogged()">
                     <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <span class="profile-avatar profile-avatar-sm pull-right hidden-xs">
-                        <img gravatar-src="app.user.getUserEmail()" alt="">
+                        <img gravatar-src="email" alt="">
                       </span>
                       <span class="hidden-sm hidden-md">{{app.user.getUsername()}}</span><span class="caret"></span>
                     </a>

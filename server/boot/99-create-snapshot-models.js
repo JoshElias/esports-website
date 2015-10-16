@@ -13,27 +13,12 @@ module.exports = function(server) {
     async.waterfall([
     	// Get all snapshots
     	function(seriesCallback) {
-    		console.log("Finding users");
     		Snapshot.find({}, seriesCallback);
     	},
     	// Create user identity for each user
-    	function(guides, seriesCallback) {
-    		console.log("creating user identies");
-    		async.eachSeries(guides, function(guide, callback) {
-          async.eachSeries(guide.oldMaps, function(mapId, innerCallback) {
-            console.log("searching on map name:" , mapId)
-            Map.findOne({where:{id:mapId}}, function(err, mapInstance) {
-              if(err) innerCallback(err);
-              else {
-                console.log("added map Instance:", mapInstance);
-                console.log("to guide:", guide.name);
-                mapInstance.guides.add(guide, function(err) {
-                  if(err) console.log(err);
-                   innerCallback(err);
-                });
-              }
-            });
-          }, callback);
+    	function(snapshots, seriesCallback) {
+    		async.eachSeries(snapshots, function(snapshot, callback) {
+					convertSnapshot(snapshot, callback);
 			  }, seriesCallback);
     	}],
     function(err) {
@@ -41,13 +26,15 @@ module.exports = function(server) {
     	else console.log("Donerino");
     });
 
-
-
-
 		function convertSnapshot(snapshot, finalCallback) {
 			async.waterfall([
-
-
+				function(seriesCallback) {
+					createDeckTier(snapshot, seriesCallback);
+				},
+				createDeckTech,
+				createCardTech,
+				createSnapshotAuthor,
+				createDeckMatchup
 			],
 			function(err) {
 				if(err) console.log(err);
@@ -57,7 +44,6 @@ module.exports = function(server) {
 		}
 
 		function createDeckTier(snapshot, finalCallback) {
-			snapshot.deckTiers = [];
 			async.eachSeries(snapshot.tiers, function(tier, seriesCallback) {
 				async.eachSeries(tier.decks, function(deck, innerCallback) {
 					try {
@@ -71,16 +57,17 @@ module.exports = function(server) {
 					} catch(err) {
 						innerCallback(err);
 					}
-
-					DeckTier.insert(deckTier, function(err, newDeckTier) {
+					DeckTier.create(deckTier, function(err, newDeckTier) {
 						if(err) innerCallback(err);
-						else(newDeckTier) {
+						else  {
 								deck.deckTier = newDeckTier;
 								innerCallback();
 						}
 					});
 				}, seriesCallback);
-			}, finalCallback);
+			}, function(err) {
+				finalCallback(err, snapshot);
+			});
 		}
 
 		function createDeckTech(snapshot, finalCallback) {
@@ -95,11 +82,11 @@ module.exports = function(server) {
 								deckTierId: deck.deckTier.id.toString()
 							}
 						} catch(err) {
-							innerCallback(err);
+							superInnerCallback(err);
 						}
 
-						DeckTech.insert(deckTech, function(err, newDeckTech) {
-							if(err) innerCallback(err);
+						DeckTech.create(deckTech, function(err, newDeckTech) {
+							if(err) superInnerCallback(err);
 							else {
 								tech.deckTech = newDeckTech;
 								superInnerCallback();
@@ -107,7 +94,9 @@ module.exports = function(server) {
 						});
 					}, innerCallback);
 				}, seriesCallback);
-			}, finalCallback);
+			}, function(err) {
+				finalCallback(err, snapshot);
+			});
 		}
 
 		function createCardTech(snapshot, finalCallback) {
@@ -115,37 +104,82 @@ module.exports = function(server) {
 				async.eachSeries(tier.decks, function(deck, innerCallback) {
 					async.eachSeries(deck.tech, function(tech, superInnerCallback) {
 						async.eachSeries(tech.cards, function(card, retardedInnerCallback) {
-
-						});
-						try {
-							var deckTech = {
-								title: tech.title,
-								orderNum: tech.orderNum,
-								deckId: deck.deck.toString(),
-								deckTierId: deck.deckTier.id.toString()
+							try {
+								var cardTech = {
+									cardId: card.card.toString(),
+									orderNum: card.orderNum,
+									both: card.both,
+									toss: card.toss,
+									deckTechId: tech.deckTech.id.toString()
+								}
+							} catch(err) {
+								retardedInnerCallback(err);
 							}
-						} catch(err) {
-							innerCallback(err);
-						}
 
-						DeckTech.insert(deckTech, function(err, newDeckTech) {
-							if(err) innerCallback(err);
-							else {
-								tech.deckTech = newDeckTech;
-								superInnerCallback();
-							}
-						});
+							CardTech.create(cardTech, function(err, newCardTech) {
+								if(err) retardedInnerCallback(err);
+								else {
+									card.cardTech = newCardTech;
+									retardedInnerCallback();
+								}
+							});
+						}, superInnerCallback);
 					}, innerCallback);
 				}, seriesCallback);
-			}, finalCallback);
+			}, function(err) {
+				finalCallback(err, snapshot);
+			});
 		}
 
 		function createSnapshotAuthor(snapshot, finalCallback) {
+			async.eachSeries(snapshot.oldAuthors, function(author, seriesCallback) {
+				try {
+					var snapshotAuthor = {
+						userId: author.user.toString(),
+						description: author.description,
+						expertClasses: author.klass,
+						snapshotId: snapshot.id.toString()
+					}
+				} catch(err) {
+					seriesCallback(err);
+				}
 
+				SnapshotAuthor.create(snapshotAuthor, function(err, newSnapshotAuthor) {
+					if(err) retardedInnerCallback(err);
+					else {
+						author.snapshotAuthor = newSnapshotAuthor;
+						seriesCallback();
+					}
+				});
+			}, function(err) {
+				finalCallback(err, snapshot);
+			});
 		}
 
 		function createDeckMatchup(snapshot, finalCallback) {
+			async.eachSeries(snapshot.matches, function(match, seriesCallback) {
+				try {
+					var deckMatchup = {
+						forDeckId: match.for.toString(),
+						againstDeckId: match.against.toString(),
+						forChance: match.forChance,
+						againstChance: match.againstChance,
+						snapshotId: snapshot.id.toString()
+					}
+				} catch(err) {
+					seriesCallback(err);
+				}
 
+				DeckMatchup.create(deckMatchup, function(err, newDeckMatchup) {
+					if(err) retardedInnerCallback(err);
+					else {
+						match.deckMathup = newDeckMatchup;
+						seriesCallback();
+					}
+				});
+			}, function(err) {
+				finalCallback(err, snapshot);
+			});
 		}
 		*/
 };

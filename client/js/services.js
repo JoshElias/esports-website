@@ -1,6 +1,19 @@
 'use strict';
 
 angular.module('app.services', [])
+.service('AppConfigService', function() {
+  var name = 'TempoStorm';
+  var version = "4.2.0";
+  var copyright = new Date().getFullYear();
+  var cdn = (tpl && tpl.length) ? tpl : './';
+
+  return {
+    getName: function() { return name; },
+    getVersion: function() { return version; },
+    getCoypright: function() { return copyright; },
+    getCdn: function() { return cdn; }
+  }
+})
 .service('MetaService', function() {
 
     var statusCode = undefined;
@@ -437,7 +450,7 @@ angular.module('app.services', [])
         }
     };
 }])
-.factory('AuthInterceptor', ['$q', '$location', 'LoopBackAuth', function ($q, $location, LoopBackAuth) {
+.factory('AuthInterceptor', ['$q', 'LoopBackAuth', function ($q, LoopBackAuth) {
   return {
         responseError: function(rejection) {
             if(rejection.status == 401) {
@@ -445,8 +458,8 @@ angular.module('app.services', [])
                 // Clearing the loopback values from the client browser for safe
                 LoopBackAuth.clearUser();
                 LoopBackAuth.clearStorage();
-                $location.nextAfterLogin = $location.path();
-                $location.path("/login");
+                //$location.nextAfterLogin = $location.path();
+                //$location.path("/login");
             }
             return $q.reject(rejection);
         }
@@ -1040,7 +1053,7 @@ angular.module('app.services', [])
                 this.total = newTotal;
             }
         };
-        
+
         paginate.isLoading = function () {
             return paginate.loading;
         };
@@ -2333,19 +2346,5 @@ angular.module('app.services', [])
     return factory;
   }
 ]);
-//.factory('AuthInterceptor', ['$q','$location', 'LoopBackAuth', function($q, $location, LoopBackAuth) {
-//  return {
-//      responseError: function(rejection) {
-//          if(rejection.status == 401) {
-//              console.log(" triggered reponse error interceptor")
-//              // Clearing the loopback values from the client browser for safe
-//              LoopBackAuth.clearUser();
-//              LoopBackAuth.clearStorage();
-//              $location.nextAfterLogin = $location.path();
-//              $location.path("/login");
-//          }
-//          return $q.reject(rejection);
-//      }
-//  }
-//}]);
+
 ;
