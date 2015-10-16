@@ -3,7 +3,7 @@ var async = require("async");
 
 var talentsAdded = 0;
 module.exports = function(server) {
-	/*
+/*
 	  var Guide = server.models.guide;
     var Hero = server.models.hero;
 
@@ -20,10 +20,10 @@ module.exports = function(server) {
 					console.log("old heroes:", guide.oldHeroes);
           async.eachSeries(guide.oldHeroes, function(hero, innerCallback) {
             console.log("searching on hero id:" , require("util").inspect(hero, { showHidden: true, depth: null }));
-            Hero.findOne({where:{id:hero.hero}}, function(err, heroInstance) {
+            Hero.findById(hero.hero, function(err, heroInstance) {
               if(err) innerCallback(err);
               else {
-                console.log("added hero Instance:", heroInstance);
+                console.log("added hero:", heroInstance.name);
                 console.log("to guide:", guide.name);
                 heroInstance.guides.add(guide, function(err) {
                   if(err) console.log(err);

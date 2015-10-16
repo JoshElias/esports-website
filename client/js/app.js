@@ -820,7 +820,10 @@ var app = angular.module('app', [
                                     votesCount: true,
                                     createdDate: true,
                                     premium: true,
-                                    guideType: true
+                                    guideType: true,
+                                    id: true,
+                                    description: true,
+                                    talentTiers: true
                                   },
                                   where: {
                                     featured: false
@@ -842,6 +845,18 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
+                          
+                            communityTalents: ['dataCommunityGuides', function (dataCommunityGuides) {
+                              var talents = {};
+                              for(var i = 0; i < dataCommunityGuides.length; i++) {
+                                for(var j = 0; j < dataCommunityGuides[i].heroes.length; j++) {
+                                  for(var k = 0; k < dataCommunityGuides[i].heroes[j].talents.length; k++) {
+                                    talents[dataCommunityGuides[i].heroes[j].talents[k].id] = dataCommunityGuides[i].heroes[j].talents[k];
+                                  }
+                                }
+                              }
+                              return talents;
+                            }],
 //                            dataTopGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
 //                                var guideType = $stateParams.t || 'all',
 //                                    filters = $stateParams.h || false,
@@ -860,14 +875,42 @@ var app = angular.module('app', [
                                   limit: 1,
                                   fields: {
                                     authorId: true,
-                                    createdDate: true,
-                                    votesCount: true,
                                     name: true,
+                                    votesCount: true,
+                                    createdDate: true,
                                     premium: true,
+                                    guideType: true,
+                                    id: true,
+                                    description: true,
+                                    talentTiers: true
                                   },
-                                  include: ['author']
+                                  include: [
+                                    {
+                                      relation: 'author'
+                                    },
+                                    {
+                                      relation: 'heroes',
+                                      scope: {
+                                        include: ['talents']
+                                      }
+                                    },
+                                    {
+                                      relation: 'maps'
+                                    }
+                                  ]
                                 }
                               }).$promise;
+                            }],
+                            topGuideTalents: ['dataTopGuide', function (dataTopGuide) {
+                              var talents = {};
+                              for(var i = 0; i < dataTopGuide.length; i++) {
+                                for(var j = 0; j < dataTopGuide[i].heroes.length; j++) {
+                                  for(var k = 0; k < dataTopGuide[i].heroes[j].talents.length; k++) {
+                                    talents[dataTopGuide[i].heroes[j].talents[k].id] = dataTopGuide[i].heroes[j].talents[k];
+                                  }
+                                }
+                              }
+                              return talents;
                             }],
 //                            dataTempostormGuides: ['HOTSGuideService', function (HOTSGuideService) {
 //                                return HOTSGuideService.getGuidesFeatured(false, 0, 4);
@@ -879,17 +922,45 @@ var app = angular.module('app', [
                                   limit: 4,
                                   fields: {
                                     authorId: true,
-                                    createdDate: true,
-                                    votesCount: true,
                                     name: true,
-                                    premium: true
+                                    votesCount: true,
+                                    createdDate: true,
+                                    premium: true,
+                                    guideType: true,
+                                    id: true,
+                                    description: true,
+                                    talentTiers: true
                                   },
                                   where: {
                                     featured: true
                                   },
-                                  include: ['author']
+                                  include: [
+                                    {
+                                      relation: 'author'
+                                    },
+                                    {
+                                      relation: 'heroes',
+                                      scope: {
+                                        include: ['talents']
+                                      }
+                                    },
+                                    {
+                                      relation: 'maps'
+                                    }
+                                  ]
                                 }
                               }).$promise;
+                            }],
+                            tempostormTalents: ['dataTempostormGuides', function (dataTempostormGuides) {
+                              var talents = {};
+                              for(var i = 0; i < dataTempostormGuides.length; i++) {
+                                for(var j = 0; j < dataTempostormGuides[i].heroes.length; j++) {
+                                  for(var k = 0; k < dataTempostormGuides[i].heroes[j].talents.length; k++) {
+                                    talents[dataTempostormGuides[i].heroes[j].talents[k].id] = dataTempostormGuides[i].heroes[j].talents[k];
+                                  }
+                                }
+                              }
+                              return talents;
                             }],
 //                            dataHeroes: ['HeroService', function (HeroService) {
 //                                return HeroService.getHeroes();

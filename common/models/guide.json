@@ -59,14 +59,13 @@
       ]
     },
     "oldComments": {
-      "type": [
-        "string"
-      ]
+      "type": [ "string" ]
     },
     "oldHeroes": {
-      "type": [
-        "string"
-      ]
+      "type": [ "object" ]
+    },
+    "talentTiers": {
+      "type": "object"
     }
   },
   "validations": [],

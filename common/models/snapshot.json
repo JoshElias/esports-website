@@ -37,6 +37,12 @@
     },
     "active": {
       "type": "boolean"
+    },
+    "oldAuthors": {
+      "type": ["object"]
+    },
+    "oldComments": {
+      "type": ["string"]
     }
   },
   "validations": [],

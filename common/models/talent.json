@@ -28,6 +28,10 @@
     "heroes": {
       "type": "hasAndBelongsToMany",
       "model": "hero"
+    },
+    "guides": {
+      "type": "hasAndBelongsToMany",
+      "model": "guide"
     }
   },
   "acls": [],
