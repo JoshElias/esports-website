@@ -9225,8 +9225,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'Guide', 'Hero',
-    function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, Guide, Hero) {
+.controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'Guide', 'Hero', 'featuredTalentDict', 'communityTalentDict',
+    function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, Guide, Hero, featuredTalentDict, communityTalentDict) {
         // data
         $scope.heroes = dataHeroes;
         $scope.maps = dataMaps;
@@ -9315,6 +9315,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
         
         function getHeroQuery (isTempostorm) {
+            console.log("getHeroQuery");
             var temp = [],
                 options = {
                     filter: {
@@ -9329,13 +9330,37 @@ angular.module('app.controllers', ['ngCookies'])
                                         relation: 'author'
                                     },
                                     {
-                                        relation: 'heroes'
+                                        relation: 'heroes',
+                                        scope: {
+                                            include: {
+                                                relation: 'talents'
+                                            }
+                                        }
+                                    },
+                                    {
+                                        relation: 'maps'
                                     }
                                 ]
                             }
                         }
                     }
                 };
+            
+            if ($scope.filters.map) {
+                console.log("map string type:", typeof $scope.filters.map.className, $scope.filters.map.className);
+                options.filter.include.scope.where = {
+                    and: [
+                        {
+                            featured: isTempostorm
+                        },
+                        {
+                            maps: { inq: [$scope.filters.map] } //joshtodo: FUCKING FIX THIS
+                        }
+                    ]
+                }
+            }
+            
+            
 
             for (var i = 0; i < $scope.filters.heroes.length; i++) {
                 temp.push($scope.filters.heroes[i].name);
@@ -9346,6 +9371,67 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             return options;
+        }
+        
+        function getGuideQuery (isTempostorm) {
+            var temp = [],
+                options = {
+                    filter: {
+                        limit: 10,
+                        where: {
+                            featured: isTempostorm
+                        },
+                        fields: {
+                            name: true,
+                            votesCount: true,
+                            authorId: true,
+                            createdDate: true,
+                            premium: true,
+                            guideType: true,
+                            id: true,
+                            talentTiers: true
+                          },
+                        include: [
+                            {
+                                relation: 'author'
+                            }, 
+                            {
+                                relation: 'heroes',
+                                scope: {
+                                    include: ['talents']
+                                }
+                            }, 
+                            {
+                                relation: 'maps'
+                            }
+                        ]
+                    }
+                }
+
+//            for (var i = 0; i < $scope.filters.heroes.length; i++) {
+//                temp.push($scope.filters.heroes[i].name);
+//            }
+//
+//            options.filter.where = {
+//                name: { inq: temp }
+//            }
+            
+            return options;
+        }
+        
+        function getDict (guides) {
+            console.log(guides);
+            var dict = {};
+            for (var i = 0; i < guides.length; i++) {
+                for (var k = 0; k < guides[i].heroes.length; k++) {
+                    for (var l = 0; l < guides[i].heroes[k].talents.length; l++) {
+                        var temp = guides[i].heroes[k].talents[l].id;
+                        dict[temp] = guides[i].heroes[k].talents[l];
+                    }
+                }
+            }
+            console.log(dict);
+            return dict;
         }
         
         var initializing = true;
@@ -9372,7 +9458,8 @@ angular.module('app.controllers', ['ngCookies'])
                     Hero.find(getHeroQuery(true))
                     .$promise
                     .then(function (data) {
-                        console.log(data);
+                        console.log("results featured:",data);
+                        featuredTalentDict = getDict(data[0].guides);
                         $timeout(function () {
                             $scope.guidesFeatured = data[0].guides;
                         });
@@ -9385,7 +9472,9 @@ angular.module('app.controllers', ['ngCookies'])
                     Hero.find(getHeroQuery(false))
                     .$promise
                     .then(function (data) {
-                        console.log(data);
+                        console.log("results community:",data);
+                        communityTalentDict = getDict(data[0].guides);
+                        
                         $timeout(function () {
                             $scope.guidesCommunity = data[0].guides;
                         });
@@ -9395,37 +9484,22 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                     
                 } else {
-                    var options = {
-                        filter: {
-                            fields: {
-                                name: true,
-                                votesCount: true,
-                                authorId: true,
-                                createdDate: true,
-                                premium: true,
-                                guideType: true,
-                                id: true
-                              },
-                            include: [
-                                {
-                                    relation: 'author'
-                                }, 
-                                {
-                                    relation: 'heroes',
-                                    scope: {
-                                        include: ['talents']
-                                    }
-                                }, 
-                                {
-                                    relation: 'maps'
-                                }
-                            ]
-                        }
-                    }
-                    Guide.find(options)
+                    Guide.find(getGuideQuery(true))
                     .$promise
                     .then(function (data) {
-                        console.log(data);
+                        featuredTalentDict = getDict(data);
+                        $timeout(function () {
+                            $scope.guidesFeatured = data;
+                        });
+                    })
+                    .catch(function () {
+                        
+                    });
+                    
+                    Guide.find(getGuideQuery(false))
+                    .$promise
+                    .then(function (data) {
+                        communityTalentDict = getDict(data);
                         $timeout(function () {
                             $scope.guidesCommunity = data;
                         });
@@ -9447,6 +9521,15 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getGuideClass = function (guide) {
             return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
         };
+        
+        $scope.getTierTalent = function (hero, guide, tier, isFeatured) {
+            if (isFeatured) {
+                return (featuredTalentDict[guide.talentTiers[hero.id][tier]] == undefined) ? 'missing' : featuredTalentDict[guide.talentTiers[hero.id][tier]].className;
+            } else {
+                return (communityTalentDict[guide.talentTiers[hero.id][tier]] == undefined) ? 'missing' : communityTalentDict[guide.talentTiers[hero.id][tier]].className;
+            }
+            
+        }
         
         $scope.guidePrevHero = function ($event, guide) {
             $event.preventDefault();

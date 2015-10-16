@@ -649,6 +649,9 @@ var app = angular.module('app', [
 //                              
 //                                return ArticleService.getArticles('hots', filters, offset, perpage);
 //                            }],
+//                            talents: ['Talent', function (Talent) {
+//                                return Talent.find({}).$promise;
+//                            }],
                             dataArticles: ['Article', function (Article) {
                               var filters = 'all',
                                   offset = 0,
@@ -683,7 +686,8 @@ var app = angular.module('app', [
                                     createdDate: true,
                                     premium: true,
                                     guideType: true,
-                                    id: true
+                                    id: true,
+                                    talentTiers: true
                                   },
                                   include: [
                                         {
@@ -696,11 +700,29 @@ var app = angular.module('app', [
                                             }
                                         }, 
                                         {
-                                            relation: 'maps'
+                                            relation: 'maps',
+                                            scope: {
+                                                fields: {
+                                                    name: true,
+                                                    className: true
+                                                }
+                                            }
                                         }
                                     ]
                                 }
                               }).$promise;
+                            }],
+                            communityTalentDict: ['dataGuidesCommunity', function (dataGuidesCommunity) {
+                                var dict = {};
+                                for (var i = 0; i < dataGuidesCommunity.length; i++) {
+                                    for (var k = 0; k < dataGuidesCommunity[i].heroes.length; k++) {
+                                        for (var l = 0; l < dataGuidesCommunity[i].heroes[k].talents.length; l++) {
+                                            var temp = dataGuidesCommunity[i].heroes[k].talents[l].id;
+                                            dict[temp] = dataGuidesCommunity[i].heroes[k].talents[l];
+                                        }
+                                    }
+                                }
+                                return dict;
                             }],
 //                            dataGuidesFeatured: ['HOTSGuideService', function (HOTSGuideService) {
 //                                return HOTSGuideService.getGuidesFeatured();
@@ -719,7 +741,8 @@ var app = angular.module('app', [
                                     createdDate: true,
                                     premium: true,
                                     guideType: true,
-                                    id: true
+                                    id: true,
+                                    talentTiers: true
                                   },
                                   include: [
                                         {
@@ -737,6 +760,18 @@ var app = angular.module('app', [
                                     ]
                                 }
                               }).$promise;
+                            }],
+                            featuredTalentDict: ['dataGuidesFeatured', function (dataGuidesFeatured) {
+                                var dict = {};
+                                for (var i = 0; i < dataGuidesFeatured.length; i++) {
+                                    for (var k = 0; k < dataGuidesFeatured[i].heroes.length; k++) {
+                                        for (var l = 0; l < dataGuidesFeatured[i].heroes[k].talents.length; l++) {
+                                            var temp = dataGuidesFeatured[i].heroes[k].talents[l].id;
+                                            dict[temp] = dataGuidesFeatured[i].heroes[k].talents[l];
+                                        }
+                                    }
+                                }
+                                return dict;
                             }],
 //                            dataHeroes: ['HeroService', function (HeroService) {
 //                                return HeroService.getHeroesList();
