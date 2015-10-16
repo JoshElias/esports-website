@@ -9193,39 +9193,6 @@ angular.module('app.controllers', ['ngCookies'])
             var filtered = ($scope.filters.search && $scope.filters.search.length) ? $filter('filter')($scope.heroes, { name: $scope.filters.search }) : $scope.heroes;
             return (filtered.indexOf(hero) === -1);
         }
-<<<<<<< HEAD
-
-        function getFilters () {
-            var filters = [];
-
-            // check for no filters
-            if (!$scope.filters.roles.length &&
-                !$scope.filters.universes.length &&
-                !$scope.filters.heroes.length &&
-                !$scope.filters.map) {
-                return false;
-            }
-
-            // heroes
-            if ($scope.filters.heroes.length) {
-                for (var i = 0; i < $scope.filters.heroes.length; i++) {
-                    filters.push($scope.filters.heroes[i]._id);
-                }
-            } else if ($scope.filters.roles.length || $scope.filters.universes.length) {
-                for (var i = 0; i < $scope.heroes.length; i++) {
-                    if (!isFiltered($scope.heroes[i])) {
-                        filters.push($scope.heroes[i]._id);
-                    }
-                }
-            }
-
-            // maps
-            if ($scope.filters.map) {
-                filters.push($scope.filters.map._id);
-            }
-
-            return filters;
-=======
 
         $scope.log = function (m) {
             console.log(m);
@@ -9260,7 +9227,6 @@ angular.module('app.controllers', ['ngCookies'])
 //            }
 
             return options;
->>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         }
 
         function isFiltered (hero) {
@@ -9275,9 +9241,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         };
-<<<<<<< HEAD
-
-=======
 
         function getHeroQuery (isTempostorm) {
             console.log("getHeroQuery");
@@ -9399,7 +9362,6 @@ angular.module('app.controllers', ['ngCookies'])
             return dict;
         }
 
->>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         var initializing = true;
         $scope.$watch(function(){ return $scope.filters; }, function (value) {
             if (initializing) {
@@ -9414,65 +9376,6 @@ angular.module('app.controllers', ['ngCookies'])
                         articleFilters.push($scope.heroes[i].name);
                     }
                 }
-<<<<<<< HEAD
-
-
-              var options = {
-                filter: {
-                  where: {
-
-                  }
-                }
-              };
-
-              console.log($scope.filters);
-
-              // check if a hero is selected, --> use that if selected
-              // check if any filters are present, --> use those
-              // check if map filters are present, --> use all filters at same time
-
-//              var allFilters = $scope.getFilters();
-
-//              // if filters exists
-//              if(allFilters) {
-//                if($scope.filters.heroes.length > 0) {
-//                  options.filter.where.heroes = {
-//                    inq:
-//                  };
-//                }
-//
-//              }
-
-                // load articles
-                ArticleService.getArticles('hots', articleFilters, 0, 6).then(function (data) {
-                    $timeout(function () {
-                        $scope.articles = data.articles;
-                    });
-                });
-
-//                Article.find({
-//                  filter: {
-//                    limit: 6,
-//                    where: {
-//                      or: articleFilters
-//                    }
-//                  }
-//                }).$promise.then(function (data) {
-//                  console.log(data);
-//                });
-
-                // load tempostorm guides
-                HOTSGuideService.getGuidesFeatured(getFilters(), 0, 10, $scope.filters.search).then(function (data) {
-                    $timeout(function () {
-                        $scope.guidesFeatured = data.guides;
-                    });
-                });
-
-                // load community guides
-                HOTSGuideService.getGuidesCommunity(getFilters(), 0, 10, $scope.filters.search, false).then(function (data) {
-                    $timeout(function () {
-                        $scope.guidesCommunity = data.guides;
-=======
 
               // check if a hero is selected, --> use that if selected
               // check if any filters are present, --> use those
@@ -9519,7 +9422,6 @@ angular.module('app.controllers', ['ngCookies'])
                     })
                     .catch(function () {
 
->>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
                     });
 
                     Guide.find(getGuideQuery(false))
@@ -9547,9 +9449,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getGuideClass = function (guide) {
             return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
         };
-<<<<<<< HEAD
-
-=======
 
         $scope.getTierTalent = function (hero, guide, tier, isFeatured) {
             if (isFeatured) {
@@ -9560,7 +9459,6 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
 
->>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         $scope.guidePrevHero = function ($event, guide) {
             $event.preventDefault();
             $event.stopPropagation();
@@ -9610,15 +9508,6 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-<<<<<<< HEAD
-.controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps',
-    function ($q, $scope, $state, $timeout, $filter, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps) {
-      console.log(dataCommunityGuides);
-        $scope.communityGuides = dataCommunityGuides;
-        $scope.topGuides = dataTopGuide ? dataTopGuide : false;
-        $scope.tempostormGuides = dataTempostormGuides;
-
-=======
 .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'communityTalents', 'tempostormTalents', 'topGuideTalents',
     function ($q, $scope, $state, $timeout, $filter, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, communityTalents, tempostormTalents, topGuideTalents) {
       console.log('top guides: ', dataTopGuide);
@@ -9635,7 +9524,6 @@ angular.module('app.controllers', ['ngCookies'])
 //      console.log('heroId: ', heroId);
 //      console.log($scope.talents[talentId]);
 
->>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         // filtering
         $scope.heroes = dataHeroes;
         $scope.maps = dataMaps;
@@ -9686,37 +9574,10 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getGuideCurrentHero = function (guide) {
           return guide.heroes[0];
         };
-<<<<<<< HEAD
-
-=======
 
 //        $scope.getGuideClass = function (guide) {
-//            return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
+//          return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
 //        };
-
->>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
-        $scope.getGuideClass = function (guide) {
-          return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
-        };
-<<<<<<< HEAD
-
-        $scope.guidePrevHero = function ($event, guide) {
-//            $event.preventDefault();
-//            $event.stopPropagation();
-//
-//            var currentHero = $scope.getGuideCurrentHero(guide),
-//                index = 0;
-//
-//            // get index of current hero
-//            for (var i = 0; i < guide.heroes.length; i++) {
-//                if (currentHero.hero._id == guide.heroes[i].hero._id) {
-//                    index = i;
-//                    break;
-//                }
-//            }
-//
-//            guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
-=======
 
         $scope.getHeroId = function (guide) {
           return $scope.getGuideCurrentHero(guide).id;
@@ -9805,54 +9666,9 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
->>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         };
 
         $scope.guideNextHero = function ($event, guide) {
-<<<<<<< HEAD
-//            $event.preventDefault();
-//            $event.stopPropagation();
-//
-//            var currentHero = $scope.getGuideCurrentHero(guide),
-//                index = 0;
-//
-//            // get index of current hero
-//            for (var i = 0; i < guide.heroes.length; i++) {
-//                if (currentHero.hero._id == guide.heroes[i].hero._id) {
-//                    index = i;
-//                    break;
-//                }
-//            }
-//
-//            guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
-        };
-
-        $scope.getTalents = function (hero, tier) {
-//            var out = [];
-//
-//            for (var i = 0; i < hero.hero.talents.length; i++) {
-//                if (hero.hero.talents[i].tier === tier) {
-//                    out.push(hero.hero.talents[i]);
-//                }
-//            }
-//
-//            return out;
-        };
-
-        $scope.selectedTalent = function (hero, tier, talent) {
-            // return (hero.talents['tier' + tier]._id == talent._id);
-        };
-
-        $scope.getTalent = function (hero, tier) {
-            for (var i = 0; i < hero.hero.talents.length; i++) {
-                if (hero.talents['tier' + tier] == hero.hero.talents[i]._id) {
-                    return hero.hero.talents[i];
-                }
-            }
-            return false;
-        };
-
-=======
               $event.preventDefault();
               $event.stopPropagation();
 
@@ -9944,7 +9760,6 @@ angular.module('app.controllers', ['ngCookies'])
 //            return false;
 //        };
 
->>>>>>> ca34dde732adb8e60b27a22cf7a9882030299c5d
         //is premium
         $scope.isPremium = function (guide) {
             if (!guide.premium.isPremium) { return false; }
