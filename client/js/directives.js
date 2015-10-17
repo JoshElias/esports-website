@@ -124,8 +124,6 @@ angular.module('app.directives', ['ui.load'])
                 if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
                   User.login({rememberMe:$scope.remember}, {email:$scope.loginInfo.email, password:$scope.loginInfo.password},
                     function(accessToken) {
-                        console.log("Received access token:", accessToken);
-                        console.log("Current User:", LoopBackAuth.currentUserData);
                         var next = $location.nextAfterLogin || "/";
                         $location.nextAfterLogin = null;
                         $location.path(next);
@@ -137,11 +135,22 @@ angular.module('app.directives', ['ui.load'])
               } else {
                 // TODO: Display modal for missing username and/or password
               }
-                };
-            }
+            };
+
+            $scope.twitchLogin = function() {
+              console.log("twitchLogin");
+              $cookies.set("authType", "login");
+              $location.path("/auth/twitch");
+            };
+
+            $scope.bnetLogin = function() {
+              console.log("bnetLogin");
+              cookies.set("authType", "login");
+              $location.path("/auth/bnet");
+            };
+          }
         }
-    }
-])
+}])
 .directive('signupForm', ['$state', 'UserService', 'LoginModalService', function ($state, UserService, LoginModalService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
@@ -276,8 +285,8 @@ angular.module('app.directives', ['ui.load'])
 //                } else {
 //                    $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
 //                        if (data.success) {
-//                            
-//                            
+//
+//
 //                        }
 //                    });
 //                }
@@ -424,7 +433,7 @@ angular.module('app.directives', ['ui.load'])
                     var sub = log.substr(4);
                     var im = "https" + sub;
                     data[i].logoUrl = im;
-                    
+
                     data[i].viewerCount = +data[i].viewerCount;
                 }
                 $scope.selectedStream = 0;
@@ -1278,7 +1287,7 @@ angular.module('app.directives', ['ui.load'])
                     var sub = log.substr(4);
                     var im = "https" + sub;
                     data[i].screenshotUrl = im;
-                    
+
                     data[i].viewerCount = +data[i].viewerCount;
                 }
                 scope.streamWheel = true;
@@ -1305,7 +1314,7 @@ angular.module('app.directives', ['ui.load'])
             .$promise
             .then(function(tweets) {
                 console.log(tweets);
-                
+
                 scope.twitWheel = true;
                 scope.tweets = tweets;
             });

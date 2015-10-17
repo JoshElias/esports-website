@@ -1,7 +1,7 @@
 <div class="login-form row">
     <div class="login-form-oauth col-sm-12 wrapper-none">
-        <a href="#" class="btn btn-block btn-twitch" ng-controller="Twitch" ng-click="login()"><i class="fa fa-twitch"></i>Log in with Twitch</a>
-        <a href="#" class="btn btn-block btn-bnet" ng-controller="Bnet" ng-click="login()" ng-if="false">Battle.net Login</a>
+        <a href="#" class="btn btn-block btn-twitch" ng-controller="Twitch" ng-click="twitchLogin()"><i class="fa fa-twitch"></i>Log in with Twitch</a>
+        <a href="#" class="btn btn-block btn-bnet" ng-controller="Bnet" ng-click="bnetLogin()">Battle.net Login</a>
     </div>
     <div class="or">
         or
@@ -27,7 +27,7 @@
             <input type="password" class="form-control input-dark login-email" id="password" name="password" placeholder="Password" ng-model="loginInfo.password" required>
             <div class="login-charm lock"><i class="fa fa-lock"></i></div>
         </div>
-            
+
         <div class="remember-me">
             <span class="fa-stack fa-lg">
                 <a class="remember-me-i" href="#" ng-click="remember = !remember">
@@ -41,7 +41,7 @@
                 <a ui-sref="app.forgotPassword" ng-if="!setState">Forgot Password?</a>
             </p>
         </div>
-            
+
         <button type="submit" class="btn btn-blue btn-block" ng-disabled="loginForm.$invalid" ng-click="login(loginInfo.email, loginInfo.password)">Login</button>
         </form>
         <div class="sign-up m-t-md">
@@ -51,5 +51,3 @@
         </div>
     </div>
 </div>
-
-

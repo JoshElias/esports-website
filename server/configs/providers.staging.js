@@ -10,7 +10,7 @@ module.exports = {
    "callbackPath": "/auth/twitch/callback",
    "successRedirect": "/",
    "failureRedirect": "/login",
-   "customCallback": passportCallback,
+   //"customCallback": passportCallback,
    "scope": ["user_read"]
  },
  "bnet-login": {
@@ -24,10 +24,22 @@ module.exports = {
    "emailOptional": true,
    "successRedirect": "/",
    "failureRedirect": "/login",
-   "customCallback": passportCallback
+   "loginCallback": passportCallback
  }
 }
 
+function loginCallback(req, done) {
+    return function(err, user, identity, token) {
+      var authInfo = {
+        identity: identity
+      };
+      if (token) {
+        authInfo.accessToken = token;
+      }
+      done(err, user, authInfo);
+    };
+  };
+/*
 function passportCallback(req, res, next) {
 
     // The default callback
@@ -107,3 +119,4 @@ function passportCallback(req, res, next) {
       }
     })(req, res, next);
   };
+  */
