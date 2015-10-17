@@ -193,7 +193,9 @@ angular.module('app.services', [])
             box.modal('show');
         },
         hideModal: function () {
-            box.modal('hide');
+            if (box) {
+                box.modal('hide');
+            }
         }
     }
 }])

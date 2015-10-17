@@ -122,13 +122,13 @@ var app = angular.module('app', [
                     }
                 },
                 resolve: {
-                    
                     CurrentUser: ['User', 'LoopBackAuth',
-                      function(User, LoopBackAuth) {
-                          if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
-                             return User.getCurrent();
-                          }
-                      }]
+                        function(User, LoopBackAuth) {
+                            if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
+                              return User.getCurrent();
+                            }
+                        }
+                    ]
                 }
             })
             .state('app.404', {
@@ -149,7 +149,6 @@ var app = angular.module('app', [
                         controller: 'HomeCtrl',
                         resolve: {
                             articles: ['Article', 'CurrentUser', function (Article, CurrentUser) {
-                              console.log("app home's user: ", CurrentUser);
                                 var offset = 1,
                                     num = 6;
 

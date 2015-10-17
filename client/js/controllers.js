@@ -66,9 +66,15 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.username = currentUser.username;
       }
 }])
-.controller('RootCtrl', ['$scope', 'LoginModalService', function ($scope, LoginModalService) {
+.controller('RootCtrl', ['$scope', 'LoginModalService', 'CurrentUser', function ($scope, LoginModalService, CurrentUser) {
+    if (CurrentUser) {
+        $scope.currentUser = CurrentUser;
+    }
+    
     $scope.loginModal = function (state) {
-        LoginModalService.showModal(state);
+        LoginModalService.showModal(state, function (data) {
+            $scope.currentUser = data.currentUserData;
+        });
     }
 }])
 .controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
@@ -9273,7 +9279,6 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     }
                 };
-
             if ($scope.filters.map) {
                 console.log("map string type:", typeof $scope.filters.map.className, $scope.filters.map.className);
                 options.filter.include.scope.where = {
@@ -9452,9 +9457,9 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.getTierTalent = function (hero, guide, tier, isFeatured) {
             if (isFeatured) {
-                return (featuredTalentDict[guide.talentTiers[hero.id][tier]] == undefined) ? 'missing' : featuredTalentDict[guide.talentTiers[hero.id][tier]].className;
+                return (featuredTalentDict[guide.talentTiers[hero.id][tier]] == undefined) ? { className: 'missing' } : featuredTalentDict[guide.talentTiers[hero.id][tier]];
             } else {
-                return (communityTalentDict[guide.talentTiers[hero.id][tier]] == undefined) ? 'missing' : communityTalentDict[guide.talentTiers[hero.id][tier]].className;
+                return (communityTalentDict[guide.talentTiers[hero.id][tier]] == undefined) ? { className: 'missing' } : communityTalentDict[guide.talentTiers[hero.id][tier]];
             }
 
         }

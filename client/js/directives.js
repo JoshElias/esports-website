@@ -107,38 +107,61 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('loginForm', ['$window', '$cookies', '$state', '$location', 'LoginModalService', 'User', 'LoopBackAuth',
-  function ($window, $cookies, $state, $location, LoginModalService, User, LoopBackAuth) {
-    return {
-        templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
-        scope: true,
-        link: function ($scope, el, attr) {
-
-            $scope.remember;
-            $scope.loginInfo = {
-                email: "",
-                password: ""
-            };
-
-            $scope.login = function login(email, password) {
-                if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
-                  User.login({rememberMe:$scope.remember}, {email:$scope.loginInfo.email, password:$scope.loginInfo.password},
-                    function(accessToken) {
-                        console.log("Received access token:", accessToken);
-                        console.log("Current User:", LoopBackAuth.currentUserData);
-                        var next = $location.nextAfterLogin || "/";
-                        $location.nextAfterLogin = null;
-                        $location.path(next);
-                    },
-                    function(err) {
-                        $scope.showError = true;
-                    }
-                );
-              } else {
-                // TODO: Display modal for missing username and/or password
-              }
+.directive('loginForm', ['$window', '$cookies', '$state', '$location', 'LoginModalService', 'User', 'LoopBackAuth', '$timeout',
+    function ($window, $cookies, $state, $location, LoginModalService, User, LoopBackAuth, $timeout) {
+        return {
+            templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
+            scope: true,
+            controller: ['$scope', function ($scope) {
+                $scope.remember = false;
+                $scope.loginInfo = {
+                    email: "",
+                    password: ""
                 };
-            }
+                $scope.loginText = "Login";
+                $scope.loginBtnEnabled = true;
+                
+                console.log($scope.callback);
+                
+                var loginStatusList = {
+                    0: "Login",
+                    1: "Please Wait...",
+                    2: "Success!"
+                }
+                
+                $scope.setLoggingIn = function (status) {
+                    $scope.loginText = loginStatusList[status];
+                }
+                
+                $scope.login = function login(email, password) {
+                    $scope.setLoggingIn(1);
+                    console.log(LoopBackAuth);
+                    if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
+                        User.login({ rememberMe:$scope.remember }, { email:$scope.loginInfo.email, password:$scope.loginInfo.password },
+                            function(accessToken) {
+                                console.log("Received access token:", accessToken);
+                                console.log("Current User:", LoopBackAuth.currentUserData);
+                                var next = $location.nextAfterLogin || "/";
+                                $location.nextAfterLogin = null;
+                                $location.path(next);
+
+                                LoginModalService.hideModal();
+                                $scope.setLoggingIn(2);
+                            
+                                if ($scope.callback) {
+                                    $scope.callback(LoopBackAuth);
+                                }
+                            },
+                            function(err) {
+                                $scope.showError = true;
+                                $scope.setLoggingIn(0);
+                            }
+                        );
+                    } else {
+                        // TODO: Display modal for missing username and/or password
+                    }
+                };
+            }]
         }
     }
 ])

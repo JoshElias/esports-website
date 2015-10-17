@@ -1,7 +1,7 @@
 <div class="login-form row">
     <div class="login-form-oauth col-sm-12 wrapper-none">
-        <a href="#" class="btn btn-block btn-twitch" ng-controller="Twitch" ng-click="login()"><i class="fa fa-twitch"></i>Log in with Twitch</a>
-        <a href="#" class="btn btn-block btn-bnet" ng-controller="Bnet" ng-click="login()" ng-if="false">Battle.net Login</a>
+        <a href="#" class="btn btn-block btn-twitch" ng-controller="Twitch" ng-click="loginWithTwitch()"><i class="fa fa-twitch"></i>Log in with Twitch</a>
+        <a href="#" class="btn btn-block btn-bnet" ng-controller="Bnet" ng-click="loginWithBnet()"><div class="bnet-logo"></div>Log in with Battlenet</a>
     </div>
     <div class="or">
         or
@@ -42,7 +42,7 @@
             </p>
         </div>
             
-        <button type="submit" class="btn btn-blue btn-block" ng-disabled="loginForm.$invalid" ng-click="login(loginInfo.email, loginInfo.password)">Login</button>
+        <button type="submit" id="login-modal-btn" class="btn btn-blue btn-block btn-login" ng-disabled="loginForm.$invalid" ng-bind="loginText" ng-click="login(loginInfo.email, loginInfo.password)"></button>
         </form>
         <div class="sign-up m-t-md">
             <span class="pull-left">Don't have an account?</span>
