@@ -41,8 +41,13 @@
                 <a ui-sref="app.forgotPassword" ng-if="!setState">Forgot Password?</a>
             </p>
         </div>
+<<<<<<< HEAD
 
         <button type="submit" class="btn btn-blue btn-block" ng-disabled="loginForm.$invalid" ng-click="login(loginInfo.email, loginInfo.password)">Login</button>
+=======
+
+        <button type="submit" id="login-modal-btn" class="btn btn-blue btn-block btn-login" ng-disabled="loginForm.$invalid" ng-bind="loginText" ng-click="login(loginInfo.email, loginInfo.password)"></button>
+>>>>>>> 9c309c06c8f48fd7e74c0242d9a0d9f97658c663
         </form>
         <div class="sign-up m-t-md">
             <span class="pull-left">Don't have an account?</span>

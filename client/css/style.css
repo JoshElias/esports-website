@@ -1991,15 +1991,22 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 
 
+/*
 .btn-twitch { position: relative; padding: 12px 12px; font-size: 20px; color: #FFF !important; background: #6441a5; }
 .btn-twitch:hover,
 .btn-twitch:active { color: #FFF; }
 .btn-twitch i { position: absolute; left: 15px; top: 13px; font-size: 30px; }
+*/
 
-.login-modal .btn-twitch { position: relative; padding: 12px 12px; font-size: 20px; color: #FFF !important; background: #6441a5; border-radius: 0; }
-.login-modal .btn-twitch:hover,
-.login-modal .btn-twitch:active { color: #FFF; }
-.login-modal .btn-twitch i { position: absolute; left: 15px; top: 13px; font-size: 30px; }
+.login-form .btn-twitch { position: relative; padding: 14px; padding-left: 75px; font-size: 20px; color: #FFF !important; background: #6441a5; border-radius: 0; text-align: left; font-size: 16px; height: 55px; }
+.login-form .btn-twitch:hover,
+.login-form .btn-twitch:active { color: #FFF; }
+.login-form .btn-twitch i { position: absolute; left: 15px; top: 13px; font-size: 30px; }
+
+.login-form .btn-bnet { position: relative; padding: 14px; padding-left: 75px; font-size: 20px; color: #FFF !important; background: #22324B; border-radius: 0; text-align: left; font-size: 16px; height: 55px; }
+.login-form .btn-bnet:hover,
+.login-form .btn-bnet:active { color: #FFF; }
+.login-form .btn-bnet .bnet-logo { position: absolute; left: 15px; top: 13px; font-size: 30px; width: 30px; height: 30px; background-image: url(../img/BattleNet.png); background-size: 100% 100%; }
 
 .login-modal {}
 .login-modal .modal-dialog {
