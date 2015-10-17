@@ -271,17 +271,28 @@ var app = angular.module('app', [
             .state('app.snapshot.redirect', {
                 url: '',
                 resolve: {
-                    data: ['SnapshotService', '$q', function (SnapshotService, $q) {
-                        return SnapshotService.getLatest().then(function (result) {
-                            if (result.success === true) {
-                                return result;
-                            } else {
-                                return $q.reject('unable to find snapshot');
-                            }
-                        });
+//                    data: ['SnapshotService', '$q', function (SnapshotService, $q) {
+//                        return SnapshotService.getLatest().then(function (result) {
+//                            console.log(result);
+//                            if (result.success === true) {
+//                                return result;
+//                            } else {
+//                                return $q.reject('unable to find snapshot');
+//                            }
+//                        });
+//                    }],
+                    data: ['Snapshot', function (Snapshot) {
+                        return Snapshot.find({
+                            
+                        }).$promise;
                     }],
+//                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
+//                        $state.go('app.snapshot.snapshot', { slug: data.snapshot[0].slug.url });
+//                        return $q.reject();
+//                    }]
                     redirect: ['$q', '$state', 'data', function ($q, $state, data) {
-                        $state.go('app.snapshot.snapshot', { slug: data.snapshot[0].slug.url });
+                        console.log(data);
+                        $state.go('app.snapshot.snapshot', { slug: data[0].slug.url });
                         return $q.reject();
                     }]
                 }
@@ -293,15 +304,31 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/snapshots.snapshot.html',
                         controller: 'SnapshotCtrl',
                         resolve: {
-                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
+//                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
+//                                var slug = $stateParams.slug;
+//                                return SnapshotService.getSnapshot(slug).then(function (result) {
+//                                    if(result.success === true) {
+//                                        return result.snapshot;
+//                                    } else {
+//                                        return $q.reject('Unable to find snapshot');
+//                                    }
+//                                });
+//                            }]
+                            dataSnapshot: ['$stateParams', 'Snapshot', function ($stateParams, Snapshot) {
                                 var slug = $stateParams.slug;
-                                return SnapshotService.getSnapshot(slug).then(function (result) {
-                                    if(result.success === true) {
-                                        return result.snapshot;
-                                    } else {
-                                        return $q.reject('Unable to find snapshot');
+                                console.log(slug);
+                                return Snapshot.find({
+                                    filter: {
+                                        where: {
+                                            'slug.url': slug
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'comments'
+                                            }
+                                        ]
                                     }
-                                });
+                                }).$promise;
                             }]
                         }
                     }
@@ -999,11 +1026,17 @@ var app = angular.module('app', [
                                     }
                                  });
                             }],
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+//                            dataHeroes: ['HeroService', function (HeroService) {
+//                                return HeroService.getHeroes();
+//                            }],
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({}).$promise;
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+//                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+//                                return HOTSGuideService.getMaps();
+//                            }]
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({}).$promise;
                             }]
                         }
                     }
@@ -1036,11 +1069,15 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.hero.html',
                         controller: 'HOTSGuideBuilderHeroCtrl',
                         resolve: {
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({
+                                    filter: {
+                                        include: ['talents']
+                                    }
+                                }).$promise;
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({}).$promise;
                             }]
                         }
                     }
@@ -1054,11 +1091,11 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.map.html',
                         controller: 'HOTSGuideBuilderMapCtrl',
                         resolve: {
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({}).$promise;
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({}).$promise;
                             }]
                         }
                     }

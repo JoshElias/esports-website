@@ -1799,10 +1799,35 @@ angular.module('app.services', [])
             gb.content.splice(newIndex, 0, content);
         };
 
+//        gb.toggleHero = function (hero) {
+//            if (gb.hasHero(hero)) {
+//                for (var i = 0; i < gb.heroes.length; i++) {
+//                    if (gb.heroes[i].hero._id === hero._id) {
+//                        gb.heroes.splice(i, 1);
+//                        return true;
+//                    }
+//                }
+//            } else {
+//                if (gb.heroes.length === 5) { return false; }
+//                var obj = {};
+//                obj.hero = hero;
+//                obj.talents = {
+//                    tier1: null,
+//                    tier4: null,
+//                    tier7: null,
+//                    tier10: null,
+//                    tier13: null,
+//                    tier16: null,
+//                    tier20: null
+//                };
+//                gb.heroes.push(obj);
+//            }
+//        };
+        
         gb.toggleHero = function (hero) {
             if (gb.hasHero(hero)) {
                 for (var i = 0; i < gb.heroes.length; i++) {
-                    if (gb.heroes[i].hero._id === hero._id) {
+                    if (gb.heroes[i].hero.id === hero.id) {
                         gb.heroes.splice(i, 1);
                         return true;
                     }
@@ -1824,10 +1849,20 @@ angular.module('app.services', [])
             }
         };
 
+//        gb.hasHero = function (hero) {
+//            if (!hero) { return false; }
+//            for (var i = 0; i < gb.heroes.length; i++) {
+//                if (gb.heroes[i].hero._id === hero._id) {
+//                    return true;
+//                }
+//            }
+//            return false;
+//        };
+        
         gb.hasHero = function (hero) {
             if (!hero) { return false; }
             for (var i = 0; i < gb.heroes.length; i++) {
-                if (gb.heroes[i].hero._id === hero._id) {
+                if (gb.heroes[i].hero.id === hero.id) {
                     return true;
                 }
             }
@@ -1842,27 +1877,55 @@ angular.module('app.services', [])
             return [1, 4, 7, 10, 13, 16, 20];
         };
 
+//        gb.talentsByTier = function (hero, tier) {
+//            var talents = [];
+//            for (var i = 0; i < hero.talents.length; i++) {
+//                if (hero.talents[i].tier === tier) {
+//                    talents.push(hero.talents[i]);
+//                }
+//            }
+//            return talents;
+//        };
+        
         gb.talentsByTier = function (hero, tier) {
             var talents = [];
             for (var i = 0; i < hero.talents.length; i++) {
-                if (hero.talents[i].tier === tier) {
+                var talentId = hero.talents[i].id;
+                if (hero.talentTiers[talentId] === tier) {
                     talents.push(hero.talents[i]);
                 }
             }
             return talents;
         };
 
+//        gb.toggleTalent = function (hero, talent) {
+//            if (gb.hasTalent(hero, talent)) {
+//                hero.talents['tier'+talent.tier] = null;
+//            } else {
+//                hero.talents['tier'+talent.tier] = talent._id;
+//            }
+//        };
+        
         gb.toggleTalent = function (hero, talent) {
+            var talentId = talent.id;
+            var talentTier = hero.hero.talentTiers[talentId];
+            console.log(hero);
             if (gb.hasTalent(hero, talent)) {
-                hero.talents['tier'+talent.tier] = null;
+                hero.talents['tier'+talentTier] = null;
             } else {
-                hero.talents['tier'+talent.tier] = talent._id;
+                hero.talents['tier'+talentTier] = talentId;
             }
         };
 
+//        gb.hasAnyTalent = function (hero, talent) {
+//            return (hero.talents['tier'+talent.tier] !== null);
+//        };
+        
         gb.hasAnyTalent = function (hero, talent) {
-            return (hero.talents['tier'+talent.tier] !== null);
-        }
+            var talentId = talent.id;
+            var talentTier = hero.hero.talentTiers[talentId];
+            return (hero.talents['tier'+talentTier] !== null);
+        };
 
         gb.allTalentsDone = function () {
             for (var i = 0; i < gb.heroes.length; i++) {
@@ -1879,26 +1942,32 @@ angular.module('app.services', [])
             return true;
         };
 
+//        gb.hasTalent = function (hero, talent) {
+//            return (hero.talents['tier'+talent.tier] == talent._id);
+//        };
+        
         gb.hasTalent = function (hero, talent) {
-            return (hero.talents['tier'+talent.tier] == talent._id);
+            var talentId = talent.id;
+            var talentTier = hero.hero.talentTiers[talentId];
+            return (hero.talents['tier'+talentTier] == talent.id);
         };
 
         gb.toggleSynergy = function (hero) {
             if (gb.hasSynergy(hero)) {
                 for (var i = 0; i < gb.synergy.length; i++) {
-                    if (gb.synergy[i] === hero._id) {
+                    if (gb.synergy[i] === hero.id) {
                         gb.synergy.splice(i, 1);
                         return true;
                     }
                 }
             } else {
-                gb.synergy.push(hero._id);
+                gb.synergy.push(hero.id);
             }
         };
 
         gb.hasSynergy = function (hero) {
             for (var i = 0; i < gb.synergy.length; i++) {
-                if (gb.synergy[i] === hero._id) {
+                if (gb.synergy[i] === hero.id) {
                     return true;
                 }
             }
@@ -1908,19 +1977,19 @@ angular.module('app.services', [])
         gb.toggleStrong = function (hero) {
             if (gb.hasStrong(hero)) {
                 for (var i = 0; i < gb.against.strong.length; i++) {
-                    if (gb.against.strong[i] === hero._id) {
+                    if (gb.against.strong[i] === hero.id) {
                         gb.against.strong.splice(i, 1);
                         return true;
                     }
                 }
             } else {
-                gb.against.strong.push(hero._id);
+                gb.against.strong.push(hero.id);
             }
         };
 
         gb.hasStrong = function (hero) {
             for (var i = 0; i < gb.against.strong.length; i++) {
-                if (gb.against.strong[i] === hero._id) {
+                if (gb.against.strong[i] === hero.id) {
                     return true;
                 }
             }
@@ -1930,19 +1999,19 @@ angular.module('app.services', [])
         gb.toggleWeak = function (hero) {
             if (gb.hasWeak(hero)) {
                 for (var i = 0; i < gb.against.weak.length; i++) {
-                    if (gb.against.weak[i] === hero._id) {
+                    if (gb.against.weak[i] === hero.id) {
                         gb.against.weak.splice(i, 1);
                         return true;
                     }
                 }
             } else {
-                gb.against.weak.push(hero._id);
+                gb.against.weak.push(hero.id);
             }
         };
 
         gb.hasWeak = function (hero) {
             for (var i = 0; i < gb.against.weak.length; i++) {
-                if (gb.against.weak[i] === hero._id) {
+                if (gb.against.weak[i] === hero.id) {
                     return true;
                 }
             }
@@ -1958,25 +2027,25 @@ angular.module('app.services', [])
         };
 
         gb.setMap = function (map) {
-            gb.maps = [map._id];
+            gb.maps = [map.id];
         };
 
         gb.toggleMap = function (map) {
             if (gb.hasMap(map)) {
                 for (var i = 0; i < gb.maps.length; i++) {
-                    if (gb.maps[i] === map._id) {
+                    if (gb.maps[i] === map.id) {
                         gb.maps.splice(i, 1);
                         return true;
                     }
                 }
             } else {
-                gb.maps.push(map._id);
+                gb.maps.push(map.id);
             }
         };
 
         gb.hasMap = function (map) {
             for (var i = 0; i < gb.maps.length; i++) {
-                if (gb.maps[i] === map._id) {
+                if (gb.maps[i] === map.id) {
                     return true;
                 }
             }
