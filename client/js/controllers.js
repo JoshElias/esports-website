@@ -6211,10 +6211,13 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'data', 'VoteService', 'LoginModalService',
-    function ($scope, $state, $compile, $window, SnapshotService, data, VoteService, LoginModalService) {
-
-        $scope.snapshot = data;
+.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'dataSnapshot', 'VoteService', 'LoginModalService',
+    function ($scope, $state, $compile, $window, SnapshotService, dataSnapshot, VoteService, LoginModalService) {
+        
+        console.log('snapshot: ', dataSnapshot[0]);
+        console.log('scope: ', $scope);
+        
+        $scope.snapshot = dataSnapshot[0];
         $scope.show = [];
         $scope.matchupName = [];
         $scope.voted = false;
@@ -6226,6 +6229,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         };
+        
         $scope.show.comments = SnapshotService.getStorage();
         $scope.$watch('app.user.isLogged()', function() {
             updateCommentVotes();
@@ -6299,7 +6303,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // find highest and lowest in tier
             for (var i = 0; i < tier.decks.length; i++) {
-                var history = tier.decks[i].rank.all;
+                var history = tier.decks[i].rank.current;
                 for (var j = 0; j < history.length; j++) {
                     if (history[j] > highestRank && history[j] != 0) { highestRank = history[j]; }
                     if ((history[j] < lowestRank && history[j] != 0) || lowestRank == 0) { lowestRank = history[j]; }
@@ -9523,11 +9527,6 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.communityGuides = dataCommunityGuides;
         $scope.topGuides = dataTopGuide ? dataTopGuide : false;
         $scope.tempostormGuides = dataTempostormGuides;
-//      var talentId = $scope.communityGuides[0].heroes[0].talents[0].id;
-//      var heroId = $scope.communityGuides[0].heroes[0].id;
-//      console.log('talentId: ', talentId);
-//      console.log('heroId: ', heroId);
-//      console.log($scope.talents[talentId]);
 
         // filtering
         $scope.heroes = dataHeroes;
@@ -9691,7 +9690,7 @@ angular.module('app.controllers', ['ngCookies'])
               guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
         };
 
-          $scope.getTalents = function (hero, tier) {
+        $scope.getTalents = function (hero, tier) {
                 var out = [];
 
                 for (var i = 0; i < hero.hero.talents.length; i++) {
@@ -9703,7 +9702,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return out;
         };
 
-        $scope.getTopGuideTalents = function (hero) {
+        $scope.getTopGuideTalents = function (guide) {
           $scope.topGuideTalents = {
             topGuideTalentsT1: [],
             topGuideTalentsT4: [],
@@ -9713,9 +9712,8 @@ angular.module('app.controllers', ['ngCookies'])
             topGuideTalentsT16: [],
             topGuideTalentsT20: []
           };
-
-          // TODO! JOSH: LOOK OVER THIS
-          angular.forEach(hero.heroes[0].talentTiers, function(value, key) {
+          
+          angular.forEach(guide.heroes[0].talentTiers, function(value, key) {
             switch(value) {
               case 1:
                 $scope.topGuideTalents.topGuideTalentsT1.push({talentId: key});
@@ -9740,7 +9738,6 @@ angular.module('app.controllers', ['ngCookies'])
                 break;
             };
           });
-          console.log($scope.topGuideTalents);
         };
 
         // Generate Top Guide Talent Object
@@ -10173,7 +10170,7 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService',
     function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService) {
         var box;
-
+        
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
         $scope.$watch('guide', function(){
@@ -10181,10 +10178,10 @@ angular.module('app.controllers', ['ngCookies'])
         }, true);
 
         // heroes
-        $scope.heroes = dataHeroes.heroes;
+        $scope.heroes = dataHeroes;
 
         // maps
-        $scope.maps = dataMaps.maps;
+        $scope.maps = dataMaps;
 
         // steps
         $scope.step = 2;
@@ -10207,8 +10204,8 @@ angular.module('app.controllers', ['ngCookies'])
         for (var row = 0; row < heroRows.length; row++) {
             var heroes = [];
             for (var i = 0; i < heroRows[row]; i++) {
-                if (dataHeroes.heroes[index]) {
-                    heroes.push(dataHeroes.heroes[index]);
+                if (dataHeroes[index]) {
+                    heroes.push(dataHeroes[index]);
                 } else {
                     heroes.push({});
                 }
@@ -10232,8 +10229,8 @@ angular.module('app.controllers', ['ngCookies'])
         for (var row = 0; row < mapRows.length; row++) {
             var maps = [];
             for (var i = 0; i < mapRows[row]; i++) {
-                if (dataMaps.maps[index]) {
-                    maps.push(dataMaps.maps[index]);
+                if (dataMaps[index]) {
+                    maps.push(dataMaps[index]);
                 }
                 index++;
             }
@@ -10278,7 +10275,7 @@ angular.module('app.controllers', ['ngCookies'])
             } else {
                 return false;
             }
-        }
+        };
 
         // featured
         $scope.featuredTypes = [
@@ -10293,7 +10290,7 @@ angular.module('app.controllers', ['ngCookies'])
                     return $scope.featuredTypes[i].text;
                 }
             }
-        }
+        };
 
         // save guide
         $scope.saveGuide = function () {
@@ -10328,10 +10325,10 @@ angular.module('app.controllers', ['ngCookies'])
         }, true);
 
         // heroes
-        $scope.heroes = dataHeroes.heroes;
+        $scope.heroes = dataHeroes;
 
         // maps
-        $scope.maps = dataMaps.maps;
+        $scope.maps = dataMaps;
 
         // steps
         $scope.step = 2;
@@ -10354,8 +10351,8 @@ angular.module('app.controllers', ['ngCookies'])
         for (var row = 0; row < mapRows.length; row++) {
             var maps = [];
             for (var i = 0; i < mapRows[row]; i++) {
-                if (dataMaps.maps[index]) {
-                    maps.push(dataMaps.maps[index]);
+                if (dataMaps[index]) {
+                    maps.push(dataMaps[index]);
                 }
                 index++;
             }
@@ -10734,7 +10731,7 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', '$window', 'HOTS', 'Base64', 'hero', 'MetaService',
     function ($scope, $state, $stateParams, $location, $window, HOTS, Base64, hero, MetaService) {
 //        if (!dataHero.success) { return $state.go('app.hots.talentCalculator.hero', { hero: $scope.heroes[0].className }); }
-
+        
         $scope.setCurrentHero(hero);
         $scope.currentCharacter = $scope.currentHero.characters[0];
         $scope.currentAbility = false;
