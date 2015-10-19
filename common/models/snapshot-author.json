@@ -10,7 +10,9 @@
       "type": "string"
     },
     "expertClasses": {
-      "type": ["string"]
+      "type": [
+        "string"
+      ]
     },
     "snapshotId": {
       "type": "string"

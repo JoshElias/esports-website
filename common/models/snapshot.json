@@ -39,10 +39,14 @@
       "type": "boolean"
     },
     "oldAuthors": {
-      "type": ["object"]
+      "type": [
+        "object"
+      ]
     },
     "oldComments": {
-      "type": ["string"]
+      "type": [
+        "string"
+      ]
     }
   },
   "validations": [],

@@ -157,5 +157,17 @@ module.exports = {
   "deckMatchup": {
     "dataSource": "mongodb",
     "public": true
+  },
+  "forumCategory": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "forumPost": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "forumThread": {
+    "dataSource": "mongodb",
+    "public": true
   }
 }

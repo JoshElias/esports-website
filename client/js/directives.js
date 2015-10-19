@@ -173,9 +173,8 @@ angular.module('app.directives', ['ui.load'])
                   cookies.set("authType", "login");
                   $location.path("/auth/bnet");
                 };
-              }
-            }]
-        }
+        }]
+    }  
 }])
 .directive('signupForm', ['$state', 'UserService', 'LoginModalService', function ($state, UserService, LoginModalService) {
     return {
