@@ -1,4 +1,3 @@
-
 module.exports = {
  "twitch-login": {
    "provider": "twitch",
@@ -6,18 +5,6 @@ module.exports = {
    "clientID": "226rnm5263dzbn13wrs3q5bvuc9aeml",
    "clientSecret": "edg5nj934q127ayqlmfapsbj7e2navx",
    "callbackURL": "http://localhost:8080/auth/twitch/callback",
-   "authPath": "/auth/twitch",
-   "callbackPath": "/auth/twitch/callback",
-   "successRedirect": "/",
-   "failureRedirect": "/login",
-   "scope": ["user_read"]
- },
- "twitch-link": {
-   "provider": "twitch",
-   "module": "passport-twitch",
-   "clientID": "226rnm5263dzbn13wrs3q5bvuc9aeml",
-   "clientSecret": "edg5nj934q127ayqlmfapsbj7e2navx",
-   "callbackURL": "http://localhost:8080/link/twitch/callback",
    "authPath": "/auth/twitch",
    "callbackPath": "/auth/twitch/callback",
    "successRedirect": "/",
@@ -34,7 +21,6 @@ module.exports = {
    "callbackPath": "/auth/bnet/callback",
    "emailOptional": true,
    "successRedirect": "/",
-   "failureRedirect": "/login",
-   "customCallback": passportCallback
+   "failureRedirect": "/login"
  }
 }
