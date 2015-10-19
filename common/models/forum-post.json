@@ -27,10 +27,19 @@
     },
     "votesCount": {
       "type": "number"
+    },
+    "forumThreadId": {
+      "type": "string"
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "forumThread": {
+      "type": "belongsTo",
+      "model": "forumThread",
+      "foreignKey": "forumThreadId"
+    }
+  },
   "acls": [],
   "methods": {}
 }

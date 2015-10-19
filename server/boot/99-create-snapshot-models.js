@@ -51,6 +51,7 @@ module.exports = function(server) {
 							description: deck.explanation,
 							weeklyNotes: deck.weeklyNotes,
 							deckId: deck.deck.toString(),
+							snapshotId: snapshot.id.toString(),
 							tier: tier.tier,
 							ranks: deck.rank.last
 						}

@@ -18,10 +18,24 @@
     },
     "title": {
       "type": "string"
+    },
+    "forumCategoryId": {
+      "type": "string"
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "forumPosts": {
+      "type": "hasMany",
+      "model": "forumPost",
+      "foreignKey": "forumThreadId"
+    },
+    "forumCategory": {
+      "type": "belongsTo",
+      "model": "forumCategory",
+      "foreignKey": "forumCategoryId"
+    }
+  },
   "acls": [],
   "methods": {}
 }

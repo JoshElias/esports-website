@@ -71,7 +71,6 @@
       "foreignKey": "authorId"
     }
   },
-  "acls": [
-  ],
+  "acls": [],
   "methods": {}
 }

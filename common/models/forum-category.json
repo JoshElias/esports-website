@@ -18,7 +18,13 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "forumThreads": {
+      "type": "hasMany",
+      "model": "forumThread",
+      "foreignKey": "forumCategoryId"
+    }
+  },
   "acls": [],
   "methods": {}
 }
