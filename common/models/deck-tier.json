@@ -21,6 +21,9 @@
     "deckId": {
       "type": "string"
     },
+    "snapshotId": {
+      "type": "string"
+    },
     "ranks": {
       "type": [
         "number"
@@ -38,6 +41,11 @@
       "type": "hasMany",
       "model": "deckTech",
       "foreignKey": "deckTierId"
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
     }
   },
   "acls": [],

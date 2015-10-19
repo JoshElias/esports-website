@@ -107,8 +107,8 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('loginForm', ['$window', '$cookies', '$state', '$location', 'LoginModalService', 'User', 'LoopBackAuth', '$timeout',
-    function ($window, $cookies, $state, $location, LoginModalService, User, LoopBackAuth, $timeout) {
+.directive('loginForm', ['$window', '$cookies', '$state', '$location', 'LoginModalService', 'User', 'LoopBackAuth',
+    function ($window, $cookies, $state, $location, LoginModalService, User, LoopBackAuth) {
         return {
             templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
             scope: true,
@@ -120,19 +120,19 @@ angular.module('app.directives', ['ui.load'])
                 };
                 $scope.loginText = "Login";
                 $scope.loginBtnEnabled = true;
-                
+
                 console.log($scope.callback);
-                
+
                 var loginStatusList = {
                     0: "Login",
                     1: "Please Wait...",
                     2: "Success!"
                 }
-                
+
                 $scope.setLoggingIn = function (status) {
                     $scope.loginText = loginStatusList[status];
                 }
-                
+
                 $scope.login = function login(email, password) {
                     $scope.setLoggingIn(1);
                     console.log(LoopBackAuth);
@@ -147,7 +147,7 @@ angular.module('app.directives', ['ui.load'])
 
                                 LoginModalService.hideModal();
                                 $scope.setLoggingIn(2);
-                            
+
                                 if ($scope.callback) {
                                     $scope.callback(LoopBackAuth);
                                 }
@@ -161,10 +161,21 @@ angular.module('app.directives', ['ui.load'])
                         // TODO: Display modal for missing username and/or password
                     }
                 };
-            }]
-        }
-    }
-])
+
+                $scope.twitchLogin = function() {
+                  console.log("twitchLogin");
+                  $cookies.set("authType", "login");
+                  $location.path("/auth/twitch");
+                };
+
+                $scope.bnetLogin = function() {
+                  console.log("bnetLogin");
+                  cookies.set("authType", "login");
+                  $location.path("/auth/bnet");
+                };
+        }]
+      }
+}])
 .directive('signupForm', ['$state', 'UserService', 'LoginModalService', function ($state, UserService, LoginModalService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
@@ -299,8 +310,8 @@ angular.module('app.directives', ['ui.load'])
 //                } else {
 //                    $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
 //                        if (data.success) {
-//                            
-//                            
+//
+//
 //                        }
 //                    });
 //                }
@@ -447,7 +458,7 @@ angular.module('app.directives', ['ui.load'])
                     var sub = log.substr(4);
                     var im = "https" + sub;
                     data[i].logoUrl = im;
-                    
+
                     data[i].viewerCount = +data[i].viewerCount;
                 }
                 $scope.selectedStream = 0;
@@ -1301,7 +1312,7 @@ angular.module('app.directives', ['ui.load'])
                     var sub = log.substr(4);
                     var im = "https" + sub;
                     data[i].screenshotUrl = im;
-                    
+
                     data[i].viewerCount = +data[i].viewerCount;
                 }
                 scope.streamWheel = true;
@@ -1328,7 +1339,7 @@ angular.module('app.directives', ['ui.load'])
             .$promise
             .then(function(tweets) {
                 console.log(tweets);
-                
+
                 scope.twitWheel = true;
                 scope.tweets = tweets;
             });

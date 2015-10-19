@@ -1,0 +1,58 @@
+{
+  "name": "forumPost",
+  "plural": "forumPosts",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "__v": {
+      "type": "number"
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "content": {
+      "type": "string"
+    },
+    "createdDate": {
+      "type": "date"
+    },
+    "title": {
+      "type": "string"
+    },
+    "views": {
+      "type": "number"
+    },
+    "votesCount": {
+      "type": "number"
+    },
+    "forumThreadId": {
+      "type": "string"
+    },
+    "authorId": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
+    "forumThread": {
+      "type": "belongsTo",
+      "model": "forumThread",
+      "foreignKey": "forumThreadId"
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "forumPostId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

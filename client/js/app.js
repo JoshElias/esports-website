@@ -324,6 +324,12 @@ var app = angular.module('app', [
                                         include: [
                                             {
                                                 relation: 'comments'
+                                            },
+                                            {
+                                                relation: 'deckMatchups',
+                                            },
+                                            {
+                                                relation: 'deckTiers'
                                             }
                                         ]
                                     }

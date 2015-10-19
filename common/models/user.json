@@ -74,6 +74,11 @@
       "type": "hasMany",
       "model": "guide",
       "foreignKey": "authorId"
+    },
+    "forumPosts": {
+      "type": "hasMany",
+      "model": "forumPost",
+      "foreignKey": "authorId"
     }
   },
   "acls": [

@@ -1,0 +1,41 @@
+{
+  "name": "forumThread",
+  "plural": "forumThreads",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "__v": {
+      "type": "number"
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "description": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "forumCategoryId": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "forumPosts": {
+      "type": "hasMany",
+      "model": "forumPost",
+      "foreignKey": "forumThreadId"
+    },
+    "forumCategory": {
+      "type": "belongsTo",
+      "model": "forumCategory",
+      "foreignKey": "forumCategoryId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
