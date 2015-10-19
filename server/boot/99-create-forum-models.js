@@ -7,90 +7,83 @@ module.exports = function(server) {
 	 	var ForumCategory = server.models.forumCategory;
     var ForumThread = server.models.forumThread;
     var ForumPost = server.models.forumPost;
+		var Comment = server.models.comment;
 
     async.waterfall([
 
     	// Get forumCategories
     	function(seriesCallback) {
-    		Hero.find({}, seriesCallback);
+    		ForumCategory.find({}, seriesCallback);
     	},
-    	// Create user identity for each user
-    	function(heros, seriesCallback) {
-    		console.log("creating user identies");
-    		async.eachSeries(heros, function(hero, callback) {
-          var talentTiers = {};
-          async.eachSeries(hero.oldTalents, function(talent, innerCallback) {
-            Talent.findOne({where:{name:talent.name}}, function(err, talentInstance) {
-              if(err) innerCallback(err);
-              else {
-                talentTiers[talentInstance.id] = talent.tier;
-                innerCallback();
-              }
-            });
-          }, function(err) {
-            hero.updateAttribute("talentTiers", talentTiers, function(err) {
-              callback(err);
-            });
-          });
-			  }, seriesCallback);
-    	},
-      function(seriesCallback) {
-    		Guide.find({}, seriesCallback);
-    	},
-    	// Create user identity for each user
-    	function(guides, seriesCallback) {
-    		console.log("creating user identies");
-				var talentsTiers = {};
-				async.eachSeries(guides, function(guide, callback) {
-					console.log("resetting talent tiers");
-					talentTiers = {};
-          async.eachSeries(guide.oldHeroes, function(hero, innerCallback) {
-						console.log("assinging hero:",hero.hero);
-						talentTiers[hero.hero] = {};
-						Hero.findById(hero.hero, function(err, heroInstance) {
-            if(err) innerCallback(err);
-            else if (!heroInstance) innerCallback("unable to find hero instance");
-            else {
-              async.eachSeries(hero.talents, function(talent, superInnerCallback) {
-                var relevantTalent;
-                for(var key in heroInstance.oldTalents) {
-                  var oldTalent = heroInstance.oldTalents[key];
-                  if(typeof oldTalent === "function") continue;
-                  //console.log("oldTalent id:", oldTalent._id.toString());
-                  //console.log("talent id:", talent.toString());
-                  if(talent.toString() === oldTalent._id.toString()) {
-                    relevantTalent = oldTalent;
-                    break;
-                  }
-                }
+    	// Update forumCategoryId  in forumThread
+    	function(forumCategories, seriesCallback) {
+    		async.eachSeries(forumCategories, function(forumCategory, innerCallback) {
+					async.eachSeries(forumCategory.threads, function(thread, superInnerCallback) {
+						ForumThread.findById(thread.toString(), function(err, forumThread) {
+							if(err) superInnerCallback(err);
+							else if(!forumThread)  {
+								console.log("no forumThread found for id:", thread.toString());
+								superInnerCallback();
+							} else {
+								forumThread.updateAttribute("forumCategoryId", forumCategory.id.toString(), function(err) {
+									superInnerCallback(err);
+								});
+							}
+						});
+					}, innerCallback);
+				}, seriesCallback);
+			},
+			// Get all the forumThreads
+			function(seriesCallback) {
+					ForumThread.find({}, seriesCallback);
+			},
+			// Update forumThreadId  in forumPost
+			function(forumThreads, seriesCallback) {
+				async.eachSeries(forumThreads, function(forumThread, innerCallback) {
+					async.eachSeries(forumThread.posts, function(post, superInnerCallback) {
+						ForumPost.findById(post.toString(), function(err, forumPost) {
+							if(err) superInnerCallback(err);
+							else if(!forumPost) {
+								console.log("no forumPost found for id:", post.toString());
+								superInnerCallback();
+							} else {
+								forumPost.updateAttribute("forumThreadId", forumThread.id.toString(), function(err) {
+									superInnerCallback(err);
+								});
+							}
+						});
+					}, innerCallback);
+				}, seriesCallback);
+			},
+			// Get all the forumPosts
+			function(seriesCallback) {
+					ForumPost.find({}, seriesCallback);
+			},
+			// Update forumPostId  in comments
+			function(forumPosts, seriesCallback) {
+				async.eachSeries(forumPosts, function(forumPost, innerCallback) {
+					async.eachSeries(forumPost.comments, function(comment, superInnerCallback) {
+						if(!comment) {
+							superInnerCallback();
+							return;
+						}
 
-								if(!relevantTalent) {
-									superInnerCallback();
-									return;
-								}
+						Comment.findById(comment.toString(), function(err, commentInstance) {
+							if(err) superInnerCallback(err);
+							else if(!commentInstance) {
+								console.log("no comment found for id:", comment.toString());
+								superInnerCallback();
+							} else {
+								commentInstance.updateAttribute("forumPostId", forumPost.id.toString(), function(err) {
+									superInnerCallback(err);
+								});
+							}
+						});
+					}, innerCallback);
+				}, seriesCallback);
+			},
 
-                Talent.findOne({where:{name:relevantTalent.name}}, function(err, talentInstance) {
-                  if(err) superInnerCallback(err);
-                  else if(!talentInstance) superInnerCallback("Unable to find talent instance");
-                  else {
-										console.log("hero id: ", hero.hero);
-										console.log("assinging tier:", relevantTalent.tier);
-										console.log("talent id: ", talentInstance.id);
-										talentTiers[hero.hero][relevantTalent.tier] = talentInstance.id
-										superInnerCallback();
-                  }
-                });
-              }, innerCallback);
-            }
-          })
-				}, function(err) {
-					console.log("talent Tiers:", talentTiers);
-					guide.updateAttribute("talentTiers", talentTiers, function(err) {
-						callback(err);
-					});
-				});
-    }, seriesCallback)
-	}],
+],
   function(err) {
     if(err) console.log("ERR creating user identities:", err);
     else console.log("Donerino");

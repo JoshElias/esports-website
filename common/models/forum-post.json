@@ -38,6 +38,11 @@
       "type": "belongsTo",
       "model": "forumThread",
       "foreignKey": "forumThreadId"
+    },
+    "comments": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "forumPostId"
     }
   },
   "acls": [],
