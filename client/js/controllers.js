@@ -435,17 +435,19 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 'HOTSGuideService',
-    function ($scope, dataProfile, MetaService, HOTSGuideService) {
-        $scope.user = dataProfile.user;
-        $scope.postCount = dataProfile.postCount;
-        $scope.deckCount = dataProfile.deckCount;
-        $scope.guideCount = dataProfile.guideCount;
-        $scope.activities = dataProfile.activities;
+.controller('ProfileCtrl', ['$scope', 'profile', 'MetaService', 'HOTSGuideService', 'LoopBackAuth',
+    function ($scope, profile, MetaService, HOTSGuideService, LoopBackAuth) {
+        
+        console.log(LoopBackAuth.currentUserData, profile);
+        $scope.user = profile;
+        $scope.postCount = postCount;
+        $scope.deckCount = deckCount;
+        $scope.guideCount = guideCount;
+//        $scope.activities = dataProfile.activities;
 
 
         function isMyProfile() {
-            if($scope.app.user.getUsername() == $scope.user.username) {
+            if($scope.user.userName == LoopBackAuth.currentUserData.userName) {
                 return 'My Profile';
             } else {
                 return '@' + $scope.user.username + ' - Profile';
@@ -650,10 +652,10 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity', 'ProfileService', 'HOTSGuideService', 'DeckService',
-    function ($scope, $sce, dataActivity, ProfileService, HOTSGuideService, DeckService) {
-        $scope.activities = dataActivity.activities;
-        $scope.total = dataActivity.total;
+.controller('ProfileActivityCtrl', ['$scope', '$sce', 'activities', 'activityCount', 'ProfileService', 'HOTSGuideService', 'DeckService',
+    function ($scope, $sce, activities, activityCount, ProfileService, HOTSGuideService, DeckService) {
+        $scope.activities = activities;
+        $scope.total = activityCount;
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
 
         $scope.getActivityType = function (activity) {

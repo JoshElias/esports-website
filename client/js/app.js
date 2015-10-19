@@ -1498,31 +1498,23 @@ var app = angular.module('app', [
                 views: {
                     content: {
                         templateUrl: tpl + 'views/frontend/profile.html',
-                        controller: 'ProfileCtrl',
-                        resolve: {
-//                            dataProfile: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-//                                var username = $stateParams.username;
-//                                return ProfileService.getProfile(username).then(function (result) {
-//                                    if (result.success === true) {
-//                                        return result;
-//                                    } else {
-//                                        return $q.reject('Unable to find profile');
-//                                    }
-//                                 });
-//                            }]
-                            dataProfile: ['$stateParams', 'User', function ($stateParams, User) {
-                              var username = $stateParams.username;
-                              console.log(username);
-                              return User.find({
-                                filter: {
-                                  where: {
-                                    username: username
-                                  }
-                                }
-                              }).$promise;
-                            }]
-                        }
                     }
+                },
+                controller: 'ProfileCtrl',
+                resolve: {
+                    userProfile: ['$stateParams', 'User', function ($stateParams, User) {
+                      var username = $stateParams.username;
+                      return User.find({
+                        filter: {
+                            where: {
+                                username: username
+                            }
+                        }
+                      }).$promise;
+                    }],
+                    postCount: ['userProfile', 'forumPost', function (userProfile, forumPost) {
+                        return 
+                    }]
                 }
             })
             .state('app.profile.activity', {
@@ -1532,9 +1524,22 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.activity.html',
                         controller: 'ProfileActivityCtrl',
                         resolve: {
-                            dataActivity: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getActivity(username);
+                            activities: ['userProfile', 'Activity', function (userProfile, Activity) {
+                                return Activity.find({
+                                    filter: {
+                                        limit: 10,
+                                        where: {
+                                            authorId: userProfile[0].id
+                                        },
+                                        include: {
+                                            relation: 'article'
+                                        }
+                                    }
+                                })
+                                .$promise;
+                            }],
+                            activityCount: ['Activity', function (Activity) {
+                                return Activity.count().$promise;
                             }]
                         }
                     }

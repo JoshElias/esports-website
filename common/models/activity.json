@@ -10,6 +10,9 @@
     "activityType": {
       "type": "string"
     },
+    "authorId": {
+      "type": "string"
+    },
     "createdDate": {
       "type": "date"
     },
@@ -18,14 +21,30 @@
     },
     "active": {
       "type": "boolean"
+    },
+    "article" : {
+      "type": "string"
+    },
+    "deck" : {
+      "type": "string"
     }
   },
   "validations": [],
   "relations": {
-    "authorId": {
-      "type": "hasOne",
+    "author": {
+      "type": "belongsTo",
       "model": "user",
-      "foreignKey": ""
+      "foreignKey": "authorId"
+    },
+    "article": {
+      "type": "belongsTo",
+      "model": "article",
+      "foreignKey": "article"
+    },
+    "deck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deck"
     }
   },
   "acls": [],
