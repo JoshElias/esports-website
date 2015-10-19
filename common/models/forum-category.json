@@ -1,0 +1,24 @@
+{
+  "name": "forumCategory",
+  "plural": "forumCategories",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "__v": {
+      "type": "number"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
