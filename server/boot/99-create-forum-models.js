@@ -62,11 +62,14 @@ module.exports = function(server) {
 			// Update forumPostId  in comments
 			function(forumPosts, seriesCallback) {
 				async.eachSeries(forumPosts, function(forumPost, innerCallback) {
-					async.eachSeries(forumPost.comments, function(comment, superInnerCallback) {
+					//console.log("forumPost comments:", forumPost.comments);
+					async.eachSeries(forumPost.oldComments, function(comment, superInnerCallback) {
 						if(!comment) {
 							superInnerCallback();
 							return;
 						}
+
+						console.log("looking for comment:", comment.toString());
 
 						Comment.findById(comment.toString(), function(err, commentInstance) {
 							if(err) superInnerCallback(err);
@@ -75,6 +78,8 @@ module.exports = function(server) {
 								superInnerCallback();
 							} else {
 								commentInstance.updateAttribute("forumPostId", forumPost.id.toString(), function(err) {
+									console.log("added forumPostId:",forumPost.id.toString());
+									console.log("to comment:", commentInstance.id.toString())
 									superInnerCallback(err);
 								});
 							}

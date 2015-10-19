@@ -60,43 +60,22 @@ angular.module('app.controllers', ['ngCookies'])
           return (/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/).test(ua);
       }
 
-      var currentUser = User.getCachedCurrent();
-      if(currentUser) {
-        $scope.email = currentUser.email;
-        $scope.username = currentUser.username;
-      }
 }])
-.controller('RootCtrl', ['$scope', 'LoginModalService', 'CurrentUser', function ($scope, LoginModalService, CurrentUser) {
-    if (CurrentUser) {
-        $scope.currentUser = CurrentUser;
-    }
-    
+.controller('RootCtrl', ['$scope', 'LoginModalService', 'User', function ($scope, LoginModalService, User, currentUser) {
+    $scope.email = currentUser.email;
+    $scope.username = currentUser.username;
+
     $scope.loginModal = function (state) {
         LoginModalService.showModal(state, function (data) {
             $scope.currentUser = data.currentUserData;
         });
     }
+
+    $scope.logout()
 }])
 .controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
     MetaService.setStatusCode(404);
 }])
-.controller('UserCtrl', ['$scope', '$location', '$window', '$state', '$cookies',  'AlertService', 'LoopBackAuth', 'User',
-    function ($scope, $location, $window, $state, $cookies, AlertService, LoopBackAuth, User) {
-
-      $scope.user = LoopBackAuth.currentUserData;
-
-        // grab alerts
-        if (AlertService.hasAlert()) {
-            $scope.success = AlertService.getSuccess();
-            AlertService.reset();
-        }
-
-        // user controller
-        $scope.login = function login(email, password) {
-
-        }
-    }
-])
 .controller('UserVerifyCtrl', ['$scope', '$location', '$window', '$state', '$stateParams', 'UserService', 'AuthenticationService', 'SubscriptionService',
     function ($scope, $location, $window, $state, $stateParams, UserService, AuthenticationService, SubscriptionService) {
         $scope.verify = {
@@ -6213,10 +6192,10 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'dataSnapshot', 'VoteService', 'LoginModalService',
     function ($scope, $state, $compile, $window, SnapshotService, dataSnapshot, VoteService, LoginModalService) {
-        
+
         console.log('snapshot: ', dataSnapshot[0]);
         console.log('scope: ', $scope);
-        
+
         $scope.snapshot = dataSnapshot[0];
         $scope.show = [];
         $scope.matchupName = [];
@@ -6229,7 +6208,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         };
-        
+
         $scope.show.comments = SnapshotService.getStorage();
         $scope.$watch('app.user.isLogged()', function() {
             updateCommentVotes();
@@ -9712,7 +9691,7 @@ angular.module('app.controllers', ['ngCookies'])
             topGuideTalentsT16: [],
             topGuideTalentsT20: []
           };
-          
+
           angular.forEach(guide.heroes[0].talentTiers, function(value, key) {
             switch(value) {
               case 1:
@@ -10170,7 +10149,7 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService',
     function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService) {
         var box;
-        
+
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
         $scope.$watch('guide', function(){
@@ -10731,7 +10710,7 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', '$window', 'HOTS', 'Base64', 'hero', 'MetaService',
     function ($scope, $state, $stateParams, $location, $window, HOTS, Base64, hero, MetaService) {
 //        if (!dataHero.success) { return $state.go('app.hots.talentCalculator.hero', { hero: $scope.heroes[0].className }); }
-        
+
         $scope.setCurrentHero(hero);
         $scope.currentCharacter = $scope.currentHero.characters[0];
         $scope.currentAbility = false;

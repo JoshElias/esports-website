@@ -25,6 +25,9 @@
     "views": {
       "type": "number"
     },
+    "oldComments": {
+      "type": ["string"]
+    },
     "votesCount": {
       "type": "number"
     },
