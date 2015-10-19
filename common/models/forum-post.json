@@ -30,10 +30,18 @@
     },
     "forumThreadId": {
       "type": "string"
+    },
+    "authorId": {
+      "type": "string"
     }
   },
   "validations": [],
   "relations": {
+    "author": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "authorId"
+    },
     "forumThread": {
       "type": "belongsTo",
       "model": "forumThread",
