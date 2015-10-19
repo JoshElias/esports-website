@@ -175,7 +175,7 @@ angular.module('app.directives', ['ui.load'])
                 };
               }
             }]
-        }
+
 }])
 .directive('signupForm', ['$state', 'UserService', 'LoginModalService', function ($state, UserService, LoginModalService) {
     return {
