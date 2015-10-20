@@ -435,19 +435,17 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileCtrl', ['$scope', 'profile', 'MetaService', 'HOTSGuideService', 'LoopBackAuth',
-    function ($scope, profile, MetaService, HOTSGuideService, LoopBackAuth) {
-        
-        console.log(LoopBackAuth.currentUserData, profile);
-        $scope.user = profile;
-        $scope.postCount = postCount;
-        $scope.deckCount = deckCount;
-        $scope.guideCount = guideCount;
+.controller('ProfileCtrl', ['$scope', 'userProfile', 'postCount', 'deckCount', 'guideCount', 'MetaService', 'HOTSGuideService', 'LoopBackAuth',
+    function ($scope, userProfile, postCount, deckCount, guideCount, MetaService, HOTSGuideService, LoopBackAuth) {
+        $scope.user = userProfile;
+        $scope.postCount = postCount.count;
+        $scope.deckCount = deckCount.count;
+        $scope.guideCount = guideCount.count;
 //        $scope.activities = dataProfile.activities;
 
-
+        
         function isMyProfile() {
-            if($scope.user.userName == LoopBackAuth.currentUserData.userName) {
+            if(LoopBackAuth.currentUserData != undefined && $scope.user.userName == LoopBackAuth.currentUserData.userName) {
                 return 'My Profile';
             } else {
                 return '@' + $scope.user.username + ' - Profile';
@@ -654,8 +652,9 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('ProfileActivityCtrl', ['$scope', '$sce', 'activities', 'activityCount', 'ProfileService', 'HOTSGuideService', 'DeckService',
     function ($scope, $sce, activities, activityCount, ProfileService, HOTSGuideService, DeckService) {
+        
         $scope.activities = activities;
-        $scope.total = activityCount;
+        $scope.total = activityCount.count;
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
 
         $scope.getActivityType = function (activity) {
@@ -688,7 +687,6 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.toggleFilter = function (filter) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
-                console.log($scope.filterActivities[i], filter);
                 if (filter == $scope.filterActivities[i]) {
                     $scope.filterActivities.splice(i,1);
                     return;
@@ -775,14 +773,14 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',
-    function ($scope, dataArticles) {
-        $scope.articles = dataArticles.articles;
+.controller('ProfileArticlesCtrl', ['$scope', 'articles',
+    function ($scope, articles) {
+        $scope.articles = articles;
     }
 ])
-.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'dataDecks',
-    function ($scope, $state, bootbox, DeckService, dataDecks) {
-        $scope.decks = dataDecks.decks;
+.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'decks',
+    function ($scope, $state, bootbox, DeckService, decks) {
+        $scope.decks = decks;
 
         //is premium
         $scope.isPremium = function (guide) {

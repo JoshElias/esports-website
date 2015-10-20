@@ -1501,12 +1501,6 @@ var app = angular.module('app', [
             .state('app.profile', {
                 abstract: true,
                 url: 'user/:username',
-                views: {
-                    content: {
-                        templateUrl: tpl + 'views/frontend/profile.html',
-                    }
-                },
-                controller: 'ProfileCtrl',
                 resolve: {
                     userProfile: ['$stateParams', 'User', function ($stateParams, User) {
                       var username = $stateParams.username;
@@ -1516,11 +1510,56 @@ var app = angular.module('app', [
                                 username: username
                             }
                         }
-                      }).$promise;
-                    }],
-                    postCount: ['userProfile', 'forumPost', function (userProfile, forumPost) {
-                        return 
+                      })
+                      .$promise
+                      .then(function (data) {
+                          return data[0];
+                      });
                     }]
+                },
+                views: {
+                    content: {
+                        controller: 'ProfileCtrl',
+                        templateUrl: tpl + 'views/frontend/profile.html',
+                        resolve: {
+                            profile: ['userProfile', function (userProfile) {
+                                return userProfile;
+                            }],
+                            postCount: ['userProfile', 'ForumPost', function (userProfile, ForumPost) {
+                                return ForumPost.count({
+                                    where: { 
+                                        and: [
+                                            {
+                                                authorId: userProfile.id
+                                            }
+                                        ]
+                                    }
+                                }).$promise;
+                            }],
+                            deckCount: ['userProfile', 'Deck', function (userProfile, Deck) {
+                                return Deck.count({
+                                    where: {
+                                        and: [
+                                            {
+                                                authorId: userProfile.id
+                                            }
+                                        ]
+                                    }
+                                }).$promise;
+                            }],
+                            guideCount: ['userProfile', 'Guide', function (userProfile, Guide) {
+                                return Guide.count({
+                                    where: {
+                                        and: [
+                                            {
+                                                authorId: userProfile.id
+                                            }
+                                        ]
+                                    }
+                                }).$promise;
+                            }]
+                        }
+                    }
                 }
             })
             .state('app.profile.activity', {
@@ -1535,17 +1574,26 @@ var app = angular.module('app', [
                                     filter: {
                                         limit: 10,
                                         where: {
-                                            authorId: userProfile[0].id
+                                            authorId: userProfile.id
                                         },
-                                        include: {
-                                            relation: 'article'
-                                        }
+                                        include: [
+                                            {
+                                                relation: 'article'
+                                            },
+                                            {
+                                                relation: 'deck'
+                                            }
+                                        ]
                                     }
                                 })
                                 .$promise;
                             }],
-                            activityCount: ['Activity', function (Activity) {
-                                return Activity.count().$promise;
+                            activityCount: ['userProfile', 'Activity', function (userProfile, Activity) {
+                                return Activity.count({
+                                    where: {
+                                        authorId: userProfile.id
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -1558,9 +1606,16 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.articles.html',
                         controller: 'ProfileArticlesCtrl',
                         resolve: {
-                            dataArticles: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getArticles(username);
+                            articles: ['userProfile', 'Article', function (userProfile, Article) {
+                                return Article.find({
+                                    filter: {
+                                        where: {
+                                            authorId: userProfile.id
+                                        }
+                                    }
+                                })
+                                .$promise;
+//                                return ProfileService.getArticles(username);
                             }]
                         }
                     }
@@ -1573,13 +1628,20 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.decks.html',
                         controller: 'ProfileDecksCtrl',
                         resolve: {
-                            dataDecks: ['User', '$stateParams', 'ProfileService', 'AuthenticationService', function (User, $stateParams, ProfileService, AuthenticationService) {
-                                var username = $stateParams.username;
-                                if (AuthenticationService.isLogged()) {
-                                    return ProfileService.getDecksLoggedIn(username);
-                                } else {
-                                    return ProfileService.getDecks(username);
-                                }
+                            decks: ['User', 'userProfile', 'Deck', 'AuthenticationService', function (User, userProfile, Deck, AuthenticationService) {
+                                return Deck.find({
+                                    filter: {
+                                        where: {
+                                            authorId: userProfile.id
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'author'
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -1592,13 +1654,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.guides.html',
                         controller: 'ProfileGuidesCtrl',
                         resolve: {
-                            dataGuides: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
-                                var username = $stateParams.username;
-                                if (AuthenticationService.isLogged()) {
-                                    return ProfileService.getGuidesLoggedIn(username);
-                                } else {
-                                    return ProfileService.getGuides(username);
-                                }
+                            dataGuides: ['userProfile', 'Guide', 'AuthenticationService', 'User', function (userProfile, Guide, AuthenticationService, User) {
+                                return Guide.find({
+                                    filter: {
+                                        where: {
+                                            authorId: userProfile.id
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'author'
+                                            }
+                                        ]
+                                    }
+                                })
                             }]
                         }
                     }

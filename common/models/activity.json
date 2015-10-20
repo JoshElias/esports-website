@@ -45,6 +45,21 @@
       "type": "belongsTo",
       "model": "deck",
       "foreignKey": "deck"
+    },
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guide"
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshot"
+    },
+    "forumPost": {
+      "type": "belongsTo",
+      "model": "forumPost",
+      "foreignKey": "forumPost"
     }
   },
   "acls": [],
