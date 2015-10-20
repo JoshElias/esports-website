@@ -68,7 +68,7 @@
                                     <ul class="dropdown-menu no-border-radius no-padding">
                                       <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{user.username}}">Profile</a></li>
                                       <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isAdmin"><a ui-sref="app.admin.dashboard">Admin</a></li>
-                                      <li class="sub"><a href="#" ng-click="currentUser.logout()">Logout</a></li>
+                                      <li class="sub"><a href="#" ng-click="logout()">Logout</a></li>
                                     </ul>
                                 </li>
                             </span>
@@ -90,7 +90,7 @@
                     <ul class="dropdown-menu no-border-radius no-padding">
                       <li class="sub" ng-class="{active: $state.includes('app.profile')}"><a href="./user/{{currentUser.username}}">Profile</a></li>
                       <li class="sub" ng-class="{active: $state.includes('app.admin')}" ng-show="currentUser.isAdmin"><a ui-sref="app.admin.dashboard">Admin</a></li>
-                      <li class="sub"><a href="#" ng-click="currentUser.logout()">Logout</a></li>
+                      <li class="sub"><a href="#" ng-click="logout()">Logout</a></li>
                     </ul>
                 </li>
             </ul>

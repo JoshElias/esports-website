@@ -61,9 +61,12 @@ angular.module('app.controllers', ['ngCookies'])
       }
 
 }])
-.controller('RootCtrl', ['$scope', 'LoginModalService', 'User', 'currentUser', function ($scope, LoginModalService, User, currentUser) {
-    $scope.email = currentUser.email;
-    $scope.username = currentUser.username;
+.controller('RootCtrl', ['$scope', 'LoginModalService', 'User', function ($scope, LoginModalService, User, currentUser) {
+    // If user is logged in
+    if(currentUser) {
+      $scope.email = currentUser.email;
+      $scope.username = currentUser.username;
+    }
 
     $scope.loginModal = function (state) {
         LoginModalService.showModal(state, function (data) {
@@ -71,7 +74,14 @@ angular.module('app.controllers', ['ngCookies'])
         });
     }
 
-    $scope.logout()
+    $scope.logout = function() {
+      /*
+      User.logout(function() {
+        console.log("logged out successfully");
+      }, function(err) {
+        console.log("error logging out:",err);
+      })*/
+    }
 }])
 .controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
     MetaService.setStatusCode(404);
