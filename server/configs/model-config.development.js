@@ -52,7 +52,10 @@ module.exports = {
   },
   "user": {
     "dataSource": "mongodb",
-    "public": true
+    "public": true,
+    "options": {
+      "emailVerificationRequired": true
+    }
   },
   "topic": {
     "dataSource": "mongodb",

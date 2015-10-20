@@ -55,6 +55,11 @@
   },
   "validations": [],
   "relations": {
+    "activities": {
+      "type": "hasMany",
+      "model": "activity",
+      "foreignKey": "authorId"
+    },
     "articles": {
       "type": "hasMany",
       "model": "article",
@@ -76,6 +81,19 @@
       "foreignKey": "authorId"
     }
   },
-  "acls": [],
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "find"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "findById"
+    }
+  ],
   "methods": {}
 }

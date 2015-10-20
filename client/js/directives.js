@@ -165,18 +165,18 @@ angular.module('app.directives', ['ui.load'])
                 $scope.twitchLogin = function() {
                   console.log("twitchLogin");
                   $cookies.set("authType", "login");
-                  $location.path("/auth/twitch");
+                  $location.path("/login/twitch");
                 };
 
                 $scope.bnetLogin = function() {
                   console.log("bnetLogin");
                   cookies.set("authType", "login");
-                  $location.path("/auth/bnet");
+                  $location.path("/login/bnet");
                 };
         }]
       }
 }])
-.directive('signupForm', ['$state', 'UserService', 'LoginModalService', function ($state, UserService, LoginModalService) {
+.directive('signupForm', ['$state', 'User', 'LoginModalService', function ($state, User, LoginModalService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
         scope: true,
@@ -186,23 +186,25 @@ angular.module('app.directives', ['ui.load'])
                 code: ""
             }
 
-            //TODO: SignupForm: Do signup
-
-            $scope.signup = function signup(email, username, password, cpassword) {
+            $scope.signup = function signup(email, username, password) {
                 if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
-                    UserService.signup(email, username, password, cpassword).success(function (data) {
-                        if (!data.success) {
-                            $scope.errors = data.errors;
-                            $scope.showError = true;
-                        } else {
-                            $scope.verify.email = email;
-                            if ($scope.setState) {
-                                $scope.state = "verify";
-                            } else {
-                                $state.go('app.verify');
-                            }
+                    User.create({
+                      email: email,
+                      username: username,
+                      password:password
+                    }, function (user) {
+                        console.log("signup succeeded");
+                          $scope.verify.email = email;
+                          if ($scope.setState) {
+                              $scope.state = "verify";
+                          } else {
+                              $state.go('app.verify');
+                          }
 //                            return $state.transitionTo('app.verify', { email: email });
-                        }
+                    }, function(err) {
+                      console.log("signup returned with err:", err);
+                        $scope.errors = err;
+                        $scope.showError = true;
                     });
                 }
             }
@@ -359,6 +361,7 @@ angular.module('app.directives', ['ui.load'])
                                 uniqueVote = false;
                                 break;
                             }
+                            uniqueVote = true;
                             comment.votes[i].direction = direction;
                             break;
                         } else {

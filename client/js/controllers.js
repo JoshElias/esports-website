@@ -60,43 +60,32 @@ angular.module('app.controllers', ['ngCookies'])
           return (/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/).test(ua);
       }
 
-      var currentUser = User.getCachedCurrent();
-      if(currentUser) {
-        $scope.email = currentUser.email;
-        $scope.username = currentUser.username;
-      }
 }])
-.controller('RootCtrl', ['$scope', 'LoginModalService', 'CurrentUser', function ($scope, LoginModalService, CurrentUser) {
-    if (CurrentUser) {
-        $scope.currentUser = CurrentUser;
+.controller('RootCtrl', ['$scope', 'LoginModalService', 'User', function ($scope, LoginModalService, User, currentUser) {
+    // If user is logged in
+    if(currentUser) {
+      $scope.email = currentUser.email;
+      $scope.username = currentUser.username;
     }
-    
+
     $scope.loginModal = function (state) {
         LoginModalService.showModal(state, function (data) {
             $scope.currentUser = data.currentUserData;
         });
     }
+
+    $scope.logout = function() {
+      /*
+      User.logout(function() {
+        console.log("logged out successfully");
+      }, function(err) {
+        console.log("error logging out:",err);
+      })*/
+    }
 }])
 .controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
     MetaService.setStatusCode(404);
 }])
-.controller('UserCtrl', ['$scope', '$location', '$window', '$state', '$cookies',  'AlertService', 'LoopBackAuth', 'User',
-    function ($scope, $location, $window, $state, $cookies, AlertService, LoopBackAuth, User) {
-
-      $scope.user = LoopBackAuth.currentUserData;
-
-        // grab alerts
-        if (AlertService.hasAlert()) {
-            $scope.success = AlertService.getSuccess();
-            AlertService.reset();
-        }
-
-        // user controller
-        $scope.login = function login(email, password) {
-
-        }
-    }
-])
 .controller('UserVerifyCtrl', ['$scope', '$location', '$window', '$state', '$stateParams', 'UserService', 'AuthenticationService', 'SubscriptionService',
     function ($scope, $location, $window, $state, $stateParams, UserService, AuthenticationService, SubscriptionService) {
         $scope.verify = {
@@ -435,17 +424,17 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 'HOTSGuideService',
-    function ($scope, dataProfile, MetaService, HOTSGuideService) {
-        $scope.user = dataProfile.user;
-        $scope.postCount = dataProfile.postCount;
-        $scope.deckCount = dataProfile.deckCount;
-        $scope.guideCount = dataProfile.guideCount;
-        $scope.activities = dataProfile.activities;
+.controller('ProfileCtrl', ['$scope', 'userProfile', 'postCount', 'deckCount', 'guideCount', 'MetaService', 'HOTSGuideService', 'LoopBackAuth',
+    function ($scope, userProfile, postCount, deckCount, guideCount, MetaService, HOTSGuideService, LoopBackAuth) {
+        $scope.user = userProfile;
+        $scope.postCount = postCount.count;
+        $scope.deckCount = deckCount.count;
+        $scope.guideCount = guideCount.count;
+//        $scope.activities = dataProfile.activities;
 
-
+        
         function isMyProfile() {
-            if($scope.app.user.getUsername() == $scope.user.username) {
+            if(LoopBackAuth.currentUserData != undefined && $scope.user.userName == LoopBackAuth.currentUserData.userName) {
                 return 'My Profile';
             } else {
                 return '@' + $scope.user.username + ' - Profile';
@@ -650,10 +639,11 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity', 'ProfileService', 'HOTSGuideService', 'DeckService',
-    function ($scope, $sce, dataActivity, ProfileService, HOTSGuideService, DeckService) {
-        $scope.activities = dataActivity.activities;
-        $scope.total = dataActivity.total;
+.controller('ProfileActivityCtrl', ['$scope', '$sce', 'activities', 'activityCount', 'ProfileService', 'HOTSGuideService', 'DeckService',
+    function ($scope, $sce, activities, activityCount, ProfileService, HOTSGuideService, DeckService) {
+        
+        $scope.activities = activities;
+        $scope.total = activityCount.count;
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
 
         $scope.getActivityType = function (activity) {
@@ -686,7 +676,6 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.toggleFilter = function (filter) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
-                console.log($scope.filterActivities[i], filter);
                 if (filter == $scope.filterActivities[i]) {
                     $scope.filterActivities.splice(i,1);
                     return;
@@ -773,14 +762,14 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',
-    function ($scope, dataArticles) {
-        $scope.articles = dataArticles.articles;
+.controller('ProfileArticlesCtrl', ['$scope', 'articles',
+    function ($scope, articles) {
+        $scope.articles = articles;
     }
 ])
-.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'dataDecks',
-    function ($scope, $state, bootbox, DeckService, dataDecks) {
-        $scope.decks = dataDecks.decks;
+.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'decks',
+    function ($scope, $state, bootbox, DeckService, decks) {
+        $scope.decks = decks;
 
         //is premium
         $scope.isPremium = function (guide) {
@@ -6218,6 +6207,7 @@ angular.module('app.controllers', ['ngCookies'])
         console.log('scope: ', $scope);
         
         $scope.snapshot = dataSnapshot;
+        
         $scope.show = [];
         $scope.matchupName = [];
         $scope.voted = false;
@@ -6229,7 +6219,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
         };
-        
+
         $scope.show.comments = SnapshotService.getStorage();
         $scope.$watch('app.user.isLogged()', function() {
             updateCommentVotes();
@@ -9752,7 +9742,7 @@ angular.module('app.controllers', ['ngCookies'])
             topGuideTalentsT16: [],
             topGuideTalentsT20: []
           };
-          
+
           angular.forEach(guide.heroes[0].talentTiers, function(value, key) {
             switch(value) {
               case 1:
@@ -10210,7 +10200,7 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService',
     function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService) {
         var box;
-        
+
         // create guide
         $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
         $scope.$watch('guide', function(){
@@ -10771,7 +10761,7 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', '$window', 'HOTS', 'Base64', 'hero', 'MetaService',
     function ($scope, $state, $stateParams, $location, $window, HOTS, Base64, hero, MetaService) {
 //        if (!dataHero.success) { return $state.go('app.hots.talentCalculator.hero', { hero: $scope.heroes[0].className }); }
-        
+
         $scope.setCurrentHero(hero);
         $scope.currentCharacter = $scope.currentHero.characters[0];
         $scope.currentAbility = false;
