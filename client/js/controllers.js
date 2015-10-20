@@ -6201,27 +6201,65 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'dataSnapshot', 'VoteService', 'LoginModalService',
-    function ($scope, $state, $compile, $window, SnapshotService, dataSnapshot, VoteService, LoginModalService) {
-
-        console.log('snapshot: ', dataSnapshot[0]);
-        console.log('scope: ', $scope);
-
-        $scope.snapshot = dataSnapshot[0];
+.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'dataSnapshot', 'VoteService', 'LoginModalService', 'User',
+    function ($scope, $state, $compile, $window, SnapshotService, dataSnapshot, VoteService, LoginModalService, User) {
+        
+        console.log('snapshot: ', dataSnapshot);
+        
+        $scope.snapshot = dataSnapshot;
+        // New decktiers array from snapshot.deckTiers
+        $scope.deckTiers = getAllDecksByTier();
         $scope.show = [];
         $scope.matchupName = [];
         $scope.voted = false;
         $scope.hasVoted = function () {
             for (var i = 0; i < $scope.snapshot.votes.length; i++) {
-                if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
+                if ($scope.snapshot.votes[i] == User.getCurrentId()) {
                     $scope.voted = true;
                     break;
                 }
             }
         };
+        
+        function getAllDecksByTier() {
+            var uniqueTiers = {};
+            var outArr = [];
+            
+            // loop through all deck tiers
+            // create an object for each tier
+            // determine the tier of the deck
+            // push the deck to the corresponding tier obj
+            
+            for(var i = 0, j = $scope.snapshot.deckTiers.length; i < j; i++) {
+                var currentDeckTier = $scope.snapshot.deckTiers[i].tier;
+                var uniqueTier = true;
+                for(var k = 0, l = outArr.length; k < l; k++) {
+                    if(outArr[k].tier === currentDeckTier) {
+                        uniqueTier = false;
+                        outArr[k].decks.push($scope.snapshot.deckTiers[i]);
+                    }
+                }
+                
+                if(uniqueTier) {
+                    var newTier = {
+                        id: $scope.snapshot.deckTiers[i].id,
+                        tier: currentDeckTier,
+                        decks: [$scope.snapshot.deckTiers[i]],
+                    };
+                    outArr.push(newTier);
+                }
+            }
+            
+            return outArr;
+            
+        }
+        
+        console.log('orig deckTiers: ', $scope.snapshot.deckTiers);
+        console.log('new deckTiers: ', $scope.deckTiers);
+        console.log('original: ', $scope.snapshot.tiers);
 
         $scope.show.comments = SnapshotService.getStorage();
-        $scope.$watch('app.user.isLogged()', function() {
+        $scope.$watch('User.isAuthenticated()', function() {
             updateCommentVotes();
             $scope.hasVoted();
         });
@@ -6276,10 +6314,19 @@ angular.module('app.controllers', ['ngCookies'])
             return out;
         }
 
+//        $scope.getTier = function (tier) {
+//            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+//                if ($scope.snapshot.tiers[i].tier == tier) {
+//                    return $scope.snapshot.tiers[i];
+//                }
+//            }
+//            return false;
+//        }
+        
         $scope.getTier = function (tier) {
-            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-                if ($scope.snapshot.tiers[i].tier == tier) {
-                    return $scope.snapshot.tiers[i];
+            for (var i = 0; i < $scope.deckTiers.length; i++) {
+                if ($scope.deckTiers[i].tier == tier) {
+                    return $scope.deckTiers[i];
                 }
             }
             return false;
@@ -6293,7 +6340,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // find highest and lowest in tier
             for (var i = 0; i < tier.decks.length; i++) {
-                var history = tier.decks[i].rank.current;
+                var history = tier.decks[i].ranks;
                 for (var j = 0; j < history.length; j++) {
                     if (history[j] > highestRank && history[j] != 0) { highestRank = history[j]; }
                     if ((history[j] < lowestRank && history[j] != 0) || lowestRank == 0) { lowestRank = history[j]; }
@@ -7347,10 +7394,11 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('ForumAddCtrl', ['$scope', '$location', '$window', '$compile', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
-    function ($scope, $location, $window, $compile, bootbox, ForumService, UserService, AuthenticationService, SubscriptionService, data) {
+.controller('ForumAddCtrl', ['$scope', '$location', '$window', '$compile', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'thread', 'User',
+    function ($scope, $location, $window, $compile, bootbox, ForumService, UserService, AuthenticationService, SubscriptionService, thread, User) {
         // thread
-        $scope.thread = data.thread;
+        $scope.thread = thread;
+        console.log('thread: ', $scope.thread);
 
         // post
         var defaultPost = {
@@ -7378,7 +7426,7 @@ angular.module('app.controllers', ['ngCookies'])
         var box,
             callback;
         $scope.addPost = function () {
-            if (!$scope.app.user.isLogged()) {
+            if (!User.isAuthenticated()) {
                 box = bootbox.dialog({
                     title: 'Login Required',
                     message: $compile('<div login-form></div>')($scope)
@@ -7426,13 +7474,16 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
-    function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
+.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'postData', 'MetaService', 'User', 'ForumPost',
+    function ($scope, $sce, $compile, $window, bootbox, postData, MetaService, User, ForumPost) {
 
-
-        $scope.post = data.post;
-        $scope.ForumService = ForumService;
-        $scope.thread = data.thread;
+        $scope.post = postData;
+        console.log('post: ', $scope.post);
+        
+//        $scope.ForumService = ForumService;
+        $scope.thread = $scope.post.forumThread;
+        
+        console.log('is user logged in: ', User.isAuthenticated());
 
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.post.title + ' - ' + $scope.thread.title);

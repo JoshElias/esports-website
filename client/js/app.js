@@ -172,7 +172,11 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/home.html',
                         controller: 'HomeCtrl',
                         resolve: {
+<<<<<<< HEAD
+                            articles: ['Article', 'currentUser', function (Article, currentUser) {
+=======
                             articles: ['Article', function (Article) {
+>>>>>>> 847d91dd4280559171fc6250d57027f2a85c0768
                                 var offset = 1,
                                     num = 6;
 
@@ -1446,9 +1450,24 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.add.html',
                         controller: 'ForumAddCtrl',
                         resolve: {
-                            data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
+//                            data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
+//                                var thread = $stateParams.thread;
+//                                return ForumService.getThread(thread);
+//                            }]
+                            thread: ['$stateParams', 'ForumThread', function($stateParams, ForumThread) {
                                 var thread = $stateParams.thread;
-                                return ForumService.getThread(thread);
+                                return ForumThread.findOne({
+                                    filter: {
+                                        where: {
+                                            'slug.url': thread
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'forumPosts'
+                                            }
+                                        ]
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
