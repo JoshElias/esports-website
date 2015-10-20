@@ -48,6 +48,7 @@ module.exports = function(server) {
 				async.eachSeries(tier.decks, function(deck, innerCallback) {
 					try {
 						var deckTier = {
+							name: deck.name,
 							description: deck.explanation,
 							weeklyNotes: deck.weeklyNotes,
 							deckId: deck.deck.toString(),

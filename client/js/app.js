@@ -125,7 +125,7 @@ var app = angular.module('app', [
                     currentUser: ['User', 'LoopBackAuth',
                         function(User, LoopBackAuth) {
                             if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
-                              return User.getCurrent();
+                              return User.getCurrent().$promise;
                             }
                         }
                     ]
@@ -148,7 +148,11 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/home.html',
                         controller: 'HomeCtrl',
                         resolve: {
+<<<<<<< HEAD
                             articles: ['Article', 'currentUser', function (Article, currentUser) {
+=======
+                            articles: ['Article', function (Article) {
+>>>>>>> 847d91dd4280559171fc6250d57027f2a85c0768
                                 var offset = 1,
                                     num = 6;
 
@@ -249,8 +253,49 @@ var app = angular.module('app', [
                                         where: {
                                             "slug.url": slug
                                         },
-                                        include: ["author", "comments"]
-                                        //TODO: Filter author include
+                                        include: [
+                                            {
+                                                relation: "author",
+                                                scope: {
+                                                    filter: [
+                                                        "username",
+                                                        "about",
+                                                        "providerDescription",
+                                                        "social"
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: "comments",
+                                                scope: {
+                                                    include: [
+                                                        "author"
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: "relatedArticles",
+                                                scope: {
+                                                    fields: [
+                                                        "title", 
+                                                        "isActive", 
+                                                        "photoNames", 
+                                                        "authorId",
+                                                        "votesScore"
+                                                    ],
+                                                    include: [
+                                                        {
+                                                            relation: "author",
+                                                            scope: {
+                                                                fields: [
+                                                                    "username"
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
                                 }).$promise;
                             }]
@@ -1624,7 +1669,7 @@ var app = angular.module('app', [
                             }],
                             postCount: ['userProfile', 'ForumPost', function (userProfile, ForumPost) {
                                 return ForumPost.count({
-                                    where: { 
+                                    where: {
                                         and: [
                                             {
                                                 authorId: userProfile.id
