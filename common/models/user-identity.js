@@ -2,6 +2,26 @@
 
 module.exports = function(UserIdentity) {
 
+	/*!
+	 * Create an access token for the given user
+	 * @param {User} user The user instance
+	 * @param {Number} [ttl] The ttl in millisenconds
+	 * @callback {Function} cb The callback function
+	 * @param {Error|String} err The error object
+		* param {AccessToken} The access token
+	 */
+	function createAccessToken(user, ttl, cb) {
+		if (arguments.length === 2 && typeof ttl === 'function') {
+			cb = ttl;
+			ttl = 0;
+		}
+		user.accessTokens.create({
+			created: new Date(),
+			ttl: Math.min(ttl || user.constructor.settings.ttl,
+				user.constructor.settings.maxTTL)
+		}, cb);
+	}
+
 	function profileToUser(provider, profile, options) {
 	  	if(provider === "bnet-login") {
 	     	return {
@@ -52,14 +72,10 @@ module.exports = function(UserIdentity) {
 	    var autoLogin = options.autoLogin || options.autoLogin === undefined;
 	    var userIdentityModel = getModel(this, UserIdentity);
 
-	    console.log("provider:",provider);
-	    console.log("profile.id",profile.id);
-
 	    userIdentityModel.findOne({where: {
 	      provider: provider,
 	      externalId: profile.id
 	    }}, function (err, identity) {
-	    	console.log("IDEN:",identity);
 	      if (err) {
 	        return cb(err);
 	      }

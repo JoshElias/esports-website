@@ -25,12 +25,11 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService",
-        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, MetaService, $cookies, $localStorage, LoginModalService) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth',
+        function ($rootScope, $state, $stateParams, $window, $http, $q, $location, MetaService, $cookies, $localStorage, LoginModalService, LoopBackAuth) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
-            $rootScope.UserService = UserService;
             $rootScope.LoginModalService = LoginModalService;
 
             // handle state changes
@@ -82,6 +81,31 @@ var app = angular.module('app', [
                 console.log('hey you don goofed. lol k , (happy martin i removed fag)');
 //                $state.transitionTo('app.404');
             });
+
+            // Looks for auth cookies and loads the user credentials from them
+            // Stuff I'd rather put in an interceptor but whatever
+            var accessToken = getAuthCookie("access_token");
+            var userId = getAuthCookie("userId");
+            if(accessToken && userId) {
+              $cookies.remove("access_token");
+              $cookies.remove("userId");
+              LoopBackAuth.setUser(accessToken, userId);
+              LoopBackAuth.save();
+            }
+
+
+            function getAuthCookie(key) {
+              var value = $cookies.get(key);
+              if(typeof value == "undefined")
+                  return undefined;
+
+              var valueElements = value.split(":");
+              var cleanCookie = valueElements[1];
+              valueElements = cleanCookie.split(".");
+              valueElements.splice(-1, 1);
+              cleanCookie = valueElements.join(".");
+              return cleanCookie;
+            }
         }
     ]
 )
@@ -273,9 +297,9 @@ var app = angular.module('app', [
                                                 relation: "relatedArticles",
                                                 scope: {
                                                     fields: [
-                                                        "title", 
-                                                        "isActive", 
-                                                        "photoNames", 
+                                                        "title",
+                                                        "isActive",
+                                                        "photoNames",
                                                         "authorId",
                                                         "votesScore"
                                                     ],

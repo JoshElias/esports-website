@@ -12,7 +12,7 @@ module.exports = function(server) {
     	// Get all the users
     	function(seriesCallback) {
     		console.log("Finding users");
-    		User.find({where:{twitchID:{"exists":true}}}, seriesCallback);
+    		User.find({where:{twitchID:{"exists":true, "not":{$size:0}}}}, seriesCallback);
     	},
     	// Create user identity for each user
     	function(users, seriesCallback) {
@@ -24,7 +24,7 @@ module.exports = function(server) {
 		          authScheme: "oAuth 2.0",
 		          profile: {},
 		          credentials: {},
-		          userId: user.id,
+		          userId: user.id.toString(),
 		          created: date,
 		          modified: date
 		        }, function(err, identity) {

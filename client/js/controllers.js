@@ -67,11 +67,8 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('RootCtrl', ['$scope', 'LoginModalService', 'User', 'currentUser', function ($scope, LoginModalService, User, currentUser) {
 
     // If user is logged in
-    console.log("Current User:", currentUser);
+    console.log("currentUSer: ", currentUser);
     $scope.currentUser = currentUser;
-    //$scope.$watch(currentUser) {
-      //$scope.currentUser = currentUser;
-    //}
 
     $scope.loginModal = function (state) {
         LoginModalService.showModal(state, function (data) {
@@ -81,7 +78,7 @@ angular.module('app.controllers', ['ngCookies'])
 
     $scope.logout = function() {
       User.logout(function() {
-        console.log("logged out successfully");
+        $scope.currentUser = undefined;
       }, function(err) {
         console.log("error logging out:", err);
       });

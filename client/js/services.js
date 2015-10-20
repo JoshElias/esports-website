@@ -439,20 +439,48 @@ angular.module('app.services', [])
         }
     };
 }])
-.factory('AuthInterceptor', ['$q', 'LoopBackAuth', function ($q, LoopBackAuth) {
+.factory('AuthInterceptor', ['$q', '$cookies', 'LoopBackAuth', function ($q, $cookies, LoopBackAuth) {
   return {
         responseError: function(rejection) {
-            if(rejection.status == 401) {
-                console.log(" triggered reponse error interceptor")
-                // Clearing the loopback values from the client browser for safe
-                LoopBackAuth.clearUser();
-                LoopBackAuth.clearStorage();
-                //$location.nextAfterLogin = $location.path();
-                //$location.path("/login");
-            }
-            return $q.reject(rejection);
+          if(rejection.status == 401) {
+              console.log(" triggered reponse error interceptor")
+              // Clearing the loopback values from the client browser for safe
+              LoopBackAuth.clearUser();
+              LoopBackAuth.clearStorage();
+              //$location.nextAfterLogin = $location.path();
+              //$location.path("/login");
+          }
+          return $q.reject(rejection);
+      }/*,
+      response: function(response) {
+
+        var accessToken = getAuthCookie("access_token");
+        var userId = getAuthCookie("userId");
+        if(accessToken && userId) {
+          console.log("setting user data???")
+          $cookies.remove("access_token");
+          $cookies.remove("userId");
+          LoopBackAuth.setUser(accessToken, userId);
+          console.log("Loopbacks before userid:", LoopBackAuth.currentUserId);
+          LoopBackAuth.save();
+          console.log("Loopbacks after userid:", LoopBackAuth.currentUserId);
         }
-      }
+        return response;
+      }*/
+    }
+
+    function getAuthCookie(key) {
+      var value = $cookies.get(key);
+      if(typeof value == "undefined")
+          return undefined;
+
+      var valueElements = value.split(":");
+      var cleanCookie = valueElements[1];
+      valueElements = cleanCookie.split(".");
+      valueElements.splice(-1, 1);
+      cleanCookie = valueElements.join(".");
+      return cleanCookie;
+    }
 }])
 .factory('AdminCardService', ['$http', '$q', function ($http, $q) {
     return {
