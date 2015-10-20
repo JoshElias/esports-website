@@ -63,7 +63,7 @@ angular.module('app.controllers', ['ngCookies'])
 }])
 .controller('RootCtrl', ['$scope', 'LoginModalService', 'User', function ($scope, LoginModalService, User, currentUser) {
     // If user is logged in
-    if(currentUser) {
+    if (currentUser) {
       $scope.email = currentUser.email;
       $scope.username = currentUser.username;
     }
@@ -6686,21 +6686,23 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
     }
 ])
-.controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService',
-    function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService) {
-
+.controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService', 'LoopBackAuth',
+    function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService, LoopBackAuth) {
+        
+        console.log(LoopBackAuth);
+        
         $scope.ArticleService = Article;
         $scope.article = article;
         $scope.authorEmail = article.author.email;
 //        $scope.ArticleService = ArticleService;
-        $scope.$watch('app.user.isLogged()', function() {
-            for (var i = 0; i < $scope.article.votes.length; i++) {
-                if ($scope.article.votes[i] == $scope.app.user.getUserID()) {
-                    checkVotes();
-                    updateCommentVotes();
-                }
-            }
-        });
+//        $scope.$watch('app.user.isLogged()', function() {
+//            for (var i = 0; i < $scope.article.votes.length; i++) {
+//                if ($scope.article.votes[i] == LoopBackAuth.currentUserData()) {
+//                    checkVotes();
+//                    updateCommentVotes();
+//                }
+//            }
+//        });
 
         $scope.isPremium = function () {
             if (!$scope.article.premium.isPremium) { return false; }
@@ -6736,10 +6738,10 @@ angular.module('app.controllers', ['ngCookies'])
 
         // related
         $scope.relatedActive = function () {
-            var related = $scope.article.related;
+            var related = $scope.article.relatedArticles;
             if (!related || !related.length) { return false; }
             for (var i = 0; i < related.length; i++) {
-                if (related[i].active) { return true; }
+                if (related[i].isActive) { return true; }
             }
             return false;
         };
@@ -6821,7 +6823,7 @@ angular.module('app.controllers', ['ngCookies'])
 //            }
 //        };
 
-        if ($scope.app.user.isLogged()) {
+        if (LoopBackAuth.currentUserData) {
             updateCommentVotes();
         }
 

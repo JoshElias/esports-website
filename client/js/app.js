@@ -249,7 +249,36 @@ var app = angular.module('app', [
                                         where: {
                                             "slug.url": slug
                                         },
-                                        include: ["author", "comments"]
+                                        include: [
+                                            {
+                                                relation: "author"
+                                            },
+                                            {
+                                                relation: "comments"
+                                            },
+                                            {
+                                                relation: "relatedArticles",
+                                                scope: {
+                                                    fields: [
+                                                        "title", 
+                                                        "isActive", 
+                                                        "photoNames", 
+                                                        "authorId",
+                                                        "votesScore"
+                                                    ],
+                                                    include: [
+                                                        {
+                                                            relation: "author",
+                                                            scope: {
+                                                                fields: [
+                                                                    "username"
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                         //TODO: Filter author include
                                     }
                                 }).$promise;
