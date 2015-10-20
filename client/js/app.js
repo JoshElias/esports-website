@@ -345,7 +345,7 @@ var app = angular.module('app', [
                             dataSnapshot: ['$stateParams', 'Snapshot', function ($stateParams, Snapshot) {
                                 var slug = $stateParams.slug;
                                 console.log(slug);
-                                return Snapshot.find({
+                                return Snapshot.findOne({
                                     filter: {
                                         where: {
                                             'slug.url': slug
@@ -358,7 +358,13 @@ var app = angular.module('app', [
                                                 relation: 'deckMatchups',
                                             },
                                             {
-                                                relation: 'deckTiers'
+                                                relation: 'deckTiers',
+                                                scope: {
+                                                    include: ['deck']
+                                                }
+                                            },
+                                            {
+                                                relation: 'authors'
                                             }
                                         ]
                                     }
@@ -1303,14 +1309,35 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.home.html',
                         controller: 'ForumCategoryCtrl',
                         resolve: {
-                            data: ['ForumService', '$q', function (ForumService, $q) {
-                                return ForumService.getCategories().then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find catagory');
+//                            data: ['ForumService', '$q', function (ForumService, $q) {
+//                                return ForumService.getCategories().then(function (result) {
+//                                    if (result.success === true) {
+//                                        return result;
+//                                    } else {
+//                                        return $q.reject('unable to find catagory');
+//                                    }
+//                                 });
+//                            }]
+                            data: ['ForumCategory', function(ForumCategory) {
+                                return ForumCategory.find({
+                                    filter: {
+                                        include: [
+                                            {
+                                                relation: 'forumThreads',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'forumPosts',
+                                                            scope: {
+                                                                include: ['author']
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
-                                 });;
+                                }).$promise;
                             }]
                         }
                     }
@@ -1324,15 +1351,40 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.threads.html',
                         controller: 'ForumThreadCtrl',
                         resolve: {
-                            data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
-                                var thread = $stateParams.thread;
-                                return ForumService.getThread(thread).then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find thread');
+//                            data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
+//                                var thread = $stateParams.thread;
+//                                return ForumService.getThread(thread).then(function (result) {
+//                                    if (result.success === true) {
+//                                        return result;
+//                                    } else {
+//                                        return $q.reject('unable to find thread');
+//                                    }
+//                                 });;
+//                            }]
+                            data: ['$stateParams', 'ForumThread', function($stateParams, ForumThread) {
+                                var slug = $stateParams.thread;
+                                return ForumThread.findOne({
+                                    filter: {
+                                        where: {
+                                            'slug.url': slug
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'forumPosts',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'comments'
+                                                        },
+                                                        {
+                                                            relation: 'author'
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
-                                 });;
+                                }).$promise;
                             }]
                         }
                     }
@@ -1361,16 +1413,46 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.post.html',
                         controller: 'ForumPostCtrl',
                         resolve: {
-                            data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
+//                            data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
+//                                var thread = $stateParams.thread,
+//                                    post = $stateParams.post;
+//                                return ForumService.getPost(thread, post).then(function (result) {
+//                                    if (result.success === true) {
+//                                        return result;
+//                                    } else {
+//                                        return $q.reject('unable to find post');
+//                                    }
+//                                 });;
+//                            }]
+                            postData: ['$stateParams', 'ForumPost', function($stateParams, ForumPost) {
                                 var thread = $stateParams.thread,
                                     post = $stateParams.post;
-                                return ForumService.getPost(thread, post).then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find post');
+                                return ForumPost.findOne({
+                                    filter: {
+                                        where: {
+                                            'slug.url': post
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'forumThread',
+                                                scope: {
+                                                    where: {
+                                                        'slug.url': thread
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                relation: 'comments',
+                                                scope: {
+                                                    include: ['author']
+                                                }
+                                            },
+                                            {
+                                                relation: 'author'
+                                            }
+                                        ]
                                     }
-                                 });;
+                                }).$promise;
                             }]
                         }
                     }
