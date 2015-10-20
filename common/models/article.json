@@ -33,13 +33,13 @@
     "viewCount": {
       "type": "number"
     },
-    "votesCount": {
-      "type": "number"
-    },
     "votes": {
       "type": [
         "object"
       ]
+    },
+    "votesScore": {
+        "type": "number"
     },
     "isFeatured": {
       "type": "boolean"
