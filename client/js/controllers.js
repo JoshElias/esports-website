@@ -61,7 +61,7 @@ angular.module('app.controllers', ['ngCookies'])
       }
 
 }])
-.controller('RootCtrl', ['$scope', 'LoginModalService', 'User', function ($scope, LoginModalService, User, currentUser) {
+.controller('RootCtrl', ['$scope', 'LoginModalService', 'User', 'currentUser', function ($scope, LoginModalService, User, currentUser) {
     $scope.email = currentUser.email;
     $scope.username = currentUser.username;
 
