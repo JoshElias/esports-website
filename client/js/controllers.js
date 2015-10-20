@@ -424,17 +424,17 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 'HOTSGuideService',
-    function ($scope, dataProfile, MetaService, HOTSGuideService) {
-        $scope.user = dataProfile.user;
-        $scope.postCount = dataProfile.postCount;
-        $scope.deckCount = dataProfile.deckCount;
-        $scope.guideCount = dataProfile.guideCount;
-        $scope.activities = dataProfile.activities;
+.controller('ProfileCtrl', ['$scope', 'userProfile', 'postCount', 'deckCount', 'guideCount', 'MetaService', 'HOTSGuideService', 'LoopBackAuth',
+    function ($scope, userProfile, postCount, deckCount, guideCount, MetaService, HOTSGuideService, LoopBackAuth) {
+        $scope.user = userProfile;
+        $scope.postCount = postCount.count;
+        $scope.deckCount = deckCount.count;
+        $scope.guideCount = guideCount.count;
+//        $scope.activities = dataProfile.activities;
 
-
+        
         function isMyProfile() {
-            if($scope.app.user.getUsername() == $scope.user.username) {
+            if(LoopBackAuth.currentUserData != undefined && $scope.user.userName == LoopBackAuth.currentUserData.userName) {
                 return 'My Profile';
             } else {
                 return '@' + $scope.user.username + ' - Profile';
@@ -639,10 +639,11 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity', 'ProfileService', 'HOTSGuideService', 'DeckService',
-    function ($scope, $sce, dataActivity, ProfileService, HOTSGuideService, DeckService) {
-        $scope.activities = dataActivity.activities;
-        $scope.total = dataActivity.total;
+.controller('ProfileActivityCtrl', ['$scope', '$sce', 'activities', 'activityCount', 'ProfileService', 'HOTSGuideService', 'DeckService',
+    function ($scope, $sce, activities, activityCount, ProfileService, HOTSGuideService, DeckService) {
+        
+        $scope.activities = activities;
+        $scope.total = activityCount.count;
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
 
         $scope.getActivityType = function (activity) {
@@ -675,7 +676,6 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.toggleFilter = function (filter) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
-                console.log($scope.filterActivities[i], filter);
                 if (filter == $scope.filterActivities[i]) {
                     $scope.filterActivities.splice(i,1);
                     return;
@@ -762,14 +762,14 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',
-    function ($scope, dataArticles) {
-        $scope.articles = dataArticles.articles;
+.controller('ProfileArticlesCtrl', ['$scope', 'articles',
+    function ($scope, articles) {
+        $scope.articles = articles;
     }
 ])
-.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'dataDecks',
-    function ($scope, $state, bootbox, DeckService, dataDecks) {
-        $scope.decks = dataDecks.decks;
+.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'decks',
+    function ($scope, $state, bootbox, DeckService, decks) {
+        $scope.decks = decks;
 
         //is premium
         $scope.isPremium = function (guide) {
