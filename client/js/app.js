@@ -251,10 +251,23 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: "author"
+                                                relation: "author",
+                                                scope: {
+                                                    filter: [
+                                                        "username",
+                                                        "about",
+                                                        "providerDescription",
+                                                        "social"
+                                                    ]
+                                                }
                                             },
                                             {
-                                                relation: "comments"
+                                                relation: "comments",
+                                                scope: {
+                                                    include: [
+                                                        "author"
+                                                    ]
+                                                }
                                             },
                                             {
                                                 relation: "relatedArticles",
@@ -279,7 +292,6 @@ var app = angular.module('app', [
                                                 }
                                             }
                                         ]
-                                        //TODO: Filter author include
                                     }
                                 }).$promise;
                             }]

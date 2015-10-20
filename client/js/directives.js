@@ -289,32 +289,26 @@ angular.module('app.directives', ['ui.load'])
             }
 
             $scope.commentPost = function () {
-                $scope.service.comments.create({
-                    id: $scope.commentable.id
-                }, {
-                    text: $scope.comment,
-                    authorId: LoopBackAuth.currentUserData,
-                    createdDate: new Date(),
-                    votes: []
-                })
-                .$promise
-                .then(function (com) {
-                    $scope.commentable.comments.push(com);
-                    $scope.comment = '';
-                    updateCommentVotes();
-                }, function (err) {
-                    console.log("failed!", err);
-                });
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
                         $scope.commentPost();
                     });
                 } else {
-                    $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
-                        if (data.success) {
-
-
-                        }
+                    $scope.service.comments.create({
+                        id: $scope.commentable.id
+                    }, {
+                        text: $scope.comment,
+                        authorId: LoopBackAuth.currentUserData,
+                        createdDate: new Date(),
+                        votes: []
+                    })
+                    .$promise
+                    .then(function (com) {
+                        $scope.commentable.comments.push(com);
+                        $scope.comment = '';
+                        updateCommentVotes();
+                    }, function (err) {
+                        console.log("failed!", err);
                     });
                 }
             };
@@ -345,13 +339,6 @@ angular.module('app.directives', ['ui.load'])
                         bootbox.alert("You can't vote for your own content.");
                         return false;
                     }
-//                    VoteService.voteComment(direction, comment).then(function (data) {
-//                        if (data.success) {
-//                            comment.voted = direction;
-//                            comment.votesCount = data.votesCount;
-//                        }
-//                    });
-                    
                     var uniqueVote = false;
                     
                     for(var i = 0; i < comment.votes.length; i++) {

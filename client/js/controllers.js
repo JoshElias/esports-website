@@ -7096,8 +7096,8 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
     }
 ])
-.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'deck', 'Deck', 'MetaService', 'LoginModalService',
-    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, deck, Deck, MetaService, LoginModalService) {
+.controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'deck', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth',
+    function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, deck, Deck, MetaService, LoginModalService, LoopBackAuth) {
 //        if (!data || !data.success) { return $state.go('app.hs.decks.list'); }
 
         // load deck
@@ -7145,6 +7145,15 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.show = $scope.app.settings.show.deck;
         $scope.$watch('show', function(){ $scope.app.settings.show.deck = $scope.show; }, true);
 
+        $scope.getUserInfo = function () {
+            console.log(LoopBackAuth);
+            if (LoopBackAuth.currentUserData) {
+                return LoopBackAuth;
+            } else {
+                return false;
+            }
+        }
+        
         // mulligans
         $scope.coin = true;
 
@@ -7303,7 +7312,7 @@ angular.module('app.controllers', ['ngCookies'])
             function checkVotes (d) {
                 console.log(d.votes);
                 var vote = d.votes.filter(function (vote) {
-                    return ($scope.app.user.getUserID() === vote.userID);
+                    return ($scope.getUserInfo().currentUserId === vote.userID);
                 })[0];
 
                 if (vote) {
@@ -7313,7 +7322,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
 
         function vote(direction, deck) {
-            if (!$scope.app.user.isLogged()) {
+            if (!$scope.getUserInfo()) {
                 LoginModalService.showModal('login', function () {
                     vote(direction, deck);
                 });
@@ -7329,7 +7338,6 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
-            updateCommentVotes();
             updateVotes();
         };
 

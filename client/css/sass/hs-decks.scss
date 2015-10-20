@@ -2,9 +2,9 @@
 
 @mixin hs-deck-images ($deck, $character) {
 
-    .hs-deck.small.#{$deck}.#{$character} { background: url('../img/decks/druid.png') center center no-repeat; background-size: cover; }
-    .hs-deck.large.#{$deck}.#{$character} { background: url('../img/decks/druid-large.png') center center no-repeat; background-size: cover; }
-    .hs-deck.long.#{$deck}.#{$character} { background-image: url('../img/decks/long/malfurion.png'); background-position: right center; background-repeat: no-repeat; }
+    .hs-deck.small.#{$deck}.#{$character} { background: url('../img/decks/#{$deck}.png') center center no-repeat; background-size: cover; }
+    .hs-deck.large.#{$deck}.#{$character} { background: url('../img/decks/#{$deck}-large.png') center center no-repeat; background-size: cover; }
+    .hs-deck.long.#{$deck}.#{$character} { background-image: url('../img/decks/long/#{$character}.png'); background-position: right center; background-repeat: no-repeat; }
 
 }
 
