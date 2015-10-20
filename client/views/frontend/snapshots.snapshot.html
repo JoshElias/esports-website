@@ -4,8 +4,6 @@
         <div class="snapTitle">
             <h1>THE META SNAPSHOT: #{{snapshot.snapNum}}</h1>
             <h3>{{snapshot.title}}</h3>
-
-            
             
         </div>
         <div class="snapshot-votes pull-right clearfix"> 
@@ -26,7 +24,7 @@
             <div class="row no-pad clearfix">
 
                 <div class="col-xs-12 col-lg-push-8 col-lg-4 rightSide clearfix m-b-md">
-                    <div class="sideTier" ng-repeat="tier in snapshot.tiers">
+                    <div class="sideTier" ng-repeat="tier in deckTiers">
                         <button ng-click="show[tier.tier] = !show[tier.tier]" class="btn-block sideTier" role="button" data-toggle="collapse" href="#collapseSideTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseSideTier{{tier.tier}}">
                             <div class="sideTierHead">
                                 <div class="inner">
@@ -38,9 +36,9 @@
                         </button>
                         <div class="sideTierBody collapse" id="collapseSideTier{{tier.tier}}">
                             <div class="sideTierDeck deck-portrait-{{deck.deck.playerClass}}-sm" ng-repeat="deck in tier.decks">
-                                <a href="#{{deck.rank.current}}" ng-click="findDeck(tier.tier, deck.rank.current)">
+                                <a href="#{{deck.rank[0]}}" ng-click="findDeck(tier.tier, deck.rank[0])">
                                     <div class="sideTierDeckRank pull-left clearfix">
-                                        <h4>{{deck.rank.current}}</h4>
+                                        <h4>{{deck.ranks[0]}}</h4>
                                     </div>
                                     <div class="sideTierDeckName pull-left clearfix">
                                         <h4 class="ell">{{deck.name}}</h4>
@@ -113,11 +111,11 @@
                                 
                             </svg>
                             <ul class="snapshot-trends-tiers m-t-lg">
-                                <li ng-repeat="tier in snapshot.tiers"><a href="#" ng-class="{ 'active': tier.tier == currentTier }" ng-click="setCurrentTier(tier.tier)">TIER {{tier.tier}}</a></li>
+                                <li ng-repeat="tier in deckTiers"><a href="#" ng-class="{ 'active': tier.tier == currentTier }" ng-click="setCurrentTier(tier.tier)">TIER {{tier.tier}}</a></li>
                             </ul>
 
                             <div class="row snapshot-trends-keys">
-                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" ng-repeat="deck in getTier(currentTier).decks track by $index"><a href="#" ng-class="{ 'active': deck.rank.current == currentDeck }" ng-click="toggleCurrentDeck(deck.rank.current)"><span class="trends-key {{deck.deck.playerClass}} m-r-sm"></span>{{deck.name}}</a></div>
+                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" ng-repeat="deck in getTier(currentTier).decks track by $index"><a href="#" ng-class="{ 'active': deck.rank[0] == currentDeck }" ng-click="toggleCurrentDeck(deck.rank[0])"><span class="trends-key {{deck.deck.playerClass}} m-r-sm"></span>{{deck.name}}</a></div>
                             </div>
 
                         </div>
@@ -128,7 +126,7 @@
             
             <!-- TIERS -->
             <div class="tiers m-b-md">
-                <div id="tier{{tier.tier}}" ng-repeat="tier in snapshot.tiers" class="tier clearfix">
+                <div id="tier{{tier.tier}}" ng-repeat="tier in deckTiers" class="tier clearfix">
                     <button class="btn btn-block btn-tier-collapse" role="button" data-toggle="collapse" href="#collapseTier{{tier.tier}}" aria-expanded="false" aria-controls="collapseTier{{tier.tier}}">
                         <div class="tier-heading clearfix">
                             <h2 class="pull-left">TIER {{tier.tier}}</h2>
@@ -136,19 +134,19 @@
                     </button>
 
                     <div class="tier-body collapse" id="collapseTier{{tier.tier}}">
-                        <div id="deck{{deck.rank.current}}" ng-repeat="deck in tier.decks | orderBy : 'rank.current'" class="tier-deck tier-deck-{{deck.deck.playerClass}}">
-                            <div class="tier-deck-heading deck-portrait-{{deck.deck.playerClass}}-sm clearfix" role="button" data-toggle="collapse" ng-href="#collapseDeck-{{deck.rank.current}}" aria-expanded="false" aria-controls="collapseDeck-{{deck.rank.current}}">
+                        <div id="deck{{deck.rank[0]}}" ng-repeat="deck in tier.decks | orderBy : 'rank[0]'" class="tier-deck tier-deck-{{deck.deck.playerClass}}">
+                            <div class="tier-deck-heading deck-portrait-{{deck.deck.playerClass}}-sm clearfix" role="button" data-toggle="collapse" ng-href="#collapseDeck-{{deck.rank[0]}}" aria-expanded="false" aria-controls="collapseDeck-{{deck.rank[0]}}">
                                 <h4>{{deck.name}}</h4>
                                 <button class="deck-button" ng-click="goToDeck($event, deck.deck.slug)">VIEW<span class="hidden-xs">&nbsp;DECK</span></button>
                             </div>
-                            <div class="tier-deck-body collapse" id="collapseDeck-{{deck.rank.current}}">
+                            <div class="tier-deck-body collapse" id="collapseDeck-{{deck.rank[0]}}">
                                 <div class="tier-deck-body-inner">
                                     <div class="row tier-deck-body-inner-inner m-l-none m-r-none">
 
                                         <div class="col-xs-12 col-md-push-4 col-md-8 col-lg-push-3 col-lg-9 m-b-md">
                                             <div class="deck-content">
                                                 <h2>EXPLANATION</h2>
-                                                <p>{{deck.explanation}}</p>
+                                                <p>{{deck.description}}</p>
 
                                                 <hr class="m-b-lg">
 
@@ -157,7 +155,7 @@
                                             </div>
                                             <span ng-if="tier.tier < 3">
                                             <hr class="m-b-lg">
-                                                <h2 class="m-b-lg">MATCH-UPS<span ng-if="matchupName[deck.deck._id]">&nbsp;- {{matchupName[deck.deck._id]}}</span></h2>
+                                                <h2 class="m-b-lg">MATCH-UPS<span ng-if="matchupName[deck.deck.id]">&nbsp;- {{matchupName[deck.deck.id]}}</span></h2>
                                                 <div class="match-graph m-t-md m-b-md">
                                                     <svg class="graph-wrapper" height="100%" width="100%">
                                                         <text x="1.5%" y="0%" fill="white">100</text>
@@ -209,21 +207,21 @@
                                                     <div>
                                                         CURRENT
                                                     </div>
-                                                    {{deck.rank.current}}
+                                                    {{deck.rank[0]}}
                                                 </div>
-                                                <div class="{{(deck.rank.last[0] >= deck.rank.current || deck.rank.last[0] == 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{(deck.rank[deck.rank.length - 1] >= deck.rank[0] || deck.rank[deck.rank.length - 1] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         LAST WEEK
                                                     </div>
-                                                    <span ng-if="deck.rank.last[0] != 0 && deck.rank.last[0] != undefined">{{deck.rank.last[0]}}</span>
-                                                    <span ng-if="deck.rank.last[0] == 0 || deck.rank.last[0] == undefined">N/A</span>
+                                                    <span ng-if="deck.rank[deck.rank.length - 1] != 0 && deck.rank[deck.rank.length - 1] != undefined">{{deck.rank[deck.rank.length - 1]}}</span>
+                                                    <span ng-if="deck.rank[deck.rank.length - 1] == 0 || deck.rank[deck.rank.length - 1] == undefined">N/A</span>
                                                 </div>
-                                                <div class="{{((deck.rank.last[0] - deck.rank.current) >= 0 || deck.rank.last[0] == 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{((deck.rank[deck.rank.length - 1] - deck.rank[0]) >= 0 || deck.rank[deck.rank.length - 1] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         CHANGE
                                                     </div>
-                                                    <span ng-if="deck.rank.last[0] != 0 && deck.rank.last[0] != undefined">{{deck.rank.last[0] - deck.rank.current}}</span>
-                                                    <span ng-if="deck.rank.last[0] == 0 || deck.rank.last[0] == undefined">N/A</span>
+                                                    <span ng-if="deck.rank[deck.rank.length - 1] != 0 && deck.rank[deck.rank.length - 1] != undefined">{{deck.rank[deck.rank.length - 1] - deck.rank[0]}}</span>
+                                                    <span ng-if="deck.rank[deck.rank.length - 1] == 0 || deck.rank[deck.rank.length - 1] == undefined">N/A</span>
                                                 </div>
                                             </div>
                                                 </div>

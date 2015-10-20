@@ -148,7 +148,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/home.html',
                         controller: 'HomeCtrl',
                         resolve: {
-                            articles: ['Article', 'CurrentUser', function (Article, CurrentUser) {
+                            articles: ['Article', 'currentUser', function (Article, currentUser) {
                                 var offset = 1,
                                     num = 6;
 
@@ -1369,9 +1369,24 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.add.html',
                         controller: 'ForumAddCtrl',
                         resolve: {
-                            data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
+//                            data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
+//                                var thread = $stateParams.thread;
+//                                return ForumService.getThread(thread);
+//                            }]
+                            thread: ['$stateParams', 'ForumThread', function($stateParams, ForumThread) {
                                 var thread = $stateParams.thread;
-                                return ForumService.getThread(thread);
+                                return ForumThread.findOne({
+                                    filter: {
+                                        where: {
+                                            'slug.url': thread
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'forumPosts'
+                                            }
+                                        ]
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
