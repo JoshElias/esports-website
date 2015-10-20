@@ -8,8 +8,11 @@ angular.module('app.controllers', ['ngCookies'])
       isSmartDevice( $window ) && angular.element($window.document.body).addClass('smart');
 
       // config
-      // TODO: Destroy bad structure! Destroy!
-      $scope.app = {
+      $rootScope.app = {
+        name : 'TempoStorm',
+        version : "4.2.0",
+        copyright : new Date().getFullYear(),
+        cdn : (tpl && tpl.length) ? tpl : './',
         settings: {
             deck: null,
             show: {
@@ -20,8 +23,8 @@ angular.module('app.controllers', ['ngCookies'])
             secondaryPortrait: []
         }
       };
+      $scope.app = $rootScope.app;
 
-      $rootScope.app = $scope.app;
 
       // save settings to local storage
       if ( angular.isDefined($localStorage.settings) ) {
@@ -61,12 +64,14 @@ angular.module('app.controllers', ['ngCookies'])
       }
 
 }])
-.controller('RootCtrl', ['$scope', 'LoginModalService', 'User', function ($scope, LoginModalService, User, currentUser) {
+.controller('RootCtrl', ['$scope', 'LoginModalService', 'User', 'currentUser', function ($scope, LoginModalService, User, currentUser) {
+
     // If user is logged in
-    if (currentUser) {
-      $scope.email = currentUser.email;
-      $scope.username = currentUser.username;
-    }
+    console.log("Current User:", currentUser);
+    $scope.currentUser = currentUser;
+    //$scope.$watch(currentUser) {
+      //$scope.currentUser = currentUser;
+    //}
 
     $scope.loginModal = function (state) {
         LoginModalService.showModal(state, function (data) {
@@ -75,12 +80,11 @@ angular.module('app.controllers', ['ngCookies'])
     }
 
     $scope.logout = function() {
-      /*
       User.logout(function() {
         console.log("logged out successfully");
       }, function(err) {
-        console.log("error logging out:",err);
-      })*/
+        console.log("error logging out:", err);
+      });
     }
 }])
 .controller('404Ctrl', ['$scope', 'MetaService', function($scope, MetaService) {
@@ -424,17 +428,17 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileCtrl', ['$scope', 'userProfile', 'postCount', 'deckCount', 'guideCount', 'MetaService', 'HOTSGuideService', 'LoopBackAuth',
-    function ($scope, userProfile, postCount, deckCount, guideCount, MetaService, HOTSGuideService, LoopBackAuth) {
-        $scope.user = userProfile;
-        $scope.postCount = postCount.count;
-        $scope.deckCount = deckCount.count;
-        $scope.guideCount = guideCount.count;
-//        $scope.activities = dataProfile.activities;
+.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 'HOTSGuideService',
+    function ($scope, dataProfile, MetaService, HOTSGuideService) {
+        $scope.user = dataProfile.user;
+        $scope.postCount = dataProfile.postCount;
+        $scope.deckCount = dataProfile.deckCount;
+        $scope.guideCount = dataProfile.guideCount;
+        $scope.activities = dataProfile.activities;
 
-        
+
         function isMyProfile() {
-            if(LoopBackAuth.currentUserData != undefined && $scope.user.userName == LoopBackAuth.currentUserData.userName) {
+            if($scope.app.user.getUsername() == $scope.user.username) {
                 return 'My Profile';
             } else {
                 return '@' + $scope.user.username + ' - Profile';
@@ -639,11 +643,10 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ProfileActivityCtrl', ['$scope', '$sce', 'activities', 'activityCount', 'ProfileService', 'HOTSGuideService', 'DeckService',
-    function ($scope, $sce, activities, activityCount, ProfileService, HOTSGuideService, DeckService) {
-        
-        $scope.activities = activities;
-        $scope.total = activityCount.count;
+.controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity', 'ProfileService', 'HOTSGuideService', 'DeckService',
+    function ($scope, $sce, dataActivity, ProfileService, HOTSGuideService, DeckService) {
+        $scope.activities = dataActivity.activities;
+        $scope.total = dataActivity.total;
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
 
         $scope.getActivityType = function (activity) {
@@ -676,6 +679,7 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.toggleFilter = function (filter) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
+                console.log($scope.filterActivities[i], filter);
                 if (filter == $scope.filterActivities[i]) {
                     $scope.filterActivities.splice(i,1);
                     return;
@@ -762,14 +766,14 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileArticlesCtrl', ['$scope', 'articles',
-    function ($scope, articles) {
-        $scope.articles = articles;
+.controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',
+    function ($scope, dataArticles) {
+        $scope.articles = dataArticles.articles;
     }
 ])
-.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'decks',
-    function ($scope, $state, bootbox, DeckService, decks) {
-        $scope.decks = decks;
+.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'dataDecks',
+    function ($scope, $state, bootbox, DeckService, dataDecks) {
+        $scope.decks = dataDecks.decks;
 
         //is premium
         $scope.isPremium = function (guide) {
@@ -6202,12 +6206,11 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'dataSnapshot', 'VoteService', 'LoginModalService',
     function ($scope, $state, $compile, $window, SnapshotService, dataSnapshot, VoteService, LoginModalService) {
-        
-        console.log('snapshot: ', dataSnapshot);
+
+        console.log('snapshot: ', dataSnapshot[0]);
         console.log('scope: ', $scope);
-        
-        $scope.snapshot = dataSnapshot;
-        
+
+        $scope.snapshot = dataSnapshot[0];
         $scope.show = [];
         $scope.matchupName = [];
         $scope.voted = false;
@@ -6284,15 +6287,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         }
-        
-//        $scope.getTier = function (tier) {
-//            for (var i = 0; i < $scope.snapshot.deckTiers.length; i++) {
-//                if ($scope.snapshot.deckTiers[i].tier == tier) {
-//                    return $scope.snapshot.deckTiers[i];
-//                }
-//            }
-//            return false;
-//        }
 
         function getTierRange (tierNum) {
             var tier = $scope.getTier(tierNum),
@@ -6316,29 +6310,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             return out;
         };
-        
-//        function getTierRange (tierNum) {
-//            var tier = $scope.getTier(tierNum),
-//                out = [],
-//                highestRank = 0,
-//                lowestRank = 0;
-//
-//            // find highest and lowest in tier
-//            for (var i = 0; i < tier.decks.length; i++) {
-//                var history = tier.decks[i].rank.current;
-//                for (var j = 0; j < history.length; j++) {
-//                    if (history[j] > highestRank && history[j] != 0) { highestRank = history[j]; }
-//                    if ((history[j] < lowestRank && history[j] != 0) || lowestRank == 0) { lowestRank = history[j]; }
-//                }
-//            }
-//
-//            // generate range
-//            for (var i = lowestRank; i <= highestRank; i++) {
-//                out.push(i);
-//            }
-//
-//            return out;
-//        };
 
         // init tier ranges
         for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
@@ -6721,9 +6692,9 @@ angular.module('app.controllers', ['ngCookies'])
 ])
 .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService', 'LoopBackAuth',
     function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService, LoopBackAuth) {
-        
+
         console.log(LoopBackAuth);
-        
+
         $scope.ArticleService = Article;
         $scope.article = article;
         $scope.authorEmail = article.author.email;
@@ -7153,7 +7124,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             }
         }
-        
+
         // mulligans
         $scope.coin = true;
 
@@ -7357,16 +7328,15 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ForumCategoryCtrl', ['$scope', 'data', 'MetaService', 
+.controller('ForumCategoryCtrl', ['$scope', 'data', 'MetaService',
     function ($scope, data, MetaService) {
-        $scope.categories = data;
+        $scope.categories = data.categories;
         $scope.metaservice.setOg('https://tempostorm.com/forum');
     }
 ])
 .controller('ForumThreadCtrl', ['$scope', 'Pagination', 'data', 'MetaService',
     function ($scope, Pagination, data, MetaService) {
-        $scope.thread = data;
-        // console.log('thread: ', $scope.thread);
+        $scope.thread = data.thread;
 
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.thread.title + ' - Forum');
@@ -7376,7 +7346,7 @@ angular.module('app.controllers', ['ngCookies'])
         // page flipping
         $scope.pagination = Pagination.new(20);
         $scope.pagination.results = function () {
-            return $scope.thread.forumPosts.length;
+            return $scope.thread.posts.length;
         };
     }
 ])
@@ -7459,19 +7429,13 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'postData', 'MetaService', 'User', 'ForumPost',
-    function ($scope, $sce, $compile, $window, bootbox, postData, MetaService, User, ForumPost) {
+.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
+    function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
 
-        $scope.post = postData;
-        console.log('post: ', $scope.post);
-        
-//        $scope.ForumService = ForumService;
-        $scope.thread = $scope.post.forumThread;
-        
-        console.log('thread title: ', $scope.thread.title);
-        
-        console.log('UserServ: ', User);
-        console.log('is user logged in: ', User.isAuthenticated());
+
+        $scope.post = data.post;
+        $scope.ForumService = ForumService;
+        $scope.thread = data.thread;
 
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.post.title + ' - ' + $scope.thread.title);
@@ -7490,46 +7454,46 @@ angular.module('app.controllers', ['ngCookies'])
 
         var box,
             callback;
-//        $scope.commentPost = function () {
-//            if (!$scope.app.user.isLogged()) {
-//                box = bootbox.dialog({
-//                    title: 'Login Required',
-//                    message: $compile('<div login-form></div>')($scope)
-//                });
-//                box.modal('show');
-//                callback = function () {
-//                    $scope.commentPost();
-//                };
-//            } else {
-//                ForumService.addComment($scope.post, $scope.comment).success(function (data) {
-//                    if (data.success) {
-//                        $scope.post.comments.push(data.comment);
-//                        $scope.comment.comment = '';
-//                        updateVotes();
-//                    }
-//                });
-//            }
-//        };
+        $scope.commentPost = function () {
+            if (!$scope.app.user.isLogged()) {
+                box = bootbox.dialog({
+                    title: 'Login Required',
+                    message: $compile('<div login-form></div>')($scope)
+                });
+                box.modal('show');
+                callback = function () {
+                    $scope.commentPost();
+                };
+            } else {
+                ForumService.addComment($scope.post, $scope.comment).success(function (data) {
+                    if (data.success) {
+                        $scope.post.comments.push(data.comment);
+                        $scope.comment.comment = '';
+                        updateVotes();
+                    }
+                });
+            }
+        };
 
-        if (User.isAuthenticated()) {
+        if ($scope.app.user.isLogged()) {
             updateVotes();
         }
         function updateVotes() {
             $scope.post.comments.forEach(checkVotes);
 
             function checkVotes (comment) {
-//                var vote = comment.votes.filter(function (vote) {
-//                    return ($scope.app.user.getUserID() === vote.userID);
-//                })[0];
+                var vote = comment.votes.filter(function (vote) {
+                    return ($scope.app.user.getUserID() === vote.userID);
+                })[0];
 
-//                if (vote) {
-//                    comment.voted = vote.direction;
-//                }
+                if (vote) {
+                    comment.voted = vote.direction;
+                }
             }
         }
 
         $scope.voteComment = function (direction, comment) {
-            if (!User.isAuthenticated()) {
+            if (!$scope.app.user.isLogged()) {
                 box = bootbox.dialog({
                     title: 'Login Required',
                     message: $compile('<div login-form></div>')($scope)
@@ -7539,7 +7503,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.voteComment(direction, comment);
                 };
             } else {
-                if (comment.author.id === User.getCurrentId()) {
+                if (comment.author._id === $scope.app.user.getUserID()) {
                     bootbox.alert("You can't vote for your own content.");
                     return false;
                 }
@@ -7549,7 +7513,6 @@ angular.module('app.controllers', ['ngCookies'])
                         comment.votesCount = data.votesCount;
                     }
                 });
-                
             }
         };
 

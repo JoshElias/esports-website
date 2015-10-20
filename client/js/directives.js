@@ -137,6 +137,9 @@ angular.module('app.directives', ['ui.load'])
                     $scope.setLoggingIn(1);
                     console.log(LoopBackAuth);
                     if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
+                      console.log("$scope.remember:", $scope.remember);
+                      console.log("$scope.info.email:", $scope.loginInfo.email);
+                      console.log("$scope.info.password:", $scope.loginInfo.password);
                         User.login({ rememberMe:$scope.remember }, { email:$scope.loginInfo.email, password:$scope.loginInfo.password },
                             function(accessToken) {
                                 console.log("Received access token:", accessToken);
@@ -329,7 +332,7 @@ angular.module('app.directives', ['ui.load'])
             }
 
             $scope.voteComment = function (direction, comment) {
-                
+
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
                         $scope.voteComment(direction, comment);
@@ -339,8 +342,17 @@ angular.module('app.directives', ['ui.load'])
                         bootbox.alert("You can't vote for your own content.");
                         return false;
                     }
+
+//                    VoteService.voteComment(direction, comment).then(function (data) {
+//                        if (data.success) {
+//                            comment.voted = direction;
+//                            comment.votesCount = data.votesCount;
+//                        }
+//                    });
+
+
                     var uniqueVote = false;
-                    
+
                     for(var i = 0; i < comment.votes.length; i++) {
                         if(comment.votes[i].userId === LoopBackAuth.currentUserId) {
                             var prevDirection = comment.votes[i].direction;
@@ -355,7 +367,7 @@ angular.module('app.directives', ['ui.load'])
                             uniqueVote = true;
                         }
                     }
-                    
+
                     if(uniqueVote) {
                         comment.votesCount = comment.votesCount + direction;
                         comment.votes.push(
@@ -376,9 +388,9 @@ angular.module('app.directives', ['ui.load'])
                                 comment.votesCount = data.votesCount;
                             }
                         });
-                        
+
                     }
-                    
+
                 }
                 updateCommentVotes();
             }
