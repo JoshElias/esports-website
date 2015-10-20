@@ -122,7 +122,7 @@ var app = angular.module('app', [
                     }
                 },
                 resolve: {
-                    CurrentUser: ['User', 'LoopBackAuth',
+                    currentUser: ['User', 'LoopBackAuth',
                         function(User, LoopBackAuth) {
                             if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
                               return User.getCurrent();
@@ -282,7 +282,7 @@ var app = angular.module('app', [
 //                    }],
                     data: ['Snapshot', function (Snapshot) {
                         return Snapshot.find({
-                            
+
                         }).$promise;
                     }],
 //                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
@@ -727,13 +727,13 @@ var app = angular.module('app', [
                                   include: [
                                         {
                                             relation: 'author'
-                                        }, 
+                                        },
                                         {
                                             relation: 'heroes',
                                             scope: {
                                                 include: ['talents']
                                             }
-                                        }, 
+                                        },
                                         {
                                             relation: 'maps',
                                             scope: {
@@ -782,13 +782,13 @@ var app = angular.module('app', [
                                   include: [
                                         {
                                             relation: 'author'
-                                        }, 
+                                        },
                                         {
                                             relation: 'heroes',
                                             scope: {
                                                 include: ['talents']
                                             }
-                                        }, 
+                                        },
                                         {
                                             relation: 'maps'
                                         }
@@ -880,7 +880,7 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
-                          
+
                             communityTalents: ['dataCommunityGuides', function (dataCommunityGuides) {
                               var talents = {};
                               for(var i = 0; i < dataCommunityGuides.length; i++) {
