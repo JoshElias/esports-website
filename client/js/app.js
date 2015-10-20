@@ -125,7 +125,7 @@ var app = angular.module('app', [
                     currentUser: ['User', 'LoopBackAuth',
                         function(User, LoopBackAuth) {
                             if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
-                              return User.getCurrent();
+                              return User.getCurrent().$promise;
                             }
                         }
                     ]
@@ -148,7 +148,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/home.html',
                         controller: 'HomeCtrl',
                         resolve: {
-                            articles: ['Article', 'CurrentUser', function (Article, CurrentUser) {
+                            articles: ['Article', function (Article) {
                                 var offset = 1,
                                     num = 6;
 
@@ -1609,7 +1609,7 @@ var app = angular.module('app', [
                             }],
                             postCount: ['userProfile', 'ForumPost', function (userProfile, ForumPost) {
                                 return ForumPost.count({
-                                    where: { 
+                                    where: {
                                         and: [
                                             {
                                                 authorId: userProfile.id

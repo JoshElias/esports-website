@@ -1,19 +1,6 @@
 'use strict';
 
 angular.module('app.services', [])
-.service('AppConfigService', function() {
-  var name = 'TempoStorm';
-  var version = "4.2.0";
-  var copyright = new Date().getFullYear();
-  var cdn = (tpl && tpl.length) ? tpl : './';
-
-  return {
-    getName: function() { return name; },
-    getVersion: function() { return version; },
-    getCoypright: function() { return copyright; },
-    getCdn: function() { return cdn; }
-  }
-})
 .service('MetaService', function() {
 
     var statusCode = undefined;
@@ -1825,7 +1812,7 @@ angular.module('app.services', [])
 //                gb.heroes.push(obj);
 //            }
 //        };
-        
+
         gb.toggleHero = function (hero) {
             if (gb.hasHero(hero)) {
                 for (var i = 0; i < gb.heroes.length; i++) {
@@ -1860,7 +1847,7 @@ angular.module('app.services', [])
 //            }
 //            return false;
 //        };
-        
+
         gb.hasHero = function (hero) {
             if (!hero) { return false; }
             for (var i = 0; i < gb.heroes.length; i++) {
@@ -1888,7 +1875,7 @@ angular.module('app.services', [])
 //            }
 //            return talents;
 //        };
-        
+
         gb.talentsByTier = function (hero, tier) {
             var talents = [];
             for (var i = 0; i < hero.talents.length; i++) {
@@ -1907,7 +1894,7 @@ angular.module('app.services', [])
 //                hero.talents['tier'+talent.tier] = talent._id;
 //            }
 //        };
-        
+
         gb.toggleTalent = function (hero, talent) {
             var talentId = talent.id;
             var talentTier = hero.hero.talentTiers[talentId];
@@ -1922,7 +1909,7 @@ angular.module('app.services', [])
 //        gb.hasAnyTalent = function (hero, talent) {
 //            return (hero.talents['tier'+talent.tier] !== null);
 //        };
-        
+
         gb.hasAnyTalent = function (hero, talent) {
             var talentId = talent.id;
             var talentTier = hero.hero.talentTiers[talentId];
@@ -1947,7 +1934,7 @@ angular.module('app.services', [])
 //        gb.hasTalent = function (hero, talent) {
 //            return (hero.talents['tier'+talent.tier] == talent._id);
 //        };
-        
+
         gb.hasTalent = function (hero, talent) {
             var talentId = talent.id;
             var talentTier = hero.hero.talentTiers[talentId];

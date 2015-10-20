@@ -55,6 +55,7 @@
                         <li ng-class="{active:$state.includes('app.sponsors')}"><a ui-sref="app.sponsors">Sponsors</a></li>
                         <li ng-class="{active:$state.includes('app.polls')}"><a ui-sref="app.polls">Vote</a></li>
                         <li>
+                          {{currentUser}}
                             <span class="dropdown-grid">
                                 <li class="hidden-sm hidden-md hidden-lg sub" ng-click="loginModal('login')" ng-hide="currentUser"><a href="#">Login</a></li>
                                 <li class="hidden-sm hidden-md hidden-lg sub" ng-click="loginModal('signup')" ng-hide="currentUser"><a href="#">Signup</a></li>
@@ -83,7 +84,7 @@
                 <li class="dropdown-short" ng-class="{active:$state.includes('app.profile')}" ng-if="currentUser">
                     <a href="#" class="dropdown-toggle clear" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <span class="profile-avatar profile-avatar-sm pull-right hidden-xs">
-                        <img gravatar-src="email" alt="">
+                        <img gravatar-src="currentUser.email" alt="">
                       </span>
                       <span class="hidden-sm hidden-md">{{currentUser.username}}</span><span class="caret"></span>
                     </a>
