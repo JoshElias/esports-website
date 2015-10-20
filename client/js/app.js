@@ -600,7 +600,19 @@ var app = angular.module('app', [
                                         where: {
                                             slug: stateSlug
                                         },
-                                        include: ["cards","comments"]
+                                        include: [
+                                            {
+                                                relation: "cards"
+                                            },
+                                            {
+                                                relation: "comments",
+                                                scope: {
+                                                    include: [
+                                                        "author"
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
                                 })
                                 .$promise
