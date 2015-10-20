@@ -6214,10 +6214,10 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'dataSnapshot', 'VoteService', 'LoginModalService',
     function ($scope, $state, $compile, $window, SnapshotService, dataSnapshot, VoteService, LoginModalService) {
         
-        console.log('snapshot: ', dataSnapshot[0]);
+        console.log('snapshot: ', dataSnapshot);
         console.log('scope: ', $scope);
         
-        $scope.snapshot = dataSnapshot[0];
+        $scope.snapshot = dataSnapshot;
         $scope.show = [];
         $scope.matchupName = [];
         $scope.voted = false;
@@ -6294,6 +6294,15 @@ angular.module('app.controllers', ['ngCookies'])
             }
             return false;
         }
+        
+//        $scope.getTier = function (tier) {
+//            for (var i = 0; i < $scope.snapshot.deckTiers.length; i++) {
+//                if ($scope.snapshot.deckTiers[i].tier == tier) {
+//                    return $scope.snapshot.deckTiers[i];
+//                }
+//            }
+//            return false;
+//        }
 
         function getTierRange (tierNum) {
             var tier = $scope.getTier(tierNum),
@@ -6317,6 +6326,29 @@ angular.module('app.controllers', ['ngCookies'])
 
             return out;
         };
+        
+//        function getTierRange (tierNum) {
+//            var tier = $scope.getTier(tierNum),
+//                out = [],
+//                highestRank = 0,
+//                lowestRank = 0;
+//
+//            // find highest and lowest in tier
+//            for (var i = 0; i < tier.decks.length; i++) {
+//                var history = tier.decks[i].rank.current;
+//                for (var j = 0; j < history.length; j++) {
+//                    if (history[j] > highestRank && history[j] != 0) { highestRank = history[j]; }
+//                    if ((history[j] < lowestRank && history[j] != 0) || lowestRank == 0) { lowestRank = history[j]; }
+//                }
+//            }
+//
+//            // generate range
+//            for (var i = lowestRank; i <= highestRank; i++) {
+//                out.push(i);
+//            }
+//
+//            return out;
+//        };
 
         // init tier ranges
         for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
@@ -7325,15 +7357,16 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ForumCategoryCtrl', ['$scope', 'data', 'MetaService',
+.controller('ForumCategoryCtrl', ['$scope', 'data', 'MetaService', 
     function ($scope, data, MetaService) {
-        $scope.categories = data.categories;
+        $scope.categories = data;
         $scope.metaservice.setOg('https://tempostorm.com/forum');
     }
 ])
 .controller('ForumThreadCtrl', ['$scope', 'Pagination', 'data', 'MetaService',
     function ($scope, Pagination, data, MetaService) {
-        $scope.thread = data.thread;
+        $scope.thread = data;
+        // console.log('thread: ', $scope.thread);
 
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.thread.title + ' - Forum');
@@ -7343,7 +7376,7 @@ angular.module('app.controllers', ['ngCookies'])
         // page flipping
         $scope.pagination = Pagination.new(20);
         $scope.pagination.results = function () {
-            return $scope.thread.posts.length;
+            return $scope.thread.forumPosts.length;
         };
     }
 ])
@@ -7426,13 +7459,19 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
-    function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
+.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'postData', 'MetaService', 'User', 'ForumPost',
+    function ($scope, $sce, $compile, $window, bootbox, postData, MetaService, User, ForumPost) {
 
-
-        $scope.post = data.post;
-        $scope.ForumService = ForumService;
-        $scope.thread = data.thread;
+        $scope.post = postData;
+        console.log('post: ', $scope.post);
+        
+//        $scope.ForumService = ForumService;
+        $scope.thread = $scope.post.forumThread;
+        
+        console.log('thread title: ', $scope.thread.title);
+        
+        console.log('UserServ: ', User);
+        console.log('is user logged in: ', User.isAuthenticated());
 
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.post.title + ' - ' + $scope.thread.title);
@@ -7451,46 +7490,46 @@ angular.module('app.controllers', ['ngCookies'])
 
         var box,
             callback;
-        $scope.commentPost = function () {
-            if (!$scope.app.user.isLogged()) {
-                box = bootbox.dialog({
-                    title: 'Login Required',
-                    message: $compile('<div login-form></div>')($scope)
-                });
-                box.modal('show');
-                callback = function () {
-                    $scope.commentPost();
-                };
-            } else {
-                ForumService.addComment($scope.post, $scope.comment).success(function (data) {
-                    if (data.success) {
-                        $scope.post.comments.push(data.comment);
-                        $scope.comment.comment = '';
-                        updateVotes();
-                    }
-                });
-            }
-        };
+//        $scope.commentPost = function () {
+//            if (!$scope.app.user.isLogged()) {
+//                box = bootbox.dialog({
+//                    title: 'Login Required',
+//                    message: $compile('<div login-form></div>')($scope)
+//                });
+//                box.modal('show');
+//                callback = function () {
+//                    $scope.commentPost();
+//                };
+//            } else {
+//                ForumService.addComment($scope.post, $scope.comment).success(function (data) {
+//                    if (data.success) {
+//                        $scope.post.comments.push(data.comment);
+//                        $scope.comment.comment = '';
+//                        updateVotes();
+//                    }
+//                });
+//            }
+//        };
 
-        if ($scope.app.user.isLogged()) {
+        if (User.isAuthenticated()) {
             updateVotes();
         }
         function updateVotes() {
             $scope.post.comments.forEach(checkVotes);
 
             function checkVotes (comment) {
-                var vote = comment.votes.filter(function (vote) {
-                    return ($scope.app.user.getUserID() === vote.userID);
-                })[0];
+//                var vote = comment.votes.filter(function (vote) {
+//                    return ($scope.app.user.getUserID() === vote.userID);
+//                })[0];
 
-                if (vote) {
-                    comment.voted = vote.direction;
-                }
+//                if (vote) {
+//                    comment.voted = vote.direction;
+//                }
             }
         }
 
         $scope.voteComment = function (direction, comment) {
-            if (!$scope.app.user.isLogged()) {
+            if (!User.isAuthenticated()) {
                 box = bootbox.dialog({
                     title: 'Login Required',
                     message: $compile('<div login-form></div>')($scope)
@@ -7500,7 +7539,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.voteComment(direction, comment);
                 };
             } else {
-                if (comment.author._id === $scope.app.user.getUserID()) {
+                if (comment.author.id === User.getCurrentId()) {
                     bootbox.alert("You can't vote for your own content.");
                     return false;
                 }
@@ -7510,6 +7549,7 @@ angular.module('app.controllers', ['ngCookies'])
                         comment.votesCount = data.votesCount;
                     }
                 });
+                
             }
         };
 

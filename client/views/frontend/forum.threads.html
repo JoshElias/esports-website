@@ -3,7 +3,7 @@
         <a href="./forum/{{thread.slug.url}}/add" class="btn btn-blue pull-right">Write a Post</a>
         <h1>{{thread.title}}</h1>
     </div>
-    <div class="forum-thread-info clearfix" ng-if="thread.posts.length">
+    <div class="forum-thread-info clearfix" ng-if="thread.forumPosts.length">
         <div class="pull-right">
             <span class="btn-group">
                 <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="post in thread.posts">
+            <tr ng-repeat="post in thread.forumPosts">
                 <td class="title"><a href="./forum/{{thread.slug.url}}/{{post.slug.url}}">{{post.title}}</a><em am-time-ago="post.createdDate"></em></td>
                 <td class="author"><a href="#" class="avatar hidden-xs"><img gravatar-src-once="post.author.email" alt="" /></a><a href="./user/{{post.author.username}}">@{{post.author.username}}</a></td>
                 <td class="views hidden-xs">{{post.views}}</td>

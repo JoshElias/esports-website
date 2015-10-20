@@ -303,18 +303,18 @@ angular.module('app.directives', ['ui.load'])
                 }, function (err) {
                     console.log("failed!", err);
                 });
-//                if (!$scope.app.user.isLogged()) {
-//                    LoginModalService.showModal('login', function () {
-//                        $scope.commentPost();
-//                    });
-//                } else {
-//                    $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
-//                        if (data.success) {
-//
-//
-//                        }
-//                    });
-//                }
+                if (LoopBackAuth.currentUserData === null) {
+                    LoginModalService.showModal('login', function () {
+                        $scope.commentPost();
+                    });
+                } else {
+                    $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
+                        if (data.success) {
+
+
+                        }
+                    });
+                }
             };
 
             updateCommentVotes();
@@ -323,7 +323,7 @@ angular.module('app.directives', ['ui.load'])
 
                 function checkVotes (comment) {
                     var vote = comment.votes.filter(function (vote) {
-                        return ($scope.app.user.getUserID() === vote.userID);
+                        return (LoopBackAuth.currentUserId === vote.userID);
                     })[0];
 
                     if (vote) {
@@ -333,21 +333,62 @@ angular.module('app.directives', ['ui.load'])
             }
 
             $scope.voteComment = function (direction, comment) {
-                if (!$scope.app.user.isLogged()) {
+                
+                if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
                         $scope.voteComment(direction, comment);
                     });
                 } else {
-                    if (comment.author._id === $scope.app.user.getUserID()) {
+                    if (comment.author.id === LoopBackAuth.currentUserId) {
                         bootbox.alert("You can't vote for your own content.");
                         return false;
                     }
-                    VoteService.voteComment(direction, comment).then(function (data) {
-                        if (data.success) {
-                            comment.voted = direction;
-                            comment.votesCount = data.votesCount;
+//                    VoteService.voteComment(direction, comment).then(function (data) {
+//                        if (data.success) {
+//                            comment.voted = direction;
+//                            comment.votesCount = data.votesCount;
+//                        }
+//                    });
+                    
+                    var uniqueVote = false;
+                    
+                    for(var i = 0; i < comment.votes.length; i++) {
+                        if(comment.votes[i].userId === LoopBackAuth.currentUserId) {
+                            var prevDirection = comment.votes[i].direction;
+                            if(direction === prevDirection) {
+                                uniqueVote = false;
+                                break;
+                            }
+                            comment.votes[i].direction = direction;
+                            break;
+                        } else {
+                            uniqueVote = true;
                         }
-                    });
+                    }
+                    
+                    if(uniqueVote) {
+                        comment.votesCount = comment.votesCount + direction;
+                        comment.votes.push(
+                            {
+                                direction: direction,
+                                userId: LoopBackAuth.currentUserId
+                            }
+                        );
+
+                        Comment.update({
+                            where: {
+                                id: comment.id
+                            }
+                        }, comment).$promise.then(function (data) {
+                            console.log(data);
+                            if(data.success) {
+                                comment.voted = direction;
+                                comment.votesCount = data.votesCount;
+                            }
+                        });
+                        
+                    }
+                    
                 }
                 updateCommentVotes();
             }
