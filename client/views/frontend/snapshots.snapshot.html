@@ -36,7 +36,7 @@
                         </button>
                         <div class="sideTierBody collapse" id="collapseSideTier{{tier.tier}}">
                             <div class="sideTierDeck deck-portrait-{{deck.deck.playerClass}}-sm" ng-repeat="deck in tier.decks">
-                                <a href="#{{deck.rank[0]}}" ng-click="findDeck(tier.tier, deck.rank[0])">
+                                <a href="#{{deck.ranks[0]}}" ng-click="findDeck(tier.tier, deck.ranks[0])">
                                     <div class="sideTierDeckRank pull-left clearfix">
                                         <h4>{{deck.ranks[0]}}</h4>
                                     </div>
@@ -115,7 +115,7 @@
                             </ul>
 
                             <div class="row snapshot-trends-keys">
-                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" ng-repeat="deck in getTier(currentTier).decks track by $index"><a href="#" ng-class="{ 'active': deck.rank[0] == currentDeck }" ng-click="toggleCurrentDeck(deck.rank[0])"><span class="trends-key {{deck.deck.playerClass}} m-r-sm"></span>{{deck.name}}</a></div>
+                                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" ng-repeat="deck in getTier(currentTier).decks track by $index"><a href="#" ng-class="{ 'active': deck.ranks[0] == currentDeck }" ng-click="toggleCurrentDeck(deck.ranks[0])"><span class="trends-key {{deck.deck.playerClass}} m-r-sm"></span>{{deck.name}}</a></div>
                             </div>
 
                         </div>
@@ -134,12 +134,12 @@
                     </button>
 
                     <div class="tier-body collapse" id="collapseTier{{tier.tier}}">
-                        <div id="deck{{deck.rank[0]}}" ng-repeat="deck in tier.decks | orderBy : 'rank[0]'" class="tier-deck tier-deck-{{deck.deck.playerClass}}">
-                            <div class="tier-deck-heading deck-portrait-{{deck.deck.playerClass}}-sm clearfix" role="button" data-toggle="collapse" ng-href="#collapseDeck-{{deck.rank[0]}}" aria-expanded="false" aria-controls="collapseDeck-{{deck.rank[0]}}">
+                        <div id="deck{{deck.ranks[0]}}" ng-repeat="deck in tier.decks | orderBy : 'ranks[0]'" class="tier-deck tier-deck-{{deck.deck.playerClass}}">
+                            <div class="tier-deck-heading deck-portrait-{{deck.deck.playerClass}}-sm clearfix" role="button" data-toggle="collapse" ng-href="#collapseDeck-{{deck.ranks[0]}}" aria-expanded="false" aria-controls="collapseDeck-{{deck.ranks[0]}}">
                                 <h4>{{deck.name}}</h4>
                                 <button class="deck-button" ng-click="goToDeck($event, deck.deck.slug)">VIEW<span class="hidden-xs">&nbsp;DECK</span></button>
                             </div>
-                            <div class="tier-deck-body collapse" id="collapseDeck-{{deck.rank[0]}}">
+                            <div class="tier-deck-body collapse" id="collapseDeck-{{deck.ranks[0]}}">
                                 <div class="tier-deck-body-inner">
                                     <div class="row tier-deck-body-inner-inner m-l-none m-r-none">
 
@@ -207,21 +207,21 @@
                                                     <div>
                                                         CURRENT
                                                     </div>
-                                                    {{deck.rank[0]}}
+                                                    {{deck.ranks[0]}}
                                                 </div>
-                                                <div class="{{(deck.rank[deck.rank.length - 1] >= deck.rank[0] || deck.rank[deck.rank.length - 1] == 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{(deck.ranks[deck.ranks.length - 1] >= deck.ranks[0] || deck.ranks[deck.ranks.length - 1] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         LAST WEEK
                                                     </div>
-                                                    <span ng-if="deck.rank[deck.rank.length - 1] != 0 && deck.rank[deck.rank.length - 1] != undefined">{{deck.rank[deck.rank.length - 1]}}</span>
-                                                    <span ng-if="deck.rank[deck.rank.length - 1] == 0 || deck.rank[deck.rank.length - 1] == undefined">N/A</span>
+                                                    <span ng-if="deck.ranks[deck.ranks.length - 1] != 0 && deck.ranks[deck.ranks.length - 1] != undefined">{{deck.ranks[deck.ranks.length - 1]}}</span>
+                                                    <span ng-if="deck.ranks[deck.ranks.length - 1] == 0 || deck.ranks[deck.ranks.length - 1] == undefined">N/A</span>
                                                 </div>
-                                                <div class="{{((deck.rank[deck.rank.length - 1] - deck.rank[0]) >= 0 || deck.rank[deck.rank.length - 1] == 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{((deck.ranks[deck.ranks.length - 1] - deck.ranks[0]) >= 0 || deck.ranks[deck.ranks.length - 1] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         CHANGE
                                                     </div>
-                                                    <span ng-if="deck.rank[deck.rank.length - 1] != 0 && deck.rank[deck.rank.length - 1] != undefined">{{deck.rank[deck.rank.length - 1] - deck.rank[0]}}</span>
-                                                    <span ng-if="deck.rank[deck.rank.length - 1] == 0 || deck.rank[deck.rank.length - 1] == undefined">N/A</span>
+                                                    <span ng-if="deck.ranks[deck.ranks.length - 1] != 0 && deck.ranks[deck.ranks.length - 1] != undefined">{{deck.ranks[deck.ranks.length - 1] - deck.ranks[0]}}</span>
+                                                    <span ng-if="deck.ranks[deck.ranks.length - 1] == 0 || deck.ranks[deck.ranks.length - 1] == undefined">N/A</span>
                                                 </div>
                                             </div>
                                                 </div>

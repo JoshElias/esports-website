@@ -283,6 +283,8 @@ angular.module('app.directives', ['ui.load'])
             $scope.commentable;
             $scope.service;
             $scope.app = $rootScope.app;
+            
+            console.log('commentable: ', $scope.commentable);
 
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
@@ -290,7 +292,8 @@ angular.module('app.directives', ['ui.load'])
             $scope.parseComment = function (c) {
                 return $sce.trustAsHtml(c);
             }
-
+            
+            // TODO: When user posts new comment, shows '[DEL]' for username until page is refreshed.
             $scope.commentPost = function () {
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
@@ -301,7 +304,8 @@ angular.module('app.directives', ['ui.load'])
                         id: $scope.commentable.id
                     }, {
                         text: $scope.comment,
-                        authorId: LoopBackAuth.currentUserData,
+                        authorId: LoopBackAuth.currentUserId,
+                        author: LoopBackAuth.currentUserData,
                         createdDate: new Date(),
                         votes: []
                     })
@@ -332,7 +336,6 @@ angular.module('app.directives', ['ui.load'])
             }
 
             $scope.voteComment = function (direction, comment) {
-
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
                         $scope.voteComment(direction, comment);
@@ -382,7 +385,6 @@ angular.module('app.directives', ['ui.load'])
                                 id: comment.id
                             }
                         }, comment).$promise.then(function (data) {
-                            console.log(data);
                             if(data.success) {
                                 comment.voted = direction;
                                 comment.votesCount = data.votesCount;

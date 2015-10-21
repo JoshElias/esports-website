@@ -148,11 +148,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/home.html',
                         controller: 'HomeCtrl',
                         resolve: {
-<<<<<<< HEAD
                             articles: ['Article', 'currentUser', function (Article, currentUser) {
-=======
-                            articles: ['Article', function (Article) {
->>>>>>> 847d91dd4280559171fc6250d57027f2a85c0768
                                 var offset = 1,
                                     num = 6;
 
@@ -1337,26 +1333,24 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.home.html',
                         controller: 'ForumCategoryCtrl',
                         resolve: {
-//                            data: ['ForumService', '$q', function (ForumService, $q) {
-//                                return ForumService.getCategories().then(function (result) {
-//                                    if (result.success === true) {
-//                                        return result;
-//                                    } else {
-//                                        return $q.reject('unable to find catagory');
-//                                    }
-//                                 });
-//                            }]
-                            data: ['ForumCategory', function(ForumCategory) {
+                            forumCategories: ['ForumCategory', function(ForumCategory) {
                                 return ForumCategory.find({
                                     filter: {
+                                        fields: {
+                                            id: true,
+                                            title: true,
+                                            active: true,
+                                        },
                                         include: [
                                             {
                                                 relation: 'forumThreads',
                                                 scope: {
+                                                    fields: ['active', 'id', 'title', 'description', 'slug'],
                                                     include: [
                                                         {
                                                             relation: 'forumPosts',
                                                             scope: {
+                                                                fields: ['active', 'id', 'content', 'createdDate', 'slug', 'title', 'views', 'votes', 'votesCount'],
                                                                 include: ['author']
                                                             }
                                                         }
@@ -1379,22 +1373,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.threads.html',
                         controller: 'ForumThreadCtrl',
                         resolve: {
-//                            data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
-//                                var thread = $stateParams.thread;
-//                                return ForumService.getThread(thread).then(function (result) {
-//                                    if (result.success === true) {
-//                                        return result;
-//                                    } else {
-//                                        return $q.reject('unable to find thread');
-//                                    }
-//                                 });;
-//                            }]
-                            data: ['$stateParams', 'ForumThread', function($stateParams, ForumThread) {
+                            forumThread: ['$stateParams', 'ForumThread', function($stateParams, ForumThread) {
                                 var slug = $stateParams.thread;
                                 return ForumThread.findOne({
                                     filter: {
                                         where: {
                                             'slug.url': slug
+                                        },
+                                        fields: {
+                                            id: true,
+                                            active: true,
+                                            description: true,
+                                            slug: true,
+                                            title: true,
                                         },
                                         include: [
                                             {
@@ -1402,10 +1393,16 @@ var app = angular.module('app', [
                                                 scope: {
                                                     include: [
                                                         {
-                                                            relation: 'comments'
+                                                            relation: 'comments',
+                                                            scope: {
+                                                                fields: ['id', 'active', 'content', 'createdDate', 'slug', 'title', 'views', 'votes', 'votesCount']
+                                                            }
                                                         },
                                                         {
-                                                            relation: 'author'
+                                                            relation: 'author',
+                                                            scope: {
+                                                                fields: ['id', 'active', 'email', 'username']
+                                                            }
                                                         }
                                                     ]
                                                 }
@@ -1437,11 +1434,21 @@ var app = angular.module('app', [
                                         where: {
                                             'slug.url': thread
                                         },
-                                        include: [
-                                            {
-                                                relation: 'forumPosts'
-                                            }
-                                        ]
+                                        fields: {
+                                            id: true,
+                                            active: true,
+                                            description: true,
+                                            slug: true,
+                                            title: true
+                                        }
+//                                        include: [
+//                                            {
+//                                                relation: 'forumPosts',
+//                                                scope: {
+//                                                    fields: ['id', 'active', 'slug', 'title']
+//                                                }
+//                                            }
+//                                        ]
                                     }
                                 }).$promise;
                             }]
@@ -1467,13 +1474,25 @@ var app = angular.module('app', [
 //                                    }
 //                                 });;
 //                            }]
-                            postData: ['$stateParams', 'ForumPost', function($stateParams, ForumPost) {
+                            forumPost: ['$stateParams', 'ForumPost', function($stateParams, ForumPost) {
                                 var thread = $stateParams.thread,
                                     post = $stateParams.post;
                                 return ForumPost.findOne({
                                     filter: {
                                         where: {
                                             'slug.url': post
+                                        },
+                                        fields: {
+                                            id: true,
+                                            active: true,
+                                            slug: true,
+                                            title: true,
+                                            forumThread: true,
+                                            authorId: true,
+                                            author: true,
+                                            forumThreadId: true,
+                                            comments: true,
+                                            content: true
                                         },
                                         include: [
                                             {

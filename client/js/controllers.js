@@ -6209,9 +6209,14 @@ angular.module('app.controllers', ['ngCookies'])
         
         console.log('snapshot: ', dataSnapshot);
         
+        
         $scope.snapshot = dataSnapshot;
         // New decktiers array from snapshot.deckTiers
         $scope.deckTiers = getAllDecksByTier();
+        
+        console.log('orig deckTiers: ', $scope.snapshot.deckTiers);
+        console.log('new deckTiers: ', $scope.deckTiers);
+        console.log('original: ', $scope.snapshot.tiers);
         $scope.show = [];
         $scope.matchupName = [];
         $scope.voted = false;
@@ -6256,10 +6261,6 @@ angular.module('app.controllers', ['ngCookies'])
             return outArr;
             
         }
-        
-        console.log('orig deckTiers: ', $scope.snapshot.deckTiers);
-        console.log('new deckTiers: ', $scope.deckTiers);
-        console.log('original: ', $scope.snapshot.tiers);
 
         $scope.show.comments = SnapshotService.getStorage();
         $scope.$watch('User.isAuthenticated()', function() {
@@ -7375,41 +7376,79 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ForumCategoryCtrl', ['$scope', 'data', 'MetaService',
-    function ($scope, data, MetaService) {
-        $scope.categories = data.categories;
+.controller('ForumCategoryCtrl', ['$scope', 'forumCategories', 'MetaService',
+    function ($scope, forumCategories, MetaService) {
+        $scope.categories = forumCategories;
+        console.log('categories: ', $scope.categories);
         $scope.metaservice.setOg('https://tempostorm.com/forum');
     }
 ])
-.controller('ForumThreadCtrl', ['$scope', 'Pagination', 'data', 'MetaService',
-    function ($scope, Pagination, data, MetaService) {
-        $scope.thread = data.thread;
+.controller('ForumThreadCtrl', ['$scope', 'Pagination', 'forumThread', 'MetaService', 'AjaxPagination', 'ForumPosts',
+    function ($scope, Pagination, forumThread, MetaService, AjaxPagination, ForumPosts) {
+        console.log('thread: ', forumThread);
+        $scope.thread = forumThread;
 
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.thread.title + ' - Forum');
 
         $scope.metaservice.setOg('https://tempostorm.com/forum/' + $scope.thread.slug.url, $scope.thread.title);
+        
+        // pagination
+        function updateArticles (page, perpage, search, callback) {
+            $scope.fetching = true;
+
+            var options = {},
+                countOptions = {};
+
+            options.filter = {
+                isActive: true,
+                fields: {
+                    content: false,
+                    votes: false
+                },
+                order: "createdDate DESC",
+                skip: ((page*perpage)-perpage),
+                limit: 20
+            };
+            
+            // counts the amount of items in the db
+            ForumPosts.count(countOptions, function (count) {
+                ForumPosts.find(options, function (posts) {
+                    $scope.forumPagination.total = count.count;
+                    $scope.forumPagination.page = page;
+                    $scope.forumPagination.perpage = perpage;
+
+                    $timeout(function () {
+                        $scope.posts = posts;
+                        $scope.fetching = false;
+                        if (callback) {
+                            return callback(count.count);
+                        }
+                    });
+                });
+            });
+        }
 
         // page flipping
-        $scope.pagination = Pagination.new(20);
-        $scope.pagination.results = function () {
-            return $scope.thread.posts.length;
-        };
+        $scope.forumPagination = AjaxPagination.new($scope.perpage, $scope.total,
+            function (page, perpage) {
+                var d = $q.defer();
+
+                updateArticles(page, perpage, $scope.search, function (data) {
+                    d.resolve(data);
+                });
+                return d.promise;
+            }
+        );
     }
 ])
-.controller('ForumAddCtrl', ['$scope', '$location', '$window', '$compile', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'thread', 'User',
-    function ($scope, $location, $window, $compile, bootbox, ForumService, UserService, AuthenticationService, SubscriptionService, thread, User) {
+.controller('ForumAddCtrl', ['$scope', '$location', '$window', '$compile', 'bootbox', 'UserService', 'AuthenticationService', 'SubscriptionService', 'thread', 'User', 'ForumPost', 'Util',
+    function ($scope, $location, $window, $compile, bootbox, UserService, AuthenticationService, SubscriptionService, thread, User, ForumPost, Util) {
         // thread
         $scope.thread = thread;
         console.log('thread: ', $scope.thread);
 
-        // post
-        var defaultPost = {
-            title: '',
-            content: ''
-        };
-
-        $scope.post = angular.copy(defaultPost);
+//        $scope.post = angular.copy(defaultPost);
 
         // summernote options
         $scope.options = {
@@ -7439,14 +7478,37 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.addPost();
                 };
             } else {
-                ForumService.addPost($scope.thread, $scope.post).success(function (data) {
-                    if (data.success) {
-                        $location.path('/forum/' + $scope.thread.slug.url);
-                    } else {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    }
+                // post
+                var newPost = {
+                    title: $scope.post.title,
+                    content: $scope.post.content,
+                    createdDate: new Date(),
+                    slug: {
+                        url: Util.slugify($scope.post.title),
+                        linked: true
+                    },
+                    forumThreadId: $scope.thread.id,
+                    authorId: User.getCurrentId(),
+                    active: true,
+                    votes: [],
+                    votesCount: 0,
+                    views: 0,
+                };
+//                ForumService.addPost($scope.thread, $scope.post).success(function (data) {
+//                    if (data.success) {
+//                        $location.path('/forum/' + $scope.thread.slug.url);
+//                    } else {
+//                        $scope.errors = data.errors;
+//                        $scope.showError = true;
+//                        $window.scrollTo(0,0);
+//                    }
+//                });
+                
+                ForumPost.create(newPost).$promise.then(function (data) {
+                    console.log('post created: ', data);
+                    $scope.post.title = '';
+                    $scope.post.content = '';
+                    $location.path('/forum/' + $scope.thread.slug.url);
                 });
             }
         };
@@ -7477,16 +7539,14 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'postData', 'MetaService', 'User', 'ForumPost',
-    function ($scope, $sce, $compile, $window, bootbox, postData, MetaService, User, ForumPost) {
+.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'forumPost', 'MetaService', 'User', 'ForumPost',
+    function ($scope, $sce, $compile, $window, bootbox, forumPost, MetaService, User, ForumPost) {
 
-        $scope.post = postData;
+        $scope.post = forumPost;
         console.log('post: ', $scope.post);
+        $scope.ForumService = ForumPost;
         
-//        $scope.ForumService = ForumService;
         $scope.thread = $scope.post.forumThread;
-        
-        console.log('is user logged in: ', User.isAuthenticated());
 
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.post.title + ' - ' + $scope.thread.title);
@@ -7506,7 +7566,7 @@ angular.module('app.controllers', ['ngCookies'])
         var box,
             callback;
         $scope.commentPost = function () {
-            if (!$scope.app.user.isLogged()) {
+            if (!User.isAuthenticated()) {
                 box = bootbox.dialog({
                     title: 'Login Required',
                     message: $compile('<div login-form></div>')($scope)
@@ -7526,7 +7586,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
         };
 
-        if ($scope.app.user.isLogged()) {
+        if (User.isAuthenticated()) {
             updateVotes();
         }
         function updateVotes() {
@@ -7534,7 +7594,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             function checkVotes (comment) {
                 var vote = comment.votes.filter(function (vote) {
-                    return ($scope.app.user.getUserID() === vote.userID);
+                    return (User.getCurrentId() === vote.userID);
                 })[0];
 
                 if (vote) {

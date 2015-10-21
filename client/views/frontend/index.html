@@ -55,7 +55,6 @@
                         <li ng-class="{active:$state.includes('app.sponsors')}"><a ui-sref="app.sponsors">Sponsors</a></li>
                         <li ng-class="{active:$state.includes('app.polls')}"><a ui-sref="app.polls">Vote</a></li>
                         <li>
-                          {{currentUser}}
                             <span class="dropdown-grid">
                                 <li class="hidden-sm hidden-md hidden-lg sub" ng-click="loginModal('login')" ng-hide="currentUser"><a href="#">Login</a></li>
                                 <li class="hidden-sm hidden-md hidden-lg sub" ng-click="loginModal('signup')" ng-hide="currentUser"><a href="#">Signup</a></li>
