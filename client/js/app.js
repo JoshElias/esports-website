@@ -172,11 +172,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/home.html',
                         controller: 'HomeCtrl',
                         resolve: {
-<<<<<<< HEAD
-                            articles: ['Article', 'currentUser', function (Article, currentUser) {
-=======
                             articles: ['Article', function (Article) {
->>>>>>> 847d91dd4280559171fc6250d57027f2a85c0768
                                 var offset = 1,
                                     num = 6;
 
