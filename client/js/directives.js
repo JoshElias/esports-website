@@ -121,8 +121,6 @@ angular.module('app.directives', ['ui.load'])
                 $scope.loginText = "Login";
                 $scope.loginBtnEnabled = true;
 
-                console.log($scope.callback);
-
                 var loginStatusList = {
                     0: "Login",
                     1: "Please Wait...",
@@ -139,7 +137,7 @@ angular.module('app.directives', ['ui.load'])
                     if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
                       console.log("$scope.remember:", $scope.remember);
                       console.log("$scope.info.email:", $scope.loginInfo.email);
-                      console.log("$scope.info.password:", $scope.loginInfo.password);
+//                      console.log("$scope.info.password:", $scope.loginInfo.password);
                         User.login({ rememberMe:$scope.remember }, { email:$scope.loginInfo.email, password:$scope.loginInfo.password },
                             function(accessToken) {
                                 console.log("Received access token:", accessToken);
@@ -274,7 +272,6 @@ angular.module('app.directives', ['ui.load'])
             service:     "="
         },
         controller: ['$scope', function ($scope) {
-
             //TODO: FIX COMMENTING
             $scope.commentable;
             $scope.service;
@@ -291,6 +288,7 @@ angular.module('app.directives', ['ui.load'])
             
             // TODO: When user posts new comment, shows '[DEL]' for username until page is refreshed.
             $scope.commentPost = function () {
+                console.log($scope.commentable.comments);
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
                         $scope.commentPost();
@@ -301,12 +299,18 @@ angular.module('app.directives', ['ui.load'])
                     }, {
                         text: $scope.comment,
                         authorId: LoopBackAuth.currentUserId,
-                        author: LoopBackAuth.currentUserData,
                         createdDate: new Date(),
-                        votes: []
+                        votes: [
+                            {
+                                userId: LoopBackAuth.currentUserId,
+                                direction: 1
+                            }
+                        ],
+                        votesCount: 1
                     })
                     .$promise
                     .then(function (com) {
+                        com.author = LoopBackAuth.currentUserData;
                         $scope.commentable.comments.push(com);
                         $scope.comment = '';
                         updateCommentVotes();
@@ -314,6 +318,7 @@ angular.module('app.directives', ['ui.load'])
                         console.log("failed!", err);
                     });
                 }
+                console.log($scope.commentable.comments);
             };
 
             updateCommentVotes();
@@ -322,7 +327,7 @@ angular.module('app.directives', ['ui.load'])
 
                 function checkVotes (comment) {
                     var vote = comment.votes.filter(function (vote) {
-                        return (LoopBackAuth.currentUserId === vote.userID);
+                        return (LoopBackAuth.currentUserId === vote.userId);
                     })[0];
 
                     if (vote) {
@@ -332,6 +337,7 @@ angular.module('app.directives', ['ui.load'])
             }
 
             $scope.voteComment = function (direction, comment) {
+                var uniqueVote = false;
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
                         $scope.voteComment(direction, comment);
@@ -341,16 +347,6 @@ angular.module('app.directives', ['ui.load'])
                         bootbox.alert("You can't vote for your own content.");
                         return false;
                     }
-
-//                    VoteService.voteComment(direction, comment).then(function (data) {
-//                        if (data.success) {
-//                            comment.voted = direction;
-//                            comment.votesCount = data.votesCount;
-//                        }
-//                    });
-
-
-                    var uniqueVote = false;
 
                     for(var i = 0; i < comment.votes.length; i++) {
                         if(comment.votes[i].userId === LoopBackAuth.currentUserId) {
@@ -366,7 +362,6 @@ angular.module('app.directives', ['ui.load'])
                             uniqueVote = true;
                         }
                     }
-
                     if(uniqueVote) {
                         comment.votesCount = comment.votesCount + direction;
                         comment.votes.push(
@@ -375,7 +370,6 @@ angular.module('app.directives', ['ui.load'])
                                 userId: LoopBackAuth.currentUserId
                             }
                         );
-
                         Comment.update({
                             where: {
                                 id: comment.id
@@ -386,9 +380,7 @@ angular.module('app.directives', ['ui.load'])
                                 comment.votesCount = data.votesCount;
                             }
                         });
-
                     }
-
                 }
                 updateCommentVotes();
             }

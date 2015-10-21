@@ -1,7 +1,13 @@
 {
+<<<<<<< HEAD
   "angular.min.js": "angular.min.75c014e8.js",
   "app.min.js": "app.min.6f439197.js",
   "vendor.min.js": "vendor.min.dfc74813.js",
+=======
+  "angular.min.js": "angular.min.03238eba.js",
+  "app.min.js": "app.min.5df56186.js",
+  "vendor.min.js": "vendor.min.fcf8fee1.js",
+>>>>>>> 8f0b50752b5a8ca8c7de0454d32146cda53f53f2
   "style.min.css": "style.min.d5815271.css",
   "vendor.min.css": "vendor.min.126681d4.css"
 }

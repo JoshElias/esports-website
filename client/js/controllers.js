@@ -67,11 +67,8 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('RootCtrl', ['$scope', 'LoginModalService', 'User', 'currentUser', function ($scope, LoginModalService, User, currentUser) {
 
     // If user is logged in
-    console.log("Current User:", currentUser);
+    console.log("currentUSer: ", currentUser);
     $scope.currentUser = currentUser;
-    //$scope.$watch(currentUser) {
-      //$scope.currentUser = currentUser;
-    //}
 
     $scope.loginModal = function (state) {
         LoginModalService.showModal(state, function (data) {
@@ -81,7 +78,7 @@ angular.module('app.controllers', ['ngCookies'])
 
     $scope.logout = function() {
       User.logout(function() {
-        console.log("logged out successfully");
+        $scope.currentUser = undefined;
       }, function(err) {
         console.log("error logging out:", err);
       });
@@ -1197,8 +1194,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('AdminCardListCtrl', ['$scope', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'Pagination', 'data',
-    function ($scope, bootbox, Util, Hearthstone, AdminCardService, AlertService, Pagination, data) {
+.controller('AdminCardListCtrl', ['$scope', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'Pagination', 'cards',
+    function ($scope, bootbox, Util, Hearthstone, AdminCardService, AlertService, Pagination, cards) {
 
         // grab alerts
         if (AlertService.hasAlert()) {
@@ -1207,7 +1204,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
 
         // load cards
-        $scope.cards = data.cards;
+        $scope.cards = cards;
 
         // filters
         $scope.expansions = [{ name: 'All Expansions', value: ''}].concat(Util.toSelect(Hearthstone.expansions));
@@ -1818,8 +1815,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleListCtrl', ['$scope', 'AdminArticleService', 'AlertService', 'Pagination', 'data',
-    function ($scope, AdminArticleService, AlertService, Pagination, data) {
+.controller('AdminArticleListCtrl', ['$scope', 'AdminArticleService', 'AlertService', 'AjaxPagination', 'articles',
+    function ($scope, AdminArticleService, AlertService, AjaxPagination, articles) {
 
         // grab alerts
         if (AlertService.hasAlert()) {
@@ -1828,78 +1825,86 @@ angular.module('app.controllers', ['ngCookies'])
         }
 
         // load articles
-        $scope.articles = data.articles;
-        $scope.page = data.page;
-        $scope.perpage = data.perpage;
-        $scope.total = data.total;
-        $scope.search = data.search;
+        $scope.articles = articles;
+//        $scope.page = data.page;
+//        $scope.perpage = data.perpage;
+//        $scope.total = data.total;
+//        $scope.search = data.search;
 
-        $scope.getArticles = function () {
-            AdminArticleService.getArticles($scope.page, $scope.perpage, $scope.search).then(function (data) {
-                $scope.articles = data.articles;
-                $scope.page = data.page;
-                $scope.total = data.total;
+//        $scope.getArticles = function () {
+//            AdminArticleService.getArticles($scope.page, $scope.perpage, $scope.search).then(function (data) {
+//                $scope.articles = data.articles;
+//                $scope.page = data.page;
+//                $scope.total = data.total;
+//            });
+//        }
+//
+//        $scope.searchArticles = function () {
+//            $scope.page = 1;
+//            $scope.getArticles();
+//        }
+        
+        // pagination
+        function updateArticles (page, perpage, search, callback) {
+            $scope.fetching = true;
+
+            var options = {},
+                countOptions = {};
+
+            options.filter = {
+                fields: [
+                    "title"
+                ],
+                order: "createdDate DESC",
+                skip: ((page*perpage)-perpage),
+                limit: 12
+            };
+
+            if ($scope.search.length > 0) {
+                options.filter.where = {
+                    or: [
+                        { title: { regexp: search } },
+                        { description: { regexp: search } },
+                        { content: { regexp: search } }
+                    ]
+                }
+                countOptions.where = {
+                    or: [
+                        { title: { regexp: search } },
+                        { description: { regexp: search } },
+                        { content: { regexp: search } }
+                    ]
+                }
+            }
+
+            Article.count(countOptions, function (count) {
+                Article.find(options, function (articles) {
+                    $scope.articlePagination.total = count.count;
+                    $scope.articlePagination.page = page;
+                    $scope.articlePagination.perpage = perpage;
+
+                    $timeout(function () {
+                        $scope.articles = articles;
+                        $scope.fetching = false;
+                        if (callback) {
+                            return callback(count.count);
+                        }
+                    });
+                });
             });
         }
 
-        $scope.searchArticles = function () {
-            $scope.page = 1;
-            $scope.getArticles();
-        }
+        // page flipping
+        $scope.articlePagination = AjaxPagination.new($scope.perpage, $scope.total,
+            function (page, perpage) {
+                var d = $q.defer();
 
-        // pagination
-        $scope.pagination = {
-            page: function () {
-                return $scope.page;
-            },
-            perpage: function () {
-                return $scope.perpage;
-            },
-            results: function () {
-                return $scope.total;
-            },
-            setPage: function (page) {
-                $scope.page = page;
-                $scope.getArticles();
-            },
-            pagesArray: function () {
-                var pages = [],
-                    start = 1,
-                    end = this.totalPages();
-
-                if (this.totalPages() > 5) {
-                    if (this.page() < 3) {
-                        start = 1;
-                        end = start + 4;
-                    } else if (this.page() > this.totalPages() - 2) {
-                        end = this.totalPages();
-                        start = end - 4;
-                    } else {
-                        start = this.page() - 2;
-                        end = this.page() + 2;
-                    }
-
-                }
-
-                for (var i = start; i <= end; i++) {
-                    pages.push(i);
-                }
-
-                return pages;
-            },
-            isPage: function (page) {
-                return (page === this.page());
-            },
-            totalPages: function (page) {
-                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
-            },
-            from: function () {
-                return (this.page() * this.perpage()) - this.perpage() + 1;
-            },
-            to: function () {
-                return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
+                updateArticles(page, perpage, $scope.search, function (data) {
+                    d.resolve(data);
+                });
+                return d.promise;
             }
-        };
+        );
 
         // delete article
         $scope.deleteArticle = function deleteArticle(article) {
@@ -3663,87 +3668,36 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminDeckListCtrl', ['$scope', 'AdminDeckService', 'AlertService', 'Pagination', 'data',
-    function ($scope, AdminDeckService, AlertService, Pagination, data) {
+.controller('AdminDeckListCtrl', ['$scope', 'AdminDeckService', 'AlertService', 'Pagination', 'decks',
+    function ($scope, AdminDeckService, AlertService, Pagination, decks) {
         // grab alerts
         if (AlertService.hasAlert()) {
             $scope.success = AlertService.getSuccess();
             AlertService.reset();
         }
+        
+        console.log(decks);
 
         // load decks
-        $scope.decks = data.decks;
-        $scope.page = data.page;
-        $scope.perpage = data.perpage;
-        $scope.total = data.total;
-        $scope.search = data.search;
+        $scope.decks = decks;
+        
+//        $scope.page = data.page;
+//        $scope.perpage = data.perpage;
+//        $scope.total = data.total;
+//        $scope.search = data.search;
 
-        $scope.getDecks = function () {
-            AdminDeckService.getDecks($scope.page, $scope.perpage, $scope.search).then(function (data) {
-                $scope.decks = data.decks;
-                $scope.page = data.page;
-                $scope.total = data.total;
-            });
-        }
-
-        $scope.searchDecks = function () {
-            $scope.page = 1;
-            $scope.getDecks();
-        }
-
-        // pagination
-        $scope.pagination = {
-            page: function () {
-                return $scope.page;
-            },
-            perpage: function () {
-                return $scope.perpage;
-            },
-            results: function () {
-                return $scope.total;
-            },
-            setPage: function (page) {
-                $scope.page = page;
-                $scope.getDecks();
-            },
-            pagesArray: function () {
-                var pages = [],
-                    start = 1,
-                    end = this.totalPages();
-
-                if (this.totalPages() > 5) {
-                    if (this.page() < 3) {
-                        start = 1;
-                        end = start + 4;
-                    } else if (this.page() > this.totalPages() - 2) {
-                        end = this.totalPages();
-                        start = end - 4;
-                    } else {
-                        start = this.page() - 2;
-                        end = this.page() + 2;
-                    }
-
-                }
-
-                for (var i = start; i <= end; i++) {
-                    pages.push(i);
-                }
-
-                return pages;
-            },
-            isPage: function (page) {
-                return (page === this.page());
-            },
-            totalPages: function (page) {
-                return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
-            },
-            from: function () {
-                return (this.page() * this.perpage()) - this.perpage() + 1;
-            },
-            to: function () {
-                return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
-            }
-        };
+//        $scope.getDecks = function () {
+//            AdminDeckService.getDecks($scope.page, $scope.perpage, $scope.search).then(function (data) {
+//                $scope.decks = data.decks;
+//                $scope.page = data.page;
+//                $scope.total = data.total;
+//            });
+//        }
+//
+//        $scope.searchDecks = function () {
+//            $scope.page = 1;
+//            $scope.getDecks();
+//        }
 
         // delete deck
         $scope.deleteDeck = function deleteDeck(deck) {
@@ -6204,18 +6158,18 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'dataSnapshot', 'VoteService', 'LoginModalService', 'User', 'Snapshot',
-    function ($scope, $state, $compile, $window, SnapshotService, dataSnapshot, VoteService, LoginModalService, User, Snapshot) {
+.controller('SnapshotCtrl', ['$scope', '$state', '$rootScope', '$compile', '$window', 'dataSnapshot', 'LoginModalService', 'User', 'Snapshot', 'LoopBackAuth',
+    function ($scope, $state, $rootScope, $compile, $window, dataSnapshot, LoginModalService, User, Snapshot, LoopBackAuth) {
         
         console.log('snapshot: ', dataSnapshot);
-        
         $scope.snapshot = dataSnapshot;
         // New decktiers array from snapshot.deckTiers
         $scope.deckTiers = getAllDecksByTier();
+
+        $scope.SnapshotService = Snapshot;
         
-        // console.log('orig deckTiers: ', $scope.snapshot.deckTiers);
         console.log('new deckTiers: ', $scope.deckTiers);
-        console.log('original: ', $scope.snapshot.tiers);
+        
         $scope.show = [];
         $scope.matchupName = [];
         $scope.voted = false;
@@ -6261,13 +6215,10 @@ angular.module('app.controllers', ['ngCookies'])
             
         }
 
-        $scope.show.comments = SnapshotService.getStorage();
-        $scope.$watch('User.isAuthenticated()', function() {
-            updateCommentVotes();
-            $scope.hasVoted();
-        });
-
-        $scope.SnapshotService = Snapshot;
+//        $scope.show.comments = SnapshotService.getStorage();
+//        $scope.$watch('User.isAuthenticated()', function() {
+//            $scope.hasVoted();
+//        });
 
         var mouseOver = [],
             charts = [],
@@ -6501,63 +6452,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
         }
-
-
-        /******************************************* COMMENTS *******************************************/
-        var defaultComment = {
-            comment: ''
-        };
-        $scope.comment = angular.copy(defaultComment);
-
-        $scope.commentPost = function () {
-            if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal('login', function () {
-                    $scope.commentPost();
-                });
-            } else {
-                SnapshotService.addComment($scope.snapshot, $scope.comment).success(function (data) {
-                    if (data.success) {
-                        $scope.snapshot.comments.push(data.comment);
-                        $scope.comment.comment = '';
-                    }
-                });
-            }
-        };
-
-        updateCommentVotes();
-        function updateCommentVotes() {
-            $scope.snapshot.comments.forEach(checkVotes);
-
-            function checkVotes (comment) {
-                var vote = comment.votes.filter(function (vote) {
-                    return ($scope.app.user.getUserID() === vote.userID);
-                })[0];
-
-                if (vote) {
-                    comment.voted = vote.direction;
-                }
-            }
-        }
-
-        $scope.voteComment = function (direction, comment) {
-            if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal('login', function () {
-                    $scope.voteComment(direction, snapshot);
-                });
-            } else {
-                if (comment.author._id === $scope.app.user.getUserID()) {
-                    bootbox.alert("You can't vote for your own content.");
-                    return false;
-                }
-                VoteService.voteComment(direction, comment).then(function (data) {
-                    if (data.success) {
-                        comment.voted = direction;
-                        comment.votesCount = data.votesCount;
-                    }
-                });
-            }
-        };
-
 
         $scope.scrollToDeck = function (deck) {
             $('html, body').animate({
@@ -6915,23 +6809,23 @@ angular.module('app.controllers', ['ngCookies'])
 //            }
 //        };
 
-        if (LoopBackAuth.currentUserData) {
-            updateCommentVotes();
-        }
-
-        function updateCommentVotes() {
-            $scope.article.comments.forEach(checkVotes);
-
-            function checkVotes (comment) {
-                var vote = comment.votes.filter(function (vote) {
-                    return ($scope.app.user.getUserID() === vote.userID);
-                })[0];
-
-                if (vote) {
-                    comment.voted = vote.direction;
-                }
-            }
-        }
+//        if (LoopBackAuth.currentUserData) {
+//            updateCommentVotes();
+//        }
+//
+//        function updateCommentVotes() {
+//            $scope.article.comments.forEach(checkVotes);
+//
+//            function checkVotes (comment) {
+//                var vote = comment.votes.filter(function (vote) {
+//                    return ($scope.app.user.getUserID() === vote.userID);
+//                })[0];
+//
+//                if (vote) {
+//                    comment.voted = vote.direction;
+//                }
+//            }
+//        }
 
         $scope.voteComment = function (direction, comment) {
             if (!$scope.app.user.isLogged()) {
@@ -9469,15 +9363,18 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     }
                 };
+            
             if ($scope.filters.map) {
-                console.log("map string type:", typeof $scope.filters.map.className, $scope.filters.map.className);
+                console.log("map string type:", typeof $scope.filters.map.className, $scope.filters.map);
                 options.filter.include.scope.where = {
                     and: [
                         {
                             featured: isTempostorm
                         },
                         {
-                            maps: { inq: [$scope.filters.map] } //joshtodo: FUCKING FIX THIS
+                            maps: {
+                                className: $scope.filters.map.className
+                            }
                         }
                     ]
                 }
@@ -9516,14 +9413,15 @@ angular.module('app.controllers', ['ngCookies'])
                           },
                         include: [
                             {
-                                relation: 'author'
-                            },
-                            {
                                 relation: 'heroes',
                                 scope: {
                                     include: ['talents']
                                 }
                             },
+                            {
+                                relation: 'author'
+                            },
+                            
                             {
                                 relation: 'maps'
                             }
@@ -9531,6 +9429,13 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
 
+            if ($scope.filters.heroes.length > 0) {
+                console.log($scope.filters.heroes);
+                options.filter.include[0].scope.where = {
+                    className: $scope.filters.heroes[0].className
+                }
+            }
+            
 //            for (var i = 0; i < $scope.filters.heroes.length; i++) {
 //                temp.push($scope.filters.heroes[i].name);
 //            }
@@ -9576,37 +9481,37 @@ angular.module('app.controllers', ['ngCookies'])
               // check if any filters are present, --> use those
               // check if map filters are present, --> use all filters at same time
 
-                if ($scope.filters.heroes.length > 0) {
-                    // load tempostorm guides
-                    Hero.find(getHeroQuery(true))
-                    .$promise
-                    .then(function (data) {
-                        console.log("results featured:",data);
-                        featuredTalentDict = getDict(data[0].guides);
-                        $timeout(function () {
-                            $scope.guidesFeatured = data[0].guides;
-                        });
-                    })
-                    .catch(function (err) {
-                        console.log("Error:", err);
-                    });
-
-                    // load community guides
-                    Hero.find(getHeroQuery(false))
-                    .$promise
-                    .then(function (data) {
-                        console.log("results community:",data);
-                        communityTalentDict = getDict(data[0].guides);
-
-                        $timeout(function () {
-                            $scope.guidesCommunity = data[0].guides;
-                        });
-                    })
-                    .catch(function (err) {
-                        console.log("Error:", err);
-                    });
-
-                } else {
+//                if ($scope.filters.heroes.length > 0) {
+//                    // load tempostorm guides
+//                    Hero.find(getHeroQuery(true))
+//                    .$promise
+//                    .then(function (data) {
+//                        console.log("results featured:",data);
+//                        featuredTalentDict = getDict(data[0].guides);
+//                        $timeout(function () {
+//                            $scope.guidesFeatured = data[0].guides;
+//                        });
+//                    })
+//                    .catch(function (err) {
+//                        console.log("Error:", err);
+//                    });
+//
+//                    // load community guides
+//                    Hero.find(getHeroQuery(false))
+//                    .$promise
+//                    .then(function (data) {
+//                        console.log("results community:",data);
+//                        communityTalentDict = getDict(data[0].guides);
+//
+//                        $timeout(function () {
+//                            $scope.guidesCommunity = data[0].guides;
+//                        });
+//                    })
+//                    .catch(function (err) {
+//                        console.log("Error:", err);
+//                    });
+//
+//                } else {
                     Guide.find(getGuideQuery(true))
                     .$promise
                     .then(function (data) {
@@ -9630,7 +9535,7 @@ angular.module('app.controllers', ['ngCookies'])
                     .catch(function () {
 
                     });
-                }
+//                }
 
 
             }
@@ -10110,21 +10015,21 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'HOTSGuideService', 'data', 'dataHeroes', 'dataMaps', 'LoginModalService', 'MetaService',
-    function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, HOTSGuideService, data, dataHeroes, dataMaps, LoginModalService, MetaService) {
-
-        $scope.guide = data.guide;
-        $scope.HOTSGuideService = HOTSGuideService;
-        $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0].hero : false;
-        $scope.heroes = dataHeroes.heroes;
-        $scope.maps = dataMaps.maps;
-
+.controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'guideTalents', 'LoginModalService', 'MetaService', 'LoopBackAuth',
+    function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, guideTalents, LoginModalService, MetaService, LoopBackAuth) {
+        
+        $scope.guide = guide;
+        $scope.Guide = Guide;
+        $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0] : false;
+        console.log($scope.currentHero);
+//        $scope.heroes = heroes;
+//        $scope.maps = maps;
 
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.guide.name + ' - Guides', $scope.guide.description);
 
         var ogImg = $scope.app.cdn + 'img/hots/hots-logo.png';
-        $scope.metaservice.setOg('https://tempostorm.com/heroes-of-the-storm/guides/' + data.guide.slug, $scope.guide.name, $scope.guide.description, 'article', ogImg);
+        $scope.metaservice.setOg('https://tempostorm.com/heroes-of-the-storm/guides/' + $scope.guide.slug, $scope.guide.name, $scope.guide.description, 'article', ogImg);
 
         // show
         if (!$scope.app.settings.show.guide) {
@@ -10142,12 +10047,13 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.$watch('show', function(){ $scope.app.settings.show.guide = $scope.show; }, true);
 
         $scope.setCurrentHero = function (hero) {
+            console.log("setCurrentHero:", hero);
             $scope.currentHero = hero;
         };
 
         $scope.getCurrentHero = function () {
             for (var i = 0; i < $scope.guide.heroes.length; i++) {
-                if ($scope.guide.heroes[i].hero._id === $scope.currentHero._id) {
+                if ($scope.guide.heroes[i].id === $scope.currentHero.id) {
                     return $scope.guide.heroes[i];
                 }
             }
@@ -10158,7 +10064,7 @@ angular.module('app.controllers', ['ngCookies'])
             var out = [];
 
             for (var i = 0; i < $scope.guide.heroes.length; i++) {
-                out.push($scope.guide.heroes[i].hero);
+                out.push($scope.guide.heroes[i]);
             }
 
             return out;
@@ -10167,47 +10073,47 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.getTiers = function () {
             return [1, 4, 7, 10, 13, 16, 20];
         };
-
+        
+        $scope.getCurrentTalents = function () {
+            var levels = $scope.getTiers(),
+                out = [];
+            
+            for (var i = 0; i < levels.length; i++) {
+                out.push(guideTalents[$scope.guide.talentTiers[$scope.currentHero.id][levels[i]]]);
+                out[i].tier = levels[i]
+            }
+            return out;
+        }
+        
         $scope.getTalents = function (hero, tier) {
             var out = [];
-
-            for (var i = 0; i < hero.hero.talents.length; i++) {
-                if (hero.hero.talents[i].tier === tier) {
-                    out.push(hero.hero.talents[i]);
+            for (var i = 0; i < hero.talents.length; i++) {
+                if (hero.talentTiers[hero.talents[i].id] === tier) {
+                    out.push(hero.talents[i]);
                 }
             }
-
             return out;
         };
 
         $scope.selectedTalent = function (hero, tier, talent) {
-            return (hero.talents['tier' + tier] == talent._id);
-        };
-
-        $scope.getTalent = function (hero, tier) {
-            for (var i = 0; i < hero.hero.talents.length; i++) {
-                if (hero.talents['tier' + tier] == hero.hero.talents[i]._id) {
-                    return hero.hero.talents[i];
-                }
-            }
-            return false;
+            return ($scope.guide.talentTiers[hero.id][tier] == talent.id);
         };
 
         // matchups
         $scope.hasSynergy = function (hero) {
-            return ($scope.guide.synergy.indexOf(hero._id) !== -1);
+            return ($scope.guide.synergy.indexOf(hero.id) !== -1);
         };
         $scope.hasStrong = function (hero) {
-            return ($scope.guide.against.strong.indexOf(hero._id) !== -1);
+            return ($scope.guide.against.strong.indexOf(hero.id) !== -1);
         };
         $scope.hasWeak = function (hero) {
-            return ($scope.guide.against.weak.indexOf(hero._id) !== -1);
+            return ($scope.guide.against.weak.indexOf(hero.id) !== -1);
         };
 
         // maps
         $scope.hasMap = function (map) {
             for (var i = 0; i < $scope.guide.maps.length; i++) {
-                if ($scope.guide.maps[i]._id === map._id) {
+                if ($scope.guide.maps[i].id === map.id) {
                     return true;
                 }
             }
@@ -10234,13 +10140,15 @@ angular.module('app.controllers', ['ngCookies'])
         var box,
             callback;
 
+        console.log(LoopBackAuth);
+        
         updateVotes();
         function updateVotes() {
             checkVotes($scope.guide);
 
             function checkVotes (guide) {
                 var vote = guide.votes.filter(function (vote) {
-                    return ($scope.app.user.getUserID() === vote.userID);
+                    return (LoopBackAuth.currentUserId === vote.userID);
                 })[0];
 
                 if (vote) {
@@ -10263,63 +10171,6 @@ angular.module('app.controllers', ['ngCookies'])
                     if (data.success) {
                         guide.voted = direction;
                         guide.votesCount = data.votesCount;
-                    }
-                });
-            }
-            updateVotes();
-            updateCommentVotes();
-        };
-
-        // comments
-        var defaultComment = {
-            comment: ''
-        };
-        $scope.comment = angular.copy(defaultComment);
-
-        $scope.commentPost = function () {
-            if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal('login', function () {
-                    $scope.commentPost();
-                });
-            } else {
-                HOTSGuideService.addComment($scope.guide, $scope.comment).success(function (data) {
-                    if (data.success) {
-                        $scope.guide.comments.push(data.comment);
-                        $scope.comment.comment = '';
-                    }
-                });
-            }
-        };
-
-        updateCommentVotes();
-        function updateCommentVotes() {
-            $scope.guide.comments.forEach(checkVotes);
-
-            function checkVotes (comment) {
-                var vote = comment.votes.filter(function (vote) {
-                    return ($scope.app.user.getUserID() === vote.userID);
-                })[0];
-
-                if (vote) {
-                    comment.voted = vote.direction;
-                }
-            }
-        }
-
-        $scope.voteComment = function (direction, comment) {
-            if (!$scope.app.user.isLogged()) {
-                LoginModalService.showModal('login', function () {
-                    $scope.voteComment(direction, deck);
-                });
-            } else {
-                if (comment.author._id === $scope.app.user.getUserID()) {
-                    bootbox.alert("You can't vote for your own content.");
-                    return false;
-                }
-                VoteService.voteComment(direction, comment).then(function (data) {
-                    if (data.success) {
-                        comment.voted = direction;
-                        comment.votesCount = data.votesCount;
                     }
                 });
             }

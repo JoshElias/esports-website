@@ -35,7 +35,7 @@
                             </div>
                         </button>
                         <div class="sideTierBody collapse" id="collapseSideTier{{tier.tier}}">
-                            <div class="sideTierDeck deck-portrait-{{deck.deck.playerClass}}-sm" ng-repeat="deck in tier.decks">
+                            <div class="sideTierDeck deck-portrait-{{deck.deck.playerClass}}-sm" ng-repeat="deck in tier.decks | orderBy : 'ranks[0]'">
                                 <a href="#{{deck.ranks[0]}}" ng-click="findDeck(tier.tier, deck.ranks[0])">
                                     <div class="sideTierDeckRank pull-left clearfix">
                                         <h4>{{deck.ranks[0]}}</h4>
@@ -226,9 +226,9 @@
                                             </div>
                                                 </div>
                                                 <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
-                                                    <div class="deck-techs" ng-if="deck.tech.length">
+                                                    <div class="deck-techs" ng-if="deck.deckTech.length">
                                                         <h3 class="m-b-lg">TECH DECISION</h3>
-                                                        <div class="tech" ng-repeat="tech in deck.tech">
+                                                        <div class="tech" ng-repeat="tech in deck.deckTech">
                                                             <div class="tech-heading">
                                                                 <span ng-if="tech.title">
                                                                     VERSUS {{tech.title}}
@@ -237,8 +237,8 @@
                                                                     GENERAL
                                                                 </span>
                                                             </div>
-                                                            <div class="tech-card" ng-repeat="card in tech.cards">
-                                                                <div class="tech-card-body" ng-class="{ 'multi' : card.both }" style="background-image: url('{{app.cdn}}cards/{{card.card.photos.small}}')">
+                                                            <div class="tech-card" ng-repeat="card in tech.cardTech">
+                                                                <div class="tech-card-body" ng-class="{ 'multi' : card.both }" style="background-image: url('{{app.cdn}}cards/{{card.card.photoNames.small}}')">
                                                                     <div class="pull-left toss" ng-if="!card.toss"><i class="fa fa-plus"></i></div>
                                                                     <div class="pull-left keep" ng-if="card.toss"><i class="fa fa-minus"></i></div>
                                                                     {{card.card.name}}
