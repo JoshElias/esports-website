@@ -6204,17 +6204,16 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'dataSnapshot', 'VoteService', 'LoginModalService', 'User',
-    function ($scope, $state, $compile, $window, SnapshotService, dataSnapshot, VoteService, LoginModalService, User) {
+.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'dataSnapshot', 'VoteService', 'LoginModalService', 'User', 'Snapshot',
+    function ($scope, $state, $compile, $window, SnapshotService, dataSnapshot, VoteService, LoginModalService, User, Snapshot) {
         
         console.log('snapshot: ', dataSnapshot);
-        
         
         $scope.snapshot = dataSnapshot;
         // New decktiers array from snapshot.deckTiers
         $scope.deckTiers = getAllDecksByTier();
         
-        console.log('orig deckTiers: ', $scope.snapshot.deckTiers);
+        // console.log('orig deckTiers: ', $scope.snapshot.deckTiers);
         console.log('new deckTiers: ', $scope.deckTiers);
         console.log('original: ', $scope.snapshot.tiers);
         $scope.show = [];
@@ -6268,7 +6267,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.hasVoted();
         });
 
-        $scope.SnapshotService = SnapshotService;
+        $scope.SnapshotService = Snapshot;
 
         var mouseOver = [],
             charts = [],
@@ -6293,7 +6292,7 @@ angular.module('app.controllers', ['ngCookies'])
         var ogImg = ($scope.snapshot.photos.square == "") ? $scope.app.cdn + 'snapshots/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photos.square;
         $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article', ogImg);
 
-        for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+        for (var i = 0; i < $scope.deckTiers.length; i++) {
             $scope.show[i+1] = false;
         }
 
@@ -6360,8 +6359,8 @@ angular.module('app.controllers', ['ngCookies'])
         };
 
         // init tier ranges
-        for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-            var tierNum = $scope.snapshot.tiers[i].tier;
+        for (var i = 0; i < $scope.deckTiers.length; i++) {
+            var tierNum = $scope.deckTiers[i].tier;
             $scope.tierRange[tierNum] = getTierRange(tierNum);
         }
 
@@ -6388,7 +6387,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
 
         $scope.getRanks = function (deck) {
-            var ranks = deck.rank.all;
+            var ranks = deck.ranks;
             return ranks;
         };
 
@@ -6398,11 +6397,11 @@ angular.module('app.controllers', ['ngCookies'])
         };
 
         $scope.getNextRank = function (deck, index) {
-            return deck.rank.all[index + 1];
+            return deck.ranks[index + 1];
         };
 
         $scope.hasNextRank = function (deck, index) {
-            return (deck.rank.all[index + 1]);
+            return (deck.ranks[index + 1]);
         };
 
         $scope.voteSnapshot = function () {
@@ -6421,19 +6420,61 @@ angular.module('app.controllers', ['ngCookies'])
         }
 
         // check for custom deck name or load normal name
+//        function getDeckName (deckID) {
+//            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+//                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
+//                    if ($scope.snapshot.tiers[i].decks[j].deck._id == deckID) {
+//                        return ($scope.snapshot.tiers[i].decks[j].name.length) ? $scope.snapshot.tiers[i].decks[j].name : $scope.snapshot.tiers[i].decks[j].deck.name;
+//                    }
+//                }
+//            }
+//            return false;
+//        }
+        
+        // check for custom deck name or load normal name
         function getDeckName (deckID) {
-            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-                for (var j = 0; j < $scope.snapshot.tiers[i].decks.length; j++) {
-                    if ($scope.snapshot.tiers[i].decks[j].deck._id == deckID) {
-                        return ($scope.snapshot.tiers[i].decks[j].name.length) ? $scope.snapshot.tiers[i].decks[j].name : $scope.snapshot.tiers[i].decks[j].deck.name;
+            for (var i = 0; i < $scope.deckTiers.length; i++) {
+                for (var j = 0; j < $scope.deckTiers[i].decks.length; j++) {
+                    if ($scope.deckTiers[i].decks[j].deck.id == deckID) {
+                        return ($scope.deckTiers[i].decks[j].name.length) ? $scope.deckTiers[i].decks[j].name : $scope.deckTiers[i].decks[j].deck.name;
                     }
                 }
             }
             return false;
         }
 
+//        function init () {
+//            var tierLength = $scope.snapshot.tiers.length,
+//                maxTierLength = (tierLength > 2) ? 2 : tierLength;
+//
+//            /******************************************* HAS VOTED *******************************************/
+//
+//
+//
+//            /******************************************* BUILD TIER MATCHES *******************************************/
+//            for (var j = 0; j < maxTierLength; j++) {
+//                for (var k = 0; k < $scope.snapshot.tiers[j].decks.length; k++) {
+//                    var matches = [];
+//                    for (var i = 0; i < $scope.snapshot.matches.length; i++) {
+//                        if($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].for._id || $scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) {
+//                            var newObj = {
+//                                against: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for._id : $scope.snapshot.matches[i].against._id,
+//                                chance: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].forChance : $scope.snapshot.matches[i].againstChance,
+//                                playerClass: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.playerClass : $scope.snapshot.matches[i].against.playerClass,
+//                                //name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.name : $scope.snapshot.matches[i].against.name
+//                                name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? getDeckName($scope.snapshot.matches[i].for._id) : getDeckName($scope.snapshot.matches[i].against._id)
+//                            };
+//                            matches.push(newObj);
+//                        }
+//                    }
+//                    charts[$scope.snapshot.tiers[j].decks[k].deck._id] = matches;
+//                }
+//            }
+//
+//        }
+        
         function init () {
-            var tierLength = $scope.snapshot.tiers.length,
+            var tierLength = $scope.deckTiers.length,
                 maxTierLength = (tierLength > 2) ? 2 : tierLength;
 
             /******************************************* HAS VOTED *******************************************/
@@ -6442,21 +6483,20 @@ angular.module('app.controllers', ['ngCookies'])
 
             /******************************************* BUILD TIER MATCHES *******************************************/
             for (var j = 0; j < maxTierLength; j++) {
-                for (var k = 0; k < $scope.snapshot.tiers[j].decks.length; k++) {
+                for (var k = 0; k < $scope.deckTiers[j].decks.length; k++) {
                     var matches = [];
-                    for (var i = 0; i < $scope.snapshot.matches.length; i++) {
-                        if($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].for._id || $scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) {
+                    for (var i = 0; i < $scope.snapshot.deckMatchups.length; i++) {
+                        if($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].forDeckId || $scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) {
                             var newObj = {
-                                against: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for._id : $scope.snapshot.matches[i].against._id,
-                                chance: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].forChance : $scope.snapshot.matches[i].againstChance,
-                                playerClass: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.playerClass : $scope.snapshot.matches[i].against.playerClass,
-                                //name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? $scope.snapshot.matches[i].for.name : $scope.snapshot.matches[i].against.name
-                                name: ($scope.snapshot.tiers[j].decks[k].deck._id == $scope.snapshot.matches[i].against._id) ? getDeckName($scope.snapshot.matches[i].for._id) : getDeckName($scope.snapshot.matches[i].against._id)
+                                against: ($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) ? $scope.snapshot.deckMatchups[i].forDeckId : $scope.snapshot.deckMatchups[i].againstDeckId,
+                                chance: ($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) ? $scope.snapshot.deckMatchups[i].forChance : $scope.snapshot.deckMatchups[i].againstChance,
+                                playerClass: ($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) ? $scope.snapshot.deckMatchups[i].forDeck.playerClass : $scope.snapshot.deckMatchups[i].againstDeck.playerClass,
+                                name: ($scope.deckTiers[j].decks[k].deck.id == $scope.snapshot.deckMatchups[i].againstDeckId) ? getDeckName($scope.snapshot.deckMatchups[i].forDeck.id) : getDeckName($scope.snapshot.deckMatchups[i].againstDeck.id)
                             };
                             matches.push(newObj);
                         }
                     }
-                    charts[$scope.snapshot.tiers[j].decks[k].deck._id] = matches;
+                    charts[$scope.deckTiers[j].decks[k].deck.id] = matches;
                 }
             }
 
@@ -7361,6 +7401,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
 
         // get premium
+        //TODO: This is using old stuff
         $scope.getPremium = function (plan) {
             if ($scope.app.user.isLogged()) {
                 if (!$scope.app.user.isSubscribed()) {
@@ -7383,8 +7424,9 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice.setOg('https://tempostorm.com/forum');
     }
 ])
-.controller('ForumThreadCtrl', ['$scope', 'Pagination', 'forumThread', 'MetaService', 'AjaxPagination', 'ForumPosts',
-    function ($scope, Pagination, forumThread, MetaService, AjaxPagination, ForumPosts) {
+.controller('ForumThreadCtrl', ['$scope', '$q', '$timeout', 'Pagination', 'forumThread', 'MetaService', 'AjaxPagination', 'ForumPost', 'forumPostCount',
+    function ($scope, $q, $timeout, Pagination, forumThread, MetaService, AjaxPagination, ForumPost, forumPostCount) {
+        $scope.total = forumPostCount.count;
         console.log('thread: ', forumThread);
         $scope.thread = forumThread;
 
@@ -7394,32 +7436,53 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.metaservice.setOg('https://tempostorm.com/forum/' + $scope.thread.slug.url, $scope.thread.title);
         
         // pagination
-        function updateArticles (page, perpage, search, callback) {
+        function updateForumPosts (page, perpage, search, callback) {
             $scope.fetching = true;
 
             var options = {},
                 countOptions = {};
-
+            
             options.filter = {
                 isActive: true,
                 fields: {
-                    content: false,
-                    votes: false
+                    id: true,
+                    active: true,
+                    description: true,
+                    slug: true,
+                    title: true,
+                    authorId: true,
+                    views: true,
+                    createdDate: true
                 },
+                include: [
+                            {
+                                relation: 'comments',
+                                scope: {
+                                    fields: ['id', 'active', 'content', 'createdDate', 'slug', 'title', 'views', 'votes', 'votesCount']
+                                }
+                            },
+                            {
+                                relation: 'author',
+                                scope: {
+                                    fields: ['id', 'active', 'email', 'username']
+                                }
+                            }
+                        ],
                 order: "createdDate DESC",
                 skip: ((page*perpage)-perpage),
                 limit: 20
             };
             
             // counts the amount of items in the db
-            ForumPosts.count(countOptions, function (count) {
-                ForumPosts.find(options, function (posts) {
+            ForumPost.count(countOptions, function (count) {
+                ForumPost.find(options).$promise.then(function (data) {
+                    console.log('data: ', data);
                     $scope.forumPagination.total = count.count;
                     $scope.forumPagination.page = page;
                     $scope.forumPagination.perpage = perpage;
 
                     $timeout(function () {
-                        $scope.posts = posts;
+                        $scope.thread.forumPosts = data;
                         $scope.fetching = false;
                         if (callback) {
                             return callback(count.count);
@@ -7434,7 +7497,7 @@ angular.module('app.controllers', ['ngCookies'])
             function (page, perpage) {
                 var d = $q.defer();
 
-                updateArticles(page, perpage, $scope.search, function (data) {
+                updateForumPosts(page, perpage, $scope.search, function (data) {
                     d.resolve(data);
                 });
                 return d.promise;
@@ -7505,15 +7568,21 @@ angular.module('app.controllers', ['ngCookies'])
 //                });
                 
                 ForumPost.create(newPost).$promise.then(function (data) {
-                    console.log('post created: ', data);
-                    $scope.post.title = '';
-                    $scope.post.content = '';
-                    $location.path('/forum/' + $scope.thread.slug.url);
+                    if(data.success) {
+                        $scope.post.title = '';
+                        $scope.post.content = '';
+                        $location.path('/forum/' + $scope.thread.slug.url);
+                    } else {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                        $window.scrollTo(0, 0);
+                    }
                 });
             }
         };
 
         // login for modal
+        // TODO: move this to loopback
         $scope.login = function login(email, password) {
             if (email !== undefined && password !== undefined) {
                 UserService.login(email, password).success(function(data) {
@@ -7576,6 +7645,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.commentPost();
                 };
             } else {
+                //TODO: Not sure if this is being used anymore as Comment Directive taking care of Comments
                 ForumService.addComment($scope.post, $scope.comment).success(function (data) {
                     if (data.success) {
                         $scope.post.comments.push(data.comment);
@@ -7604,7 +7674,7 @@ angular.module('app.controllers', ['ngCookies'])
         }
 
         $scope.voteComment = function (direction, comment) {
-            if (!$scope.app.user.isLogged()) {
+            if (!User.isAuthenticated()) {
                 box = bootbox.dialog({
                     title: 'Login Required',
                     message: $compile('<div login-form></div>')($scope)
@@ -7614,10 +7684,11 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.voteComment(direction, comment);
                 };
             } else {
-                if (comment.author._id === $scope.app.user.getUserID()) {
+                if (comment.author.id === User.getCurrentId()) {
                     bootbox.alert("You can't vote for your own content.");
                     return false;
                 }
+                // TODO: Use comment service?
                 VoteService.voteComment(direction, comment).then(function (data) {
                     if (data.success) {
                         comment.voted = direction;
@@ -7628,6 +7699,7 @@ angular.module('app.controllers', ['ngCookies'])
         };
 
         // login for modal
+        // TODO: Use loopback services
         $scope.login = function login(email, password) {
             if (email !== undefined && password !== undefined) {
                 UserService.login(email, password).success(function(data) {

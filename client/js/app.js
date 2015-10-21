@@ -362,21 +362,82 @@ var app = angular.module('app', [
                                         where: {
                                             'slug.url': slug
                                         },
+                                        fields: {
+                                            id: true,
+                                            authorId: true,
+                                            deckId: true,
+                                            active: true,
+                                            snapNum: true,
+                                            votes: true,
+                                            votesCount: true,
+                                            title: true,
+                                            content: true,
+                                            slug: true,
+                                            photos: true,
+                                            createdDate: true
+                                        },
                                         include: [
                                             {
                                                 relation: 'comments'
                                             },
                                             {
                                                 relation: 'deckMatchups',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'forDeck',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    playerClass: true
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: 'againstDeck',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    playerClass: true
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
                                             },
                                             {
                                                 relation: 'deckTiers',
                                                 scope: {
-                                                    include: ['deck']
+                                                    include: [
+                                                        {
+                                                            relation: 'deck',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    playerClass: true,
+                                                                    name: true
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
                                                 }
                                             },
                                             {
-                                                relation: 'authors'
+                                                relation: 'authors',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'user',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    social: true,
+                                                                    username: true
+                                                                }
+                                                            }
+                                                        }
+                                                    ],
+                                                }
                                             }
                                         ]
                                     }
@@ -1373,6 +1434,9 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.threads.html',
                         controller: 'ForumThreadCtrl',
                         resolve: {
+                            forumPostCount: ['ForumPost', function(ForumPost) {
+                                return ForumPost.count().$promise;
+                            }],
                             forumThread: ['$stateParams', 'ForumThread', function($stateParams, ForumThread) {
                                 var slug = $stateParams.thread;
                                 return ForumThread.findOne({
@@ -1380,6 +1444,7 @@ var app = angular.module('app', [
                                         where: {
                                             'slug.url': slug
                                         },
+                                        // TODO: Fix the order using `order: "createdDate DESC",`
                                         fields: {
                                             id: true,
                                             active: true,
@@ -1391,6 +1456,9 @@ var app = angular.module('app', [
                                             {
                                                 relation: 'forumPosts',
                                                 scope: {
+                                                    order: "createdDate DESC",
+                                                    limit: 20,
+                                                    fields: ['id', 'active', 'description', 'slug', 'title', 'authorId', 'views', 'createdDate'],
                                                     include: [
                                                         {
                                                             relation: 'comments',

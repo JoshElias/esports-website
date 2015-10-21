@@ -166,15 +166,11 @@ angular.module('app.directives', ['ui.load'])
                 };
 
                 $scope.twitchLogin = function() {
-                  console.log("twitchLogin");
-                  $cookies.set("authType", "login");
-                  $location.path("/login/twitch");
+                  window.location.replace("/login/twitch");
                 };
 
                 $scope.bnetLogin = function() {
-                  console.log("bnetLogin");
-                  cookies.set("authType", "login");
-                  $location.path("/login/bnet");
+                  window.location.replace("/login/bnet");
                 };
         }]
       }

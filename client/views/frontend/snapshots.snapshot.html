@@ -100,8 +100,8 @@
                                     <line x1="5%" y1="410" x2="95%" y2="410" style="stroke:rgba(255,255,255,.4)"/>
                                     <text height="15" ng-attr-x="{{getPositionX($index, 10)}}%" y="425" fill="white" text-anchor="middle" ng-class="{ 'hidden-xs' : $index%2 == 1 }" ng-repeat="moment in snapshotTimeline() track by $index">{{moment}}</text>
 
-                                    <g ng-repeat="deck in getTier(currentTier).decks track by $index" class="deck" ng-class="{ 'not-selected': hasDeckSelected() && currentDeck != deck.rank.current }">
-                                        <g ng-repeat="rank in deck.rank.all track by $index" ng-if="rank > 0">
+                                    <g ng-repeat="deck in getTier(currentTier).decks track by $index" class="deck" ng-class="{ 'not-selected': hasDeckSelected() && currentDeck != deck.ranks[0] }">
+                                        <g ng-repeat="rank in deck.ranks track by $index" ng-if="rank > 0">
                                             <circle class="dot-{{deck.deck.playerClass}}" ng-attr-cx="{{getPositionX($index, 10)}}%" ng-attr-cy="{{getPositionY(currentTier, getRankIndex(currentTier, rank), 410, 20)}}" r="5" stroke-width="2" fill="transparent" ng-if="rank > 0"/>
                                             <line class="dot-{{deck.deck.playerClass}}" ng-attr-x1="{{getPositionX($index, 10)}}%" ng-attr-y1="{{getPositionY(currentTier, getRankIndex(currentTier, rank), 410, 20)}}" ng-attr-x2="{{getPositionX($index + 1, 10)}}%" ng-attr-y2="{{getPositionY(currentTier, getRankIndex(currentTier, getNextRank(deck, $index)), 410, 20)}}" stroke-width="2" ng-if="hasNextRank(deck, $index)" />
                                         </g>
@@ -186,7 +186,7 @@
                                                             <line x1="1.1%" y1="100%" x2="1.1%" y2="0" />
 
                                                             <svg height="100%" width="98%" x="1.5%">
-                                                                <svg class="bar-wrap" ng-repeat="match in filtered = (getMatches(deck.deck._id) | orderBy: 'playerClass')" ng-mouseover="setMouseOver(deck.deck._id, match.against, match.name)" ng-mouseleave="setMouseOver(deck.deck._id, false)" ng-class="{ 'no-mouse' : getMouseOver(deck.deck._id) != false && getMouseOver(deck.deck._id) != match.against }">
+                                                                <svg class="bar-wrap" ng-repeat="match in filtered = (getMatches(deck.deck.id) | orderBy: 'deck.deck.playerClass')" ng-mouseover="setMouseOver(deck.deck.id, match.against, match.name)" ng-mouseleave="setMouseOver(deck.deck.id, false)" ng-class="{ 'no-mouse' : getMouseOver(deck.deck.id) != false && getMouseOver(deck.deck.id) != match.against }">
                                                                     <rect class="bar bar-{{match.playerClass}}" ng-attr-width="{{(100/filtered.length)-.8}}%" ng-attr-height="{{100-match.chance}}%" ng-attr-x="{{(100/filtered.length)*$index}}%" ng-attr-y="{{match.chance}}%">
                                                                 </svg>
                                                                 </rect>
@@ -203,7 +203,7 @@
                                                 <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
                                                     <h3 class="m-b-lg">RANKING</h3>
                                                     <div class="deck-rank m-b-lg">
-                                                <div class="{{(deck.rank.current <= deck.rank.last[0] || deck.rank.last[0] == 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{(deck.ranks[0] <= deck.ranks[deck.ranks.length - 1] || deck.ranks[deck.ranks.length - 1] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         CURRENT
                                                     </div>
@@ -264,20 +264,20 @@
             <!-- AUTHORS -->
             <div class="row m-l-none m-r-none m-b-md">
                 <div class="meta-author col-lg-12" ng-repeat="author in snapshot.authors" >
-                    <button class="meta-author-collapser" type="button" data-toggle="collapse" data-target="#{{author.user._id}}" aria-expanded="false" aria-controls="{{author.user._id}}">
+                    <button class="meta-author-collapser" type="button" data-toggle="collapse" data-target="#{{author.user.id}}" aria-expanded="false" aria-controls="{{author.user.id}}">
                         <div class="author-img-wrapper pull-left hidden-xs">
-                            <img ng-if="author.klass.length === 1" class="author-class-icon m-l-sm" ng-src="../../img/meta-snapshot/class-icons/{{author.klass[0]}}.png" />
-                            <span ng-if="author.klass.length > 1">
-                                <img class="author-class-icon" ng-repeat="ico in author.klass" src="../../img/meta-snapshot/class-icons/{{ico}}.png" style="left: {{((author.klass.length-1)*23)-(23*$index)}}px;" />
+                            <img ng-if="author.expertClasses.length === 1" class="author-class-icon m-l-sm" ng-src="../../img/meta-snapshot/class-icons/{{author.expertClasses[0]}}.png" />
+                            <span ng-if="author.expertClasses.length > 1">
+                                <img class="author-class-icon" ng-repeat="ico in author.expertClasses" src="../../img/meta-snapshot/class-icons/{{ico}}.png" style="left: {{((author.expertClasses.length-1)*23)-(23*$index)}}px;" />
                             </span>
                         </div>
                         <div class="author-text-wrapper">
-                            <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.klass.length > 0 } ">{{author.user.username}}</h2>
-                            <span ng-if="author.klass.length === 1">
-                                <h3 class="classExpert">{{author.klass[0]}} EXPERT</h3>
+                            <h2 class="m-b-xs" ng-class=" { 'm-t-sm' : author.expertClasses.length > 0 } ">{{author.user.username}}</h2>
+                            <span ng-if="author.expertClasses.length === 1">
+                                <h3 class="classExpert">{{author.expertClasses[0]}} EXPERT</h3>
                             </span>
-                            <h3 ng-if="author.klass.length > 1">
-                                <span ng-repeat="klass in author.klass">
+                            <h3 ng-if="author.expertClasses.length > 1">
+                                <span ng-repeat="klass in author.expertClasses">
                                     <span ng-if="$index > 0">&nbsp;AND</span> {{klass}}
                                 </span>
                                 EXPERT
@@ -291,7 +291,7 @@
                         </div>
                     </button>
                     
-                    <div class="author-collapse collapse" id="{{author.user._id}}">
+                    <div class="author-collapse collapse" id="{{author.user.id}}">
                         <p> {{author.description}} </p>
                         <div class="soc-btns m-t-md m-b-md hidden-sm hidden-md hidden-lg">
                             <a ng-if="author.user.social.twitch != '' && author.user.social.twitch != undefined" class="btn twitch-btn soc-btn" ng-click="goToTwitch($event, author.user.social.twitch)"><i class="fa fa-twitch"></i></a>
