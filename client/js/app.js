@@ -40,18 +40,18 @@ var app = angular.module('app', [
                     event.preventDefault();
                     $state.go(toState.redirectTo, toParams);
                 }
-                if (toState.access && toState.access.noauth && $window.sessionStorage.token && AuthenticationService.isLogged()) {
-                    event.preventDefault();
-                    $state.transitionTo('app.home');
-                }
-                if (toState.access && toState.access.auth && !$window.sessionStorage.token && !AuthenticationService.isLogged()) {
-                    event.preventDefault();
-                    $state.transitionTo('app.login');
-                }
-                if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
-                    //event.preventDefault();
-                    //$state.transitionTo('app.home');
-                }
+//                if (toState.access && toState.access.noauth && $window.sessionStorage.token && AuthenticationService.isLogged()) {
+//                    event.preventDefault();
+//                    $state.transitionTo('app.home');
+//                }
+//                if (toState.access && toState.access.auth && !$window.sessionStorage.token && !AuthenticationService.isLogged()) {
+//                    event.preventDefault();
+//                    $state.transitionTo('app.login');
+//                }
+//                if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
+//                    //event.preventDefault();
+//                    //$state.transitionTo('app.home');
+//                }
                 $window.scrollTo(0,0);
             });
             $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
@@ -628,7 +628,14 @@ var app = angular.module('app', [
                                                 relation: "comments",
                                                 scope: {
                                                     include: [
-                                                        "author"
+                                                        {
+                                                            relation: "author",
+                                                            scope: {
+                                                                fields: [
+                                                                    "username"
+                                                                ]
+                                                            }
+                                                        }
                                                     ]
                                                 }
                                             }
@@ -941,7 +948,8 @@ var app = angular.module('app', [
                                     guideType: true,
                                     id: true,
                                     description: true,
-                                    talentTiers: true
+                                    talentTiers: true,
+                                    slug: true
                                   },
                                   where: {
                                     featured: false
@@ -1000,7 +1008,8 @@ var app = angular.module('app', [
                                     guideType: true,
                                     id: true,
                                     description: true,
-                                    talentTiers: true
+                                    talentTiers: true,
+                                    slug: true
                                   },
                                   include: [
                                     {
@@ -1047,7 +1056,8 @@ var app = angular.module('app', [
                                     guideType: true,
                                     id: true,
                                     description: true,
-                                    talentTiers: true
+                                    talentTiers: true,
+                                    slug: true
                                   },
                                   where: {
                                     featured: true
@@ -1104,27 +1114,49 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.guide.html',
                         controller: 'HOTSGuideCtrl',
                         resolve: {
-                            data: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                return HOTSGuideService.getGuide(slug).then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('Unable to find guide');
+                                return Guide.findOne({
+                                    filter: {
+                                        where: {
+                                            slug: slug
+                                        },
+                                        include: [
+                                            {
+                                                relation: "heroes",
+                                                scope: {
+                                                    include: ["talents"]
+                                                }
+                                            },
+                                            {
+                                                relation: "maps"
+                                            },
+                                            {
+                                                relation: "comments",
+                                                scope: {
+                                                    include: [
+                                                        "author"
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
-                                 });
+                                }).$promise.then(function (data) {
+                                    console.log(data);
+                                    return data;
+                                });
                             }],
-//                            dataHeroes: ['HeroService', function (HeroService) {
-//                                return HeroService.getHeroes();
-//                            }],
-                            dataHeroes: ['Hero', function (Hero) {
-                                return Hero.find({}).$promise;
-                            }],
-//                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-//                                return HOTSGuideService.getMaps();
-//                            }]
-                            dataMaps: ['Map', function (Map) {
-                                return Map.find({}).$promise;
+                            guideTalents: ['guide', function (guide) {
+                                var talents = {};
+                                console.log(guide);
+                                if (guide.guideType === "hero") {
+                                    for (var i = 0; i < guide.heroes.length; i++) {
+                                        for (var j = 0; j < guide.heroes[i].talents.length; j++) {
+                                            talents[guide.heroes[i].talents[j].id] = guide.heroes[i].talents[j]
+                                        }
+                                    }
+                                }
+                                return talents;
                             }]
                         }
                     }
@@ -1622,7 +1654,6 @@ var app = angular.module('app', [
                 views: {
                     content: {
                         templateUrl: tpl + 'views/frontend/login.html',
-                        controller: 'UserCtrl',
                     }
                 },
                 access: { noauth: true },
@@ -1633,7 +1664,6 @@ var app = angular.module('app', [
                 views: {
                     content: {
                         templateUrl: tpl + 'views/frontend/signup.html',
-                        controller: 'UserCtrl',
                     }
                 },
                 access: { noauth: true },
@@ -1655,7 +1685,6 @@ var app = angular.module('app', [
                 views: {
                     content: {
                         templateUrl: tpl + 'views/frontend/forgot-password.html',
-                        controller: 'UserCtrl'
                     }
                 },
                 access: { noauth: true },
@@ -1971,11 +2000,26 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/articles.list.html',
                         controller: 'AdminArticleListCtrl',
                         resolve: {
-                            data: ['AdminArticleService', function (AdminArticleService) {
+                            articles: ['Article', function (Article) {
                                 var page = 1,
                                     perpage = 50,
-                                    search = '';
-                                return AdminArticleService.getArticles(page, perpage, search);
+                                    search = '',
+                                    options = {
+                                        filter: {
+                                            skip: perpage*page,
+                                            limit: perpage,
+                                            order: "createdDate DESC",
+                                            fields: [
+                                                "title"
+                                            ]
+                                        }
+                                    };
+                                
+                                return Article.find(options)
+                                .$promise
+                                .then(function (data) {
+                                    return data;
+                                });
                             }]
                         }
                     }
@@ -2075,11 +2119,22 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.list.html',
                         controller: 'AdminDeckListCtrl',
                         resolve: {
-                            data: ['AdminDeckService', function (AdminDeckService) {
+                            decks: ['Deck', function (Deck) {
                                 var page = 1,
                                     perpage = 50,
                                     search = '';
-                                return AdminDeckService.getDecks(page, perpage, search);
+                                
+                                return Deck.find({
+                                    filter: {
+                                        limit: 50,
+                                        skip: (page*perpage) - perpage,
+                                        order: "createdDate DESC",
+                                        fields: [
+                                            "name"
+                                        ]
+                                    }
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -2155,8 +2210,21 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/cards.list.html',
                         controller: 'AdminCardListCtrl',
                         resolve: {
-                            data: ['AdminCardService', function (AdminCardService) {
-                                return AdminCardService.getCards();
+                            cards: ['Card', function (Card) {
+                                return Card.find({
+                                    filter: {
+                                        limit: 50,
+                                        page: 1,
+                                        order: "name ASC",
+                                        fields: [
+                                            "name",
+                                            "rarity",
+                                            "playerClass",
+                                            "cardType",
+                                            "expansion"
+                                        ]
+                                    }
+                                });
                             }]
                         }
                     }

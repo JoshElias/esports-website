@@ -3599,7 +3599,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .vote-count-btns.vote-large { font-size: 24px; }
 
 .btn-vote-up,
-.btn-vote-down { display: block; color: rgba(255,255,255,.8) !important; }
+.btn-vote-down { display: block; color: rgba(255,255,255,.8) !important; outline: none; border: none; }
 
 .btn-vote-up.vote-small { margin-top: 5px; }
 .btn-vote-down.vote-small { margin-top: -5px; }
@@ -3609,7 +3609,10 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .btn-vote-down:hover { color: #FFF !important; }
 
 .btn-vote-up.active,
-.btn-vote-down.active { color: #083f7d !important; }
+.btn-vote-down.active { color: #083f7d !important; outline: none; border: none; }
+
+.btn-vote-up:focus,
+.btn-vote-down:focus { outline: none; border: none; }
 
 /* comments */
 .comments { }
