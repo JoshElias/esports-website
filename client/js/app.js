@@ -34,7 +34,7 @@ var app = angular.module('app', [
 
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
-                console.log('started state change');
+
                 //ngProgress.start();
                 if (toState.redirectTo) {
                     event.preventDefault();
@@ -82,8 +82,8 @@ var app = angular.module('app', [
 //                $state.transitionTo('app.404');
             });
 
+
             // Looks for auth cookies and loads the user credentials from them
-            // Stuff I'd rather put in an interceptor but whatever
             var accessToken = getAuthCookie("access_token");
             var userId = getAuthCookie("userId");
             if(accessToken && userId) {
@@ -93,7 +93,7 @@ var app = angular.module('app', [
               LoopBackAuth.save();
             }
 
-
+            // TODO: extend $cookies with this function
             function getAuthCookie(key) {
               var value = $cookies.get(key);
               if(typeof value == "undefined")
@@ -146,6 +146,7 @@ var app = angular.module('app', [
                     }
                 },
                 resolve: {
+                  // Load the current user data if we don't have it
                     currentUser: ['User', 'LoopBackAuth',
                         function(User, LoopBackAuth) {
                             if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
@@ -153,7 +154,16 @@ var app = angular.module('app', [
                             }
                         }
                     ]
-                }
+                },
+                onEnter: ['$cookies', '$state', function($cookies, $state) {
+                    // look for redirect cookie
+                    var redirectState = $cookies.get("redirectState");
+                    if(redirectState) {
+                      console.log("transitionTo:", redirectState);
+                      $cookies.remove("redirectState");
+                      $state.transitionTo(redirectState);
+                    }
+                }]
             })
             .state('app.404', {
                 url: '404',

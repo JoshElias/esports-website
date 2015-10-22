@@ -164,12 +164,17 @@ angular.module('app.directives', ['ui.load'])
                 };
 
                 $scope.twitchLogin = function() {
-                  window.location.replace("/login/twitch");
+                  thirdPartyLogin('twitch');
                 };
 
                 $scope.bnetLogin = function() {
-                  window.location.replace("/login/bnet");
+                  thirdPartyLogin("bnet");
                 };
+
+                function thirdPartyLogin(provider) {
+                  $cookies.put("redirectState", $state.current.name);
+                  window.location.replace("/login/"+provider);
+                }
         }]
       }
 }])
@@ -276,7 +281,7 @@ angular.module('app.directives', ['ui.load'])
             $scope.commentable;
             $scope.service;
             $scope.app = $rootScope.app;
-            
+
             console.log('commentable: ', $scope.commentable);
 
             var defaultComment = '';
@@ -285,7 +290,7 @@ angular.module('app.directives', ['ui.load'])
             $scope.parseComment = function (c) {
                 return $sce.trustAsHtml(c);
             }
-            
+
             // TODO: When user posts new comment, shows '[DEL]' for username until page is refreshed.
             $scope.commentPost = function () {
                 console.log($scope.commentable.comments);
