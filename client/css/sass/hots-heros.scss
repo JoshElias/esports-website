@@ -106,7 +106,8 @@
 @include hots-hero(abathur);
 @include hots-hero(anub-arak);
 @include hots-hero(arthas);
-@include hots-hero(Azmodan);
+@include hots-hero(artanis);
+@include hots-hero(azmodan);
 @include hots-hero(brightwing);
 @include hots-hero(chen);
 @include hots-hero(diablo);
@@ -202,6 +203,23 @@
     ( class: (rewind), pos: 13 ), // -390
     ( class: (hardened-shield), pos: 14 ) // -420
 ) );
+
+
+//talents: artanis
+
+@include hots-hero-talents ( heroName, (
+    ( class: (khaydarian-resonance, chrono-surge, graviton-vortex ), pos: 0 ), // 0
+    ( class: (reactive-parry, amateur-opponent, triple-strike, zealot-charge, titan-killer, psionic-wound), pos: 1 ), // -30
+    ( class: (seasoned-marksman), pos: 2 ), // -60
+    ( class: (shield-battery, phase-bulwark, shield-surge, force-of-will), pos: 3 ), // -90
+    ( class: (lethal-alacrity, templars-zeal, templars-zeal, solarite-reaper, psionic-synergy), pos: 4 ), // -120
+    ( class: (follow-through), pos: 5 ), // -150
+    ( class: (suppression-pulse, orbital-bombardment), pos: 6 ), // -180
+    ( class: (purifier-beam, target-purified), pos: 7 ), // -210
+    ( class: (burning-rage), pos: 8 ), // -240
+    ( class: (nexus-blades), pos: 9 ) // -270
+) );
+
 
 //talents: Azmodan
 
