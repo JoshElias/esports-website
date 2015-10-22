@@ -2146,7 +2146,7 @@ var app = angular.module('app', [
                                             ]
                                         }
                                     };
-                                
+
                                 return Article.find(options)
                                 .$promise
                                 .then(function (data) {
@@ -2255,7 +2255,7 @@ var app = angular.module('app', [
                                 var page = 1,
                                     perpage = 50,
                                     search = '';
-                                
+
                                 return Deck.find({
                                     filter: {
                                         limit: 50,
