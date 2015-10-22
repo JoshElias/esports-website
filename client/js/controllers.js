@@ -64,8 +64,8 @@ angular.module('app.controllers', ['ngCookies'])
     }
 
     $scope.logout = function() {
-      User.logout(function()
-      //TODO: cookie won
+      User.logout(function() {
+      //TODO: cookie won't remove
         $cookies.remove("connect.sid");
         $scope.currentUser = undefined;
       }, function(err) {
