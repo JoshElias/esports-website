@@ -1,10 +1,17 @@
 var async = require("async");
 var uuid = require("node-uuid");
 var bcrypt = require('bcrypt-nodejs');
+var utils = require("../../lib/utils");
 
 
 module.exports = function(User) {
 
+  User.afterRemote("login", function(ctx, remoteMethodOutput, next) {
+    var weirdOutput = JSON.parse(JSON.stringify(remoteMethodOutput));
+    ctx.req.logIn(weirdOutput.user, function(err) {
+      next(err);
+    });
+  });
 
  /*!
    * Hash the plain password
@@ -221,68 +228,6 @@ module.exports = function(User) {
     finalCallback);
   }
 
-  /**
-     * Login a user by with the given `credentials`.
-     *
-     * ```js
-     *    User.login({username: 'foo', password: 'bar'}, function (err, token) {
-    *      console.log(token.id);
-    *    });
-     * ```
-     *
-     * @param {Object} credentials username/password or email/password
-     * @param {String[]|String} [include] Optionally set it to "user" to include
-     * the user info
-     * @callback {Function} callback Callback function
-     * @param {Error} err Error object
-     * @param {AccessToken} token Access token if login is successful
-     */
-/*
-    User.linkThirdParty = function(id, fn) {
-      var self = this;
-      fn = fn || utils.createPromiseCallback();
-
-      self.findById(id, function(err, user) {
-        var defaultError = new Error('linking 3rd party failed');
-        defaultError.statusCode = 401;
-        defaultError.code = '3RD_PARTY_LINK_FAILED';
-
-        if (err) {
-          debug('An error is reported from User.findById: %j', err);
-          fn(defaultError);
-        } else if (user) {
-          user.hasPassword(credentials.password, function(err, isMatch) {
-            if (err) {
-              debug('An error is reported from User.hasPassword: %j', err);
-              fn(defaultError);
-            } else if (isMatch) {
-              if (self.settings.emailVerificationRequired && !user.emailVerified) {
-                // Fail to log in if email verification is not done yet
-                debug('User email has not been verified');
-                err = new Error('login failed as the email has not been verified');
-                err.statusCode = 401;
-                err.code = 'LOGIN_FAILED_EMAIL_NOT_VERIFIED';
-                fn(err);
-              } else {
-                if (user.createAccessToken.length === 2) {
-                  user.createAccessToken(credentials.ttl, tokenHandler);
-                } else {
-                  user.createAccessToken(credentials.ttl, credentials, tokenHandler);
-                }
-              }
-            } else {
-              debug('The password is invalid for user %s', query.email || query.username);
-              fn(defaultError);
-            }
-          });
-        } else {
-          debug('No matching record is found for user %s', query.email || query.username);
-          fn(defaultError);
-        }
-      });
-      return fn.promise;
-    };
-*/
 
   User.remoteMethod(
     "changeEmail",
@@ -350,3 +295,16 @@ module.exports = function(User) {
 
 
 };
+
+/*
+Model.on('attached', function (obj) {
+    var baseRemove = Model.remove;
+    Model.remove = function customRemove(filter, options, next) {
+        baseRemove = baseRemove.bind(this);
+
+        //Do Custom operation
+
+        return baseRemove(filter,opations,next);
+    }
+});
+*/

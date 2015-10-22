@@ -34,7 +34,8 @@
     "passport-twitter": "^1.0.3",
     "prerender-node": "^2.0.2",
     "serve-favicon": "^2.3.0",
-    "serve-static": "^1.10.0"
+    "serve-static": "^1.10.0",
+    "underscore": "^1.8.3"
   },
   "optionalDependencies": {
     "loopback-explorer": "^1.1.0"

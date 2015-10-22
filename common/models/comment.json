@@ -35,6 +35,9 @@
     },
     "snapshotId": {
       "type": "string"
+    },
+    "forumPostId": {
+      "type": "string"
     }
   },
   "validations": [],
@@ -63,6 +66,11 @@
       "type": "belongsTo",
       "model": "snapshot",
       "foreignKey": "snapshotId"
+    },
+    "forumPost": {
+      "type": "belongsTo",
+      "model": "forumPost",
+      "foreignKey": "forumPostId"
     }
   },
   "acls": [],

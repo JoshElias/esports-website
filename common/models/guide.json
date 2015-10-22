@@ -65,8 +65,11 @@
     },
     "oldHeroes": {
       "type": [
-        "string"
+        "object"
       ]
+    },
+    "talentTiers": {
+      "type": "object"
     }
   },
   "validations": [],

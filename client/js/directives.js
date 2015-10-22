@@ -108,41 +108,77 @@ angular.module('app.directives', ['ui.load'])
     }
 }])
 .directive('loginForm', ['$window', '$cookies', '$state', '$location', 'LoginModalService', 'User', 'LoopBackAuth',
-  function ($window, $cookies, $state, $location, LoginModalService, User, LoopBackAuth) {
-    return {
-        templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
-        scope: true,
-        link: function ($scope, el, attr) {
-
-            $scope.remember;
-            $scope.loginInfo = {
-                email: "",
-                password: ""
-            };
-
-            $scope.login = function login(email, password) {
-                if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
-                  User.login({rememberMe:$scope.remember}, {email:$scope.loginInfo.email, password:$scope.loginInfo.password},
-                    function(accessToken) {
-                        console.log("Received access token:", accessToken);
-                        console.log("Current User:", LoopBackAuth.currentUserData);
-                        var next = $location.nextAfterLogin || "/";
-                        $location.nextAfterLogin = null;
-                        $location.path(next);
-                    },
-                    function(err) {
-                        $scope.showError = true;
-                    }
-                );
-              } else {
-                // TODO: Display modal for missing username and/or password
-              }
+    function ($window, $cookies, $state, $location, LoginModalService, User, LoopBackAuth) {
+        return {
+            templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
+            scope: true,
+            controller: ['$scope', function ($scope) {
+                $scope.remember = false;
+                $scope.loginInfo = {
+                    email: "",
+                    password: ""
                 };
-            }
-        }
-    }
-])
-.directive('signupForm', ['$state', 'UserService', 'LoginModalService', function ($state, UserService, LoginModalService) {
+                $scope.loginText = "Login";
+                $scope.loginBtnEnabled = true;
+
+                var loginStatusList = {
+                    0: "Login",
+                    1: "Please Wait...",
+                    2: "Success!"
+                }
+
+                $scope.setLoggingIn = function (status) {
+                    $scope.loginText = loginStatusList[status];
+                }
+
+                $scope.login = function login(email, password) {
+                    $scope.setLoggingIn(1);
+                    console.log(LoopBackAuth);
+                    if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
+                      console.log("$scope.remember:", $scope.remember);
+                      console.log("$scope.info.email:", $scope.loginInfo.email);
+//                      console.log("$scope.info.password:", $scope.loginInfo.password);
+                        User.login({ rememberMe:$scope.remember }, { email:$scope.loginInfo.email, password:$scope.loginInfo.password },
+                            function(accessToken) {
+                                console.log("Received access token:", accessToken);
+                                console.log("Current User:", LoopBackAuth.currentUserData);
+                                var next = $location.nextAfterLogin || "/";
+                                $location.nextAfterLogin = null;
+                                $location.path(next);
+
+                                LoginModalService.hideModal();
+                                $scope.setLoggingIn(2);
+
+                                if ($scope.callback) {
+                                    $scope.callback(LoopBackAuth);
+                                }
+                            },
+                            function(err) {
+                                $scope.showError = true;
+                                $scope.setLoggingIn(0);
+                            }
+                        );
+                    } else {
+                        // TODO: Display modal for missing username and/or password
+                    }
+                };
+
+                $scope.twitchLogin = function() {
+                  thirdPartyLogin('twitch');
+                };
+
+                $scope.bnetLogin = function() {
+                  thirdPartyLogin("bnet");
+                };
+
+                function thirdPartyLogin(provider) {
+                  $cookies.put("redirectState", $state.current.name);
+                  window.location.replace("/login/"+provider);
+                }
+        }]
+      }
+}])
+.directive('signupForm', ['$state', 'User', 'LoginModalService', function ($state, User, LoginModalService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
         scope: true,
@@ -152,23 +188,25 @@ angular.module('app.directives', ['ui.load'])
                 code: ""
             }
 
-            //TODO: SignupForm: Do signup
-
-            $scope.signup = function signup(email, username, password, cpassword) {
+            $scope.signup = function signup(email, username, password) {
                 if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
-                    UserService.signup(email, username, password, cpassword).success(function (data) {
-                        if (!data.success) {
-                            $scope.errors = data.errors;
-                            $scope.showError = true;
-                        } else {
-                            $scope.verify.email = email;
-                            if ($scope.setState) {
-                                $scope.state = "verify";
-                            } else {
-                                $state.go('app.verify');
-                            }
+                    User.create({
+                      email: email,
+                      username: username,
+                      password:password
+                    }, function (user) {
+                        console.log("signup succeeded");
+                          $scope.verify.email = email;
+                          if ($scope.setState) {
+                              $scope.state = "verify";
+                          } else {
+                              $state.go('app.verify');
+                          }
 //                            return $state.transitionTo('app.verify', { email: email });
-                        }
+                    }, function(err) {
+                      console.log("signup returned with err:", err);
+                        $scope.errors = err;
+                        $scope.showError = true;
                     });
                 }
             }
@@ -239,11 +277,12 @@ angular.module('app.directives', ['ui.load'])
             service:     "="
         },
         controller: ['$scope', function ($scope) {
-
             //TODO: FIX COMMENTING
             $scope.commentable;
             $scope.service;
             $scope.app = $rootScope.app;
+
+            console.log('commentable: ', $scope.commentable);
 
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
@@ -252,35 +291,39 @@ angular.module('app.directives', ['ui.load'])
                 return $sce.trustAsHtml(c);
             }
 
+            // TODO: When user posts new comment, shows '[DEL]' for username until page is refreshed.
             $scope.commentPost = function () {
-                $scope.service.comments.create({
-                    id: $scope.commentable.id
-                }, {
-                    text: $scope.comment,
-                    authorId: LoopBackAuth.currentUserData,
-                    createdDate: new Date(),
-                    votes: []
-                })
-                .$promise
-                .then(function (com) {
-                    $scope.commentable.comments.push(com);
-                    $scope.comment = '';
-                    updateCommentVotes();
-                }, function (err) {
-                    console.log("failed!", err);
-                });
-//                if (!$scope.app.user.isLogged()) {
-//                    LoginModalService.showModal('login', function () {
-//                        $scope.commentPost();
-//                    });
-//                } else {
-//                    $scope.service.addComment($scope.commentable, $scope.comment).success(function (data) {
-//                        if (data.success) {
-//                            
-//                            
-//                        }
-//                    });
-//                }
+                console.log($scope.commentable.comments);
+                if (LoopBackAuth.currentUserData === null) {
+                    LoginModalService.showModal('login', function () {
+                        $scope.commentPost();
+                    });
+                } else {
+                    $scope.service.comments.create({
+                        id: $scope.commentable.id
+                    }, {
+                        text: $scope.comment,
+                        authorId: LoopBackAuth.currentUserId,
+                        createdDate: new Date(),
+                        votes: [
+                            {
+                                userId: LoopBackAuth.currentUserId,
+                                direction: 1
+                            }
+                        ],
+                        votesCount: 1
+                    })
+                    .$promise
+                    .then(function (com) {
+                        com.author = LoopBackAuth.currentUserData;
+                        $scope.commentable.comments.push(com);
+                        $scope.comment = '';
+                        updateCommentVotes();
+                    }, function (err) {
+                        console.log("failed!", err);
+                    });
+                }
+                console.log($scope.commentable.comments);
             };
 
             updateCommentVotes();
@@ -289,7 +332,7 @@ angular.module('app.directives', ['ui.load'])
 
                 function checkVotes (comment) {
                     var vote = comment.votes.filter(function (vote) {
-                        return ($scope.app.user.getUserID() === vote.userID);
+                        return (LoopBackAuth.currentUserId === vote.userId);
                     })[0];
 
                     if (vote) {
@@ -299,21 +342,50 @@ angular.module('app.directives', ['ui.load'])
             }
 
             $scope.voteComment = function (direction, comment) {
-                if (!$scope.app.user.isLogged()) {
+                var uniqueVote = false;
+                if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
                         $scope.voteComment(direction, comment);
                     });
                 } else {
-                    if (comment.author._id === $scope.app.user.getUserID()) {
+                    if (comment.author.id === LoopBackAuth.currentUserId) {
                         bootbox.alert("You can't vote for your own content.");
                         return false;
                     }
-                    VoteService.voteComment(direction, comment).then(function (data) {
-                        if (data.success) {
-                            comment.voted = direction;
-                            comment.votesCount = data.votesCount;
+
+                    for(var i = 0; i < comment.votes.length; i++) {
+                        if(comment.votes[i].userId === LoopBackAuth.currentUserId) {
+                            var prevDirection = comment.votes[i].direction;
+                            if(direction === prevDirection) {
+                                uniqueVote = false;
+                                break;
+                            }
+                            uniqueVote = true;
+                            comment.votes[i].direction = direction;
+                            break;
+                        } else {
+                            uniqueVote = true;
                         }
-                    });
+                    }
+                    if(uniqueVote) {
+                        comment.votesCount = comment.votesCount + direction;
+                        comment.votes.push(
+                            {
+                                direction: direction,
+                                userId: LoopBackAuth.currentUserId
+                            }
+                        );
+                        Comment.update({
+                            where: {
+                                id: comment.id
+                            }
+                        }, comment).$promise.then(function (data) {
+                            if(data.success) {
+                                comment.voted = direction;
+                                comment.votesCount = data.votesCount;
+                            }
+                        });
+                    }
                 }
                 updateCommentVotes();
             }
@@ -424,7 +496,7 @@ angular.module('app.directives', ['ui.load'])
                     var sub = log.substr(4);
                     var im = "https" + sub;
                     data[i].logoUrl = im;
-                    
+
                     data[i].viewerCount = +data[i].viewerCount;
                 }
                 $scope.selectedStream = 0;
@@ -1278,7 +1350,7 @@ angular.module('app.directives', ['ui.load'])
                     var sub = log.substr(4);
                     var im = "https" + sub;
                     data[i].screenshotUrl = im;
-                    
+
                     data[i].viewerCount = +data[i].viewerCount;
                 }
                 scope.streamWheel = true;
@@ -1305,7 +1377,7 @@ angular.module('app.directives', ['ui.load'])
             .$promise
             .then(function(tweets) {
                 console.log(tweets);
-                
+
                 scope.twitWheel = true;
                 scope.tweets = tweets;
             });

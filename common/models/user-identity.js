@@ -2,29 +2,6 @@
 
 module.exports = function(UserIdentity) {
 
-	function profileToUser(provider, profile, options) {
-	  	if(provider === "bnet-login") {
-	     	return {
-	        	username: profile.username,
-	        	password : generateKey('password')
-	      	}
-	  	} else if(provider === "twitch-login") {
-	      	return {
-	        	username: profile.username,
-	        	email: profile.email,
-	        	password : generateKey('password')
-	      	}
-	    }
-	}
-
-	function getModel(cls, base) {
-  		if (!cls) {
-    		return base;
-  		}
- 		return (cls.prototype instanceof base)? cls: base;
-	}
-
-
 
 /**
    * Log in with a third-party provider such as Facebook or Google.
@@ -50,16 +27,12 @@ module.exports = function(UserIdentity) {
 	      options = {};
 	    }
 	    var autoLogin = options.autoLogin || options.autoLogin === undefined;
-	    var userIdentityModel = getModel(this, UserIdentity);
+  		var provider = (profile.battletag) ? "bnet" : "twitch"; // extend if needed
 
-	    console.log("provider:",provider);
-	    console.log("profile.id",profile.id);
-
-	    userIdentityModel.findOne({where: {
+	    UserIdentity.findOne({where: {
 	      provider: provider,
 	      externalId: profile.id
 	    }}, function (err, identity) {
-	    	console.log("IDEN:",identity);
 	      if (err) {
 	        return cb(err);
 	      }
@@ -83,4 +56,81 @@ module.exports = function(UserIdentity) {
 	      }
 	  });
 	};
+
+
+	/**
+   * Link a third party account to a LoopBack user
+   * @param {String} provider The provider name
+   * @param {String} authScheme The authentication scheme
+   * @param {Object} profile The profile
+   * @param {Object} credentials The credentials
+   * @param {Object} [options] The options
+   * @callback {Function} cb The callback function
+   * @param {Error|String} err The error object or string
+   * @param {Object} [credential] The user credential object
+   */
+  UserIdentity.link = function (userId, provider, authScheme, profile,
+                                  credentials, options, cb) {
+
+    options = options || {};
+    if(typeof options === 'function' && cb === undefined) {
+      cb = options;
+      options = {};
+    }
+
+	  var provider = (profile.battletag) ? "bnet" : "twitch"; // extend if needed
+    UserIdentity.findOne({where: {
+      userId: userId,
+      provider: provider,
+      externalId: profile.id
+    }}, function (err, extCredential) {
+      if (err) {
+        return cb(err);
+      }
+
+      var date = new Date();
+      if (extCredential) {
+        // Find the user for the given extCredential
+        extCredential.credentials = credentials;
+        return extCredential.updateAttributes({profile: profile,
+          credentials: credentials, modified: date}, cb);
+      }
+
+      // Create the linked account
+      UserIdentity.create({
+        provider: provider,
+        externalId: profile.id,
+        authScheme: authScheme,
+        profile: profile,
+        credentials: credentials,
+        userId: userId,
+        created: date,
+        modified: date
+      }, function (err, i) {
+        cb(err, i);
+      });
+
+    });
+  }
+
+
+	/*!
+	 * Create an access token for the given user
+	 * @param {User} user The user instance
+	 * @param {Number} [ttl] The ttl in millisenconds
+	 * @callback {Function} cb The callback function
+	 * @param {Error|String} err The error object
+		* param {AccessToken} The access token
+	 */
+	function createAccessToken(user, ttl, cb) {
+		if (arguments.length === 2 && typeof ttl === 'function') {
+			cb = ttl;
+			ttl = 0;
+		}
+		user.accessTokens.create({
+			created: new Date(),
+			ttl: Math.min(ttl || user.constructor.settings.ttl,
+				user.constructor.settings.maxTTL)
+		}, cb);
+	}
 };

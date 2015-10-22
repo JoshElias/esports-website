@@ -1,11 +1,14 @@
 
 var async = require("async");
+var util = require("util");
 
 var talentsAdded = 0;
 module.exports = function(server) {
-  /*
+/*
 	 var Talent = server.models.talent;
     var Hero = server.models.hero;
+    var Guide = server.models.guide;
+
 
     async.waterfall([
     	// Get all the users
@@ -24,7 +27,7 @@ module.exports = function(server) {
               else {
                 console.log("added talent Instance:", talentInstance.name);
                 console.log("to hero:", hero.name);
-                talentInstance.heroes.add(hero, function(err) {
+                hero.talents.add(talentInstance, function(err) {
                   if(err) console.log(err);
                    innerCallback(err);
                 });
@@ -37,5 +40,5 @@ module.exports = function(server) {
     	if(err) console.log("ERR creating user identities:", err);
     	else console.log("Donerino");
     });
-    */
+		*/
 };

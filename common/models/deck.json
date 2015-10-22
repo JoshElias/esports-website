@@ -73,6 +73,9 @@
     "voteScore": {
       "type": "number"
     },
+    "authorId": {
+      "type": "string"
+    },
     "cardIds": {
       "type": [
         "string"

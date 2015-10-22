@@ -3,7 +3,7 @@
         <div class="forum-category">
             {{category.title}}
         </div>
-        <table class="table forum-section" ng-show="category.threads.length">
+        <table class="table forum-section" ng-show="category.forumThreads.length">
             <thead>
                 <tr>
                     <th class="section">Section</th>
@@ -12,29 +12,29 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="thread in category.threads">
+                <tr ng-repeat="thread in category.forumThreads">
                     <td class="section">
                         <a href="./forum/{{thread.slug.url}}">{{thread.title}}</a><br>
                         <em>{{thread.description}}</em>
                     </td>
                     <td class="latest hidden-xs">
-                        <div ng-if="thread.numPosts > 0">
-                            <a href="./forum/{{thread.slug.url}}/{{thread.posts[0].slug.url}}" class="title">{{thread.posts[0].title}}</a>
+                        <div ng-if="thread.forumPosts.length > 0">
+                            <a href="./forum/{{thread.slug.url}}/{{thread.forumPosts[0].slug.url}}" class="title">{{thread.forumPosts[0].title}}</a>
                             <div class="latest-info clearfix">
                                 <div class="author">
-                                    <a href="#" class="avatar hidden-xs"><img gravatar-src-once="thread.posts[0].author.email" alt="{{thread.posts[0].author.username}}" /></a><a href="./user/{{thread.posts[0].author.username}}">@{{thread.posts[0].author.username}}</a>
+                                    <a href="#" class="avatar hidden-xs"><img gravatar-src-once="thread.forumPosts[0].author.email" alt="{{thread.forumPosts[0].author.username}}" /></a><a href="./user/{{thread.posts[0].author.username}}">@{{thread.forumPosts[0].author.username}}</a>
                                 </div>
                                 <div class="ago pull-right">
-                                    <span am-time-ago="thread.posts[0].createdDate"></span>
+                                    <span am-time-ago="thread.forumPosts[0].createdDate"></span>
                                 </div>
                             </div>
                         </div>
-                        <div ng-if="thread.numPosts === 0">
+                        <div ng-if="thread.forumPosts.length === 0">
                             There are no posts in this thread yet.
                         </div>
                     </td>
                     <td class="posts hidden-xs">
-                        {{thread.numPosts}}
+                        {{thread.forumPosts.length}}
                     </td>
                 </tr>
             </tbody>

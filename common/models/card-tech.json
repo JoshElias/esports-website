@@ -30,7 +30,7 @@
       "foreignKey": "deckTechId"
     },
     "card": {
-      "type": "hasOne",
+      "type": "belongsTo",
       "model": "card",
       "foreignKey": "cardId"
     }

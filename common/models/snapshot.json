@@ -37,6 +37,16 @@
     },
     "active": {
       "type": "boolean"
+    },
+    "oldAuthors": {
+      "type": [
+        "object"
+      ]
+    },
+    "oldComments": {
+      "type": [
+        "string"
+      ]
     }
   },
   "validations": [],
@@ -59,7 +69,7 @@
     "deckTiers": {
       "type": "hasMany",
       "model": "deckTier",
-      "foreignKey": "deckId"
+      "foreignKey": "snapshotId"
     }
   },
   "acls": [],

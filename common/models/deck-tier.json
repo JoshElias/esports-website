@@ -18,6 +18,12 @@
     "tier": {
       "type": "number"
     },
+    "deckId": {
+      "type": "string"
+    },
+    "snapshotId": {
+      "type": "string"
+    },
     "ranks": {
       "type": [
         "number"
@@ -27,7 +33,7 @@
   "validations": [],
   "relations": {
     "deck": {
-      "type": "hasOne",
+      "type": "belongsTo",
       "model": "deck",
       "foreignKey": "deckId"
     },
@@ -35,6 +41,11 @@
       "type": "hasMany",
       "model": "deckTech",
       "foreignKey": "deckTierId"
+    },
+    "snapshot": {
+      "type": "belongsTo",
+      "model": "snapshot",
+      "foreignKey": "snapshotId"
     }
   },
   "acls": [],

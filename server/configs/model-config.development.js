@@ -52,7 +52,10 @@ module.exports = {
   },
   "user": {
     "dataSource": "mongodb",
-    "public": true
+    "public": true,
+    "options": {
+      "emailVerificationRequired": true
+    }
   },
   "topic": {
     "dataSource": "mongodb",
@@ -155,6 +158,18 @@ module.exports = {
     "public": true
   },
   "deckMatchup": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "forumCategory": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "forumPost": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "forumThread": {
     "dataSource": "mongodb",
     "public": true
   }

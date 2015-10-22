@@ -25,34 +25,33 @@ var app = angular.module('app', [
     'app.animations'
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', 'AuthenticationService', 'UserService', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService",
-        function ($rootScope, $state, $stateParams, $window, $http, $q, AuthenticationService, UserService, $location, MetaService, $cookies, $localStorage, LoginModalService) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth',
+        function ($rootScope, $state, $stateParams, $window, $http, $q, $location, MetaService, $cookies, $localStorage, LoginModalService, LoopBackAuth) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
-            $rootScope.UserService = UserService;
             $rootScope.LoginModalService = LoginModalService;
 
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
-                console.log('started state change');
+
                 //ngProgress.start();
                 if (toState.redirectTo) {
                     event.preventDefault();
                     $state.go(toState.redirectTo, toParams);
                 }
-                if (toState.access && toState.access.noauth && $window.sessionStorage.token && AuthenticationService.isLogged()) {
-                    event.preventDefault();
-                    $state.transitionTo('app.home');
-                }
-                if (toState.access && toState.access.auth && !$window.sessionStorage.token && !AuthenticationService.isLogged()) {
-                    event.preventDefault();
-                    $state.transitionTo('app.login');
-                }
-                if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
-                    //event.preventDefault();
-                    //$state.transitionTo('app.home');
-                }
+//                if (toState.access && toState.access.noauth && $window.sessionStorage.token && AuthenticationService.isLogged()) {
+//                    event.preventDefault();
+//                    $state.transitionTo('app.home');
+//                }
+//                if (toState.access && toState.access.auth && !$window.sessionStorage.token && !AuthenticationService.isLogged()) {
+//                    event.preventDefault();
+//                    $state.transitionTo('app.login');
+//                }
+//                if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
+//                    //event.preventDefault();
+//                    //$state.transitionTo('app.home');
+//                }
                 $window.scrollTo(0,0);
             });
             $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
@@ -76,10 +75,37 @@ var app = angular.module('app', [
                 }
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {
-                console.log(event);
+                console.log("Event:", event);
+                console.log("To State:", toState);
+                console.log("From State", fromState);
                 console.log('hey you don goofed. lol k , (happy martin i removed fag)');
 //                $state.transitionTo('app.404');
             });
+
+
+            // Looks for auth cookies and loads the user credentials from them
+            var accessToken = getAuthCookie("access_token");
+            var userId = getAuthCookie("userId");
+            if(accessToken && userId) {
+              $cookies.remove("access_token");
+              $cookies.remove("userId");
+              LoopBackAuth.setUser(accessToken, userId);
+              LoopBackAuth.save();
+            }
+
+            // TODO: extend $cookies with this function
+            function getAuthCookie(key) {
+              var value = $cookies.get(key);
+              if(typeof value == "undefined")
+                  return undefined;
+
+              var valueElements = value.split(":");
+              var cleanCookie = valueElements[1];
+              valueElements = cleanCookie.split(".");
+              valueElements.splice(-1, 1);
+              cleanCookie = valueElements.join(".");
+              return cleanCookie;
+            }
         }
     ]
 )
@@ -120,14 +146,24 @@ var app = angular.module('app', [
                     }
                 },
                 resolve: {
-                    User: ['$window', '$cookies', '$state', '$q', 'User', 'LoopBackAuth', function($window, $cookies, $state, $q, User, LoopBackAuth) {
-                      console.log("App State");
-                      console.log("Cached user:", User.getCachedCurrent());
-                        if (User.isAuthenticated() && !User.getCachedCurrent()) {
-                            return User.getCurrentId();
+                  // Load the current user data if we don't have it
+                    currentUser: ['User', 'LoopBackAuth',
+                        function(User, LoopBackAuth) {
+                            if(User.isAuthenticated() && !LoopBackAuth.currentUserData) {
+                              return User.getCurrent().$promise;
+                            }
                         }
-                    }]
-                }
+                    ]
+                },
+                onEnter: ['$cookies', '$state', function($cookies, $state) {
+                    // look for redirect cookie
+                    var redirectState = $cookies.get("redirectState");
+                    if(redirectState) {
+                      console.log("transitionTo:", redirectState);
+                      $cookies.remove("redirectState");
+                      $state.transitionTo(redirectState);
+                    }
+                }]
             })
             .state('app.404', {
                 url: '404',
@@ -149,7 +185,7 @@ var app = angular.module('app', [
                             articles: ['Article', function (Article) {
                                 var offset = 1,
                                     num = 6;
-                                
+
                                 return Article.find({
                                     filter: {
                                         where: {
@@ -195,7 +231,7 @@ var app = angular.module('app', [
                                     page = $stateParams.p || 1,
                                     perpage = 12,
                                     search = $stateParams.s || '';
-                                
+
                                 return Article.find({
                                     filter: {
                                         where: {
@@ -216,7 +252,7 @@ var app = angular.module('app', [
                                     articles.perpage = perpage;
                                     return articles;
                                 });
-                                
+
                             }],
                             articlesTotal: ['Article', function (Article) {
                                 return Article.count({
@@ -241,14 +277,55 @@ var app = angular.module('app', [
                         resolve: {
                             article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var slug = $stateParams.slug;
-                                
+
                                 return Article.findOne({
                                     filter: {
                                         where: {
                                             "slug.url": slug
                                         },
-                                        include: ["author", "comments"]
-                                        //TODO: Filter author include
+                                        include: [
+                                            {
+                                                relation: "author",
+                                                scope: {
+                                                    filter: [
+                                                        "username",
+                                                        "about",
+                                                        "providerDescription",
+                                                        "social"
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: "comments",
+                                                scope: {
+                                                    include: [
+                                                        "author"
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: "relatedArticles",
+                                                scope: {
+                                                    fields: [
+                                                        "title",
+                                                        "isActive",
+                                                        "photoNames",
+                                                        "authorId",
+                                                        "votesScore"
+                                                    ],
+                                                    include: [
+                                                        {
+                                                            relation: "author",
+                                                            scope: {
+                                                                fields: [
+                                                                    "username"
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
                                 }).$promise;
                             }]
@@ -268,17 +345,28 @@ var app = angular.module('app', [
             .state('app.snapshot.redirect', {
                 url: '',
                 resolve: {
-                    data: ['SnapshotService', '$q', function (SnapshotService, $q) {
-                        return SnapshotService.getLatest().then(function (result) {
-                            if (result.success === true) {
-                                return result;
-                            } else {
-                                return $q.reject('unable to find snapshot');
-                            }
-                        });
+//                    data: ['SnapshotService', '$q', function (SnapshotService, $q) {
+//                        return SnapshotService.getLatest().then(function (result) {
+//                            console.log(result);
+//                            if (result.success === true) {
+//                                return result;
+//                            } else {
+//                                return $q.reject('unable to find snapshot');
+//                            }
+//                        });
+//                    }],
+                    data: ['Snapshot', function (Snapshot) {
+                        return Snapshot.find({
+
+                        }).$promise;
                     }],
+//                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
+//                        $state.go('app.snapshot.snapshot', { slug: data.snapshot[0].slug.url });
+//                        return $q.reject();
+//                    }]
                     redirect: ['$q', '$state', 'data', function ($q, $state, data) {
-                        $state.go('app.snapshot.snapshot', { slug: data.snapshot[0].slug.url });
+                        console.log(data);
+                        $state.go('app.snapshot.snapshot', { slug: data[0].slug.url });
                         return $q.reject();
                     }]
                 }
@@ -290,15 +378,135 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/snapshots.snapshot.html',
                         controller: 'SnapshotCtrl',
                         resolve: {
-                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
+//                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
+//                                var slug = $stateParams.slug;
+//                                return SnapshotService.getSnapshot(slug).then(function (result) {
+//                                    if(result.success === true) {
+//                                        return result.snapshot;
+//                                    } else {
+//                                        return $q.reject('Unable to find snapshot');
+//                                    }
+//                                });
+//                            }]
+                            dataSnapshot: ['$stateParams', 'Snapshot', function ($stateParams, Snapshot) {
                                 var slug = $stateParams.slug;
-                                return SnapshotService.getSnapshot(slug).then(function (result) {
-                                    if(result.success === true) {
-                                        return result.snapshot;
-                                    } else {
-                                        return $q.reject('Unable to find snapshot');
+                                console.log(slug);
+                                return Snapshot.findOne({
+                                    filter: {
+                                        where: {
+                                            'slug.url': slug
+                                        },
+                                        fields: {
+                                            id: true,
+                                            authorId: true,
+                                            deckId: true,
+                                            active: true,
+                                            snapNum: true,
+                                            votes: true,
+                                            votesCount: true,
+                                            title: true,
+                                            content: true,
+                                            slug: true,
+                                            photos: true,
+                                            createdDate: true
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'comments',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'author',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    username: true
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'deckMatchups',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'forDeck',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    playerClass: true
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: 'againstDeck',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    playerClass: true
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'deckTiers',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'deck',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    playerClass: true,
+                                                                    name: true,
+                                                                    slug: true,
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: 'deckTech',
+                                                            scope: {
+                                                                include: [
+                                                                    {
+                                                                        relation: 'cardTech',
+                                                                        scope: {
+                                                                            include: [
+                                                                                {
+                                                                                    relation: 'card'
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'authors',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'user',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    social: true,
+                                                                    username: true
+                                                                }
+                                                            }
+                                                        }
+                                                    ],
+                                                }
+                                            }
+                                        ]
                                     }
-                                });
+                                }).$promise;
                             }]
                         }
                     }
@@ -419,7 +627,7 @@ var app = angular.module('app', [
                                     search = $stateParams.s || '',
                                     age = $stateParams.a || '',
                                     order = $stateParams.o || '';
-                                
+
                                 return Deck.find({
                                     filter: {
                                         where: {
@@ -441,18 +649,18 @@ var app = angular.module('app', [
                                     }
                                 })
                                 .$promise;
-                                
+
                             }],
                             tempostormCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var search = $stateParams.s || '';
-                                
+
                                 return Deck.count({
                                     where: {
                                         isFeatured: true,
                                     }
                                 })
                                 .$promise;
-                                
+
                             }],
                             communityDecks: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var klass = $stateParams.k || false,
@@ -486,7 +694,7 @@ var app = angular.module('app', [
                             }],
                             communityCount: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var search = $stateParams.s || '';
-                                
+
                                 return Deck.count({
                                     where: {
                                         isFeatured: false,
@@ -514,7 +722,26 @@ var app = angular.module('app', [
                                         where: {
                                             slug: stateSlug
                                         },
-                                        include: ["cards","comments"]
+                                        include: [
+                                            {
+                                                relation: "cards"
+                                            },
+                                            {
+                                                relation: "comments",
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: "author",
+                                                            scope: {
+                                                                fields: [
+                                                                    "username"
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
                                 })
                                 .$promise
@@ -522,7 +749,7 @@ var app = angular.module('app', [
                                     console.log(com);
                                     return com;
                                 });
-                                
+
                             }]
                         }
                     }
@@ -585,7 +812,7 @@ var app = angular.module('app', [
                             }],
                             classCardsCount: ['$stateParams', 'Card', function ($stateParams, Card) {
                                 var playerClass = $stateParams.playerClass;
-                                
+
                                 return Card.count({
                                     where: {
                                         playerClass: playerClass.slice(0,1).toUpperCase() + playerClass.substr(1)
@@ -646,14 +873,17 @@ var app = angular.module('app', [
 //                                var filters = 'all',
 //                                    offset = 0,
 //                                    perpage = 6;
-//                              
+//
 //                                return ArticleService.getArticles('hots', filters, offset, perpage);
+//                            }],
+//                            talents: ['Talent', function (Talent) {
+//                                return Talent.find({}).$promise;
 //                            }],
                             dataArticles: ['Article', function (Article) {
                               var filters = 'all',
                                   offset = 0,
                                   perpage = 6;
-                              
+
                               return Article.find({
                                 filter: {
                                   limit: 6,
@@ -679,19 +909,47 @@ var app = angular.module('app', [
                                   fields: {
                                     name: true,
                                     votesCount: true,
-                                    description: true,
                                     authorId: true,
                                     createdDate: true,
                                     premium: true,
-                                    against: true,
-                                    oldHeroes: true,
                                     guideType: true,
-                                    synergy: true,
-                                    oldHeroes: true,
+                                    id: true,
+                                    talentTiers: true
                                   },
-                                  include: ['author']
+                                  include: [
+                                        {
+                                            relation: 'author'
+                                        },
+                                        {
+                                            relation: 'heroes',
+                                            scope: {
+                                                include: ['talents']
+                                            }
+                                        },
+                                        {
+                                            relation: 'maps',
+                                            scope: {
+                                                fields: {
+                                                    name: true,
+                                                    className: true
+                                                }
+                                            }
+                                        }
+                                    ]
                                 }
                               }).$promise;
+                            }],
+                            communityTalentDict: ['dataGuidesCommunity', function (dataGuidesCommunity) {
+                                var dict = {};
+                                for (var i = 0; i < dataGuidesCommunity.length; i++) {
+                                    for (var k = 0; k < dataGuidesCommunity[i].heroes.length; k++) {
+                                        for (var l = 0; l < dataGuidesCommunity[i].heroes[k].talents.length; l++) {
+                                            var temp = dataGuidesCommunity[i].heroes[k].talents[l].id;
+                                            dict[temp] = dataGuidesCommunity[i].heroes[k].talents[l];
+                                        }
+                                    }
+                                }
+                                return dict;
                             }],
 //                            dataGuidesFeatured: ['HOTSGuideService', function (HOTSGuideService) {
 //                                return HOTSGuideService.getGuidesFeatured();
@@ -706,19 +964,41 @@ var app = angular.module('app', [
                                   fields: {
                                     name: true,
                                     votesCount: true,
-                                    description: true,
                                     authorId: true,
                                     createdDate: true,
                                     premium: true,
-                                    against: true,
-                                    oldHeroes: true,
                                     guideType: true,
-                                    synergy: true,
-                                    oldHeroes: true,
+                                    id: true,
+                                    talentTiers: true
                                   },
-                                  include: ['author']
+                                  include: [
+                                        {
+                                            relation: 'author'
+                                        },
+                                        {
+                                            relation: 'heroes',
+                                            scope: {
+                                                include: ['talents']
+                                            }
+                                        },
+                                        {
+                                            relation: 'maps'
+                                        }
+                                    ]
                                 }
                               }).$promise;
+                            }],
+                            featuredTalentDict: ['dataGuidesFeatured', function (dataGuidesFeatured) {
+                                var dict = {};
+                                for (var i = 0; i < dataGuidesFeatured.length; i++) {
+                                    for (var k = 0; k < dataGuidesFeatured[i].heroes.length; k++) {
+                                        for (var l = 0; l < dataGuidesFeatured[i].heroes[k].talents.length; l++) {
+                                            var temp = dataGuidesFeatured[i].heroes[k].talents[l].id;
+                                            dict[temp] = dataGuidesFeatured[i].heroes[k].talents[l];
+                                        }
+                                    }
+                                }
+                                return dict;
                             }],
 //                            dataHeroes: ['HeroService', function (HeroService) {
 //                                return HeroService.getHeroesList();
@@ -753,24 +1033,176 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-                            dataCommunityGuides: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
-                                return HOTSGuideService.getGuidesCommunity(false, 0, 10, false, false);
+//                            dataCommunityGuides: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+//                                return HOTSGuideService.getGuidesCommunity(false, 0, 10, false, false);
+//                            }],
+                            dataCommunityGuides: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                              return Guide.find({
+                                filter: {
+                                  limit: 10,
+                                  order: 'VotesCount DESC',
+                                  fields: {
+                                    authorId: true,
+                                    name: true,
+                                    votesCount: true,
+                                    createdDate: true,
+                                    premium: true,
+                                    guideType: true,
+                                    id: true,
+                                    description: true,
+                                    talentTiers: true,
+                                    slug: true
+                                  },
+                                  where: {
+                                    featured: false
+                                  },
+                                  include: [
+                                    {
+                                      relation: 'author'
+                                    },
+                                    {
+                                      relation: 'heroes',
+                                      scope: {
+                                        include: ['talents']
+                                      }
+                                    },
+                                    {
+                                      relation: 'maps'
+                                    }
+                                  ]
+                                }
+                              }).$promise;
                             }],
-                            dataTopGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
-                                var guideType = $stateParams.t || 'all',
+
+                            communityTalents: ['dataCommunityGuides', function (dataCommunityGuides) {
+                              var talents = {};
+                              for(var i = 0; i < dataCommunityGuides.length; i++) {
+                                for(var j = 0; j < dataCommunityGuides[i].heroes.length; j++) {
+                                  for(var k = 0; k < dataCommunityGuides[i].heroes[j].talents.length; k++) {
+                                    talents[dataCommunityGuides[i].heroes[j].talents[k].id] = dataCommunityGuides[i].heroes[j].talents[k];
+                                  }
+                                }
+                              }
+                              return talents;
+                            }],
+//                            dataTopGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+//                                var guideType = $stateParams.t || 'all',
+//                                    filters = $stateParams.h || false,
+//                                    order = $stateParams.o || 'high';
+//
+//                                return HOTSGuideService.getGuides('hero', filters, 1, 1, '', '', order);
+//                            }],
+                            dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
+                              var guideType = $stateParams.t || 'all',
                                     filters = $stateParams.h || false,
                                     order = $stateParams.o || 'high';
 
-                                return HOTSGuideService.getGuides('hero', filters, 1, 1, '', '', order);
+                              return Guide.find({
+                                filter: {
+                                  order: 'votesCount DESC',
+                                  limit: 1,
+                                  fields: {
+                                    authorId: true,
+                                    name: true,
+                                    votesCount: true,
+                                    createdDate: true,
+                                    premium: true,
+                                    guideType: true,
+                                    id: true,
+                                    description: true,
+                                    talentTiers: true,
+                                    slug: true
+                                  },
+                                  include: [
+                                    {
+                                      relation: 'author'
+                                    },
+                                    {
+                                      relation: 'heroes',
+                                      scope: {
+                                        include: ['talents']
+                                      }
+                                    },
+                                    {
+                                      relation: 'maps'
+                                    }
+                                  ]
+                                }
+                              }).$promise;
                             }],
-                            dataTempostormGuides: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getGuidesFeatured(false, 0, 4);
+                            topGuideTalents: ['dataTopGuide', function (dataTopGuide) {
+                              var talents = {};
+                              for(var i = 0; i < dataTopGuide.length; i++) {
+                                for(var j = 0; j < dataTopGuide[i].heroes.length; j++) {
+                                  for(var k = 0; k < dataTopGuide[i].heroes[j].talents.length; k++) {
+                                    talents[dataTopGuide[i].heroes[j].talents[k].id] = dataTopGuide[i].heroes[j].talents[k];
+                                  }
+                                }
+                              }
+                              return talents;
                             }],
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+//                            dataTempostormGuides: ['HOTSGuideService', function (HOTSGuideService) {
+//                                return HOTSGuideService.getGuidesFeatured(false, 0, 4);
+//                            }],
+                            dataTempostormGuides: ['Guide', function (Guide) {
+                              return Guide.find({
+                                filter: {
+                                  order: 'votesCount DESC',
+                                  limit: 4,
+                                  fields: {
+                                    authorId: true,
+                                    name: true,
+                                    votesCount: true,
+                                    createdDate: true,
+                                    premium: true,
+                                    guideType: true,
+                                    id: true,
+                                    description: true,
+                                    talentTiers: true,
+                                    slug: true
+                                  },
+                                  where: {
+                                    featured: true
+                                  },
+                                  include: [
+                                    {
+                                      relation: 'author'
+                                    },
+                                    {
+                                      relation: 'heroes',
+                                      scope: {
+                                        include: ['talents']
+                                      }
+                                    },
+                                    {
+                                      relation: 'maps'
+                                    }
+                                  ]
+                                }
+                              }).$promise;
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+                            tempostormTalents: ['dataTempostormGuides', function (dataTempostormGuides) {
+                              var talents = {};
+                              for(var i = 0; i < dataTempostormGuides.length; i++) {
+                                for(var j = 0; j < dataTempostormGuides[i].heroes.length; j++) {
+                                  for(var k = 0; k < dataTempostormGuides[i].heroes[j].talents.length; k++) {
+                                    talents[dataTempostormGuides[i].heroes[j].talents[k].id] = dataTempostormGuides[i].heroes[j].talents[k];
+                                  }
+                                }
+                              }
+                              return talents;
+                            }],
+//                            dataHeroes: ['HeroService', function (HeroService) {
+//                                return HeroService.getHeroes();
+//                            }],
+                            dataHeroes: ['Hero', function (Hero) {
+                              return Hero.find({}).$promise;
+                            }],
+//                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
+//                                return HOTSGuideService.getMaps();
+//                            }]
+                            dataMaps: ['Map', function (Map) {
+                              return Map.find({}).$promise;
                             }]
                         }
                     }
@@ -784,21 +1216,49 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.guide.html',
                         controller: 'HOTSGuideCtrl',
                         resolve: {
-                            data: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                return HOTSGuideService.getGuide(slug).then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('Unable to find guide');
+                                return Guide.findOne({
+                                    filter: {
+                                        where: {
+                                            slug: slug
+                                        },
+                                        include: [
+                                            {
+                                                relation: "heroes",
+                                                scope: {
+                                                    include: ["talents"]
+                                                }
+                                            },
+                                            {
+                                                relation: "maps"
+                                            },
+                                            {
+                                                relation: "comments",
+                                                scope: {
+                                                    include: [
+                                                        "author"
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
-                                 });
+                                }).$promise.then(function (data) {
+                                    console.log(data);
+                                    return data;
+                                });
                             }],
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
-                            }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+                            guideTalents: ['guide', function (guide) {
+                                var talents = {};
+                                console.log(guide);
+                                if (guide.guideType === "hero") {
+                                    for (var i = 0; i < guide.heroes.length; i++) {
+                                        for (var j = 0; j < guide.heroes[i].talents.length; j++) {
+                                            talents[guide.heroes[i].talents[j].id] = guide.heroes[i].talents[j]
+                                        }
+                                    }
+                                }
+                                return talents;
                             }]
                         }
                     }
@@ -831,11 +1291,15 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.hero.html',
                         controller: 'HOTSGuideBuilderHeroCtrl',
                         resolve: {
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({
+                                    filter: {
+                                        include: ['talents']
+                                    }
+                                }).$promise;
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({}).$promise;
                             }]
                         }
                     }
@@ -849,11 +1313,11 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.map.html',
                         controller: 'HOTSGuideBuilderMapCtrl',
                         resolve: {
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({}).$promise;
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({}).$promise;
                             }]
                         }
                     }
@@ -1027,14 +1491,33 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.home.html',
                         controller: 'ForumCategoryCtrl',
                         resolve: {
-                            data: ['ForumService', '$q', function (ForumService, $q) {
-                                return ForumService.getCategories().then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find catagory');
+                            forumCategories: ['ForumCategory', function(ForumCategory) {
+                                return ForumCategory.find({
+                                    filter: {
+                                        fields: {
+                                            id: true,
+                                            title: true,
+                                            active: true,
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'forumThreads',
+                                                scope: {
+                                                    fields: ['active', 'id', 'title', 'description', 'slug'],
+                                                    include: [
+                                                        {
+                                                            relation: 'forumPosts',
+                                                            scope: {
+                                                                fields: ['active', 'id', 'content', 'createdDate', 'slug', 'title', 'views', 'votes', 'votesCount'],
+                                                                include: ['author']
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
-                                 });;
+                                }).$promise;
                             }]
                         }
                     }
@@ -1048,15 +1531,50 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.threads.html',
                         controller: 'ForumThreadCtrl',
                         resolve: {
-                            data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
-                                var thread = $stateParams.thread;
-                                return ForumService.getThread(thread).then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find thread');
+                            forumPostCount: ['ForumPost', function(ForumPost) {
+                                return ForumPost.count().$promise;
+                            }],
+                            forumThread: ['$stateParams', 'ForumThread', function($stateParams, ForumThread) {
+                                var slug = $stateParams.thread;
+                                return ForumThread.findOne({
+                                    filter: {
+                                        where: {
+                                            'slug.url': slug
+                                        },
+                                        // TODO: Fix the order using `order: "createdDate DESC",`
+                                        fields: {
+                                            id: true,
+                                            active: true,
+                                            description: true,
+                                            slug: true,
+                                            title: true,
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'forumPosts',
+                                                scope: {
+                                                    order: "createdDate DESC",
+                                                    limit: 20,
+                                                    fields: ['id', 'active', 'description', 'slug', 'title', 'authorId', 'views', 'createdDate'],
+                                                    include: [
+                                                        {
+                                                            relation: 'comments',
+                                                            scope: {
+                                                                fields: ['id', 'active', 'content', 'createdDate', 'slug', 'title', 'views', 'votes', 'votesCount']
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: 'author',
+                                                            scope: {
+                                                                fields: ['id', 'active', 'email', 'username']
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
-                                 });;
+                                }).$promise;
                             }]
                         }
                     }
@@ -1070,9 +1588,34 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.add.html',
                         controller: 'ForumAddCtrl',
                         resolve: {
-                            data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
+//                            data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
+//                                var thread = $stateParams.thread;
+//                                return ForumService.getThread(thread);
+//                            }]
+                            thread: ['$stateParams', 'ForumThread', function($stateParams, ForumThread) {
                                 var thread = $stateParams.thread;
-                                return ForumService.getThread(thread);
+                                return ForumThread.findOne({
+                                    filter: {
+                                        where: {
+                                            'slug.url': thread
+                                        },
+                                        fields: {
+                                            id: true,
+                                            active: true,
+                                            description: true,
+                                            slug: true,
+                                            title: true
+                                        }
+//                                        include: [
+//                                            {
+//                                                relation: 'forumPosts',
+//                                                scope: {
+//                                                    fields: ['id', 'active', 'slug', 'title']
+//                                                }
+//                                            }
+//                                        ]
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -1085,16 +1628,58 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.post.html',
                         controller: 'ForumPostCtrl',
                         resolve: {
-                            data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
+//                            data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
+//                                var thread = $stateParams.thread,
+//                                    post = $stateParams.post;
+//                                return ForumService.getPost(thread, post).then(function (result) {
+//                                    if (result.success === true) {
+//                                        return result;
+//                                    } else {
+//                                        return $q.reject('unable to find post');
+//                                    }
+//                                 });;
+//                            }]
+                            forumPost: ['$stateParams', 'ForumPost', function($stateParams, ForumPost) {
                                 var thread = $stateParams.thread,
                                     post = $stateParams.post;
-                                return ForumService.getPost(thread, post).then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('unable to find post');
+                                return ForumPost.findOne({
+                                    filter: {
+                                        where: {
+                                            'slug.url': post
+                                        },
+                                        fields: {
+                                            id: true,
+                                            active: true,
+                                            slug: true,
+                                            title: true,
+                                            forumThread: true,
+                                            authorId: true,
+                                            author: true,
+                                            forumThreadId: true,
+                                            comments: true,
+                                            content: true
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'forumThread',
+                                                scope: {
+                                                    where: {
+                                                        'slug.url': thread
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                relation: 'comments',
+                                                scope: {
+                                                    include: ['author']
+                                                }
+                                            },
+                                            {
+                                                relation: 'author'
+                                            }
+                                        ]
                                     }
-                                 });;
+                                }).$promise;
                             }]
                         }
                     }
@@ -1120,7 +1705,7 @@ var app = angular.module('app', [
                                         fifaMembers : [],
                                         fgcMembers  : []
                                     }
-                                    
+
                                     for (var i=0; i != results.length; i++) {
                                         console.log(results[i]);
                                         var type = results[i].gameName;
@@ -1132,7 +1717,7 @@ var app = angular.module('app', [
                                             case 'fgc' : teams.fgcMembers.push(results[i]); break;
                                         }
                                     }
-                                    
+
                                     return teams;
                                 });
                             }]
@@ -1201,7 +1786,6 @@ var app = angular.module('app', [
                 views: {
                     content: {
                         templateUrl: tpl + 'views/frontend/login.html',
-                        controller: 'UserCtrl',
                     }
                 },
                 access: { noauth: true },
@@ -1212,7 +1796,6 @@ var app = angular.module('app', [
                 views: {
                     content: {
                         templateUrl: tpl + 'views/frontend/signup.html',
-                        controller: 'UserCtrl',
                     }
                 },
                 access: { noauth: true },
@@ -1234,7 +1817,6 @@ var app = angular.module('app', [
                 views: {
                     content: {
                         templateUrl: tpl + 'views/frontend/forgot-password.html',
-                        controller: 'UserCtrl'
                     }
                 },
                 access: { noauth: true },
@@ -1254,20 +1836,62 @@ var app = angular.module('app', [
             .state('app.profile', {
                 abstract: true,
                 url: 'user/:username',
+                resolve: {
+                    userProfile: ['$stateParams', 'User', function ($stateParams, User) {
+                      var username = $stateParams.username;
+                      return User.find({
+                        filter: {
+                            where: {
+                                username: username
+                            }
+                        }
+                      })
+                      .$promise
+                      .then(function (data) {
+                          return data[0];
+                      });
+                    }]
+                },
                 views: {
                     content: {
-                        templateUrl: tpl + 'views/frontend/profile.html',
                         controller: 'ProfileCtrl',
+                        templateUrl: tpl + 'views/frontend/profile.html',
                         resolve: {
-                            dataProfile: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getProfile(username).then(function (result) {
-                                    if (result.success === true) {
-                                        return result;
-                                    } else {
-                                        return $q.reject('Unable to find profile');
+                            profile: ['userProfile', function (userProfile) {
+                                return userProfile;
+                            }],
+                            postCount: ['userProfile', 'ForumPost', function (userProfile, ForumPost) {
+                                return ForumPost.count({
+                                    where: {
+                                        and: [
+                                            {
+                                                authorId: userProfile.id
+                                            }
+                                        ]
                                     }
-                                 });
+                                }).$promise;
+                            }],
+                            deckCount: ['userProfile', 'Deck', function (userProfile, Deck) {
+                                return Deck.count({
+                                    where: {
+                                        and: [
+                                            {
+                                                authorId: userProfile.id
+                                            }
+                                        ]
+                                    }
+                                }).$promise;
+                            }],
+                            guideCount: ['userProfile', 'Guide', function (userProfile, Guide) {
+                                return Guide.count({
+                                    where: {
+                                        and: [
+                                            {
+                                                authorId: userProfile.id
+                                            }
+                                        ]
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -1280,9 +1904,31 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.activity.html',
                         controller: 'ProfileActivityCtrl',
                         resolve: {
-                            dataActivity: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getActivity(username);
+                            activities: ['userProfile', 'Activity', function (userProfile, Activity) {
+                                return Activity.find({
+                                    filter: {
+                                        limit: 10,
+                                        where: {
+                                            authorId: userProfile.id
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'article'
+                                            },
+                                            {
+                                                relation: 'deck'
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise;
+                            }],
+                            activityCount: ['userProfile', 'Activity', function (userProfile, Activity) {
+                                return Activity.count({
+                                    where: {
+                                        authorId: userProfile.id
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -1295,9 +1941,16 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.articles.html',
                         controller: 'ProfileArticlesCtrl',
                         resolve: {
-                            dataArticles: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getArticles(username);
+                            articles: ['userProfile', 'Article', function (userProfile, Article) {
+                                return Article.find({
+                                    filter: {
+                                        where: {
+                                            authorId: userProfile.id
+                                        }
+                                    }
+                                })
+                                .$promise;
+//                                return ProfileService.getArticles(username);
                             }]
                         }
                     }
@@ -1310,13 +1963,20 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.decks.html',
                         controller: 'ProfileDecksCtrl',
                         resolve: {
-                            dataDecks: ['User', '$stateParams', 'ProfileService', 'AuthenticationService', function (User, $stateParams, ProfileService, AuthenticationService) {
-                                var username = $stateParams.username;
-                                if (AuthenticationService.isLogged()) {
-                                    return ProfileService.getDecksLoggedIn(username);
-                                } else {
-                                    return ProfileService.getDecks(username);
-                                }
+                            decks: ['User', 'userProfile', 'Deck', 'AuthenticationService', function (User, userProfile, Deck, AuthenticationService) {
+                                return Deck.find({
+                                    filter: {
+                                        where: {
+                                            authorId: userProfile.id
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'author'
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -1329,13 +1989,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.guides.html',
                         controller: 'ProfileGuidesCtrl',
                         resolve: {
-                            dataGuides: ['$stateParams', 'ProfileService', 'AuthenticationService', 'User', function ($stateParams, ProfileService, AuthenticationService, User) {
-                                var username = $stateParams.username;
-                                if (AuthenticationService.isLogged()) {
-                                    return ProfileService.getGuidesLoggedIn(username);
-                                } else {
-                                    return ProfileService.getGuides(username);
-                                }
+                            dataGuides: ['userProfile', 'Guide', 'AuthenticationService', 'User', function (userProfile, Guide, AuthenticationService, User) {
+                                return Guide.find({
+                                    filter: {
+                                        where: {
+                                            authorId: userProfile.id
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'author'
+                                            }
+                                        ]
+                                    }
+                                })
                             }]
                         }
                     }
@@ -1466,11 +2132,26 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/articles.list.html',
                         controller: 'AdminArticleListCtrl',
                         resolve: {
-                            data: ['AdminArticleService', function (AdminArticleService) {
+                            articles: ['Article', function (Article) {
                                 var page = 1,
                                     perpage = 50,
-                                    search = '';
-                                return AdminArticleService.getArticles(page, perpage, search);
+                                    search = '',
+                                    options = {
+                                        filter: {
+                                            skip: perpage*page,
+                                            limit: perpage,
+                                            order: "createdDate DESC",
+                                            fields: [
+                                                "title"
+                                            ]
+                                        }
+                                    };
+
+                                return Article.find(options)
+                                .$promise
+                                .then(function (data) {
+                                    return data;
+                                });
                             }]
                         }
                     }
@@ -1570,11 +2251,22 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.list.html',
                         controller: 'AdminDeckListCtrl',
                         resolve: {
-                            data: ['AdminDeckService', function (AdminDeckService) {
+                            decks: ['Deck', function (Deck) {
                                 var page = 1,
                                     perpage = 50,
                                     search = '';
-                                return AdminDeckService.getDecks(page, perpage, search);
+
+                                return Deck.find({
+                                    filter: {
+                                        limit: 50,
+                                        skip: (page*perpage) - perpage,
+                                        order: "createdDate DESC",
+                                        fields: [
+                                            "name"
+                                        ]
+                                    }
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -1650,8 +2342,21 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/cards.list.html',
                         controller: 'AdminCardListCtrl',
                         resolve: {
-                            data: ['AdminCardService', function (AdminCardService) {
-                                return AdminCardService.getCards();
+                            cards: ['Card', function (Card) {
+                                return Card.find({
+                                    filter: {
+                                        limit: 50,
+                                        page: 1,
+                                        order: "name ASC",
+                                        fields: [
+                                            "name",
+                                            "rarity",
+                                            "playerClass",
+                                            "cardType",
+                                            "expansion"
+                                        ]
+                                    }
+                                });
                             }]
                         }
                     }
