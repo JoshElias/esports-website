@@ -57,10 +57,6 @@ angular.module('app.controllers', ['ngCookies'])
     // If user is logged in
     $scope.currentUser = LoopBackAuth.currentUserData;
 
-    if($scope.currentUser) {
-      //window.location.replace("/link/twitch");
-    }
-
     $scope.loginModal = function (state) {
         LoginModalService.showModal(state, function (data) {
             $scope.currentUser = data.currentUserData;
@@ -68,8 +64,8 @@ angular.module('app.controllers', ['ngCookies'])
     }
 
     $scope.logout = function() {
-      User.logout(function() {
-        // TODO: cookie won't delete?
+      User.logout(function()
+      //TODO: cookie won
         $cookies.remove("connect.sid");
         $scope.currentUser = undefined;
       }, function(err) {
