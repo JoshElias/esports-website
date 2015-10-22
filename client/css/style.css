@@ -87,7 +87,12 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
     border-bottom: 2px solid #000;
 }
 
-
+.hello-andrew {
+    font-size: 48px;
+    color: limegreen;
+    font-weight: bold;
+}
+/* TODO: Remove this^ please lol */
 
 .navbar-tempo .navbar-header { margin-left: 0px !important; }
 .navbar-tempo .navbar-toggle { margin-right: 0px !important; }

@@ -209,6 +209,23 @@ var app = angular.module('app', [
                 },
                 seo: { title: 'Home', description: 'TempoStorm home page.', keywords: '' }
             })
+            .state('app.overwatch', {
+                abstract: true,
+                url: 'overwatch',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/overwatch.html'
+                    }
+                }
+            })
+            .state('app.overwatch.home', {
+                url: '',
+                views: {
+                    overwatch: {
+                        templateUrl: tpl + 'views/frontend/overwatch.home.html'
+                    }
+                }
+            })
             .state('app.articles', {
                 abstract: true,
                 url: 'articles',
@@ -1259,6 +1276,21 @@ var app = angular.module('app', [
                                     }
                                 }
                                 return talents;
+                            }],
+                            heroes: ['Hero', function(Hero) {
+                                
+                                return Hero.find({
+                                    
+                                })
+                                .$promise
+                                
+                            }],
+                            maps: ['Map', function(Map) {
+                                
+                                return Map.find({
+                                    
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -1907,9 +1939,11 @@ var app = angular.module('app', [
                             activities: ['userProfile', 'Activity', function (userProfile, Activity) {
                                 return Activity.find({
                                     filter: {
-                                        limit: 10,
+                                        order: "createdDate DESC",
+                                        limit: 3,
                                         where: {
-                                            authorId: userProfile.id
+                                            authorId: userProfile.id,
+                                            active: true
                                         },
                                         include: [
                                             {
