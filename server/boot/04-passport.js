@@ -1,3 +1,4 @@
+var loopback = require("loopback");
 var passport = require("passport");
 var async = require("async");
 var crypto = require("crypto");
@@ -7,9 +8,7 @@ var PassportConfigurator = require("loopback-component-passport").PassportConfig
 
 module.exports = function(server) {
 
-
     var passportConfigurator = PassportConfigurator(server);
-
 
     // More passport stuffs
     var passportProviders = {};
@@ -22,12 +21,11 @@ module.exports = function(server) {
       process.exit(1);
     }
 
-
     passportConfigurator.init();
     passportConfigurator.setupModels({
       userModel: server.models.user,
       userIdentityModel: server.models.userIdentity,
-      userCredentialModel: server.models.UserCredential
+      userCredentialModel: server.models.userIdentity
     });
 
     for(var s in passportProviders) {

@@ -13,7 +13,6 @@ var MongoStore = require("connect-mongo")(session);
 module.exports = function(server) {
 
   var staticDir = path.join(__dirname, "..", "..", "client");
-  console.log("static dir: ", staticDir);
   server.use(serveStatic("client"));
 
   server.engine("dust", consolidate.dust);
@@ -30,12 +29,21 @@ module.exports = function(server) {
 
   server.use(methodOverride());
   server.use(loopback.favicon());
-  server.use(loopback.cookieParser(server.get("jwtSecret")));
-  server.use(loopback.token({model:server.models.AccessToken}));
 
+  server.middleware('auth', loopback.token({
+    model: server.models.AccessToken
+  }));
+  server.middleware('session:before', loopback.cookieParser(server.get('jwtSecret')));
+  /*
+  server.middleware('session', loopback.session({
+    secret: 'kitty',
+    saveUninitialized: false,
+    resave: true,
+    cookie: { httpOnly: false }
+  }));
+*/
   var week = 60 * 60 * 24 * 7 * 1000;
-
-  server.use(loopback.session({
+  server.middleware('session', loopback.session({
       resave: false,
       saveUninitialized: false,
       secret:server.get("sessionSecret"),

@@ -3,9 +3,6 @@
 angular.module('app.controllers', ['ngCookies'])
   .controller('AppCtrl', ['$scope', '$localStorage', '$cookies', '$window', '$location', 'User', '$rootScope',
     function($scope, $localStorage, $cookies, $window, $location, User, $rootScope) {
-      var isIE = !!navigator.userAgent.match(/MSIE/i);
-      isIE && angular.element($window.document.body).addClass('ie');
-      isSmartDevice( $window ) && angular.element($window.document.body).addClass('smart');
 
       // config
       $rootScope.app = {
@@ -54,21 +51,15 @@ angular.module('app.controllers', ['ngCookies'])
       $scope.$watch('app.settings', function(){
           $localStorage.settings = $scope.app.settings;
       }, true);
-
-      function isSmartDevice( $window )
-      {
-          // Adapted from http://www.detectmobilebrowsers.com
-          var ua = $window['navigator']['userAgent'] || $window['navigator']['vendor'] || $window['opera'];
-          // Checks for iOs, Android, Blackberry, Opera Mini, and Windows mobile devices
-          return (/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/).test(ua);
-      }
-
 }])
-.controller('RootCtrl', ['$scope', 'LoginModalService', 'User', 'currentUser', function ($scope, LoginModalService, User, currentUser) {
+.controller('RootCtrl', ['$scope', '$cookies', 'LoginModalService', 'User', 'LoopBackAuth', function ($scope, $cookies, LoginModalService, User, LoopBackAuth) {
 
     // If user is logged in
-    console.log("currentUSer: ", currentUser);
-    $scope.currentUser = currentUser;
+    $scope.currentUser = LoopBackAuth.currentUserData;
+
+    if($scope.currentUser) {
+      //window.location.replace("/link/twitch");
+    }
 
     $scope.loginModal = function (state) {
         LoginModalService.showModal(state, function (data) {
@@ -78,6 +69,8 @@ angular.module('app.controllers', ['ngCookies'])
 
     $scope.logout = function() {
       User.logout(function() {
+        // TODO: cookie won't delete?
+        $cookies.remove("connect.sid");
         $scope.currentUser = undefined;
       }, function(err) {
         console.log("error logging out:", err);
@@ -6201,65 +6194,27 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'dataSnapshot', 'VoteService', 'LoginModalService', 'User',
-    function ($scope, $state, $compile, $window, SnapshotService, dataSnapshot, VoteService, LoginModalService, User) {
-        
-        console.log('snapshot: ', dataSnapshot);
-        
-        $scope.snapshot = dataSnapshot;
-        // New decktiers array from snapshot.deckTiers
-        $scope.deckTiers = getAllDecksByTier();
+.controller('SnapshotCtrl', ['$scope', '$state', '$compile', '$window', 'SnapshotService', 'dataSnapshot', 'VoteService', 'LoginModalService',
+    function ($scope, $state, $compile, $window, SnapshotService, dataSnapshot, VoteService, LoginModalService) {
+
+        console.log('snapshot: ', dataSnapshot[0]);
+        console.log('scope: ', $scope);
+
+        $scope.snapshot = dataSnapshot[0];
         $scope.show = [];
         $scope.matchupName = [];
         $scope.voted = false;
         $scope.hasVoted = function () {
             for (var i = 0; i < $scope.snapshot.votes.length; i++) {
-                if ($scope.snapshot.votes[i] == User.getCurrentId()) {
+                if ($scope.snapshot.votes[i] == $scope.app.user.getUserID()) {
                     $scope.voted = true;
                     break;
                 }
             }
         };
-        
-        function getAllDecksByTier() {
-            var uniqueTiers = {};
-            var outArr = [];
-            
-            // loop through all deck tiers
-            // create an object for each tier
-            // determine the tier of the deck
-            // push the deck to the corresponding tier obj
-            
-            for(var i = 0, j = $scope.snapshot.deckTiers.length; i < j; i++) {
-                var currentDeckTier = $scope.snapshot.deckTiers[i].tier;
-                var uniqueTier = true;
-                for(var k = 0, l = outArr.length; k < l; k++) {
-                    if(outArr[k].tier === currentDeckTier) {
-                        uniqueTier = false;
-                        outArr[k].decks.push($scope.snapshot.deckTiers[i]);
-                    }
-                }
-                
-                if(uniqueTier) {
-                    var newTier = {
-                        id: $scope.snapshot.deckTiers[i].id,
-                        tier: currentDeckTier,
-                        decks: [$scope.snapshot.deckTiers[i]],
-                    };
-                    outArr.push(newTier);
-                }
-            }
-            
-            return outArr;
-            
-        }
-        
-        console.log('orig deckTiers: ', $scope.snapshot.deckTiers);
-        console.log('new deckTiers: ', $scope.deckTiers);
-        console.log('original: ', $scope.snapshot.tiers);
 
         $scope.show.comments = SnapshotService.getStorage();
-        $scope.$watch('User.isAuthenticated()', function() {
+        $scope.$watch('app.user.isLogged()', function() {
             updateCommentVotes();
             $scope.hasVoted();
         });
@@ -6314,19 +6269,10 @@ angular.module('app.controllers', ['ngCookies'])
             return out;
         }
 
-//        $scope.getTier = function (tier) {
-//            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-//                if ($scope.snapshot.tiers[i].tier == tier) {
-//                    return $scope.snapshot.tiers[i];
-//                }
-//            }
-//            return false;
-//        }
-        
         $scope.getTier = function (tier) {
-            for (var i = 0; i < $scope.deckTiers.length; i++) {
-                if ($scope.deckTiers[i].tier == tier) {
-                    return $scope.deckTiers[i];
+            for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
+                if ($scope.snapshot.tiers[i].tier == tier) {
+                    return $scope.snapshot.tiers[i];
                 }
             }
             return false;
@@ -6340,7 +6286,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // find highest and lowest in tier
             for (var i = 0; i < tier.decks.length; i++) {
-                var history = tier.decks[i].ranks;
+                var history = tier.decks[i].rank.current;
                 for (var j = 0; j < history.length; j++) {
                     if (history[j] > highestRank && history[j] != 0) { highestRank = history[j]; }
                     if ((history[j] < lowestRank && history[j] != 0) || lowestRank == 0) { lowestRank = history[j]; }
@@ -7394,11 +7340,10 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('ForumAddCtrl', ['$scope', '$location', '$window', '$compile', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'thread', 'User',
-    function ($scope, $location, $window, $compile, bootbox, ForumService, UserService, AuthenticationService, SubscriptionService, thread, User) {
+.controller('ForumAddCtrl', ['$scope', '$location', '$window', '$compile', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'data',
+    function ($scope, $location, $window, $compile, bootbox, ForumService, UserService, AuthenticationService, SubscriptionService, data) {
         // thread
-        $scope.thread = thread;
-        console.log('thread: ', $scope.thread);
+        $scope.thread = data.thread;
 
         // post
         var defaultPost = {
@@ -7426,7 +7371,7 @@ angular.module('app.controllers', ['ngCookies'])
         var box,
             callback;
         $scope.addPost = function () {
-            if (!User.isAuthenticated()) {
+            if (!$scope.app.user.isLogged()) {
                 box = bootbox.dialog({
                     title: 'Login Required',
                     message: $compile('<div login-form></div>')($scope)
@@ -7474,16 +7419,13 @@ angular.module('app.controllers', ['ngCookies'])
 
     }
 ])
-.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'postData', 'MetaService', 'User', 'ForumPost',
-    function ($scope, $sce, $compile, $window, bootbox, postData, MetaService, User, ForumPost) {
+.controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'ForumService', 'UserService', 'AuthenticationService', 'VoteService', 'SubscriptionService', 'data', 'MetaService',
+    function ($scope, $sce, $compile, $window, bootbox, ForumService, UserService, AuthenticationService, VoteService, SubscriptionService, data, MetaService) {
 
-        $scope.post = postData;
-        console.log('post: ', $scope.post);
-        
-//        $scope.ForumService = ForumService;
-        $scope.thread = $scope.post.forumThread;
-        
-        console.log('is user logged in: ', User.isAuthenticated());
+
+        $scope.post = data.post;
+        $scope.ForumService = ForumService;
+        $scope.thread = data.thread;
 
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.post.title + ' - ' + $scope.thread.title);

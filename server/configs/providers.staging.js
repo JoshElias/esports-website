@@ -5,7 +5,7 @@ module.exports = {
    "module": "passport-twitch",
    "clientID": "226rnm5263dzbn13wrs3q5bvuc9aeml",
    "clientSecret": "edg5nj934q127ayqlmfapsbj7e2navx",
-   "callbackURL": "http://52.26.75.137:8080/login/twitch/callback",
+   "callbackURL": "https://52.26.75.137/login/twitch/callback",
    "authPath": "/login/twitch",
    "callbackPath": "/login/twitch/callback",
    "successRedirect": "/",
@@ -22,16 +22,18 @@ module.exports = {
    "callbackPath": "/link/twitch/callback",
    "successRedirect": "/",
    "failureRedirect": "/login",
-   "scope": ["user_read"]
+   "scope": ["user_read"],
+   "link": true,
+   "session": true
  },
  "bnet-login": {
    "provider": "bnet",
    "module": "passport-bnet",
    "clientID": "6xjg4e2va25ag3mdsbuzpqp5faa59pqm",
    "clientSecret": "yrq9yt5KtHtA3feEwU59BcvkYcyc2uMJ",
-   "callbackURL": "https://localhost:443/auth/bnet/callback",
-   "authPath": "/auth/bnet",
-   "callbackPath": "/auth/bnet/callback",
+   "callbackURL": "https://52.26.75.137/login/bnet/callback",
+   "authPath": "/login/bnet",
+   "callbackPath": "/login/bnet/callback",
    "emailOptional": true,
    "successRedirect": "/",
    "failureRedirect": "/login"
@@ -40,12 +42,14 @@ module.exports = {
    "provider": "bnet",
    "module": "passport-bnet",
    "clientID": "dabvc6wpmq93c7m3z9626zeny9crppyb",
-   "clientSecret": "yrq9yt5KtHtA3feEwU59BcvkYcyc2uMJ",
-   "callbackURL": "https://localhost:443/link/bnet/callback",
+   "clientSecret": "U9AeqwXauXBsewhKQn6ZEUygmZsmBgPT",
+   "callbackURL": "https://52.26.75.137/link/bnet/callback",
    "authPath": "/link/bnet",
    "callbackPath": "/link/bnet/callback",
    "emailOptional": true,
    "successRedirect": "/",
-   "failureRedirect": "/login"
+   "failureRedirect": "/login",
+   "link": true,
+   "session": true
  }
 }
