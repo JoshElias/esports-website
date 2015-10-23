@@ -50,7 +50,7 @@ module.exports = {
             ],
             'client/dist/css/style.css': [
                 'client/css/style.css',
-                'client/dist/css/sass.css',
+                'client/dist/css/sass/*.css',
             ]
         }
     }

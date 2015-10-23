@@ -16,7 +16,7 @@ module.exports = {
                 'client/css/vendor/animate.css',
             ],
             'client/dist/css/style.min.css': [
-                'client/dist/css/app.css'
+                'client/dist/css/style.css'
             ],
         }
     }
