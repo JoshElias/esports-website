@@ -1805,8 +1805,10 @@ angular.module('app.controllers', ['ngCookies'])
         };
     }
 ])
-.controller('AdminArticleListCtrl', ['$scope', 'AdminArticleService', 'AlertService', 'AjaxPagination', 'articles',
-    function ($scope, AdminArticleService, AlertService, AjaxPagination, articles) {
+.controller('AdminArticleListCtrl', ['$scope', '$q', '$timeout', 'AdminArticleService', 'AlertService', 'AjaxPagination', 'articles', 'articlesCount', 'Article',
+    function ($scope, $q, $timeout, AdminArticleService, AlertService, AjaxPagination, articles, articlesCount, Article) {
+        
+        console.log('articles: ', articles);
 
         // grab alerts
         if (AlertService.hasAlert()) {
@@ -1816,10 +1818,10 @@ angular.module('app.controllers', ['ngCookies'])
 
         // load articles
         $scope.articles = articles;
-//        $scope.page = data.page;
-//        $scope.perpage = data.perpage;
-//        $scope.total = data.total;
-//        $scope.search = data.search;
+        $scope.page = 1;
+        $scope.perpage = 50;
+        $scope.total = articlesCount.count;
+        $scope.search = '';
 
 //        $scope.getArticles = function () {
 //            AdminArticleService.getArticles($scope.page, $scope.perpage, $scope.search).then(function (data) {
@@ -1842,12 +1844,12 @@ angular.module('app.controllers', ['ngCookies'])
                 countOptions = {};
 
             options.filter = {
-                fields: [
-                    "title"
-                ],
+                fields: {
+                    title: true
+                },
                 order: "createdDate DESC",
                 skip: ((page*perpage)-perpage),
-                limit: 12
+                limit: 50
             };
 
             if ($scope.search.length > 0) {
@@ -1872,6 +1874,9 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.articlePagination.total = count.count;
                     $scope.articlePagination.page = page;
                     $scope.articlePagination.perpage = perpage;
+                    
+                    console.log('page: ', $scope.articlePagination.page);
+                    console.log('perpage: ', $scope.articlePagination.perpage);
 
                     $timeout(function () {
                         $scope.articles = articles;
@@ -1883,6 +1888,11 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             });
         }
+        
+        
+        $scope.$watch('search', function() {
+            updateArticles($scope.articlePagination.page, $scope.articlePagination.perpage, $scope.search, false);
+        }, true);
 
         // page flipping
         $scope.articlePagination = AjaxPagination.new($scope.perpage, $scope.total,
@@ -1930,7 +1940,10 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             });
             box.modal('show');
-        }
+        };
+        
+        $scope.starting = ($scope.articlePagination.page - 1) * $scope.articlePagination.perpage;
+        $scope.ending = ($scope.starting + 50) > $scope.total ? $scope.total : $scope.starting + 50;
 
     }
 ])
@@ -7467,28 +7480,28 @@ angular.module('app.controllers', ['ngCookies'])
 
         // login for modal
         // TODO: move this to loopback
-        $scope.login = function login(email, password) {
-            if (email !== undefined && password !== undefined) {
-                UserService.login(email, password).success(function(data) {
-                    AuthenticationService.setLogged(true);
-                    AuthenticationService.setAdmin(data.isAdmin);
-                    AuthenticationService.setProvider(data.isProvider);
-
-                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                    SubscriptionService.setTsPlan(data.subscription.plan);
-                    SubscriptionService.setExpiry(data.subscription.expiry);
-
-                    $window.sessionStorage.userID = data.userID;
-                    $window.sessionStorage.username = data.username;
-                    $window.sessionStorage.email = data.email;
-                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                    box.modal('hide');
-                    callback();
-                }).error(function() {
-                    $scope.showError = true;
-                });
-            }
-        }
+//        $scope.login = function login(email, password) {
+//            if (email !== undefined && password !== undefined) {
+//                UserService.login(email, password).success(function(data) {
+//                    AuthenticationService.setLogged(true);
+//                    AuthenticationService.setAdmin(data.isAdmin);
+//                    AuthenticationService.setProvider(data.isProvider);
+//
+//                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
+//                    SubscriptionService.setTsPlan(data.subscription.plan);
+//                    SubscriptionService.setExpiry(data.subscription.expiry);
+//
+//                    $window.sessionStorage.userID = data.userID;
+//                    $window.sessionStorage.username = data.username;
+//                    $window.sessionStorage.email = data.email;
+//                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
+//                    box.modal('hide');
+//                    callback();
+//                }).error(function() {
+//                    $scope.showError = true;
+//                });
+//            }
+//        }
 
     }
 ])
@@ -9598,20 +9611,27 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'HOTSGuideService', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'communityTalents', 'tempostormTalents', 'topGuideTalents',
-    function ($q, $scope, $state, $timeout, $filter, HOTSGuideService, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, communityTalents, tempostormTalents, topGuideTalents) {
-      console.log('top guides: ', dataTopGuide);
-      console.log('community guide: ', dataCommunityGuides);
-      console.log('tempostorm guide: ', dataTempostormGuides);
-      console.log('top guide talents: ', topGuideTalents);
+.controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'communityTalents', 'tempostormTalents', 'topGuideTalents', 'Guide', 'tempostormGuideCount', 'communityGuideCount',
+    function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, communityTalents, tempostormTalents, topGuideTalents, Guide, tempostormGuideCount, communityGuideCount) {
+        console.log('top guides: ', dataTopGuide);
+        console.log('community guide: ', dataCommunityGuides);
+        console.log('tempostorm guide: ', dataTempostormGuides);
+      
+        console.log('commcount: ', communityGuideCount);
+        
+        $scope.tempostormGuides = dataTempostormGuides;
+        $scope.tempostormGuideTalents = tempostormTalents;
 
         $scope.communityGuides = dataCommunityGuides;
+        $scope.communityGuideTalents = communityTalents;
+        
         $scope.topGuides = dataTopGuide ? dataTopGuide : false;
-        $scope.tempostormGuides = dataTempostormGuides;
+        $scope.topGuidesTalents = topGuideTalents;
 
         // filtering
         $scope.heroes = dataHeroes;
         $scope.maps = dataMaps;
+        
         $scope.filters = {
             roles: [],
             universes: [],
@@ -9622,6 +9642,7 @@ angular.module('app.controllers', ['ngCookies'])
 
         var initializing = true;
         $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            console.log('filters: ', $scope.filters);
             if (initializing) {
                 $timeout(function () {
                     initializing = false;
@@ -9630,10 +9651,10 @@ angular.module('app.controllers', ['ngCookies'])
                 // generate filters
                 var guideFilters = [];
                 for (var i = 0; i < $scope.filters.heroes.length; i++) {
-                    guideFilters.push($scope.filters.heroes[i]._id);
+                    guideFilters.push($scope.filters.heroes[i].id);
                 }
                 if ($scope.filters.map) {
-                    guideFilters.push($scope.filters.map._id);
+                    guideFilters.push($scope.filters.map.id);
                 }
 
                 updateTopGuide();
@@ -9656,13 +9677,14 @@ angular.module('app.controllers', ['ngCookies'])
 //        $scope.getGuideCurrentHero = function (guide) {
 //            return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
 //        };
+        
         $scope.getGuideCurrentHero = function (guide) {
           return guide.heroes[0];
         };
 
-//        $scope.getGuideClass = function (guide) {
-//          return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
-//        };
+        $scope.getGuideClass = function (guide) {
+          return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
+        };
 
         $scope.getHeroId = function (guide) {
           return $scope.getGuideCurrentHero(guide).id;
@@ -9674,7 +9696,7 @@ angular.module('app.controllers', ['ngCookies'])
           if(angular.isUndefined(talentId)) {
             return 'Missing Talent';
           }
-          var talent = communityTalents[talentId];
+          var talent = $scope.communityGuideTalents[talentId];
           var talentName = talent.name;
           return talentName;
         };
@@ -9685,7 +9707,7 @@ angular.module('app.controllers', ['ngCookies'])
           if(angular.isUndefined(talentId)) {
             return 'Missing';
           }
-          var talent = communityTalents[talentId];
+          var talent = $scope.communityGuideTalents[talentId];
           var talentName = talent.className;
           return talentName;
         };
@@ -9696,7 +9718,7 @@ angular.module('app.controllers', ['ngCookies'])
           if(angular.isUndefined(talentId)) {
             return 'Missing Talent';
           }
-          var talent = tempostormTalents[talentId];
+          var talent = $scope.tempostormGuideTalents[talentId];
           var talentName = talent.name;
           return talentName;
         };
@@ -9707,7 +9729,7 @@ angular.module('app.controllers', ['ngCookies'])
           if(angular.isUndefined(talentId)) {
             return 'Missing';
           }
-          var talent = tempostormTalents[talentId];
+          var talent = $scope.tempostormGuideTalents[talentId];
           var talentName = talent.className;
           return talentName;
         };
@@ -9718,7 +9740,7 @@ angular.module('app.controllers', ['ngCookies'])
           if(angular.isUndefined(talentId)) {
             return 'Missing Talent';
           }
-          var talent = topGuideTalents[talentId];
+          var talent = $scope.topGuidesTalents[talentId];
           var talentName = talent.name;
           return talentName;
         };
@@ -9729,7 +9751,7 @@ angular.module('app.controllers', ['ngCookies'])
           if(angular.isUndefined(talentId)) {
             return 'Missing';
           }
-          var talent = topGuideTalents[talentId];
+          var talent = $scope.topGuidesTalents[talentId];
           var talentName = talent.className;
           return talentName;
         };
@@ -9906,87 +9928,227 @@ angular.module('app.controllers', ['ngCookies'])
             // heroes
             if ($scope.filters.heroes.length) {
                 for (var i = 0; i < $scope.filters.heroes.length; i++) {
-                    filters.push($scope.filters.heroes[i]._id);
+                    filters.push($scope.filters.heroes[i].id);
                 }
             } else if ($scope.filters.roles.length || $scope.filters.universes.length) {
                 for (var i = 0; i < $scope.heroes.length; i++) {
                     if (!isFiltered($scope.heroes[i])) {
-                        filters.push($scope.heroes[i]._id);
+                        filters.push($scope.heroes[i].id);
                     }
                 }
             }
 
             // maps
             if ($scope.filters.map) {
-                filters.push($scope.filters.map._id);
+                filters.push($scope.filters.map.id);
             }
 
             return filters;
         }
 
+//        function updateTopGuide () {
+//            HOTSGuideService.getGuides('hero', getFilters(), 1, 1, $scope.filters.search).then(function (data) {
+//                $timeout(function () {
+//                    $scope.topGuides = (data.total) ? data.guides : false;
+//                });
+//            });
+//        }
+        
+      // TODO: Make this and community and tempostorm update functions use filters.
         function updateTopGuide () {
-            HOTSGuideService.getGuides('hero', getFilters(), 1, 1, $scope.filters.search).then(function (data) {
-                $timeout(function () {
-                    $scope.topGuides = (data.total) ? data.guides : false;
-                });
-            });
+            return Guide.findOne({
+            filter: {
+              order: 'votesCount DESC',
+              limit: 1,
+              fields: {
+                authorId: true,
+                name: true,
+                votesCount: true,
+                createdDate: true,
+                premium: true,
+                guideType: true,
+                id: true,
+                description: true,
+                talentTiers: true,
+                slug: true
+              },
+              include: [
+                {
+                  relation: 'author'
+                },
+                {
+                  relation: 'heroes',
+                  scope: {
+                    include: ['talents']
+                  }
+                },
+                {
+                  relation: 'maps'
+                }
+              ]
+            }
+          }).$promise.then(function (data) {
+              console.log('new top hero: ', data);
+          });
         }
+        
+        function updateTempostormGuides(page, perpage, search, callback) {
+            $scope.fetching = true;
 
-        // pagination
-        function updateTempostormGuides (page, perpage, callback) {
-            var offset = ((page * perpage) - perpage);
-
-            HOTSGuideService.getGuidesFeatured(getFilters(), offset, perpage, $scope.filters.search).then(function (data) {
-                $scope.tempostormPagination.total = data.total;
-                $scope.tempostormPagination.page = page;
-                $timeout(function () {
-                    $scope.tempostormGuides = data.guides;
-
-                    if (callback) {
-                        return callback(data);
+            var options = {},
+                countOptions = {
+                    where: {
+                        featured: true
                     }
+                };
+            
+            options.filter = {
+                isActive: true,
+                limit: 4,
+                order: 'votesCount DESC',
+                where: {
+                    featured: true
+                },
+                include: [
+                    {
+                      relation: 'author'
+                    },
+                    {
+                      relation: 'heroes',
+                      scope: {
+                        include: ['talents']
+                      }
+                    },
+                    {
+                      relation: 'maps'
+                    }
+                  ],
+                skip: ((page*perpage)-perpage)
+            };
+            
+            // Pagination query
+            Guide.count(countOptions, function (count) {
+                Guide.find(options).$promise.then(function (data) {
+                    $scope.tempostormPagination.total = count.count;
+                    $scope.tempostormPagination.page = page;
+                    $scope.tempostormPagination.perpage = perpage;
+                    
+                    var talents = {};
+                      for(var i = 0; i < data.length; i++) {
+                        for(var j = 0; j < data[i].heroes.length; j++) {
+                          for(var k = 0; k < data[i].heroes[j].talents.length; k++) {
+                            talents[data[i].heroes[j].talents[k].id] = data[i].heroes[j].talents[k];
+                          }
+                        }
+                      }
+                    
+                    $timeout(function () {
+                        $scope.tempostormGuides = data;
+                        $scope.tempostormGuideTalents = talents;
+                        $scope.fetching = false;
+                        if (callback) {
+                            return callback(count.count);
+                        }
+                    });
                 });
             });
         }
-
-        $scope.tempostormPagination = AjaxPagination.new(4, dataTempostormGuides.total,
+        
+        $scope.tempostormPagination = AjaxPagination.new(4, tempostormGuideCount.count,
             function (page, perpage) {
                 var d = $q.defer();
 
-                updateTempostormGuides(page, perpage, function (data) {
-                    d.resolve(data.total);
+                updateTempostormGuides(page, perpage, $scope.search, function (data) {
+                    d.resolve(data);
                 });
-
                 return d.promise;
             }
         );
+        
+        function updateCommunityGuides(page, perpage, search, callback) {
+            $scope.fetching = true;
 
-        function updateCommunityGuides (page, perpage, callback) {
-            var offset = ((page * perpage) - perpage);
-
-            HOTSGuideService.getGuidesCommunity(getFilters(), offset, perpage, $scope.filters.search, false).then(function (data) {
-                $scope.communityPagination.total = data.total;
-                $scope.communityPagination.page = page;
-                $timeout(function () {
-                    $scope.communityGuides = data.guides;
-
-                    if (callback) {
-                        return callback(data);
+            var options = {},
+                countOptions = {
+                    where: {
+                        featured: false
                     }
+                };
+            
+            options.filter = {
+                isActive: true,
+                limit: 10,
+                order: 'VotesCount DESC',
+                fields: {
+                  authorId: true,
+                  name: true,
+                  votesCount: true,
+                  createdDate: true,
+                  premium: true,
+                  guideType: true,
+                  id: true,
+                  description: true,
+                  talentTiers: true,
+                  slug: true
+                },
+                where: {
+                    featured: false
+                },
+                include: [
+                  {
+                    relation: 'author'
+                  },
+                  {
+                    relation: 'heroes',
+                    scope: {
+                      include: ['talents']
+                    }
+                  },
+                  {
+                    relation: 'maps'
+                  }
+                ],
+                skip: ((page*perpage)-perpage)
+            };
+            
+            // Pagination query
+            Guide.count(countOptions, function (count) {
+              console.log('count: ', count);
+                Guide.find(options).$promise.then(function (data) {
+                    $scope.communityPagination.total = count.count;
+                    $scope.communityPagination.page = page;
+                    $scope.communityPagination.perpage = perpage;
+                    
+                    var talents = {};
+                      for(var i = 0; i < data.length; i++) {
+                        for(var j = 0; j < data[i].heroes.length; j++) {
+                          for(var k = 0; k < data[i].heroes[j].talents.length; k++) {
+                            talents[data[i].heroes[j].talents[k].id] = data[i].heroes[j].talents[k];
+                          }
+                        }
+                      }
+                    
+                    $timeout(function () {
+                        $scope.communityGuides = data;
+                        $scope.communityGuideTalents = talents;
+                        $scope.fetching = false;
+                        if (callback) {
+                            return callback(count.count);
+                        }
+                    });
                 });
             });
         }
-
-        $scope.communityPagination = AjaxPagination.new(10, dataCommunityGuides.total,
+        
+        $scope.communityPagination = AjaxPagination.new(10, communityGuideCount.count,
             function (page, perpage) {
-                var d = $q.defer(),
-                    offset = ((page * perpage) - perpage);
+                var d = $q.defer();
+            
+            console.log('page: ', page);
+            console.log('perpag: ', perpage);
 
-                HOTSGuideService.getGuidesCommunity(getFilters(), offset, perpage, $scope.filters.search, false).then(function (data) {
-                    $timeout(function () {
-                        $scope.communityGuides = data.guides;
-                        d.resolve(data.total);
-                    });
+                updateCommunityGuides(page, perpage, $scope.search, function (data) {
+                    d.resolve(data);
                 });
                 return d.promise;
             }
@@ -11048,8 +11210,11 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
 
         var box;
-        $scope.pollsMain = dataPollsMain.polls;
-        $scope.pollsSide = dataPollsSide.polls;
+        $scope.pollsMain = dataPollsMain;
+        $scope.pollsSide = dataPollsSide;
+        
+        console.log('polls main: ', dataPollsMain);
+        console.log('polls side: ', dataPollsSide);
 
         $scope.toggleItem = function (poll, item) {
             if (!poll.votes) { poll.votes = []; }
