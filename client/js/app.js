@@ -209,6 +209,23 @@ var app = angular.module('app', [
                 },
                 seo: { title: 'Home', description: 'TempoStorm home page.', keywords: '' }
             })
+            .state('app.overwatch', {
+                abstract: true,
+                url: 'overwatch',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/overwatch.html'
+                    }
+                }
+            })
+            .state('app.overwatch.home', {
+                url: '',
+                views: {
+                    overwatch: {
+                        templateUrl: tpl + 'views/frontend/overwatch.home.html'
+                    }
+                }
+            })
             .state('app.articles', {
                 abstract: true,
                 url: 'articles',
@@ -1251,6 +1268,21 @@ var app = angular.module('app', [
                                     }
                                 }
                                 return talents;
+                            }],
+                            heroes: ['Hero', function(Hero) {
+                                
+                                return Hero.find({
+                                    
+                                })
+                                .$promise
+                                
+                            }],
+                            maps: ['Map', function(Map) {
+                                
+                                return Map.find({
+                                    
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -1894,9 +1926,11 @@ var app = angular.module('app', [
                             activities: ['userProfile', 'Activity', function (userProfile, Activity) {
                                 return Activity.find({
                                     filter: {
-                                        limit: 10,
+                                        order: "createdDate DESC",
+                                        limit: 3,
                                         where: {
-                                            authorId: userProfile.id
+                                            authorId: userProfile.id,
+                                            active: true
                                         },
                                         include: [
                                             {
@@ -1929,6 +1963,7 @@ var app = angular.module('app', [
                         controller: 'ProfileArticlesCtrl',
                         resolve: {
                             articles: ['userProfile', 'Article', function (userProfile, Article) {
+                                console.log(userProfile);
                                 return Article.find({
                                     filter: {
                                         where: {
@@ -1937,7 +1972,6 @@ var app = angular.module('app', [
                                     }
                                 })
                                 .$promise;
-//                                return ProfileService.getArticles(username);
                             }]
                         }
                     }
@@ -1976,7 +2010,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.guides.html',
                         controller: 'ProfileGuidesCtrl',
                         resolve: {
-                            dataGuides: ['userProfile', 'Guide', 'AuthenticationService', 'User', function (userProfile, Guide, AuthenticationService, User) {
+                            guides: ['userProfile', 'Guide', 'AuthenticationService', 'User', function (userProfile, Guide, AuthenticationService, User) {
                                 return Guide.find({
                                     filter: {
                                         where: {
@@ -2135,7 +2169,7 @@ var app = angular.module('app', [
                                             ]
                                         }
                                     };
-                                
+
                                 return Article.find(options)
                                 .$promise
                                 .then(function (data) {
@@ -2244,7 +2278,7 @@ var app = angular.module('app', [
                                 var page = 1,
                                     perpage = 50,
                                     search = '';
-                                
+
                                 return Deck.find({
                                     filter: {
                                         limit: 50,

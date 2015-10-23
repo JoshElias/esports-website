@@ -1,7 +1,7 @@
 {
-  "angular.min.js": "angular.min.75c014e8.js",
-  "app.min.js": "app.min.6f439197.js",
   "angular.min.js": "angular.min.03238eba.js",
+  "app.min.js": "app.min.c04f380e.js",
   "style.min.css": "style.min.d5815271.css",
-  "vendor.min.css": "vendor.min.126681d4.css"
+  "vendor.min.css": "vendor.min.5b357838.css",
+  "vendor.min.js": "vendor.min.fcf8fee1.js"
 }

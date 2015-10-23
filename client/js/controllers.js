@@ -415,17 +415,18 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileCtrl', ['$scope', 'dataProfile', 'MetaService', 'HOTSGuideService',
-    function ($scope, dataProfile, MetaService, HOTSGuideService) {
-        $scope.user = dataProfile.user;
-        $scope.postCount = dataProfile.postCount;
-        $scope.deckCount = dataProfile.deckCount;
-        $scope.guideCount = dataProfile.guideCount;
-        $scope.activities = dataProfile.activities;
+.controller('ProfileCtrl', ['$scope', 'profile', 'postCount', 'deckCount', 'guideCount', 'MetaService', 'HOTSGuideService', 'LoopBackAuth',
+    function ($scope, profile, postCount, deckCount, guideCount, MetaService, HOTSGuideService, LoopBackAuth) {
+        $scope.user = profile;
+        
+        $scope.postCount = postCount.count;
+        $scope.deckCount = deckCount.count;
+        $scope.guideCount = guideCount.count;
+        
 
 
         function isMyProfile() {
-            if($scope.app.user.getUsername() == $scope.user.username) {
+            if(LoopBackAuth.currentUserId == $scope.user.username) {
                 return 'My Profile';
             } else {
                 return '@' + $scope.user.username + ' - Profile';
@@ -627,33 +628,17 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             });
         }
-
     }
 ])
-.controller('ProfileActivityCtrl', ['$scope', '$sce', 'dataActivity', 'ProfileService', 'HOTSGuideService', 'DeckService',
-    function ($scope, $sce, dataActivity, ProfileService, HOTSGuideService, DeckService) {
-        $scope.activities = dataActivity.activities;
-        $scope.total = dataActivity.total;
+.controller('ProfileActivityCtrl', ['$scope', '$sce', 'activities', 'activityCount', 'Activity', 'HOTSGuideService', 'DeckService', 'LoopBackAuth',
+    function ($scope, $sce, activities, activityCount, Activity, HOTSGuideService, DeckService, LoopBackAuth) {
+        
+        $scope.activities = activities;
+        $scope.total = activityCount.count;
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
+        $scope.LoopBackAuth = LoopBackAuth;
+        var filter = [];
 
-        $scope.getActivityType = function (activity) {
-            switch (activity.activityType) {
-                case 'articleComment':
-                case 'deckComment':
-                case 'forumComment':
-                case 'guideComment':
-                case 'snapshotComment':
-                    return 'comments'; break;
-                case 'createArticle':
-                    return 'articles'; break;
-                case 'createDeck':
-                    return 'decks'; break;
-                case 'createGuide':
-                    return 'guides'; break;
-                case 'forumPost':
-                    return 'forumposts'; break;
-            }
-        }
 
         $scope.isFiltered = function(type) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
@@ -666,13 +651,16 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.toggleFilter = function (filter) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
-                console.log($scope.filterActivities[i], filter);
                 if (filter == $scope.filterActivities[i]) {
                     $scope.filterActivities.splice(i,1);
                     return;
                 }
             }
             $scope.filterActivities.push(filter);
+        }
+        
+        var buildFilter = function () {
+            
         }
 
         $scope.activities.forEach(function (activity) {
@@ -682,8 +670,28 @@ angular.module('app.controllers', ['ngCookies'])
         });
 
         $scope.loadActivities = function () {
-            ProfileService.getActivity($scope.user.username, $scope.activities.length).then(function (data) {
-                $scope.activities = $scope.activities.concat(data.activities);
+            Activity.find({
+                filter: {
+                    order: "createdDate DESC",
+                    limit: 3,
+                    skip: $scope.activities.length,
+                    where: {
+                        authorId: $scope.user.id,
+                        active: true
+                    },
+                    include: [
+                        {
+                            relation: 'article'
+                        },
+                        {
+                            relation: 'deck'
+                        }
+                    ]
+                }
+            })
+            .$promise
+            .then(function (data) {
+                $scope.activities = $scope.activities.concat(data);
             });
         }
 
@@ -753,14 +761,14 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',
-    function ($scope, dataArticles) {
-        $scope.articles = dataArticles.articles;
+.controller('ProfileArticlesCtrl', ['$scope', 'articles',
+    function ($scope, articles) {
+        $scope.articles = articles;
     }
 ])
-.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'dataDecks',
-    function ($scope, $state, bootbox, DeckService, dataDecks) {
-        $scope.decks = dataDecks.decks;
+.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'decks',
+    function ($scope, $state, bootbox, DeckService, decks) {
+        $scope.decks = decks;
 
         //is premium
         $scope.isPremium = function (guide) {
@@ -825,9 +833,9 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'dataGuides',
-    function ($scope, $state, bootbox, HOTSGuideService, dataGuides) {
-        $scope.guides = dataGuides.guides;
+.controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'guides',
+    function ($scope, $state, bootbox, HOTSGuideService, guides) {
+        $scope.guides = guides;
 
         // guides
         $scope.getGuideCurrentHero = function (guide) {
@@ -10167,15 +10175,15 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'guideTalents', 'LoginModalService', 'MetaService', 'LoopBackAuth',
-    function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, guideTalents, LoginModalService, MetaService, LoopBackAuth) {
+.controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'guideTalents', 'LoginModalService', 'MetaService', 'LoopBackAuth',
+    function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, guideTalents, LoginModalService, MetaService, LoopBackAuth) {
         
         $scope.guide = guide;
         $scope.Guide = Guide;
         $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0] : false;
         console.log($scope.currentHero);
-//        $scope.heroes = heroes;
-//        $scope.maps = maps;
+        $scope.heroes = heroes;
+        $scope.maps = maps;
 
         $scope.metaservice = MetaService;
         $scope.metaservice.set($scope.guide.name + ' - Guides', $scope.guide.description);
