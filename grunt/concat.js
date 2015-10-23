@@ -14,6 +14,8 @@ module.exports = {
                 'client/vendor/bootbox/bootbox.js',
                 'client/js/vendor/angular-file-upload-shim.min.js',
                 'client/js/vendor/wtooltip.js',
+                'client/vendor/underscore/underscore-min.js',
+                'client/vendor/async/dist/async.min.js',
             ],
             'client/dist/js/angular.js': [
                 'client/vendor/angular/angular.js',

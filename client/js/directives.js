@@ -1054,7 +1054,7 @@ angular.module('app.directives', ['ui.load'])
             };
 
             scope.toggleFilterMap = function (map) {
-                scope.filters.map = (scope.filters.map == map) ? false : map;
+                scope.filters.map = (scope.filters.map == map) ? undefined : map;
             };
 
             scope.currentMapBack = function () {
