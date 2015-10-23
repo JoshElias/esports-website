@@ -11,6 +11,10 @@ module.exports = {
         files: ['client/css/**/*.css'],
         tasks: ['clean:css', 'newer:cssmin', 'hash']
     },
+    sass: {
+        files: ['client/css/sass/*.scss'],
+        tasks: ['clean:sass', 'compass:build', 'newer:concat', 'newer:cssmin', 'hash:css']
+    },
     img: {
         files: ['client/img/**/*.{png,jpg,gif}'],
         tasks: ['newer:imagemin']
