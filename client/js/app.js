@@ -1976,6 +1976,7 @@ var app = angular.module('app', [
                         controller: 'ProfileArticlesCtrl',
                         resolve: {
                             articles: ['userProfile', 'Article', function (userProfile, Article) {
+                                console.log(userProfile);
                                 return Article.find({
                                     filter: {
                                         where: {
@@ -1984,7 +1985,6 @@ var app = angular.module('app', [
                                     }
                                 })
                                 .$promise;
-//                                return ProfileService.getArticles(username);
                             }]
                         }
                     }
@@ -2023,7 +2023,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.guides.html',
                         controller: 'ProfileGuidesCtrl',
                         resolve: {
-                            dataGuides: ['userProfile', 'Guide', 'AuthenticationService', 'User', function (userProfile, Guide, AuthenticationService, User) {
+                            guides: ['userProfile', 'Guide', 'AuthenticationService', 'User', function (userProfile, Guide, AuthenticationService, User) {
                                 return Guide.find({
                                     filter: {
                                         where: {

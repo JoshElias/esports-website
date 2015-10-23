@@ -634,28 +634,11 @@ angular.module('app.controllers', ['ngCookies'])
     function ($scope, $sce, activities, activityCount, Activity, HOTSGuideService, DeckService, LoopBackAuth) {
         
         $scope.activities = activities;
-        $scope.total = activityCount;
+        $scope.total = activityCount.count;
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
         $scope.LoopBackAuth = LoopBackAuth;
+        var filter = [];
 
-        $scope.getActivityType = function (activity) {
-            switch (activity.activityType) {
-                case 'articleComment':
-                case 'deckComment':
-                case 'forumComment':
-                case 'guideComment':
-                case 'snapshotComment':
-                    return 'comments'; break;
-                case 'createArticle':
-                    return 'articles'; break;
-                case 'createDeck':
-                    return 'decks'; break;
-                case 'createGuide':
-                    return 'guides'; break;
-                case 'forumPost':
-                    return 'forumposts'; break;
-            }
-        }
 
         $scope.isFiltered = function(type) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
@@ -668,13 +651,16 @@ angular.module('app.controllers', ['ngCookies'])
 
         $scope.toggleFilter = function (filter) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
-                console.log($scope.filterActivities[i], filter);
                 if (filter == $scope.filterActivities[i]) {
                     $scope.filterActivities.splice(i,1);
                     return;
                 }
             }
             $scope.filterActivities.push(filter);
+        }
+        
+        var buildFilter = function () {
+            
         }
 
         $scope.activities.forEach(function (activity) {
@@ -775,14 +761,14 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileArticlesCtrl', ['$scope', 'dataArticles',
-    function ($scope, dataArticles) {
-        $scope.articles = dataArticles.articles;
+.controller('ProfileArticlesCtrl', ['$scope', 'articles',
+    function ($scope, articles) {
+        $scope.articles = articles;
     }
 ])
-.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'dataDecks',
-    function ($scope, $state, bootbox, DeckService, dataDecks) {
-        $scope.decks = dataDecks.decks;
+.controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'decks',
+    function ($scope, $state, bootbox, DeckService, decks) {
+        $scope.decks = decks;
 
         //is premium
         $scope.isPremium = function (guide) {
@@ -847,9 +833,9 @@ angular.module('app.controllers', ['ngCookies'])
         }
     }
 ])
-.controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'dataGuides',
-    function ($scope, $state, bootbox, HOTSGuideService, dataGuides) {
-        $scope.guides = dataGuides.guides;
+.controller('ProfileGuidesCtrl', ['$scope', '$state', 'bootbox', 'HOTSGuideService', 'guides',
+    function ($scope, $state, bootbox, HOTSGuideService, guides) {
+        $scope.guides = guides;
 
         // guides
         $scope.getGuideCurrentHero = function (guide) {
@@ -9682,9 +9668,9 @@ angular.module('app.controllers', ['ngCookies'])
           return guide.heroes[0];
         };
 
-//        $scope.getGuideClass = function (guide) {
-//          return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
-//        };
+        $scope.getGuideClass = function (guide) {
+          return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
+        };
 
         $scope.getHeroId = function (guide) {
           return $scope.getGuideCurrentHero(guide).id;
