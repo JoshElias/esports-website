@@ -1,5 +1,9 @@
-@import 'ts-colors.scss'
 
+.blocker {
+    line-height: 1;
+}
+
+@import 'ts-colors';
 
 .ow-titles {
     line-height:1.5;
@@ -9,6 +13,10 @@
     font-size: 30px;
 }
 
+.ow-sub-titles {
+    color: $ts-grey;
+}
+
     
 .no-pad-left {
     padding-left: 0;
@@ -16,28 +24,36 @@
 
 .ts-div {
     background-color:rgba(19,18,19,.7); 
-    box-shadow: 2px 12px 10px rgba(0,0,0,.75); 
+    box-shadow: 3px 4px 5px rgba(0,0,0,.75); 
     border: 1px solid rgba(255,255,255,0.2); outline: 1px solid #000;
+}
+
+.ow-hero-list {
+    margin: 0;
+    padding: 0;
+    
 }
 
 .ow-heroes {
     padding: 15px 20px 20px 20px;
 }
 
-.ow-hero-filters {
-    position: relative;
-}
+
 
 .ow-hero-filters { 
     position: relative; 
-    margin: 0 auto; max-width: 1448px; 
-    height: 510px; padding: 0; 
+    height: 910px; 
+    padding: 0; 
+    margin-top: 41px;
 
-    li { 
-        list-style: none; 
-        position: absolute; 
+        li { 
+            list-style: none; 
+            position: relative;
+            
+
+        }
         
-        :nth-child(1) { top: 15px; left: 10.9px; }
+       /* :nth-child(1) { top: 15px; left: 10.9px; }
         :nth-child(2) { top: 15px; left: 96.8px; }
         :nth-child(3) { top: 15px; left: 182.7px; }
         :nth-child(4) { top: 15px; left: 268.6px; }
@@ -58,7 +74,40 @@
         :nth-child(16) { top: 80px; right: 300px; }
         
         :nth-child(17) { top: 80px; right: 15px; }
-        :nth-child(18) { top: 80px; right: 105px; }
+        :nth-child(18) { top: 80px; right: 105px; } */
+        
+       li button {
+            width: 75px;
+            height: 75px;
+            background-position: -2px -156px;
+            display: inline-block;
+            width: 75px;
+            height: 75px;
+            overflow: hidden;
+            background-repeat: no-repeat;
+            background-image: url('../img/hots/heroes/hots-hero-select.png');
+            border-radius: 50%;
+            border: 3px solid #FFF;
+            text-indent: -99999px;
+            background-color: rgba(39,102,173,.2);
+            outline: none;
+            opacity: 1;  
+           float: left;
+           margin-left: 10.9px;
+            margin-top: 10.9px;
+            }
+            
+        li button:hover {
+                background-color: $ts-blue;
+            
+        }
+            
+        
     }
 
+.ow-hero-selected {
+    background: $ts-blue;
+    height:  300px;
+    position: absolute;
+    bottom: 0;
 }
