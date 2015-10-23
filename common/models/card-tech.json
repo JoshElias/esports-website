@@ -1,5 +1,6 @@
 {
   "name": "cardTech",
+  "plural": "cardTechs",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {

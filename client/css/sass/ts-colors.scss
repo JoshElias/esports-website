@@ -3,47 +3,64 @@
 
 $white: #fff;
 $black: #000;
+$light-blue: #428bca;
+$light-grey: #ddd;
+
+$ts-black: #121111;
+$ts-red: #aa2526;
+$ts-green: #27c24c;
+$ts-yellow: #f7ef22;
+$ts-grey: #bababa; // ts font
+$ts-dark-grey: #666; 
+
+$ow-orange: #fdb813;
 
 //tempostorm blues
 
 $ts-blue: #2766ad;
-
-$ts-light-blue: #428bca;
-$ts-other-light-blue: #67a0d6; //need this blue?? .home-article .home-article-content
-
 $ts-dark-blue: #083f7d;
+
+
+// Article colors
+
+$article-blue: #67a0d6; //need this blue?? .home-article .home-article-content
+$article-orange: #d07828;
+$article-purple: #8968ad;
+
+
+
+
 
 //tempo storm main colours
 
-$ts-orange: #d07828;
-$ts-other-orange: #D27A2A;
+
+$memeber-purple: #D27A2A;
+
+
+//hots colors
 
 $hots-purple: #8968ad;
+$hots-dark-purple: #221b36; 
 
-$ts-purple: #4d286c;
+//talent cal colors
 
-$ts-red: #aa2526;
+$tc-purple: #4d286c;
 
-$ts-green: #27c24c;
+//tempstorm Scrollbar colors
 
-$ts-black: #121111;
+$sb-track: #333; // scrollbar
+$sb-thumb: #454545; //scrollbar thumb
 
-$ts-dark-purple: #221b36; 
+//Notification Dropdown colors
 
-$ts-yellow: #f7ef22;
-
-
-//tempstorm greys
-
-$ts-dark-grey: #333; // scrollbar
-$ts-med-grey: #454545; //scrollbar thumb
-$ts-grey: #bababa; // ts font
+$notification-font: #555;
+$notification-font: #f5f5f5;
+$notification-border: $light-grey;
 
 
 
-$grey: #555;
-$another-grey: #666; // need this one?
-$light-grey: #ddd;
+$avatar-white: #F2F2F2;
+
 
 
 

@@ -1,0 +1,105 @@
+
+@import 'ts-colors.scss';
+
+.ow-home-title {
+    background: $ts-blue url('../../dist/img/overwatch/top-header-big.jpg') no-repeat bottom;
+    background-size: cover;
+}
+
+.ow-home-logo {
+    margin: 63.5px;
+    margin-left: 12.05% 
+}
+
+.ow-content h1.title {
+    font-family: 'Open Sans Bold';
+    font-size: 26px;
+    color: #DDD;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+
+.ow-content h3.sub-title {
+    font-size: 14px;
+    color: #d3eefa;
+}
+
+
+    
+.no-pad-left {
+    padding-left: 0;
+}
+
+.ts-div {
+    background-color:rgba(19,18,19,.7); 
+    box-shadow: 3px 4px 5px rgba(0,0,0,.75); 
+    border: 1px solid rgba(255,255,255,0.2); outline: 1px solid #000;
+}
+
+.ow-hero-list {
+    margin: 0;
+    padding: 0;
+    
+}
+
+.ow-heroes {
+    padding: 15px 20px 20px 20px;
+}
+
+
+
+.ow-hero-filters { 
+    position: relative; 
+    height: 730px; 
+    padding: 0; 
+    margin-top: 18px;
+
+        li { 
+            list-style: none; 
+            position: relative;
+            
+
+       a {
+            width: 75px;
+            height: 75px;
+            background-position: -2px -156px;
+            display: inline-block;
+            width: 75px;
+            height: 75px;
+            overflow: hidden;
+            background-repeat: no-repeat;
+            background-image: url('../img/hots/heroes/hots-hero-select.png');
+            border-radius: 50%;
+            border: 3px solid #FFF;
+            text-indent: -99999px;
+            // background-color: rgba(39,102,173,.2);
+            outline: none;
+            opacity: 1;  
+            float: left;
+            margin-left: 10.9px;
+            margin-top: 10.9px;
+       
+            }
+    
+     
+        a.active {
+            background-color: $ow-orange;
+            } 
+            
+            a:hover {
+             background-color: $ow-orange;
+            }
+            
+       }
+    }
+
+    
+
+
+.ow-hero-selected {
+    background: $ts-blue;
+    height:  300px;
+    position: absolute;
+    bottom: 0;
+}

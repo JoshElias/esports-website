@@ -1,5 +1,5 @@
 module.exports = {
-    first: ['clean:js', 'clean:css'],
+    first: ['clean:js', 'clean:css', 'clean:sass'],
     second: ['compass:build', 'loopback_sdk_angular:build'],
     third: ['newer:concat', 'newer:htmlmin:dist'],
     fourth: ['newer:uglify', 'newer:cssmin', 'newer:imagemin'],

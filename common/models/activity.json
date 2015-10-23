@@ -22,10 +22,10 @@
     "active": {
       "type": "boolean"
     },
-    "article" : {
+    "article": {
       "type": "string"
     },
-    "deck" : {
+    "deck": {
       "type": "string"
     }
   },
