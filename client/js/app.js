@@ -209,6 +209,23 @@ var app = angular.module('app', [
                 },
                 seo: { title: 'Home', description: 'TempoStorm home page.', keywords: '' }
             })
+            .state('app.overwatch', {
+                abstract: true,
+                url: 'overwatch',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/overwatch.html'
+                    }
+                }
+            })
+            .state('app.overwatch.home', {
+                url: '',
+                views: {
+                    overwatch: {
+                        templateUrl: tpl + 'views/frontend/overwatch.home.html'
+                    }
+                }
+            })
             .state('app.articles', {
                 abstract: true,
                 url: 'articles',
@@ -489,6 +506,12 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: 'authors',
+                                                fields: {
+                                                  description: true,
+                                                  expertClasses: true,
+                                                  id: true,
+                                                  userId: true
+                                                },
                                                 scope: {
                                                     include: [
                                                         {
@@ -869,16 +892,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.home.html',
                         controller: 'HOTSHomeCtrl',
                         resolve: {
-//                            dataArticles: ['ArticleService', function (ArticleService) {
-//                                var filters = 'all',
-//                                    offset = 0,
-//                                    perpage = 6;
-//
-//                                return ArticleService.getArticles('hots', filters, offset, perpage);
-//                            }],
-//                            talents: ['Talent', function (Talent) {
-//                                return Talent.find({}).$promise;
-//                            }],
+                            
                             dataArticles: ['Article', function (Article) {
                               var filters = 'all',
                                   offset = 0,
@@ -896,9 +910,7 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
-//                            dataGuidesCommunity: ['HOTSGuideService', function (HOTSGuideService) {
-//                                return HOTSGuideService.getGuidesCommunity();
-//                            }],
+                            
                             dataGuidesCommunity: ['Guide', function (Guide) {
                               return Guide.find({
                                 filter: {
@@ -939,6 +951,7 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
+                            
                             communityTalentDict: ['dataGuidesCommunity', function (dataGuidesCommunity) {
                                 var dict = {};
                                 for (var i = 0; i < dataGuidesCommunity.length; i++) {
@@ -951,9 +964,7 @@ var app = angular.module('app', [
                                 }
                                 return dict;
                             }],
-//                            dataGuidesFeatured: ['HOTSGuideService', function (HOTSGuideService) {
-//                                return HOTSGuideService.getGuidesFeatured();
-//                            }],
+                            
                             dataGuidesFeatured: ['Guide', function (Guide) {
                               return Guide.find({
                                 filter: {
@@ -988,6 +999,7 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
+                            
                             featuredTalentDict: ['dataGuidesFeatured', function (dataGuidesFeatured) {
                                 var dict = {};
                                 for (var i = 0; i < dataGuidesFeatured.length; i++) {
@@ -1000,15 +1012,11 @@ var app = angular.module('app', [
                                 }
                                 return dict;
                             }],
-//                            dataHeroes: ['HeroService', function (HeroService) {
-//                                return HeroService.getHeroesList();
-//                            }],
+                            
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({}).$promise;
                             }],
-//                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-//                                return HOTSGuideService.getMaps();
-//                            }]
+                            
                             dataMaps: ['Map', function (Map) {
                               return Map.find({}).$promise;
                             }]
@@ -1033,9 +1041,6 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.list.html',
                         controller: 'HOTSGuidesListCtrl',
                         resolve: {
-//                            dataCommunityGuides: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
-//                                return HOTSGuideService.getGuidesCommunity(false, 0, 10, false, false);
-//                            }],
                             dataCommunityGuides: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                               return Guide.find({
                                 filter: {
@@ -1073,6 +1078,14 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
+                            
+                            communityGuideCount: ['Guide', function(Guide) {
+                                return Guide.count({
+                                    where: {
+                                        featured: false
+                                    }
+                                }).$promise;
+                            }],
 
                             communityTalents: ['dataCommunityGuides', function (dataCommunityGuides) {
                               var talents = {};
@@ -1085,13 +1098,7 @@ var app = angular.module('app', [
                               }
                               return talents;
                             }],
-//                            dataTopGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
-//                                var guideType = $stateParams.t || 'all',
-//                                    filters = $stateParams.h || false,
-//                                    order = $stateParams.o || 'high';
-//
-//                                return HOTSGuideService.getGuides('hero', filters, 1, 1, '', '', order);
-//                            }],
+                            
                             dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                               var guideType = $stateParams.t || 'all',
                                     filters = $stateParams.h || false,
@@ -1130,6 +1137,7 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
+                            
                             topGuideTalents: ['dataTopGuide', function (dataTopGuide) {
                               var talents = {};
                               for(var i = 0; i < dataTopGuide.length; i++) {
@@ -1141,9 +1149,7 @@ var app = angular.module('app', [
                               }
                               return talents;
                             }],
-//                            dataTempostormGuides: ['HOTSGuideService', function (HOTSGuideService) {
-//                                return HOTSGuideService.getGuidesFeatured(false, 0, 4);
-//                            }],
+                            
                             dataTempostormGuides: ['Guide', function (Guide) {
                               return Guide.find({
                                 filter: {
@@ -1181,6 +1187,15 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
+                            
+                            tempostormGuideCount: ['Guide', function(Guide) {
+                                return Guide.count({
+                                    where: {
+                                        featured: true
+                                    }
+                                }).$promise;
+                            }],
+                            
                             tempostormTalents: ['dataTempostormGuides', function (dataTempostormGuides) {
                               var talents = {};
                               for(var i = 0; i < dataTempostormGuides.length; i++) {
@@ -1192,15 +1207,9 @@ var app = angular.module('app', [
                               }
                               return talents;
                             }],
-//                            dataHeroes: ['HeroService', function (HeroService) {
-//                                return HeroService.getHeroes();
-//                            }],
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({}).$promise;
                             }],
-//                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-//                                return HOTSGuideService.getMaps();
-//                            }]
                             dataMaps: ['Map', function (Map) {
                               return Map.find({}).$promise;
                             }]
@@ -1259,6 +1268,21 @@ var app = angular.module('app', [
                                     }
                                 }
                                 return talents;
+                            }],
+                            heroes: ['Hero', function(Hero) {
+                                
+                                return Hero.find({
+                                    
+                                })
+                                .$promise
+                                
+                            }],
+                            maps: ['Map', function(Map) {
+                                
+                                return Map.find({
+                                    
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -1628,17 +1652,6 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.post.html',
                         controller: 'ForumPostCtrl',
                         resolve: {
-//                            data: ['$stateParams', 'ForumService', '$q', function ($stateParams, ForumService, $q) {
-//                                var thread = $stateParams.thread,
-//                                    post = $stateParams.post;
-//                                return ForumService.getPost(thread, post).then(function (result) {
-//                                    if (result.success === true) {
-//                                        return result;
-//                                    } else {
-//                                        return $q.reject('unable to find post');
-//                                    }
-//                                 });;
-//                            }]
                             forumPost: ['$stateParams', 'ForumPost', function($stateParams, ForumPost) {
                                 var thread = $stateParams.thread,
                                     post = $stateParams.post;
@@ -1733,12 +1746,18 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/polls.html',
                         controller: 'PollsCtrl',
                         resolve: {
-                            dataPollsMain: ['PollService', function(PollService) {
-                                return PollService.getPolls('main');
-                            }],
-                            dataPollsSide: ['PollService', function(PollService) {
-                                return PollService.getPolls('side');
-                            }]
+//                            dataPollsMain: ['PollService', function(PollService) {
+//                                return PollService.getPolls('main');
+//                            }],
+                          dataPollsMain: ['Poll', function (Poll) {
+                            return Poll.find({}).$promise;
+                          }],
+//                            dataPollsSide: ['PollService', function(PollService) {
+//                                return PollService.getPolls('side');
+//                            }]
+                          dataPollsSide: ['Poll', function (Poll) {
+                            return Poll.find({}).$promise;
+                          }]
                         }
                     }
                 },
@@ -1907,9 +1926,11 @@ var app = angular.module('app', [
                             activities: ['userProfile', 'Activity', function (userProfile, Activity) {
                                 return Activity.find({
                                     filter: {
-                                        limit: 10,
+                                        order: "createdDate DESC",
+                                        limit: 3,
                                         where: {
-                                            authorId: userProfile.id
+                                            authorId: userProfile.id,
+                                            active: true
                                         },
                                         include: [
                                             {
@@ -1942,6 +1963,7 @@ var app = angular.module('app', [
                         controller: 'ProfileArticlesCtrl',
                         resolve: {
                             articles: ['userProfile', 'Article', function (userProfile, Article) {
+                                console.log(userProfile);
                                 return Article.find({
                                     filter: {
                                         where: {
@@ -1950,7 +1972,6 @@ var app = angular.module('app', [
                                     }
                                 })
                                 .$promise;
-//                                return ProfileService.getArticles(username);
                             }]
                         }
                     }
@@ -1989,7 +2010,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.guides.html',
                         controller: 'ProfileGuidesCtrl',
                         resolve: {
-                            dataGuides: ['userProfile', 'Guide', 'AuthenticationService', 'User', function (userProfile, Guide, AuthenticationService, User) {
+                            guides: ['userProfile', 'Guide', 'AuthenticationService', 'User', function (userProfile, Guide, AuthenticationService, User) {
                                 return Guide.find({
                                     filter: {
                                         where: {
@@ -2132,13 +2153,15 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/articles.list.html',
                         controller: 'AdminArticleListCtrl',
                         resolve: {
+                            articlesCount: ['Article', function (Article) {
+                                return Article.count({}).$promise;
+                            }],
                             articles: ['Article', function (Article) {
                                 var page = 1,
                                     perpage = 50,
                                     search = '',
                                     options = {
                                         filter: {
-                                            skip: perpage*page,
                                             limit: perpage,
                                             order: "createdDate DESC",
                                             fields: [

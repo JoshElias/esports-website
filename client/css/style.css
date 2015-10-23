@@ -87,7 +87,12 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
     border-bottom: 2px solid #000;
 }
 
-
+.hello-andrew {
+    font-size: 48px;
+    color: limegreen;
+    font-weight: bold;
+}
+/* TODO: Remove this^ please lol */
 
 .navbar-tempo .navbar-header { margin-left: 0px !important; }
 .navbar-tempo .navbar-toggle { margin-right: 0px !important; }
@@ -2253,6 +2258,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-page p { color: #C4C4C4; }
 
 .profile-page .profile-info { text-align: center; margin-bottom: 100px; }
+.profile-page .profile-scroll { min-height: 600px; }
 .profile-page .profile-img { width: 115px; height: 115px; border-radius: 50%; background-color: rgba(200,200,200,.4); padding: 5px; margin: auto; }
 .profile-page .profile-img img { width: 100%; }
 .profile-page .profile-info .profile-info-body .profile-social { margin: 30px 0px; }
@@ -2286,7 +2292,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .profile-page .activity-list .activity .activity-right { padding-left: 25px; color: white; width: 100%; }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header {  }
-.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 { font-size: 14px; letter-spacing: 2px; }
+.profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 { font-size: 14px; letter-spacing: 2px; max-width: 80%; }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header h2.deleted { font-size: 14px; letter-spacing: 2px; width: 100%; color: rgba(215,215,215,.8); }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 .color-wrapper { color: rgba(215,215,215,1) }
 .profile-page .activity-list .activity .activity-right .activity-content .activity-header h2 a { font-weight: bold; }

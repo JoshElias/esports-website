@@ -55,7 +55,7 @@
                 </div>
 
                 <div ng-repeat="poll in pollsMain | orderBy: '-createdDate'">
-                    <div class="poll" ng-class="{ 'poll-img' : poll.type == 'img'}" ng-if="poll.type == 'img' && !isDoneVoting(poll._id)">
+                    <div class="poll" ng-class="{ 'poll-img' : poll.type == 'img'}" ng-if="poll.type == 'img' && !isDoneVoting(poll.id)">
                         <div class="poll-title-wrapper">
                             <h1 class="poll-title">{{poll.title}}</h1>
                             <h4 class="poll-subTitle">{{poll.subTitle}}</h4>
