@@ -34,14 +34,7 @@ module.exports = function(server) {
     model: server.models.AccessToken
   }));
   server.middleware('session:before', loopback.cookieParser(server.get('jwtSecret')));
-  /*
-  server.middleware('session', loopback.session({
-    secret: 'kitty',
-    saveUninitialized: false,
-    resave: true,
-    cookie: { httpOnly: false }
-  }));
-*/
+
   var week = 60 * 60 * 24 * 7 * 1000;
   server.middleware('session', loopback.session({
       resave: false,

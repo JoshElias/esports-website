@@ -47,6 +47,7 @@ module.exports = function(server) {
 			async.eachSeries(snapshot.tiers, function(tier, seriesCallback) {
 				async.eachSeries(tier.decks, function(deck, innerCallback) {
 					try {
+						deck.rank.last.unshift(deck.rank.current);
 						var deckTier = {
 							name: deck.name,
 							description: deck.explanation,
