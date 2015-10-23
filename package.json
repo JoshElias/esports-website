@@ -19,7 +19,7 @@
     "errorhandler": "^1.1.1",
     "express-session": "^1.11.3",
     "express-validator": "^2.14.1",
-    "lb-connector-mandrill": "0.0.3",
+    "loopback-connector-mandrill": "git://github.com/JoshElias/loopback-connector-mandrill.git",
     "loopback": "^2.14.0",
     "loopback-boot": "^2.6.5",
     "loopback-component-passport": "^1.4.0",

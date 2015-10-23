@@ -16,7 +16,7 @@
             <div class="activity-img">
                 <img gravatar-src-once="user.email" class="img-circle">
             </div>
-            <div class="m-t-sm" ng-if="LoopBackAuth.currentUserId() == user.id">
+            <div class="m-t-sm" ng-if="LoopBackAuth.currentUserId == user.id">
                 
 
                 <div ng-if="activity.activityType == 'createDeck' && activity.exists && activity.deck" class="activity-btn-wrapper m-l-xs">
@@ -48,6 +48,6 @@
     <!-- / activity -->
 </div>
 
-<div ng-show="activities.length != total" class="show-more m-b-md"><a class="show-more-btn" ng-click="loadActivities()" href="#">Show More</a></div>
+<div ng-if="activities.length != total" class="show-more m-b-md"><a class="show-more-btn" ng-click="loadActivities(false)" href="#">Show More</a></div>
 <!-- / activities -->
 <p class="profile-no-content" ng-show="!activities.length">@{{user.username}} has no site activity yet.</p>

@@ -1,5 +1,15 @@
-@import 'ts-colors.scss';
+@import 'ts-colors.scss'
 
+
+.ow-titles {
+    line-height:1.5;
+    margin: 0;
+    font-family: 'Open Sans Bold';
+    color: $white;
+    font-size: 30px;
+}
+
+    
 .no-pad-left {
     padding-left: 0;
 }
@@ -18,7 +28,7 @@
     position: relative;
 }
 
-ow.hero-filters { 
+.ow-hero-filters { 
     position: relative; 
     margin: 0 auto; max-width: 1448px; 
     height: 510px; padding: 0; 
@@ -27,28 +37,28 @@ ow.hero-filters {
         list-style: none; 
         position: absolute; 
         
-        :nth-child(1) { top: 30px; left: 15px; }
-        :nth-child(2) { top: 15px; left: 215px; }
-        :nth-child(3) { top: 15px; left: 301px; }
-        :nth-child(4) { top: 15px; left: 387px; }
+        :nth-child(1) { top: 15px; left: 10.9px; }
+        :nth-child(2) { top: 15px; left: 96.8px; }
+        :nth-child(3) { top: 15px; left: 182.7px; }
+        :nth-child(4) { top: 15px; left: 268.6px; }
         
-        :nth-child(5) { top: 15px; left: 473px; }
-        :nth-child(6) { top: 15px; right: 473px; }
-        :nth-child(7) { top: 15px; right: 387px; }
-        :nth-child(8) { top: 15px; right: 301px; }
+        :nth-child(5) { top: 15px; left: 10.9px; }
+        :nth-child(6) { top: 15px; right: 105px; }
+        :nth-child(7) { top: 15px; right: 195px; }
+        :nth-child(8) { top: 15px; right: 300px; }
         
-        :nth-child(9) { top: 15px; right: 215px; }
-        :nth-child(10) { top: 15px; right: 129px; }
-        :nth-child(11) { top: 80px; left: 86px; }
-        :nth-child(12) { top: 80px; left: 172px; }
+        :nth-child(9) { top: 15px; right: 15px; }
+        :nth-child(10) { top: 15px; right: 105px; }
+        :nth-child(11) { top: 80px; left: 195px; }
+        :nth-child(12) { top: 80px; left: 300px; }
         
-        :nth-child(13) { top: 80px; left: 258px; }
-        :nth-child(14) { top: 80px; left: 344px; }
-        :nth-child(15) { top: 80px; left: 430px; }
-        :nth-child(16) { top: 80px; right: 430px; }
+        :nth-child(13) { top: 80px; left: 15px; }
+        :nth-child(14) { top: 80px; left: 105px; }
+        :nth-child(15) { top: 80px; left: 195px; }
+        :nth-child(16) { top: 80px; right: 300px; }
         
-        :nth-child(17) { top: 80px; right: 344px; }
-        :nth-child(18) { top: 80px; right: 258px; }
+        :nth-child(17) { top: 80px; right: 15px; }
+        :nth-child(18) { top: 80px; right: 105px; }
     }
 
 }

@@ -208,6 +208,7 @@
                 <!-- guides -->
                 <ul class="hots-guides" ng-if="communityGuides.length">
                     <li ng-repeat="guide in communityGuides">
+                        <!-- TODO: Find out why Kaelthas image does not appear on guide -->
                         <a ui-sref="app.hots.guides.guide({ slug: guide.slug })" class="hots-guide long {{getGuideClass(guide)}}">
                             <div class="inner"></div>
                             <div class="hots-guide-premium" ng-if="isPremium(guide)"></div>
