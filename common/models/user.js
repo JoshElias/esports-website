@@ -24,44 +24,103 @@ module.exports = function(User) {
 
 
 	// Handle user registeration
-	User.afterRemote("create", function(context, user, next) {
-
-		var options = {
-			generateVerificationToken : generateVerificationToken
-		}
-
-		user.verify(options, function(err) {
-			if(err) {
-				console.log("Unable to verify the user's email");
-				next(err);
-			} else {
-				console.log("Verification email sent");
-				context.res.json({success:true});
-				/*
-				context.res.render("response", {
-					title: "Signed up successfully",
-					content: "Please check your email and click on the verification link",
-					redirectTo: "/",
-					redirectToLinkText: "Log in"
-				});
-				*/
-			}
-		});
-	});
+  User.afterRemote("create", function(context, user, next) {
+    console.log("ummm");
+    var potentialOptions = {};
+    console.log("is this on?");
+    user.verify(potentialOptions, function(err) {
+      console.log("help:",err);
+      if(err) {
+        console.log("Unable to verify the user's email");
+      } else {
+        console.log("Verification email sent");
+      }
+      next(err);
+      /*
+       context.res.render("response", {
+       title: "Signed up successfully",
+       content: "Please check your email and click on the verification link",
+       redirectTo: "/",
+       redirectToLinkText: "Log in"
+       });
+       */
+    })
+  });
 
 	function generateVerificationToken(user, finalCallback) {
 		try {
-			var token = uuid.v4().substring(0, 23);
+			var token = uuid.v4().substring(0, 22);
 			finalCallback(undefined, token)
 		} catch(err) {
 			finalCallback(err);
 		}
 	};
 
+// Override the base User's verify method
+    User.on('attached', function (obj) {
+        User.prototype.verify = function(options, finalCallback) {
+            var user = this;
+            var userModel = this.constructor;
+            //var registry = userModel.registry;
 
+            async.waterfall([
+                    // Generate token
+                    function(seriesCallback) {
+                        var tokenGenerator = options.generateVerificationToken || generateVerificationToken;
+                        tokenGenerator(user, seriesCallback);
+                    },
+                    // Save user with new token
+                    function(newToken, seriesCallback) {
+                        user.updateAttribute("verificationToken", newToken, seriesCallback)
+                    },
+                    // Send Email
+                    function(user, seriesCallback) {
+                        var mailOptions = {
+                            from: { name: "Tempostorm", email: "admin@tempostorm.com" },
+                            to: { name: user.username, email: user.email, type: "to"},
+                            template : {
+                                name: "testactivation",
+                            },
+                            subject: "Confirm your account",
+                            //text: "text message",
+                            //html: "<b>message</b>"
+                            vars: [{
+                                "rcpt": user.email,
+                                "vars": [{
+                                    'name': 'ID',
+                                    'content': user.id
+                                },{
+                                    'name': 'TOKEN',
+                                    'content': user.verificationToken
+                                },{
+                                    'name': 'REDIRECT',
+                                    'content': '/'
+                                }]
+                            }],
+                            tags: [ "signup" ]
+                        };
+
+                        var Email = userModel.email;
+                        Email.send(mailOptions, function(err, email) {
+                            seriesCallback(err);
+                        });
+                    }],
+              finalCallback);
+            }
+    });
+/*
+  User.afterRemote('confirm', function(ctx, inst, next) {
+    var userInstance = JSON.parse(JSON.stringify(inst));
+    console.log("isEmailVerified:", userInstance.emailVerified);
+    if(userInstance.emailVerified) {
+      ctx.res.cookie
+    }
+  });
+*/
 	/**
    * Verify a user's identity by sending them a confirmation email.
    */
+    /*
   User.prototype.verify = function(options, finalCallback) {
     var user = this;
     var userModel = this.constructor;
@@ -70,7 +129,7 @@ module.exports = function(User) {
     async.waterfall([
       // Generate token
       function(seriesCallback) {
-        var tokenGenerator = options.generateVerificationToken || User.generateVerificationToken;
+        var tokenGenerator = options.generateVerificationToken || generateVerificationToken;
         tokenGenerator(user, seriesCallback);
       },
       // Save user with new token
@@ -111,7 +170,7 @@ module.exports = function(User) {
     }],
     finalCallback);
   };
-
+*/
 
   /**
    * Confirm the user's identity.
@@ -122,6 +181,7 @@ module.exports = function(User) {
    * @callback {Function} callback
    * @param {Error} err
    */
+  /*
   User.confirmEmail = function(email, token, redirect, fn) {
     var user = this;
     var userModel = this.constructor;
@@ -177,6 +237,7 @@ module.exports = function(User) {
     http: {verb: 'get', path: '/confirmEmail'}
   }
 );
+*/
 
 
   User.prototype.changeEmail = function(newEmail, finalCallback) {
@@ -238,6 +299,7 @@ module.exports = function(User) {
       http: { path: "/changeEmail", verb: "post"}
     }
   );
+    /*
 
 
 	// Handle passport reset
@@ -295,16 +357,3 @@ module.exports = function(User) {
 
 
 };
-
-/*
-Model.on('attached', function (obj) {
-    var baseRemove = Model.remove;
-    Model.remove = function customRemove(filter, options, next) {
-        baseRemove = baseRemove.bind(this);
-
-        //Do Custom operation
-
-        return baseRemove(filter,opations,next);
-    }
-});
-*/

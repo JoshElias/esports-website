@@ -14,7 +14,7 @@ module.exports = {
 	},
 	"mandrill": {
 	    "name": "mandrill",
-	    "connector": "lb-connector-mandrill",
+	    "connector": "loopback-connector-mandrill",
 	    "apiKey": "Zl5f6pHhNAraoqh5Z2jBEQ"
 	}
 }
