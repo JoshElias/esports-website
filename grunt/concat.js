@@ -1,9 +1,9 @@
 module.exports = {
-    options: {
-        separator: ';',
-        stripBanners: true,
-    },
-    build: {
+    js: {
+        options: {
+            separator: ';',
+            stripBanners: true,
+        },
         files: {
             'client/dist/js/vendor.js': [
                 'client/vendor/jquery/dist/jquery.js',
@@ -45,13 +45,21 @@ module.exports = {
                 'client/js/filters.js',
                 'client/js/animations.js',                
             ],
+        }
+    },
+    css: {
+        options: {
+            separator: '',
+            stripBanners: true,
+        },
+        files: {
             'client/dist/css/sass.css': [
                 'client/dist/css/sass/*.css'
             ],
             'client/dist/css/style.css': [
                 'client/css/style.css',
                 'client/dist/css/sass/*.css',
-            ]
+            ],            
         }
     }
 };
