@@ -188,8 +188,10 @@ angular.module('app.directives', ['ui.load'])
                 code: ""
             }
 
-            $scope.signup = function signup(email, username, password) {
+            $scope.signup = function(email, username, password) {
+              console.log("what is life?");
                 if (email !== undefined && username !== undefined && password !== undefined && cpassword !== undefined) {
+                  console.log("creating this thing")
                     User.create({
                       email: email,
                       username: username,

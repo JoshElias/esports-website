@@ -24,26 +24,28 @@ module.exports = function(User) {
 
 
 	// Handle user registeration
-	User.afterRemote("create", function(context, user, next) {
-        var potentialOptions = {};
-		user.verify(potentialOptions, function(err) {
-			if(err) {
-				console.log("Unable to verify the user's email");
-				next(err);
-			} else {
-				console.log("Verification email sent");
-				context.res.json({success:true});
-				/*
-				context.res.render("response", {
-					title: "Signed up successfully",
-					content: "Please check your email and click on the verification link",
-					redirectTo: "/",
-					redirectToLinkText: "Log in"
-				});
-				*/
-			}
-		});
-	});
+  User.afterRemote("create", function(context, user, next) {
+    console.log("ummm");
+    var potentialOptions = {};
+    console.log("is this on?");
+    user.verify(potentialOptions, function(err) {
+      console.log("help:",err);
+      if(err) {
+        console.log("Unable to verify the user's email");
+      } else {
+        console.log("Verification email sent");
+      }
+      next(err);
+      /*
+       context.res.render("response", {
+       title: "Signed up successfully",
+       content: "Please check your email and click on the verification link",
+       redirectTo: "/",
+       redirectToLinkText: "Log in"
+       });
+       */
+    })
+  });
 
 	function generateVerificationToken(user, finalCallback) {
 		try {
@@ -54,12 +56,9 @@ module.exports = function(User) {
 		}
 	};
 
-
+// Override the base User's verify method
     User.on('attached', function (obj) {
-        var baseVerify = User.verify;
-        User.verify = function customVerify(options, finalCallback) {
-            baseVerify = baseVerify.bind(this);
-
+        User.prototype.verify = function(options, finalCallback) {
             var user = this;
             var userModel = this.constructor;
             //var registry = userModel.registry;
@@ -106,19 +105,18 @@ module.exports = function(User) {
                             seriesCallback(err);
                         });
                     }],
-                function(err) {
-                    if(err) {
-                        // TODO: send a nice error with status to the client
-                        console.log("ERR sending verification email:")
-                        finalCallback(err);
-                    } else {
-                        baseVerify(options, finalCallback);
-                    }
-                });
-
+              finalCallback);
             }
     });
-
+/*
+  User.afterRemote('confirm', function(ctx, inst, next) {
+    var userInstance = JSON.parse(JSON.stringify(inst));
+    console.log("isEmailVerified:", userInstance.emailVerified);
+    if(userInstance.emailVerified) {
+      ctx.res.cookie
+    }
+  });
+*/
 	/**
    * Verify a user's identity by sending them a confirmation email.
    */
@@ -359,16 +357,3 @@ module.exports = function(User) {
 
 
 };
-
-/*
-Model.on('attached', function (obj) {
-    var baseRemove = Model.remove;
-    Model.remove = function customRemove(filter, options, next) {
-        baseRemove = baseRemove.bind(this);
-
-        //Do Custom operation
-
-        return baseRemove(filter,opations,next);
-    }
-});
-*/

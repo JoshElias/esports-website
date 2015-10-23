@@ -7860,24 +7860,6 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('Twitch', ['$scope',
-        function ($scope) {
-            $scope.login = function () {
-                window.location.replace('/auth/twitch');
-            };
-
-            $scope.signup = function () {
-                window.location.replace('/auth/twitch');
-            };
-        }
-    ])
-    .controller('Bnet', ['$scope',
-        function ($scope) {
-            $scope.login = function () {
-                window.location.replace('/auth/bnet');
-            };
-        }
-    ])
     /* admin hots */
     .controller('AdminHeroListCtrl', ['$scope', 'AdminHeroService', 'AlertService', 'Pagination', 'data',
         function ($scope, AdminHeroService, AlertService, Pagination, data) {
