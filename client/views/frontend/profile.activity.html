@@ -48,6 +48,6 @@
     <!-- / activity -->
 </div>
 
-<div ng-if="activities.length != total" class="show-more m-b-md"><a class="show-more-btn" ng-click="loadActivities()" href="#">Show More</a></div>
+<div ng-if="activities.length != total" class="show-more m-b-md"><a class="show-more-btn" ng-click="loadActivities(false)" href="#">Show More</a></div>
 <!-- / activities -->
 <p class="profile-no-content" ng-show="!activities.length">@{{user.username}} has no site activity yet.</p>
