@@ -1,25 +1,30 @@
-<<<<<<< HEAD
-=======
+
 @import 'ts-colors.scss';
->>>>>>> 25f183f93c3d816cb392660fb98b3df2931c250b
 
-.blocker {
-    line-height: 1;
+.ow-home-title {
+    background: $ts-blue url('../../dist/img/overwatch/top-header-big.jpg') no-repeat bottom;
+    background-size: cover;
 }
 
-@import 'ts-colors';
+.ow-home-logo {
+    margin: 63.5px;
+    margin-left: 12.05% 
+}
 
-.ow-titles {
-    line-height:1.5;
-    margin: 0;
+.ow-content h1.title {
     font-family: 'Open Sans Bold';
-    color: $white;
-    font-size: 30px;
+    font-size: 26px;
+    color: #DDD;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
-.ow-sub-titles {
-    color: $ts-grey;
+
+.ow-content h3.sub-title {
+    font-size: 14px;
+    color: #d3eefa;
 }
+
 
     
 .no-pad-left {
@@ -46,41 +51,16 @@
 
 .ow-hero-filters { 
     position: relative; 
-    height: 910px; 
+    height: 730px; 
     padding: 0; 
-    margin-top: 41px;
+    margin-top: 18px;
 
         li { 
             list-style: none; 
             position: relative;
             
 
-        }
-        
-       /* :nth-child(1) { top: 15px; left: 10.9px; }
-        :nth-child(2) { top: 15px; left: 96.8px; }
-        :nth-child(3) { top: 15px; left: 182.7px; }
-        :nth-child(4) { top: 15px; left: 268.6px; }
-        
-        :nth-child(5) { top: 15px; left: 10.9px; }
-        :nth-child(6) { top: 15px; right: 105px; }
-        :nth-child(7) { top: 15px; right: 195px; }
-        :nth-child(8) { top: 15px; right: 300px; }
-        
-        :nth-child(9) { top: 15px; right: 15px; }
-        :nth-child(10) { top: 15px; right: 105px; }
-        :nth-child(11) { top: 80px; left: 195px; }
-        :nth-child(12) { top: 80px; left: 300px; }
-        
-        :nth-child(13) { top: 80px; left: 15px; }
-        :nth-child(14) { top: 80px; left: 105px; }
-        :nth-child(15) { top: 80px; left: 195px; }
-        :nth-child(16) { top: 80px; right: 300px; }
-        
-        :nth-child(17) { top: 80px; right: 15px; }
-        :nth-child(18) { top: 80px; right: 105px; } */
-        
-       li button {
+       a {
             width: 75px;
             height: 75px;
             background-position: -2px -156px;
@@ -93,21 +73,29 @@
             border-radius: 50%;
             border: 3px solid #FFF;
             text-indent: -99999px;
-            background-color: rgba(39,102,173,.2);
+            // background-color: rgba(39,102,173,.2);
             outline: none;
             opacity: 1;  
-           float: left;
-           margin-left: 10.9px;
+            float: left;
+            margin-left: 10.9px;
             margin-top: 10.9px;
+       
+            }
+    
+     
+        a.active {
+            background-color: $ow-orange;
+            } 
+            
+            a:hover {
+             background-color: $ow-orange;
             }
             
-        li button:hover {
-                background-color: $ts-blue;
-            
-        }
-            
-        
+       }
     }
+
+    
+
 
 .ow-hero-selected {
     background: $ts-blue;
