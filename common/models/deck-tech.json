@@ -1,5 +1,6 @@
 {
   "name": "deckTech",
+  "plural": "deckTechs",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
