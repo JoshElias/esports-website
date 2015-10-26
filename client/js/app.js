@@ -216,7 +216,8 @@ var app = angular.module('app', [
                     content: {
                         templateUrl: tpl + 'views/frontend/overwatch.html'
                     }
-                }
+                },
+                seo: { title: 'Overwatch', description: '', keywords: 'overwatch' }
             })
             .state('app.overwatch.home', {
                 url: '',
@@ -236,7 +237,7 @@ var app = angular.module('app', [
                 }
             })
             .state('app.overwatch.heroes.hero', {
-                url: '/heroes/:slug',
+                url: '/:slug',
                 views: {
                     'overwatch-heroes': {
                         templateUrl: tpl + 'views/frontend/overwatch.heroes.hero.html'
