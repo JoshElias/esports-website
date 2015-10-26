@@ -202,7 +202,7 @@ var app = angular.module('app', [
                                 }).$promise;
                             }],
                             articlesTotal: ['Article', function (Article) {
-                                return Article.count();
+                                return Article.count().$promise;
                             }]
                         }
                     }
@@ -2171,20 +2171,28 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/articles.list.html',
                         controller: 'AdminArticleListCtrl',
                         resolve: {
+                            paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    options: {
+                                        filter: {
+                                            limit: 50,
+                                            order: 'createdDate DESC',
+                                            fields: ['id', 'title', 'createdDate']
+                                        }
+                                    }
+                                };
+                            }],
                             articlesCount: ['Article', function (Article) {
                                 return Article.count({}).$promise;
                             }],
-                            articles: ['Article', function (Article) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '',
-                                    options = {
+                            articles: ['Article', 'paginationParams', function (Article, paginationParams) {
+                                var options = {
                                         filter: {
-                                            limit: perpage,
+                                            limit: paginationParams.perpage,
                                             order: "createdDate DESC",
-                                            fields: [
-                                                "title"
-                                            ]
+                                            fields: paginationParams.options.filter.fields
                                         }
                                     };
 
@@ -3022,11 +3030,26 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/snapshots.list.html',
                         controller: 'AdminSnapshotListCtrl',
                         resolve: {
-                            data: ['AdminSnapshotService', function (AdminSnapshotService) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '';
-                                return AdminSnapshotService.getSnapshots(page, perpage, search);
+                            paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    options: {
+                                        filter: {
+                                            limit: 50,
+                                            order: 'createdDate DESC',
+                                            fields: ['id', 'title', 'createdDate']
+                                        }
+                                    }
+                                };
+                            }],
+                            snapshotsCount: ['Snapshot', function (Snapshot) {
+                                return Snapshot.count({}).$promise;
+                            }],
+                            snapshots: ['Snapshot', 'paginationParams', function (Snapshot, paginationParams) {
+                                return Snapshot.find(
+                                    paginationParams.options
+                                ).$promise;
                             }]
                         }
                     }
@@ -3142,8 +3165,33 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/vod.list.html',
                         controller: 'AdminVodListCtrl',
                         resolve: {
-                            data: ['Vod', function (Vod) {
-                                return Vod.find();
+                            paginationParams: [function() {
+                                var perpage = 12;
+                                return {
+                                    page: 1,
+                                    perpage: perpage,
+                                    options: {
+                                        filter: {
+                                            limit: perpage,
+                                            order: 'createdDate DESC',
+                                            fields: ['id', 'subtitle', 'createdDate', 'youtubeId', 'youtubeVars', 'displayDate']
+                                        }
+                                    }
+                                };
+                            }],
+                            vodsCount: ['Vod', function (Vod) {
+                                return Vod.count({}).$promise;
+                            }],
+                            vods: ['Vod', 'paginationParams', function(Vod, paginationParams) {
+                                var options = {
+                                    filter: {
+                                        limit: paginationParams.perpage,
+                                        order: "createdDate DESC",
+                                        fields: paginationParams.options.filter.fields
+                                    }
+                                };
+                                
+                                return Vod.find(options).$promise;
                             }]
                         }
                     }
@@ -3167,9 +3215,13 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/vod.edit.html',
                         controller: 'AdminVodEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminVodService', function ($stateParams, AdminVodService) {
+                            vod: ['$stateParams', 'Vod', function ($stateParams, Vod) {
                                 var id = $stateParams.id;
-                                return AdminVodService.getVod(id);
+                                return Vod.findById({ id: id }, function(data) {
+                                    return data;
+                                }, function(err) {
+                                    if(err) console.log('error: ',err);
+                                });
                             }]
                         }
                     }
@@ -3194,6 +3246,85 @@ var app = angular.module('app', [
                     }
                 },
                 seo: { title: 'Contact Us', description: 'Contact Page', keywords: '' }
+            })
+            .state('app.admin.overwatch', {
+                abstract: true,
+                url: '/overwatch',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/overwatch.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.overwatch.heroes', {
+                abstract: true,
+                url: '/heroes',
+                views: {
+                    overwatch: {
+                        templateUrl: tpl + 'views/admin/overwatch.heroes.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.overwatch.heroes.list', {
+                url: '',
+                views: {
+                    heroes: {
+                        templateUrl: tpl + 'views/admin/overwatch.heroes.list.html',
+                        controller: 'AdminOverwatchHeroListCtrl',
+                        resolve: {
+                            heroes: ['OverwatchHero', function (OverwatchHero) {
+                                var page = 1,
+                                    perpage = 50;
+
+                                return OverwatchHero.find({
+                                    filter: {
+                                        fields: {
+                                            id: true,
+                                            heroName: true,
+                                            orderNum: true
+                                        },
+                                        order: "orderNum ASC",
+                                        skip: (page * perpage) - perpage,
+                                        limit: perpage
+                                    }
+                                }).$promise;
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.overwatch.heroes.add', {
+                url: '/add',
+                views: {
+                    heroes: {
+                        templateUrl: tpl + 'views/admin/overwatch.heroes.add.html',
+                        controller: 'AdminOverwatchHeroAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.overwatch.heroes.edit', {
+                url: '/edit/:heroID',
+                views: {
+                    heroes: {
+                        templateUrl: tpl + 'views/admin/overwatch.heroes.edit.html',
+                        controller: 'AdminOverwatchHeroEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminHeroService', function ($stateParams, AdminHeroService) {
+                                var heroID = $stateParams.heroID;
+                                return AdminHeroService.getHero(heroID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             });
     }]
 );

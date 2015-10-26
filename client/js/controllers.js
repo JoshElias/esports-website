@@ -1888,10 +1888,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminArticleListCtrl', ['$scope', '$q', '$timeout', 'AdminArticleService', 'AlertService', 'AjaxPagination', 'articles', 'articlesCount', 'Article',
-        function ($scope, $q, $timeout, AdminArticleService, AlertService, AjaxPagination, articles, articlesCount, Article) {
-
-            console.log('articles: ', articles);
+    .controller('AdminArticleListCtrl', ['$scope', '$q', '$timeout', 'AdminArticleService', 'AlertService', 'AjaxPagination', 'paginationParams', 'articles', 'articlesCount', 'Article',
+        function ($scope, $q, $timeout, AdminArticleService, AlertService, AjaxPagination, paginationParams, articles, articlesCount, Article) {
 
             // grab alerts
             if (AlertService.hasAlert()) {
@@ -1901,23 +1899,14 @@ angular.module('app.controllers', ['ngCookies'])
 
             // load articles
             $scope.articles = articles;
-            $scope.page = 1;
-            $scope.perpage = 50;
+            $scope.page = paginationParams.page;
+            $scope.perpage = paginationParams.perpage;
             $scope.total = articlesCount.count;
             $scope.search = '';
-
-//        $scope.getArticles = function () {
-//            AdminArticleService.getArticles($scope.page, $scope.perpage, $scope.search).then(function (data) {
-//                $scope.articles = data.articles;
-//                $scope.page = data.page;
-//                $scope.total = data.total;
-//            });
-//        }
-//
-//        $scope.searchArticles = function () {
-//            $scope.page = 1;
-//            $scope.getArticles();
-//        }
+            
+            $scope.searchArticles = function() {
+                updateArticles(1, $scope.perpage, $scope.search, false);
+            };
 
             // pagination
             function updateArticles (page, perpage, search, callback) {
@@ -1927,12 +1916,10 @@ angular.module('app.controllers', ['ngCookies'])
                     countOptions = {};
 
                 options.filter = {
-                    fields: {
-                        title: true
-                    },
+                    fields: paginationParams.options.filter.fields,
                     order: "createdDate DESC",
                     skip: ((page*perpage)-perpage),
-                    limit: 50
+                    limit: perpage
                 };
 
                 if ($scope.search.length > 0) {
@@ -1958,9 +1945,6 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.articlePagination.page = page;
                         $scope.articlePagination.perpage = perpage;
 
-                        console.log('page: ', $scope.articlePagination.page);
-                        console.log('perpage: ', $scope.articlePagination.perpage);
-
                         $timeout(function () {
                             $scope.articles = articles;
                             $scope.fetching = false;
@@ -1971,11 +1955,6 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 });
             }
-
-
-            $scope.$watch('search', function() {
-                updateArticles($scope.articlePagination.page, $scope.articlePagination.perpage, $scope.search, false);
-            }, true);
 
             // page flipping
             $scope.articlePagination = AjaxPagination.new($scope.perpage, $scope.total,
@@ -1999,11 +1978,11 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminArticleService.deleteArticle(article._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.articles.indexOf(article);
-                                        if (index !== -1) {
-                                            $scope.articles.splice(index, 1);
+                                Article.deleteById({ id: article.id }).$promise.then(function (data) {
+                                    if (data.$resolved) {
+                                        var indexToDel = $scope.articles.indexOf(article);
+                                        if (indexToDel !== -1) {
+                                            $scope.articles.splice(indexToDel, 1);
                                         }
                                         $scope.success = {
                                             show: true,
@@ -2025,13 +2004,10 @@ angular.module('app.controllers', ['ngCookies'])
                 box.modal('show');
             };
 
-            $scope.starting = ($scope.articlePagination.page - 1) * $scope.articlePagination.perpage;
-            $scope.ending = ($scope.starting + 50) > $scope.total ? $scope.total : $scope.starting + 50;
-
         }
     ])
-    .controller('AdminSnapshotListCtrl', [ '$scope', 'data', 'AdminSnapshotService', 'AlertService',
-        function ($scope, data, AdminSnapshotService, AlertService) {
+    .controller('AdminSnapshotListCtrl', [ '$scope', '$q', '$timeout', 'snapshotsCount', 'snapshots', 'paginationParams', 'AdminSnapshotService', 'AlertService', 'Snapshot', 'AjaxPagination',
+        function ($scope, $q, $timeout, snapshotsCount, snapshots, paginationParams, AdminSnapshotService, AlertService, Snapshot, AjaxPagination) {
 
             // grab alerts
             if (AlertService.hasAlert()) {
@@ -2039,81 +2015,78 @@ angular.module('app.controllers', ['ngCookies'])
                 AlertService.reset();
             }
 
-            // load articles
-            $scope.snapshots = data.snapshots;
-            $scope.page = data.page;
-            $scope.perpage = data.perpage;
-            $scope.total = data.total;
-            $scope.search = data.search;
+            // load snapshots
+            $scope.snapshots = snapshots;
+            $scope.page = paginationParams.page;
+            $scope.perpage = paginationParams.perpage;
+            $scope.total = snapshotsCount.count;
+            $scope.search = '';
+            
+            $scope.searchSnapshots = function() {
+                updateSnapshots(1, $scope.perpage, $scope.search, false);
+            };
+            
+            // pagination
+            function updateSnapshots (page, perpage, search, callback) {
+                $scope.fetching = true;
 
-            $scope.getSnapshots = function () {
-                AdminSnapshotService.getSnapshots($scope.page, $scope.perpage, $scope.search).then(function (data) {
-                    $scope.snapshots = data.snapshots;
-                    $scope.page = data.page;
-                    $scope.total = data.total;
+                var options = {},
+                    countOptions = {};
+
+                options.filter = {
+                    fields: paginationParams.options.filter.fields,
+                    order: "createdDate DESC",
+                    skip: ((page*perpage)-perpage),
+                    limit: paginationParams.perpage
+                };
+
+                if ($scope.search.length > 0) {
+                    options.filter.where = {
+                        or: [
+                            { title: { regexp: search } },
+                            { description: { regexp: search } },
+                            { content: { regexp: search } }
+                        ]
+                    }
+                    countOptions.where = {
+                        or: [
+                            { title: { regexp: search } },
+                            { description: { regexp: search } },
+                            { content: { regexp: search } }
+                        ]
+                    }
+                }
+
+                Snapshot.count(countOptions, function (count) {
+                    Snapshot.find(options, function (snapshots) {
+                        $scope.snapshotPagination.total = count.count;
+                        $scope.snapshotPagination.page = page;
+                        $scope.snapshotPagination.perpage = perpage;
+
+                        $timeout(function () {
+                            $scope.snapshots = snapshots;
+                            $scope.fetching = false;
+                            if (callback) {
+                                return callback(count.count);
+                            }
+                        });
+                    });
                 });
             }
+            
+            // page flipping
+            $scope.snapshotPagination = AjaxPagination.new($scope.perpage, $scope.total,
+                function (page, perpage) {
+                    var d = $q.defer();
 
-            $scope.searchSnapshots = function () {
-                $scope.page = 1;
-                $scope.getSnapshots();
-            }
-
-            // pagination
-            $scope.pagination = {
-                page: function () {
-                    return $scope.page;
-                },
-                perpage: function () {
-                    return $scope.perpage;
-                },
-                results: function () {
-                    return $scope.total;
-                },
-                setPage: function (page) {
-                    $scope.page = page;
-                    $scope.getSnapshots();
-                },
-                pagesArray: function () {
-                    var pages = [],
-                        start = 1,
-                        end = this.totalPages();
-
-                    if (this.totalPages() > 5) {
-                        if (this.page() < 3) {
-                            start = 1;
-                            end = start + 4;
-                        } else if (this.page() > this.totalPages() - 2) {
-                            end = this.totalPages();
-                            start = end - 4;
-                        } else {
-                            start = this.page() - 2;
-                            end = this.page() + 2;
-                        }
-
-                    }
-
-                    for (var i = start; i <= end; i++) {
-                        pages.push(i);
-                    }
-
-                    return pages;
-                },
-                isPage: function (page) {
-                    return (page === this.page());
-                },
-                totalPages: function (page) {
-                    return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
-                },
-                from: function () {
-                    return (this.page() * this.perpage()) - this.perpage() + 1;
-                },
-                to: function () {
-                    return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
+                    updateSnapshots(page, perpage, $scope.search, function (data) {
+                        d.resolve(data);
+                    });
+                    return d.promise;
                 }
-            };
+            );
 
-            // delete article
+            // delete snapshot
             $scope.deleteSnapshot = function deleteSnapshot(snapshot) {
                 var box = bootbox.dialog({
                     title: 'Delete Meta Snapshot: ' + snapshot.title + '?',
@@ -2123,11 +2096,11 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminSnapshotService.deleteSnapshot(snapshot._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.snapshots.indexOf(snapshot);
-                                        if (index !== -1) {
-                                            $scope.snapshots.splice(index, 1);
+                                Snapshot.deleteById({ id: snapshot.id }).$promise.then(function (data) {
+                                    if (data.$resolved) {
+                                        var indexToDel = $scope.snapshots.indexOf(snapshot);
+                                        if (indexToDel !== -1) {
+                                            $scope.snapshots.splice(indexToDel, 1);
                                         }
                                         $scope.success = {
                                             show: true,
@@ -2147,7 +2120,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
                 box.modal('show');
-            }
+            };
 
 
         }
@@ -3631,54 +3604,111 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminVodListCtrl', ['$scope', 'data', 'AdminVodService',
-        function ($scope, data, AdminVodService) {
-            $scope.vods = data.vods;
-
-            $scope.getDate = function (d) {
-                d = new Date(d);
-                return d;
+    .controller('AdminVodListCtrl', ['$scope', '$q', '$timeout', 'paginationParams', 'vodsCount', 'vods', 'AlertService', 'Vod', 'AjaxPagination',
+        function ($scope, $q, $timeout,  paginationParams, vodsCount, vods, AlertService, Vod, AjaxPagination) {
+            
+            // grab alerts
+            if (AlertService.hasAlert()) {
+                $scope.success = AlertService.getSuccess();
+                AlertService.reset();
             }
+            
+            console.log('vods: ', vods);
 
-            $scope.convertMonth = function (d) {
-                switch (d) {
-                    case 0 : return "January"; break;
-                    case 1 : return "February"; break;
-                    case 2 : return "March"; break;
-                    case 3 : return "April"; break;
-                    case 4 : return "May"; break;
-                    case 5 : return "June"; break;
-                    case 6 : return "July"; break;
-                    case 7 : return "August"; break;
-                    case 8 : return "September"; break;
-                    case 9 : return "October"; break;
-                    case 10 : return "November"; break;
-                    case 11 : return "December"; break;
+            // load vods
+            $scope.vods = vods;
+            $scope.page = paginationParams.page;
+            $scope.perpage = paginationParams.perpage;
+            $scope.total = vodsCount.count;
+            $scope.search = '';
+            
+            $scope.searchVods = function() {
+                updateVods(1, $scope.perpage, $scope.search, false);
+            };
+            
+            // pagination
+            function updateVods (page, perpage, search, callback) {
+                $scope.fetching = true;
+
+                var options = {},
+                    countOptions = {};
+
+                options.filter = {
+                    fields: paginationParams.options.filter.fields,
+                    order: "createdDate DESC",
+                    skip: ((page*perpage)-perpage),
+                    limit: perpage
+                };
+
+                if ($scope.search.length > 0) {
+                    options.filter.where = {
+                        or: [
+                            { subtitle: { regexp: search } },
+                            { displayDate: { regexp: search } },
+                        ]
+                    }
+                    countOptions.where = {
+                        or: [
+                            { subtitle: { regexp: search } },
+                            { displayDate: { regexp: search } },
+                        ]
+                    }
                 }
-            }
 
-            // delete deck
-            $scope.deleteVod = function deleteVos(vod) {
+                Vod.count(countOptions, function (count) {
+                    Vod.find(options, function (vods) {
+                        $scope.vodPagination.total = count.count;
+                        $scope.vodPagination.page = page;
+                        $scope.vodPagination.perpage = perpage;
+
+                        $timeout(function () {
+                            $scope.vods = vods;
+                            $scope.fetching = false;
+                            if (callback) {
+                                return callback(count.count);
+                            }
+                        });
+                    });
+                });
+            }
+            
+            // page flipping
+            $scope.vodPagination = AjaxPagination.new($scope.perpage, $scope.total,
+                function (page, perpage) {
+                    var d = $q.defer();
+
+                    updateVods(page, perpage, $scope.search, function (data) {
+                        d.resolve(data);
+                    });
+                    return d.promise;
+                }
+            );
+
+            // delete vod
+            $scope.deleteVod = function deleteVod(vod) {
                 var box = bootbox.dialog({
-                    title: 'Delete VOD: ' + vod.date + '?',
-                    message: 'Are you sure you want to delete the VOD <strong>' + vod.date + '</strong>?',
+                    title: 'Delete VOD: ' + vod.subtitle + '?',
+                    message: 'Are you sure you want to delete the VOD <strong>' + vod.subtitle + '</strong>?',
                     buttons: {
                         delete: {
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminVodService.vodRemove(vod._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.vods.indexOf(vod);
-                                        if (index !== -1) {
-                                            $scope.vods.splice(index, 1);
+                                Vod.deleteById({ id: vod.id }, function (data) {
+                                    if (data.$resolved) {
+                                        var indexToDel = $scope.vods.indexOf(vod);
+                                        if (indexToDel !== -1) {
+                                            $scope.vods.splice(indexToDel, 1);
                                         }
                                         $scope.success = {
                                             show: true,
-                                            msg: vod.date + ' deleted successfully.'
+                                            msg: vod.subtitle + ' deleted successfully.'
                                         };
                                     }
+                                }, function (error) {
+                                    if(error) console.log('error: ', error);
                                 });
+                                $scope.vodPagination.total -= 1;
                             }
                         },
                         cancel: {
@@ -3694,14 +3724,15 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminVodAddCtrl', ['$scope', '$window', '$state', 'AdminVodService', 'AlertService',
-        function ($scope, $window, $state, AdminVodService, AlertService) {
+    .controller('AdminVodAddCtrl', ['$scope', '$window', '$state', 'AdminVodService', 'AlertService', 'Vod',
+        function ($scope, $window, $state, AdminVodService, AlertService, Vod) {
 
             var defaultVod = {
-                date: {},
-                url: '',
-                subTitle: '',
-                vars: {
+                displayDate: '',
+                createdDate: new Date(),
+                youtubeId: '',
+                subtitle: '',
+                youtubeVars: {
                     list: ''
                 }
             };
@@ -3710,46 +3741,50 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.vod = angular.copy(defaultVod);
 
             // save VOD
-            $scope.saveVod = function () {
-                AdminVodService.vodAdd($scope.vod).then(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: 'Video of the Day has been added successfully.' });
-                        $scope.showSuccess = true;
+            $scope.saveVod = function (vod) {
+                Vod.create({}, vod, function (data) {
+                    console.log('data: ', data);
+                    if (data.$resolved) {
+                        $scope.success = {
+                            show: true,
+                            msg: vod.subtitle + ' created successfully.'
+                        };
                         $scope.vod = angular.copy(defaultVod);
-                        $scope.playlist = {
-                            vars: {
-                                list: ''
-                            }
-                        }
-                        $state.go('app.admin.vod.add');
                     }
-                    $window.scrollTo(0,0);
+                }, function (err) {
+                    if(err) console.log('error: ',err);
+                    $scope.success = {
+                        show: true,
+                        msg: vod.subtitle + ' could not be created.'
+                    };
                 });
             };
 
         }
     ])
-    .controller('AdminVodEditCtrl', ['$scope', '$state', '$window', 'data', 'AdminVodService', 'AlertService',
-        function ($scope, $state, $window, data, AdminVodService, AlertService) {
-            data.vod.date = Date.parse(data.vod.date);
-            $scope.vod = data.vod;
-            $scope.isPlaylist = ($scope.vod.url != "") ? false : true;
+    .controller('AdminVodEditCtrl', ['$scope', '$state', '$window', 'vod', 'AdminVodService', 'AlertService', 'Vod',
+        function ($scope, $state, $window, vod, AdminVodService, AlertService, Vod) {
+            console.log('vod: ',vod);
+            $scope.vod = vod;
+            console.log('is playlist: ', $scope.vod.youtubeId == "");
+            $scope.isPlaylist = ($scope.vod.youtubeId == "") ? true : false;
 
-            // save VOD
-            $scope.saveVod = function () {
-                AdminVodService.vodEdit($scope.vod).then(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: 'Video of the Day has been edited successfully.' });
-                        $scope.showSuccess = true;
-                        $state.go('app.admin.vod.add');
+            // update VOD
+            $scope.updateVod = function (vod) {
+                Vod.update({
+                    where: {
+                        id: vod.id
+                    }
+                }, vod, function(data) {
+                    if(data.$resolved) {
+                        $scope.success = {
+                            show: true,
+                            msg: vod.subtitle + ' was edited successfully.'
+                        };
                     }
                     $window.scrollTo(0,0);
+                }, function(err) {
+                    if(err) console.log('error: ',err);
                 });
             };
         }
@@ -9310,8 +9345,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'Guide', 'Hero', 'Map', 'featuredTalentDict', 'communityTalentDict',
-        function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, Guide, Hero, Map, featuredTalentDict, communityTalentDict) {
+    .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'HOTSGuideQueryService', 'featuredTalentDict', 'communityTalentDict',
+        function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, HOTSGuideQueryService, featuredTalentDict, communityTalentDict) {
 
             // data
             $scope.heroes = dataHeroes;
@@ -9365,206 +9400,6 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             };
             
-            function getMapGuides (isFeatured, limit, finalCallback) {
-                var selectedMap = $scope.filters.map;
-                
-                if (_.isEmpty(selectedMap)) {
-                    return;
-                }
-                
-                async.waterfall(
-                    [
-                        function (seriesCallback) {
-                            Map.findOne({
-                                filter: {
-                                    fields: ["id"],
-                                    where: {
-                                        id: $scope.filters.map.id
-                                    },
-                                    include: [
-                                        {
-                                            relation: "guides",
-                                            scope: {
-                                                fields: ["id"],
-                                                where: {
-                                                    guideType: "map",
-                                                    featured: isFeatured
-                                                }
-                                            }
-                                        }
-                                    ]
-                                }
-                            }, 
-                            function (maps) {
-                                return seriesCallback(undefined, maps);
-                            },
-                            function (err) {
-                                console.log(err);
-                                return finalCallback(err);
-                            })
-                        },
-                        function (map, seriesCallback) {
-                            var guides = map.guides;
-                            var guideIds = _.map(guides, function(guide) { return guide.id })
-                            
-                            Guide.find({
-                                filter: {
-                                    limit: limit,
-                                    sort: "createdDate ASC",
-                                    where: {
-                                        id: { inq: guideIds }
-                                    },
-                                    fields: [
-                                        "id",
-                                        "name",
-                                        "createdDate",
-                                        "votesCount",
-                                        "slug",
-                                        "guideType",
-                                        "authorId",
-                                        "public",
-                                        "premium"
-                                    ],
-                                    include: [
-                                        {
-                                            relation: "author"
-                                        },
-                                        {
-                                            relation: "maps"
-                                        }
-                                    ]
-                                }
-                            }, function (guides) {
-                                return finalCallback(undefined, guides);
-                            }, function (err) {
-                                return finalCallback(err)
-                            })
-                        }
-                    ]
-                )
-            }
-                         
-            
-            function getHeroMapGuides (isFeatured, limit, finalCallback) {
-                var selectedHeroes = $scope.filters.heroes;
-                
-                if (_.isEmpty(selectedHeroes)) {
-                    return;
-                }
-                
-                async.waterfall([
-                    //get selected heroes
-                    function (seriesCallback) {
-                        var selectedHeroIds = _.map(selectedHeroes, function (hero) { return hero.id; });
-                        
-                        Hero.find({
-                            filter: {
-                                fields: ["id"],
-                                where: { id : { inq: selectedHeroIds } },
-                                include: [
-                                    {
-                                        relation: "guides",
-                                        scope: {
-                                            where: { featured: isFeatured },
-                                            fields: ["id"],
-                                            include: [
-                                                {
-                                                    relation: "maps",
-                                                    scope: {
-                                                        fields: ["className"]
-                                                    }
-                                                },
-                                                {
-                                                    relation: "heroes",
-                                                    scope: {
-                                                        fields: ["id"]
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                ]
-                            }
-                        }, function (heroes) {
-                            seriesCallback(undefined, heroes);
-                        }, function (err) {
-                            console.log("error!", err);
-                            seriesCallback(err);
-                        })
-                    },
-                    //filter heroes
-                    function (heroes, seriesCallback) {
-                        //filter out guides by map className
-                        try {
-                            var selectedGuides = [];
-                            _.each(heroes, function (hero) { 
-                               var filteredGuides = _.filter(hero.guides, function (guide) {
-                                    return _.find(guide.maps, function (map) {
-                                        return (map.className === $scope.filters.map.className)
-                                    })
-                                });
-                                selectedGuides.push(filteredGuides);
-                            });
-                            
-                            selectedGuides = _.flatten(selectedGuides);
-                            var selectedGuideIds = _.map(selectedGuides, function(guide) { return guide.id })
-                            
-                            return seriesCallback(undefined, selectedGuideIds);
-                        } catch (err) {
-                            return seriesCallback(err);
-                        }
-                    },
-                    //populate heroes, talents
-                    function (selectedGuideIds, seriesCallback) {
-                        Guide.find({
-                            filter: {
-                                limit: limit,
-                                order: "createdDate ASC",
-                                where: {
-                                    id: { inq: selectedGuideIds }
-                                },
-                                fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "votesCount", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
-                                    "talentTiers"
-                                ],
-                                include: [
-                                    {
-                                        relation: "author"
-                                    },
-                                    {
-                                        relation: "heroes",
-                                        scope: {
-                                            include: [ "talents" ]
-                                        }
-                                    },
-                                    {
-                                        relation: "maps"
-                                    }
-                                ]
-                            }
-                        }, function (guides) {
-                            return seriesCallback(undefined, guides);
-                        }, function (err) {
-                            console.log(err);
-                            seriesCallback(err);
-                        })
-                    }
-                ],
-                function (err, guides) {
-                    if (err) {
-                        console.log("Error:", err);
-                    };
-                    
-                    return finalCallback(err, guides);
-                })
-            }
-
             function getDict (guides) {
                 var dict = {};
                 for (var i = 0; i < guides.length; i++) {
@@ -9580,11 +9415,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             var initializing = true;
             $scope.$watch(function(){ return $scope.filters; }, function (value) {
+                console.log(initializing);
                 if (initializing) {
                     $timeout(function () {
                         initializing = false;
                     });
                 } else {
+                    initializing = true;
                     // article filters
                     var articleFilters = [];
                     for (var i = 0; i < $scope.heroes.length; i++) {
@@ -9593,49 +9430,119 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     }
                     
-                    if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
+                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                         async.parallel([
                             function () {
-                                getHeroMapGuides(true, 10, function(err, guides) {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, function(err, guides) {
                                     featuredTalentDict = getDict(guides);
+                                    
                                     $timeout(function () {
                                         $scope.guidesFeatured = guides;
+                                        initializing = false;
                                     });
                                 });
                             },
                             function () {
-                                getHeroMapGuides(false, 10, function(err, guides) {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, function(err, guides) {
                                     communityTalentDict = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.guidesCommunity = guides;
+                                        initializing = false;
                                     });
                                 });
                             }
                         ]);
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
-                        
-                    } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
                         async.parallel([
                             function () {
-                                getMapGuides(true, 10, function(err, guides) {
+                                HOTSGuideQueryService.getHeroGuides($scope.filters, true, 10, function (err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
                                     $timeout(function () {
                                         $scope.guidesFeatured = guides;
+                                        initializing = false;
                                     });
                                 });
                             },
                             function () {
-                                getMapGuides(false, 10, function(err, guides) {
+                                HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, function (err, guides) {
+                                    communityTalentDict = getDict(guides);
+                                    
                                     $timeout(function () {
                                         $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ])
+                    } else if ($scope.filters.search != '') {
+                        console.log("search");
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getGuides($scope.filters, true, 10, function(err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                                HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
+                                    communityTalentDict = getDict(guides);
+
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ]);
+                    } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getMapGuides($scope.filters, true, 10, function(err, guides) {
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                                HOTSGuideQueryService.getMapGuides($scope.filters, false, 10, function(err, guides) {
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
                                     });
                                 });
                             }
                         ]);
                     } else {
-                        console.log("we do some universe and role stuff here");
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getGuides($scope.filters, true, 10, function(err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                               HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
+                                    communityTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ]);
                     }
-                    
                 }
             }, true);
 
@@ -9735,28 +9642,175 @@ angular.module('app.controllers', ['ngCookies'])
                 map: false
             };
 
+                        function getDict (guides) {
+//                console.log(guides);
+                var dict = {};
+                for (var i = 0; i < guides.length; i++) {
+                    for (var k = 0; k < guides[i].heroes.length; k++) {
+                        for (var l = 0; l < guides[i].heroes[k].talents.length; l++) {
+                            var temp = guides[i].heroes[k].talents[l].id;
+                            dict[temp] = guides[i].heroes[k].talents[l];
+                        }
+                    }
+                }
+                return dict;
+            }
+
             var initializing = true;
             $scope.$watch(function(){ return $scope.filters; }, function (value) {
-                console.log('filters: ', $scope.filters);
+                console.log(initializing);
                 if (initializing) {
                     $timeout(function () {
                         initializing = false;
                     });
                 } else {
-                    // generate filters
-                    var guideFilters = [];
-                    for (var i = 0; i < $scope.filters.heroes.length; i++) {
-                        guideFilters.push($scope.filters.heroes[i].id);
+                    initializing = true;
+                    // article filters
+                    var articleFilters = [];
+                    for (var i = 0; i < $scope.heroes.length; i++) {
+                        if (!isFiltered($scope.heroes[i])) {
+                            articleFilters.push($scope.heroes[i].name);
+                        }
                     }
-                    if ($scope.filters.map) {
-                        guideFilters.push($scope.filters.map.id);
-                    }
+                    
+                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, function(err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, function(err, guides) {
+                                    communityTalentDict = getDict(guides);
 
-                    updateTopGuide();
-                    updateTempostormGuides(1, 4);
-                    updateCommunityGuides(1, 10);
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ]);
+                    } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getHeroGuides($scope.filters, true, 10, function (err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                                HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, function (err, guides) {
+                                    communityTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ])
+                    } else if ($scope.filters.search != '') {
+                        console.log("search");
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getGuides($scope.filters, true, 10, function(err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                                HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
+                                    communityTalentDict = getDict(guides);
+
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ]);
+                    } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getMapGuides($scope.filters, true, 10, function(err, guides) {
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                                HOTSGuideQueryService.getMapGuides($scope.filters, false, 10, function(err, guides) {
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ]);
+                    } else {
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getGuides($scope.filters, true, 10, function(err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                               HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
+                                    communityTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ]);
+                    }
                 }
             }, true);
+            
+//            var initializing = true;
+//            $scope.$watch(function(){ return $scope.filters; }, function (value) {
+//                console.log('filters: ', $scope.filters);
+//                if (initializing) {
+//                    $timeout(function () {
+//                        initializing = false;
+//                    });
+//                } else {
+//                    // generate filters
+//                    var guideFilters = [];
+//                    for (var i = 0; i < $scope.filters.heroes.length; i++) {
+//                        guideFilters.push($scope.filters.heroes[i].id);
+//                    }
+//                    if ($scope.filters.map) {
+//                        guideFilters.push($scope.filters.map.id);
+//                    }
+//
+//                    updateTopGuide();
+//                    updateTempostormGuides(1, 4);
+//                    updateCommunityGuides(1, 10);
+//                }
+//            }, true);
 
             // top guide
             $scope.getTopGuideHeroBg = function (guide) {
@@ -11419,6 +11473,16 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('twitchCtrl', ['$scope', 'dataTwitch',
         function($scope, dataTwitch) {
             $scope.streams = dataTwitch.stuff;
+        }
+    ])
+    .controller('AdminOverwatchHeroListCtrl', ['$scope', 'heroes',
+        function ($scope, heroes) {
+            $scope.heroes = heroes;
+        }
+    ])
+    .controller('AdminOverwatchHeroAddCtrl', ['$scope', 'Util', 'OVERWATCH', 
+        function ($scope, Util, OVERWATCH) {
+            $scope.roles = Util.toSelect(OVERWATCH.roles);
         }
     ])
 ;

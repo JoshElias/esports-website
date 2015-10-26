@@ -22,6 +22,10 @@
     "heroId": {
         "type": "string",
         "required": true
+    },
+    "orderNum": {
+        "type": "number",
+        "required": true
     }
   },
   "validations": [],

@@ -11,7 +11,7 @@
       "type": "string",
       "required": true
     },
-    "heroRoll": {
+    "heroRole": {
       "type": "string",
       "required": true
     },
@@ -39,9 +39,17 @@
       "type": "string",
       "required": true
     },
-    "photoNames": {
-      "type": "object",
+    "className": {
+      "type": "string",
       "required": true
+    },
+    "orderNum": {
+        "type": "number",
+        "required": true
+    },
+    "isActive": {
+        "type": "boolean",
+        "required": true
     }
   },
   "validations": [],
