@@ -1,0 +1,57 @@
+{
+  "name": "overwatchHero",
+  "plural": "overwatchHeroes",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "heroName": {
+      "type": "string",
+      "required": true
+    },
+    "heroRoll": {
+      "type": "string",
+      "required": true
+    },
+    "realName": {
+      "type": "string",
+      "required": true
+    },
+    "occupation": {
+      "type": "string",
+      "required": true
+    },
+    "location": {
+      "type": "string",
+      "required": true
+    },
+    "organization": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "youtubeId": {
+      "type": "string",
+      "required": true
+    },
+    "photoNames": {
+      "type": "object",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "overwatchAbilities": {
+      "type": "hasMany",
+      "model": "overwatchAbility",
+      "foreignKey": "heroId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

@@ -226,6 +226,23 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.overwatch.heroes', {
+                abstract: true,
+                url: '/heroes',
+                views: {
+                    overwatch: {
+                        templateUrl: tpl + 'views/frontend/overwatch.heroes.html'
+                    }
+                }
+            })
+            .state('app.overwatch.heroes.hero', {
+                url: '/heroes/:slug',
+                views: {
+                    'overwatch-heroes': {
+                        templateUrl: tpl + 'views/frontend/overwatch.heroes.hero.html'
+                    }
+                }
+            })
             .state('app.articles', {
                 abstract: true,
                 url: 'articles',
