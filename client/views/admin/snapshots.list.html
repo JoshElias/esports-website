@@ -7,12 +7,20 @@
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
         <div class="pull-right" ng-if="snapshots">
-            <span class="m-r-sm">Showing: <strong>{{pagination.from()}}</strong> to <strong>{{pagination.to()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ snapshotPagination.total === 0 ? snapshotPagination.total : ((snapshotPagination.page - 1) * snapshotPagination.perpage) + 1 }}</strong> 
+                to <strong>{{  snapshotPagination.page * snapshotPagination.perpage > snapshotPagination.total ? snapshotPagination.total : snapshotPagination.page * snapshotPagination.perpage }}</strong> 
+                of <strong>{{ snapshotPagination.total }}</strong>
+            </span>
+<!--
             <span class="btn-group">
                 <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)"><i class="fa fa-arrow-circle-left"></i></button>
                 <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
                 <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
             </span>
+-->
+            <div pagination="snapshotPagination" theme="default" class="default"></div>
         </div>
         <div class="pull-left">
             <form>
@@ -39,18 +47,26 @@
         <div class="list-group-item" ng-if="!snapshots.length && !search.length">
             There are no snapshots yet.
         </div>
-        <div class="list-group-item b-t-none" ng-if="search.length && pagination.results() == 0">
+        <div class="list-group-item b-t-none" ng-if="search.length && snapshotPagination.total === 0">
             That search returned no results.
         </div>
     </div>
     <div class="panel-footer clearfix">
         <div class="pull-right" ng-if="snapshots">
-            <span class="m-r-sm">Showing: <strong>{{pagination.from()}}</strong> to <strong>{{pagination.to()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ snapshotPagination.total === 0 ? snapshotPagination.total : ((snapshotPagination.page - 1) * snapshotPagination.perpage) + 1 }}</strong> 
+                to <strong>{{  snapshotPagination.page * snapshotPagination.perpage > snapshotPagination.total ? snapshotPagination.total : snapshotPagination.page * snapshotPagination.perpage }}</strong> 
+                of <strong>{{ snapshotPagination.total }}</strong>
+            </span>
+<!--
             <span class="btn-group">
                 <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)"><i class="fa fa-arrow-circle-left"></i></button>
                 <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
                 <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
             </span>
+-->
+            <div pagination="snapshotPagination" theme="default" class="default"></div>
         </div>
         <div class="pull-left">
             <form>

@@ -1,36 +1,93 @@
+// 1... tempo storm color imports
 
 @import 'ts-colors.scss';
 
-$size: 77px;
+// 2... local variables
+
+$size: 71px;
 $pos-x: 2px;
 $pos-y: 4px;
+
+// 3... local mixins library
 
 @mixin ow-hero-list ($hero, $size, $pos-x, $pos-y) { 
      
   .ow-hero-filters li a.#{$hero} {
-            background: url("../img/overwatch/hero-thumbnails/#{$hero}.png") no-repeat;
-            width: 75px;
-            height: 75px;
+            background: url("../../dist/img/overwatch/hero-thumbnails/#{$hero}.png") no-repeat;
+            width: 65px;
+            height: 65px;
             display: inline-block;
             overflow: hidden;
             border-radius: 50%;
-            border: 3px solid #FFF;
+            border: 2px solid #FFF;
             text-indent: -99999px;
             outline: none;
             opacity: 1;  
             float: left;
-            margin-left: 10.9px;
-            margin-top: 10.9px;
-      background-position: #{$pos-x} #{$pos-y};
+            margin-left: 8px;
+            margin-right: 8px;
+            background-position: #{$pos-x} #{$pos-y};
             background-size: #{$size} auto;                
-            }    
+            z-index: 100;    
+        }    
     }
+
+
+//styles start
+
+
+// 4... style overides
+
+
+.no-side-pad {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+    
+.no-pad-left {
+    padding-left: 0;
+}
+
+.ts-div {
+    background-color:rgba(19,18,19,.7); 
+    box-shadow: 3px 4px 5px rgba(0,0,0,.75); 
+    border: 1px solid rgba(255,255,255,0.2); outline: 1px solid #000;
+}
+
+.m-b-18 {
+    margin-bottom: 18px;
+}
+
+//overwatch specific styles
+
+
+// 5... OW typography
+
+.ow-content h1.title {
+    font-family: 'Open Sans Bold';
+    font-size: 26px;
+    color: #DDD;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+
+.ow-content h3.sub-title {
+    font-size: 14px;
+    color: #d3eefa;
+}
+
+
+
+// 6... background & header
 
 .ow-bg {
     margin: 0;
     padding: 0 !important;
     background: $ts-black url('../../dist/img/overwatch/hero-top-bg.jpg') no-repeat center center;
     background-size: cover;
+    background-attachment: fixed;
 
 }
 
@@ -43,7 +100,6 @@ $pos-y: 4px;
             background-position: left; 
         
         }
-    
 }
 
 .ow-home-logo {
@@ -62,35 +118,15 @@ $pos-y: 4px;
 
 }
 
-.ow-content h1.title {
-    font-family: 'Open Sans Bold';
-    font-size: 26px;
-    color: #DDD;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
 
 
-.ow-content h3.sub-title {
-    font-size: 14px;
-    color: #d3eefa;
-}
+// 7... Hero filter lists
 
-
-    
-.no-pad-left {
-    padding-left: 0;
-}
-
-.ts-div {
-    background-color:rgba(19,18,19,.7); 
-    box-shadow: 3px 4px 5px rgba(0,0,0,.75); 
-    border: 1px solid rgba(255,255,255,0.2); outline: 1px solid #000;
-}
 
 .ow-hero-list {
     margin: 0;
     padding: 0;
+    z-index: 100;
     
 }
 
@@ -100,76 +136,88 @@ $pos-y: 4px;
 
 
 
-.ow-hero-filters { 
+.ow-herobar-home {
     position: relative; 
-    height: 730px; 
-    padding: 0; 
-    margin-top: 18px;
+    padding: 22px 0 0 0; 
+   // margin-top: 18px;
+    height: 648px;
+  
+    
+        @media (max-width: 1200px) {
+        
+            height: auto; 
+        
+        }
+}
 
+.ow-hero-filters { 
+    
+    ul {
+        text-align: center; 
+    }
+        
         li { 
             list-style: none; 
             position: relative;
-            
-
-       a {
-            width: 75px;
-            height: 75px;
             display: inline-block;
-            overflow: hidden;
-            //background-repeat: no-repeat;
-            border-radius: 50%;
-            border: 3px solid #FFF;
-            text-indent: -99999px;
-            // background-color: rgba(39,102,173,.2);
-            outline: none;
-            opacity: 1;  
-            float: left;
-            margin-left: 10.9px;
-            margin-top: 10.9px;
-       
-            }
-    
             
-        a.soldier-76 {
-            background: url("../img/overwatch/hero-thumbnails/soldier-76.png") no-repeat;
-             width: 75px;
-            height: 75px;
-            display: inline-block;
-            overflow: hidden;
-            //background-repeat: no-repeat;
-            border-radius: 50%;
-            border: 3px solid #FFF;
-            text-indent: -99999px;
-            // background-color: rgba(39,102,173,.2);
-            outline: none;
-            opacity: 1;  
-            float: left;
-            margin-left: 10.9px;
-            margin-top: 10.9px;
-            background-position: 2px 9px;
-            background-size: 77px 60px;
-                
+            a {
+            margin-bottom: 22px;
             }
-     
- 
-            
        }
+        
     }
 
+@include ow-hero-list (bastion, $size, 5px, $pos-y);
+@include ow-hero-list (hanzo, $size, $pos-x, $pos-y);
+@include ow-hero-list (junkrat, $size, -10px, 1px);
+@include ow-hero-list (lucio, $size, $pos-x, 1px);
+@include ow-hero-list (mccree, 72px, 2px, 0px);
+@include ow-hero-list (mercy, $size, $pos-x, 1px);
+@include ow-hero-list (pharah, $size, $pos-x, $pos-y);
+@include ow-hero-list (reaper, $size, $pos-x, $pos-y);
+@include ow-hero-list (reinhardt, $size, $pos-x, $pos-y);
+@include ow-hero-list (roadhog, $size, $pos-x, $pos-y);
+@include ow-hero-list (soldier-76, $size, $pos-x, $pos-y);
 @include ow-hero-list (symmetra, $size, $pos-x, $pos-y);
+@include ow-hero-list (torbjorn, $size, -7px, 1px);
+@include ow-hero-list (tracer, $size, $pos-x, 1px);
+@include ow-hero-list (widowmaker, $size, $pos-x, $pos-y);
+@include ow-hero-list (winston, 72px, $pos-x, -1px);
+@include ow-hero-list (zarya, $size, $pos-x, 1px);
+@include ow-hero-list (zenyatta, $size, $pos-x, $pos-y);
 
 
     .ow-hero-filters li a.active {
-            background-color: $ow-orange;
+            background-color: $ow-yellow;
             } 
             
     .ow-hero-filters li a:hover {
-             background-color: $ow-orange;
+             background-color: $ow-yellow;
             }
 
 .ow-hero-selected {
-    background: $ts-blue;
-    height:  300px;
     position: absolute;
+    width: 100%;
+    height: 550px;
+    padding: 0;
     bottom: 0;
+    background: url('../../dist/img/overwatch/hero-sidebar/bastion.png') center ;
+    opacity: 0.3;
+}
+
+
+// 8... Hero page hero list bar
+
+.ow-hero-bar {
+    width: 100%;
+    margin: 0 0 20px 0;
+    padding: 10px 0 0 0;
+    background-color:rgba(19,18,19,.7); 
+    box-shadow: 3px 4px 5px rgba(0,0,0,.75); 
+  
+}
+
+.ow-hero-bar li a {
+    margin-bottom: 10px !important;
 }

@@ -1,0 +1,41 @@
+{
+  "name": "overwatchAbility",
+  "plural": "overwatchAbilities",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "className": {
+      "type": "string",
+      "required": true
+    },
+    "heroId": {
+        "type": "string",
+        "required": true
+    },
+    "orderNum": {
+        "type": "number",
+        "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "hero": {
+      "type": "belongsTo",
+      "model": "overwatchHero",
+      "foreignKey": "heroId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
