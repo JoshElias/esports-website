@@ -9310,8 +9310,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'Guide', 'Hero', 'Map', 'featuredTalentDict', 'communityTalentDict',
-        function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, Guide, Hero, Map, featuredTalentDict, communityTalentDict) {
+    .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'HOTSGuideQueryService', 'featuredTalentDict', 'communityTalentDict',
+        function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, HOTSGuideQueryService, featuredTalentDict, communityTalentDict) {
 
             // data
             $scope.heroes = dataHeroes;
@@ -9365,206 +9365,6 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             };
             
-            function getMapGuides (isFeatured, limit, finalCallback) {
-                var selectedMap = $scope.filters.map;
-                
-                if (_.isEmpty(selectedMap)) {
-                    return;
-                }
-                
-                async.waterfall(
-                    [
-                        function (seriesCallback) {
-                            Map.findOne({
-                                filter: {
-                                    fields: ["id"],
-                                    where: {
-                                        id: $scope.filters.map.id
-                                    },
-                                    include: [
-                                        {
-                                            relation: "guides",
-                                            scope: {
-                                                fields: ["id"],
-                                                where: {
-                                                    guideType: "map",
-                                                    featured: isFeatured
-                                                }
-                                            }
-                                        }
-                                    ]
-                                }
-                            }, 
-                            function (maps) {
-                                return seriesCallback(undefined, maps);
-                            },
-                            function (err) {
-                                console.log(err);
-                                return finalCallback(err);
-                            })
-                        },
-                        function (map, seriesCallback) {
-                            var guides = map.guides;
-                            var guideIds = _.map(guides, function(guide) { return guide.id })
-                            
-                            Guide.find({
-                                filter: {
-                                    limit: limit,
-                                    sort: "createdDate ASC",
-                                    where: {
-                                        id: { inq: guideIds }
-                                    },
-                                    fields: [
-                                        "id",
-                                        "name",
-                                        "createdDate",
-                                        "votesCount",
-                                        "slug",
-                                        "guideType",
-                                        "authorId",
-                                        "public",
-                                        "premium"
-                                    ],
-                                    include: [
-                                        {
-                                            relation: "author"
-                                        },
-                                        {
-                                            relation: "maps"
-                                        }
-                                    ]
-                                }
-                            }, function (guides) {
-                                return finalCallback(undefined, guides);
-                            }, function (err) {
-                                return finalCallback(err)
-                            })
-                        }
-                    ]
-                )
-            }
-                         
-            
-            function getHeroMapGuides (isFeatured, limit, finalCallback) {
-                var selectedHeroes = $scope.filters.heroes;
-                
-                if (_.isEmpty(selectedHeroes)) {
-                    return;
-                }
-                
-                async.waterfall([
-                    //get selected heroes
-                    function (seriesCallback) {
-                        var selectedHeroIds = _.map(selectedHeroes, function (hero) { return hero.id; });
-                        
-                        Hero.find({
-                            filter: {
-                                fields: ["id"],
-                                where: { id : { inq: selectedHeroIds } },
-                                include: [
-                                    {
-                                        relation: "guides",
-                                        scope: {
-                                            where: { featured: isFeatured },
-                                            fields: ["id"],
-                                            include: [
-                                                {
-                                                    relation: "maps",
-                                                    scope: {
-                                                        fields: ["className"]
-                                                    }
-                                                },
-                                                {
-                                                    relation: "heroes",
-                                                    scope: {
-                                                        fields: ["id"]
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                ]
-                            }
-                        }, function (heroes) {
-                            seriesCallback(undefined, heroes);
-                        }, function (err) {
-                            console.log("error!", err);
-                            seriesCallback(err);
-                        })
-                    },
-                    //filter heroes
-                    function (heroes, seriesCallback) {
-                        //filter out guides by map className
-                        try {
-                            var selectedGuides = [];
-                            _.each(heroes, function (hero) { 
-                               var filteredGuides = _.filter(hero.guides, function (guide) {
-                                    return _.find(guide.maps, function (map) {
-                                        return (map.className === $scope.filters.map.className)
-                                    })
-                                });
-                                selectedGuides.push(filteredGuides);
-                            });
-                            
-                            selectedGuides = _.flatten(selectedGuides);
-                            var selectedGuideIds = _.map(selectedGuides, function(guide) { return guide.id })
-                            
-                            return seriesCallback(undefined, selectedGuideIds);
-                        } catch (err) {
-                            return seriesCallback(err);
-                        }
-                    },
-                    //populate heroes, talents
-                    function (selectedGuideIds, seriesCallback) {
-                        Guide.find({
-                            filter: {
-                                limit: limit,
-                                order: "createdDate ASC",
-                                where: {
-                                    id: { inq: selectedGuideIds }
-                                },
-                                fields: [
-                                    "name", 
-                                    "authorId", 
-                                    "slug", 
-                                    "votesCount", 
-                                    "guideType", 
-                                    "premium", 
-                                    "id", 
-                                    "talentTiers"
-                                ],
-                                include: [
-                                    {
-                                        relation: "author"
-                                    },
-                                    {
-                                        relation: "heroes",
-                                        scope: {
-                                            include: [ "talents" ]
-                                        }
-                                    },
-                                    {
-                                        relation: "maps"
-                                    }
-                                ]
-                            }
-                        }, function (guides) {
-                            return seriesCallback(undefined, guides);
-                        }, function (err) {
-                            console.log(err);
-                            seriesCallback(err);
-                        })
-                    }
-                ],
-                function (err, guides) {
-                    if (err) {
-                        console.log("Error:", err);
-                    };
-                    
-                    return finalCallback(err, guides);
-                })
-            }
-
             function getDict (guides) {
                 var dict = {};
                 for (var i = 0; i < guides.length; i++) {
@@ -9580,11 +9380,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             var initializing = true;
             $scope.$watch(function(){ return $scope.filters; }, function (value) {
+                console.log(initializing);
                 if (initializing) {
                     $timeout(function () {
                         initializing = false;
                     });
                 } else {
+                    initializing = true;
                     // article filters
                     var articleFilters = [];
                     for (var i = 0; i < $scope.heroes.length; i++) {
@@ -9593,49 +9395,119 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     }
                     
-                    if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
+                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
                         async.parallel([
                             function () {
-                                getHeroMapGuides(true, 10, function(err, guides) {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, function(err, guides) {
                                     featuredTalentDict = getDict(guides);
+                                    
                                     $timeout(function () {
                                         $scope.guidesFeatured = guides;
+                                        initializing = false;
                                     });
                                 });
                             },
                             function () {
-                                getHeroMapGuides(false, 10, function(err, guides) {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, function(err, guides) {
                                     communityTalentDict = getDict(guides);
 
                                     $timeout(function () {
                                         $scope.guidesCommunity = guides;
+                                        initializing = false;
                                     });
                                 });
                             }
                         ]);
                     } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
-                        
-                    } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
                         async.parallel([
                             function () {
-                                getMapGuides(true, 10, function(err, guides) {
+                                HOTSGuideQueryService.getHeroGuides($scope.filters, true, 10, function (err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
                                     $timeout(function () {
                                         $scope.guidesFeatured = guides;
+                                        initializing = false;
                                     });
                                 });
                             },
                             function () {
-                                getMapGuides(false, 10, function(err, guides) {
+                                HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, function (err, guides) {
+                                    communityTalentDict = getDict(guides);
+                                    
                                     $timeout(function () {
                                         $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ])
+                    } else if ($scope.filters.search != '') {
+                        console.log("search");
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getGuides($scope.filters, true, 10, function(err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                                HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
+                                    communityTalentDict = getDict(guides);
+
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ]);
+                    } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getMapGuides($scope.filters, true, 10, function(err, guides) {
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                                HOTSGuideQueryService.getMapGuides($scope.filters, false, 10, function(err, guides) {
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
                                     });
                                 });
                             }
                         ]);
                     } else {
-                        console.log("we do some universe and role stuff here");
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getGuides($scope.filters, true, 10, function(err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                               HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
+                                    communityTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ]);
                     }
-                    
                 }
             }, true);
 
@@ -9735,28 +9607,175 @@ angular.module('app.controllers', ['ngCookies'])
                 map: false
             };
 
+                        function getDict (guides) {
+//                console.log(guides);
+                var dict = {};
+                for (var i = 0; i < guides.length; i++) {
+                    for (var k = 0; k < guides[i].heroes.length; k++) {
+                        for (var l = 0; l < guides[i].heroes[k].talents.length; l++) {
+                            var temp = guides[i].heroes[k].talents[l].id;
+                            dict[temp] = guides[i].heroes[k].talents[l];
+                        }
+                    }
+                }
+                return dict;
+            }
+
             var initializing = true;
             $scope.$watch(function(){ return $scope.filters; }, function (value) {
-                console.log('filters: ', $scope.filters);
+                console.log(initializing);
                 if (initializing) {
                     $timeout(function () {
                         initializing = false;
                     });
                 } else {
-                    // generate filters
-                    var guideFilters = [];
-                    for (var i = 0; i < $scope.filters.heroes.length; i++) {
-                        guideFilters.push($scope.filters.heroes[i].id);
+                    initializing = true;
+                    // article filters
+                    var articleFilters = [];
+                    for (var i = 0; i < $scope.heroes.length; i++) {
+                        if (!isFiltered($scope.heroes[i])) {
+                            articleFilters.push($scope.heroes[i].name);
+                        }
                     }
-                    if ($scope.filters.map) {
-                        guideFilters.push($scope.filters.map.id);
-                    }
+                    
+                     if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map != undefined) {
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 10, function(err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                                HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, function(err, guides) {
+                                    communityTalentDict = getDict(guides);
 
-                    updateTopGuide();
-                    updateTempostormGuides(1, 4);
-                    updateCommunityGuides(1, 10);
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ]);
+                    } else if (!_.isEmpty($scope.filters.heroes) && $scope.filters.map == undefined) {
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getHeroGuides($scope.filters, true, 10, function (err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                                HOTSGuideQueryService.getHeroGuides($scope.filters, false, 10, function (err, guides) {
+                                    communityTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ])
+                    } else if ($scope.filters.search != '') {
+                        console.log("search");
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getGuides($scope.filters, true, 10, function(err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                                HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
+                                    communityTalentDict = getDict(guides);
+
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ]);
+                    } else if (_.isEmpty($scope.filters.hero) && $scope.filters.map != undefined) {
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getMapGuides($scope.filters, true, 10, function(err, guides) {
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                                HOTSGuideQueryService.getMapGuides($scope.filters, false, 10, function(err, guides) {
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ]);
+                    } else {
+                        async.parallel([
+                            function () {
+                                HOTSGuideQueryService.getGuides($scope.filters, true, 10, function(err, guides) {
+                                    featuredTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesFeatured = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            },
+                            function () {
+                               HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
+                                    communityTalentDict = getDict(guides);
+                                    
+                                    $timeout(function () {
+                                        $scope.guidesCommunity = guides;
+                                        initializing = false;
+                                    });
+                                });
+                            }
+                        ]);
+                    }
                 }
             }, true);
+            
+//            var initializing = true;
+//            $scope.$watch(function(){ return $scope.filters; }, function (value) {
+//                console.log('filters: ', $scope.filters);
+//                if (initializing) {
+//                    $timeout(function () {
+//                        initializing = false;
+//                    });
+//                } else {
+//                    // generate filters
+//                    var guideFilters = [];
+//                    for (var i = 0; i < $scope.filters.heroes.length; i++) {
+//                        guideFilters.push($scope.filters.heroes[i].id);
+//                    }
+//                    if ($scope.filters.map) {
+//                        guideFilters.push($scope.filters.map.id);
+//                    }
+//
+//                    updateTopGuide();
+//                    updateTempostormGuides(1, 4);
+//                    updateCommunityGuides(1, 10);
+//                }
+//            }, true);
 
             // top guide
             $scope.getTopGuideHeroBg = function (guide) {

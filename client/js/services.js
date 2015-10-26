@@ -2216,6 +2216,384 @@ angular.module('app.services', [])
         }
     };
 }])
+.factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', function (Hero, Map, Guide) {
+    return {
+        getGuides: function (filters, isFeatured, limit, finalCallback) {
+            var where = {};
+
+            if (filters.search == "" && (!_.isEmpty(filters.universes || !_.isEmpty(filters.roles)))) {
+                where.and = [];
+
+                if (!_.isEmpty(filters.universes)) {
+                    where.and.push({ universe: { inq: filters.universes } });
+                }
+
+                if (!_.isEmpty(filters.roles)) {
+                    where.and.push({ role: { inq: filters.roles } });
+                }
+            } else if (filters.search != "") {
+                where.or = [
+                    { name: { regexp: filters.search } },
+                    { description: { regexp: filters.search } }
+                ]
+            }
+
+            async.waterfall([
+                function(seriesCallback) {
+                    var selectedUniverses = filters.universes,
+                        selectedRoles = filters.roles
+
+                    Hero.find({
+                        filter: {
+                            fields: ["id"],
+                            where: where,
+                            include: [
+                                {
+                                    relation: "guides",
+                                    scope: {
+                                        fields: ["id"],
+                                        where: {
+                                            guideType: "hero",
+                                            featured: isFeatured
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }, function (heroes) {
+                        return seriesCallback(undefined, heroes);
+                    }, function (err) {
+                        return seriesCallback(err);
+                    })
+                }, function (heroes, seriesCallback) {
+                    var selectedGuideIds = [];
+
+                    _.each(heroes, function(hero) {
+                        selectedGuideIds.push(_.map(hero.guides, function (guide) { return guide.id }));
+                    })
+
+                    selectedGuideIds = _.flatten(selectedGuideIds);
+                    return seriesCallback(undefined, selectedGuideIds)
+                }, function (selectedGuideIds, seriesCallback) {
+                    Guide.find({
+                        filter: {
+                            limit: limit,
+                            sort: "createdDate ASC",
+                            where: {
+                                id: { inq: selectedGuideIds }
+                            },
+                            fields: [
+                                "name", 
+                                "authorId", 
+                                "slug", 
+                                "votesCount", 
+                                "guideType", 
+                                "premium", 
+                                "id", 
+                                "talentTiers"
+                            ],
+                            include: [
+                                {
+                                    relation: "author"
+                                },
+                                {
+                                    relation: "heroes",
+                                    scope: {
+                                        include: [ "talents" ]
+                                    }
+                                }
+                            ]
+                        }
+                    }).$promise.then(function (guides) {
+                        return finalCallback(undefined, guides);
+                    }).catch(function (err) {
+                        return finalCallback(err);
+                    });
+                }
+            ])
+        },
+        getHeroGuides: function (filters, isFeatured, limit, finalCallback) {
+            var selectedHeroes = filters.heroes;
+
+            if (_.isEmpty(selectedHeroes)) {
+                return;
+            }
+
+            async.waterfall([
+                function (seriesCallback) {
+                    var selectedHeroIds = _.map(selectedHeroes, function (hero) { return hero.id; })
+
+                    Hero.find({
+                        filter: {
+                            fields: ["id"],
+                            where: {
+                                id: { inq: selectedHeroIds }
+                            },
+                            include: [
+                                {
+                                    relation: "guides",
+                                    scope: {
+                                        fields: ["id"],
+                                        where: {
+                                            guideType: "hero",
+                                            featured: isFeatured
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }, function (heroes) {
+                        return seriesCallback(undefined, heroes);
+                    }, function (err) {
+                        return finalCallback(err);
+                    })
+                }, function (heroes, seriesCallback) {
+                    var selectedGuideIds = [];
+
+                    _.each(heroes, function (hero) {
+                        _.each(filters.heroes, function (selectedHero) {
+                            if (hero.id == selectedHero.id) {
+                                var filteredGuides = _.map(hero.guides, function (guide) { return guide.id; })
+                            }
+                            selectedGuideIds.push(filteredGuides);
+                        })
+
+                    })
+                    return seriesCallback(undefined, selectedGuideIds);
+                }, function (guideIds, seriesCallback) {
+                    guideIds = _.flatten(guideIds);
+
+                    Guide.find({
+                        filter: {
+                            limit: limit,
+                            sort: "createdDate ASC",
+                            where: {
+                                id: { inq: guideIds }
+                            },
+                            fields: [
+                                "name", 
+                                "authorId", 
+                                "slug", 
+                                "votesCount", 
+                                "guideType", 
+                                "premium", 
+                                "id", 
+                                "talentTiers"
+                            ],
+                            include: [
+                                {
+                                    relation: "author"
+                                },
+                                {
+                                    relation: "heroes",
+                                    scope: {
+                                        include: [ "talents" ]
+                                    }
+                                }
+                            ]
+                        }
+                    }).$promise.then(function (guides) {
+                        return finalCallback(undefined, guides);
+                    }).catch(function (err) {
+                        return finalCallback(err);
+                    })
+                }
+            ])
+        },
+        getMapGuides: function (filters, isFeatured, limit, finalCallback) {
+            var selectedMap = filters.map;
+
+            if (_.isEmpty(selectedMap)) {
+                return;
+            }
+
+            async.waterfall(
+                [
+                    function (seriesCallback) {
+                        Map.findOne({
+                            filter: {
+                                fields: ["id"],
+                                where: {
+                                    id: filters.map.id
+                                },
+                                include: [
+                                    {
+                                        relation: "guides",
+                                        scope: {
+                                            fields: ["id"],
+                                            where: {
+                                                guideType: "map",
+                                                featured: isFeatured
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }, function (maps) {
+                            return seriesCallback(undefined, maps);
+                        }, function (err) {
+                            return finalCallback(err);
+                        })
+                    },
+                    function (map, seriesCallback) {
+                        var guides = map.guides;
+                        var guideIds = _.map(guides, function(guide) { return guide.id })
+
+                        Guide.find({
+                            filter: {
+                                limit: limit,
+                                sort: "createdDate ASC",
+                                where: {
+                                    id: { inq: guideIds }
+                                },
+                                fields: [
+                                    "id",
+                                    "name",
+                                    "createdDate",
+                                    "votesCount",
+                                    "slug",
+                                    "guideType",
+                                    "authorId",
+                                    "public",
+                                    "premium"
+                                ],
+                                include: [
+                                    {
+                                        relation: "author"
+                                    },
+                                    {
+                                        relation: "maps"
+                                    }
+                                ]
+                            }
+                        }).$promise.then(function (guides) {
+                            return finalCallback(undefined, guides);
+                        }).catch(function (err) {
+                            return finalCallback(err)
+                        })
+                    }
+                ]
+            )
+        },
+        getHeroMapGuides: function (filters, isFeatured, limit, finalCallback) {
+            var selectedHeroes = filters.heroes;
+
+            if (_.isEmpty(selectedHeroes)) {
+                return;
+            }
+
+            async.waterfall([
+                //get selected heroes
+                function (seriesCallback) {
+                    var selectedHeroIds = _.map(selectedHeroes, function (hero) { return hero.id; });
+
+                    Hero.find({
+                        filter: {
+                            fields: ["id"],
+                            where: { id : { inq: selectedHeroIds } },
+                            include: [
+                                {
+                                    relation: "guides",
+                                    scope: {
+                                        where: { featured: isFeatured },
+                                        fields: ["id"],
+                                        include: [
+                                            {
+                                                relation: "maps",
+                                                scope: {
+                                                    fields: ["className"]
+                                                }
+                                            },
+                                            {
+                                                relation: "heroes",
+                                                scope: {
+                                                    fields: ["id"]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }, function (heroes) {
+                        return seriesCallback(undefined, heroes);
+                    }, function (err) {
+                        return seriesCallback(err);
+                    })
+                },
+                //filter heroes
+                function (heroes, seriesCallback) {
+                    //filter out guides by map className
+                    try {
+                        var selectedGuides = [];
+                        _.each(heroes, function (hero) { 
+                           var filteredGuides = _.filter(hero.guides, function (guide) {
+                                return _.find(guide.maps, function (map) {
+                                    return (map.className === filters.map.className)
+                                })
+                            });
+                            selectedGuides.push(filteredGuides);
+                        });
+
+                        selectedGuides = _.flatten(selectedGuides);
+                        var selectedGuideIds = _.map(selectedGuides, function(guide) { return guide.id })
+
+                        return seriesCallback(undefined, selectedGuideIds);
+                    } catch (err) {
+                        return seriesCallback(err);
+                    }
+                },
+                //populate heroes, talents
+                function (selectedGuideIds, seriesCallback) {
+                    Guide.find({
+                        filter: {
+                            limit: limit,
+                            order: "createdDate ASC",
+                            where: {
+                                id: { inq: selectedGuideIds }
+                            },
+                            fields: [
+                                "name", 
+                                "authorId", 
+                                "slug", 
+                                "votesCount", 
+                                "guideType", 
+                                "premium", 
+                                "id", 
+                                "talentTiers"
+                            ],
+                            include: [
+                                {
+                                    relation: "author"
+                                },
+                                {
+                                    relation: "heroes",
+                                    scope: {
+                                        include: [ "talents" ]
+                                    }
+                                },
+                                {
+                                    relation: "maps"
+                                }
+                            ]
+                        }
+                    }).$promise.then(function (guides) {
+                        return seriesCallback(undefined, guides);
+                    }).catch(function (err) {
+                        return seriesCallback(err);
+                    })
+                }
+            ],
+            function (err, guides) {
+                if (err) {
+                    console.log("Error:", err);
+                };
+
+                return finalCallback(err, guides);
+            })
+        }
+    }
+}])
 .factory('HeroService', ['$http', '$q', function ($http, $q) {
     return {
         getHeroesList: function () {
