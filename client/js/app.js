@@ -216,13 +216,31 @@ var app = angular.module('app', [
                     content: {
                         templateUrl: tpl + 'views/frontend/overwatch.html'
                     }
-                }
+                },
+                seo: { title: 'Overwatch', description: '', keywords: 'overwatch' }
             })
             .state('app.overwatch.home', {
                 url: '',
                 views: {
                     overwatch: {
                         templateUrl: tpl + 'views/frontend/overwatch.home.html'
+                    }
+                }
+            })
+            .state('app.overwatch.heroes', {
+                abstract: true,
+                url: '/heroes',
+                views: {
+                    overwatch: {
+                        templateUrl: tpl + 'views/frontend/overwatch.heroes.html'
+                    }
+                }
+            })
+            .state('app.overwatch.heroes.hero', {
+                url: '/:slug',
+                views: {
+                    'overwatch-heroes': {
+                        templateUrl: tpl + 'views/frontend/overwatch.heroes.hero.html'
                     }
                 }
             })

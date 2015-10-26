@@ -6,4 +6,5 @@ module.exports = {
         'client/dist/css/sass.css',
         'client/dist/css/style.css',
     ],
+    loopback: 'client/dist/js/services/lb-services.js'
 };

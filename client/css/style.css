@@ -456,8 +456,6 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
     height: 50px;
 }
 
-
-
 .home-articles { position:relative; background: rgba(36,104,171,.3); }
 
 .home-articles-wrapper { position: relative; margin: 0 10px; padding: 40px 0px; height: 400px; overflow: hidden; }
@@ -478,10 +476,12 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-article .home-article-content h1.ts { color: #67a0d6; }
 .home-article .home-article-content h1.hs { color: #d07828; }
 .home-article .home-article-content h1.hots { color: #8968ad; }
+.home-article .home-article-content h1.overwatch { color: #fdb813; }
 .home-article .article-icon { background-image: url(../img/article-type-icon.png); height:40px; width:40px; position: absolute; right: 5px; top: 53px; }
-.home-article .article-icon.ts { background-position: 0px; }
-.home-article .article-icon.hs { background-position: 80px; }
-.home-article .article-icon.hots { background-position: 40px; }
+.home-article .article-icon.ts { background-position: 0px 0px; }
+.home-article .article-icon.hs { background-position: -40px 0px; }
+.home-article .article-icon.hots { background-position: -80px 0px; }
+.home-article .article-icon.overwatch { background-position: -120px 0px; }
 .home-article .home-article-content p { margin-bottom: 0px; color: #bababa; }
 
 .home-articles-prev,
