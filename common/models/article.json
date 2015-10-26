@@ -39,7 +39,7 @@
       ]
     },
     "votesScore": {
-        "type": "number"
+      "type": "number"
     },
     "isFeatured": {
       "type": "boolean"
