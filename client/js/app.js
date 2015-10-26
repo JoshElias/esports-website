@@ -202,7 +202,7 @@ var app = angular.module('app', [
                                 }).$promise;
                             }],
                             articlesTotal: ['Article', function (Article) {
-                                return Article.count();
+                                return Article.count().$promise;
                             }]
                         }
                     }
@@ -3194,6 +3194,85 @@ var app = angular.module('app', [
                     }
                 },
                 seo: { title: 'Contact Us', description: 'Contact Page', keywords: '' }
+            })
+            .state('app.admin.overwatch', {
+                abstract: true,
+                url: '/overwatch',
+                views: {
+                    admin: {
+                        templateUrl: tpl + 'views/admin/overwatch.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.overwatch.heroes', {
+                abstract: true,
+                url: '/heroes',
+                views: {
+                    overwatch: {
+                        templateUrl: tpl + 'views/admin/overwatch.heroes.html'
+                    }
+                },
+                access: { auth: true, admin: true }
+            })
+            .state('app.admin.overwatch.heroes.list', {
+                url: '',
+                views: {
+                    heroes: {
+                        templateUrl: tpl + 'views/admin/overwatch.heroes.list.html',
+                        controller: 'AdminOverwatchHeroListCtrl',
+                        resolve: {
+                            heroes: ['OverwatchHero', function (OverwatchHero) {
+                                var page = 1,
+                                    perpage = 50;
+
+                                return OverwatchHero.find({
+                                    filter: {
+                                        fields: {
+                                            id: true,
+                                            heroName: true,
+                                            orderNum: true
+                                        },
+                                        order: "orderNum ASC",
+                                        skip: (page * perpage) - perpage,
+                                        limit: perpage
+                                    }
+                                }).$promise;
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.overwatch.heroes.add', {
+                url: '/add',
+                views: {
+                    heroes: {
+                        templateUrl: tpl + 'views/admin/overwatch.heroes.add.html',
+                        controller: 'AdminOverwatchHeroAddCtrl'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.overwatch.heroes.edit', {
+                url: '/edit/:heroID',
+                views: {
+                    heroes: {
+                        templateUrl: tpl + 'views/admin/overwatch.heroes.edit.html',
+                        controller: 'AdminOverwatchHeroEditCtrl',
+                        resolve: {
+                            data: ['$stateParams', 'AdminHeroService', function ($stateParams, AdminHeroService) {
+                                var heroID = $stateParams.heroID;
+                                return AdminHeroService.getHero(heroID);
+                            }]
+                        }
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
             });
     }]
 );

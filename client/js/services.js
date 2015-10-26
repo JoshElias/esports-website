@@ -1239,6 +1239,13 @@ angular.module('app.services', [])
 
     return hots;
 })
+.factory('OVERWATCH', function () {
+    var ow = {};
+
+    ow.roles = ["Defense", "Offense", "Support", "Tank"];
+    
+    return ow;
+})
 .factory('DeckBuilder', ['$sce', '$http', '$q', function ($sce, $http, $q) {
 
     var deckBuilder = {};

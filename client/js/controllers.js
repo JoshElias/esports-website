@@ -11421,4 +11421,14 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.streams = dataTwitch.stuff;
         }
     ])
+    .controller('AdminOverwatchHeroListCtrl', ['$scope', 'heroes',
+        function ($scope, heroes) {
+            $scope.heroes = heroes;
+        }
+    ])
+    .controller('AdminOverwatchHeroAddCtrl', ['$scope', 'Util', 'OVERWATCH', 
+        function ($scope, Util, OVERWATCH) {
+            $scope.roles = Util.toSelect(OVERWATCH.roles);
+        }
+    ])
 ;

@@ -63,6 +63,23 @@
             </ul>
         </li>
         <!-- / hots -->
+        <!-- overwatch -->
+        <li ng-class="{active:$state.includes('app.admin.overwatch')}" class="nav-drop">
+            <a href="#" class="nav-drop-btn">
+                <span class="pull-right text-muted">
+                    <i class="fa fa-fw fa-angle-right"></i>
+                    <i class="fa fa-fw fa-angle-down"></i>
+                </span>
+                <i class="fa fa-bolt m-r-sm"></i>
+                <span>Overwatch</span>
+            </a>
+            <ul class="nav nav-sub">
+                <li ng-class="{active:$state.includes('app.admin.overwatch.heroes')}">
+                    <a ui-sref="app.admin.overwatch.heroes.list">Heroes</a>
+                </li>
+            </ul>
+        </li>
+        <!-- / overwatch -->
         <li ng-class="{active:$state.includes('app.admin.forum')}" class="nav-drop">
             <a href="#" class="nav-drop-btn">
                 <span class="pull-right text-muted">
