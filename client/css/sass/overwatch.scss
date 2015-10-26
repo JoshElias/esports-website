@@ -1,14 +1,65 @@
 
 @import 'ts-colors.scss';
 
-.ow-home-title {
-    background: $ts-blue url('../../dist/img/overwatch/top-header-big.jpg') no-repeat bottom;
+$size: 77px;
+$pos-x: 2px;
+$pos-y: 4px;
+
+@mixin ow-hero-list ($hero, $size, $pos-x, $pos-y) { 
+     
+  .ow-hero-filters li a.#{$hero} {
+            background: url("../img/overwatch/hero-thumbnails/#{$hero}.png") no-repeat;
+            width: 75px;
+            height: 75px;
+            display: inline-block;
+            overflow: hidden;
+            border-radius: 50%;
+            border: 3px solid #FFF;
+            text-indent: -99999px;
+            outline: none;
+            opacity: 1;  
+            float: left;
+            margin-left: 10.9px;
+            margin-top: 10.9px;
+      background-position: #{$pos-x} #{$pos-y};
+            background-size: #{$size} auto;                
+            }    
+    }
+
+.ow-bg {
+    margin: 0;
+    padding: 0 !important;
+    background: $ts-black url('../../dist/img/overwatch/hero-top-bg.jpg') no-repeat center center;
     background-size: cover;
+
+}
+
+.ow-home-title {
+    background: $ts-blue url('../../dist/img/overwatch/top-banner.jpg') no-repeat center center;
+    background-size: cover;
+    
+        @media (max-width: 1050px) {
+        
+            background-position: left; 
+        
+        }
+    
 }
 
 .ow-home-logo {
-    margin: 63.5px;
-    margin-left: 12.05% 
+    margin: 33px;
+    margin-left: 12.05%; 
+    height: 80%;
+    width: 360px;
+    
+      @media (max-width: 1050px) {
+        
+            margin-left:auto;
+            margin-right: auto;
+        
+        }
+    
+
 }
 
 .ow-content h1.title {
@@ -63,13 +114,9 @@
        a {
             width: 75px;
             height: 75px;
-            background-position: -2px -156px;
             display: inline-block;
-            width: 75px;
-            height: 75px;
             overflow: hidden;
-            background-repeat: no-repeat;
-            background-image: url('../img/hots/heroes/hots-hero-select.png');
+            //background-repeat: no-repeat;
             border-radius: 50%;
             border: 3px solid #FFF;
             text-indent: -99999px;
@@ -82,20 +129,43 @@
        
             }
     
-     
-        a.active {
-            background-color: $ow-orange;
-            } 
             
-            a:hover {
-             background-color: $ow-orange;
+        a.soldier-76 {
+            background: url("../img/overwatch/hero-thumbnails/soldier-76.png") no-repeat;
+             width: 75px;
+            height: 75px;
+            display: inline-block;
+            overflow: hidden;
+            //background-repeat: no-repeat;
+            border-radius: 50%;
+            border: 3px solid #FFF;
+            text-indent: -99999px;
+            // background-color: rgba(39,102,173,.2);
+            outline: none;
+            opacity: 1;  
+            float: left;
+            margin-left: 10.9px;
+            margin-top: 10.9px;
+            background-position: 2px 9px;
+            background-size: 77px 60px;
+                
             }
+     
+ 
             
        }
     }
 
-    
+@include ow-hero-list (symmetra, $size, $pos-x, $pos-y);
 
+
+    .ow-hero-filters li a.active {
+            background-color: $ow-orange;
+            } 
+            
+    .ow-hero-filters li a:hover {
+             background-color: $ow-orange;
+            }
 
 .ow-hero-selected {
     background: $ts-blue;
