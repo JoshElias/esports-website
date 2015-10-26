@@ -16,16 +16,19 @@
     "createdDate": {
       "type": "date"
     },
-    "exists": {
+    "isActive": {
       "type": "boolean"
     },
-    "active": {
-      "type": "boolean"
-    },
-    "article": {
+    "articleId": {
       "type": "string"
     },
-    "deck": {
+    "deckId": {
+      "type": "string"
+    },
+    "snapshotId": {
+      "type": "string"
+    },
+    "forumPostId": {
       "type": "string"
     }
   },
@@ -39,27 +42,27 @@
     "article": {
       "type": "belongsTo",
       "model": "article",
-      "foreignKey": "article"
+      "foreignKey": "articleId"
     },
     "deck": {
       "type": "belongsTo",
       "model": "deck",
-      "foreignKey": "deck"
+      "foreignKey": "deckId"
     },
     "guide": {
       "type": "belongsTo",
       "model": "guide",
-      "foreignKey": "guide"
+      "foreignKey": "guideId"
     },
     "snapshot": {
       "type": "belongsTo",
       "model": "snapshot",
-      "foreignKey": "snapshot"
+      "foreignKey": "snapshotId"
     },
     "forumPost": {
       "type": "belongsTo",
       "model": "forumPost",
-      "foreignKey": "forumPost"
+      "foreignKey": "forumPostId"
     }
   },
   "acls": [],

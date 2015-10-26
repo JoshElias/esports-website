@@ -3,8 +3,8 @@ var async = require("async");
 
 var talentsAdded = 0;
 module.exports = function(server) {
-/*
-	  var Guide = server.models.guide;
+    /*
+    var Guide = server.models.guide;
     var Hero = server.models.hero;
 
     async.waterfall([
@@ -38,5 +38,5 @@ module.exports = function(server) {
     	if(err) console.log("ERR creating user identities:", err);
     	else console.log("Donerino");
     });
-		*/
+    */
 };

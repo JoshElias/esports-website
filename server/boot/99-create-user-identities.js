@@ -3,7 +3,7 @@ var async = require("async");
 
 
 module.exports = function(server) {
-	/*
+/*
 	var UserIdentity = server.models.UserIdentity;
     var User = server.models.user;
 
@@ -19,7 +19,7 @@ module.exports = function(server) {
     		console.log("creating user identies");
     		async.eachSeries(users, function(user, callback) {
 				UserIdentity.create({
-		          provider: "twitch-login",
+		          provider: "twitch",
 		          externalId: user.twitchID,
 		          authScheme: "oAuth 2.0",
 		          profile: {},
@@ -36,5 +36,5 @@ module.exports = function(server) {
     	if(err) console.log("ERR creating user identities:", err);
     	else console.log("Donerino");
     });
-*/
+    */
 };

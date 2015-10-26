@@ -184,5 +184,5 @@ module.exports = function(server) {
 				finalCallback(err, snapshot);
 			});
 		}
-		*/
+*/
 };

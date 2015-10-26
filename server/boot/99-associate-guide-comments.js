@@ -2,8 +2,8 @@
 var async = require("async");
 
 module.exports = function(server) {
-/*
-	  var Guide = server.models.guide;
+    /*
+    var Guide = server.models.guide;
     var Comment = server.models.comment;
 
     async.waterfall([
@@ -36,5 +36,5 @@ module.exports = function(server) {
     	if(err) console.log("ERR creating user identities:", err);
     	else console.log("Donerino");
     });
-		*/
+    */
 };

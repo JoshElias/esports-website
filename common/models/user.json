@@ -7,7 +7,7 @@
     "validateUpsert": true
   },
   "properties": {
-    "active": {
+    "isActive": {
       "type": "boolean"
     },
     "firstName": {
@@ -46,11 +46,14 @@
     "newEmailCode": {
       "type": "string"
     },
-    "verified": {
+    "isVerified": {
       "type": "boolean"
     },
     "__v": {
       "type": "number"
+    },
+    "twitchID":{
+      "type": "string"
     }
   },
   "validations": [],

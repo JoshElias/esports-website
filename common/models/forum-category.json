@@ -10,11 +10,14 @@
     "title": {
       "type": "string"
     },
-    "active": {
+    "isActive": {
       "type": "boolean"
     },
     "__v": {
       "type": "number"
+    },
+    "oldThreads": {
+      "type": ["string"]
     }
   },
   "validations": [],

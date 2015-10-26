@@ -80,6 +80,18 @@
       "type": [
         "string"
       ]
+    },
+    "oldComments": {
+      "type": ["string"]
+    },
+    "oldMulligans": {
+      "type": ["object"]
+    },
+    "oldCards": {
+      "type": ["object"]
+    },
+    "youtubeId" : {
+      "type": "string"
     }
   },
   "validations": [],

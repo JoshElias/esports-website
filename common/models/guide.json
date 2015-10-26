@@ -21,7 +21,7 @@
     "description": {
       "type": "string"
     },
-    "video": {
+    "youtubeId": {
       "type": "string"
     },
     "createdDate": {
@@ -30,7 +30,7 @@
     "premium": {
       "type": "object"
     },
-    "featured": {
+    "isFeatured": {
       "type": "boolean"
     },
     "votes": {
@@ -41,10 +41,10 @@
     "votesCount": {
       "type": "number"
     },
-    "views": {
+    "viewCount": {
       "type": "number"
     },
-    "public": {
+    "isPublic": {
       "type": "boolean"
     },
     "against": {

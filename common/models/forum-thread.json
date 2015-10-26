@@ -10,7 +10,7 @@
     "__v": {
       "type": "number"
     },
-    "active": {
+    "isActive": {
       "type": "boolean"
     },
     "description": {
@@ -21,6 +21,9 @@
     },
     "forumCategoryId": {
       "type": "string"
+    },
+    "slug": {
+      "type": "object"
     }
   },
   "validations": [],

@@ -14,6 +14,9 @@
         "object"
       ]
     },
+    "oldReplies": {
+      "type": ["string"]
+    },
     "createdDate": {
       "type": "date",
       "required": true

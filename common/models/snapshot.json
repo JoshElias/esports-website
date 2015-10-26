@@ -21,7 +21,7 @@
     "tiers": {
       "type": "object"
     },
-    "matches": {
+    "oldMatches": {
       "type": [
         "object"
       ]
@@ -35,7 +35,10 @@
     "votesCount": {
       "type": "number"
     },
-    "active": {
+    "votes": {
+      "type": ["string"]
+    },
+    "isActive": {
       "type": "boolean"
     },
     "oldAuthors": {

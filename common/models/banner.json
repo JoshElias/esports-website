@@ -24,7 +24,7 @@
     "orderNum": {
       "type": "number"
     },
-    "active": {
+    "isActive": {
       "type": "boolean"
     }
   },

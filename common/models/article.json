@@ -55,6 +55,9 @@
         "string"
       ]
     },
+    "oldRelatedArticles":{
+      "type": ["string"]
+    },
     "isActive": {
       "type": "boolean"
     },
@@ -75,14 +78,14 @@
       "foreignKey": "authorId"
     },
     "relatedArticles": {
-      "type": "hasMany",
+      "type": "hasAndBelongsToMany",
       "model": "article",
-      "foreignKey": "relatedArticleIds"
+      "foreignKey": ""
     },
     "deck": {
-      "type": "hasOne",
+      "type": "belongsTo",
       "model": "deck",
-      "foreignKey": "articleIds"
+      "foreignKey": "deckId"
     }
   },
   "acls": [],

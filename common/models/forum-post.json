@@ -10,7 +10,7 @@
     "__v": {
       "type": "number"
     },
-    "active": {
+    "isActive": {
       "type": "boolean"
     },
     "content": {
@@ -22,13 +22,16 @@
     "title": {
       "type": "string"
     },
-    "views": {
+    "viewCount": {
       "type": "number"
     },
     "oldComments": {
       "type": [
         "string"
       ]
+    },
+    "slug": {
+      "type": "object"
     },
     "votesCount": {
       "type": "number"

@@ -18,7 +18,7 @@ module.exports = function(server) {
     	// Update forumCategoryId  in forumThread
     	function(forumCategories, seriesCallback) {
     		async.eachSeries(forumCategories, function(forumCategory, innerCallback) {
-					async.eachSeries(forumCategory.threads, function(thread, superInnerCallback) {
+					async.eachSeries(forumCategory.oldThreads, function(thread, superInnerCallback) {
 						ForumThread.findById(thread.toString(), function(err, forumThread) {
 							if(err) superInnerCallback(err);
 							else if(!forumThread)  {
@@ -40,7 +40,7 @@ module.exports = function(server) {
 			// Update forumThreadId  in forumPost
 			function(forumThreads, seriesCallback) {
 				async.eachSeries(forumThreads, function(forumThread, innerCallback) {
-					async.eachSeries(forumThread.posts, function(post, superInnerCallback) {
+					async.eachSeries(forumThread.oldPosts, function(post, superInnerCallback) {
 						ForumPost.findById(post.toString(), function(err, forumPost) {
 							if(err) superInnerCallback(err);
 							else if(!forumPost) {
@@ -93,5 +93,5 @@ module.exports = function(server) {
     if(err) console.log("ERR creating user identities:", err);
     else console.log("Donerino");
   });
-	*/
+    */
 };
