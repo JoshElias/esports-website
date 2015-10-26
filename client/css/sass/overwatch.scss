@@ -1,30 +1,40 @@
+// font import
 
 @import 'ts-colors.scss';
 
-$size: 77px;
+//local variables
+
+$size: 71px;
 $pos-x: 2px;
 $pos-y: 4px;
+
+//local mixins library
 
 @mixin ow-hero-list ($hero, $size, $pos-x, $pos-y) { 
      
   .ow-hero-filters li a.#{$hero} {
-            background: url("../img/overwatch/hero-thumbnails/#{$hero}.png") no-repeat;
-            width: 75px;
-            height: 75px;
+            background: url("../../dist/img/overwatch/hero-thumbnails/#{$hero}.png") no-repeat;
+            width: 65px;
+            height: 65px;
             display: inline-block;
             overflow: hidden;
             border-radius: 50%;
-            border: 3px solid #FFF;
+            border: 2px solid #FFF;
             text-indent: -99999px;
             outline: none;
             opacity: 1;  
             float: left;
-            margin-left: 10.9px;
-            margin-top: 10.9px;
-      background-position: #{$pos-x} #{$pos-y};
+            margin-left: 8px;
+            margin-right: 8px;
+            margin-bottom: 22px;
+            background-position: #{$pos-x} #{$pos-y};
             background-size: #{$size} auto;                
-            }    
+            z-index: 100;    
+        }    
     }
+
+
+//styles start
 
 .ow-bg {
     margin: 0;
@@ -91,6 +101,7 @@ $pos-y: 4px;
 .ow-hero-list {
     margin: 0;
     padding: 0;
+    z-index: 100;
     
 }
 
@@ -102,67 +113,34 @@ $pos-y: 4px;
 
 .ow-hero-filters { 
     position: relative; 
-    height: 730px; 
-    padding: 0; 
+    padding: 22px 0 0 0; 
     margin-top: 18px;
-
+    height: 648px;
+  
+    
+        @media (max-width: 1200px) {
+        
+            height: auto; 
+        
+        }
+    
+    ul {
+        text-align: center; 
+    }
+        
         li { 
             list-style: none; 
             position: relative;
-            
-   
-       a {
-            width: 75px;
-            height: 75px;
             display: inline-block;
-            overflow: hidden;
-            //background-repeat: no-repeat;
-            border-radius: 50%;
-            border: 3px solid #FFF;
-            text-indent: -99999px;
-            // background-color: rgba(39,102,173,.2);
-            outline: none;
-            opacity: 1;  
-            float: left;
-            margin-left: 10.9px;
-            margin-top: 10.9px;
-       
-            }
-    
-             /*
-            
-        a.soldier-76 {
-            background: url("../img/overwatch/hero-thumbnails/soldier-76.png") no-repeat;
-             width: 75px;
-            height: 75px;
-            display: inline-block;
-            overflow: hidden;
-            //background-repeat: no-repeat;
-            border-radius: 50%;
-            border: 3px solid #FFF;
-            text-indent: -99999px;
-            // background-color: rgba(39,102,173,.2);
-            outline: none;
-            opacity: 1;  
-            float: left;
-            margin-left: 10.9px;
-            margin-top: 10.9px;
-            background-position: 2px 9px;
-            background-size: 77px 60px;
-                
-            }
-     
-*/
-            
-            
        }
+        
     }
 
 @include ow-hero-list (bastion, $size, 5px, $pos-y);
 @include ow-hero-list (hanzo, $size, $pos-x, $pos-y);
 @include ow-hero-list (junkrat, $size, -10px, 1px);
 @include ow-hero-list (lucio, $size, $pos-x, 1px);
-@include ow-hero-list (mccree, 81px, 2px, 0px);
+@include ow-hero-list (mccree, 72px, 2px, 0px);
 @include ow-hero-list (mercy, $size, $pos-x, 1px);
 @include ow-hero-list (pharah, $size, $pos-x, $pos-y);
 @include ow-hero-list (reaper, $size, $pos-x, $pos-y);
@@ -173,7 +151,7 @@ $pos-y: 4px;
 @include ow-hero-list (torbjorn, $size, -7px, 1px);
 @include ow-hero-list (tracer, $size, $pos-x, 1px);
 @include ow-hero-list (widowmaker, $size, $pos-x, $pos-y);
-@include ow-hero-list (winston, 81px, $pos-x, -1px);
+@include ow-hero-list (winston, 72px, $pos-x, -1px);
 @include ow-hero-list (zarya, $size, $pos-x, 1px);
 @include ow-hero-list (zenyatta, $size, $pos-x, $pos-y);
 
@@ -187,8 +165,12 @@ $pos-y: 4px;
             }
 
 .ow-hero-selected {
-    background: $ts-blue;
-    height:  300px;
     position: absolute;
+    width: 100%;
+    height: 550px;
+    padding: 0;
     bottom: 0;
+    background: url('../../dist/img/overwatch/hero-sidebar/bastion.png') center ;
+    opacity: 0.3;
 }
+
