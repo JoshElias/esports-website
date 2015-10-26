@@ -1,14 +1,14 @@
-// font import
+// 1... tempo storm color imports
 
 @import 'ts-colors.scss';
 
-//local variables
+// 2... local variables
 
 $size: 71px;
 $pos-x: 2px;
 $pos-y: 4px;
 
-//local mixins library
+// 3... local mixins library
 
 @mixin ow-hero-list ($hero, $size, $pos-x, $pos-y) { 
      
@@ -26,7 +26,6 @@ $pos-y: 4px;
             float: left;
             margin-left: 8px;
             margin-right: 8px;
-            margin-bottom: 22px;
             background-position: #{$pos-x} #{$pos-y};
             background-size: #{$size} auto;                
             z-index: 100;    
@@ -36,11 +35,59 @@ $pos-y: 4px;
 
 //styles start
 
+
+// 4... style overides
+
+
+.no-side-pad {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+    
+.no-pad-left {
+    padding-left: 0;
+}
+
+.ts-div {
+    background-color:rgba(19,18,19,.7); 
+    box-shadow: 3px 4px 5px rgba(0,0,0,.75); 
+    border: 1px solid rgba(255,255,255,0.2); outline: 1px solid #000;
+}
+
+.m-b-18 {
+    margin-bottom: 18px;
+}
+
+//overwatch specific styles
+
+
+// 5... OW typography
+
+.ow-content h1.title {
+    font-family: 'Open Sans Bold';
+    font-size: 26px;
+    color: #DDD;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+
+.ow-content h3.sub-title {
+    font-size: 14px;
+    color: #d3eefa;
+}
+
+
+
+// 6... background & header
+
 .ow-bg {
     margin: 0;
     padding: 0 !important;
     background: $ts-black url('../../dist/img/overwatch/hero-top-bg.jpg') no-repeat center center;
     background-size: cover;
+    background-attachment: fixed;
 
 }
 
@@ -53,7 +100,6 @@ $pos-y: 4px;
             background-position: left; 
         
         }
-    
 }
 
 .ow-home-logo {
@@ -72,31 +118,10 @@ $pos-y: 4px;
 
 }
 
-.ow-content h1.title {
-    font-family: 'Open Sans Bold';
-    font-size: 26px;
-    color: #DDD;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
 
 
-.ow-content h3.sub-title {
-    font-size: 14px;
-    color: #d3eefa;
-}
+// 7... Hero filter lists
 
-
-    
-.no-pad-left {
-    padding-left: 0;
-}
-
-.ts-div {
-    background-color:rgba(19,18,19,.7); 
-    box-shadow: 3px 4px 5px rgba(0,0,0,.75); 
-    border: 1px solid rgba(255,255,255,0.2); outline: 1px solid #000;
-}
 
 .ow-hero-list {
     margin: 0;
@@ -111,10 +136,10 @@ $pos-y: 4px;
 
 
 
-.ow-hero-filters { 
+.ow-herobar-home {
     position: relative; 
     padding: 22px 0 0 0; 
-    margin-top: 18px;
+   // margin-top: 18px;
     height: 648px;
   
     
@@ -123,6 +148,9 @@ $pos-y: 4px;
             height: auto; 
         
         }
+}
+
+.ow-hero-filters { 
     
     ul {
         text-align: center; 
@@ -132,6 +160,10 @@ $pos-y: 4px;
             list-style: none; 
             position: relative;
             display: inline-block;
+            
+            a {
+            margin-bottom: 22px;
+            }
        }
         
     }
@@ -174,3 +206,18 @@ $pos-y: 4px;
     opacity: 0.3;
 }
 
+
+// 8... Hero page hero list bar
+
+.ow-hero-bar {
+    width: 100%;
+    margin: 0 0 20px 0;
+    padding: 10px 0 0 0;
+    background-color:rgba(19,18,19,.7); 
+    box-shadow: 3px 4px 5px rgba(0,0,0,.75); 
+  
+}
+
+.ow-hero-bar li a {
+    margin-bottom: 10px !important;
+}
