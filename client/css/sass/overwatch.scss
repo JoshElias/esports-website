@@ -110,7 +110,7 @@ $pos-y: 4px;
             list-style: none; 
             position: relative;
             
-
+   
        a {
             width: 75px;
             height: 75px;
@@ -129,6 +129,7 @@ $pos-y: 4px;
        
             }
     
+             /*
             
         a.soldier-76 {
             background: url("../img/overwatch/hero-thumbnails/soldier-76.png") no-repeat;
@@ -151,20 +152,38 @@ $pos-y: 4px;
                 
             }
      
- 
+*/
+            
             
        }
     }
 
+@include ow-hero-list (bastion, $size, 5px, $pos-y);
+@include ow-hero-list (hanzo, $size, $pos-x, $pos-y);
+@include ow-hero-list (junkrat, $size, -10px, 1px);
+@include ow-hero-list (lucio, $size, $pos-x, 1px);
+@include ow-hero-list (mccree, 81px, 2px, 0px);
+@include ow-hero-list (mercy, $size, $pos-x, 1px);
+@include ow-hero-list (pharah, $size, $pos-x, $pos-y);
+@include ow-hero-list (reaper, $size, $pos-x, $pos-y);
+@include ow-hero-list (reinhardt, $size, $pos-x, $pos-y);
+@include ow-hero-list (roadhog, $size, $pos-x, $pos-y);
+@include ow-hero-list (soldier-76, $size, $pos-x, $pos-y);
 @include ow-hero-list (symmetra, $size, $pos-x, $pos-y);
+@include ow-hero-list (torbjorn, $size, -7px, 1px);
+@include ow-hero-list (tracer, $size, $pos-x, 1px);
+@include ow-hero-list (widowmaker, $size, $pos-x, $pos-y);
+@include ow-hero-list (winston, 81px, $pos-x, -1px);
+@include ow-hero-list (zarya, $size, $pos-x, 1px);
+@include ow-hero-list (zenyatta, $size, $pos-x, $pos-y);
 
 
     .ow-hero-filters li a.active {
-            background-color: $ow-orange;
+            background-color: $ow-yellow;
             } 
             
     .ow-hero-filters li a:hover {
-             background-color: $ow-orange;
+             background-color: $ow-yellow;
             }
 
 .ow-hero-selected {
