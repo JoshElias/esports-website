@@ -188,5 +188,8 @@ module.exports = {
   "container": {
     "dataSource":"s3",
     "public": true
+  },
+  "image": {
+     "public": true
   }
 }
