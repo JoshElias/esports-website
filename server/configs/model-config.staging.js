@@ -173,11 +173,15 @@ module.exports = {
     "dataSource": "mongodb",
     "public": true
   },
-  "overwatchHero": {
+  "mulligan": {
     "dataSource": "mongodb",
     "public": true
   },
-  "overwatchAbility": {
+  "cardWithCoin": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "cardWithoutCoin": {
     "dataSource": "mongodb",
     "public": true
   }

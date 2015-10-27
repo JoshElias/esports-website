@@ -15,7 +15,9 @@
       ]
     },
     "oldReplies": {
-      "type": ["string"]
+      "type": [
+        "string"
+      ]
     },
     "createdDate": {
       "type": "date",

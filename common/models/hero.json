@@ -59,7 +59,9 @@
       "type": "object"
     },
     "stats": {
-      "type": ["object"]
+      "type": [
+        "object"
+      ]
     }
   },
   "validations": [],

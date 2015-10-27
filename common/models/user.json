@@ -52,7 +52,7 @@
     "__v": {
       "type": "number"
     },
-    "twitchID":{
+    "twitchID": {
       "type": "string"
     }
   },

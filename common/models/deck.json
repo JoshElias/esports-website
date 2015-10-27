@@ -82,15 +82,21 @@
       ]
     },
     "oldComments": {
-      "type": ["string"]
+      "type": [
+        "string"
+      ]
     },
     "oldMulligans": {
-      "type": ["object"]
+      "type": [
+        "object"
+      ]
     },
     "oldCards": {
-      "type": ["object"]
+      "type": [
+        "object"
+      ]
     },
-    "youtubeId" : {
+    "youtubeId": {
       "type": "string"
     }
   },

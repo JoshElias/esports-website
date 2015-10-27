@@ -20,12 +20,12 @@
       "required": true
     },
     "heroId": {
-        "type": "string",
-        "required": true
+      "type": "string",
+      "required": true
     },
     "orderNum": {
-        "type": "number",
-        "required": true
+      "type": "number",
+      "required": true
     }
   },
   "validations": [],

@@ -55,8 +55,10 @@
         "string"
       ]
     },
-    "oldRelatedArticles":{
-      "type": ["string"]
+    "oldRelatedArticles": {
+      "type": [
+        "string"
+      ]
     },
     "isActive": {
       "type": "boolean"

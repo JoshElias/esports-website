@@ -1,0 +1,24 @@
+{
+  "name": "mulligan",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "className": {
+      "type": "string",
+      "required": true
+    },
+    "instructionsWithCoin": {
+      "type": "string"
+    },
+    "instructionsWithoutCoin": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

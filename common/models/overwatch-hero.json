@@ -44,12 +44,12 @@
       "required": true
     },
     "orderNum": {
-        "type": "number",
-        "required": true
+      "type": "number",
+      "required": true
     },
     "isActive": {
-        "type": "boolean",
-        "required": true
+      "type": "boolean",
+      "required": true
     }
   },
   "validations": [],

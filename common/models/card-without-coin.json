@@ -1,0 +1,22 @@
+{
+  "name": "cardWithoutCoin",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "cardId": {
+      "type": "string",
+      "required": true
+    },
+    "mulliganId": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
