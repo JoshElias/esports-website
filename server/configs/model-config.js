@@ -186,12 +186,12 @@ module.exports = {
     "public": true
   },
   "overwatchHero": {
-      "dataSource": "mongodb",
-      "public": true
+    "dataSource": "mongodb",
+    "public": true
   },
   "overwatchAbility": {
-      "dataSource": "mongodb",
-      "public": true
+    "dataSource": "mongodb",
+    "public": true
   },
   "container": {
     "dataSource":"s3",
