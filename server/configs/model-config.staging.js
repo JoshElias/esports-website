@@ -184,5 +184,9 @@ module.exports = {
   "cardWithoutCoin": {
     "dataSource": "mongodb",
     "public": true
+  },
+  "container": {
+    "dataSource":"s3",
+    "public": true
   }
 }
