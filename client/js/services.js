@@ -2261,7 +2261,7 @@ angular.module('app.services', [])
                                         fields: ["id"],
                                         where: {
                                             guideType: "hero",
-                                            featured: isFeatured
+                                            isFeatured: isFeatured
                                         }
                                     }
                                 }
@@ -2343,7 +2343,7 @@ angular.module('app.services', [])
                                         fields: ["id"],
                                         where: {
                                             guideType: "hero",
-                                            featured: isFeatured
+                                            isFeatured: isFeatured
                                         }
                                     }
                                 }
@@ -2430,7 +2430,7 @@ angular.module('app.services', [])
                                             fields: ["id"],
                                             where: {
                                                 guideType: "map",
-                                                featured: isFeatured
+                                                isFeatured: isFeatured
                                             }
                                         }
                                     }
@@ -2502,7 +2502,7 @@ angular.module('app.services', [])
                                 {
                                     relation: "guides",
                                     scope: {
-                                        where: { featured: isFeatured },
+                                        where: { isFeatured: isFeatured },
                                         fields: ["id"],
                                         include: [
                                             {
