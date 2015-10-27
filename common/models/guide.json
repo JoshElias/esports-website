@@ -34,9 +34,7 @@
       "type": "boolean"
     },
     "votes": {
-      "type": [
-        "object"
-      ]
+      "type": "array"
     },
     "votesCount": {
       "type": "number"
@@ -49,6 +47,9 @@
     },
     "against": {
       "type": "object"
+    },
+    "content": {
+      "type": "array"
     },
     "authorId": {
       "type": "string"

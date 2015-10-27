@@ -442,7 +442,7 @@ var app = angular.module('app', [
                                             title: true,
                                             content: true,
                                             slug: true,
-                                            photos: true,
+                                            photoNames: true,
                                             createdDate: true
                                         },
                                         include: [
@@ -934,7 +934,7 @@ var app = angular.module('app', [
                                 filter: {
                                   limit: 10,
                                   where: {
-                                    featured: false
+                                    isFeatured: false
                                   },
                                   fields: {
                                     name: true,
@@ -988,7 +988,7 @@ var app = angular.module('app', [
                                 filter: {
                                   limit: 10,
                                   where: {
-                                    featured: true
+                                    isFeatured: true
                                   },
                                   fields: {
                                     name: true,
@@ -1077,7 +1077,7 @@ var app = angular.module('app', [
                                     slug: true
                                   },
                                   where: {
-                                    featured: false
+                                    isFeatured: false
                                   },
                                   include: [
                                     {
@@ -1122,10 +1122,13 @@ var app = angular.module('app', [
                                     filters = $stateParams.h || false,
                                     order = $stateParams.o || 'high';
 
-                              return Guide.find({
+                              return Guide.findOne({
                                 filter: {
                                   order: 'votesCount DESC',
                                   limit: 1,
+                                  where: {
+                                      guideType: "hero"
+                                  },
                                   fields: {
                                     authorId: true,
                                     name: true,
@@ -1153,25 +1156,25 @@ var app = angular.module('app', [
                                     }
                                   ]
                                 }
-                              }).$promise;
+                              }).$promise.then(function (guide) {
+                                  return guide;
+                              }).catch(function(err) {
+                                  console.log("error", err);
+                              });
                             }],
-                            
                             topGuideTalents: ['dataTopGuide', function (dataTopGuide) {
-                              var talents = {};
-                              for(var i = 0; i < dataTopGuide.length; i++) {
-                                for(var j = 0; j < dataTopGuide[i].heroes.length; j++) {
-                                  for(var k = 0; k < dataTopGuide[i].heroes[j].talents.length; k++) {
-                                    talents[dataTopGuide[i].heroes[j].talents[k].id] = dataTopGuide[i].heroes[j].talents[k];
-                                  }
+                            var talents = {};
+                            for(var j = 0; j < dataTopGuide.heroes.length; j++) {
+                                for(var k = 0; k < dataTopGuide.heroes[j].talents.length; k++) {
+                                        talents[dataTopGuide.heroes[j].talents[k].id] = dataTopGuide.heroes[j].talents[k];
+                                    }
                                 }
-                              }
-                              return talents;
+                            return talents;
                             }],
-                            
                             dataTempostormGuides: ['Guide', function (Guide) {
                               return Guide.find({
                                 filter: {
-                                  order: 'votesCount DESC',
+                                  order: 'createdDate ASC',
                                   limit: 4,
                                   fields: {
                                     authorId: true,
@@ -1186,7 +1189,7 @@ var app = angular.module('app', [
                                     slug: true
                                   },
                                   where: {
-                                    featured: true
+                                    isFeatured: true
                                   },
                                   include: [
                                     {
@@ -2215,21 +2218,21 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/articles.add.html',
                         controller: 'AdminArticleAddCtrl',
                         resolve: {
-                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
-                                return AdminDeckService.getDecks(1, 10, '');
-                            }],
-                            dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
-                                return AdminHOTSGuideService.getGuides(1, 10, '');
-                            }],
-                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
-                                return AdminArticleService.getArticles(1, 10, '');
-                            }],
-                            dataProviders: ['AdminUserService', function (AdminUserService) {
-                                return AdminUserService.getProviders();
-                            }],
-                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-                                return AdminHeroService.getAllHeroes();
-                            }]
+//                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
+//                                return AdminDeckService.getDecks(1, 10, '');
+//                            }],
+//                            dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
+//                                return AdminHOTSGuideService.getGuides(1, 10, '');
+//                            }],
+//                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
+//                                return AdminArticleService.getArticles(1, 10, '');
+//                            }],
+//                            dataProviders: ['AdminUserService', function (AdminUserService) {
+//                                return AdminUserService.getProviders();
+//                            }],
+//                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
+//                                return AdminHeroService.getAllHeroes();
+//                            }]
                         }
                     }
                 },

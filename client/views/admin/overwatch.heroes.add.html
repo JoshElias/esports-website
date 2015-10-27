@@ -5,7 +5,7 @@
     </div>
     <div class="panel-body">
         <ul class="error text-danger">
-            <li ng-repeat="error in errors">{{error.msg}}</li>
+            <li ng-repeat="error in errors">{{error.message}}</li>
         </ul>
     </div>
 </div>
@@ -18,37 +18,37 @@
         <div class="row form-group">
             <label for="name" class="col-sm-2 control-label">Hero Name</label>
             <div class="col-sm-10">
-                <input type="text" id="name" name="name" class="form-control" ng-model="hero.name" required>
+                <input type="text" id="name" name="name" class="form-control" ng-model="hero.heroName" required>
             </div>
         </div>
         <div class="row form-group">
             <label for="role" class="col-sm-2 control-label">Role</label>
             <div class="col-sm-10">
-                <select id="role" name="role" class="form-control" ng-options="role as role for role in roles" ng-model="hero.role" required></select>
+                <select id="role" name="role" class="form-control" ng-options="role as role for role in roles" ng-model="hero.heroRole" required></select>
             </div>
         </div>
         <div class="row form-group">
             <label for="name" class="col-sm-2 control-label">Real Name</label>
             <div class="col-sm-10">
-                <input type="text" id="name" name="name" class="form-control" ng-model="hero.name" required>
+                <input type="text" id="name" name="name" class="form-control" ng-model="hero.realName" required>
             </div>
         </div>
         <div class="row form-group">
             <label for="name" class="col-sm-2 control-label">Occupation</label>
             <div class="col-sm-10">
-                <input type="text" id="name" name="name" class="form-control" ng-model="hero.name" required>
+                <input type="text" id="name" name="name" class="form-control" ng-model="hero.occupation" required>
             </div>
         </div>
         <div class="row form-group">
             <label for="name" class="col-sm-2 control-label">Location</label>
             <div class="col-sm-10">
-                <input type="text" id="name" name="name" class="form-control" ng-model="hero.name" required>
+                <input type="text" id="name" name="name" class="form-control" ng-model="hero.location" required>
             </div>
         </div>
         <div class="row form-group">
             <label for="name" class="col-sm-2 control-label">Organization</label>
             <div class="col-sm-10">
-                <input type="text" id="name" name="name" class="form-control" ng-model="hero.name" required>
+                <input type="text" id="name" name="name" class="form-control" ng-model="hero.organization" required>
             </div>
         </div>
         <div class="row form-group">
@@ -60,7 +60,7 @@
         <div class="row form-group">
             <label for="title" class="col-sm-2 control-label">YouTube Video ID</label>
             <div class="col-sm-10">
-                <input type="text" id="title" name="title" class="form-control" ng-model="hero.title" required>
+                <input type="text" id="title" name="title" class="form-control" ng-model="hero.youtubeId" required>
             </div>
         </div>
         <div class="panel panel-default">
@@ -98,7 +98,7 @@
         <div class="row form-group">
             <label for="active" class="col-sm-2 control-label">Active</label>
             <div class="col-sm-10">
-                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in heroActive" ng-model="hero.active" required></select>
+                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in heroActive" ng-model="hero.isActive" required></select>
             </div>
         </div>
     </div>
