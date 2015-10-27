@@ -1411,4 +1411,14 @@ angular.module('app.directives', ['ui.load'])
         }
     };
 }])
+.directive('overwatchAbilityAddForm', function () {
+    return {
+        templateUrl: tpl + 'views/admin/overwatch.heroes.ability.add.html'
+    };
+})
+.directive('overwatchAbilityEditForm', function () {
+    return {
+        templateUrl: tpl + 'views/admin/overwatch.heroes.ability.edit.html'
+    };
+})
 ;
