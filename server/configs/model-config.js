@@ -190,6 +190,7 @@ module.exports = {
     "public": true
   },
     "image": {
+        "dataSource":"s3",
         "public": true
     }
 }

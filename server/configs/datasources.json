@@ -2,7 +2,7 @@
   "mongodb": {
   "host": "54.68.67.60",
   "port": 27017,
-  "database": "new-tempostorm",
+  "database": "tempostorm",
   "name": "mongodb",
   "connector": "mongodb",
   "server": {
@@ -22,6 +22,7 @@
     "connector": "loopback-component-storage",
     "provider": "amazon",
     "key": "+KtXI6Pvdt8ijq4uOCpkIT5f76Wxf23avEdy311f",
-    "keyId": "AKIAI5GMLIWXZP6TQXYQ"
+    "keyId": "AKIAI5GMLIWXZP6TQXYQ",
+    "bucket": "staging-cdn.tempostorm.com"
   }
 }
