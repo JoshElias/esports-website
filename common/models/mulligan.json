@@ -18,7 +18,20 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "cardsWithCoin": {
+      "type": "hasMany",
+      "model": "card",
+      "foreignKey": "mulliganId",
+      "through": "cardWithCoin"
+    },
+    "cardsWithoutCoin": {
+      "type": "hasMany",
+      "model": "card",
+      "foreignKey": "mulliganId",
+      "through": "cardWithoutCoin"
+    }
+  },
   "acls": [],
   "methods": {}
 }

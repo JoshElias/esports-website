@@ -192,5 +192,12 @@ module.exports = {
   "overwatchAbility": {
       "dataSource": "mongodb",
       "public": true
+  },
+  "container": {
+    "dataSource":"s3",
+    "public": true
+  },
+  "image": {
+    "public": true
   }
 }
