@@ -91,6 +91,27 @@ $pos-y: 4px;
 
 }
 
+.ow-upper-bg {
+    margin: 0;
+    padding: 0 !important;
+    background: $ts-black url('../../dist/img/overwatch/hero-top-bg.jpg') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 1050px;
+  
+}
+
+.ow-lower-bg {
+    margin: 0;
+    padding: 0 !important;
+    background: $ts-black url('../../dist/img/overwatch/hero-top-bg.jpg') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 1000px;
+
+}
+
+
 .ow-home-title {
     background: $ts-blue url('../../dist/img/overwatch/top-banner.jpg') no-repeat center center;
     background-size: cover;
@@ -215,9 +236,95 @@ $pos-y: 4px;
     padding: 10px 0 0 0;
     background-color:rgba(19,18,19,.7); 
     box-shadow: 3px 4px 5px rgba(0,0,0,.75); 
+    z-index: 100;
   
 }
 
 .ow-hero-bar li a {
     margin-bottom: 10px !important;
+}
+
+// 9... Overwatch skillbar styles
+
+.ow-hero-skillbar {
+    width: 100%;
+    background-color: rgba($ts-blue, 0.7);
+    border-top: 3px solid $ts-blue;
+    border-bottom: 3px solid $ts-blue;
+    z-index: 300;
+    margin-top: -203px;
+    position: relative;
+}
+
+// 10... overwatch hero brief
+
+.ow-hero-brief {
+    
+    z-index: 100;
+    
+    h1 {
+        font-style: italic;
+        font-size: 7em;
+        margin-top: 75px;
+        font-weight: 900;
+    }
+    
+    ul {
+    padding-left: 0;
+    }
+    
+    h1,
+    li {
+        text-transform: uppercase;
+        color: $white;
+        
+        text-shadow: 2px 2px $ts-black;
+        
+    }
+    
+    li {
+        list-style-type: none;
+        line-height: 2.5em;
+        font-weight: 700;
+
+        
+    }
+    
+    li:first-of-type {
+            margin-bottom: 20px; 
+            font-size: 1.5em;
+    }
+   
+    li:nth-of-type(2) {
+        
+    }
+    
+    .ow-role {
+    
+        font-weight: 900;
+        color: $ow-yellow;
+       
+    }
+}
+
+
+
+.test {
+    background-color: green;
+}
+
+
+// 11.... overwatch Hero image
+
+.ow-character-img {
+    
+    
+    img {
+        position: absolute;
+        top: -100px;
+        left: -50px;
+        width: 145%;
+        z-index: 10;
+    }
+
 }

@@ -46,7 +46,7 @@
     "newEmailCode": {
       "type": "string"
     },
-    "isVerified": {
+    "emailVerified": {
       "type": "boolean"
     },
     "__v": {
