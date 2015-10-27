@@ -2044,14 +2044,12 @@ angular.module('app.controllers', ['ngCookies'])
                     options.filter.where = {
                         or: [
                             { title: { regexp: search } },
-                            { description: { regexp: search } },
                             { content: { regexp: search } }
                         ]
                     }
                     countOptions.where = {
                         or: [
                             { title: { regexp: search } },
-                            { description: { regexp: search } },
                             { content: { regexp: search } }
                         ]
                     }
@@ -3743,7 +3741,6 @@ angular.module('app.controllers', ['ngCookies'])
             // save VOD
             $scope.saveVod = function (vod) {
                 Vod.create({}, vod, function (data) {
-                    console.log('data: ', data);
                     if (data.$resolved) {
                         $scope.success = {
                             show: true,
@@ -6360,8 +6357,10 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.metaservice.set($scope.snapshot.title + ' - The Meta Snapshot', $scope.snapshot.content.intro);
+            
+            console.log('square: ', $scope.snapshot.photoNames.square);
 
-            var ogImg = ($scope.snapshot.photos.square == "") ? $scope.app.cdn + 'snapshots/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photos.square;
+            var ogImg = ($scope.snapshot.photoNames.square == "") ? $scope.app.cdn + 'snapshots/default-banner-square.jpg' : $scope.app.cdn + 'snapshots/' + $scope.snapshot.photoNames.square;
             $scope.metaservice.setOg('https://tempostorm.com/hearthstone/meta-snapshot/' + $scope.snapshot.slug.url, $scope.snapshot.title, $scope.snapshot.content.intro, 'article', ogImg);
 
             for (var i = 0; i < $scope.deckTiers.length; i++) {
@@ -10505,18 +10504,22 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService',
-        function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService) {
+    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util',
+        function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util) {
             var box;
 
             // create guide
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
+            
             $scope.$watch('guide', function(){
                 $scope.app.settings.guide = $scope.guide;
             }, true);
+            
+            console.log('guide: ', $scope.guide);
 
             // heroes
             $scope.heroes = dataHeroes;
+            console.log('heroes: ',dataHeroes);
 
             // maps
             $scope.maps = dataMaps;
@@ -10551,6 +10554,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 $scope.heroRows.push(heroes);
             }
+            
+            console.log('hero row: ',$scope.heroRows);
 
             $scope.tooltipPos = function (row, $index) {
                 return (($index + 1) > Math.ceil(row.length / 2)) ? 'left' : 'right';
@@ -10632,21 +10637,19 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
-                if ( !$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
+                if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
                     return false;
                 }
-                if (!$scope.app.user.isLogged()) {
+                if (!User.isAuthenticated()) {
                     LoginModalService.showModal('login');
                 } else {
-                    HOTSGuideService.addGuide($scope.guide).success(function (data) {
-                        if (!data.success) {
-                            $scope.errors = data.errors;
-                            $scope.showError = true;
-                            $window.scrollTo(0,0);
-                        } else {
-                            $scope.app.settings.guide = null;
-                            $state.go('app.hots.guides.guide', { slug: data.slug });
-                        }
+                    console.log('guide: ', $scope.guide);
+                    Guide.create({}, $scope.guide, function(data) {
+                        console.log('data: ',data);
+                        $scope.app.settings.guide = null;
+                        $state.go('app.hots.guides.guide', { slug: data.slug });
+                    }, function(err) {
+                        if(err) console.log('error: ',err);
                     });
                 }
             };
@@ -10754,6 +10757,10 @@ angular.module('app.controllers', ['ngCookies'])
                 if (!$scope.app.user.isLogged()) {
                     LoginModalService.showModal('login');
                 } else {
+                    console.log('guide: ', $scope.guide);
+                    console.log('name: ',$scope.guide.name);
+                    $scope.guide.slug = Util.slugify($scope.guide.name);
+                    console.log('slug: ',$scope.guide.slug);
                     HOTSGuideService.addGuide($scope.guide).success(function (data) {
                         if (!data.success) {
                             $scope.errors = data.errors;

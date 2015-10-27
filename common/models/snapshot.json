@@ -29,7 +29,7 @@
     "createdDate": {
       "type": "date"
     },
-    "photos": {
+    "photoNames": {
       "type": "object"
     },
     "votesCount": {
