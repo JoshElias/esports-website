@@ -1,6 +1,6 @@
 module.exports = {
 	"mongodb": {
-	    "host": "54.68.67.60", 
+	    "host": "54.68.67.60",
 	    "port": 27017,
 	    "database": "tempostorm",
 	    "name": "mongodb",
@@ -17,11 +17,11 @@ module.exports = {
 	    "connector": "loopback-connector-mandrill",
 	    "apiKey": "Zl5f6pHhNAraoqh5Z2jBEQ"
 	},
-    "s3": {
-        "name": "s3",
-        "connector": "loopback-component-storage",
-        "provider": "amazon",
-        "key": "AKIAIQZRXBQLHFBKCGSQ",
-        "keyId": "+5HNYCyZ84OMMNuZfrFuEz2xzyN9MtJQWN65dSB3"
-    }
+  "s3": {
+    "name": "s3",
+    "connector": "loopback-component-storage",
+    "provider": "amazon",
+    "key": "+KtXI6Pvdt8ijq4uOCpkIT5f76Wxf23avEdy311f",
+    "keyId": "AKIAI5GMLIWXZP6TQXYQ"
+  }
 }

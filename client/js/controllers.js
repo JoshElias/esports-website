@@ -11613,7 +11613,7 @@ angular.module('app.controllers', ['ngCookies'])
                             ability.heroId = heroValue.id;
                         });
                         
-                        OverwatchAbility.createMany({}, $scope.hero.abilities).$promise
+                        OverwatchHero.overwatchAbilities.createMany({ id: heroValue.id }, $scope.hero.abilities).$promise
                         .then(function (abilityValue) {
                             console.log('abilities values: ', abilityValue);
 

@@ -85,6 +85,18 @@
       "type": "hasAndBelongsToMany",
       "model": "deck",
       "foreignKey": ""
+    },
+    "mulligansWithCoin": {
+      "type": "hasMany",
+      "model": "mulligan",
+      "foreignKey": "cardId",
+      "through": "cardWithCoin"
+    },
+    "mulligansWithoutCoin": {
+      "type": "hasMany",
+      "model": "mulligan",
+      "foreignKey": "cardId",
+      "through": "cardWithoutCoin"
     }
   },
   "acls": [],
