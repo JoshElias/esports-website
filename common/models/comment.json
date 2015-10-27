@@ -41,6 +41,9 @@
     },
     "forumPostId": {
       "type": "string"
+    },
+    "parentCommentId": {
+      "type": "string"
     }
   },
   "validations": [],
@@ -74,6 +77,16 @@
       "type": "belongsTo",
       "model": "forumPost",
       "foreignKey": "forumPostId"
+    },
+    "parentComment": {
+      "type": "belongsTo",
+      "model": "comment",
+      "foreignKey": "parentCommentId"
+    },
+    "replies": {
+      "type": "hasMany",
+      "model": "comment",
+      "foreignKey": "parentCommentId"
     }
   },
   "acls": [],

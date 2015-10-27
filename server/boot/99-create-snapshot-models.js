@@ -160,7 +160,7 @@ module.exports = function(server) {
 		}
 
 		function createDeckMatchup(snapshot, finalCallback) {
-			async.eachSeries(snapshot.matches, function(match, seriesCallback) {
+			async.eachSeries(snapshot.oldMatches, function(match, seriesCallback) {
 				try {
 					var deckMatchup = {
 						forDeckId: match.for.toString(),
