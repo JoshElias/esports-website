@@ -1248,6 +1248,7 @@ var app = angular.module('app', [
                         resolve: {
                             guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
+                                console.log('slug: ', slug);
                                 return Guide.findOne({
                                     filter: {
                                         where: {
@@ -1276,11 +1277,14 @@ var app = angular.module('app', [
                                 }).$promise.then(function (data) {
                                     console.log(data);
                                     return data;
+                                })
+                                .catch(function (err) {
+                                    console.log('err: ', err);
                                 });
                             }],
                             guideTalents: ['guide', function (guide) {
                                 var talents = {};
-                                console.log(guide);
+                                console.log('guide: ', guide);
                                 if (guide.guideType === "hero") {
                                     for (var i = 0; i < guide.heroes.length; i++) {
                                         for (var j = 0; j < guide.heroes[i].talents.length; j++) {
