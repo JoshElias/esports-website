@@ -1738,7 +1738,7 @@ angular.module('app.services', [])
 
     return deckBuilder;
 }])
-.factory('GuideBuilder', ['$sce', '$http', '$q', function ($sce, $http, $q) {
+.factory('GuideBuilder', ['$sce', '$http', '$q', 'User', function ($sce, $http, $q, User) {
 
     var guideBuilder = {};
 
@@ -1749,26 +1749,43 @@ angular.module('app.services', [])
         d.setMonth(d.getMonth() + 1);
 
         var gb = {
-            _id: data._id || null,
             name: data.name || '',
             slug: data.slug || '',
             guideType: guideType,
             description: data.description || '',
             content: data.content || [],
             heroes: data.heroes || [],
+            createdDate: d,
             maps: data.maps || [],
             synergy: data.synergy || [],
             against: data.against || {
                 strong: [],
                 weak: []
             },
-            video: data.video || '',
+            youtubeId: data.youtubeId || '',
             premium: data.premium || {
                 isPremium: false,
                 expiryDate: d
             },
-            featured: data.featured || false,
-            public: (data.public) ? data.public.toString() : 'true'
+            isFeatured: data.featured || false,
+            isPublic: (data.isPublic) ? data.isPublic.toString() : 'true',
+            votes: data.votes || [],
+            votesCount: data.votesCount || 0,
+            viewCount: data.viewcount || 0,
+            against: data.against || {
+                weak: [],
+                strong: []
+            },
+            authorId: data.authorId || User.getCurrentId(),
+            talentTiers: data.talentTiers || {
+                1: null,
+                4: null,
+                7: null,
+                10: null,
+                13: null,
+                16: null,
+                20: null
+            }
         };
 
         // constrain maps to 1 if map guide

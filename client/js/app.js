@@ -442,7 +442,7 @@ var app = angular.module('app', [
                                             title: true,
                                             content: true,
                                             slug: true,
-                                            photos: true,
+                                            photoNames: true,
                                             createdDate: true
                                         },
                                         include: [
@@ -2218,21 +2218,21 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/articles.add.html',
                         controller: 'AdminArticleAddCtrl',
                         resolve: {
-                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
-                                return AdminDeckService.getDecks(1, 10, '');
-                            }],
-                            dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
-                                return AdminHOTSGuideService.getGuides(1, 10, '');
-                            }],
-                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
-                                return AdminArticleService.getArticles(1, 10, '');
-                            }],
-                            dataProviders: ['AdminUserService', function (AdminUserService) {
-                                return AdminUserService.getProviders();
-                            }],
-                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-                                return AdminHeroService.getAllHeroes();
-                            }]
+//                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
+//                                return AdminDeckService.getDecks(1, 10, '');
+//                            }],
+//                            dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
+//                                return AdminHOTSGuideService.getGuides(1, 10, '');
+//                            }],
+//                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
+//                                return AdminArticleService.getArticles(1, 10, '');
+//                            }],
+//                            dataProviders: ['AdminUserService', function (AdminUserService) {
+//                                return AdminUserService.getProviders();
+//                            }],
+//                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
+//                                return AdminHeroService.getAllHeroes();
+//                            }]
                         }
                     }
                 },
