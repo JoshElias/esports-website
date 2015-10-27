@@ -10379,6 +10379,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getCurrentTalents = function () {
                 var levels = $scope.getTiers(),
                     out = [];
+                
+                console.log('guideTalents: ', guideTalents);
 
                 for (var i = 0; i < levels.length; i++) {
                     out.push(guideTalents[$scope.guide.talentTiers[$scope.currentHero.id][levels[i]]]);
@@ -10506,22 +10508,21 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util',
-        function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util) {
+    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util) {
             var box;
 
             // create guide
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
             
+            console.log('guide: ', $scope.guide);
+            
             $scope.$watch('guide', function(){
                 $scope.app.settings.guide = $scope.guide;
             }, true);
-            
-            console.log('guide: ', $scope.guide);
 
             // heroes
             $scope.heroes = dataHeroes;
-            console.log('heroes: ',dataHeroes);
 
             // maps
             $scope.maps = dataMaps;
@@ -10645,11 +10646,25 @@ angular.module('app.controllers', ['ngCookies'])
                 if (!User.isAuthenticated()) {
                     LoginModalService.showModal('login');
                 } else {
-                    console.log('guide: ', $scope.guide);
-                    Guide.create({}, $scope.guide, function(data) {
-                        console.log('data: ',data);
-                        $scope.app.settings.guide = null;
-                        $state.go('app.hots.guides.guide', { slug: data.slug });
+                    $scope.guide.slug = Util.slugify($scope.guide.name);
+                    console.log('guide going in: ', $scope.guide);
+                    
+                    Guide.create({}, $scope.guide, function(guide) {
+                        console.log('created guide: ', guide);
+                        
+                        // DEFINITELY SOMETHING WRONG HERE
+                        Guide.heroes.createMany({
+                            id: guide.id,
+                        }, $scope.guide.heroes, function(heroGuide) {
+                            $scope.app.settings.guide = null;
+                            console.log('slug: ', $scope.guide.slug);
+                            $state.go('app.hots.guides.guide', { slug: guide.slug });
+                            
+                        }, function(error) {
+                            if(error) console.log('error: ', error);
+                        });
+                        
+//                        $state.go('app.hots.guides.guide', { slug: guide.slug });
                     }, function(err) {
                         if(err) console.log('error: ',err);
                     });
