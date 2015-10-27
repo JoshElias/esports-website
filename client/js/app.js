@@ -3319,9 +3319,22 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/overwatch.heroes.edit.html',
                         controller: 'AdminOverwatchHeroEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminHeroService', function ($stateParams, AdminHeroService) {
+                            hero: ['$stateParams', 'OverwatchHero', function ($stateParams, OverwatchHero) {
                                 var heroID = $stateParams.heroID;
-                                return AdminHeroService.getHero(heroID);
+                                
+                                return OverwatchHero.findOne({
+                                    filter: {
+                                        where: {
+                                            id: heroID
+                                        },
+                                        include: {
+                                            relation: 'overwatchAbilities',
+                                            scope: {
+                                                order: "orderNum ASC"
+                                            }
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
