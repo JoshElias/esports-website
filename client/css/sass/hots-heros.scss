@@ -1,6 +1,21 @@
-//custom mixins
+// Description: hots heroes scss file specifically for adding heroes using mixins
+// used to enter heroes and their talents into mixins to auto gen css
 
-//HOTS Character image Mixin
+//*************************************
+
+// 1... hots heroes Mixin library
+// 2... Original styles
+// 3... hero talent template
+// 5... HOTS heroes talents
+
+//*************************************
+
+//*************************************
+// 1... hots heroes Mixin library
+//*************************************
+
+
+//HOTS Character images Mixin
 
 @mixin hots-hero ($hero) {  /* Starting new Hots Hero */
 .icon-#{$hero} { background: url(../img/hots/heroes/#{$hero}-hex.png) no-repeat center center; }
@@ -48,10 +63,12 @@
     }
 }
 
-
-// .....Original styles
+//*************************************
+// 2... Original styles
+//*************************************
 
 /* talents icons */
+
 .talents-icon { 
     display: block; 
     width: 30px; 
@@ -75,7 +92,20 @@
 }
 
 
-/* This is the template for hots-hero-talents
+//*************************************
+// 3... hero talent template
+//*************************************
+
+/* 
+
+This is the template for hots-hero-talents.
+
+1. enter the heroes name in first varaible
+2. enter the heroes talents into the class array. numbers on the far left are a refrence to the location on the sprite sheet of the talents in that pos in the array.
+
+*/
+
+/*
 
 @include hots-hero-talents ( heroName, (
     ( class: (), pos: 0 ), // 0
@@ -101,7 +131,9 @@
 
 */
 
-/* hots hero images */
+//*************************************
+//4... HOTS Character images
+//*************************************
 
 @include hots-hero(abathur);
 @include hots-hero(anub-arak);
@@ -146,6 +178,11 @@
 @include hots-hero(valla);
 @include hots-hero(zagara);
 @include hots-hero(zeratul);
+
+
+//*************************************
+//5... HOTS heroes talents
+//*************************************
 
 //abathur Talents
 
@@ -1001,8 +1038,6 @@
     ( class: (storm-shield), pos: 16 ), // -480
     ( class: (rewind), pos: 17 ) // -510
 ) );
-
-
 
 //talents: uther
 

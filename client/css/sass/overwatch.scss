@@ -1,14 +1,40 @@
+// Description: scss file for overwartch home and all heroes pages
+
+//*************************************
+
 // 1... tempo storm color imports
+// 2... local variables
+// 3... local mixins library
+// 4... style overides
+// 5... OW typography
+// 6... backgrounds & header
+// 7... Hero filter lists
+// 8... Hero page hero list bar
+// 9... overwatch hero brief
+// 10.... overwatch Hero image
+// 11... overwatch hero Skill bar
+// 12... Overwatch heroes story Div
+
+//*************************************
+
+//*************************************
+// 1... tempo storm color imports
+//*************************************
+
 
 @import 'ts-colors.scss';
 
+//*************************************
 // 2... local variables
+//*************************************
 
 $size: 71px;
 $pos-x: 2px;
 $pos-y: 4px;
 
+//*************************************
 // 3... local mixins library
+//*************************************
 
 @mixin ow-hero-list ($hero, $size, $pos-x, $pos-y) { 
      
@@ -32,12 +58,45 @@ $pos-y: 4px;
         }    
     }
 
+@mixin hero-skills-mix ($hero) {
+
+        .#{$hero}.ow-skill-1 {
+
+            background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
+            background-position: -2px -10px; 
+        }
+
+        .#{$hero}.ow-skill-2 {
+
+            background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
+            background-position: -170px -10px; 
+        }
+
+        .#{$hero}.ow-skill-3 {
+
+            background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
+            background-position: -343px -10px; 
+        }
+
+        .#{$hero}.ow-skill-4 {
+
+            background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
+            background-position: -518px -10px; 
+        }
+
+        .#{$hero}.ow-skill-5 {
+
+            background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
+            background-position: -684px -10px; 
+        }
+
+}
 
 //styles start
 
-
+//*************************************
 // 4... style overides
-
+//*************************************
 
 .no-side-pad {
     padding-left: 0;
@@ -50,7 +109,7 @@ $pos-y: 4px;
 }
 
 .ts-div {
-    background-color:rgba(19,18,19,.7); 
+    background-color: $opac-div; 
     box-shadow: 3px 4px 5px rgba(0,0,0,.75); 
     border: 1px solid rgba(255,255,255,0.2); outline: 1px solid #000;
 }
@@ -61,13 +120,14 @@ $pos-y: 4px;
 
 //overwatch specific styles
 
-
+//*************************************
 // 5... OW typography
+//*************************************
 
 .ow-content h1.title {
     font-family: 'Open Sans Bold';
     font-size: 26px;
-    color: #DDD;
+    color: $light-grey;
     letter-spacing: 2px;
     text-transform: uppercase;
 }
@@ -79,8 +139,7 @@ $pos-y: 4px;
 }
 
 
-
-// 6... background & header
+// 6... backgrounds & header
 
 .ow-bg {
     margin: 0;
@@ -88,7 +147,6 @@ $pos-y: 4px;
     background: $ts-black url('../../dist/img/overwatch/hero-top-bg.jpg') no-repeat center center;
     background-size: cover;
     background-attachment: fixed;
-
 }
 
 .ow-upper-bg {
@@ -96,9 +154,7 @@ $pos-y: 4px;
     padding: 0 !important;
     background: $ts-black url('../../dist/img/overwatch/hero-top-bg.jpg') no-repeat center center;
     background-size: cover;
-    background-attachment: fixed;
- //   height: 1145px;
-  
+    background-attachment: fixed; 
 }
 
 .ow-lower-bg {
@@ -107,8 +163,6 @@ $pos-y: 4px;
     background: $ts-black url('../../dist/img/overwatch/lower-half-background.jpg') no-repeat center center;
     background-size: cover;
     background-attachment: fixed;
-    //height: 1000px;
-
 }
 
 
@@ -119,7 +173,6 @@ $pos-y: 4px;
         @media (max-width: 1050px) {
         
             background-position: left; 
-        
         }
 }
 
@@ -139,10 +192,9 @@ $pos-y: 4px;
 
 }
 
-
-
+//*************************************
 // 7... Hero filter lists
-
+//*************************************
 
 .ow-hero-list {
     margin: 0;
@@ -154,8 +206,6 @@ $pos-y: 4px;
 .ow-heroes {
     padding: 15px 20px 20px 20px;
 }
-
-
 
 .ow-herobar-home {
     position: relative; 
@@ -186,8 +236,9 @@ $pos-y: 4px;
             margin-bottom: 16px;
             }
        }
-        
-    }
+}
+
+// mixin to add heroes to the hero navbar
 
 @include ow-hero-list (bastion, $size, 5px, $pos-y);
 @include ow-hero-list (hanzo, $size, $pos-x, $pos-y);
@@ -197,7 +248,7 @@ $pos-y: 4px;
 @include ow-hero-list (mercy, $size, $pos-x, 1px);
 @include ow-hero-list (pharah, $size, $pos-x, $pos-y);
 @include ow-hero-list (reaper, $size, $pos-x, $pos-y);
-@include ow-hero-list (reinhardt, $size, $pos-x, $pos-y);
+@include ow-hero-list (reinhardt, $size, $pos-x, -1px);
 @include ow-hero-list (roadhog, $size, $pos-x, $pos-y);
 @include ow-hero-list (soldier-76, $size, $pos-x, $pos-y);
 @include ow-hero-list (symmetra, $size, $pos-x, $pos-y);
@@ -209,13 +260,13 @@ $pos-y: 4px;
 @include ow-hero-list (zenyatta, $size, $pos-x, $pos-y);
 
 
-    .ow-hero-filters li a.active {
-            background-color: $ow-yellow;
-            } 
+.ow-hero-filters li a.active {
+    background-color: $ow-yellow;
+} 
             
-    .ow-hero-filters li a:hover {
-             background-color: $ow-yellow;
-            }
+.ow-hero-filters li a:hover {
+    background-color: $ow-yellow;
+}
 
 .ow-hero-selected {
     position: absolute;
@@ -227,31 +278,26 @@ $pos-y: 4px;
     opacity: 0.3;
 }
 
-
+//*************************************
 // 8... Hero page hero list bar
+//*************************************
 
 .ow-hero-bar {
     width: 100%;
     margin: 0 0 20px 0;
     padding: 10px 0 0 0;
-    background-color:rgba(19,18,19,.7); 
+    background-color: $opac-div; 
     box-shadow: 3px 4px 5px rgba(0,0,0,.75); 
     z-index: 100;
-  
 }
 
 .ow-hero-bar li a {
     margin-bottom: 10px !important;
 }
 
-
-
-
-// 9... Overwatch skillbar styles
-
-
-
-// 10... overwatch hero brief
+//*************************************
+// 9... overwatch hero brief
+//*************************************
 
 .ow-hero-brief  {
     
@@ -263,8 +309,7 @@ $pos-y: 4px;
         font-size: 7em;
         margin-top: 75px;
         font-weight: 900;
-        
-         
+ 
     }
     
     ul {
@@ -315,111 +360,96 @@ $pos-y: 4px;
             display: block;
             margin-top: 15px;
            
-            }
-            
+            }        
         }
-
-        
     }
     
     li:first-of-type {
             margin-bottom: 20px; 
             font-size: 1.5em;
             padding-left: 0;
-        
+
         @media (max-width: 765px) {
-            
+
                 text-align: center;
         }
-        
     }
-   
+
     li:nth-of-type(2):before {
         width: 100%;
         content: url(../../dist/img/overwatch/icons/name.png);
         position: absolute;
         top: 6px;
         left: 0px;
-        
+
           @media (max-width: 765px) {
-            
+
                 display: none;
         }
-      
+
     }
-    
-     li:nth-of-type(3):before {
+
+    li:nth-of-type(3):before {
         width: 100%;
         content: url(../../dist/img/overwatch/icons/organization.png);
         position: absolute;
         top: 6px;
         left: 0px;
-      
+
          @media (max-width: 765px) {
-            
+
                 display: none;
         }
-         
     }
-    
-     li:nth-of-type(4):before {
+
+    li:nth-of-type(4):before {
         width: 100%;
         content: url(../../dist/img/overwatch/icons/origin.png);
         position: absolute;
         top: 6px;
         left: 0px;
-         
+
          @media (max-width: 765px) {
-            
+
                 display: none;
         }
-      
     }
-    
-     li:nth-of-type(5):before {
+
+    li:nth-of-type(5):before {
         width: 100%;
         content: url(../../dist/img/overwatch/icons/affiliation.png);
         position: absolute;
         top: 10px;
         left: 0px;
-         
+
          @media (max-width: 765px) {
-            
+
                 display: none;
         }
-      
     }
 
-    
     .ow-role {
-    
         font-weight: 900;
         color: $ow-yellow;
         position: relative;
         margin-left: 5px;
     }
-    
+
     .ow-role-icon {
-       
         content: url(../../dist/img/overwatch/icons/support.png);
         margin-left: 5px;
-        }
-        
-    
-}
+    }
+
+} // ow-hero-brief class ends
 
 
 
-.test {
-    background-color: green;
-}
-
-
-// 11.... overwatch Hero image
+//*************************************
+// 10.... overwatch Hero image
+//*************************************
 
 .ow-character-img {
-    
-    
+
     img {
         position: absolute;
         top: -85px;
@@ -432,7 +462,6 @@ $pos-y: 4px;
            top: -40px;
         left: 320px;
         width: 70%; 
-        
         }
         
          @media (max-width: 800px) {
@@ -443,7 +472,9 @@ $pos-y: 4px;
     }
 }
 
-// 12... Skill bar
+//*************************************
+// 11... overwatch hero Skillbar
+//*************************************
 
 .ow-skill-desc {
     color: $white;
@@ -476,16 +507,13 @@ $pos-y: 4px;
 .ow-skills {
     padding-top: 15px;
     min-height: 310px;
-    
-  
-    
 }
 
 .ow-skill-desc {
     padding-top: 15px;
 }
+
 .skill {
-    
     display: block;
     overflow: hidden;
     white-space: nowrap;
@@ -493,64 +521,50 @@ $pos-y: 4px;
     height: 110px;
     width: 166px;
     margin: auto;
-    
 }
 
-.mercy.ow-skill-1 {
-    
-    background: url('../../dist/img/overwatch/abilities-sprite-sheets/mercy-sprite.png') no-repeat;
-    background-position: -2px -10px; 
-}
+// mixin for heroes skill icons
 
-.mercy.ow-skill-2 {
-    
-    background: url('../../dist/img/overwatch/abilities-sprite-sheets/mercy-sprite.png') no-repeat;
-    background-position: -170px -10px; 
-}
+@include hero-skills-mix (bastion);
+@include hero-skills-mix (hanzo);
+@include hero-skills-mix (junkrat);
+@include hero-skills-mix (lucio);
+@include hero-skills-mix (mccree);
+@include hero-skills-mix (mercy);
+@include hero-skills-mix (pharah);
+@include hero-skills-mix (reaper);
+@include hero-skills-mix (reinhardt);
+@include hero-skills-mix (roadhog);
+@include hero-skills-mix (soldier-76);
+@include hero-skills-mix (symmetra);
+@include hero-skills-mix (torbjorn);
+@include hero-skills-mix (tracer);
+@include hero-skills-mix (widowmaker);
+@include hero-skills-mix (winston);
+@include hero-skills-mix (zarya);
+@include hero-skills-mix (zenyatta);
 
-.mercy.ow-skill-3 {
-    
-    background: url('../../dist/img/overwatch/abilities-sprite-sheets/mercy-sprite.png') no-repeat;
-    background-position: -343px -10px; 
-}
-
-.mercy.ow-skill-4 {
-    
-    background: url('../../dist/img/overwatch/abilities-sprite-sheets/mercy-sprite.png') no-repeat;
-    background-position: -518px -10px; 
-}
-
-.mercy.ow-skill-5 {
-    
-    background: url('../../dist/img/overwatch/abilities-sprite-sheets/mercy-sprite.png') no-repeat;
-    background-position: -684px -10px; 
-}
-
-//13... Overwatch cahracter story Div
-
-
+//*************************************
+// 12... Overwatch heroes story Div and realted video
+//*************************************
 
 .ow-character-story  {
     
     z-index: 100;
 
-    
     h1,
     h2 {
         font-style: italic;
         font-size: 7em;
-      
         font-weight: 900;
         text-transform: uppercase;
         color: $white;
-        
         text-shadow: 2px 2px $ts-black;
  
     }
     
     h2 {
         font-size: 4.6em;
-    
     }
     
     p {
@@ -569,15 +583,12 @@ $pos-y: 4px;
                 margin-top: 40px;
                 text-align: center;
         }
-    
     }
 }
 
 .ow-character-video {
 
     .ow-vid-div {
-     
         text-align: center;
-      
     }
 }
