@@ -226,7 +226,40 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     overwatch: {
-                        templateUrl: tpl + 'views/frontend/overwatch.home.html'
+                        templateUrl: tpl + 'views/frontend/overwatch.home.html',
+                        controller: 'OverwatchHomeCtrl',
+                        resolve: {
+                            articles: ['Article', function (Article) {
+                                var perpage = 6;
+                                
+                                return Article.find({
+                                    filter: {
+                                        where: {
+                                            articleType: 'overwatch',
+                                            isActive: true
+                                        },
+                                        fields: {
+                                            content: false,
+                                            votes: false
+                                        },
+                                        sort: 'createdDate DESC',
+                                        limit: perpage
+                                    }
+                                }).$promise;
+                            }],
+                            heroes: ['OverwatchHero', function (OverwatchHero) {
+                                return OverwatchHero.find({
+                                    filter: {
+                                        fields: {
+                                            heroName: true,
+                                            className: true,
+                                            orderNum: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                }).$promise;
+                            }]
+                        }
                     }
                 }
             })
@@ -243,7 +276,41 @@ var app = angular.module('app', [
                 url: '/:slug',
                 views: {
                     'overwatch-heroes': {
-                        templateUrl: tpl + 'views/frontend/overwatch.heroes.hero.html'
+                        templateUrl: tpl + 'views/frontend/overwatch.heroes.hero.html',
+                        controller: 'OverwatchHeroCtrl',
+                        resolve: {
+                            heroes: ['OverwatchHero', function (OverwatchHero) {
+                                return OverwatchHero.find({
+                                    filter: {
+                                        fields: {
+                                            heroName: true,
+                                            className: true,
+                                            orderNum: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                }).$promise;
+                            }],
+                            hero: ['$stateParams', 'OverwatchHero', function ($stateParams, OverwatchHero) {
+                                var slug = $stateParams.slug;
+                                return OverwatchHero.findOne({
+                                    filter: {
+                                        where: {
+                                            className: slug
+                                        },
+                                        fields: {
+                                            orderNum: false
+                                        },
+                                        include: {
+                                            relation: 'overwatchAbilities',
+                                            scope: {
+                                                order: 'orderNum ASC'
+                                            }
+                                        }
+                                    }
+                                }).$promise;
+                            }]
+                        }
                     }
                 }
             })

@@ -11377,6 +11377,29 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.streams = dataTwitch.stuff;
         }
     ])
+    .controller('OverwatchHomeCtrl', ['$scope', 'articles', 'heroes',
+        function ($scope, articles, heroes) {
+            // load vars
+            $scope.articles = articles;
+            $scope.heroes = heroes;
+            $scope.heroHover = 'neutral';
+            
+            $scope.setHeroHover = function (hero) {
+                $scope.heroHover = hero;
+            };
+            
+            $scope.getHeroHover = function () {
+                return $scope.heroHover;
+            };
+        }
+    ])
+    .controller('OverwatchHeroCtrl', ['$scope', 'hero', 'heroes',
+        function ($scope, hero, heroes) {
+            // load vars
+            $scope.heroes = heroes;
+            $scope.hero = hero;
+        }
+    ])
     .controller('AdminOverwatchHeroListCtrl', ['$scope', '$window', '$timeout', 'bootbox', 'AlertService', 'OverwatchHero', 'heroes',
         function ($scope, $window, $timeout, bootbox, AlertService, OverwatchHero, heroes) {
             // load vars
