@@ -1,4 +1,19 @@
-// deck mixins
+// Description: file to build css for adding new decks to HS
+
+//*************************************
+
+// 1... HS deck mixin library
+// 2... HS decks 
+
+//*************************************
+
+
+//*************************************
+// 1... HS deck mixin library
+//*************************************
+
+// $deck = type of deck, druid or warrior etc.
+// $character = character varients of the deck, ie rexxar or alleria as hunters
 
 @mixin hs-deck-images ($deck, $character) {
 
@@ -8,8 +23,11 @@
 
 }
 
+//*************************************
+// 2... HS decks 
+//*************************************
 
-// HS decks
+
 
 @include hs-deck-images (druid, malfurion);
 @include hs-deck-images (hunter, rexxar);

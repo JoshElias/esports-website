@@ -908,6 +908,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise;
                             }],
+                            
                             neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
@@ -941,6 +942,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise;
                             }],
+                            
                             toStep: ['$stateParams', function ($stateParams) {
                                 if ($stateParams.goTo) {
                                     return $stateParams.goTo;
@@ -2456,19 +2458,40 @@ var app = angular.module('app', [
                         resolve: {
                             deck: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var deckID = $stateParams.deckID;
-//                                return Deck.findById({ id: deckID }).$promise;
-                                return Deck.findOne({
+                                return Deck.findById({ 
+                                    id: deckID,
                                     filter: {
-                                        where: {
-                                            id: deckID,
+                                        fields: {
+                                            id: true,
+                                            createdDate: true,
+                                            name: true,
+                                            description: true,
+                                            playerClass: true,
+                                            premium: true,
+                                            slug: true,
+                                            dust: true,
+                                            heroName: true,
+                                            authorId: true,
+                                            deckType: true,
+                                            viewCount: true
                                         },
-                                        include: [
-                                            {
-                                                relation: 'cards'
+                                        include: {
+                                            relation: 'cards',
+                                            scope: {
+                                                include: 'card',
+                                                fields: {
+                                                    
+                                                }
                                             }
-                                        ]
+                                        }
                                     }
-                                }).$promise;
+                                }, function (data) {
+                                    if(data.$$state.status ==1) {
+                                        return data;
+                                    }
+                                }, function(err) {
+                                    if(err) console.log('err: ',err);
+                                });
                             }],
                             
                             classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
@@ -2478,7 +2501,8 @@ var app = angular.module('app', [
                                 return Card.find({
                                     filter: {
                                         where: {
-                                            playerClass: playerClass
+                                            playerClass: playerClass,
+                                            deckable: true
                                         },
                                         order: ['cost ASC', 'cardType ASC', 'name ASC'],
                                         limit: perpage
@@ -2503,12 +2527,12 @@ var app = angular.module('app', [
                                 }).$promise;
                             }],
                             
-                            neutralCardsList: ['$stateParams', 'Card', function($stateParams, Card) {
+                            neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
                                         where: {
                                             playerClass: 'Neutral',
-                                            decktable: true
+                                            deckable: true
                                         },
                                         order: ["cost ASC", "cardType ASC", "name ASC"],
                                         limit: 15
@@ -3013,11 +3037,26 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/users.list.html',
                         controller: 'AdminUserListCtrl',
                         resolve: {
-                            data: ['AdminUserService', function (AdminUserService) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '';
-                                return AdminUserService.getUsers(page, perpage, search);
+                            paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    search: '',
+                                    options: {
+                                        filter: {
+                                            limit: 50
+                                        }
+                                    }
+                                };
+                            }],
+//                            data: ['AdminUserService', function (AdminUserService) {
+//                                var page = 1,
+//                                    perpage = 50,
+//                                    search = '';
+//                                return AdminUserService.getUsers(page, perpage, search);
+//                            }]
+                            users: ['User', 'paginationParams', function(User, paginationParams) {
+                                return User.find(paginationParams.options).$promise;
                             }]
                         }
                     }
@@ -3234,9 +3273,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/snapshots.edit.html',
                         controller: 'AdminSnapshotEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminSnapshotService', function ($stateParams, AdminSnapshotService) {
+//                            data: ['$stateParams', 'AdminSnapshotService', function ($stateParams, AdminSnapshotService) {
+//                                var snapshotID = $stateParams.snapshotID;
+//                                return AdminSnapshotService.getSnapshot(snapshotID);
+//                            }]
+                            snapshot: ['$stateParams', 'Snapshot', function($stateParams, Snapshot) {
                                 var snapshotID = $stateParams.snapshotID;
-                                return AdminSnapshotService.getSnapshot(snapshotID);
+                                return Snapshot.find({
+                                    filter: {
+                                        where: {
+                                            id: snapshotID
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
