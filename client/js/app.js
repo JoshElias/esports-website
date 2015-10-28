@@ -2394,9 +2394,28 @@ var app = angular.module('app', [
                                         where: {
                                             id: deckID,
                                         },
+                                        fields: {
+                                            id: true,
+                                            deckId: true,
+                                            createdDate: true,
+                                            name: true,
+                                            description: true,
+                                            playerClass: true,
+                                            premium: true,
+                                            slug: true,
+                                            dust: true,
+                                            heroName: true,
+                                            authorId: true,
+                                            deckType: true,
+                                            viewCount: true
+                                        },
                                         include: ['cards']
                                     }
-                                }).$promise;
+                                }, function (data) {
+                                    return data;
+                                }, function(err) {
+                                    if(err) console.log('err: ',err);
+                                });
                             }],
                             
                             classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {

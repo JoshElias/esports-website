@@ -4310,10 +4310,12 @@ angular.module('app.controllers', ['ngCookies'])
         function ($state, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck) {
             // find me easy
             console.log('init deck: ',deck);
-            console.log('class cards: ',classCardsList);
-            console.log('neutral cards: ',neutralCardsList);
-            console.log('class card count: ',classCardsCount);
-            console.log('neutral card count: ',neutralCardsCount);
+//            console.log('class cards: ',classCardsList);
+//            console.log('neutral cards: ',neutralCardsList);
+//            console.log('class card count: ',classCardsCount);
+//            console.log('neutral card count: ',neutralCardsCount);
+//            console.log('deck cards: ', deckCards);
+            
             
             // redirect back to class pick if no data
 //            if (!data || !data.success == 1) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
@@ -4400,6 +4402,7 @@ angular.module('app.controllers', ['ngCookies'])
                 class: classCardsList,
                 current: classCardsList
             };
+            console.log('all cards: ', $scope.cards);
 //        $scope.cards.current = $scope.cards.class;
 
             $scope.search = function() {
@@ -4558,6 +4561,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.mechanics = Hearthstone.mechanics;
+            console.log('mechanics: ', $scope.mechanics);
             $scope.inMechanics = function (mechanic) {
                 return ($scope.filters.mechanics.indexOf(mechanic) >= 0);
             }
@@ -4629,8 +4633,9 @@ angular.module('app.controllers', ['ngCookies'])
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
 
-            //$scope.deck = DeckBuilder.new(data.className);
+            
 //            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
+            
 //            $scope.$watch('deck', function() {
 //                $scope.app.settings.deck = {
 //                    name: $scope.deck.name,
@@ -4649,8 +4654,11 @@ angular.module('app.controllers', ['ngCookies'])
 //                };
 //            }, true);
             
-            // MY FIX: removed $scope.className === $scope.app.settings.deck.playerClass
-            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
+            console.log('settings: ', $scope.app.settings);
+//            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
+            
+            $scope.deck = DeckBuilder.new(deck.playerClass, deck);
+            
             $scope.$watch('deck', function() {
                 $scope.app.settings.deck = {
                     name: $scope.deck.name,
@@ -4669,6 +4677,8 @@ angular.module('app.controllers', ['ngCookies'])
                     id: $scope.deck.id
                 };
             }, true);
+            
+            console.log('settings now: ', $scope.app.settings);
             
             console.log('newest deck: ', $scope.deck);
 
@@ -5844,6 +5854,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.className = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
+            
             $scope.cards = {
                 neutral: neutralCardsList,
                 class: classCardsList,
