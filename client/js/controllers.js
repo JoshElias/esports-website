@@ -2123,10 +2123,12 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('AdminSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', '$upload', 'data', 'AlertService', 'Util', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
-        function ($scope, $compile, $timeout, $state, $window, $upload, data, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
+    .controller('AdminSnapshotEditCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'AdminDeckService', 'AdminSnapshotService', 'AdminUserService', 'AdminCardService',
+        function ($scope, $upload, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, AdminDeckService, AdminSnapshotService, AdminUserService, AdminCardService) {
+            
+            console.log('snapshot: ', snapshot);
 
-
+            // special
             var deckBootBox = undefined,
                 authorBootBox = undefined,
                 cardBootBox = undefined,
@@ -2167,7 +2169,7 @@ angular.module('app.controllers', ['ngCookies'])
                     orderNum : 1
                 };
 
-            $scope.snapshot = data.snapshot;
+            $scope.snapshot = snapshot;
             $scope.search = "";
             $scope.decks = [];
             $scope.matches = populateMatches();
@@ -4304,18 +4306,24 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'deck', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep',
-        function ($state, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, deck, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep) {
+    .controller('AdminDeckEditCtrl', ['$state', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck',
+        function ($state, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck) {
             // find me easy
             console.log('init deck: ',deck);
+            console.log('class cards: ',classCardsList);
+            console.log('neutral cards: ',neutralCardsList);
+            console.log('class card count: ',classCardsCount);
+            console.log('neutral card count: ',neutralCardsCount);
             
             // redirect back to class pick if no data
-            if (!deck || !deck.$promise.$$state.status == 1) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+//            if (!data || !data.success == 1) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
 
             // set default tab page
             $scope.step = 1;
             $scope.showManaCurve = false;
             $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
+            
+//            console.log('classes: ', $scope.classes);
 
             // steps
             $scope.stepDesc = {
@@ -4543,6 +4551,11 @@ angular.module('app.controllers', ['ngCookies'])
                 mechanics: [],
                 mana: 'all'
             };
+            
+            $scope.setClassCards = function (b) {
+                classCards = b;
+                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+            }
 
             $scope.mechanics = Hearthstone.mechanics;
             $scope.inMechanics = function (mechanic) {
@@ -4575,6 +4588,8 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.filters.mana = m;
                 updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
             }
+            
+            
 
             $scope.filters.byMana = function () {
                 return function (item) {
@@ -4638,20 +4653,20 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
             $scope.$watch('deck', function() {
                 $scope.app.settings.deck = {
-                    name: deck.name,
-                    deckType: deck.deckType,
-                    description: deck.description,
-                    chapters: deck.chapters,
-                    matches: deck.matches,
-                    cards: deck.cards,
-                    heroName: deck.heroName,
-                    playerClass: deck.playerClass,
-                    type: deck.type,
-                    basic: deck.basic,
-                    mulligans: deck.mulligans,
-                    video: deck.video,
-                    public: deck.public,
-                    id: deck.id
+                    name: $scope.deck.name,
+                    deckType: $scope.deck.deckType,
+                    description: $scope.deck.description,
+                    chapters: $scope.deck.chapters,
+                    matches: $scope.deck.matches,
+                    cards: $scope.deck.cards,
+                    heroName: $scope.deck.heroName,
+                    playerClass: $scope.deck.playerClass,
+                    type: $scope.deck.type,
+                    basic: $scope.deck.basic,
+                    mulligans: $scope.deck.mulligans,
+                    video: $scope.deck.video,
+                    public: $scope.deck.public,
+                    id: $scope.deck.id
                 };
             }, true);
             
@@ -4757,8 +4772,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminUserListCtrl', ['$scope', 'bootbox', 'Pagination', 'AlertService', 'AdminUserService', 'data',
-        function ($scope, bootbox, Pagination, AlertService, AdminUserService, data) {
+    .controller('AdminUserListCtrl', ['$scope', 'bootbox', 'Pagination', 'AlertService', 'AdminUserService', 'users',
+        function ($scope, bootbox, Pagination, AlertService, AdminUserService, users) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -5741,6 +5756,9 @@ angular.module('app.controllers', ['ngCookies'])
         function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep) {
             // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+            
+            console.log('neutralCardsList: ', neutralCardsList);
+            console.log('init deck: ', $scope.deck);
 
             $scope.isSecondary = function (klass) {
                 switch(klass) {
