@@ -1248,6 +1248,7 @@ var app = angular.module('app', [
                         resolve: {
                             guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
+                                console.log('slug: ', slug);
                                 return Guide.findOne({
                                     filter: {
                                         where: {
@@ -1276,11 +1277,14 @@ var app = angular.module('app', [
                                 }).$promise.then(function (data) {
                                     console.log(data);
                                     return data;
+                                })
+                                .catch(function (err) {
+                                    console.log('err: ', err);
                                 });
                             }],
                             guideTalents: ['guide', function (guide) {
                                 var talents = {};
-                                console.log(guide);
+                                console.log('guide: ', guide);
                                 if (guide.guideType === "hero") {
                                     for (var i = 0; i < guide.heroes.length; i++) {
                                         for (var j = 0; j < guide.heroes[i].talents.length; j++) {
@@ -3319,9 +3323,22 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/overwatch.heroes.edit.html',
                         controller: 'AdminOverwatchHeroEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminHeroService', function ($stateParams, AdminHeroService) {
+                            hero: ['$stateParams', 'OverwatchHero', function ($stateParams, OverwatchHero) {
                                 var heroID = $stateParams.heroID;
-                                return AdminHeroService.getHero(heroID);
+                                
+                                return OverwatchHero.findOne({
+                                    filter: {
+                                        where: {
+                                            id: heroID
+                                        },
+                                        include: {
+                                            relation: 'overwatchAbilities',
+                                            scope: {
+                                                order: "orderNum ASC"
+                                            }
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }

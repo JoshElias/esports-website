@@ -10379,6 +10379,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getCurrentTalents = function () {
                 var levels = $scope.getTiers(),
                     out = [];
+                
+                console.log('guideTalents: ', guideTalents);
 
                 for (var i = 0; i < levels.length; i++) {
                     out.push(guideTalents[$scope.guide.talentTiers[$scope.currentHero.id][levels[i]]]);
@@ -10506,22 +10508,21 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util',
-        function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util) {
+    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util) {
             var box;
 
             // create guide
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
             
+            console.log('guide: ', $scope.guide);
+            
             $scope.$watch('guide', function(){
                 $scope.app.settings.guide = $scope.guide;
             }, true);
-            
-            console.log('guide: ', $scope.guide);
 
             // heroes
             $scope.heroes = dataHeroes;
-            console.log('heroes: ',dataHeroes);
 
             // maps
             $scope.maps = dataMaps;
@@ -10645,11 +10646,25 @@ angular.module('app.controllers', ['ngCookies'])
                 if (!User.isAuthenticated()) {
                     LoginModalService.showModal('login');
                 } else {
-                    console.log('guide: ', $scope.guide);
-                    Guide.create({}, $scope.guide, function(data) {
-                        console.log('data: ',data);
-                        $scope.app.settings.guide = null;
-                        $state.go('app.hots.guides.guide', { slug: data.slug });
+                    $scope.guide.slug = Util.slugify($scope.guide.name);
+                    console.log('guide going in: ', $scope.guide);
+                    
+                    Guide.create({}, $scope.guide, function(guide) {
+                        console.log('created guide: ', guide);
+                        
+                        // DEFINITELY SOMETHING WRONG HERE
+                        Guide.heroes.createMany({
+                            id: guide.id,
+                        }, $scope.guide.heroes, function(heroGuide) {
+                            $scope.app.settings.guide = null;
+                            console.log('slug: ', $scope.guide.slug);
+                            $state.go('app.hots.guides.guide', { slug: guide.slug });
+                            
+                        }, function(error) {
+                            if(error) console.log('error: ', error);
+                        });
+                        
+//                        $state.go('app.hots.guides.guide', { slug: guide.slug });
                     }, function(err) {
                         if(err) console.log('error: ',err);
                     });
@@ -11589,33 +11604,28 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.addHero = function () {
                 $scope.showError = false;
 
-                OverwatchHero.create({}, $scope.hero).$promise
+                OverwatchHero.create($scope.hero).$promise
                 .then(function (heroValue) {
                     console.log('hero value: ', heroValue);
                     
-                    if ($scope.hero.abilities.length) {
-                        _.each($scope.hero.abilities, function (ability) {
-                            ability.heroId = heroValue.id;
-                        });
-                        
-                        OverwatchAbility.createMany({}, $scope.hero.abilities).$promise
-                        .then(function (abilityValue) {
-                            console.log('abilities values: ', abilityValue);
+                    _.each($scope.hero.abilities, function (ability) {
+                        ability.heroId = heroValue.id;
+                    });
 
-                            AlertService.setSuccess({ show: true, msg: $scope.hero.heroName + ' has been added successfully.' });
-                            $state.go('app.admin.overwatch.heroes.list');
-                        })
-                        .catch(function (httpResponse) {
-                            console.log('httpResponse: ', httpResponse);
+                    OverwatchHero.overwatchAbilities.createMany({ id: heroValue.id }, $scope.hero.abilities).$promise
+                    .then(function (abilityValue) {
+                        console.log('abilities values: ', abilityValue);
 
-                            $scope.errors = _.omit(httpResponse.data.error, ['message', 'status']);
-                            $scope.showError = true;
-                            $window.scrollTo(0,0);
-                        });
-                    } else {
                         AlertService.setSuccess({ show: true, msg: $scope.hero.heroName + ' has been added successfully.' });
                         $state.go('app.admin.overwatch.heroes.list');
-                    }
+                    })
+                    .catch(function (httpResponse) {
+                        console.log('httpResponse: ', httpResponse);
+
+                        $scope.errors = _.omit(httpResponse.data.error, ['message', 'status']);
+                        $scope.showError = true;
+                        $window.scrollTo(0,0);
+                    });
                 })
                 .catch(function (httpResponse) {
                     console.log('httpResponse: ', httpResponse);
@@ -11625,6 +11635,143 @@ angular.module('app.controllers', ['ngCookies'])
                     $window.scrollTo(0,0);
                 });
             };
+        }
+    ])
+    .controller('AdminOverwatchHeroEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'bootbox', 'OVERWATCH', 'AlertService', 'OverwatchHero', 'OverwatchAbility', 'hero',
+        function ($scope, $compile, $timeout, $state, $window, bootbox, OVERWATCH, AlertService, OverwatchHero, OverwatchAbility, hero) {
+            console.log('hero: ', hero);
+            
+            // defaults
+            var defaultAbility = {
+                    name: '',
+                    description: '',
+                    className: '',
+                    orderNum: 1
+                };
+            
+            // load vars
+            $scope.hero = hero;
+            $scope.hero.badKey = [];
+            $scope.roles = OVERWATCH.roles;
+            
+            // select options
+            $scope.heroActive = [
+                { name: 'Yes', value: true },
+                { name: 'No', value: false }
+            ];
+            
+            // abilities
+            var box;
+            $scope.abilityAddWnd = function () {
+                $scope.currentAbility = angular.copy(defaultAbility);
+                box = bootbox.dialog({
+                    title: 'Add Ability',
+                    message: $compile('<div overwatch-ability-add-form></div>')($scope)
+                });
+            };
+
+            $scope.abilityEditWnd = function (ability) {
+                $scope.currentAbility = ability;
+                box = bootbox.dialog({
+                    title: 'Edit Ability',
+                    message: $compile('<div overwatch-ability-edit-form></div>')($scope)
+                });
+            };
+
+            $scope.addAbility = function () {
+                $scope.currentAbility.orderNum = $scope.hero.overwatchAbilities.length + 1;
+                $scope.hero.overwatchAbilities.push($scope.currentAbility);
+                box.modal('hide');
+                $scope.currentAbility = false;
+            };
+
+            $scope.editAbility = function (ability) {
+                box.modal('hide');
+                $scope.currentAbility = false;
+            };
+
+            $scope.deleteAbility = function (ability) {
+                function done () {
+                    $timeout(function () {
+                        var index = $scope.hero.overwatchAbilities.indexOf(ability);
+                        $scope.hero.overwatchAbilities.splice(index, 1);
+                        updateOrder($scope.hero.overwatchAbilities);
+                    });
+                }
+
+                box = bootbox.confirm({
+                    title: 'Delete Ability?',
+                    message: 'Are you sure you want to delete the ability ' + ability.name + '?',
+                    callback: function (result) {
+                        if (!result) { return; }
+                        if (!ability.id) { return done(); }
+
+                        OverwatchHero.overwatchAbilities.destroyById({ id: ability.heroId, fk: ability.id }).$promise
+                        .then(done)
+                        .catch(function (httpResponse) {
+                            console.log('httpResponse: ', httpResponse);
+
+                            $scope.errors = [httpResponse.data.error.message];
+                            $scope.showError = true;
+                            $window.scrollTo(0,0);
+                        });
+                    }
+                });
+            };
+            
+            function updateOrder (list) {
+                for (var i = 0; i < list.length; i++) {
+                    list[i].orderNum = i + 1;
+                }
+            }
+            
+            // drag and drop for abilities
+            $scope.updateDND = function (list, index) {
+                list.splice(index, 1);
+                updateOrder(list);
+            }
+            
+            // edit hero
+            $scope.editHero = function () {
+                console.log('edit hero');
+                //OverwatchHero.updateAll({ where: { id: $scope.hero.id } }, $scope.hero).$promise
+                $scope.hero.$save()
+                .then(function (heroValue) {
+                    console.log('hero updated: ', heroValue);
+                    /*
+                    _.each($scope.hero.overwatchAbilities, function (ability) {
+                        console.log('ability updated: ', ability);
+                        ability.heroId = heroValue.id;
+                    });
+                    
+                    async.forEach($scope.hero.overwatchAbilities, function(ability, eachCallback) {
+                        
+                        if (ability.id) {
+                            console.log('ability update: ', ability.name);
+                            OverwatchAbility.update({ where: { id: ability.id } }, ability).$promise
+                            .then(eachCallback)
+                            .catch(eachCallback);
+                        } else {
+                            console.log('ability create: ', ability.name);
+                            OverwatchHero.overwatchAbilities.create({ id: heroValue.id }, ability).$promise
+                            .then(eachCallback)
+                            .catch(eachCallback);
+                        }
+                    }, function () {
+                        console.log('edit success');
+                        AlertService.setSuccess({ show: true, msg: $scope.hero.heroName + ' has been updated successfully.' });
+                        return $state.go('app.admin.overwatch.heroes.list');
+                    });
+                    */
+                })
+                .catch(function (httpResponse) {
+                    console.log('httpResponse: ', httpResponse);
+
+                    $scope.errors = ['An error occurred while trying to update the hero.'];
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                });
+            }
         }
     ])
 ;

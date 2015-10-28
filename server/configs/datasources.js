@@ -21,7 +21,8 @@ module.exports = {
         "name": "s3",
         "connector": "loopback-component-storage",
         "provider": "amazon",
-        "key": "AKIAIQZRXBQLHFBKCGSQ",
-        "keyId": "+5HNYCyZ84OMMNuZfrFuEz2xzyN9MtJQWN65dSB3"
-    }
+        "key": "+KtXI6Pvdt8ijq4uOCpkIT5f76Wxf23avEdy311f",
+        "keyId": "AKIAI5GMLIWXZP6TQXYQ",
+        "bucket": "staging-cdn.tempostorm.com"
+  }
 }
