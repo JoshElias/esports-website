@@ -16,7 +16,18 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "card": {
+      "type": "belongsTo",
+      "model": "card",
+      "foreignKey": "cardId"
+    },
+    "mulligan": {
+      "type": "belongsTo",
+      "model": "mulligan",
+      "foreignKey": "mulliganId"
+    }
+  },
   "acls": [],
   "methods": {}
 }

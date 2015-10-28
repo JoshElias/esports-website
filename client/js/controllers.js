@@ -3786,39 +3786,87 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminDeckListCtrl', ['$scope', 'AdminDeckService', 'AlertService', 'Pagination', 'decks',
-        function ($scope, AdminDeckService, AlertService, Pagination, decks) {
+    .controller('AdminDeckListCtrl', ['$scope', '$q', '$timeout', 'AdminDeckService', 'AlertService', 'Pagination', 'decks', 'paginationParams', 'decksCount', 'Deck', 'AjaxPagination',
+        function ($scope, $q, $timeout, AdminDeckService, AlertService, Pagination, decks, paginationParams, decksCount, Deck, AjaxPagination) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
                 AlertService.reset();
             }
 
-            console.log(decks);
-
             // load decks
             $scope.decks = decks;
-
-//        $scope.page = data.page;
-//        $scope.perpage = data.perpage;
-//        $scope.total = data.total;
-//        $scope.search = data.search;
-
-//        $scope.getDecks = function () {
-//            AdminDeckService.getDecks($scope.page, $scope.perpage, $scope.search).then(function (data) {
-//                $scope.decks = data.decks;
-//                $scope.page = data.page;
-//                $scope.total = data.total;
-//            });
-//        }
-//
-//        $scope.searchDecks = function () {
-//            $scope.page = 1;
-//            $scope.getDecks();
-//        }
+            $scope.page = paginationParams.page;
+            $scope.perpage = paginationParams.perpage;
+            $scope.total = decksCount.count;
+            $scope.search = paginationParams.search;
+            
+            // search on keyup
+            $scope.searchDecks = function() {
+                updateDecks(1, $scope.perpage, $scope.search, false);
+            };
+            
+            // pagination
+            function updateDecks (page, perpage, search, callback) {
+                $scope.fetching = true;
+                
+                var options = {},
+                    countOptions = {};
+                
+                options.filter = {
+                    fields: paginationParams.options.filter.fields,
+                    order: "createdDate DESC",
+                    skip: ((page*perpage) - perpage),
+                    limit: perpage
+                };
+                
+                if ($scope.search.length > 0) {
+                    options.filter.where = {
+                        or: [
+                            { title: { regexp: search } },
+                            { description: { regexp: search } },
+                            { name: { regexp: search } }
+                        ]
+                    }
+                    countOptions.where = {
+                        or: [
+                            { title: { regexp: search } },
+                            { description: { regexp: search } },
+                            { name: { regexp: search } }
+                        ]
+                    }
+                }
+                
+                Deck.count(countOptions, function (count) {
+                    Deck.find(options, function (decks) {
+                        $scope.deckPagination.total = count.count;
+                        $scope.deckPagination.page = page;
+                        $scope.deckPagination.perpage = perpage;
+                        
+                        $timeout(function() {
+                            $scope.decks = decks;
+                            $scope.fetching = false;
+                            
+                            if (callback) {
+                                return callback(count.count);
+                            }
+                        });
+                    });
+                });
+            }
+            
+            // page flipping
+            $scope.deckPagination = AjaxPagination.new($scope.perpage, $scope.total, function(page, perpage) {
+                var d = $q.defer();
+                
+                updateDecks(page, perpage, $scope.search, function (data) {
+                    d.resolve(data);
+                });
+                return d.promise;
+            });
 
             // delete deck
-            $scope.deleteDeck = function deleteDeck(deck) {
+            $scope.deleteDeck = function deleteDeck (deck) {
                 var box = bootbox.dialog({
                     title: 'Delete deck: ' + deck.name + '?',
                     message: 'Are you sure you want to delete the deck <strong>' + deck.name + '</strong>?',
@@ -3827,18 +3875,24 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminDeckService.deleteDeck(deck._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.decks.indexOf(deck);
-                                        if (index !== -1) {
-                                            $scope.decks.splice(index, 1);
-                                        }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: deck.name + ' deleted successfully.'
-                                        };
-                                    }
-                                });
+//                                Deck.deleteById({ id: deck.id }).$promise.then(function (data) {
+//                                    if (data.$resolved) {
+//                                        var indexToDel = $scope.decks.indexOf(deck);
+//                                        if (indexToDel !== -1) {
+//                                            $scope.articles.splice(indexToDel, 1);
+//                                        }
+//                                        $scope.success = {
+//                                            show: true,
+//                                            msg: article.title + ' deleted successfully.'
+//                                        };
+//                                    }
+//                                });
+                                
+                                // todo errors
+//                                Deck.deleteById({ id: deck.id }, function (deletedDeck) {
+//                                    console.log('deleted deck: ', deletedDeck);
+//                                }, function(err) {
+//                                });
                             }
                         },
                         cancel: {
@@ -3854,7 +3908,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminDeckBuilderClassCtrl', ['$scope', function ($scope) {
+    .controller('AdminDeckBuilderClassCtrl', ['$scope', 'Hearthstone', function ($scope, Hearthstone) {
         if ($scope.app.settings.secondaryPortrait == undefined || $scope.app.settings.secondaryPortrait.length == 0) {
             $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
         }
@@ -3904,8 +3958,7 @@ angular.module('app.controllers', ['ngCookies'])
             portraitSettings[index] = numb;
             $scope.app.settings.secondaryPortrait[index] = numb;
         }
-
-        //
+        
         for (var i = 0; i < $scope.app.settings.secondaryPortrait.length; i++) {
             if ($scope.getName(i, true) == undefined || $scope.getName(i, true) == '') {
                 $scope.app.settings.secondaryPortrait[i] = 0;
@@ -4251,10 +4304,13 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'data',
-        function ($state, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, data) {
+    .controller('AdminDeckEditCtrl', ['$state', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'deck', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep',
+        function ($state, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, deck, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep) {
+            // find me easy
+            console.log('init deck: ',deck);
+            
             // redirect back to class pick if no data
-            if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
+            if (!deck || !deck.$promise.$$state.status == 1) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
 
             // set default tab page
             $scope.step = 1;
@@ -4283,8 +4339,6 @@ angular.module('app.controllers', ['ngCookies'])
                     case 'warrior': return $scope.app.settings.secondaryPortrait[8]; break;
                 }
             }
-
-            console.log(data);
 
             $scope.getDust = function (cards) {
                 var dust = 0;
@@ -4331,32 +4385,136 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
 
-            $scope.className = data.deck.playerClass;
-            $scope.cards = {};
+            $scope.className = deck.playerClass;
+            
+            $scope.cards = {
+                neutral: neutralCardsList,
+                class: classCardsList,
+                current: classCardsList
+            };
 //        $scope.cards.current = $scope.cards.class;
 
             $scope.search = function() {
                 updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
             }
 
+//            function updateCards (page, perpage, search, mechanics, mana, callback) {
+//                DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
+//                    $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+//                    $scope.classPagination.page = page;
+//                    $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
+//                    $scope.neutralPagination.page = page;
+//                    $timeout(function () {
+//                        $scope.cards.current = ($scope.isClassCards()) ? data.cards.class : data.cards.neutral;
+//
+//                        if (callback) {
+//                            return callback(data);
+//                        }
+//                    });
+//                });
+//            }
+            
             function updateCards (page, perpage, search, mechanics, mana, callback) {
-                DeckBuilder.loadCards(page, perpage, search, mechanics, mana, $scope.className.toLowerCase()).then(function (data) {
-                    $scope.classPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
-                    $scope.classPagination.page = page;
-                    $scope.neutralPagination.total = ($scope.isClassCards()) ? data.classTotal : data.neutralTotal;
-                    $scope.neutralPagination.page = page;
-                    $timeout(function () {
-                        $scope.cards.current = ($scope.isClassCards()) ? data.cards.class : data.cards.neutral;
-
-                        if (callback) {
-                            return callback(data);
-                        }
+                $scope.fetching = true;
+                
+                var options = {
+                    filter: {
+                        where: {
+                            playerClass: ($scope.isClassCards()) ? $scope.className : 'Neutral',
+                            deckable: true
+                        },
+                        order: ['cost ASC', 'cardType ASC', 'name ASC'],
+                        skip: ((page * perpage) - perpage),
+                        limit: perpage
+                    }
+                }
+                var countOptionsClass = {
+                    where: {
+                        playerClass: $scope.className,
+                        deckable: true
+                    }
+                }
+                var countOptionsNeutral = {
+                    where: {
+                        playerClass: 'Neutral',
+                        deckable: true
+                    }
+                }
+                
+                if ($scope.search.length > 0) {
+                    options.filter.where.or = [
+                        { name: { regexp: search } },
+                        { description: { regexp: search } },
+                        { content: { regexp: search } }
+                    ]
+                    
+                    countOptionsClass.where.or = [
+                        { name: { regexp: search } },
+                        { description: { regexp: search } },
+                        { content: { regexp: search } }
+                    ]
+                }
+                
+                if (mechanics.length == 1) {
+                    options.filter.where.mechanics = {
+                        inq: mechanics
+                    }
+                    
+                    countOptionsClass.where.mechanics = {
+                        inq: mechanics
+                    }
+                    
+                    countOptionsNeutral.where.mechanics = {
+                        inq: mechanics
+                    }
+                } else if (mechanics.length > 1) {
+                    options.filter.where.mechanics = mechanics;
+                    countOptionsClass.where.mechanics = mechanics;
+                    countOptionsNeutral.where.mechanics = mechanics;
+                }
+                
+                if (mana != 'all' && mana != '7+') {
+                    options.filter.where.cost = mana;
+                    countOptionsClass.where.cost = mana;
+                    countOptionsNeutral.where.cost = mana;
+                } else if (mana == '7+') {
+                    options.filter.where.cost = { gte: 7 };
+                    countOptionsClass.where.cost = { gte: 7 };
+                    countOptionsNeutral.where.cost = { gte: 7 };
+                }
+                
+                Card.count(countOptionsClass)
+                .$promise
+                .then(function (classCount) {
+                    Card.count(countOptionsNeutral)
+                    .$promise
+                    .then(function (classCount) {
+                        Card.count(countOptionsNeutral)
+                        .$promise
+                        .then(function (neutralCount) {
+                            Card.find(options)
+                            .$promise
+                            .then(function (data) {
+                                $scope.classPagination.total = classCount.count;
+                                $scope.classPagination.page = page;
+                                $scope.neutralPagination.total = neutralCount.count;
+                                $scope.neutralPagination.page = page;
+                                
+                                $timeout(function() {
+                                    $scope.cards.current = data;
+                                    $scope.fetching = false;
+                                    if(callback) {
+                                        return callback([classCount.count, neutralCount.count]);
+                                    }
+                                });
+                            });
+                        });
                     });
                 });
             }
 
             // page flipping
-            $scope.classPagination = AjaxPagination.new(15, data.classTotal,
+            $scope.classPagination = AjaxPagination.new(15, classCardsCount.count,
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -4368,7 +4526,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             );
 
-            $scope.neutralPagination = AjaxPagination.new(15, data.neutralTotal,
+            $scope.neutralPagination = AjaxPagination.new(15, neutralCardsCount.count,
                 function (page, perpage) {
                     var d = $q.defer();
 
@@ -4455,7 +4613,49 @@ angular.module('app.controllers', ['ngCookies'])
 
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
-            $scope.deck = DeckBuilder.new(data.deck.className, data.deck);
+
+            //$scope.deck = DeckBuilder.new(data.className);
+//            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
+//            $scope.$watch('deck', function() {
+//                $scope.app.settings.deck = {
+//                    name: $scope.deck.name,
+//                    deckType: $scope.deck.deckType,
+//                    description: $scope.deck.description,
+//                    chapters: $scope.deck.chapters,
+//                    matches: $scope.deck.matches,
+//                    cards: $scope.deck.cards,
+//                    heroName: $scope.deck.heroName,
+//                    playerClass: $scope.deck.playerClass,
+//                    type: $scope.deck.type,
+//                    basic: $scope.deck.basic,
+//                    mulligans: $scope.deck.mulligans,
+//                    video: $scope.deck.video,
+//                    public: $scope.deck.public
+//                };
+//            }, true);
+            
+            // MY FIX: removed $scope.className === $scope.app.settings.deck.playerClass
+            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
+            $scope.$watch('deck', function() {
+                $scope.app.settings.deck = {
+                    name: deck.name,
+                    deckType: deck.deckType,
+                    description: deck.description,
+                    chapters: deck.chapters,
+                    matches: deck.matches,
+                    cards: deck.cards,
+                    heroName: deck.heroName,
+                    playerClass: deck.playerClass,
+                    type: deck.type,
+                    basic: deck.basic,
+                    mulligans: deck.mulligans,
+                    video: deck.video,
+                    public: deck.public,
+                    id: deck.id
+                };
+            }, true);
+            
+            console.log('newest deck: ', $scope.deck);
 
             // current mulligan
             $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
@@ -7351,6 +7551,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
 
                 if (big === 0) return 0;
+                
+                console.log('whatisthis: ',Math.ceil($scope.deck.manaCount(mana) / big * 98));
 
                 return Math.ceil($scope.deck.manaCount(mana) / big * 98);
             };
@@ -10055,6 +10257,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getCurrentTalents = function () {
                 var levels = $scope.getTiers(),
                     out = [];
+                
+                console.log('guideTalents: ', guideTalents);
 
                 for (var i = 0; i < levels.length; i++) {
                     out.push(guideTalents[$scope.guide.talentTiers[$scope.currentHero.id][levels[i]]]);
@@ -10182,22 +10386,21 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util',
-        function ($scope, $state, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util) {
+    .controller('HOTSGuideBuilderHeroCtrl', ['$scope', '$state', '$timeout', '$window', '$compile', 'HOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps', 'LoginModalService', 'User', 'Guide', 'Util',
+        function ($scope, $state, $timeout, $window, $compile, HOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps, LoginModalService, User, Guide, Util) {
             var box;
 
             // create guide
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
             
+            console.log('guide: ', $scope.guide);
+            
             $scope.$watch('guide', function(){
                 $scope.app.settings.guide = $scope.guide;
             }, true);
-            
-            console.log('guide: ', $scope.guide);
 
             // heroes
             $scope.heroes = dataHeroes;
-            console.log('heroes: ',dataHeroes);
 
             // maps
             $scope.maps = dataMaps;
@@ -10321,11 +10524,25 @@ angular.module('app.controllers', ['ngCookies'])
                 if (!User.isAuthenticated()) {
                     LoginModalService.showModal('login');
                 } else {
-                    console.log('guide: ', $scope.guide);
-                    Guide.create({}, $scope.guide, function(data) {
-                        console.log('data: ',data);
-                        $scope.app.settings.guide = null;
-                        $state.go('app.hots.guides.guide', { slug: data.slug });
+                    $scope.guide.slug = Util.slugify($scope.guide.name);
+                    console.log('guide going in: ', $scope.guide);
+                    
+                    Guide.create({}, $scope.guide, function(guide) {
+                        console.log('created guide: ', guide);
+                        
+                        // DEFINITELY SOMETHING WRONG HERE
+                        Guide.heroes.createMany({
+                            id: guide.id,
+                        }, $scope.guide.heroes, function(heroGuide) {
+                            $scope.app.settings.guide = null;
+                            console.log('slug: ', $scope.guide.slug);
+                            $state.go('app.hots.guides.guide', { slug: guide.slug });
+                            
+                        }, function(error) {
+                            if(error) console.log('error: ', error);
+                        });
+                        
+//                        $state.go('app.hots.guides.guide', { slug: guide.slug });
                     }, function(err) {
                         if(err) console.log('error: ',err);
                     });
@@ -11265,33 +11482,28 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.addHero = function () {
                 $scope.showError = false;
 
-                OverwatchHero.create({}, $scope.hero).$promise
+                OverwatchHero.create($scope.hero).$promise
                 .then(function (heroValue) {
                     console.log('hero value: ', heroValue);
                     
-                    if ($scope.hero.abilities.length) {
-                        _.each($scope.hero.abilities, function (ability) {
-                            ability.heroId = heroValue.id;
-                        });
-                        
-                        OverwatchAbility.createMany({}, $scope.hero.abilities).$promise
-                        .then(function (abilityValue) {
-                            console.log('abilities values: ', abilityValue);
+                    _.each($scope.hero.abilities, function (ability) {
+                        ability.heroId = heroValue.id;
+                    });
 
-                            AlertService.setSuccess({ show: true, msg: $scope.hero.heroName + ' has been added successfully.' });
-                            $state.go('app.admin.overwatch.heroes.list');
-                        })
-                        .catch(function (httpResponse) {
-                            console.log('httpResponse: ', httpResponse);
+                    OverwatchHero.overwatchAbilities.createMany({ id: heroValue.id }, $scope.hero.abilities).$promise
+                    .then(function (abilityValue) {
+                        console.log('abilities values: ', abilityValue);
 
-                            $scope.errors = _.omit(httpResponse.data.error, ['message', 'status']);
-                            $scope.showError = true;
-                            $window.scrollTo(0,0);
-                        });
-                    } else {
                         AlertService.setSuccess({ show: true, msg: $scope.hero.heroName + ' has been added successfully.' });
                         $state.go('app.admin.overwatch.heroes.list');
-                    }
+                    })
+                    .catch(function (httpResponse) {
+                        console.log('httpResponse: ', httpResponse);
+
+                        $scope.errors = _.omit(httpResponse.data.error, ['message', 'status']);
+                        $scope.showError = true;
+                        $window.scrollTo(0,0);
+                    });
                 })
                 .catch(function (httpResponse) {
                     console.log('httpResponse: ', httpResponse);
@@ -11301,6 +11513,143 @@ angular.module('app.controllers', ['ngCookies'])
                     $window.scrollTo(0,0);
                 });
             };
+        }
+    ])
+    .controller('AdminOverwatchHeroEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'bootbox', 'OVERWATCH', 'AlertService', 'OverwatchHero', 'OverwatchAbility', 'hero',
+        function ($scope, $compile, $timeout, $state, $window, bootbox, OVERWATCH, AlertService, OverwatchHero, OverwatchAbility, hero) {
+            console.log('hero: ', hero);
+            
+            // defaults
+            var defaultAbility = {
+                    name: '',
+                    description: '',
+                    className: '',
+                    orderNum: 1
+                };
+            
+            // load vars
+            $scope.hero = hero;
+            $scope.hero.badKey = [];
+            $scope.roles = OVERWATCH.roles;
+            
+            // select options
+            $scope.heroActive = [
+                { name: 'Yes', value: true },
+                { name: 'No', value: false }
+            ];
+            
+            // abilities
+            var box;
+            $scope.abilityAddWnd = function () {
+                $scope.currentAbility = angular.copy(defaultAbility);
+                box = bootbox.dialog({
+                    title: 'Add Ability',
+                    message: $compile('<div overwatch-ability-add-form></div>')($scope)
+                });
+            };
+
+            $scope.abilityEditWnd = function (ability) {
+                $scope.currentAbility = ability;
+                box = bootbox.dialog({
+                    title: 'Edit Ability',
+                    message: $compile('<div overwatch-ability-edit-form></div>')($scope)
+                });
+            };
+
+            $scope.addAbility = function () {
+                $scope.currentAbility.orderNum = $scope.hero.overwatchAbilities.length + 1;
+                $scope.hero.overwatchAbilities.push($scope.currentAbility);
+                box.modal('hide');
+                $scope.currentAbility = false;
+            };
+
+            $scope.editAbility = function (ability) {
+                box.modal('hide');
+                $scope.currentAbility = false;
+            };
+
+            $scope.deleteAbility = function (ability) {
+                function done () {
+                    $timeout(function () {
+                        var index = $scope.hero.overwatchAbilities.indexOf(ability);
+                        $scope.hero.overwatchAbilities.splice(index, 1);
+                        updateOrder($scope.hero.overwatchAbilities);
+                    });
+                }
+
+                box = bootbox.confirm({
+                    title: 'Delete Ability?',
+                    message: 'Are you sure you want to delete the ability ' + ability.name + '?',
+                    callback: function (result) {
+                        if (!result) { return; }
+                        if (!ability.id) { return done(); }
+
+                        OverwatchHero.overwatchAbilities.destroyById({ id: ability.heroId, fk: ability.id }).$promise
+                        .then(done)
+                        .catch(function (httpResponse) {
+                            console.log('httpResponse: ', httpResponse);
+
+                            $scope.errors = [httpResponse.data.error.message];
+                            $scope.showError = true;
+                            $window.scrollTo(0,0);
+                        });
+                    }
+                });
+            };
+            
+            function updateOrder (list) {
+                for (var i = 0; i < list.length; i++) {
+                    list[i].orderNum = i + 1;
+                }
+            }
+            
+            // drag and drop for abilities
+            $scope.updateDND = function (list, index) {
+                list.splice(index, 1);
+                updateOrder(list);
+            }
+            
+            // edit hero
+            $scope.editHero = function () {
+                console.log('edit hero');
+                //OverwatchHero.updateAll({ where: { id: $scope.hero.id } }, $scope.hero).$promise
+                $scope.hero.$save()
+                .then(function (heroValue) {
+                    console.log('hero updated: ', heroValue);
+                    /*
+                    _.each($scope.hero.overwatchAbilities, function (ability) {
+                        console.log('ability updated: ', ability);
+                        ability.heroId = heroValue.id;
+                    });
+                    
+                    async.forEach($scope.hero.overwatchAbilities, function(ability, eachCallback) {
+                        
+                        if (ability.id) {
+                            console.log('ability update: ', ability.name);
+                            OverwatchAbility.update({ where: { id: ability.id } }, ability).$promise
+                            .then(eachCallback)
+                            .catch(eachCallback);
+                        } else {
+                            console.log('ability create: ', ability.name);
+                            OverwatchHero.overwatchAbilities.create({ id: heroValue.id }, ability).$promise
+                            .then(eachCallback)
+                            .catch(eachCallback);
+                        }
+                    }, function () {
+                        console.log('edit success');
+                        AlertService.setSuccess({ show: true, msg: $scope.hero.heroName + ' has been updated successfully.' });
+                        return $state.go('app.admin.overwatch.heroes.list');
+                    });
+                    */
+                })
+                .catch(function (httpResponse) {
+                    console.log('httpResponse: ', httpResponse);
+
+                    $scope.errors = ['An error occurred while trying to update the hero.'];
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                });
+            }
         }
     ])
 ;

@@ -184,5 +184,21 @@ module.exports = {
   "cardWithoutCoin": {
     "dataSource": "mongodb",
     "public": true
+  },
+  "overwatchHero": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "overwatchAbility": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "container": {
+    "dataSource":"s3",
+    "public": true
+  },
+  "image": {
+      "dataSource":"s3",
+     "public": true
   }
 }

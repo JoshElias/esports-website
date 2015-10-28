@@ -851,6 +851,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise;
                             }],
+                            
                             classCardsCount: ['$stateParams', 'Card', function ($stateParams, Card) {
                                 var playerClass = $stateParams.playerClass;
 
@@ -861,6 +862,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise;
                             }],
+                            
                             neutralCardsCount: ['Card', function (Card) {
                                 return Card.count({
                                     where: {
@@ -1244,6 +1246,7 @@ var app = angular.module('app', [
                         resolve: {
                             guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
+                                console.log('slug: ', slug);
                                 return Guide.findOne({
                                     filter: {
                                         where: {
@@ -1272,11 +1275,14 @@ var app = angular.module('app', [
                                 }).$promise.then(function (data) {
                                     console.log(data);
                                     return data;
+                                })
+                                .catch(function (err) {
+                                    console.log('err: ', err);
                                 });
                             }],
                             guideTalents: ['guide', function (guide) {
                                 var talents = {};
-                                console.log(guide);
+                                console.log('guide: ', guide);
                                 if (guide.guideType === "hero") {
                                     for (var i = 0; i < guide.heroes.length; i++) {
                                         for (var j = 0; j < guide.heroes[i].talents.length; j++) {
@@ -2299,19 +2305,34 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.list.html',
                         controller: 'AdminDeckListCtrl',
                         resolve: {
-                            decks: ['Deck', function (Deck) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '';
+                            paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    search: '',
+                                    options: {
+                                        filter: {
+                                            fields: ["id", "name", "playerClass", "description"]
+                                        }
+                                    }
+                                };
+                            }],
+                            
+                            decksCount: ['Deck', function(Deck) {
+                                return Deck.count({}).$promise;
+                            }],
+                            
+                            decks: ['Deck', 'paginationParams', function (Deck, paginationParams) {
+                                var page = paginationParams.page,
+                                    perpage = paginationParams.perpage,
+                                    search = paginationParams.search;
 
                                 return Deck.find({
                                     filter: {
-                                        limit: 50,
+                                        limit: paginationParams.perpage,
                                         skip: (page*perpage) - perpage,
                                         order: "createdDate DESC",
-                                        fields: [
-                                            "name"
-                                        ]
+                                        fields: paginationParams.options.filter.fields
                                     }
                                 })
                                 .$promise;
@@ -2363,10 +2384,74 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.edit.html',
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminDeckService', function ($stateParams, AdminDeckService) {
+                            deck: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var deckID = $stateParams.deckID;
-                                return AdminDeckService.getDeck(deckID);
+//                                return Deck.findById({ id: deckID }).$promise;
+                                return Deck.findOne({
+                                    filter: {
+                                        where: {
+                                            id: deckID,
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'cards'
+                                            }
+                                        ]
+                                    }
+                                }).$promise;
+                            }],
+                            
+                            classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
+                                var perpage = 15,
+                                    playerClass = deck.playerClass;
+                                
+                                return Card.find({
+                                    filter: {
+                                        where: {
+                                            playerClass: playerClass
+                                        },
+                                        order: ['cost ASC', 'cardType ASC', 'name ASC'],
+                                        limit: perpage
+                                    }
+                                }).$promise;
+                            }],
+                            
+                            classCardsCount: ['$stateParams', 'deck', 'Card', function ($stateParams, deck, Card) {
+                                var deckID = $stateParams.deckID;
+                                return Card.count({
+                                    where: {
+                                        playerClass: deck.playerClass
+                                    }
+                                }).$promise;
+                            }],
+                            
+                            neutralCardsCount: ['Card', function (Card) {
+                                return Card.count({
+                                    where: {
+                                        playerClass: 'Neutral'
+                                    }
+                                }).$promise;
+                            }],
+                            
+                            neutralCardsList: ['$stateParams', 'Card', function($stateParams, Card) {
+                                return Card.find({
+                                    filter: {
+                                        where: {
+                                            playerClass: 'Neutral',
+                                            decktable: true
+                                        },
+                                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                                        limit: 15
+                                    }
+                                }).$promise;
+                            }],
+                            
+                            toStep: ['$stateParams', function ($stateParams) {
+                                if($stateParams.goTo) {
+                                    return $stateParams.goTo;
+                                }
                             }]
+                            
                         }
                     }
                 },
@@ -3315,9 +3400,22 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/overwatch.heroes.edit.html',
                         controller: 'AdminOverwatchHeroEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminHeroService', function ($stateParams, AdminHeroService) {
+                            hero: ['$stateParams', 'OverwatchHero', function ($stateParams, OverwatchHero) {
                                 var heroID = $stateParams.heroID;
-                                return AdminHeroService.getHero(heroID);
+                                
+                                return OverwatchHero.findOne({
+                                    filter: {
+                                        where: {
+                                            id: heroID
+                                        },
+                                        include: {
+                                            relation: 'overwatchAbilities',
+                                            scope: {
+                                                order: "orderNum ASC"
+                                            }
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
