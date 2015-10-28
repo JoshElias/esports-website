@@ -108,7 +108,7 @@
                 </div>
                 
                 <div class="deck-info">
-                    <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
+                    <div class="db-deck-header db-deck-{{className | lowercase}} {{deck.heroName | lowercase}}">
                         <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                     </div>
                     <span ng-show="deck.basic">

@@ -2261,6 +2261,14 @@ angular.module('app.services', [])
                     { description: { regexp: filters.search } }
                 ]
             }
+            
+            var where = {
+                guideType: "hero"
+            }
+            
+            if (isFeatured !== null) {
+                where.isFeatured = isFeatured
+            }
 
             async.waterfall([
                 function(seriesCallback) {
@@ -2276,10 +2284,7 @@ angular.module('app.services', [])
                                     relation: "guides",
                                     scope: {
                                         fields: ["id"],
-                                        where: {
-                                            guideType: "hero",
-                                            isFeatured: isFeatured
-                                        }
+                                        where: where
                                     }
                                 }
                             ]
@@ -2342,6 +2347,14 @@ angular.module('app.services', [])
             if (_.isEmpty(selectedHeroes)) {
                 return;
             }
+            
+            var where = {
+                guideType: "hero"
+            }
+            
+            if (isFeatured !== null) {
+                where.isFeatured = isFeatured
+            }
 
             async.waterfall([
                 function (seriesCallback) {
@@ -2358,10 +2371,7 @@ angular.module('app.services', [])
                                     relation: "guides",
                                     scope: {
                                         fields: ["id"],
-                                        where: {
-                                            guideType: "hero",
-                                            isFeatured: isFeatured
-                                        }
+                                        where: where
                                     }
                                 }
                             ]
@@ -2431,6 +2441,14 @@ angular.module('app.services', [])
                 return;
             }
 
+            var where = {
+                guideType: "map"
+            }
+            
+            if (isFeatured !== null) {
+                where.isFeatured = isFeatured
+            }
+            
             async.waterfall(
                 [
                     function (seriesCallback) {
@@ -2445,10 +2463,7 @@ angular.module('app.services', [])
                                         relation: "guides",
                                         scope: {
                                             fields: ["id"],
-                                            where: {
-                                                guideType: "map",
-                                                isFeatured: isFeatured
-                                            }
+                                            where: where
                                         }
                                     }
                                 ]
@@ -2505,6 +2520,12 @@ angular.module('app.services', [])
             if (_.isEmpty(selectedHeroes)) {
                 return;
             }
+            
+            var where = {}
+            
+            if (isFeatured !== null) {
+                where.isFeatured = isFeatured
+            }
 
             async.waterfall([
                 //get selected heroes
@@ -2519,7 +2540,7 @@ angular.module('app.services', [])
                                 {
                                     relation: "guides",
                                     scope: {
-                                        where: { isFeatured: isFeatured },
+                                        where: where,
                                         fields: ["id"],
                                         include: [
                                             {

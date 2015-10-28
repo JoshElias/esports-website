@@ -851,6 +851,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise;
                             }],
+                            
                             classCardsCount: ['$stateParams', 'Card', function ($stateParams, Card) {
                                 var playerClass = $stateParams.playerClass;
 
@@ -861,6 +862,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise;
                             }],
+                            
                             neutralCardsCount: ['Card', function (Card) {
                                 return Card.count({
                                     where: {
@@ -1096,7 +1098,6 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
-                            
                             communityGuideCount: ['Guide', function(Guide) {
                                 return Guide.count({
                                     where: {
@@ -1104,7 +1105,6 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-
                             communityTalents: ['dataCommunityGuides', function (dataCommunityGuides) {
                               var talents = {};
                               for(var i = 0; i < dataCommunityGuides.length; i++) {
@@ -1116,7 +1116,6 @@ var app = angular.module('app', [
                               }
                               return talents;
                             }],
-                            
                             dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                               var guideType = $stateParams.t || 'all',
                                     filters = $stateParams.h || false,
@@ -1206,9 +1205,9 @@ var app = angular.module('app', [
                                     }
                                   ]
                                 }
-                              }).$promise;
+                              })
+                              .$promise;
                             }],
-                            
                             tempostormGuideCount: ['Guide', function(Guide) {
                                 return Guide.count({
                                     where: {
@@ -1216,7 +1215,6 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-                            
                             tempostormTalents: ['dataTempostormGuides', function (dataTempostormGuides) {
                               var talents = {};
                               for(var i = 0; i < dataTempostormGuides.length; i++) {
@@ -2307,19 +2305,34 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.list.html',
                         controller: 'AdminDeckListCtrl',
                         resolve: {
-                            decks: ['Deck', function (Deck) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '';
+                            paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    search: '',
+                                    options: {
+                                        filter: {
+                                            fields: ["id", "name", "playerClass", "description"]
+                                        }
+                                    }
+                                };
+                            }],
+                            
+                            decksCount: ['Deck', function(Deck) {
+                                return Deck.count({}).$promise;
+                            }],
+                            
+                            decks: ['Deck', 'paginationParams', function (Deck, paginationParams) {
+                                var page = paginationParams.page,
+                                    perpage = paginationParams.perpage,
+                                    search = paginationParams.search;
 
                                 return Deck.find({
                                     filter: {
-                                        limit: 50,
+                                        limit: paginationParams.perpage,
                                         skip: (page*perpage) - perpage,
                                         order: "createdDate DESC",
-                                        fields: [
-                                            "name"
-                                        ]
+                                        fields: paginationParams.options.filter.fields
                                     }
                                 })
                                 .$promise;
@@ -2371,10 +2384,74 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.edit.html',
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminDeckService', function ($stateParams, AdminDeckService) {
+                            deck: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var deckID = $stateParams.deckID;
-                                return AdminDeckService.getDeck(deckID);
+//                                return Deck.findById({ id: deckID }).$promise;
+                                return Deck.findOne({
+                                    filter: {
+                                        where: {
+                                            id: deckID,
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'cards'
+                                            }
+                                        ]
+                                    }
+                                }).$promise;
+                            }],
+                            
+                            classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
+                                var perpage = 15,
+                                    playerClass = deck.playerClass;
+                                
+                                return Card.find({
+                                    filter: {
+                                        where: {
+                                            playerClass: playerClass
+                                        },
+                                        order: ['cost ASC', 'cardType ASC', 'name ASC'],
+                                        limit: perpage
+                                    }
+                                }).$promise;
+                            }],
+                            
+                            classCardsCount: ['$stateParams', 'deck', 'Card', function ($stateParams, deck, Card) {
+                                var deckID = $stateParams.deckID;
+                                return Card.count({
+                                    where: {
+                                        playerClass: deck.playerClass
+                                    }
+                                }).$promise;
+                            }],
+                            
+                            neutralCardsCount: ['Card', function (Card) {
+                                return Card.count({
+                                    where: {
+                                        playerClass: 'Neutral'
+                                    }
+                                }).$promise;
+                            }],
+                            
+                            neutralCardsList: ['$stateParams', 'Card', function($stateParams, Card) {
+                                return Card.find({
+                                    filter: {
+                                        where: {
+                                            playerClass: 'Neutral',
+                                            decktable: true
+                                        },
+                                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                                        limit: 15
+                                    }
+                                }).$promise;
+                            }],
+                            
+                            toStep: ['$stateParams', function ($stateParams) {
+                                if($stateParams.goTo) {
+                                    return $stateParams.goTo;
+                                }
                             }]
+                            
                         }
                     }
                 },
