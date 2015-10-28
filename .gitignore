@@ -24,3 +24,10 @@ client/dist
 .sass-cache/*
 client/css/.sass-cache/*
 server/configs/assets.json
+server/uploads/photos/banners/*
+server/uploads/photos/articles/*
+server/uploads/photos/cards/*
+server/uploads/photos/decks/*
+server/uploads/photos/polls/*
+server/uploads/photos/snapshots/*
+server/uploads/photos/teams/*
