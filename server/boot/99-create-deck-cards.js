@@ -26,7 +26,7 @@ module.exports = function(server) {
                             deckId: deck.id.toString(),
                             cardQuantity: card.qty
                         }, function(err, newDeckCard) {
-                            if(err) console.log(err);
+                            if(err) console.log(err);git st
                             else console.log("successfully added DeckCard:", newDeckCard.id);
                             innerCallback(err);
                         });

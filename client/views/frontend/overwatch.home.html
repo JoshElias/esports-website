@@ -57,41 +57,17 @@
                 </div>
             </div> <!-- ROW 1 ends -->
         </div> 
-           <div class="row">
-               <div class="col-xs-12 col-sm-6 m-b-md">
-                   <h1 class="title">VIDEO OF THE DAY</h1>
-                   <div video-of-the-day="">
-                       <h3 class="sub-title m-b-md ng-binding">Heroes of the Storm: Arthelon suggests a talent build for Raynor and discusses his playstyle</h3>
-                       <iframe class="home-vod ng-scope ng-isolate-scope" ng-if="vod.url" video-url="vod.url" data-ng-animate="1" id="unique-youtube-embed-id-4" frameborder="0" allowfullscreen="1" title="YouTube video player" width="640" height="390" src="https://www.youtube.com/embed/fyLgSUt7Wqs?start=0&amp;enablejsapi=1&amp;origin=https%3A%2F%2Ftempostorm.com"></iframe> 
-                   </div>
-               </div>
-
-               <div class="col-xs-12 col-sm-6 m-b-md">
-                   <h1 class="title">TEMPOSTORM TV</h1>
-                   <h3 class="sub-title m-b-md">Check out who is streaming right now</h3>
-                   <div tempostorm-tv="">
-                       <ul class="tempostorm-tv ng-scope" ng-if="streams.length">
-                           <li ng-repeat="stream in streams | orderBy: '-viewerCount'" class="ng-scope"><a ng-href="http://www.twitch.tv/reckful" target="_blank" class="tempostorm-tv-stream" href="http://www.twitch.tv/reckful">
-                           <div class="inner"></div>
-                           <div class="tempostorm-tv-wrapper clearfix">
-                               <img ng-src="https://static-cdn.jtvnw.net/previews-ttv/live_user_reckful-320x180.jpg" class="pull-left img-responsive hidden-xs" src="https://static-cdn.jtvnw.net/previews-ttv/live_user_reckful-320x180.jpg">
-                               <div class="tempostorm-tv-content pos-rl">
-                               <h1 class="ng-binding">tempo storm Reckful - i am single not trying to mingle though</h1><h3 class="ng-binding">PLAYING: ArmA III</h3>
-                                   <div class="streamer ng-binding">Reckful</div>
-                                   <div class="viewers ng-binding">
-                                       <span class="fa fa-eye m-r-sm"></span>5,034</div>
-                               </div>
-                           </div>
-                           </a>
-                           </li>
-                       </ul>
-                   </div>
-               </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <h1 class="title m-t-md">VIDEO OF THE DAY</h1>
+                <div video-of-the-day></div>
             </div>
-
-
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <h1 class="title m-t-md">TEMPOSTORM TV</h1>
+                <h3 class="sub-title m-b-md">Check out who is streaming right now</h3>
+                <div tempostorm-tv></div>
+            </div>
+        </div>
     </div> <!-- overwatch articles and heroes ends -->
-
-
 </div> <!-- overwatch articles and heroes ends -->
     
