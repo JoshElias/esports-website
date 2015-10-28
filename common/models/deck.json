@@ -108,9 +108,9 @@
       "foreignKey": "authorId"
     },
     "cards": {
-      "type": "hasAndBelongsToMany",
-      "model": "card",
-      "foreignKey": ""
+      "type": "hasMany",
+      "model": "deckCard",
+      "foreignKey": "deckId"
     },
     "comments": {
       "type": "hasMany",

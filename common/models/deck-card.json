@@ -1,0 +1,37 @@
+{
+  "name": "deckCard",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "cardId": {
+      "type": "string",
+      "required": true
+    },
+    "deckId": {
+      "type": "string",
+      "required": true
+    },
+    "cardQuantity": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "cardId": {
+      "type": "belongsTo",
+      "model": "card",
+      "foreignKey": "cardId"
+    },
+    "deckId": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deckId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
