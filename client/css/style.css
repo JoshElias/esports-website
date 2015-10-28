@@ -4417,7 +4417,7 @@ p.white { color: #FFF; }
 .talents-icon.kharazim { background: url('../img/hots/talents/kharazim.png') no-repeat; }
 .talents-icon.rexxar { background: url('../img/hots/talents/rexxar.png') no-repeat; }
 
-.brightwing.missing { background-image: url('../img/hots/talents/questionmark.png') !important; background-size: 100% 100% !important; }
+.talents-icon.missing { background-image: url('../img/hots/talents/questionmark.png') !important; background-size: 100% 100% !important; }
 
 /* talents - the-butcher - small */
 /* Tier 1 */

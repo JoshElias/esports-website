@@ -1096,7 +1096,6 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
-                            
                             communityGuideCount: ['Guide', function(Guide) {
                                 return Guide.count({
                                     where: {
@@ -1104,7 +1103,6 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-
                             communityTalents: ['dataCommunityGuides', function (dataCommunityGuides) {
                               var talents = {};
                               for(var i = 0; i < dataCommunityGuides.length; i++) {
@@ -1116,7 +1114,6 @@ var app = angular.module('app', [
                               }
                               return talents;
                             }],
-                            
                             dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                               var guideType = $stateParams.t || 'all',
                                     filters = $stateParams.h || false,
@@ -1206,9 +1203,9 @@ var app = angular.module('app', [
                                     }
                                   ]
                                 }
-                              }).$promise;
+                              })
+                              .$promise;
                             }],
-                            
                             tempostormGuideCount: ['Guide', function(Guide) {
                                 return Guide.count({
                                     where: {
@@ -1216,7 +1213,6 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-                            
                             tempostormTalents: ['dataTempostormGuides', function (dataTempostormGuides) {
                               var talents = {};
                               for(var i = 0; i < dataTempostormGuides.length; i++) {
