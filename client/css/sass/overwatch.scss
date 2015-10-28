@@ -39,58 +39,60 @@ $pos-y: 4px;
 @mixin ow-hero-list ($hero, $size, $pos-x, $pos-y) { 
      
   .ow-hero-filters li a.#{$hero} {
-            background: url("../../dist/img/overwatch/hero-thumbnails/#{$hero}.png") no-repeat;
-            width: 65px;
-            height: 65px;
-            display: inline-block;
-            overflow: hidden;
-            border-radius: 50%;
-            border: 2px solid #FFF;
-            text-indent: -99999px;
-            outline: none;
-            opacity: 1;  
-            float: left;
-            margin-left: 8px;
-            margin-right: 8px;
-            background-position: #{$pos-x} #{$pos-y};
-            background-size: #{$size} auto;                
-            z-index: 100;    
-        }    
-    }
+        background: url("../../dist/img/overwatch/hero-thumbnails/#{$hero}.png") no-repeat;
+        width: 65px;
+        height: 65px;
+        display: inline-block;
+        overflow: hidden;
+        border-radius: 50%;
+        border: 2px solid #FFF;
+        text-indent: -99999px;
+        outline: none;
+        opacity: 1;  
+        float: left;
+        margin-left: 8px;
+        margin-right: 8px;
+        background-position: #{$pos-x} #{$pos-y};
+        background-size: #{$size} auto;                
+        z-index: 100;    
+        }   
+    
+    .ow-hero-selected.#{$hero} {
+        
+        background: url('../../dist/img/overwatch/hero-sidebar/#{$hero}.png') center ;
+        }
+}
 
 @mixin hero-skills-mix ($hero) {
 
-        .#{$hero}.ow-skill-1 {
+        .#{$hero}.skill.scrap-gun {
 
             background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
             background-position: -2px -10px; 
         }
 
-        .#{$hero}.ow-skill-2 {
+        .#{$hero}.skill.take-a-breather {
 
             background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
             background-position: -170px -10px; 
         }
 
-        .#{$hero}.ow-skill-3 {
+        .#{$hero}.skill.chain-hook {
 
             background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
             background-position: -343px -10px; 
         }
 
-        .#{$hero}.ow-skill-4 {
+        .#{$hero}.skill.whole-hog {
 
             background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
             background-position: -518px -10px; 
         }
 
-        .#{$hero}.ow-skill-5 {
-
-            background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
-            background-position: -684px -10px; 
-        }
-
+  
 }
+
+
 
 //styles start
 
@@ -274,9 +276,18 @@ $pos-y: 4px;
     height: 550px;
     padding: 0;
     bottom: 0;
-    background: url('../../dist/img/overwatch/hero-sidebar/bastion.png') center ;
     opacity: 0.3;
 }
+
+.ow-hero-selected.neutral {
+    background: url('../../dist/img/overwatch/hero-sidebar/neutral.png') center ;
+}
+
+.ow-hero-selected.bastion {
+       background: url('../../dist/img/overwatch/hero-sidebar/bastion.png') center ;
+}
+
+
 
 //*************************************
 // 8... Hero page hero list bar
@@ -525,24 +536,20 @@ $pos-y: 4px;
 
 // mixin for heroes skill icons
 
-@include hero-skills-mix (bastion);
-@include hero-skills-mix (hanzo);
-@include hero-skills-mix (junkrat);
-@include hero-skills-mix (lucio);
-@include hero-skills-mix (mccree);
-@include hero-skills-mix (mercy);
-@include hero-skills-mix (pharah);
-@include hero-skills-mix (reaper);
-@include hero-skills-mix (reinhardt);
-@include hero-skills-mix (roadhog);
-@include hero-skills-mix (soldier-76);
-@include hero-skills-mix (symmetra);
-@include hero-skills-mix (torbjorn);
-@include hero-skills-mix (tracer);
-@include hero-skills-mix (widowmaker);
-@include hero-skills-mix (winston);
-@include hero-skills-mix (zarya);
-@include hero-skills-mix (zenyatta);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //*************************************
 // 12... Overwatch heroes story Div and realted video
