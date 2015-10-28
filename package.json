@@ -39,6 +39,7 @@
     "passport-twitch": "^1.0.1",
     "passport-twitter": "^1.0.3",
     "prerender-node": "^2.0.2",
+    "s3": "^4.4.0",
     "serve-favicon": "^2.3.0",
     "serve-static": "^1.10.0",
     "underscore": "^1.8.3"
