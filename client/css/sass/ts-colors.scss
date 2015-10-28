@@ -1,90 +1,111 @@
+// Description: scss file for tempostorms color variables to be imported to all scss files
 
-// Descriptive variables
+//*************************************
 
-$white: #fff;
-$black: #000;
+// 1... Descriptive color variables
+// 2... Tempostorm specific colors
+// 3... Overwatch specific colors
+// 4... Article colors
+// 5... hots colors
+// 6... talent calculator colors
+// 7... tempstorm Scrollbar colors
+// 8... Notification Dropdown colors
+// 9... Hearthstone class colours
+// 10... random colors 
+
+//*************************************
+
+//*************************************
+// 1... Descriptive color variables
+//*************************************
+
+$white: rgba(255, 255, 255, 1);// #fff;
+$black: rgba(0, 0, 0, 1); //#000;
+
+
 $light-blue: rgba(39, 102, 173, 1); //#428bca;
-$light-grey: #ddd;
+$light-grey: rgba(221, 221, 221, 1); //#ddd;
 
-$ts-black: #121111;
-$ts-red: #aa2526;
-$ts-green: #27c24c;
-$ts-yellow: #f7ef22;
-$ts-grey: #bababa; // ts font
-$ts-dark-grey: #666; 
+//*************************************
+// 2... Tempostorm specific colors
+//*************************************
 
-$ow-yellow: #fdb813;
+$off-black: rgba(27, 27, 27, 1); //#1b1b1b;
 
-//tempostorm blues
+$ts-blue: rgba(39, 102, 173, 1); //#2766ad; This is Tempostorm sites main blue
+$ts-dark-blue: rgba(39, 102, 173, 1); //#083f7d;
 
-$ts-blue: #2766ad;
-$ts-dark-blue: #083f7d;
+$ts-black: rgba(18, 17, 17, 1); //#121111;
+$ts-red: rgba(170, 37, 38, 1); //#aa2526;
+$ts-green: rgba(39, 194, 76, 1); //#27c24c;
+$ts-yellow: rgba(247, 239, 34, 1); //#f7ef22;
+$ts-grey: rgba(186, 186, 186, 1); //#bababa; // ts font color !!!!
+$ts-dark-grey: rgba(102, 102, 102, 1); //#666; 
+$ts-purple: rgba(137, 104, 173, 1); //#8968ad;
+$opac-div: rgba(19,18,19,.7); // used for dark divs with opacity of 70% 
 
+$memeber-orange: rgba(210, 122, 42, 1); //#D27A2A;
+$avatar-white: rgba(242, 242, 242, 1); //#F2F2F2;
 
-// Article colors
+//*************************************
+// 3... Overwatch specific colors
+//*************************************
 
-$article-blue: #67a0d6; //need this blue?? .home-article .home-article-content
-$article-orange: #d07828;
-$article-purple: #8968ad;
+$ow-yellow: rgba(253, 184, 19, 1); //#fdb813;
 
+//*************************************
+// 4... Article colors
+//*************************************
 
+$article-blue: rgba(103, 160, 214, 1); //#67a0d6; .home-article .home-article-content
+$article-orange: rgba(208, 120, 40, 1); //#d07828;
+$article-purple: $ts-purple; //#8968ad;
 
+//*************************************
+// 5... hots colors
+//*************************************
 
+$hots-purple: $ts-purple; //#8968ad;
+$hots-dark-purple: rgba(34, 27, 54, 1); //#221b36; 
 
-//tempo storm main colours
+//*************************************
+// 6... talent calculator colors
+//*************************************
 
+$tc-purple: rgba(77, 40, 108, 1); //#4d286c;
 
-$memeber-purple: #D27A2A;
+//*************************************
+// 7... tempstorm Scrollbar colors
+//*************************************
 
+$sb-track: rgba(51, 51, 51, 1); //#333; // scrollbar
+$sb-thumb: rgba(69, 69, 69, 1); //#454545; //scrollbar thumb
 
-//hots colors
+//*************************************
+// 8... Notification Dropdown colors
+//*************************************
 
-$hots-purple: #8968ad;
-$hots-dark-purple: #221b36; 
-
-//talent cal colors
-
-$tc-purple: #4d286c;
-
-//tempstorm Scrollbar colors
-
-$sb-track: #333; // scrollbar
-$sb-thumb: #454545; //scrollbar thumb
-
-//Notification Dropdown colors
-
-$notification-font: #555;
-$notification-font: #f5f5f5;
+$notification-font: rgba(85, 85, 85, 1); //#555;
+$notification-font: rgba(245, 245, 245, 1); //#f5f5f5;
 $notification-border: $light-grey;
 
+//*************************************
+// 9... Hearthstone class colours
+//*************************************
 
+$druid-orange: rgba(255, 125, 10, 1); 
+$hunter-green: rgba(171, 212, 115, 1);
+$mage-blue: rgba(105, 204, 240, 1);
+$paladin-pink: rgba(245, 140, 186, 1);
+$priest-white: $white;
+$rogue-yellow: rgba(255, 245, 105, 1);
+$shaman-blue: rgba(0, 112, 222, 1);
+$warlock-pink: rgba(148, 130, 201, 1);
+$warrior-tan: rgba(199, 156, 110, 1); 
 
-$avatar-white: #F2F2F2;
-
-
-
-
+//*************************************
+// 10... random colors 
+//*************************************
 
 // $smoke: #f5f5f5;
 // $light-smoke: #F2F2F2;
-
-
-$off-black: #1b1b1b;
-
-
-// HS class colours
-
-$druid-orange: rgb(255, 125, 10); 
-$hunter-green: rgb(171, 212, 115);
-$mage-blue: rgb(105, 204, 240);
-$paladin-pink: rgb(245, 140, 186);
-$priest-white: white;
-$rogue-yellow: rgb(255, 245, 105);
-$shaman-blue: rgb(0, 112, 222);
-$warlock-pink: rgb(148, 130, 201);
-$warrior-tan: rgb(199, 156, 110); 
-
-
-// Functional Variables
-
-

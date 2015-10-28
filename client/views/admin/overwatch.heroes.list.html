@@ -7,7 +7,7 @@
 <div class="panel panel-danger error-modal animated" ng-show="showError">
     <div class="panel-heading">
         <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-        <strong>Unable to delete hero</strong>
+        <strong>ERROR</strong>
     </div>
     <div class="panel-body">
         <ul class="error text-danger">
@@ -18,49 +18,42 @@
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
         <div class="pull-right">
-            <span class="m-r-sm">Showing: <strong>{{pagination.from()}}</strong> to <strong>{{pagination.to()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
-            <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
-            </span>
+            <i class="fa fa-cog fa-2x fa-spin" ng-if="saving"></i>
         </div>
         <div class="pull-left">
             <form>
                 <span class="pull-left m-r-sm">
-                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="searchHeroes()">
+                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="searchHeroes()" ng-disabled="saving">
                 </span>
             </form>
         </div>
     </div>
-    <div class="list-group">
-        <div class="list-group-item admin-list-item clearfix" ng-repeat="hero in heroes">
+    <ul class="list-group" dnd-list="heroes" dnd-allowed-types="['hero']">
+        <li class="list-group-item admin-list-item clearfix"
+            ng-repeat="hero in filtered = (heroes | filter:search)"
+            dnd-draggable="hero"
+            dnd-moved="updateDND(heroes, $index)"
+            dnd-disable-if="heroes.length < 2 || saving || search.length"
+            dnd-type="'hero'"
+        >
             <span>{{hero.heroName}}</span>
             <div class="pull-right btn-toolbar">
-                <a ui-sref="app.admin.overwatch.heroes.edit({ heroID: hero.id })" class="btn btn-default">Edit</a>
-                <button class="btn btn-danger" ng-click="deleteHero(hero)">Delete</button>
+                <button ui-sref="app.admin.overwatch.heroes.edit({ heroID: hero.id })" class="btn btn-default" ng-disabled="saving">Edit</button>
+                <button class="btn btn-danger" ng-click="deleteHero(hero)" ng-disabled="saving">Delete</button>
             </div>
-        </div>
-        <div class="list-group-item" ng-show="!heroes.length">
+        </li>
+        <li class="list-group-item" ng-show="!heroes.length">
             There are no heroes yet.
-        </div>
-        <div class="list-group-item b-t-none" ng-show="heroes.length && filtered && !filtered.length">
+        </li>
+        <li class="list-group-item b-t-none" ng-show="heroes.length && filtered && !filtered.length">
             That search returned no results.
-        </div>
-    </div>
+        </li>
+    </ul>
     <div class="panel-footer clearfix">
-        <div class="pull-right">
-            <span class="m-r-sm">Showing: <strong>{{pagination.from()}}</strong> to <strong>{{pagination.to()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
-            <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
-            </span>
-        </div>
         <div class="pull-left">
             <form>
                 <span class="pull-left m-r-sm">
-                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="searchHeroes()">
+                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="searchHeroes()" ng-disabled="saving">
                 </span>
             </form>
         </div>

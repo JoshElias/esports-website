@@ -110,8 +110,8 @@ var app = angular.module('app', [
     ]
 )
 .config(
-    ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider',
-    function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider) {
+    ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider', '$animateProvider',
+    function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider, $animateProvider) {
 
         app.controller = $controllerProvider.register;
         app.directive  = $compileProvider.directive;
@@ -133,6 +133,9 @@ var app = angular.module('app', [
             'self',
             tpl + '**'
         ]);
+        
+        // ignore ng-animate on font awesome spin
+        $animateProvider.classNameFilter(/^((?!(fa-spin)).)*$/);
 
 //        $urlRouterProvider.otherwise('404');
         $stateProvider
@@ -3409,19 +3412,9 @@ var app = angular.module('app', [
                         controller: 'AdminOverwatchHeroListCtrl',
                         resolve: {
                             heroes: ['OverwatchHero', function (OverwatchHero) {
-                                var page = 1,
-                                    perpage = 50;
-
                                 return OverwatchHero.find({
                                     filter: {
-                                        fields: {
-                                            id: true,
-                                            heroName: true,
-                                            orderNum: true
-                                        },
-                                        order: "orderNum ASC",
-                                        skip: (page * perpage) - perpage,
-                                        limit: perpage
+                                        order: "orderNum ASC"
                                     }
                                 }).$promise;
                             }]
