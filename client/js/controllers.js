@@ -11382,10 +11382,45 @@ angular.module('app.controllers', ['ngCookies'])
             // load vars
             $scope.heroes = heroes;
             
+            // other vars
+            $scope.search = '';
+            $scope.saving = false;
+            
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
                 AlertService.reset();
+            }
+            
+            function updateOrder (list) {
+                for (var i = 0; i < list.length; i++) {
+                    list[i].orderNum = i + 1;
+                }
+                $scope.saving = true;
+                async.forEach(list, function (hero, eachCallback) {
+                    OverwatchHero.upsert(hero).$promise
+                    .then(function () {
+                        return eachCallback();
+                    })
+                    .catch(function (httpResponse) {
+                        return eachCallback(httpResponse);
+                    });
+                }, function (httpResponse) {
+                    if (httpResponse) {
+                        console.log('httpResponse: ', httpResponse);
+
+                        $scope.errors = ['An error occurred while trying to save the hero order.'];
+                        $scope.showError = true;
+                        $window.scrollTo(0,0);
+                    }
+                    $scope.saving = false;
+                });
+            }
+            
+            // drag and drop for abilities
+            $scope.updateDND = function (list, index) {
+                list.splice(index, 1);
+                updateOrder(list);
             }
             
             // delete hero and abilities
