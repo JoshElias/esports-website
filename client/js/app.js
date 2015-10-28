@@ -110,8 +110,8 @@ var app = angular.module('app', [
     ]
 )
 .config(
-    ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider',
-    function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider) {
+    ['$locationProvider', '$stateProvider', '$urlRouterProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$httpProvider', '$bootboxProvider', '$sceDelegateProvider', '$animateProvider',
+    function ($locationProvider, $stateProvider, $urlRouterProvider, $controllerProvider, $compileProvider, $filterProvider, $provide, $httpProvider, $bootboxProvider, $sceDelegateProvider, $animateProvider) {
 
         app.controller = $controllerProvider.register;
         app.directive  = $compileProvider.directive;
@@ -133,6 +133,9 @@ var app = angular.module('app', [
             'self',
             tpl + '**'
         ]);
+        
+        // ignore ng-animate on font awesome spin
+        $animateProvider.classNameFilter(/^((?!(fa-spin)).)*$/);
 
 //        $urlRouterProvider.otherwise('404');
         $stateProvider
@@ -223,7 +226,40 @@ var app = angular.module('app', [
                 url: '',
                 views: {
                     overwatch: {
-                        templateUrl: tpl + 'views/frontend/overwatch.home.html'
+                        templateUrl: tpl + 'views/frontend/overwatch.home.html',
+                        controller: 'OverwatchHomeCtrl',
+                        resolve: {
+                            articles: ['Article', function (Article) {
+                                var perpage = 6;
+                                
+                                return Article.find({
+                                    filter: {
+                                        where: {
+                                            articleType: 'overwatch',
+                                            isActive: true
+                                        },
+                                        fields: {
+                                            content: false,
+                                            votes: false
+                                        },
+                                        sort: 'createdDate DESC',
+                                        limit: perpage
+                                    }
+                                }).$promise;
+                            }],
+                            heroes: ['OverwatchHero', function (OverwatchHero) {
+                                return OverwatchHero.find({
+                                    filter: {
+                                        fields: {
+                                            heroName: true,
+                                            className: true,
+                                            orderNum: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                }).$promise;
+                            }]
+                        }
                     }
                 }
             })
@@ -240,7 +276,41 @@ var app = angular.module('app', [
                 url: '/:slug',
                 views: {
                     'overwatch-heroes': {
-                        templateUrl: tpl + 'views/frontend/overwatch.heroes.hero.html'
+                        templateUrl: tpl + 'views/frontend/overwatch.heroes.hero.html',
+                        controller: 'OverwatchHeroCtrl',
+                        resolve: {
+                            heroes: ['OverwatchHero', function (OverwatchHero) {
+                                return OverwatchHero.find({
+                                    filter: {
+                                        fields: {
+                                            heroName: true,
+                                            className: true,
+                                            orderNum: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                }).$promise;
+                            }],
+                            hero: ['$stateParams', 'OverwatchHero', function ($stateParams, OverwatchHero) {
+                                var slug = $stateParams.slug;
+                                return OverwatchHero.findOne({
+                                    filter: {
+                                        where: {
+                                            className: slug
+                                        },
+                                        fields: {
+                                            orderNum: false
+                                        },
+                                        include: {
+                                            relation: 'overwatchAbilities',
+                                            scope: {
+                                                order: 'orderNum ASC'
+                                            }
+                                        }
+                                    }
+                                }).$promise;
+                            }]
+                        }
                     }
                 }
             })
@@ -838,6 +908,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise;
                             }],
+                            
                             neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
@@ -871,6 +942,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise;
                             }],
+                            
                             toStep: ['$stateParams', function ($stateParams) {
                                 if ($stateParams.goTo) {
                                     return $stateParams.goTo;
@@ -2386,19 +2458,40 @@ var app = angular.module('app', [
                         resolve: {
                             deck: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var deckID = $stateParams.deckID;
-//                                return Deck.findById({ id: deckID }).$promise;
-                                return Deck.findOne({
+                                return Deck.findById({ 
+                                    id: deckID,
                                     filter: {
-                                        where: {
-                                            id: deckID,
+                                        fields: {
+                                            id: true,
+                                            createdDate: true,
+                                            name: true,
+                                            description: true,
+                                            playerClass: true,
+                                            premium: true,
+                                            slug: true,
+                                            dust: true,
+                                            heroName: true,
+                                            authorId: true,
+                                            deckType: true,
+                                            viewCount: true
                                         },
-                                        include: [
-                                            {
-                                                relation: 'cards'
+                                        include: {
+                                            relation: 'cards',
+                                            scope: {
+                                                include: 'card',
+                                                fields: {
+                                                    
+                                                }
                                             }
-                                        ]
+                                        }
                                     }
-                                }).$promise;
+                                }, function (data) {
+                                    if(data.$$state.status ==1) {
+                                        return data;
+                                    }
+                                }, function(err) {
+                                    if(err) console.log('err: ',err);
+                                });
                             }],
                             
                             classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
@@ -2408,7 +2501,8 @@ var app = angular.module('app', [
                                 return Card.find({
                                     filter: {
                                         where: {
-                                            playerClass: playerClass
+                                            playerClass: playerClass,
+                                            deckable: true
                                         },
                                         order: ['cost ASC', 'cardType ASC', 'name ASC'],
                                         limit: perpage
@@ -2433,12 +2527,12 @@ var app = angular.module('app', [
                                 }).$promise;
                             }],
                             
-                            neutralCardsList: ['$stateParams', 'Card', function($stateParams, Card) {
+                            neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
                                         where: {
                                             playerClass: 'Neutral',
-                                            decktable: true
+                                            deckable: true
                                         },
                                         order: ["cost ASC", "cardType ASC", "name ASC"],
                                         limit: 15
@@ -2943,11 +3037,26 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/users.list.html',
                         controller: 'AdminUserListCtrl',
                         resolve: {
-                            data: ['AdminUserService', function (AdminUserService) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '';
-                                return AdminUserService.getUsers(page, perpage, search);
+                            paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    search: '',
+                                    options: {
+                                        filter: {
+                                            limit: 50
+                                        }
+                                    }
+                                };
+                            }],
+//                            data: ['AdminUserService', function (AdminUserService) {
+//                                var page = 1,
+//                                    perpage = 50,
+//                                    search = '';
+//                                return AdminUserService.getUsers(page, perpage, search);
+//                            }]
+                            users: ['User', 'paginationParams', function(User, paginationParams) {
+                                return User.find(paginationParams.options).$promise;
                             }]
                         }
                     }
@@ -3164,9 +3273,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/snapshots.edit.html',
                         controller: 'AdminSnapshotEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminSnapshotService', function ($stateParams, AdminSnapshotService) {
+//                            data: ['$stateParams', 'AdminSnapshotService', function ($stateParams, AdminSnapshotService) {
+//                                var snapshotID = $stateParams.snapshotID;
+//                                return AdminSnapshotService.getSnapshot(snapshotID);
+//                            }]
+                            snapshot: ['$stateParams', 'Snapshot', function($stateParams, Snapshot) {
                                 var snapshotID = $stateParams.snapshotID;
-                                return AdminSnapshotService.getSnapshot(snapshotID);
+                                return Snapshot.find({
+                                    filter: {
+                                        where: {
+                                            id: snapshotID
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -3360,19 +3479,9 @@ var app = angular.module('app', [
                         controller: 'AdminOverwatchHeroListCtrl',
                         resolve: {
                             heroes: ['OverwatchHero', function (OverwatchHero) {
-                                var page = 1,
-                                    perpage = 50;
-
                                 return OverwatchHero.find({
                                     filter: {
-                                        fields: {
-                                            id: true,
-                                            heroName: true,
-                                            orderNum: true
-                                        },
-                                        order: "orderNum ASC",
-                                        skip: (page * perpage) - perpage,
-                                        limit: perpage
+                                        order: "orderNum ASC"
                                     }
                                 }).$promise;
                             }]

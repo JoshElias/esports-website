@@ -20,149 +20,54 @@
 
     <div class="container-fluid container-fluid-max ow-content"> <!-- overwatch articles and heroes -->
         <div class="row no-pad">
-         <div class="col-lg-9 m-b-md section-articles clearfix m-t-lg no-pad" >
+            <div class="col-lg-9 m-b-md section-articles clearfix m-t-lg no-pad" >
                 <h1 class="title ">OVERWATCH ARTICLES</h1>
                 <h3 class="sub-title m-b-md">Articles for overwatch goes here!!</h3>
 
-                    <!-- / section banner -->
-                    <div class="container-fluid no-pad-left">
-
-                        <!-- page flipping 
-                        <div pagination="articlePagination" theme="default" class="default m-t-lg"></div>
-                       page flipping -->
-
-                        <!-- articles -->
-                        <div class="articles-list">
-                            <!-- article -->
-                            <div class="row no-pad">
-                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" >
-                                    <div class="m-r-sm m-b-sm">
-                                        <article-thumb article="article" />
-                                    </div>
+                <!-- / section banner -->
+                <div class="container-fluid no-pad-left">
+                    <!-- articles -->
+                    <div class="articles-list">
+                        <!-- article -->
+                        <div class="row no-pad">
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="article in articles">
+                                <div class="m-r-sm m-b-sm">
+                                    <article-thumb article="article" />
                                 </div>
-                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" >
-                                    <div class="m-r-sm m-b-sm">
-
-                                        <article-thumb article="article" />
-                                    </div>
-                                </div>
-                                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
-                                    <div class="m-r-sm m-b-sm">
-
-                                        <article-thumb article="article" />
-                                    </div>
-                                </div>
-                                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" >
-                                    <div class="m-r-sm m-b-sm">
-
-                                        <article-thumb article="article" />
-                                    </div>
-                                </div>
-                                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" >
-                                    <div class="m-r-sm m-b-sm">
-
-                                        <article-thumb article="article" />
-                                    </div>
-                                </div>
-                                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" >
-                                    <div class="m-r-sm m-b-sm">
-
-                                        <article-thumb article="article" />
-                                    </div>
-                                </div>
-
                             </div>
-                            <!-- / article -->
                         </div>
+                        <!-- / article -->
                     </div>
-              </div> 
+                    <!-- / articles -->
+                </div>
+            </div> 
 
-                        <!-- / articles -->
 
-                        <!-- page flipping 
-                        <div pagination="articlePagination" theme="default" class="default"></div>
-                         page flipping -->
+            <!-- Hero section -->
 
-             <!-- Hero section -->
-
-         <div class="col-lg-3 m-b-md section-heroes clearfix m-t-lg" >
-             <h1 class="title m-b-18 ">OVERWATCH CHARACTERS</h1>
-
-             <div class="container-fluid ts-div ow-hero-filters ow-herobar-home">
-
-                                     
-                    <div class="col-lg-12 ow-hero-selected hidden-md hidden-sm hidden-xs">
-                    </div>
-
+            <div class="col-lg-3 m-b-md section-heroes clearfix m-t-lg" >
+                <h1 class="title m-b-18 ">OVERWATCH CHARACTERS</h1>
+                <div class="ts-div ow-hero-filters ow-herobar-home">
+                    <div class="ow-hero-selected hidden-md hidden-sm hidden-xs {{getHeroHover()}}"></div>
                     <ul class="ow-hero-list">
-
-                        <li ><a href="/overwatch/heroes/bastion" class="bastion" ng-tooltip title="Bastion">bastion</a></li>
-                        <li ><a href="/overwatch/heroes/hanzo" class="hanzo" ng-tooltip title="Hanzo">hanzo</a></li>
-                        <li ><a href="/overwatch/heroes/junkrat" class="junkrat" ng-tooltip title="Junkrat">junkrat</a></li>
-                        <li ><a href="/overwatch/heroes/lucio" class="lucio" ng-tooltip title="Lucio">lucio</a></li>
-
-                        <li ><a href="/overwatch/heroes/mccree" class="mccree" ng-tooltip title="Mccree">mccree</a></li>
-                        <li ><a href="/overwatch/heroes/mercy" class="mercy" ng-tooltip title="Mercy">mercy</a></li>
-                        <li ><a href="/overwatch/heroes/pharah" class="pharah" ng-tooltip title="Pharah">pharah</a></li>
-                        <li ><a href="/overwatch/heroes/reaper" class="reaper" ng-tooltip title="Reaper">reaper</a></li>
-
-                        <li ><a href="/overwatch/heroes/reinhardt" class="reinhardt" ng-tooltip title="Reinhardt">reinhardt</a></li>
-                        <li ><a href="/overwatch/heroes/roadhog" class="roadhog" ng-tooltip title="Roadhog">roadhog</a></li>
-                        <li ><a href="/overwatch/heroes/soldier-76" class="soldier-76" ng-tooltip title="Soldier-76">soldier-76</a></li>
-                        <li ><a href="/overwatch/heroes/symmetra" class="symmetra" ng-tooltip title="Symmetra">symmetra</a></li>
-
-                        <li ><a href="/overwatch/heroes/torbjorn" class="torbjorn" ng-tooltip title="torbjorn">torbjorn</a></li>
-                        <li ><a href="/overwatch/heroes/tracer" class="tracer" ng-tooltip title="Tracer">tracer</a></li>
-                        <li ><a href="/overwatch/heroes/widowmaker" class="widowmaker" ng-tooltip title="Widowmaker">widowmaker</a></li>
-                        <li ><a href="/overwatch/heroes/winston" class="winston" ng-tooltip title="Winston">winston</a></li>
-
-                        <li ><a href="/overwatch/heroes/zarya" class="zarya" ng-tooltip title="Zarya">zarya</a></li>
-                        <li ><a href="/overwatch/heroes/zenyatta" class="zenyatta" ng-tooltip title="Zenyatta">zenyatta</a></li>
-
+                        <li ng-repeat="item in heroes">
+                            <a ui-sref="app.overwatch.heroes.hero({ slug: item.className })" class="{{item.className}}" ng-tooltip title="{{item.heroName}}" ng-mouseover="setHeroHover(item.className)" ng-mouseout="setHeroHover('neutral')">{{item.heroName}}</a>
+                        </li>
                     </ul>
-
-
-
-
-            </div>
-
-    </div> <!-- ROW 1 ends -->
+                </div>
+            </div> <!-- ROW 1 ends -->
         </div> 
-           <div class="row">
-               <div class="col-xs-12 col-sm-6 m-b-md">
-                   <h1 class="title">VIDEO OF THE DAY</h1>
-                   <div video-of-the-day="">
-                       <h3 class="sub-title m-b-md ng-binding">Heroes of the Storm: Arthelon suggests a talent build for Raynor and discusses his playstyle</h3>
-                       <iframe class="home-vod ng-scope ng-isolate-scope" ng-if="vod.url" video-url="vod.url" data-ng-animate="1" id="unique-youtube-embed-id-4" frameborder="0" allowfullscreen="1" title="YouTube video player" width="640" height="390" src="https://www.youtube.com/embed/fyLgSUt7Wqs?start=0&amp;enablejsapi=1&amp;origin=https%3A%2F%2Ftempostorm.com"></iframe> 
-                   </div>
-               </div>
-
-               <div class="col-xs-12 col-sm-6 m-b-md">
-                   <h1 class="title">TEMPOSTORM TV</h1>
-                   <h3 class="sub-title m-b-md">Check out who is streaming right now</h3>
-                   <div tempostorm-tv="">
-                       <ul class="tempostorm-tv ng-scope" ng-if="streams.length">
-                           <li ng-repeat="stream in streams | orderBy: '-viewerCount'" class="ng-scope"><a ng-href="http://www.twitch.tv/reckful" target="_blank" class="tempostorm-tv-stream" href="http://www.twitch.tv/reckful">
-                           <div class="inner"></div>
-                           <div class="tempostorm-tv-wrapper clearfix">
-                               <img ng-src="https://static-cdn.jtvnw.net/previews-ttv/live_user_reckful-320x180.jpg" class="pull-left img-responsive hidden-xs" src="https://static-cdn.jtvnw.net/previews-ttv/live_user_reckful-320x180.jpg">
-                               <div class="tempostorm-tv-content pos-rl">
-                               <h1 class="ng-binding">tempo storm Reckful - i am single not trying to mingle though</h1><h3 class="ng-binding">PLAYING: ArmA III</h3>
-                                   <div class="streamer ng-binding">Reckful</div>
-                                   <div class="viewers ng-binding">
-                                       <span class="fa fa-eye m-r-sm"></span>5,034</div>
-                               </div>
-                           </div>
-                           </a>
-                           </li>
-                       </ul>
-                   </div>
-               </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <h1 class="title m-t-md">VIDEO OF THE DAY</h1>
+                <div video-of-the-day></div>
             </div>
-
-
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <h1 class="title m-t-md">TEMPOSTORM TV</h1>
+                <h3 class="sub-title m-b-md">Check out who is streaming right now</h3>
+                <div tempostorm-tv></div>
+            </div>
+        </div>
     </div> <!-- overwatch articles and heroes ends -->
-
-
 </div> <!-- overwatch articles and heroes ends -->
     
