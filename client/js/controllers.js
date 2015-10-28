@@ -11734,10 +11734,11 @@ angular.module('app.controllers', ['ngCookies'])
             // edit hero
             $scope.editHero = function () {
                 console.log('edit hero');
-                OverwatchHero.update({ where: { id: $scope.hero.id } }, $scope.hero).$promise
+                //OverwatchHero.updateAll({ where: { id: $scope.hero.id } }, $scope.hero).$promise
+                $scope.hero.$save()
                 .then(function (heroValue) {
                     console.log('hero updated: ', heroValue);
-                    
+                    /*
                     _.each($scope.hero.overwatchAbilities, function (ability) {
                         console.log('ability updated: ', ability);
                         ability.heroId = heroValue.id;
@@ -11761,7 +11762,7 @@ angular.module('app.controllers', ['ngCookies'])
                         AlertService.setSuccess({ show: true, msg: $scope.hero.heroName + ' has been updated successfully.' });
                         return $state.go('app.admin.overwatch.heroes.list');
                     });
-                    
+                    */
                 })
                 .catch(function (httpResponse) {
                     console.log('httpResponse: ', httpResponse);
