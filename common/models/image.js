@@ -25,7 +25,6 @@ module.exports = function(Image) {
             }
 
             var file = files[Object.keys(files)[0]]; // get first property in dict files
-            console.log("file:", file);
 
             var types = ['image/png', 'image/jpeg', 'image/gif'];
             if (types.indexOf(file.type) === -1) {

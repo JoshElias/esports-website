@@ -193,6 +193,10 @@ module.exports = {
     "dataSource": "mongodb",
     "public": true
   },
+  "deckCard": {
+    "dataSource":"mongodb",
+    "public": true
+  },
   "container": {
     "dataSource":"s3",
     "public": true

@@ -82,9 +82,9 @@
   "validations": [],
   "relations": {
     "decks": {
-      "type": "hasAndBelongsToMany",
-      "model": "deck",
-      "foreignKey": ""
+      "type": "hasMany",
+      "model": "deckCard",
+      "foreignKey": "cardId"
     },
     "mulligansWithCoin": {
       "type": "hasMany",
