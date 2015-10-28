@@ -2388,15 +2388,11 @@ var app = angular.module('app', [
                         resolve: {
                             deck: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var deckID = $stateParams.deckID;
-//                                return Deck.findById({ id: deckID }).$promise;
-                                return Deck.findOne({
+                                return Deck.findById({ 
+                                    id: deckID,
                                     filter: {
-                                        where: {
-                                            id: deckID,
-                                        },
                                         fields: {
                                             id: true,
-                                            deckId: true,
                                             createdDate: true,
                                             name: true,
                                             description: true,
@@ -2409,10 +2405,20 @@ var app = angular.module('app', [
                                             deckType: true,
                                             viewCount: true
                                         },
-                                        include: ['cards']
+                                        include: {
+                                            relation: 'cards',
+                                            scope: {
+                                                include: 'card',
+                                                fields: {
+                                                    
+                                                }
+                                            }
+                                        }
                                     }
                                 }, function (data) {
-                                    return data;
+                                    if(data.$$state.status ==1) {
+                                        return data;
+                                    }
                                 }, function(err) {
                                     if(err) console.log('err: ',err);
                                 });

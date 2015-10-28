@@ -4315,6 +4315,7 @@ angular.module('app.controllers', ['ngCookies'])
 //            console.log('class card count: ',classCardsCount);
 //            console.log('neutral card count: ',neutralCardsCount);
 //            console.log('deck cards: ', deckCards);
+//              console.log('HS Service: ', Hearthstone);
             
             
             // redirect back to class pick if no data
@@ -4394,14 +4395,13 @@ angular.module('app.controllers', ['ngCookies'])
                     classCards = b;
                 });
             }
-
-            $scope.className = deck.playerClass;
             
             $scope.cards = {
                 neutral: neutralCardsList,
                 class: classCardsList,
                 current: classCardsList
             };
+            
             console.log('all cards: ', $scope.cards);
 //        $scope.cards.current = $scope.cards.class;
 
@@ -4592,8 +4592,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.filters.mana = m;
                 updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana)
             }
-            
-            
 
             $scope.filters.byMana = function () {
                 return function (item) {
@@ -4632,6 +4630,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
+            
 
             
 //            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
@@ -4653,10 +4652,12 @@ angular.module('app.controllers', ['ngCookies'])
 //                    public: $scope.deck.public
 //                };
 //            }, true);
-            
-            console.log('settings: ', $scope.app.settings);
 //            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
             
+//            $scope.className = deck.playerClass;
+            console.log('class: ', deck.playerClass);
+            
+            // deck.playerclass undefined for some reason
             $scope.deck = DeckBuilder.new(deck.playerClass, deck);
             
             $scope.$watch('deck', function() {
