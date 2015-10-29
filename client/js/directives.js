@@ -215,23 +215,22 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('forgotPasswordForm', ['LoginModalService', 'UserService', function (LoginModalService, UserService) {
+.directive('forgotPasswordForm', ['LoginModalService', 'User', function (LoginModalService, User) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/forgot.password.form.html',
         scope: true,
         link: function ($scope, el, attr) {
 
-            //TODO: ForgotPassword: Do forgotPassword
-
             $scope.forgotPassword = function () {
-                UserService.forgotPassword($scope.forgot.email).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                    } else {
-                        $scope.showSuccess = true;
-                        $scope.forgot.email = '';
-                    }
+                User.resetPassword({email: $scope.forgot.email})
+                .$promise
+                .then(function (data) {
+                  $scope.showSuccess = true;
+                  $scope.forgot.email = '';
+                })
+                .catch(function(err) {
+                  $scope.errors = err;
+                  $scope.showError = true;
                 });
             };
         }

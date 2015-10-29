@@ -12,12 +12,15 @@ module.exports = function(server) {
     	// Get all the users
     	function(seriesCallback) {
     		console.log("Finding users");
-    		User.find({where:{twitchID:{"exists":true, "not":{$size:0}}}}, seriesCallback);
+    		User.find({}, seriesCallback);
     	},
     	// Create user identity for each user
     	function(users, seriesCallback) {
     		console.log("creating user identies");
     		async.eachSeries(users, function(user, callback) {
+          if(!user.twitchID) {
+            return callback();
+          }
 				UserIdentity.create({
 		          provider: "twitch",
 		          externalId: user.twitchID,
@@ -28,6 +31,7 @@ module.exports = function(server) {
 		          created: date,
 		          modified: date
 		        }, function(err, identity) {
+          console.log("created new identity")
 		        	callback(err);
 		        });
 			}, seriesCallback);
@@ -36,5 +40,5 @@ module.exports = function(server) {
     	if(err) console.log("ERR creating user identities:", err);
     	else console.log("Donerino");
     });
-    */
+*/
 };

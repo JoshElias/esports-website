@@ -1,5 +1,6 @@
 var async = require("async");
 var uuid = require("node-uuid");
+var loopback = require("loopback");
 var bcrypt = require('bcrypt-nodejs');
 var utils = require("../../lib/utils");
 
@@ -13,6 +14,12 @@ module.exports = function(User) {
     });
   });
 
+  User.afterRemote("confirm", function(ctx, output, next) {
+    //console.log("ctx:", ctx);
+    ctx.req.logIn({id:ctx.args.uid}, function(err) {
+      next(err)
+    });
+  });
  /*!
    * Hash the plain password
    */
@@ -25,16 +32,8 @@ module.exports = function(User) {
 
 	// Handle user registeration
   User.afterRemote("create", function(context, user, next) {
-    console.log("ummm");
     var potentialOptions = {};
-    console.log("is this on?");
     user.verify(potentialOptions, function(err) {
-      console.log("help:",err);
-      if(err) {
-        console.log("Unable to verify the user's email");
-      } else {
-        console.log("Verification email sent");
-      }
       next(err);
     })
   });
@@ -50,55 +49,120 @@ module.exports = function(User) {
 
 // Override the base User's verify method
     User.on('attached', function (obj) {
+
         User.prototype.verify = function(options, finalCallback) {
             var user = this;
             var userModel = this.constructor;
             //var registry = userModel.registry;
 
             async.waterfall([
-                    // Generate token
-                    function(seriesCallback) {
-                        var tokenGenerator = options.generateVerificationToken || generateVerificationToken;
-                        tokenGenerator(user, seriesCallback);
-                    },
-                    // Save user with new token
-                    function(newToken, seriesCallback) {
-                        user.updateAttribute("verificationToken", newToken, seriesCallback)
-                    },
-                    // Send Email
-                    function(user, seriesCallback) {
-                        var mailOptions = {
-                            from: { name: "Tempostorm", email: "admin@tempostorm.com" },
-                            to: { name: user.username, email: user.email, type: "to"},
-                            template : {
-                                name: "testactivation",
-                            },
-                            subject: "Confirm your account",
-                            //text: "text message",
-                            //html: "<b>message</b>"
-                            vars: [{
-                                "rcpt": user.email,
-                                "vars": [{
-                                    'name': 'ID',
-                                    'content': user.id
-                                },{
-                                    'name': 'TOKEN',
-                                    'content': user.verificationToken
-                                },{
-                                    'name': 'REDIRECT',
-                                    'content': '/'
-                                }]
-                            }],
-                            tags: [ "signup" ]
-                        };
+                // Generate token
+                function(seriesCallback) {
+                    var tokenGenerator = options.generateVerificationToken || generateVerificationToken;
+                    tokenGenerator(user, seriesCallback);
+                },
+                // Save user with new token
+                function(newToken, seriesCallback) {
+                    user.updateAttribute("verificationToken", newToken, seriesCallback)
+                },
+                // Send Email
+                function(user, seriesCallback) {
+                    var mailOptions = {
+                        from: { name: "Tempostorm", email: "admin@tempostorm.com" },
+                        to: { name: user.username, email: user.email, type: "to"},
+                        template : {
+                            name: "testactivation",
+                        },
+                        subject: "Confirm your account",
+                        //text: "text message",
+                        //html: "<b>message</b>"
+                        vars: [{
+                            "rcpt": user.email,
+                            "vars": [{
+                                'name': 'ID',
+                                'content': user.id
+                            },{
+                                'name': 'TOKEN',
+                                'content': user.verificationToken
+                            },{
+                                'name': 'REDIRECT',
+                                'content': '/'
+                            }]
+                        }],
+                        tags: [ "signup" ]
+                    };
 
-                        var Email = userModel.email;
-                        Email.send(mailOptions, function(err, email) {
-                            seriesCallback(err);
+                    var Email = userModel.email;
+                    Email.send(mailOptions, function(err, email) {
+                        seriesCallback(err);
+                    });
+                }],
+          finalCallback);
+        }
+
+      /**
+       * Confirm the user's identity.
+       *
+       * @param {Any} userId
+       * @param {String} token The validation token
+       * @param {String} redirect URL to redirect the user to once confirmed
+       * @callback {Function} callback
+       * @param {Error} err
+       */
+      User.confirm = function(uid, token, redirect, fn) {
+        fn = fn || utils.createPromiseCallback();
+        this.findById(uid, function(err, user) {
+          if (err) {
+            fn(err);
+          } else {
+            if (user && user.verificationToken === token) {
+              user.verificationToken = undefined;
+              user.emailVerified = true;
+              user.save(function(err) {
+                if (err) {
+                  fn(err);
+                } else {
+                  var ctx = loopback.getCurrentContext();
+                  if(ctx.active) {
+                    var res = ctx.active.http.res;
+                    var req = ctx.active.http.req;
+                    user.createAccessToken("1209600", function(err, token) {
+                      if (err) return fn(err);
+
+                      token.__data.user = user;
+                      res.cookie('access_token', token.id.toString(), {
+                          signed: req.signedCookies ? true : false,
+                          // maxAge is in ms
+                          maxAge: token.ttl
                         });
-                    }],
-              finalCallback);
+                      res.cookie('userId', user.id.toString(), {
+                        signed: req.signedCookies ? true : false,
+                        maxAge: token.ttl
+                      });
+
+                      fn(err, token);
+                    });
+                  } else {
+                    fn(err, user);
+                  }
+                }
+              });
+            } else {
+              if (user) {
+                err = new Error('Invalid token: ' + token);
+                err.statusCode = 400;
+                err.code = 'INVALID_TOKEN';
+              } else {
+                err = new Error('User not found: ' + uid);
+                err.statusCode = 404;
+                err.code = 'USER_NOT_FOUND';
+              }
+              fn(err);
             }
+          }
+        });
+        return fn.promise;
+      };
     });
 
     //send password reset link when requested
