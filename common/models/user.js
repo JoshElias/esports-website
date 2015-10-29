@@ -36,14 +36,6 @@ module.exports = function(User) {
         console.log("Verification email sent");
       }
       next(err);
-      /*
-       context.res.render("response", {
-       title: "Signed up successfully",
-       content: "Please check your email and click on the verification link",
-       redirectTo: "/",
-       redirectToLinkText: "Log in"
-       });
-       */
     })
   });
 
@@ -107,6 +99,38 @@ module.exports = function(User) {
                     }],
               finalCallback);
             }
+    });
+
+    //send password reset link when requested
+    User.on('resetPasswordRequest', function(info) {
+        var userModel = this.constructor;
+
+        var mailOptions = {
+            from: { name: "Tempostorm", email: "admin@tempostorm.com" },
+            to: { name: info.user.username, email: info.email, type: "to"},
+            template : {
+                name: "testresetpassword",
+            },
+            subject: "Reset your account password",
+            //text: "text message",
+            //html: "<b>message</b>"
+            vars: [{
+                "rcpt": info.email,
+                "vars": [{
+                    'name': 'EMAIL',
+                    'content': info.email
+                },{
+                    'name': 'TOKEN',
+                    'content': info.accessToken
+                }]
+            }],
+            tags: [ "signup" ]
+        };
+
+        var Email = userModel.email;
+        Email.send(mailOptions, function(err, email) {
+            seriesCallback(err);
+        });
     });
 /*
   User.afterRemote('confirm', function(ctx, inst, next) {
