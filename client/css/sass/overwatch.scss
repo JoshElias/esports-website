@@ -6,6 +6,7 @@
 // 2... local variables
 // 3... local mixins library
 // 4... style overides
+// 4.1... arrows
 // 5... OW typography
 // 6... backgrounds & header
 // 7... Hero filter lists
@@ -63,33 +64,26 @@ $pos-y: 4px;
         }
 }
 
-@mixin hero-skills-mix ($hero) {
 
-        .#{$hero}.skill.scrap-gun {
+@mixin ow-hero-abilities ($hero, $abilities) {
 
-            background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
-            background-position: -2px -10px; 
+        $inc: -170;
+    
+        .#{$hero}.skill {
+            
+        background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;        
+        
+            @each $ability in $abilities {
+            
+                $incPos: $inc*map-get($ability, pos);
+                
+                @each $abilityName in map-get($ability, class) {
+                    
+                &.#{$abilityName} { background-position: #{$incPos}px -10px; }
+
+            }
         }
-
-        .#{$hero}.skill.take-a-breather {
-
-            background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
-            background-position: -170px -10px; 
-        }
-
-        .#{$hero}.skill.chain-hook {
-
-            background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
-            background-position: -343px -10px; 
-        }
-
-        .#{$hero}.skill.whole-hog {
-
-            background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;
-            background-position: -518px -10px; 
-        }
-
-  
+    }
 }
 
 
@@ -122,9 +116,65 @@ $pos-y: 4px;
 
 //overwatch specific styles
 
+
+//*************************************
+// 4.1... arrows
+//*************************************
+
+.arrows {
+    position: relative;
+   
+}
+
+.arrow-left,
+.arrow-right {
+    position: absolute;
+    top: 50%;
+    margin-top: -25px;
+    z-index: 500;
+    
+    img {
+        opacity: .5;
+    }
+    
+    &:hover {
+    
+        img {
+            opacity: 1;
+        }
+    }
+    
+    @media  (max-width: 1570px) {
+    
+        display: none;
+    }
+    
+}
+
+.arrow-left {  
+    left: 20px;
+}
+
+.arrow-right {  
+    right: 20px;
+}
+
+
+
+
 //*************************************
 // 5... OW typography
 //*************************************
+
+.ow-content {
+    margin-right: -10px;
+    padding-top: 80px;
+}
+
+.ow-content > .row {
+    margin: 0 auto;
+    max-width: 1448px;
+}
 
 .ow-content h1.title {
     font-family: 'Open Sans Bold';
@@ -141,7 +191,9 @@ $pos-y: 4px;
 }
 
 
+//*************************************
 // 6... backgrounds & header
+//*************************************
 
 .ow-bg {
     margin: 0;
@@ -489,9 +541,7 @@ $pos-y: 4px;
 
 .ow-skill-desc {
     color: $white;
-    max-width: 300px;
     min-width: 200px;
-    margin: auto;
     
     h3 {
         font-weight: 700;
@@ -534,9 +584,184 @@ $pos-y: 4px;
     margin: auto;
 }
 
-// mixin for heroes skill icons
+// mixin for heroes ability icons
+
+// roadhog Abilities
+
+@include ow-hero-abilities (roadhog, (
+    ( class: (scrap-gun), pos: 0 ), 
+    ( class: (take-a-breather), pos: 1 ), 
+    ( class: (chain-hook), pos: 2 ), 
+    ( class: (whole-hog), pos: 3 ), 
+) );
+
+// Lucio Abilities
+
+@include ow-hero-abilities (lucio, (
+    ( class: (sonic-amplifier), pos: 0 ), 
+    ( class: (crossfade), pos: 1 ), 
+    ( class: (amp-it-up), pos: 2 ),
+    ( class: (sound-barrier), pos: 3 ), 
+) );
 
 
+// Junkrat abilities
+
+@include ow-hero-abilities (junkrat, (
+    ( class: (frag-launcher), pos: 0 ), 
+    ( class: (concussion-mine), pos: 1 ), 
+    ( class: (steel-trap), pos: 2 ),
+    ( class: (total-mayhem), pos: 3 ),
+    ( class: (rip-tire), pos: 4 ), 
+) );
+
+// soldier-76 abilities
+
+@include ow-hero-abilities (soldier-76, (
+    ( class: (heavy-pulse-rifle), pos: 0 ), 
+    ( class: (helix-rockets), pos: 1 ), 
+    ( class: (sprint), pos: 2 ),
+    ( class: (biotic-field), pos: 3 ),
+    ( class: (tactical-visor), pos: 4 ), 
+) );
+
+
+// Zarya Abilities
+
+@include ow-hero-abilities (zarya, (
+    ( class: (particle-cannon), pos: 0 ), 
+    ( class: (particle-barrier), pos: 1 ), 
+    ( class: (projected-barrier), pos: 2 ),
+    ( class: (graviton-surge), pos: 3 ), 
+) );
+
+// mccree abilities
+
+@include ow-hero-abilities (mccree, (
+    ( class: (peacekeeper), pos: 0 ), 
+    ( class: (combat-roll), pos: 1 ), 
+    ( class: (flashbang), pos: 2 ),
+    ( class: (deadeye), pos: 3 ), 
+) );
+
+
+
+// Tracers abilities
+
+@include ow-hero-abilities (tracer, (
+    ( class: (pulse-pistol), pos: 0 ), 
+    ( class: (blink), pos: 1 ), 
+    ( class: (recall), pos: 2 ),
+    ( class: (pulse-bomb), pos: 3 ), 
+) );
+
+// reaper abilities
+
+@include ow-hero-abilities (reaper, (
+    ( class: (hellfire-shotguns), pos: 0 ), 
+    ( class: (wraith-form), pos: 1 ), 
+    ( class: (shadow-step), pos: 2 ),
+    ( class: (death-blossom), pos: 3 ), 
+) );
+
+// widowmaker abilities
+
+@include ow-hero-abilities (widowmaker, (
+    ( class: (widows-kiss), pos: 0 ), 
+    ( class: (grappling-hook), pos: 1 ), 
+    ( class: (venom-mine), pos: 2 ),
+    ( class: (infra-sight), pos: 3 ), 
+) );
+
+
+// winston abilities
+
+@include ow-hero-abilities (winston, (
+    ( class: (tesla-cannon), pos: 0 ), 
+    ( class: (jump-pack), pos: 1 ), 
+    ( class: (shield-projector), pos: 2 ),
+    ( class: (primal-rage), pos: 3 ), 
+) );
+
+
+// pharah abilities
+
+@include ow-hero-abilities (pharah, (
+    ( class: (rocket-launcher), pos: 0 ), 
+    ( class: (jump-jet), pos: 1 ), 
+    ( class: (concussive-blast), pos: 2 ),
+    ( class: (barrage), pos: 3 ), 
+) );
+
+
+// abiliteis for reinhardt
+
+@include ow-hero-abilities (reinhardt, (
+    ( class: (rocket-hammer), pos: 0 ), 
+    ( class: (shield), pos: 1 ), 
+    ( class: (charge), pos: 2 ),
+    ( class: (fire-strike), pos: 3 ),
+    ( class: (earthshatter), pos: 4 ), 
+) );
+
+// abilities for symmetra
+
+@include ow-hero-abilities (symmetra, (
+    ( class: (photon-projector), pos: 0 ), 
+    ( class: (sentry-turret), pos: 1 ), 
+    ( class: (photon-shield), pos: 2 ),
+    ( class: (teleporter), pos: 3 ), 
+) );
+
+
+// abilities for torbjorn
+
+@include ow-hero-abilities (torbjorn, (
+    ( class: (rivet-gun), pos: 0 ), 
+    ( class: (forge-hammer), pos: 1 ), 
+    ( class: (build-turret), pos: 2 ),
+    ( class: (armor-pack), pos: 3 ),
+    ( class: (molten-core), pos: 4 ), 
+) );
+
+// abilities for bastion
+
+@include ow-hero-abilities (bastion, (
+    ( class: (config-recon), pos: 0 ), 
+    ( class: (config-sentry), pos: 1 ), 
+    ( class: (re-config), pos: 2 ),
+    ( class: (self-repair), pos: 3 ),
+    ( class: (config-tank), pos: 4 ), 
+) );
+
+
+// abilities for hanzo
+
+@include ow-hero-abilities (hanzo, (
+    ( class: (storm-bow), pos: 0 ), 
+    ( class: (sonic-arrow), pos: 1 ), 
+    ( class: (scatter-arrow), pos: 2 ),
+    ( class: (dragonstrike), pos: 3 ), 
+) );
+
+// abilities for mercy
+
+@include ow-hero-abilities (mercy, (
+    ( class: (caduceus-staff), pos: 0 ), 
+    ( class: (caduceus-blaster), pos: 1 ), 
+    ( class: (guardian-angel), pos: 2 ), 
+    ( class: (angelic-descent), pos: 3 ), 
+    ( class: (resurrect), pos: 4 ), 
+) );
+
+// abilities for zenyatta
+
+@include ow-hero-abilities (zenyatta, (
+    ( class: (orb-of-destruction), pos: 0 ), 
+    ( class: (orb-of-harmony), pos: 1 ), 
+    ( class: (orb-of-discord), pos: 2 ),
+    ( class: (transcendence), pos: 3 ), 
+) );
 
 
 
@@ -575,7 +800,12 @@ $pos-y: 4px;
     }
     
     p {
-         color: $white;
+        color: $white;
+        white-space: pre-wrap;       /* css-3 */
+        white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+        white-space: -pre-wrap;      /* Opera 4-6 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        word-wrap: break-word;       /* Internet Explorer 5.5+ */
     }
     
     @media (max-width: 765px) {

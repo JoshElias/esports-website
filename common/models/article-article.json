@@ -1,0 +1,33 @@
+{
+  "name": "articleArticle",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "parentArticleId": {
+      "type": "string",
+      "required": true
+    },
+    "childArticleId": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "parentArticle": {
+      "type": "belongsTo",
+      "model": "article",
+      "foreignKey": "parentArticleId"
+    },
+    "childArticle": {
+      "type": "belongsTo",
+      "model": "article",
+      "foreignKey": "childArticleId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

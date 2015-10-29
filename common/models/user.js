@@ -14,12 +14,7 @@ module.exports = function(User) {
     });
   });
 
-  User.afterRemote("confirm", function(ctx, output, next) {
-    //console.log("ctx:", ctx);
-    ctx.req.logIn({id:ctx.args.uid}, function(err) {
-      next(err)
-    });
-  });
+
  /*!
    * Hash the plain password
    */
@@ -128,19 +123,22 @@ module.exports = function(User) {
                     var req = ctx.active.http.req;
                     user.createAccessToken("1209600", function(err, token) {
                       if (err) return fn(err);
+                        token.__data.user = user;
+                        ctx.req.logIn(user, function(err) {
+                            if(err) return next(err);
 
-                      token.__data.user = user;
-                      res.cookie('access_token', token.id.toString(), {
-                          signed: req.signedCookies ? true : false,
-                          // maxAge is in ms
-                          maxAge: token.ttl
+                            res.cookie('access_token', token.id.toString(), {
+                                signed: req.signedCookies ? true : false,
+                                // maxAge is in ms
+                                maxAge: token.ttl
+                            });
+                            res.cookie('userId', user.id.toString(), {
+                                signed: req.signedCookies ? true : false,
+                                maxAge: token.ttl
+                            });
+
+                            fn(err, token);
                         });
-                      res.cookie('userId', user.id.toString(), {
-                        signed: req.signedCookies ? true : false,
-                        maxAge: token.ttl
-                      });
-
-                      fn(err, token);
                     });
                   } else {
                     fn(err, user);

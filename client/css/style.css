@@ -1186,6 +1186,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 /* article */
 .articles-list { margin-right: -20px; }
 .articles-list .article-wrapper { margin-right: 20px; }
+.articles-list-sm { margin-right: -10px; }
 
 .article-votes { position: absolute; right: 20px; top: 20px; }
 .article-votes .vote-wrap { position: relative; text-align: center; }
@@ -8687,6 +8688,9 @@ input[type=range]:focus::-ms-fill-upper {
 
 /* mobile */
 @media (min-width: 768px) {
+}
+@media (min-width: 1199px) {
+    .col-lg-20p { width: 20%; }
 }
 @media (min-width: 768px) and (max-width: 1199px) {
     /* HOME FEEDS */

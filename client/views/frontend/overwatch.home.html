@@ -5,47 +5,36 @@
     </div>
 
 
-    <div class="sub-nav-wrapper hidden-xs ">
-        <div class="container-fluid sub-nav" sub-nav="">
+    <div class="sub-nav-wrapper hidden-xs">
+        <div class="container-fluid sub-nav" sub-nav>
 
             <div class="swap-to pull-right"></div>
             <div class="sub-nav-links">
                 <ul>
-                    <li><a href="/overwatch">OVERWATCH</a>
-                    <li><a href="/overwatch/heroes/bastion">HEROES</a> 
+                    <li><a href="/overwatch" class="active">OVERWATCH</a>
+                    <li><a href="/overwatch/heroes">HEROES</a> 
                 </ul>
             </div>
         </div>
     </div>
 
-    <div class="container-fluid container-fluid-max ow-content"> <!-- overwatch articles and heroes -->
-        <div class="row no-pad">
-            <div class="col-lg-9 m-b-md section-articles clearfix m-t-lg no-pad" >
-                <h1 class="title ">OVERWATCH ARTICLES</h1>
-                <h3 class="sub-title m-b-md">Articles for overwatch goes here!!</h3>
-
-                <!-- / section banner -->
-                <div class="container-fluid no-pad-left">
-                    <!-- articles -->
-                    <div class="articles-list">
-                        <!-- article -->
-                        <div class="row no-pad">
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="article in articles">
-                                <div class="m-r-sm m-b-sm">
-                                    <article-thumb article="article" />
-                                </div>
-                            </div>
+    <div class="container-fluid ow-content">
+        <div class="row no-pad m-t-lg">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
+                <h1 class="title">OVERWATCH ARTICLES</h1>
+                <h3 class="sub-title m-b-md">The latest articles on all things Overwatch</h3>
+                <div class="row no-pad" ng-if="articles.length">
+                    <div class="col-xs-12 col-sm-6 col-md-4 pos-rl" ng-repeat="article in articles">
+                        <div class="m-r-sm m-b-sm">
+                            <article-thumb article="article" />
                         </div>
-                        <!-- / article -->
                     </div>
-                    <!-- / articles -->
                 </div>
-            </div> 
-
+            </div>
 
             <!-- Hero section -->
 
-            <div class="col-lg-3 m-b-md section-heroes clearfix m-t-lg" >
+            <div class="col-lg-3 m-b-md section-heroes clearfix" >
                 <h1 class="title m-b-18 ">OVERWATCH CHARACTERS</h1>
                 <div class="ts-div ow-hero-filters ow-herobar-home">
                     <div class="ow-hero-selected hidden-md hidden-sm hidden-xs {{getHeroHover()}}"></div>
