@@ -34,14 +34,16 @@
 
             <!-- Hero section -->
             <div class="col-lg-3 section-heroes m-b-md">
-                <h1 class="title m-b-18">OVERWATCH CHARACTERS</h1>
-                <div class="ts-div ow-hero-filters ow-herobar-home">
-                    <div class="ow-hero-selected hidden-md hidden-sm hidden-xs {{getHeroHover()}}"></div>
-                    <ul class="ow-hero-list">
-                        <li ng-repeat="item in heroes">
-                            <a ui-sref="app.overwatch.heroes.hero({ slug: item.className })" class="{{item.className}}" ng-tooltip title="{{item.heroName}}" ng-mouseover="setHeroHover(item.className)" ng-mouseout="setHeroHover('neutral')">{{item.heroName}}</a>
-                        </li>
-                    </ul>
+                <div class="m-r-sm">
+                    <h1 class="title m-b-18">OVERWATCH CHARACTERS</h1>
+                    <div class="ts-div ow-hero-filters ow-herobar-home">
+                        <div class="ow-hero-selected hidden-md hidden-sm hidden-xs {{getHeroHover()}}"></div>
+                        <ul class="ow-hero-list">
+                            <li ng-repeat="item in heroes">
+                                <a ui-sref="app.overwatch.heroes.hero({ slug: item.className })" class="{{item.className}}" ng-tooltip title="{{item.heroName}}" ng-mouseover="setHeroHover(item.className)" ng-mouseout="setHeroHover('neutral')">{{item.heroName}}</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div> 
