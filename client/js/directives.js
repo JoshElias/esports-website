@@ -1002,7 +1002,7 @@ angular.module('app.directives', ['ui.load'])
                 }
 
                 if (!scope.filters.heroes.length) {
-                    randHeroIndex = randomIntFromInterval(0, scope.heroes.length - 1);
+                    randHeroIndex = randomIntFromInterval(1, scope.heroes.length);
                 }
             };
 
@@ -1063,6 +1063,7 @@ angular.module('app.directives', ['ui.load'])
 
             // setup hero filters
             scope.heroDots = [{}];
+            console.log(scope.heroes);
             for (var i = 0; i < 55; i++) {
                 if (scope.heroes[i]) {
                     scope.heroDots.push(scope.heroes[i]);

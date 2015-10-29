@@ -946,7 +946,8 @@ var app = angular.module('app', [
                                     premium: true,
                                     guideType: true,
                                     id: true,
-                                    talentTiers: true
+                                    talentTiers: true,
+                                    slug: true
                                   },
                                   include: [
                                         {
@@ -1000,7 +1001,8 @@ var app = angular.module('app', [
                                     premium: true,
                                     guideType: true,
                                     id: true,
-                                    talentTiers: true
+                                    talentTiers: true,
+                                    slug: true
                                   },
                                   include: [
                                         {
@@ -1034,7 +1036,11 @@ var app = angular.module('app', [
                             }],
                             
                             dataHeroes: ['Hero', function (Hero) {
-                              return Hero.find({}).$promise;
+                              return Hero.find({
+                                  filter: {
+                                      order: "name ASC"
+                                  }
+                              }).$promise;
                             }],
                             
                             dataMaps: ['Map', function (Map) {
@@ -1065,7 +1071,7 @@ var app = angular.module('app', [
                               return Guide.find({
                                 filter: {
                                   limit: 10,
-                                  order: 'VotesCount DESC',
+                                  order: 'createdDate ASC',
                                   fields: {
                                     authorId: true,
                                     name: true,
@@ -1121,7 +1127,7 @@ var app = angular.module('app', [
                                     filters = $stateParams.h || false,
                                     order = $stateParams.o || 'high';
 
-                              return Guide.findOne({
+                              return Guide.find({
                                 filter: {
                                   order: 'votesCount DESC',
                                   limit: 1,
@@ -1155,19 +1161,21 @@ var app = angular.module('app', [
                                     }
                                   ]
                                 }
-                              }).$promise.then(function (guide) {
-                                  return guide;
+                              }).$promise.then(function (guides) {
+                                  return guides;
                               }).catch(function(err) {
                                   console.log("error", err);
                               });
                             }],
                             topGuideTalents: ['dataTopGuide', function (dataTopGuide) {
                             var talents = {};
-                            for(var j = 0; j < dataTopGuide.heroes.length; j++) {
-                                for(var k = 0; k < dataTopGuide.heroes[j].talents.length; k++) {
-                                        talents[dataTopGuide.heroes[j].talents[k].id] = dataTopGuide.heroes[j].talents[k];
+                            for(var i = 0; i < dataTopGuide.length; i++) {
+                                for(var j = 0; j < dataTopGuide[i].heroes.length; j++) {
+                                    for(var k = 0; k < dataTopGuide[i].heroes[j].talents.length; k++) {
+                                        talents[dataTopGuide[i].heroes[j].talents[k].id] = dataTopGuide[i].heroes[j].talents[k];
                                     }
                                 }
+                            }
                             return talents;
                             }],
                             dataTempostormGuides: ['Guide', function (Guide) {
@@ -1227,7 +1235,11 @@ var app = angular.module('app', [
                               return talents;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
-                              return Hero.find({}).$promise;
+                              return Hero.find({
+                                  filter: {
+                                      order: "name ASC"
+                                  }
+                              }).$promise;
                             }],
                             dataMaps: ['Map', function (Map) {
                               return Map.find({}).$promise;

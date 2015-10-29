@@ -2240,36 +2240,89 @@ angular.module('app.services', [])
         }
     };
 }])
-.factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', function (Hero, Map, Guide) {
+.factory('HOTSGuideQueryService', ['Hero', 'Map', 'Guide', 'Article', function (Hero, Map, Guide, Article) {
     return {
-        getGuides: function (filters, isFeatured, limit, finalCallback) {
-            var where = {};
+        getArticles: function (filters, isFeatured, limit, finalCallback) {
+            async.waterfall([
+                function(seriesCallback) {
+                    var where = {};
+                    
+                    if ((!_.isEmpty(filters.roles) || !_.isEmpty(filters.universes)) && _.isEmpty(filters.heroes)) {
+                        where.and = [];
+                        if (!_.isEmpty(filters.roles)) {
+                            where.and.push({ role: { inq: filters.roles }})
+                        }
 
-            if (filters.search == "" && (!_.isEmpty(filters.universes || !_.isEmpty(filters.roles)))) {
-                where.and = [];
+                        if (!_.isEmpty(filters.universes)) {
+                            where.and.push({ universe: { inq: filters.universes }})
+                        }
+                    } else if (!_.isEmpty(filters.heroes)) {
+                        var heroNames = _.map(filters.heroes, function (hero) { return hero.name });
+                        where.name = { inq: heroNames };
+                    }
+
+                    Hero.find({
+                        filter: {
+                            where: where,
+                            fields: ["name"]
+                        }
+                    }, function (heroes) {
+                        return seriesCallback(undefined, heroes);
+                    }, function (err) {
+                        console.log(err);
+                        return finalCallback(err);
+                    });
+                },
+                function(heroes, seriesCallback) {
+                    heroes = _.map(heroes, function(hero) { return hero.name; })
+                    
+                    Article.find({
+                        filter: {
+                            where: {
+                                classTags: { inq: heroes }
+                            }
+                        }
+                    }, function (articles) {
+                        return finalCallback(undefined, articles);
+                    }, function (err) {
+                        console.log(err);
+                        return finalCallback(err);
+                    })
+                }
+            ])
+            
+        },
+        getGuides: function (filters, isFeatured, limit, finalCallback) {
+            var order = "votesCount DESC",
+                heroWhere = {}, 
+                guideWhere = {
+                    guideType: "hero"
+                },
+                heroGuideWhere = {};
+            
+            if (filters.search == "" && (!_.isEmpty(filters.universes) || !_.isEmpty(filters.roles))) {
+                heroWhere.and = [];
 
                 if (!_.isEmpty(filters.universes)) {
-                    where.and.push({ universe: { inq: filters.universes } });
+                    heroWhere.and.push({ universe: { inq: filters.universes } });
                 }
 
                 if (!_.isEmpty(filters.roles)) {
-                    where.and.push({ role: { inq: filters.roles } });
+                    heroWhere.and.push({ role: { inq: filters.roles } });
                 }
             } else if (filters.search != "") {
-                where.or = [
+                heroGuideWhere.or = [
                     { name: { regexp: filters.search } },
                     { description: { regexp: filters.search } }
                 ]
             }
             
-            var where = {
-                guideType: "hero"
+            if (isFeatured !== null) {
+                guideWhere.isFeatured = isFeatured;
+                order = "createdDate ASC";
             }
             
-            if (isFeatured !== null) {
-                where.isFeatured = isFeatured
-            }
-
+            
             async.waterfall([
                 function(seriesCallback) {
                     var selectedUniverses = filters.universes,
@@ -2278,13 +2331,13 @@ angular.module('app.services', [])
                     Hero.find({
                         filter: {
                             fields: ["id"],
-                            where: where,
+                            where: heroWhere,
                             include: [
                                 {
                                     relation: "guides",
                                     scope: {
                                         fields: ["id"],
-                                        where: where
+                                        where: heroGuideWhere
                                     }
                                 }
                             ]
@@ -2296,21 +2349,19 @@ angular.module('app.services', [])
                     })
                 }, function (heroes, seriesCallback) {
                     var selectedGuideIds = [];
-
                     _.each(heroes, function(hero) {
                         selectedGuideIds.push(_.map(hero.guides, function (guide) { return guide.id }));
                     })
-
                     selectedGuideIds = _.flatten(selectedGuideIds);
                     return seriesCallback(undefined, selectedGuideIds)
                 }, function (selectedGuideIds, seriesCallback) {
+                    guideWhere.id = { inq: selectedGuideIds };
+                    
                     Guide.find({
                         filter: {
                             limit: limit,
-                            sort: "createdDate ASC",
-                            where: {
-                                id: { inq: selectedGuideIds }
-                            },
+                            order: order,
+                            where: guideWhere,
                             fields: [
                                 "name", 
                                 "authorId", 
@@ -2319,7 +2370,8 @@ angular.module('app.services', [])
                                 "guideType", 
                                 "premium", 
                                 "id", 
-                                "talentTiers"
+                                "talentTiers",
+                                "createdDate"
                             ],
                             include: [
                                 {
@@ -2412,7 +2464,8 @@ angular.module('app.services', [])
                                 "guideType", 
                                 "premium", 
                                 "id", 
-                                "talentTiers"
+                                "talentTiers",
+                                "createdDate"
                             ],
                             include: [
                                 {
@@ -2605,7 +2658,8 @@ angular.module('app.services', [])
                                 "guideType", 
                                 "premium", 
                                 "id", 
-                                "talentTiers"
+                                "talentTiers",
+                                "createdDate"
                             ],
                             include: [
                                 {
@@ -2633,7 +2687,6 @@ angular.module('app.services', [])
                 if (err) {
                     console.log("Error:", err);
                 };
-
                 return finalCallback(err, guides);
             })
         }
