@@ -111,7 +111,7 @@
                 
                 <div class="deck-info">
                     <div class="db-deck-header db-deck-{{className | lowercase}} {{deck.heroName | lowercase}}">
-                        <div class="db-deck-count">{{deck.getSize()}} / 30</div>
+                        <div class="db-deck-count">{{ deck.getSize() }} / 30</div>
                     </div>
                     <span ng-show="deck.basic">
                         <div class="deck-title">
@@ -122,14 +122,14 @@
                         </div>
                     </span>
                     <div class="deck-list">
-                        <div class="list-card" ng-repeat="card in deck.cards track by $index" ng-click="deck.removeCardFromDeck(card)">
+                        <div class="list-card" ng-repeat="card in app.settings.deck track by $index" ng-click="deck.removeCardFromDeck(card)">
                             <div class="mana-cost">{{card.cost}}</div>
                             {{card.name}}
                             <div ng-if="card.qty == 2" class="pull-right m-r-sm">2</div>
                             <div ng-if="card.legendary" class="legendary pull-right"><i class="fa fa-star"></i></div>
                         </div>
                     </div>
-                    <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
+                    <div class="db-deck-dust db-deck-footer db-deck-{{className | lowercase}} {{deck.heroName | lowercase}}">
                         {{getDust(deck.cards)}}
                         <div class="dust-bottle-sm"></div>
                     </div>

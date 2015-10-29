@@ -2468,41 +2468,47 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.edit.html',
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
-                            deck: ['$stateParams', 'Deck', function ($stateParams, Deck) {
-                                var deckID = $stateParams.deckID;
-                                return Deck.findById({ 
-                                    id: deckID,
-                                    filter: {
-                                        fields: {
-                                            id: true,
-                                            createdDate: true,
-                                            name: true,
-                                            description: true,
-                                            playerClass: true,
-                                            premium: true,
-                                            slug: true,
-                                            dust: true,
-                                            heroName: true,
-                                            authorId: true,
-                                            deckType: true,
-                                            viewCount: true
-                                        },
-                                        include: {
-                                            relation: 'cards',
-                                            scope: {
-                                                include: 'card',
-                                                fields: {
-                                                    
+                            resolveParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 15,
+                                    options: {
+                                        filter: {
+                                            fields: {
+                                                id: true,
+                                                createdDate: true,
+                                                name: true,
+                                                description: true,
+                                                playerClass: true,
+                                                premium: true,
+                                                slug: true,
+                                                dust: true,
+                                                heroName: true,
+                                                authorId: true,
+                                                deckType: true,
+                                                viewCount: true
+                                            },
+                                            include: {
+                                                relation: 'cards',
+                                                scope: {
+                                                    include: 'card',
+                                                    scope: {
+                                                        include: 'mulligansWithCoin'
+                                                    }
                                                 }
                                             }
                                         }
                                     }
-                                }, function (data) {
-                                    if(data.$$state.status ==1) {
-                                        return data;
-                                    }
-                                }, function(err) {
-                                    if(err) console.log('err: ',err);
+                                };
+                            }],
+                            deck: ['$stateParams', 'resolveParams', 'Deck', function ($stateParams, resolveParams, Deck) {
+                                var deckID = $stateParams.deckID;
+                                return Deck.findById({ 
+                                    id: deckID,
+                                    filter: resolveParams.options.filter
+                                }).$promise
+                                .catch(function(err) {
+                                    console.log('err: ', err);
                                 });
                             }],
                             

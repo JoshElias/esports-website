@@ -4306,8 +4306,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck',
-        function ($state, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck) {
+    .controller('AdminDeckEditCtrl', ['$state', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams',
+        function ($state, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams) {
             // find me easy
             console.log('init deck: ',deck);
 //            console.log('class cards: ',classCardsList);
@@ -4317,26 +4317,9 @@ angular.module('app.controllers', ['ngCookies'])
 //            console.log('deck cards: ', deckCards);
 //              console.log('HS Service: ', Hearthstone);
             
-            
             // redirect back to class pick if no data
 //            if (!data || !data.success == 1) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
-
-            // set default tab page
-            $scope.step = 1;
-            $scope.showManaCurve = false;
-            $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
             
-//            console.log('classes: ', $scope.classes);
-
-            // steps
-            $scope.stepDesc = {
-                1: 'Select the cards for your deck.',
-                2: 'Select which cards to mulligan for.',
-                3: 'Provide a description for how to play your deck.',
-                4: 'Select how your deck preforms against other classes.',
-                5: 'Provide a synopsis and title for your deck.'
-            };
-
             $scope.isSecondary = function (klass) {
                 switch(klass) {
                     case 'druid': return $scope.app.settings.secondaryPortrait[0]; break;
@@ -4351,13 +4334,48 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
 
+            // set default tab page
+            $scope.step = 1;
+            $scope.showManaCurve = false;
+            $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
+            
+//            console.log('classes: ', $scope.classes);
+            
+            
+            
+            //get the hero name based on the index of portraitSettings' index
+            $scope.getName = function (index, klass) {
+                try {
+                    return Hearthstone.heroNames[klass][$scope.isSecondary(klass.toLowerCase())];
+                } catch(err) {
+                    $scope.app.settings.secondaryPortrait = [0,0,0,0,0,0,0,0,0];
+                    $scope.getName(index, caps);
+                }
+            }
+            
+            $scope.getActiveDeckName = function () {
+                return Hearthstone.heroNames[deck.playerClass.slice(0,1).toUpperCase() + deck.playerClass.substr(1)][$scope.isSecondary(deck.playerClass)];
+            }
+
+            // steps
+            $scope.stepDesc = {
+                1: 'Select the cards for your deck.',
+                2: 'Select which cards to mulligan for.',
+                3: 'Provide a description for how to play your deck.',
+                4: 'Select how your deck preforms against other classes.',
+                5: 'Provide a synopsis and title for your deck.'
+            };
+
             $scope.getDust = function (cards) {
                 var dust = 0;
                 for (var i = 0; i < cards.length; i++) {
-                    dust += cards[i].dust * cards[i].qty;
+                    dust += cards[i].card.dust * cards[i].cardQuantity;
                 }
                 return dust
             }
+            
+            $scope.type = 1;
+            $scope.basic = false;
 
             $scope.prevStep = function () {
                 if ($scope.step > 1) $scope.step = $scope.step - 1;
@@ -4388,6 +4406,14 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.isClassCards = function () {
                 return classCards;
             }
+            
+            $scope.className = deck.playerClass;
+            
+            $scope.cards = {
+                neutral: neutralCardsList,
+                class: classCardsList,
+                current: classCardsList
+            };
 
             $scope.setClassCards = function (b) {
                 updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
@@ -4406,7 +4432,7 @@ angular.module('app.controllers', ['ngCookies'])
 //        $scope.cards.current = $scope.cards.class;
 
             $scope.search = function() {
-                updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
+                updateCards(resolveParams.page, resolveParams.perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, false);
             }
 
 //            function updateCards (page, perpage, search, mechanics, mana, callback) {
@@ -4513,6 +4539,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 
                                 $timeout(function() {
                                     $scope.cards.current = data;
+                                    console.log('new cards: ', $scope.cards.current);
                                     $scope.fetching = false;
                                     if(callback) {
                                         return callback([classCount.count, neutralCount.count]);
@@ -4655,10 +4682,10 @@ angular.module('app.controllers', ['ngCookies'])
 //            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
             
 //            $scope.className = deck.playerClass;
-            console.log('class: ', deck.playerClass);
             
-            // deck.playerclass undefined for some reason
-            $scope.deck = DeckBuilder.new(deck.playerClass, deck);
+            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null) ? DeckBuilder.new($scope.className, deck) : DeckBuilder.new($scope.clasName);
+            
+            console.log('deck now: ', deck);
             
             $scope.$watch('deck', function() {
                 $scope.app.settings.deck = {
@@ -4677,14 +4704,14 @@ angular.module('app.controllers', ['ngCookies'])
                     public: $scope.deck.public,
                     id: $scope.deck.id
                 };
+                console.log('newest deck: ', $scope.deck);
+                console.log('deck name: ', $scope.deck.name);
             }, true);
             
             console.log('settings now: ', $scope.app.settings);
-            
-            console.log('newest deck: ', $scope.deck);
 
             // current mulligan
-            $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
+            $scope.currentMulligan = $scope.deck.getMulligan($scope.className);
 
             $scope.setMulligan = function (mulligan) {
                 $scope.currentMulligan = mulligan;
