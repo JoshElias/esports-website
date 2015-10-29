@@ -131,11 +131,24 @@ $pos-y: 4px;
     position: absolute;
     top: 50%;
     margin-top: -25px;
+    z-index: 500;
+    
+    img {
+        opacity: .5;
+    }
+    
+    &:hover {
+    
+        img {
+            opacity: 1;
+        }
+    }
     
     @media  (max-width: 1570px) {
     
         display: none;
     }
+    
 }
 
 .arrow-left {  
