@@ -51,12 +51,19 @@
     <div class="row ow-hero-skillbar no-pad"> <!-- skills row -->    
         <div class="container-fluid">
             <div class="container-fluid container-fluid-max">
-                <div class="row">
-                    <div class="col-xs-12 col-sm-6 ow-skills" ng-class="{ 'col-md-3 col-lg-2': hero.overwatchAbilities.length == 5, 'col-md-offset-1 col-lg-offset-1': hero.overwatchAbilities.length == 5 && $index == 0, 'col-lg-3 col-md-3': hero.overwatchAbilities.length == 4 }" ng-repeat="ability in hero.overwatchAbilities">
-                        <div class="{{hero.className}} skill {{ability.className}}"></div>
-                        <div class="{{hero.className}} ow-desc-1 ow-skill-desc">
-                            <h3>{{ability.name}}</h3>
-                            <p>{{ability.description}}</p>
+                <div class="row row-flex row-flex-wrap">
+                    <div class="col-xs-12 col-sm-6 ow-skills"
+                         ng-class="{ 'col-md-4 col-lg-20p': hero.overwatchAbilities.length == 5, 'col-lg-3 col-md-3': hero.overwatchAbilities.length == 4 }"
+                         ng-repeat="ability in hero.overwatchAbilities"
+                    >
+                        <div class="flex-col">
+                            <div>
+                                <div class="{{hero.className}} skill {{ability.className}}"></div>
+                            </div>
+                            <div class="{{hero.className}} ow-desc-1 ow-skill-desc">
+                                <h3>{{ability.name}}</h3>
+                                <p>{{ability.description}}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
