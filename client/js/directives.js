@@ -283,7 +283,6 @@ angular.module('app.directives', ['ui.load'])
             $scope.service;
             $scope.app = $rootScope.app;
 
-            console.log('commentable: ', $scope.commentable);
 
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
@@ -294,7 +293,6 @@ angular.module('app.directives', ['ui.load'])
 
             // TODO: When user posts new comment, shows '[DEL]' for username until page is refreshed.
             $scope.commentPost = function () {
-                console.log($scope.commentable.comments);
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
                         $scope.commentPost();
@@ -324,7 +322,6 @@ angular.module('app.directives', ['ui.load'])
                         console.log("failed!", err);
                     });
                 }
-                console.log($scope.commentable.comments);
             };
 
             updateCommentVotes();
@@ -875,8 +872,6 @@ angular.module('app.directives', ['ui.load'])
         controller: ['$scope', function ($scope) {
             $scope.cdn = $scope.$parent.$parent.$parent.$parent.$parent.app.cdn;
 
-            console.log($scope.deck);
-
             $scope.getQty = function (id) {
                 return $scope.deck.cardQuantities[id];
             }
@@ -1062,7 +1057,6 @@ angular.module('app.directives', ['ui.load'])
 
             // setup hero filters
             scope.heroDots = [{}];
-            console.log(scope.heroes);
             for (var i = 0; i < 55; i++) {
                 if (scope.heroes[i]) {
                     scope.heroDots.push(scope.heroes[i]);

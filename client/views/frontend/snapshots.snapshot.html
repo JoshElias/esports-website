@@ -238,7 +238,7 @@
                                                                 </span>
                                                             </div>
                                                             <div class="tech-card" ng-repeat="card in tech.cardTech">
-                                                                <div class="tech-card-body" ng-class="{ 'multi' : card.both }" style="background-image: url('{{app.cdn}}cards/{{card.card.photoNames.small}}')">
+                                                                <div class="tech-card-body" ng-class="{ 'multi' : card.both }" style='background-image: url("{{app.cdn}}cards/{{card.card.photoNames.small}}")'>
                                                                     <div class="pull-left toss" ng-if="!card.toss"><i class="fa fa-plus"></i></div>
                                                                     <div class="pull-left keep" ng-if="card.toss"><i class="fa fa-minus"></i></div>
                                                                     {{card.card.name}}

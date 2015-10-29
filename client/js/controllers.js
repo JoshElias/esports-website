@@ -7030,6 +7030,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.ArticleService = Article;
             $scope.article = article;
             $scope.authorEmail = article.author.email;
+            $scope.hasVoted = checkVotes();
 //        $scope.ArticleService = ArticleService;
 //        $scope.$watch('app.user.isLogged()', function() {
 //            for (var i = 0; i < $scope.article.votes.length; i++) {
@@ -7101,12 +7102,12 @@ angular.module('app.controllers', ['ngCookies'])
             function checkVotes () {
                 for (var i = 0; i < $scope.article.votes.length; i++) {
                     if (typeof($scope.article.votes[i]) === 'object') {
-                        if ($scope.article.votes[i].userID == $scope.app.user.getUserID()) {
+                        if ($scope.article.votes[i].userID == LoopBackAuth.currentUserId) {
                             $scope.hasVoted = true;
                             break;
                         }
                     } else {
-                        if ($scope.article.votes[i] == $scope.app.user.getUserID()) {
+                        if ($scope.article.votes[i] == LoopBackAuth.currentUserId) {
                             $scope.hasVoted = true;
                             break;
                         }
@@ -7120,82 +7121,49 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             function vote(article) {
-                if (!$scope.app.user.isLogged()) {
+                if (!LoopBackAuth.currentUserId) {
                     LoginModalService.showModal('login', function() {
                         vote(article);
                     });
                 } else {
                     if (!$scope.hasVoted) {
-                        VoteService.voteArticle(article).then(function (data) {
-                            if (data.success) {
-                                $scope.hasVoted = true;
-                                article.votesCount = data.votesCount;
+                        Article.findOne({
+                            filter: {
+                                where: {
+                                    id: $scope.article.id
+                                }, 
+                                fields: ["votes", "votesCount"]
                             }
+                        })
+                        .$promise
+                        .then(function (article) {
+                            async.waterfall([
+                                function(seriesCallback) {
+                                    article.votes.push({ 
+                                        userID: LoopBackAuth.currentUserId, 
+                                        direction: 1 
+                                    });
+                                    article.votesCount += 1;
+                                    return seriesCallback(undefined, article)
+                                },
+                                function(article, seriesCallback) {
+                                    Article.update({
+                                        where: {
+                                            id: $scope.article.id
+                                        }
+                                    }, {
+                                        votes: article.votes,
+                                        votesCount: article.votesCount
+                                    }, function (data) {
+                                        $scope.article.votes = data.votes;
+                                        $scope.article.votesCount = data.votesCount;
+                                        checkVotes();
+                                    });
+                                }
+                            ]);
                         });
                     }
                 }
-                checkVotes();
-                updateCommentVotes();
-            };
-
-//        // comments
-//        var defaultComment = {
-//            comment: ''
-//        };
-//        $scope.comment = angular.copy(defaultComment);
-//
-//        $scope.commentPost = function () {
-//            if (!$scope.app.user.isLogged()) {
-//                LoginModalService.showModal('login', function () {
-//                    $scope.commentPost();
-//                });
-//            } else {
-//                ArticleService.addComment($scope.article, $scope.comment).success(function (data) {
-//                    if (data.success) {
-//                        $scope.article.comments.push(data.comment);
-//                        $scope.comment.comment = '';
-//                    }
-//                });
-//            }
-//        };
-
-//        if (LoopBackAuth.currentUserData) {
-//            updateCommentVotes();
-//        }
-//
-//        function updateCommentVotes() {
-//            $scope.article.comments.forEach(checkVotes);
-//
-//            function checkVotes (comment) {
-//                var vote = comment.votes.filter(function (vote) {
-//                    return ($scope.app.user.getUserID() === vote.userID);
-//                })[0];
-//
-//                if (vote) {
-//                    comment.voted = vote.direction;
-//                }
-//            }
-//        }
-
-            $scope.voteComment = function (direction, comment) {
-                if (!$scope.app.user.isLogged()) {
-                    LoginModalService.showModal('login', function () {
-                        $scope.voteComment(direction, comment);
-                    });
-                } else {
-                    if (comment.author._id === $scope.app.user.getUserID()) {
-                        bootbox.alert("You can't vote for your own content.");
-                        return false;
-                    }
-                    VoteService.voteComment(direction, comment).then(function (data) {
-                        if (data.success) {
-                            comment.voted = direction;
-                            comment.votesCount = data.votesCount;
-                        }
-                    });
-                }
-                checkVotes();
-                updateCommentVotes();
             };
 
             // get premium
@@ -9861,12 +9829,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'communityTalents', 'tempostormTalents', 'topGuideTalents', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService',
         function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, communityTalents, tempostormTalents, topGuideTalents, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService) {
-            console.log('top guides: ', dataTopGuide);
-            console.log('community guide: ', dataCommunityGuides);
-            console.log('tempostorm guide: ', dataTempostormGuides);
-
-            console.log('commcount: ', communityGuideCount);
-
+            
             $scope.tempostormGuides = dataTempostormGuides;
             $scope.tempostormGuideTalents = tempostormTalents;
 
@@ -9903,7 +9866,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             var initializing = true;
             $scope.$watch(function(){ return $scope.filters; }, function (value) {
-                console.log(initializing);
                 if (initializing) {
                     $timeout(function () {
                         initializing = false;
@@ -9957,7 +9919,6 @@ angular.module('app.controllers', ['ngCookies'])
                         async.series([
                             function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroGuides($scope.filters, null, 1, function (err, guides) {
-                                    console.log(guides);
                                     $scope.topGuidesTalents = getDict(guides);
                                     
                                     $timeout(function () {
@@ -10015,7 +9976,6 @@ angular.module('app.controllers', ['ngCookies'])
                     } else {
                         async.series([
                             function (seriesCallback) {
-                                console.log("you shouldn't be running fuck");
                                 HOTSGuideQueryService.getGuides($scope.filters, null, 1, function(err, guides) {
                                     $scope.topGuidesTalents = getDict(guides);
 
