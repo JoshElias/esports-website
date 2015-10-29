@@ -117,10 +117,15 @@
       "model": "comment",
       "foreignKey": "deckId"
     },
-    "deckMatchups": {
+    "matchups": {
       "type": "hasMany",
       "model": "deckMatchup",
       "foreignKey": "deckId"
+    },
+    "mulligans": {
+      "type": "hasMany",
+      "model": "mulligan",
+      "foreignKey":"deckId"
     }
   },
   "acls": [],
