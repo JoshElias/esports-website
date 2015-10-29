@@ -166,6 +166,15 @@ $pos-y: 4px;
 // 5... OW typography
 //*************************************
 
+.ow-content {
+    margin-right: -10px;
+    padding-top: 80px;
+}
+
+.ow-content > .row {
+    margin: 0 auto;
+    max-width: 1448px;
+}
 
 .ow-content h1.title {
     font-family: 'Open Sans Bold';
