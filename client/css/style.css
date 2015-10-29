@@ -81,7 +81,7 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 /* nav bar */
 .navbar-tempo {
     margin-bottom: 0px;
-    height: 55px;
+    height: 52px;
     background: #1b1b1b;
     color: #2766ad;
     border-bottom: 2px solid #000;
@@ -179,6 +179,14 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 .navbar-default .navbar-nav .open .dropdown-menu > li > a { padding-top: 10px; padding-bottom: 11px; }
 .navbar-nav .game-head-link { display: block; padding: 5px 15px; font-size: 16px; line-height: 20px; white-space: nowrap; font-weight: 700; color: white!important; }
 .navbar-nav .game-head-link:hover { text-decoration: underline; }
+
+/* mega nav fix */
+.navbar:not(.no-border) .navbar-nav>li.dropdown-grid>.dropdown-grid-wrapper>.dropdown-menu, .navbar:not(.no-border) .navbar-nav>li[class*=dropdown]>.dropdown-menu {
+    margin-top: 0px;
+}
+.navbar:not(.no-border) .navbar-nav>li.dropdown-grid>.dropdown-grid-wrapper>.dropdown-menu.dropdown-user-login, .navbar:not(.no-border) .navbar-nav>li[class*=dropdown]>.dropdown-menu.dropdown-user-login {
+    margin-top: 2px;
+}
 
 /* notifications */
 .notifications .badge {
