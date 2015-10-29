@@ -25,38 +25,50 @@
          </div>
     </div>
     <!--Hero nav ends -->
+    <div class="arrows">
+        <a href="#" class="arrow-left"><img src="../../dist/img/overwatch/icons/left.png"></a>
+        <a href="#" class="arrow-right"><img src="../../dist/img/overwatch/icons/right.png"></a>
+        <div class="container-fluid container-fluid-max ow-content"> <!-- overwatch articles and heroes -->
 
-    <div class="container-fluid container-fluid-max ow-content"> <!-- overwatch articles and heroes -->
-        <div class="row no-pad">
-            <div class="col-lg-12 hero-upper" > <!-- upper container -->
-                <div class="row"> <!-- hero brief row -->       
-                    <div class="col-lg-6 col-xs-12 ow-hero-brief"  > <!-- hero brief --> 
-                        <h1 class="ow-hero-name">{{hero.heroName}}</h1>
-                        <ul class="ow-hero-profile">
-                            <li>Role: <img src="../../dist/img/overwatch/icons/{{hero.heroRole.toLowerCase()}}.png" class="ow-role-icon"> <span class="ow-role">{{hero.heroRole}}</span></li>
-                            <li><span class="ow-orange-title">Real Name:</span> {{hero.realName}}<span class="hide-me">,</span> <span class="ow-orange-title">Age:</span> {{hero.age}}</li>
-                            <li><span class="ow-orange-title">Occupation:</span> {{hero.occupation}}</li>
-                            <li><span class="ow-orange-title">Base of Operations:</span> {{hero.location}}</li>
-                            <li><span class="ow-orange-title">Affiliation:</span> {{hero.organization}}</li>
-                        </ul>
-                    </div> <!-- hero brief ends -->
-                    <div class="col-lg-6 ow-character-img hidden-xs"> <!-- hero image --> 
-                        <img src="../../dist/img/overwatch/hero-background/hq/{{hero.className}}.png">
-                    </div> <!-- hero image ends -->
-                </div> <!-- hero brief ends -->  
-            </div> <!-- upper container ends -->
-        </div> <!-- row 1 ends -->
-    </div> <!--overwatch content ends -->
+
+            <div class="row no-pad">
+                <div class="col-lg-12 hero-upper" > <!-- upper container -->
+                    <div class="row"> <!-- hero brief row -->       
+                        <div class="col-lg-6 col-xs-12 ow-hero-brief"  > <!-- hero brief --> 
+                            <h1 class="ow-hero-name">{{hero.heroName}}</h1>
+                            <ul class="ow-hero-profile">
+                                <li>Role: <img src="../../dist/img/overwatch/icons/{{hero.heroRole.toLowerCase()}}.png" class="ow-role-icon"> <span class="ow-role">{{hero.heroRole}}</span></li>
+                                <li><span class="ow-orange-title">Real Name:</span> {{hero.realName}}<span class="hide-me">,</span> <span class="ow-orange-title">Age:</span> {{hero.age}}</li>
+                                <li><span class="ow-orange-title">Occupation:</span> {{hero.occupation}}</li>
+                                <li><span class="ow-orange-title">Base of Operations:</span> {{hero.location}}</li>
+                                <li><span class="ow-orange-title">Affiliation:</span> {{hero.organization}}</li>
+                            </ul>
+                        </div> <!-- hero brief ends -->
+                        <div class="col-lg-6 ow-character-img hidden-xs"> <!-- hero image --> 
+                            <img src="../../dist/img/overwatch/hero-background/hq/{{hero.className}}.png">
+                        </div> <!-- hero image ends -->
+                    </div> <!-- hero brief ends -->  
+                </div> <!-- upper container ends -->
+            </div> <!-- row 1 ends -->
+        </div> <!--overwatch content ends -->
+    </div><!-- arrow container ends -->
 
     <div class="row ow-hero-skillbar no-pad"> <!-- skills row -->    
         <div class="container-fluid">
             <div class="container-fluid container-fluid-max">
-                <div class="row">
-                    <div class="col-xs-12 col-sm-6 ow-skills" ng-class="{ 'col-md-3 col-lg-2': hero.overwatchAbilities.length == 5, 'col-md-offset-1 col-lg-offset-1': hero.overwatchAbilities.length == 5 && $index == 0, 'col-lg-3 col-md-3': hero.overwatchAbilities.length == 4 }" ng-repeat="ability in hero.overwatchAbilities">
-                        <div class="{{hero.className}} skill {{ability.className}}"></div>
-                        <div class="{{hero.className}} ow-desc-1 ow-skill-desc">
-                            <h3>{{ability.name}}</h3>
-                            <p>{{ability.description}}</p>
+                <div class="row row-flex row-flex-wrap">
+                    <div class="col-xs-12 col-sm-6 ow-skills"
+                         ng-class="{ 'col-md-4 col-lg-20p': hero.overwatchAbilities.length == 5, 'col-lg-3 col-md-3': hero.overwatchAbilities.length == 4 }"
+                         ng-repeat="ability in hero.overwatchAbilities"
+                    >
+                        <div class="flex-col">
+                            <div>
+                                <div class="{{hero.className}} skill {{ability.className}}"></div>
+                            </div>
+                            <div class="{{hero.className}} ow-desc-1 ow-skill-desc">
+                                <h3>{{ability.name}}</h3>
+                                <p>{{ability.description}}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
