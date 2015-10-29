@@ -68,14 +68,14 @@
 <!--lower ssection starts -->
 <div class="ow-lower-bg">
      <div class="container-fluid container-fluid-max ow-content"> <!-- overwatch articles and heroes -->
-        <div class="row no-pad">
+        <div class="row">
             <div class="col-lg-6 col-md-12 ow-character-story m-t-lg m-b-lg">
                 <h2>Story</h2>
                 <p>{{hero.description}}</p>
             </div>
             <div class="col-lg-6 col-md-12 ow-character-video m-t-lg m-b-lg">
                 <div class="ow-vid-div m-t-lg">
-                    <!-- TODO: video -->
+                    <youtube-video class="home-vod" video-url="hero.youtubeId"></youtube-video>
                 </div>
             </div>
         </div>
