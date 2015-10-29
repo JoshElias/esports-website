@@ -11408,6 +11408,28 @@ angular.module('app.controllers', ['ngCookies'])
             // load vars
             $scope.heroes = heroes;
             $scope.hero = hero;
+            
+            // arrows
+            function getCurrentHeroIndex () {
+                for (var i = 0; i < $scope.heroes.length; i++) {
+                    if ($scope.heroes[i].className == $scope.hero.className) {
+                        return i;
+                    }
+                }
+                return false;
+            }
+            
+            $scope.getNextHero = function () {
+                var index = getCurrentHeroIndex();
+                if (index === false) { return $scope.heroes[0].className; }
+                return (index < ($scope.heroes.length - 1)) ? $scope.heroes[index + 1].className : $scope.heroes[0].className;
+            }
+            
+            $scope.getPrevHero = function () {
+                var index = getCurrentHeroIndex();
+                if (index === false) { return $scope.heroes[0].className; }
+                return (index > 0) ? $scope.heroes[index - 1].className : $scope.heroes[$scope.heroes.length - 1].className;
+            }
         }
     ])
     .controller('AdminOverwatchHeroListCtrl', ['$scope', '$window', '$timeout', 'bootbox', 'AlertService', 'OverwatchHero', 'heroes',
