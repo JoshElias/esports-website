@@ -11403,12 +11403,16 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('OverwatchHeroCtrl', ['$scope', 'hero', 'heroes',
-        function ($scope, hero, heroes) {
+    .controller('OverwatchHeroCtrl', ['$scope', 'MetaService', 'hero', 'heroes',
+        function ($scope, MetaService, hero, heroes) {
             // load vars
             $scope.heroes = heroes;
             $scope.hero = hero;
             
+            // seo
+            $scope.metaservice = MetaService;
+            $scope.metaservice.set($scope.hero.heroName + ' - Overwatch', 'Informaton about the Overwatch hero ' + $scope.hero.heroName);
+
             // arrows
             function getCurrentHeroIndex () {
                 for (var i = 0; i < $scope.heroes.length; i++) {
