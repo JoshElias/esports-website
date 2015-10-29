@@ -8776,6 +8776,11 @@ input[type=range]:focus::-ms-fill-upper {
     /* home */
     .twitch-feed { padding-right: 0px; }
     .twitter-feed { padding-left: 0px; }
+    .games-btn {height: 110px; }
+    .games-btn:hover .games-btn-back { -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); opacity: 1; }
+    .games-btn:hover .games-btn-logo { -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); }
+    
+    .games-btn-logo {width: 200px;}
     
     /* filters */
     .filter-bar { display: none; }
