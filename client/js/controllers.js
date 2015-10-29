@@ -6947,7 +6947,25 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.fetching = false;
             $scope.metaservice = MetaService;
             $scope.metaservice.setOg('https://tempostorm.com/articles');
-
+            
+            // article filtering
+            $scope.articleTypes = ['ts', 'hs', 'hots', 'overwatch'];
+            $scope.articleFilter = [];
+            $scope.toggleArticleFilter = function (type) {
+                if ($scope.isArticleFilter(type)) {
+                    var index = $scope.articleFilter.indexOf(type);
+                    $scope.articleFilter.splice(index, 1);
+                } else {
+                    $scope.articleFilter.push(type);
+                }
+                
+                $scope.getArticles();
+            };
+            
+            $scope.isArticleFilter = function (type) {
+                return ($scope.articleFilter.indexOf(type) !== -1);
+            };
+            
             $scope.getArticles = function() {
                 updateArticles(1, $scope.perpage, $scope.search);
             }
@@ -6958,9 +6976,21 @@ angular.module('app.controllers', ['ngCookies'])
 
                 var options = {},
                     countOptions = {};
+                
+                countOptions['where'] = {
+                    isActive: true,
+                    articleType: {
+                        inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
+                    }
+                };
 
                 options.filter = {
-                    isActive: true,
+                    where: {
+                        isActive: true,
+                        articleType: {
+                            inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
+                        }
+                    },
                     fields: {
                         content: false,
                         votes: false
@@ -6971,20 +7001,16 @@ angular.module('app.controllers', ['ngCookies'])
                 };
 
                 if ($scope.search.length > 0) {
-                    options.filter.where = {
-                        or: [
-                            { title: { regexp: search } },
-                            { description: { regexp: search } },
-                            { content: { regexp: search } }
-                        ]
-                    }
-                    countOptions.where = {
-                        or: [
-                            { title: { regexp: search } },
-                            { description: { regexp: search } },
-                            { content: { regexp: search } }
-                        ]
-                    }
+                    options.filter.where['or'] = [
+                        { title: { regexp: search } },
+                        { description: { regexp: search } },
+                        { content: { regexp: search } }
+                    ];
+                    countOptions.where.or = [
+                        { title: { regexp: search } },
+                        { description: { regexp: search } },
+                        { content: { regexp: search } }
+                    ];
                 }
 
                 Article.count(countOptions, function (count) {
