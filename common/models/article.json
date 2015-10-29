@@ -80,9 +80,11 @@
       "foreignKey": "authorId"
     },
     "relatedArticles": {
-      "type": "hasAndBelongsToMany",
+      "type": "hasMany",
       "model": "article",
-      "foreignKey": ""
+      "foreignKey": "parentArticleId",
+      "through": "articleArticle",
+      "keyThrough": "childArticleId"
     },
     "deck": {
       "type": "belongsTo",
