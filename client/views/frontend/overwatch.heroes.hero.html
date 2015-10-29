@@ -8,7 +8,7 @@
             <div class="sub-nav-links">
                 <ul>
                     <li><a href="/overwatch">OVERWATCH</a>
-                    <li><a href="/overwatch/heroes/bastion">HEROES</a> 
+                    <li><a href="/overwatch/heroes" class="active">HEROES</a> 
                 </ul>
             </div>
         </div>
@@ -26,8 +26,8 @@
     </div>
     <!--Hero nav ends -->
     <div class="arrows">
-        <a href="#" class="arrow-left"><img src="../../dist/img/overwatch/icons/left.png"></a>
-        <a href="#" class="arrow-right"><img src="../../dist/img/overwatch/icons/right.png"></a>
+        <a ui-sref="app.overwatch.heroes.hero({ slug: getPrevHero() })" class="arrow-left"><img src="../../dist/img/overwatch/icons/left.png"></a>
+        <a ui-sref="app.overwatch.heroes.hero({ slug: getNextHero() })" class="arrow-right"><img src="../../dist/img/overwatch/icons/right.png"></a>
         <div class="container-fluid container-fluid-max ow-content"> <!-- overwatch articles and heroes -->
 
 
