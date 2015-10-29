@@ -21,12 +21,12 @@
   },
   "validations": [],
   "relations": {
-    "cardId": {
+    "card": {
       "type": "belongsTo",
       "model": "card",
       "foreignKey": "cardId"
     },
-    "deckId": {
+    "deck": {
       "type": "belongsTo",
       "model": "deck",
       "foreignKey": "deckId"

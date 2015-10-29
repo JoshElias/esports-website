@@ -1,4 +1,16 @@
-// map guide img mixin
+// Description: file to build css for adding new maps to hots
+
+//*************************************
+
+// 1... hots map Mixin library
+// 2... hots maps
+
+//*************************************
+
+
+//*************************************
+// 1... hots map Mixin library
+//*************************************
 
 // map=map name, filename= (file).jpg
 
@@ -10,6 +22,9 @@
 
 }
 
+//*************************************
+// 2... hots maps
+//*************************************
 
 @include hots-map-images (blackheartsbay, bhb);
 @include hots-map-images (cursedhollow, curse);

@@ -15,194 +15,70 @@
     </div>
     
     <!-- Hero nav begins -->
-    
     <div class="container-fluid ow-hero-filters no-side-pad">
-
-                     <div class="col-lg-12 ow-hero-bar">
-
-
-                   
-
-                    <ul class="ow-hero-list">
-
-                        <li ><a href="/overwatch/heroes/bastion" class="bastion" ng-tooltip title="Bastion">bastion</a></li>
-                        <li ><a href="/overwatch/heroes/hanzo" class="hanzo" ng-tooltip title="Hanzo">hanzo</a></li>
-                        <li ><a href="/overwatch/heroes/junkrat" class="junkrat" ng-tooltip title="Junkrat">junkrat</a></li>
-                        <li ><a href="/overwatch/heroes/lucio" class="lucio" ng-tooltip title="Lucio">lucio</a></li>
-
-                        <li ><a href="/overwatch/heroes/mccree" class="mccree" ng-tooltip title="Mccree">mccree</a></li>
-                        <li ><a href="/overwatch/heroes/mercy" class="mercy" ng-tooltip title="Mercy">mercy</a></li>
-                        <li ><a href="/overwatch/heroes/pharah" class="pharah" ng-tooltip title="Pharah">pharah</a></li>
-                        <li ><a href="/overwatch/heroes/reaper" class="reaper" ng-tooltip title="Reaper">reaper</a></li>
-
-                        <li ><a href="/overwatch/heroes/reinhardt" class="reinhardt" ng-tooltip title="Reinhardt">reinhardt</a></li>
-                        <li ><a href="/overwatch/heroes/roadhog" class="roadhog" ng-tooltip title="Roadhog">roadhog</a></li>
-                        <li ><a href="/overwatch/heroes/soldier-76" class="soldier-76" ng-tooltip title="Soldier-76">soldier-76</a></li>
-                        <li ><a href="/overwatch/heroes/symmetra" class="symmetra" ng-tooltip title="Symmetra">symmetra</a></li>
-
-                        <li ><a href="/overwatch/heroes/torbjorn" class="torbjorn" ng-tooltip title="torbjorn">torbjorn</a></li>
-                        <li ><a href="/overwatch/heroes/tracer" class="tracer" ng-tooltip title="Tracer">tracer</a></li>
-                        <li ><a href="/overwatch/heroes/widowmaker" class="widowmaker" ng-tooltip title="Widowmaker">widowmaker</a></li>
-                        <li ><a href="/overwatch/heroes/winston" class="winston" ng-tooltip title="Winston">winston</a></li>
-
-                        <li ><a href="/overwatch/heroes/zarya" class="zarya" ng-tooltip title="Zarya">zarya</a></li>
-                        <li ><a href="/overwatch/heroes/zenyatta" class="zenyatta" ng-tooltip title="Zenyatta">zenyatta</a></li>
-
-                    </ul>
-
-                     </div>
-
-
+         <div class="col-lg-12 ow-hero-bar">
+             <ul class="ow-hero-list">
+                <li ng-repeat="item in heroes">
+                    <a ui-sref="app.overwatch.heroes.hero({ slug: item.className })" class="{{item.className}}" ng-class="{ active: hero.className == item.className }" ng-tooltip title="{{item.heroName}}">{{item.heroName}}</a>
+                </li>
+            </ul>
+         </div>
     </div>
-
-    
-    
-    
-    
     <!--Hero nav ends -->
 
     <div class="container-fluid container-fluid-max ow-content"> <!-- overwatch articles and heroes -->
         <div class="row no-pad">
-        
-        
             <div class="col-lg-12 hero-upper" > <!-- upper container -->
-        
-
                 <div class="row"> <!-- hero brief row -->       
-                    
                     <div class="col-lg-6 col-xs-12 ow-hero-brief"  > <!-- hero brief --> 
-                    
-                    <h1 class="ow-hero-name">Mercy</h1>
-                    
-                    <ul class="ow-hero-profile">
-                        <li>Role: <img src="../../dist/img/overwatch/icons/support.png" class="ow-role-icon"> <span class="ow-role">Support</span></li>
-                        <li><span class="ow-orange-title">Real Name:</span> Angela Ziegler<span class="hide-me">,</span> <span class="ow-orange-title">Age:</span> 34</li>
-                        <li><span class="ow-orange-title">Occupation:</span> Field Medic, First Responder</li>
-                        <li><span class="ow-orange-title">Base of Operations:</span> Zurich, Switzerland</li>
-                        <li><span class="ow-orange-title">Affiliation:</span> Overwatch (Formerly)</li>
-                    </ul>
-                    
-                    
+                        <h1 class="ow-hero-name">{{hero.heroName}}</h1>
+                        <ul class="ow-hero-profile">
+                            <li>Role: <img src="../../dist/img/overwatch/icons/{{hero.heroRole.toLowerCase()}}.png" class="ow-role-icon"> <span class="ow-role">{{hero.heroRole}}</span></li>
+                            <li><span class="ow-orange-title">Real Name:</span> {{hero.realName}}<span class="hide-me">,</span> <span class="ow-orange-title">Age:</span> {{hero.age}}</li>
+                            <li><span class="ow-orange-title">Occupation:</span> {{hero.occupation}}</li>
+                            <li><span class="ow-orange-title">Base of Operations:</span> {{hero.location}}</li>
+                            <li><span class="ow-orange-title">Affiliation:</span> {{hero.organization}}</li>
+                        </ul>
                     </div> <!-- hero brief ends -->
                     <div class="col-lg-6 ow-character-img hidden-xs"> <!-- hero image --> 
-                        <img src="../../dist/img/overwatch/hero-background/hq/mercy.png">
+                        <img src="../../dist/img/overwatch/hero-background/hq/{{hero.className}}.png">
                     </div> <!-- hero image ends -->
-                 
-
                 </div> <!-- hero brief ends -->  
-
-                
             </div> <!-- upper container ends -->
-      
         </div> <!-- row 1 ends -->
     </div> <!--overwatch content ends -->
 
-    
-        <div class="row ow-hero-skillbar no-pad"> <!-- skills row -->    
+    <div class="row ow-hero-skillbar no-pad"> <!-- skills row -->    
         <div class="container-fluid">
-         <div class="container-fluid container-fluid-max no-side-pad">
-             
-             <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 col-lg-offset-1 ow-skills">
-                 
-                <div class="mercy skill ow-skill-1" >
-                   
-                 </div>
-                 
-                 <div class="mercy ow-desc-1 ow-skill-desc">
-                    <h3>Caduceus Staff</h3>
-                     <p>Mercy engages one of two beams that connect to an ally. By maintaining the beams, she can either restore that ally’s health or increase the amount of damage they deal.</p>
-                 </div>
-                 
-             </div>
-             
-             <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 ow-skills">
-                 
-                <div class="mercy skill ow-skill-2" >
-                   
-                 </div>
-                 
-                 <div class="mercy ow-desc-2 ow-skill-desc">
-                    <h3>Caduceus Blaster</h3>
-                     <p>Mercy shoots a round from her sidearm. It's best reserved for emergency personal defense.</p>
-                 </div>
-                 
-             </div>
-             
-             <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 ow-skills">
-                 
-                <div class="mercy skill ow-skill-3" >
-                   
-                 </div>
-                 
-                 <div class="mercy ow-desc-3 ow-skill-desc">
-                    <h3>Guardian Angel</h3>
-                     <p>Mercy flies towards a targeted ally, allowing her to reach them quickly and provide assistance in crucial moments.</p>
-                 </div>
-                 
-             </div>
-             
-             <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 ow-skills">
-                 
-                <div class="mercy skill ow-skill-4" >
-                   
-                 </div>
-                 
-                 <div class="mercy ow-desc-4 ow-skill-desc">
-                    <h3>Angelic Descent</h3>
-                     <p>Propelled by her Valkyrie suit, Mercy slows the speed of her descent from great heights.</p>
-                 </div>
-                 
-             </div>
-             
-             <div class="col-lg-2 col-md-12 ow-skills">
-                 
-                <div class="mercy skill ow-skill-5" >
-                   
-                 </div>
-                 
-                 <div class="mercy ow-desc-5 ow-skill-desc">
-                    <h3>Resurrect</h3>
-                     <p>Mercy radiates restorative power, bringing nearby dead allies back into the fight with full health.</p>
-                 </div>
-                 
-             </div> 
+            <div class="container-fluid container-fluid-max">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 ow-skills" ng-class="{ 'col-md-3 col-lg-2': hero.overwatchAbilities.length == 5, 'col-md-offset-1 col-lg-offset-1': hero.overwatchAbilities.length == 5 && $index == 0, 'col-lg-3 col-md-3': hero.overwatchAbilities.length == 4 }" ng-repeat="ability in hero.overwatchAbilities">
+                        <div class="{{hero.className}} skill {{ability.className}}"></div>
+                        <div class="{{hero.className}} ow-desc-1 ow-skill-desc">
+                            <h3>{{ability.name}}</h3>
+                            <p>{{ability.description}}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div> <!-- skills row ends-->
 </div> <!-- ow upper background ends-->
  
-    <!--lower ssection starts -->
+<!--lower ssection starts -->
 <div class="ow-lower-bg">
      <div class="container-fluid container-fluid-max ow-content"> <!-- overwatch articles and heroes -->
         <div class="row no-pad">
-            
-
-                <div class="col-lg-6 col-md-12 ow-character-story m-t-lg m-b-lg">
-                    <h2>Story</h2>
-                    <p>A guardian angel to those who come under her care, Dr. Angela Ziegler is a peerless healer, a brilliant scientist, and a staunch advocate for peace.</p>
-
-<p>Ziegler rose to become the head of surgery at a prominent Swiss hospital before pioneering a breakthrough in the field of applied nanobiology that radically improved the treatment of life-threatening illnesses and injuries. It was this expertise that attracted the attention of Overwatch.</p>
-
-<p>Because her parents had been taken by war, Ziegler was opposed to the organization's militaristic approach to keeping global peace. Ultimately, she recognized that Overwatch offered her the opportunity to save lives on a much larger scale. As Overwatch's head of medical research, Angela sought to leverage her work for healing in frontline crises. The result was the Valkyrie swift-response suit, which Ziegler herself piloted on many Overwatch missions.</p>
-
-<p>Despite her contributions to Overwatch, she was often at odds with her superiors and the organization's overarching aims. When Overwatch dissolved, Ziegler dedicated herself to helping those affected by war.</p>
-
-<p>Though she spends most of her time caring for the broken and dispossessed in crisis areas around the world, Dr. Ziegler can be counted on to don her Valkyrie suit whenever innocents are imperiled.</p>
-            
+            <div class="col-lg-6 col-md-12 ow-character-story m-t-lg m-b-lg">
+                <h2>Story</h2>
+                <p>{{hero.description}}</p>
+            </div>
+            <div class="col-lg-6 col-md-12 ow-character-video m-t-lg m-b-lg">
+                <div class="ow-vid-div m-t-lg">
+                    <!-- TODO: video -->
                 </div>
-                <div class="col-lg-6 col-md-12 ow-character-video m-t-lg m-b-lg">
-            
-                    <div class="ow-vid-div m-t-lg">
-                    <iframe id="ytplayer" class="ow-videos" type="text/html" width="640" height="390"
-  src="https://www.youtube.com/watch?v=-l-ytDZWVFI"
-  frameborder="1"/>
-                    </div>
-            
-                </div>
-
-
-            
-         </div>
+            </div>
+        </div>
     </div>
 </div>
     
