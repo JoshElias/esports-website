@@ -271,6 +271,28 @@ var app = angular.module('app', [
                     }
                 }
             })
+            .state('app.overwatch.heroes.redirect', {
+                url: '',
+                resolve: {
+                    hero: ['OverwatchHero', function (OverwatchHero) {
+                        return OverwatchHero.findOne({
+                            filter: {
+                                where: {
+                                    isActive: true
+                                },
+                                fields: {
+                                    className: true
+                                },
+                                sort: 'orderNum ASC'
+                            }
+                        }).$promise;
+                    }],
+                    redirect: ['$q', '$state', 'hero', function ($q, $state, hero) {
+                        $state.go('app.overwatch.heroes.hero', { slug: hero.className });
+                        return $q.reject();
+                    }]
+                }
+            })
             .state('app.overwatch.heroes.hero', {
                 url: '/:slug',
                 views: {
