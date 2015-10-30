@@ -92,12 +92,6 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
     border-bottom: 2px solid #000;
 }
 
-.hello-andrew {
-    font-size: 48px;
-    color: limegreen;
-    font-weight: bold;
-}
-/* TODO: Remove this^ please lol */
 
 .navbar-tempo .navbar-header { margin-left: 0px !important; }
 .navbar-tempo .navbar-toggle { margin-right: 0px !important; }
@@ -4163,7 +4157,7 @@ ul[dnd-list] .dndPlaceholder {
 
 .hero-selection .hero .icon-wrap .icon span.icon-ts { background: url('../img/hots/heroes/ts-hex.png') no-repeat center center; }
 
-/*
+/* moved to hots-heroes scss
 
 .icon-abathur { background: url('../img/hots/heroes/abathur-hex.png') no-repeat center center; }
 .icon-anub-arak { background: url('../img/hots/heroes/anub-arak-hex.png') no-repeat center center; }
@@ -4288,7 +4282,7 @@ p.white { color: #FFF; }
 .hero-list li a { display: block; padding: 0 20px; height: 28px; color: #FFF; font-size: 16px; line-height: 28px; text-decoration: none; }
 .hero-list li a:hover { text-decoration: none; }
 
-/*
+/* moved to hots-heroes scss
 
 .hero-list li a.abathur { background: url('../img/hots/heroes/28x/abathur28.png') no-repeat center right; }
 .hero-list li a.anub-arak { background: url('../img/hots/heroes/28x/anub-arak28.png') no-repeat center right; }
@@ -4419,14 +4413,16 @@ p.white { color: #FFF; }
 
 */
 
-/* talents icons */
+/* talents icons - moved to hots-heroes.scss*/
+
+/*
 .talents-icon { display: block; width: 30px; height: 30px; overflow: hidden; white-space: nowrap; text-indent: -99999px; opacity: .5; transition: opacity .1s linear; }
 .talents-icon.tier-selected { opacity: .3; }
 .talents-icon:hover { opacity: .9; }
 .talents-icon.active { opacity: 1; }
 
 .talents-icon.large { width: 102px; height: 102px; }
-
+*/
 /* talents - heroes */
 
 /*
@@ -4473,8 +4469,9 @@ p.white { color: #FFF; }
 .talents-icon.rexxar { background: url('../img/hots/talents/rexxar.png') no-repeat; }
 */
 
+/*
 .talents-icon.missing { background-image: url('../img/hots/talents/questionmark.png') !important; background-size: 100% 100% !important; }
-
+*/
 
 /* talents - the-butcher - small */
 /* Tier 1 */
@@ -7859,6 +7856,8 @@ p.white { color: #FFF; }
     .filters-maps li button { width: 43px !important; height: 43px !important; border-width: 1px !important; }
 }
 
+
+
 .hots-filters-search { padding: 8px 0px 0px; }
 
 .hero-filters li button { display:inline-block; width:75px; height:75px; overflow:hidden; background-repeat: no-repeat; background-image:url('../img/hots/heroes/hots-hero-select.png'); border-radius: 50%; border: 3px solid #FFF; text-indent: -99999px; background-color: rgba(39,102,173,.2); outline: none; opacity: 1; transition: transform .25s ease-in-out, opacity .25s ease-in-out, background-color .25s ease-in-out; }
@@ -7959,8 +7958,13 @@ p.white { color: #FFF; }
     .hero-filters li button.zeratul {width:43px; height:43px; background-position: -1802px -2px}
 }
 
+
+
 .hero-back { transition: background .25s ease-in-out; }
 .hero-back.default { background: rgba(0,0,0,0) center center no-repeat; }
+
+/* .hero-back.hero moved to hots-heroes.scss
+
 .hero-back.abathur { background: url('../img/hots/heroes/bgs/abathur.png') center center no-repeat; }
 .hero-back.anub-arak { background: url('../img/hots/heroes/bgs/anubarak.png') center center no-repeat; }
 .hero-back.arthas { background: url('../img/hots/heroes/bgs/arthas.png') center center no-repeat; }
@@ -8002,6 +8006,8 @@ p.white { color: #FFF; }
 .hero-back.zagara { background: url('../img/hots/heroes/bgs/zagara.png') center center no-repeat; }
 .hero-back.zeratul { background: url('../img/hots/heroes/bgs/zeratul.png') center center no-repeat; }
 .hero-back.kharazim { background: url('../img/hots/heroes/bgs/kharazim.png') center center no-repeat; }
+
+*/
 
 .filters-maps {}
 .filters-maps ul { margin: 0; padding: 0; }
