@@ -15,6 +15,10 @@
     },
     "instructionsWithoutCoin": {
       "type": "string"
+    },
+    "deckId": {
+      "type": "string",
+      "required": true
     }
   },
   "validations": [],
@@ -30,6 +34,11 @@
       "model": "card",
       "foreignKey": "mulliganId",
       "through": "cardWithoutCoin"
+    },
+    "deck": {
+      "type": "belongsTo",
+      "model": "deck",
+      "foreignKey": "deckId"
     }
   },
   "acls": [],

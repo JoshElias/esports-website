@@ -6,6 +6,7 @@
 // 2... local variables
 // 3... local mixins library
 // 4... style overides
+// 4.1... arrows
 // 5... OW typography
 // 6... backgrounds & header
 // 7... Hero filter lists
@@ -115,9 +116,64 @@ $pos-y: 4px;
 
 //overwatch specific styles
 
+
+//*************************************
+// 4.1... arrows
+//*************************************
+
+.arrows {
+    position: relative;
+   
+}
+
+.arrow-left,
+.arrow-right {
+    position: absolute;
+    top: 50%;
+    margin-top: -25px;
+    z-index: 500;
+    
+    img {
+        opacity: .5;
+    }
+    
+    &:hover {
+    
+        img {
+            opacity: 1;
+        }
+    }
+    
+    @media  (max-width: 1570px) {
+    
+        display: none;
+    }
+    
+}
+
+.arrow-left {  
+    left: 20px;
+}
+
+.arrow-right {  
+    right: 20px;
+}
+
+
+
+
 //*************************************
 // 5... OW typography
 //*************************************
+
+.ow-content {
+    margin-right: -10px;
+}
+
+.ow-content > .row {
+    margin: 0 auto;
+    max-width: 1448px;
+}
 
 .ow-content h1.title {
     font-family: 'Open Sans Bold';
@@ -127,14 +183,15 @@ $pos-y: 4px;
     text-transform: uppercase;
 }
 
-
 .ow-content h3.sub-title {
     font-size: 14px;
     color: #d3eefa;
 }
 
 
+//*************************************
 // 6... backgrounds & header
+//*************************************
 
 .ow-bg {
     margin: 0;

@@ -51,8 +51,13 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 .app-footer ul li a:hover { text-decoration: underline; }
 
 .social {  }
-.social a { float: left; margin-right: 10px; display: block; color: #FFF; width: 30px; height: 30px; font-size: 30px; opacity: .7; }
+.social a { float: left; margin-right: 15px; margin-bottom: 15px; display: block; color: #FFF; width: 30px; height: 30px; font-size: 30px; opacity: .7; }
 .social a:hover { opacity: 1; }
+
+.social a:nth-of-type(3) {
+    clear: left;
+}
+
 
 .footer-sponsors { height: 70px; background: url('../img/sponsorbanner.jpg') center center repeat-x; }
 
@@ -536,6 +541,9 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .hs-home-logo { margin: 60px auto; }
 
 /* start decks */
+
+/* HS Deck styles and Deck background images moved to HS-Decks
+
 .hs-decks { margin: 0; padding: 0; }
 .hs-decks li { list-style: none; margin-bottom: 10px; }
 .hs-deck { position: relative; top: 0px; left: 0px; display: block; height: 99px; padding: 10px 15px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }
@@ -565,6 +573,11 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .hs-deck.long .hs-deck-hero-name { margin-bottom: 0; font-family: 'Open Sans Bold'; font-size: 14px; color: #FFF; line-height: 79px; }
 .hs-deck.long .hs-deck-hero-name { text-shadow: 0px 0px 10px rgba(255,255,255,.6); }
 .hs-deck.long:hover { background-color: rgba(255,255,255,.2); }
+
+
+*/
+
+/*
 
 .hs-deck.small.druid.malfurion { background: url('../img/decks/druid.png') center center no-repeat; background-size: cover; }
 .hs-deck.small.hunter.rexxar { background: url('../img/decks/hunter.png') center center no-repeat; background-size: cover; }
@@ -604,7 +617,11 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .hs-deck.long.warlock.guldan { background-image: url('../img/decks/long/guldan.png'); background-position: right center; background-repeat: no-repeat; }
 .hs-deck.long.warrior.garrosh { background-image: url('../img/decks/long/garrosh.png'); background-position: right center; background-repeat: no-repeat; }
 .hs-deck.long.warrior.magni { background-image: url('../img/decks/long/magni.png'); background-position: right center; background-repeat: no-repeat; }
+
+*/
+
 /* end decks */
+
 
 /* sections */
 .section-banner { min-height: 54px; background: #2766ad; border-bottom: 1px solid #083f7d; }
@@ -1182,10 +1199,22 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-deck-Warrior .deck-portrait-Warrior { background: url(../img/meta-snapshot/hero-portrait/Warrior.png) no-repeat top center; }
 .deck-portrait-Warrior-sm { background: url(../img/meta-snapshot/hero-portrait/warrior-sm.png) no-repeat top right; }
 
+/* article filters */
+.article-filters { margin-bottom: 15px; }
+.article-filters ul { margin: 0; padding: 0; margin-top: -5px; }
+.article-filters ul li { list-style: none; float: left; margin-right: 5px; }
+.article-filters ul li button { width: 40px; height: 40px; background: url('../img/article-type-icon.png') no-repeat; background-position: 0px 0px; border: none; outline: none; opacity: .5; overflow: hidden; text-indent: -99999px; }
+.article-filters ul li button:hover { opacity: .7; }
+.article-filters ul li button.active { opacity: 1; }
+.article-filters ul li button.ts { background-position: 0px 0px; }
+.article-filters ul li button.hs { background-position: -40px 0px; }
+.article-filters ul li button.hots { background-position: -80px 0px; }
+.article-filters ul li button.overwatch { background-position: -120px 0px; }
 
 /* article */
 .articles-list { margin-right: -20px; }
 .articles-list .article-wrapper { margin-right: 20px; }
+.articles-list-sm { margin-right: -10px; }
 
 .article-votes { position: absolute; right: 20px; top: 20px; }
 .article-votes .vote-wrap { position: relative; text-align: center; }
@@ -4134,6 +4163,8 @@ ul[dnd-list] .dndPlaceholder {
 
 .hero-selection .hero .icon-wrap .icon span.icon-ts { background: url('../img/hots/heroes/ts-hex.png') no-repeat center center; }
 
+/*
+
 .icon-abathur { background: url('../img/hots/heroes/abathur-hex.png') no-repeat center center; }
 .icon-anub-arak { background: url('../img/hots/heroes/anub-arak-hex.png') no-repeat center center; }
 .icon-arthas { background: url('../img/hots/heroes/arthas-hex.png') no-repeat center center; }
@@ -4176,11 +4207,15 @@ ul[dnd-list] .dndPlaceholder {
 .icon-kharazim { background: url('../img/hots/heroes/kharazim-hex.png') no-repeat center center; }
 .icon-rexxar { background: url('../img/hots/heroes/rexxar-hex.png') no-repeat center center; }
 
+*/
+
 .hero-selection .hero .icon-wrap .icon:hover { background-color: rgba(88, 43, 128, 1); }
 .hero-selection .hero .icon-wrap .icon.active { background-color: #2766ad; }
 
 p.white { color: #FFF; }
 .darkbox { background: rgba(0,0,0,.6); border-radius: 4px; border: 1px solid #000; }
+
+
 
 /* maps */
 .map-selection { margin: 70px auto 20px auto; }
@@ -4253,6 +4288,8 @@ p.white { color: #FFF; }
 .hero-list li a { display: block; padding: 0 20px; height: 28px; color: #FFF; font-size: 16px; line-height: 28px; text-decoration: none; }
 .hero-list li a:hover { text-decoration: none; }
 
+/*
+
 .hero-list li a.abathur { background: url('../img/hots/heroes/28x/abathur28.png') no-repeat center right; }
 .hero-list li a.anub-arak { background: url('../img/hots/heroes/28x/anub-arak28.png') no-repeat center right; }
 .hero-list li a.arthas { background: url('../img/hots/heroes/28x/arthas28.png') no-repeat center right; }
@@ -4295,6 +4332,8 @@ p.white { color: #FFF; }
 .hero-list li a.kharazim { background: url('../img/hots/heroes/28x/kharazim28.png') no-repeat center right; }
 .hero-list li a.rexxar { background: url('../img/hots/heroes/28x/rexxar28.png') no-repeat center right; }
 
+*/
+
 /* guide steps */
 .gb-steps { margin: 0 0 20px 0; padding: 0 1px; }
 .gb-steps li { float: left; list-style: none; }
@@ -4333,6 +4372,8 @@ p.white { color: #FFF; }
 .gb-talents-icons li:last-child { margin-right: 0px; }
 
 /* talents - titles */
+
+/*
 .talents-title { background-position: right top !important; }
 .talents-title.lili { background: url('../img/hots/heroes/60x/lili60.png') no-repeat; }
 .talents-title.abathur { background: url('../img/hots/heroes/60x/abathur60.png') no-repeat; }
@@ -4376,6 +4417,8 @@ p.white { color: #FFF; }
 .talents-title.kharazim { background: url('../img/hots/heroes/60x/kharazim60.png') no-repeat; }
 .talents-title.rexxar { background: url('../img/hots/heroes/60x/rexxar60.png') no-repeat; }
 
+*/
+
 /* talents icons */
 .talents-icon { display: block; width: 30px; height: 30px; overflow: hidden; white-space: nowrap; text-indent: -99999px; opacity: .5; transition: opacity .1s linear; }
 .talents-icon.tier-selected { opacity: .3; }
@@ -4385,6 +4428,8 @@ p.white { color: #FFF; }
 .talents-icon.large { width: 102px; height: 102px; }
 
 /* talents - heroes */
+
+/*
 .talents-icon.lili { background: url('../img/hots/talents/lili.png') no-repeat; }
 .talents-icon.abathur { background: url('../img/hots/talents/abathur.png') no-repeat; }
 .talents-icon.anub-arak { background: url('../img/hots/talents/anubarak.png') no-repeat; }
@@ -4426,8 +4471,10 @@ p.white { color: #FFF; }
 .talents-icon.leoric { background: url('../img/hots/talents/leoric.png') no-repeat; }
 .talents-icon.kharazim { background: url('../img/hots/talents/kharazim.png') no-repeat; }
 .talents-icon.rexxar { background: url('../img/hots/talents/rexxar.png') no-repeat; }
+*/
 
 .talents-icon.missing { background-image: url('../img/hots/talents/questionmark.png') !important; background-size: 100% 100% !important; }
+
 
 /* talents - the-butcher - small */
 /* Tier 1 */
@@ -7476,6 +7523,8 @@ p.white { color: #FFF; }
 .hots-modal p { position: relative; padding: 0; /*color: #bcbbbb;*/ color: #F2F2F2; font-size: 12px; text-shadow: 1px 1px 5px #000; z-index: 1003; }
 
 /* hots modal - heroes */
+
+/*
 .hots-modal .hots-modal-hero { width: 300px; }
 .hots-modal .hots-modal-hero p.title { color: #d3eefa; letter-spacing: 2px; text-transform: uppercase; }
 .hots-modal .hots-modal-hero p.description { margin-bottom: 68px; }
@@ -7522,6 +7571,8 @@ p.white { color: #FFF; }
 .hots-modal .hero.leoric { background: url('../img/hots/modal/heroes/leoric.png') no-repeat center right; }
 .hots-modal .hero.kharazim { background: url('../img/hots/modal/heroes/kharazim.png') no-repeat center right; }
 .hots-modal .hero.rexxar { background: url('../img/hots/modal/heroes/rexxar.png') no-repeat center right; }
+
+*/
 
 .hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
 .hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
@@ -8048,6 +8099,8 @@ p.white { color: #FFF; }
 }
 
 /* guide images */
+
+/*
 .hots-guide.large.abathur { background: url('../img/hots/heroes/guide-images/1/abathur.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.large.anub-arak { background: url('../img/hots/heroes/guide-images/1/anubarak.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.large.arthas { background: url('../img/hots/heroes/guide-images/1/arthas.jpg') no-repeat center top; background-size: cover; }
@@ -8174,6 +8227,8 @@ p.white { color: #FFF; }
 .hots-guide.long.zeratul { background-image: url('../img/hots/heroes/guide-images/long/zeratul.png'); background-repeat: no-repeat; background-position: right top; }
 .hots-guide.long.kharazim { background-image: url('../img/hots/heroes/guide-images/long/kharazim.png'); background-repeat: no-repeat; background-position: right top; }
 
+*/
+
 .hots-guide.large.blackheartsbay { background: url('../img/hots/maps/guides/bhb.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.large.cursedhollow { background: url('../img/hots/maps/guides/curse.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.large.dragonshrine { background: url('../img/hots/maps/guides/ds.jpg') no-repeat center top; background-size: cover; }
@@ -8222,6 +8277,9 @@ p.white { color: #FFF; }
 .hots-top-guide-talents li { list-style: none; display: inline-block; vertical-align: top; }
 
 .hots-top-guide .hero { position: absolute; top: -65px; right: -160px; width: 557px; height: 364px; z-index: 1; }
+
+/*
+
 .hots-top-guide .hero.abathur { background: url('../img/hots/modal/heroes/abathur.png') no-repeat center right; }
 .hots-top-guide .hero.anub-arak { background: url('../img/hots/modal/heroes/anub-arak.png') no-repeat center right; }
 .hots-top-guide .hero.arthas { background: url('../img/hots/modal/heroes/arthas.png') no-repeat center right; }
@@ -8263,6 +8321,8 @@ p.white { color: #FFF; }
 .hots-top-guide .hero.the-butcher { background: url('../img/hots/modal/heroes/the-butcher.png') no-repeat center right; }
 .hots-top-guide .hero.leoric { background: url('../img/hots/modal/heroes/leoric.png') no-repeat center right; }
 .hots-top-guide .hero.kharazim { background: url('../img/hots/modal/heroes/kharazim.png') no-repeat center right; }
+
+*/
 
 .hots-list-ts-guides { margin-top: 50px; margin-bottom: 50px; }
 .hots-list-ts-guides-wrapper { margin-right: -20px; }
@@ -8321,6 +8381,8 @@ p.white { color: #FFF; }
 .guide-hero-image { height: 60px; border-top: 1px solid #000; }
 .guide-hero.active .guide-hero-image { border-top: 1px solid #2766ad; }
 
+/*
+
 .guide-hero-image.abathur { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/abathur60.png') no-repeat right top; }
 .guide-hero-image.anub-arak { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/anub-arak60.png') no-repeat right top; }
 .guide-hero-image.arthas { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/arthas60.png') no-repeat right top; }
@@ -8362,6 +8424,8 @@ p.white { color: #FFF; }
 .guide-hero-image.the-butcher { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/the-butcher60.png') no-repeat right top; }
 .guide-hero-image.leoric { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/leoric60.png') no-repeat right top; }
 .guide-hero-image.kharazim { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/kharazim60.png') no-repeat right top; }
+
+*/
 
 .guide-heroes-1 { width: 100%; }
 .guide-heroes-2 { width: 50%; }
@@ -8534,6 +8598,8 @@ p.white { color: #FFF; }
 .tc-level-slider { margin-right: 40px; }
 
 .tc-hero { }
+
+/*
 .tc-hero.abathur { background: url('../img/hots/modal/heroes/abathur.png') no-repeat right 120px; }
 .tc-hero.anub-arak { background: url('../img/hots/modal/heroes/anub-arak.png') no-repeat right 120px; }
 .tc-hero.arthas { background: url('../img/hots/modal/heroes/arthas.png') no-repeat right 120px; }
@@ -8575,7 +8641,7 @@ p.white { color: #FFF; }
 .tc-hero.leoric { background: url('../img/hots/modal/heroes/leoric.png') no-repeat right 120px; }
 .tc-hero.kharazim { background: url('../img/hots/modal/heroes/kharazim.png') no-repeat right 120px; }
 .tc-hero.rexxar { background: url('../img/hots/modal/heroes/rexxar.png') no-repeat right 120px; }
-
+*/
 
 /* talent calculator link */
 .talent-calculator-link { padding: 2px; width: 100%; height: 200px; background: #9b81b6; /* Old browsers */
@@ -8690,9 +8756,13 @@ input[type=range]:focus::-ms-fill-upper {
 /* mobile */
 @media (min-width: 768px) {
 }
+
 @media (min-width: 1199px) {
     .col-lg-20p { width: 20%; }
 }
+
+
+
 @media (min-width: 768px) and (max-width: 1199px) {
     /* HOME FEEDS */
     .twitch-feed { padding-right: 10px; }
@@ -8777,6 +8847,11 @@ input[type=range]:focus::-ms-fill-upper {
     /* home */
     .twitch-feed { padding-right: 0px; }
     .twitter-feed { padding-left: 0px; }
+    .games-btn {height: 110px; }
+    .games-btn:hover .games-btn-back { -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); opacity: 1; }
+    .games-btn:hover .games-btn-logo { -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); }
+    
+    .games-btn-logo {width: 200px;}
     
     /* filters */
     .filter-bar { display: none; }
