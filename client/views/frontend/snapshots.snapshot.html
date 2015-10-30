@@ -10,9 +10,10 @@
                 
             <span class="snapVoteWrap">
                 <div class="vote-count vote-large m-l-sm pull-right">
-                    {{snapshot.votesCount}}
+                    <span ng-if="!processingVote">{{snapshot.votesCount}}</span>
+                    <span ng-if="processingVote"><i class="fa fa-cog fa-spin"></i></span>
                 </div>
-                <a ng-if="!voted" class="btn-vote-up vote-large" ng-click="voteSnapshot()"><p><i class="fa fa-thumbs-up"></i></p></a>
+                <a ng-if="!hasVoted" class="btn-vote-up vote-large" ng-click="voteSnapshot(snapshot)"><p><i class="fa fa-thumbs-up"></i></p></a>
             </span>
 
         </div>

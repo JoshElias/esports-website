@@ -291,7 +291,6 @@ angular.module('app.directives', ['ui.load'])
                 return $sce.trustAsHtml(c);
             }
 
-            // TODO: When user posts new comment, shows '[DEL]' for username until page is refreshed.
             $scope.commentPost = function () {
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
