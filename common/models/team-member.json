@@ -1,0 +1,39 @@
+{
+  "name": "teamMember",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "strict": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "screenName": {
+      "type": "string"
+    },
+    "fullName": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "social": {
+      "type": "object"
+    },
+    "photoName": {
+      "type": "string"
+    },
+    "game": {
+      "type": "string"
+    },
+    "orderNum": {
+      "type": "number"
+    },
+    "isActive": {
+      "type": "boolean"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
