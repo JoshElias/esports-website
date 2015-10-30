@@ -8,6 +8,7 @@
 // 3... hero talent template
 // 5... HOTS heroes talents
 
+
 //*************************************
 
 //*************************************
@@ -1135,4 +1136,10 @@ This is the template for hots-hero-talents.
     ( class: (berserk), pos: 21 ), // -630
     ( class: (rewind), pos: 22 ) // -660
 ) );
+
+
+/* hots modal - heroes */
+.hots-modal .hots-modal-hero { width: 300px; }
+.hots-modal .hots-modal-hero p.title { color: #d3eefa; letter-spacing: 2px; text-transform: uppercase; }
+.hots-modal .hots-modal-hero p.description { margin-bottom: 68px; }
 
