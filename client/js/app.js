@@ -2516,7 +2516,7 @@ var app = angular.module('app', [
                                                 {
                                                     relation: 'mulligans',
                                                     scope: {
-                                                        include: 'deck'
+                                                        include: 'cardsWithCoin'
                                                     }
                                                 },
                                                 {
