@@ -337,7 +337,7 @@ module.exports = function(User) {
 
                     user.updateAttribute("email", email, function(emailErr, emailInstance) {
                         if(emailErr) return cb(emailErr);
-                        
+
                         var ctx = loopback.getCurrentContext();
                         if(ctx.active) {
                             var res = ctx.active.http.res;
