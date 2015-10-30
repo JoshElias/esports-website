@@ -33,14 +33,14 @@ module.exports = function(User) {
     })
   });
 
-	function generateVerificationToken(user, finalCallback) {
-		try {
-			var token = uuid.v4().substring(0, 22);
-			finalCallback(undefined, token)
-		} catch(err) {
-			finalCallback(err);
-		}
-	};
+    function generateVerificationToken(user, finalCallback) {
+        try {
+            var token = uuid.v4().substring(0, 22);
+            finalCallback(undefined, token)
+        } catch(err) {
+            finalCallback(err);
+        }
+    };
 
 // Override the base User's verify method
     User.on('attached', function (obj) {
@@ -165,13 +165,12 @@ module.exports = function(User) {
 
     //send password reset link when requested
     User.on('resetPasswordRequest', function(info) {
-        var userModel = this.constructor;
 
         var mailOptions = {
             from: { name: "Tempostorm", email: "admin@tempostorm.com" },
             to: { name: info.user.username, email: info.email, type: "to"},
             template : {
-                name: "testresetpassword",
+                name: "testresetpassword"
             },
             subject: "Reset your account password",
             //text: "text message",
@@ -179,153 +178,61 @@ module.exports = function(User) {
             vars: [{
                 "rcpt": info.email,
                 "vars": [{
-                    'name': 'EMAIL',
-                    'content': info.email
+                    'name': 'ID',
+                    'content': info.user.id.toString()
                 },{
                     'name': 'TOKEN',
-                    'content': info.accessToken
+                    'content': info.accessToken.id.toString()
                 }]
             }],
             tags: [ "signup" ]
         };
 
-        var Email = userModel.email;
+        var Email = User.app.models.Email;
         Email.send(mailOptions, function(err, email) {
-            seriesCallback(err);
+            if(err) {
+                console.log("ERR resetting user password");
+                console.log("send the client some kind of error?")
+            }
         });
     });
-/*
-  User.afterRemote('confirm', function(ctx, inst, next) {
-    var userInstance = JSON.parse(JSON.stringify(inst));
-    console.log("isEmailVerified:", userInstance.emailVerified);
-    if(userInstance.emailVerified) {
-      ctx.res.cookie
-    }
-  });
-*/
-	/**
-   * Verify a user's identity by sending them a confirmation email.
-   */
-    /*
-  User.prototype.verify = function(options, finalCallback) {
-    var user = this;
-    var userModel = this.constructor;
-    var registry = userModel.registry;
 
-    async.waterfall([
-      // Generate token
-      function(seriesCallback) {
-        var tokenGenerator = options.generateVerificationToken || generateVerificationToken;
-        tokenGenerator(user, seriesCallback);
-      },
-      // Save user with new token
-      function(newToken, seriesCallback) {
-        user.updateAttribute("verificationToken", newToken, seriesCallback)
-      },
-      // Send Email
-      function(user, seriesCallback) {
-        var mailOptions = {
-          from: { name: "Tempostorm", email: "admin@tempostorm.com" },
-          to: { name: user.username, email: user.email, type: "to"},
-          template : {
-            name: "testactivation",
-          },
-          subject: "Confirm your account",
-          //text: "text message",
-          //html: "<b>message</b>"
-          vars: [{
-            "rcpt": user.email,
-            "vars": [{
-                'name': 'EMAIL',
-                'content': user.email
-            },{
-                'name': 'TOKEN',
-                'content': user.verificationToken
-            },{
-              'name': 'REDIRECT',
-              'content': '/'
-            }]
-        }],
-        tags: [ "signup" ]
-      };
 
-      var Email = userModel.email;
-      Email.send(mailOptions, function(err, email) {
-        seriesCallback(err);
-      });
-    }],
-    finalCallback);
-  };
-*/
+    User.changePassword = function(userId, newPassword, cb) {
+        console.log("entering butthole");
+        /*
+        cb = cb || utils.createPromiseCallback();
 
-  /**
-   * Confirm the user's identity.
-   *
-   * @param {String} email
-   * @param {String} token The validation token
-   * @param {String} redirect URL to redirect the user to once confirmed
-   * @callback {Function} callback
-   * @param {Error} err
-   */
-  /*
-  User.confirmEmail = function(email, token, redirect, fn) {
-    var user = this;
-    var userModel = this.constructor;
-    var registry = userModel.registry;
-
-    console.log("Confirming email:", email);
-    //fn = fn || utils.createPromiseCallback();
-    user.findOne({where:{email:email}}, function(err, user) {
-      console.log("found something?")
-      if (err) {
-        fn(err);
-      } else {
-        console.log("user:", user);
-        console.log("user's token:", user.verificationToken);
-        console.log("client's token:", token);
-        if (user && user.verificationToken === token) {
-          user.verificationToken = undefined;
-          user.emailVerified = true;
-          user.save(function(err) {
+        console.log("changing password");
+        User.findById(userId, function(err, user) {
             if (err) {
-              fn(err);
+                cb(err);
+            } else if (user) {
+                console.log("help");
+                user.updateAttribute("password", User.hashPassword(newPassword), function(err) {
+                    console.log('done');
+                    if(err) {
+                        var err = new Error('unable to save new password');
+                        err.statusCode = 400;
+                        err.code = 'UNABLE_TO_CHANGE_PASSWORD';
+                        return cb(err);
+                    }
+                    cb();
+                });
             } else {
-              fn();
+                var err = new Error('no user found');
+                err.statusCode = 400;
+                err.code = 'USER_NOT_FOUND';
+                cb(err);
+
             }
-          });
-        } else {
-          if (user) {
-            err = new Error('Invalid token: ' + token);
-            err.statusCode = 400;
-            err.code = 'INVALID_TOKEN';
-          } else {
-            err = new Error('User not found: ' + uid);
-            err.statusCode = 404;
-            err.code = 'USER_NOT_FOUND';
-          }
-          fn(err);
-        }
-      }
-    });
-    return fn.promise;
-  };
+        });
 
-  User.disableRemoteMethod('confirm', true);
-  User.remoteMethod(
-  'confirmEmail',
-  {
-    description: 'Confirm a user registration with email verification token.',
-    accepts: [
-      {arg: 'email', type: 'string', required: true},
-      {arg: 'token', type: 'string', required: true},
-      {arg: 'redirect', type: 'string'}
-    ],
-    http: {verb: 'get', path: '/confirmEmail'}
-  }
-);
-*/
+        return cb.promise;
+        */
+    };
 
-
+/*
   User.prototype.changeEmail = function(newEmail, finalCallback) {
     var user = this;
     var userModel = this.constructor;
@@ -385,25 +292,21 @@ module.exports = function(User) {
       http: { path: "/changeEmail", verb: "post"}
     }
   );
+  */
+
+    User.remoteMethod(
+        'changePassword',
+        {
+            description: "Changes user's emails",
+            accepts: [
+                {arg: 'uid', type: 'string', required: true},
+                {arg: 'newPassword', type: 'string', required: true}
+            ],
+            http: {verb: 'post'}
+        }
+    );
     /*
 
-
-	// Handle passport reset
-	User.on("resetPasswordRequest", function(info) {
-		var url = "http://localhost:3000/reset-password";
-		var html = 'Click <a href="' + url + '?access_token=' + info.accessToken.id
-	  		+ '">here</a> to reset your password';
-
-	  	User.app.models.Email.send({
-	  		to: info.email,
-	  		from: info.email,
-	  		subject: "Password reset",
-	  		html: html
-	  	}, function(err) {
-	  		if(err) console.log("Error sending client password changed email");
-	  		else console.log("successfully sent client password changed email");
-	  	});
-	});
 
 /*
   // Filter out sensitive user information depending on ACL

@@ -82,30 +82,29 @@ var app = angular.module('app', [
 //                $state.transitionTo('app.404');
             });
 
-
-            // Looks for auth cookies and loads the user credentials from them
             var accessToken = getAuthCookie("access_token");
             var userId = getAuthCookie("userId");
-            if(accessToken && userId) {
-              $cookies.remove("access_token");
-              $cookies.remove("userId");
-              LoopBackAuth.setUser(accessToken, userId);
-              LoopBackAuth.save();
+            if (accessToken && userId) {
+                $cookies.remove("access_token");
+                $cookies.remove("userId");
+                LoopBackAuth.setUser(accessToken, userId);
+                LoopBackAuth.save();
             }
 
             // TODO: extend $cookies with this function
             function getAuthCookie(key) {
-              var value = $cookies.get(key);
-              if(typeof value == "undefined")
-                  return undefined;
+                var value = $cookies.get(key);
+                if (typeof value == "undefined")
+                    return undefined;
 
-              var valueElements = value.split(":");
-              var cleanCookie = valueElements[1];
-              valueElements = cleanCookie.split(".");
-              valueElements.splice(-1, 1);
-              cleanCookie = valueElements.join(".");
-              return cleanCookie;
+                var valueElements = value.split(":");
+                var cleanCookie = valueElements[1];
+                valueElements = cleanCookie.split(".");
+                valueElements.splice(-1, 1);
+                cleanCookie = valueElements.join(".");
+                return cleanCookie;
             }
+
         }
     ]
 )
@@ -270,28 +269,6 @@ var app = angular.module('app', [
                     overwatch: {
                         templateUrl: tpl + 'views/frontend/overwatch.heroes.html'
                     }
-                }
-            })
-            .state('app.overwatch.heroes.redirect', {
-                url: '',
-                resolve: {
-                    hero: ['OverwatchHero', function (OverwatchHero) {
-                        return OverwatchHero.findOne({
-                            filter: {
-                                where: {
-                                    isActive: true
-                                },
-                                fields: {
-                                    className: true
-                                },
-                                sort: 'orderNum ASC'
-                            }
-                        }).$promise;
-                    }],
-                    redirect: ['$q', '$state', 'hero', function ($q, $state, hero) {
-                        $state.go('app.overwatch.heroes.hero', { slug: hero.className });
-                        return $q.reject();
-                    }]
                 }
             })
             .state('app.overwatch.heroes.hero', {
@@ -1973,12 +1950,28 @@ var app = angular.module('app', [
                 seo: { title: 'Forgot your Password?', description: 'Recover your Password.', keywords: '' }
             })
             .state('app.resetPassword', {
-                url: 'forgot-password/reset?email&code',
+                url: 'forgot-password/reset?userId&access_token',
                 views: {
                     content: {
                         templateUrl: tpl + 'views/frontend/reset-password.html',
                         controller: 'UserResetPasswordCtrl'
                     }
+                },
+                resolve: {
+                    // Load the current user data if we don't have it
+                    currentUser: ['$stateParams', 'User', 'LoopBackAuth',
+                        function($stateParams, User, LoopBackAuth) {
+
+                            // Check if credentials were sent with the request
+                            var userId = $stateParams.userId;
+                            var access_token = $stateParams.access_token;
+                            if(!User.isAuthenticated() && userId && access_token) {
+                                LoopBackAuth.setUser(access_token, userId);
+                                LoopBackAuth.save();
+                                return User.getCurrent().$promise;
+                            }
+                        }
+                    ]
                 },
                 access: { noauth: true },
                 seo: { title: 'Reset your Password', description: '', keywords: '' }
