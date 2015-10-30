@@ -17,10 +17,11 @@
 
                 <span class="vote-wrap">
                     <div class="vote-count vote-large m-l-sm pull-right">
-                        {{article.votesScore}}
+                        <span ng-if="!processingVote">{{article.votesCount}}</span>
+                        <span ng-if="processingVote"><i class="fa fa-spinner fa-pulse"></i></span>
                     </div>
 <!--                    {{article}}-->
-                    <a ng-if="!hasVoted" class="btn-vote-up vote-large" ng-click="voteArticle(article)"><p><i class="fa fa-thumbs-up"></i></p></a>
+                    <a ng-if="!hasVoted && !processingVote" class="btn-vote-up vote-large" ng-click="voteArticle(article)"><p><i class="fa fa-thumbs-up"></i></p></a>
                 </span>
 
             </div>
@@ -85,7 +86,7 @@
                             <div class="related-info">
                                 <p class="ell top related-title-{{getType(item)}}">{{item.title}}</p>
                                 <p class="ell bot">by: {{item.author.username}}</p>
-                                <p class="votes">+{{item.votesScore}}</p>
+                                <p class="votes">+{{item.votesCount}}</p>
                             </div>
                         </a>
                     </div>

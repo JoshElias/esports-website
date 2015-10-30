@@ -3,7 +3,7 @@
 //*************************************
 
 // 1... HS deck mixin library
-// 2... HS decks 
+// 2... HS decks backgrounds 
 
 //*************************************
 
@@ -24,7 +24,7 @@
 }
 
 //*************************************
-// 2... HS decks 
+// 2... HS decks backgrounds 
 //*************************************
 
 
@@ -41,3 +41,39 @@
 @include hs-deck-images (warlock, guldan);
 @include hs-deck-images (warrior, garrosh);
 @include hs-deck-images (warrior, magni);
+
+
+//*************************************
+// 2... HS decks styles 
+//*************************************
+
+
+.hs-decks { margin: 0; padding: 0; }
+.hs-decks li { list-style: none; margin-bottom: 10px; }
+.hs-deck { position: relative; top: 0px; left: 0px; display: block; height: 99px; padding: 10px 15px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }
+.hs-deck.small:hover,
+.hs-deck.large:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
+.hs-deck.large { height: 220px; }
+
+.hs-deck .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 4; }
+.hs-deck .hs-deck-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
+.hs-deck .bt-shadow { position: absolute; right: 0px; bottom: 0px; left: 0px; height: 60px; background: url('../img/hs/bt-shadow.png') repeat-x; z-index: 2; }
+.hs-deck .hs-deck-owner { position: absolute; right: 15px; bottom: 55px; z-index: 6; }
+.hs-deck.small .hs-deck-details,
+.hs-deck.large .hs-deck-details { position: absolute; bottom: 0px; left: 0px; padding: 0 20px 0; max-width: 100%; z-index: 3; }
+.hs-deck h1 { padding-right: 30px; font-family: 'Open Sans Bold'; font-size: 10px; color: #f7ef22; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
+.hs-deck h3 { padding-right: 30px; font-size: 12px; color: #ccc; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
+
+.hs-deck .hs-deck-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
+.hs-deck.small .hs-deck-votes,
+.hs-deck.large .hs-deck-votes { position: absolute; bottom: 15px; right: 20px; width: 30px; height: 30px; line-height: 26px; border-radius: 50%; border: 2px solid #FFF; background: rgba(0,0,0,.7); color: #FFF; font-size: 12px; text-align: center; opacity: .7; z-index: 3; }
+
+.hs-list-ts-decks { margin-right: -20px; }
+.hs-list-ts-decks .hs-decks li .hs-deck { margin-right: 20px; }
+
+.hs-deck.long h1 { margin: 12px 0 18px 0; font-size: 14px; }
+.hs-deck.long .hs-deck-dust,
+.hs-deck.long .hs-deck-votes,
+.hs-deck.long .hs-deck-hero-name { margin-bottom: 0; font-family: 'Open Sans Bold'; font-size: 14px; color: #FFF; line-height: 79px; }
+.hs-deck.long .hs-deck-hero-name { text-shadow: 0px 0px 10px rgba(255,255,255,.6); }
+.hs-deck.long:hover { background-color: rgba(255,255,255,.2); }

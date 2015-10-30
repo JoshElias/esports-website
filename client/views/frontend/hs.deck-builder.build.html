@@ -344,13 +344,13 @@
                                 <textarea class="db-mulligan-instructions" placeholder="Type your mulligan instructions here" resize="none" ng-model="mulligan.withCoin.instructions"></textarea>
                                 <div class="mulliganCardWrapper">
                                     <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};" ng-repeat="card in mulligan.withCoin.cards track by $index" class="mulliganCards">
-                                        <img ng-src="{{app.cdn}}cards/{{card.photos.large}}" />
+                                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" />
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xs-4 right">
                                 <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                    <button ng-click="deck.toggleMulligan(mulligan, true, card)" ng-class="{ 'active' : isMulliganCard(true, card) }">
+                                    <button ng-click="deck.toggleMulligan(currentMulligan, true, card.card)" ng-class="{ 'active' : isMulliganCard(true, card) }">
                                         <div class="mana-cost">{{card.cost}}</div>
                                         {{card.name}}
                                         <div ng-if="card.qty == 2" class="pull-right m-r-sm">2</div>

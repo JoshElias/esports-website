@@ -1422,6 +1422,7 @@ angular.module('app.services', [])
         }
 
         db.toggleMulligan = function (mulligan, withCoin, card) {
+            console.log('mulligan: ', mulligan);
             var c = (withCoin) ? mulligan.withCoin.cards : mulligan.withoutCoin.cards,
                 exists = false,
                 index = -1;
@@ -1447,7 +1448,7 @@ angular.module('app.services', [])
         db.getMulligan = function (klass) {
             var mulligans = db.mulligans;
             for (var i = 0; i < mulligans.length; i++) {
-                if (mulligans[i].klass === klass) {
+                if (mulligans[i].className === klass) {
                     return mulligans[i];
                 }
             }
@@ -1473,7 +1474,7 @@ angular.module('app.services', [])
             }
 
             if (exists) {
-                return (!isLegendary && (db.cards[index].qty === 1 || db.arena));
+                return (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena));
             } else {
                 return true;
             }
@@ -1487,7 +1488,7 @@ angular.module('app.services', [])
 
             // check if card already exists
             for (var i = 0; i < db.cards.length; i++) {
-                if (db.cards[i].id === card.id) {
+                if (db.cards[i].card.id === card.id) {
                     exists = true;
                     index = i;
                     break;
@@ -1497,24 +1498,36 @@ angular.module('app.services', [])
             // add card
             if (exists) {
                 // increase qty by one
-                if (!isLegendary && (db.cards[index].qty === 1 || db.arena)) {
-                    db.cards[index].qty = db.cards[index].qty + 1;
+                console.log('isLegendary: ', isLegendary);
+                if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
+                    db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
                 }
             } else {
                 // add new card
                 db.cards.push({
-                    id: card.id,
-                    cost: card.cost,
-                    name: card.name,
-                    cardType: card.cardType,
-                    dust: card.dust,
-                    photos: {
-                        small: card.photoNames.small,
-                        medium: card.photoNames.medium,
-                        large: card.photoNames.large
-                    },
-                    legendary: isLegendary,
-                    qty: 1
+                    deckId: db.id,
+                    cardId: card.id,
+                    cardQuantity: 1,
+                    card: {
+                        active: card.active,
+                        artist: card.artist,
+                        attack: card.attack,
+                        cardType: card.cardType,
+                        cost: card.cost,
+                        deckable: card.deckable,
+                        durability: card.durability,
+                        dust: card.dust,
+                        flavor: card.flavor,
+                        health: card.health,
+                        id: card.id,
+                        mechanics: card.mechanics,
+                        name: card.name,
+                        photoNames: card.photoNames,
+                        playerClass: card.playerClass,
+                        race: card.race,
+                        rarity: card.rarity,
+                        text: card.text
+                    }
                 });
                 // sort deck
                 db.sortDeck();
@@ -1559,21 +1572,24 @@ angular.module('app.services', [])
         };
 
         db.removeCardFromDeck = function (card) {
+            console.log('card to rem: ', card);
             for (var i = 0; i < db.cards.length; i++) {
                 if (card.id == db.cards[i].id) {
-                    if (db.cards[i].qty > 1) {
-                        db.cards[i].qty = db.cards[i].qty - 1;
+                    if (db.cards[i].cardQuantity > 1) {
+                        db.cards[i].cardQuantity = db.cards[i].cardQuantity - 1;
+                        return;
                     } else {
-                        var index = db.cards.indexOf(db.cards[i]);
+                        var index = db.cards.indexOf(card);
                         db.cards.splice(index, 1);
+                        return;
                     }
                 }
             }
         };
 
         db.removeCard = function (card) {
-            if (card.qty > 1) {
-                card.qty = card.qty - 1;
+            if (card.cardQuantity > 1) {
+                card.cardQuantity = card.cardQuantity - 1;
             } else {
                 var index = db.cards.indexOf(card);
                 db.cards.splice(index, 1);
@@ -1597,12 +1613,22 @@ angular.module('app.services', [])
         db.manaCount = function (mana) {
             var cnt = 0;
             for (var i = 0; i < db.cards.length; i++) {
-                if (db.cards[i].cost === mana || (mana === 7 && db.cards[i].cost >= 7)) {
-                    cnt += db.cards[i].qty;
+                if (db.cards[i].card.cost === mana || (mana === 7 && db.cards[i].cost >= 7)) {
+                    cnt += db.cards[i].cardQuantity;
                 }
             }
             return cnt;
         };
+        
+//        db.manaCount = function (mana) {
+//            var cnt = 0;
+//            for (var i = 0; i < db.cards.length; i++) {
+//                if (db.cards[i].card.cost === mana || (mana === 7 && db.cards[i].cost >= 7)) {
+//                    cnt += db.cards[i].cardQuantity;
+//                }
+//            }
+//            return cnt;
+//        };
 
         db.getSize = function () {
             var size = 0;
@@ -1615,7 +1641,7 @@ angular.module('app.services', [])
         db.getDust = function () {
             var dust = 0;
             for (var i = 0; i < db.cards.length; i++) {
-                dust += db.cards[i].qty * db.cards[i].dust;
+                dust += db.cards[i].cardQuantity * db.cards[i].dust;
             }
             return dust;
         };
@@ -1629,7 +1655,7 @@ angular.module('app.services', [])
             // make sure not more than 2 of same cards in non-arena deck
             if (!db.arena) {
                 for (var i = 0; i < db.cards.length; i++) {
-                    if (db.cards[i].qty > 2) {
+                    if (db.cards[i].cardQuantity > 2) {
                         return false;
                     }
                 }
@@ -1672,11 +1698,11 @@ angular.module('app.services', [])
         db.newMatch = function (klass) {
             var m = {
                 deckName: '',
-                klass: '',
+                className: '',
                 match: 0
             };
 
-            m.klass = klass;
+            m.className = klass;
             db.matches.push(m);
         }
 

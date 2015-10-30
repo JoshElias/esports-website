@@ -78,7 +78,7 @@ var app = angular.module('app', [
                 console.log("Event:", event);
                 console.log("To State:", toState);
                 console.log("From State", fromState);
-                console.log('hey you don goofed. lol k , (happy martin i removed fag)');
+                console.log('State change failed!');
 //                $state.transitionTo('app.404');
             });
 
@@ -218,8 +218,7 @@ var app = angular.module('app', [
                     content: {
                         templateUrl: tpl + 'views/frontend/overwatch.html'
                     }
-                },
-                seo: { title: 'Overwatch', description: '', keywords: 'overwatch' }
+                }
             })
             .state('app.overwatch.home', {
                 url: '',
@@ -260,7 +259,8 @@ var app = angular.module('app', [
                             }]
                         }
                     }
-                }
+                },
+                seo: { title: 'Overwatch', description: 'Tempo Storm is your top source for Blizzard Entertainment\'s Overwatch. Tournament news, strategy, and patch details.', keywords: 'blizzard overwatch' }
             })
             .state('app.overwatch.heroes', {
                 abstract: true,
@@ -415,7 +415,9 @@ var app = angular.module('app', [
                                                         "isActive",
                                                         "photoNames",
                                                         "authorId",
-                                                        "votesScore"
+                                                        "votesCount",
+                                                        "articleType",
+                                                        "slug"
                                                     ],
                                                     include: [
                                                         {
@@ -2483,41 +2485,62 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.edit.html',
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
-                            deck: ['$stateParams', 'Deck', function ($stateParams, Deck) {
+                            resolveParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 15,
+                                    options: {
+                                        filter: {
+                                            fields: {
+                                                id: true,
+                                                createdDate: true,
+                                                name: true,
+                                                description: true,
+                                                playerClass: true,
+                                                premium: true,
+                                                slug: true,
+                                                dust: true,
+                                                heroName: true,
+                                                authorId: true,
+                                                deckType: true,
+                                                viewCount: true
+                                            },
+                                            include: [
+                                                {
+                                                    relation: 'mulligans',
+                                                    scope: {
+                                                        include: 'deck'
+                                                    }
+                                                },
+                                                {
+                                                    relation: 'cards',
+                                                    scope: {
+                                                        include: 'card'
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                };
+                            }],
+                            
+                            mulligans: ['Mulligan', function(Mulligan) {
+                                return Mulligan.findById({
+                                    id: '563268357912e98557c1f33c',
+                                    filter: {
+                                        include: 'cardsWithCoin'
+                                    }
+                                }).$promise;
+                            }],
+                            
+                            deck: ['$stateParams', 'resolveParams', 'Deck', function ($stateParams, resolveParams, Deck) {
                                 var deckID = $stateParams.deckID;
                                 return Deck.findById({ 
                                     id: deckID,
-                                    filter: {
-                                        fields: {
-                                            id: true,
-                                            createdDate: true,
-                                            name: true,
-                                            description: true,
-                                            playerClass: true,
-                                            premium: true,
-                                            slug: true,
-                                            dust: true,
-                                            heroName: true,
-                                            authorId: true,
-                                            deckType: true,
-                                            viewCount: true
-                                        },
-                                        include: {
-                                            relation: 'cards',
-                                            scope: {
-                                                include: 'card',
-                                                fields: {
-                                                    
-                                                }
-                                            }
-                                        }
-                                    }
-                                }, function (data) {
-                                    if(data.$$state.status ==1) {
-                                        return data;
-                                    }
-                                }, function(err) {
-                                    if(err) console.log('err: ',err);
+                                    filter: resolveParams.options.filter
+                                }).$promise
+                                .catch(function(err) {
+                                    console.log('err: ', err);
                                 });
                             }],
                             
@@ -3306,13 +3329,87 @@ var app = angular.module('app', [
 //                            }]
                             snapshot: ['$stateParams', 'Snapshot', function($stateParams, Snapshot) {
                                 var snapshotID = $stateParams.snapshotID;
-                                return Snapshot.find({
+                                return Snapshot.findOne({
                                     filter: {
                                         where: {
                                             id: snapshotID
-                                        }
+                                        },
+                                        fields: {
+//                                            tiers: false
+                                        },
+                                        include: [
+                                            {
+                                                relation: "authors",
+                                                scope: {
+                                                    include: {
+                                                        relation: "user"
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                relation: "deckTiers",
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: "deck"
+                                                        },
+                                                        {
+                                                            relation: "deckTech",
+                                                            scope: {
+                                                                include: {
+                                                                    relation: "cardTech",
+                                                                    scope: {
+                                                                        include: {
+                                                                            relation: "card"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: "deckMatchups",
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: "forDeck",
+                                                            scope: {
+                                                                fields: ["name"]
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: "againstDeck",
+                                                            scope: {
+                                                                fields: ["name"]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (snapshot) {
+                                    //BUILD TIERS//
+                                    snapshot.tiers = [];
+                                    _.each(snapshot.deckTiers, function (deck) {
+                                        if (snapshot.tiers[deck.tier-1] === undefined) {
+                                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier };
+                                        }
+
+                                        snapshot.tiers[deck.tier-1].decks.push(deck);
+                                    })
+                                    console.log(snapshot.tiers);
+                                    //BUILD TIERS//
+                                    
+                                    //BUILD MATCHES//
+                                    snapshot.matches = snapshot.deckMatchups;
+                                           
+                                    return snapshot;
+                                });
                             }]
                         }
                     }

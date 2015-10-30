@@ -18,52 +18,42 @@
         </div>
     </div>
 
-    <div class="container-fluid container-fluid-max ow-content"> <!-- overwatch articles and heroes -->
+    <div class="container-fluid ow-content m-t-lg">
         <div class="row no-pad">
-            <div class="col-lg-9 m-b-md section-articles clearfix m-t-lg no-pad" >
-                <h1 class="title ">OVERWATCH ARTICLES</h1>
-                <h3 class="sub-title m-b-md">Articles for overwatch goes here!!</h3>
-
-                <!-- / section banner -->
-                <div class="container-fluid no-pad-left">
-                    <!-- articles -->
-                    <div class="articles-list">
-                        <!-- article -->
-                        <div class="row no-pad">
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="article in articles">
-                                <div class="m-r-sm m-b-sm">
-                                    <article-thumb article="article" />
-                                </div>
-                            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-9 m-b-md">
+                <h1 class="title">OVERWATCH ARTICLES</h1>
+                <h3 class="sub-title m-b-md">The latest articles on all things Overwatch</h3>
+                <div class="row no-pad" ng-if="articles.length">
+                    <div class="col-xs-12 col-sm-6 col-md-4 pos-rl" ng-repeat="article in articles">
+                        <div class="m-r-sm m-b-sm">
+                            <article-thumb article="article" />
                         </div>
-                        <!-- / article -->
                     </div>
-                    <!-- / articles -->
                 </div>
-            </div> 
-
+            </div>
 
             <!-- Hero section -->
-
-            <div class="col-lg-3 m-b-md section-heroes clearfix m-t-lg" >
-                <h1 class="title m-b-18 ">OVERWATCH CHARACTERS</h1>
-                <div class="ts-div ow-hero-filters ow-herobar-home">
-                    <div class="ow-hero-selected hidden-md hidden-sm hidden-xs {{getHeroHover()}}"></div>
-                    <ul class="ow-hero-list">
-                        <li ng-repeat="item in heroes">
-                            <a ui-sref="app.overwatch.heroes.hero({ slug: item.className })" class="{{item.className}}" ng-tooltip title="{{item.heroName}}" ng-mouseover="setHeroHover(item.className)" ng-mouseout="setHeroHover('neutral')">{{item.heroName}}</a>
-                        </li>
-                    </ul>
+            <div class="col-lg-3 section-heroes m-b-md">
+                <div class="m-r-sm">
+                    <h1 class="title m-b-18">OVERWATCH CHARACTERS</h1>
+                    <div class="ts-div ow-hero-filters ow-herobar-home">
+                        <div class="ow-hero-selected hidden-md hidden-sm hidden-xs {{getHeroHover()}}"></div>
+                        <ul class="ow-hero-list">
+                            <li ng-repeat="item in heroes">
+                                <a ui-sref="app.overwatch.heroes.hero({ slug: item.className })" class="{{item.className}}" ng-tooltip title="{{item.heroName}}" ng-mouseover="setHeroHover(item.className)" ng-mouseout="setHeroHover('neutral')">{{item.heroName}}</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div> <!-- ROW 1 ends -->
+            </div>
         </div> 
         <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                <h1 class="title m-t-md">VIDEO OF THE DAY</h1>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 m-b-md">
+                <h1 class="title">VIDEO OF THE DAY</h1>
                 <div video-of-the-day></div>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                <h1 class="title m-t-md">TEMPOSTORM TV</h1>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 m-b-md">
+                <h1 class="title">TEMPOSTORM TV</h1>
                 <h3 class="sub-title m-b-md">Check out who is streaming right now</h3>
                 <div tempostorm-tv></div>
             </div>
