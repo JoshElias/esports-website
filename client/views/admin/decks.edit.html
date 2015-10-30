@@ -121,7 +121,7 @@
                         </div>
                     </span>
                     <div class="deck-list">
-                        <div class="list-card" ng-repeat="card in deck.cards track by $index" ng-click="deck.removeCardFromDeck(card)">
+                        <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" ng-click="deck.removeCardFromDeck(card)">
                             <div class="mana-cost">{{card.card.cost}}</div>
                             {{card.card.name}}
                             <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
@@ -340,22 +340,31 @@
                             <h3>WITH COIN</h3>
                         </span>
                     </div>
-                    <div class="db-mulligan-content row m-r-none m-l-none" ng-repeat="mulligan in deck.mulligans" ng-show="currentMulligan == mulligan">
+                    <div class="db-mulligan-content row m-r-none m-l-none" 
+                         ng-repeat="mulligan in deck.mulligans"
+                         ng-show="currentMulligan == mulligan">
                         <div class="col-xs-8 left clearfix">
-                            <textarea class="db-mulligan-instructions" placeholder="Type your mulligan instructions here" resize="none" ng-model="mulligan.withCoin.instructions"></textarea>
+                            <textarea class="db-mulligan-instructions" 
+                                      placeholder="Type your mulligan instructions here" 
+                                      resize="none" 
+                                      ng-model="mulligan.instructionsWithCoin"></textarea>
                             <div class="mulliganCardWrapper">
-                                <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};" ng-repeat="card in current.withCoin.cards track by $index" class="mulliganCards">
-                                    <img ng-src="{{app.cdn}}cards/{{card.photos.large}}" />
+                                <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};"
+                                     ng-repeat="card in mulligan.cardsWithoutCoin track by $index" 
+                                     class="mulliganCards">
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}"/>
                                 </div>
                             </div>
-                        </div>
+                        </div>  
                         <div class="col-xs-4 right">
                             <div class="list-card" ng-repeat="card in deck.cards track by $index">
                                 <button ng-click="deck.toggleMulligan(mulligan, true, card)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
-                                    <div ng-if="card.card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
-                                    <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right"><i class="fa fa-star"></i></div>
+                                    <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
+                                    <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
+                                        <i class="fa fa-star"></i>
+                                    </div>
                                 </button>
                             </div>
                         </div>
@@ -366,16 +375,23 @@
                         </div> 
                         <i class="fa fa-close"></i>
                         <span class="header-text">
-                            <h2>CARDS TO KEEP AGAINST {{currentMulligan.klass.toUpperCase()}}</h2>
+                            <h2>CARDS TO KEEP AGAINST {{currentMulligan.className | uppercase}}</h2>
                             <h3>WITHOUT COIN</h3>
                         </span>
                     </div>
-                    <div class="db-mulligan-content row m-r-none m-l-none" ng-repeat="mulligan in deck.mulligans" ng-show="currentMulligan == mulligan">
+                    <div class="db-mulligan-content row m-r-none m-l-none" 
+                         ng-repeat="mulligan in deck.mulligans" 
+                         ng-show="currentMulligan == mulligan">
                         <div class="col-xs-8 left clearfix">
-                            <textarea class="db-mulligan-instructions" placeholder="Type your mulligan instructions here" resize="none" ng-model="mulligan.withoutCoin.instructions"></textarea>
+                            <textarea class="db-mulligan-instructions" 
+                                      placeholder="Type your mulligan instructions here"
+                                      resize="none" 
+                                      ng-model="mulligan.instructionsWithoutCoin"></textarea>
                             <div class="mulliganCardWrapper">
-                                <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};" ng-repeat="card in mulligan.withoutCoin.cards track by $index" class="mulliganCards">
-                                    <img ng-src="{{app.cdn}}cards/{{card.photos.large}}" />
+                                <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};"
+                                     ng-repeat="card in mulligan.cardsWithoutCoin track by $index" 
+                                     class="mulliganCards">
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}"/>
                                 </div>
                             </div>
                         </div>
@@ -454,9 +470,7 @@
                             <strong>Unable to add deck</strong>
                         </div>
                         <div class="panel-body">
-                            <ul class="error text-danger">
-                                <li ng-repeat="error in errors">{{error.msg}}</li>
-                            </ul>
+                            <span>{{errors}}</span>
                         </div>
                     </div>
                     <div class="db-section-title">
@@ -545,19 +559,20 @@
                                 <div class="col-sm-10 col-sm-offset-2">
                                     <div class="radio">
                                         <label>
-                                            <input type="radio" name="public" ng-model="deck.public" value="true"> Make this deck public
+                                            <input type="radio" name="public" ng-model="deck.isPublic" value="true"> Make this deck public
                                         </label>
                                     </div>
                                     <div class="radio">
                                         <label>
-                                            <input type="radio" name="public" ng-model="deck.public" value="false"> Make this deck private
+                                            <input type="radio" name="public" ng-model="deck.isPublic" value="false"> Make this deck private
                                         </label>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group m-b-none">
                                 <div class="col-sm-10 col-sm-offset-2">
-                                    <button type="submit" class="btn btn-blue" ng-disabled="!deck.validDeck() || !deck.validVideo() || dbForm.$invalid" ng-click="updateDeck()">Save Deck</button>
+                                    <button type="submit" class="btn btn-blue" 
+                                            ng-click="updateDeck(deck)">Save Deck</button>
                                 </div>
                             </div>
                         </div>

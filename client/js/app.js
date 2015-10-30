@@ -839,19 +839,10 @@ var app = angular.module('app', [
                                                 relation: "cards"
                                             },
                                             {
-                                                relation: "comments",
-                                                scope: {
-                                                    include: [
-                                                        {
-                                                            relation: "author",
-                                                            scope: {
-                                                                fields: [
-                                                                    "username"
-                                                                ]
-                                                            }
-                                                        }
-                                                    ]
-                                                }
+                                                relation: "comments"
+                                            },
+                                            {
+                                                relation: 'author'
                                             }
                                         ]
                                     }
@@ -2491,27 +2482,36 @@ var app = angular.module('app', [
                                     perpage: 15,
                                     options: {
                                         filter: {
-                                            fields: {
-                                                id: true,
-                                                createdDate: true,
-                                                name: true,
-                                                description: true,
-                                                playerClass: true,
-                                                premium: true,
-                                                slug: true,
-                                                dust: true,
-                                                heroName: true,
-                                                authorId: true,
-                                                deckType: true,
-                                                viewCount: true
-                                            },
+//                                            fields: {
+//                                                id: true,
+//                                                createdDate: true,
+//                                                name: true,
+//                                                description: true,
+//                                                playerClass: true,
+//                                                premium: true,
+//                                                slug: true,
+//                                                dust: true,
+//                                                heroName: true,
+//                                                authorId: true,
+//                                                deckType: true,
+//                                                viewCount: true,
+//                                                isPublic: true
+//                                            },
                                             include: [
-                                                {
-                                                    relation: 'mulligans',
-                                                    scope: {
-                                                        include: 'cardsWithCoin'
-                                                    }
-                                                },
+                                                // this relation wasnt working for me
+//                                                {
+//                                                    relation: 'mulligans',
+//                                                    scope: {
+//                                                        include: [
+//                                                            {
+//                                                                relation: 'cardsWithCoin'
+//                                                            },
+//                                                            {
+//                                                                relation: 'cardsWithoutCoin'
+//                                                            }
+//                                                        ]
+//                                                    }
+//                                                },
                                                 {
                                                     relation: 'cards',
                                                     scope: {
@@ -2524,15 +2524,6 @@ var app = angular.module('app', [
                                 };
                             }],
                             
-                            mulligans: ['Mulligan', function(Mulligan) {
-                                return Mulligan.findById({
-                                    id: '563268357912e98557c1f33c',
-                                    filter: {
-                                        include: 'cardsWithCoin'
-                                    }
-                                }).$promise;
-                            }],
-                            
                             deck: ['$stateParams', 'resolveParams', 'Deck', function ($stateParams, resolveParams, Deck) {
                                 var deckID = $stateParams.deckID;
                                 return Deck.findById({ 
@@ -2542,6 +2533,26 @@ var app = angular.module('app', [
                                 .catch(function(err) {
                                     console.log('err: ', err);
                                 });
+                            }],
+                            
+                            mulligans: ['Mulligan', '$stateParams', function(Mulligan, $stateParams) {
+                                var deckID = $stateParams.deckID;
+                                console.log('deckID: ', deckID);
+                                return Mulligan.find({
+                                    filter: {
+                                        where: {
+                                            deckId: deckID
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'cardsWithCoin'
+                                            },
+                                            {
+                                                relation: 'cardsWithoutCoin'
+                                            }
+                                        ]
+                                    }
+                                }).$promise;
                             }],
                             
                             classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
