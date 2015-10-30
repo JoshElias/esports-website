@@ -271,16 +271,16 @@
                         <button class="btn db-arrow db-arrow-left" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
                         <button class="btn db-arrow db-arrow-right" ng-disabled="pagination.page == pagination.pages()" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>-->
                         <!-- cards -->
-                        <div class="db-cards-view-wrapper clearfix">
-                            <div class="db-cards-view clearfix">
-                                <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in cards.current">
-                                    <a href="#" data-tooltip-img="{{app.cdn}}cards/{{card.photos.large}}" ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
-                                        <img ng-src="{{app.cdn}}cards/{{card.photos.medium}}" alt="{{card.name}}">
-                                    </a>
+                            <div class="db-cards-view-wrapper clearfix">
+                                <div class="db-cards-view clearfix" ng-if="!fetching">
+                                    <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in cards.current">
+                                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
+                                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="{{card.name}}">
+                                        </a>
+                                    </div>
+                                    <div class="db-cards-no-match" ng-show="!cards.current.length">No Matches Found</div>
                                 </div>
-                                <div class="db-cards-no-match" ng-show="!cards.current.length">No Matches Found</div>
                             </div>
-                        </div>
                     </div><!-- / db-cards -->
                 </div>
                 </div>
@@ -292,51 +292,51 @@
         <form class="form-horizontal" name="dbForm" novalidate>
             <div class="db-builder clearfix">
                 <div class="db-section db-mulligans" ng-hide="step !== 2">
-                    <div class="class-select clearfix">
-                        <div ng-class="{'secondary': app.settings.secondaryPortrait[0], 'active':currentMulligan.klass == 'Mage' }" class="class class-mage">
-                            <button ng-click="setMulligan(deck.getMulligan('Mage'))"></button>
-                            <span>MAGE</span>
+                        <div class="class-select clearfix">
+                            <div ng-class="{'no-select': currentMulligan.className != 'Druid'  }" class="class class-druid {{getName(0, 'Druid').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Druid'))"></button>
+                                <span>DRUID</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Hunter'  }" class="class class-hunter {{getName(0, 'Hunter').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Hunter'))"></button>
+                                <span>HUNTER</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Mage' }" class="class class-mage {{getName(0, 'Mage').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Mage'))"></button>
+                                <span>MAGE</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Paladin'  }" class="class class-paladin {{getName(0, 'Paladin').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Paladin'))"></button>
+                                <span>PALADIN</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Priest'  }" class="class class-priest {{getName(0, 'Priest').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Priest'))"></button>
+                                <span>PRIEST</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Rogue'  }" class="class class-rogue {{getName(0, 'Rogue').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Rogue'))"></button>
+                                <span>ROGUE</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Shaman'  }" class="class class-shaman {{getName(0, 'Shaman').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Shaman'))"></button>
+                                <span>SHAMAN</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Warlock'  }" class="class class-warlock {{getName(0, 'Warlock').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Warlock'))"></button>
+                                <span>WARLOCK</span>
+                            </div>
+                            <div ng-class="{'no-select': currentMulligan.className != 'Warrior'  }" class="class class-warrior {{getName(0, 'Warrior').toLowerCase()}}">
+                                <button ng-click="setMulligan(deck.getMulligan('Warrior'))"></button>
+                                <span>WARRIOR</span>
+                            </div>
                         </div>
-                        <div ng-class="{'secondary': app.settings.secondaryPortrait[1], 'active':currentMulligan.klass == 'Shaman' }" class="class class-shaman">
-                            <button ng-click="setMulligan(deck.getMulligan('Shaman'))"></button>
-                            <span>SHAMAN</span>
-                        </div>
-                        <div ng-class="{'secondary': app.settings.secondaryPortrait[2], 'active':currentMulligan.klass == 'Warrior' }" class="class class-warrior">
-                            <button ng-click="setMulligan(deck.getMulligan('Warrior'))"></button>
-                            <span>WARRIOR</span>
-                        </div>
-                        <div ng-class="{'secondary': app.settings.secondaryPortrait[3], 'active':currentMulligan.klass == 'Rogue' }" class="class class-rogue">
-                            <button ng-click="setMulligan(deck.getMulligan('Rogue'))"></button>
-                            <span>ROGUE</span>
-                        </div>
-                        <div ng-class="{'secondary': app.settings.secondaryPortrait[4], 'active':currentMulligan.klass == 'Paladin' }" class="class class-paladin">
-                            <button ng-click="setMulligan(deck.getMulligan('Paladin'))"></button>
-                            <span>PALADIN</span>
-                        </div>
-                        <div ng-class="{'secondary': app.settings.secondaryPortrait[5], 'active':currentMulligan.klass == 'Priest' }" class="class class-priest">
-                            <button ng-click="setMulligan(deck.getMulligan('Priest'))"></button>
-                            <span>PRIEST</span>
-                        </div>
-                        <div ng-class="{'secondary': app.settings.secondaryPortrait[6], 'active':currentMulligan.klass == 'Warlock' }" class="class class-warlock">
-                            <button ng-click="setMulligan(deck.getMulligan('Warlock'))"></button>
-                            <span>WARLOCK</span>
-                        </div>
-                        <div ng-class="{'secondary': app.settings.secondaryPortrait[7], 'active':currentMulligan.klass == 'Hunter' }" class="class class-hunter">
-                            <button ng-click="setMulligan(deck.getMulligan('Hunter'))"></button>
-                            <span>HUNTER</span>
-                        </div>
-                        <div ng-class="{'secondary': app.settings.secondaryPortrait[8], 'active':currentMulligan.klass == 'Druid' }" class="class class-druid">
-                            <button ng-click="setMulligan(deck.getMulligan('Druid'))"></button>
-                            <span>DRUID</span>
-                        </div>
-                    </div>
 
                     <div class="description-header">
                         <div class="big-coin">
                             <img src="../../img/bigcoin.png" />
                         </div>   
                         <span class="header-text">
-                            <h2>CARDS TO KEEP AGAINST {{currentMulligan.klass.toUpperCase()}}</h2>
+                            <h2>CARDS TO KEEP AGAINST {{currentMulligan.className | uppercase}}</h2>
                             <h3>WITH COIN</h3>
                         </span>
                     </div>
@@ -344,7 +344,7 @@
                         <div class="col-xs-8 left clearfix">
                             <textarea class="db-mulligan-instructions" placeholder="Type your mulligan instructions here" resize="none" ng-model="mulligan.withCoin.instructions"></textarea>
                             <div class="mulliganCardWrapper">
-                                <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};" ng-repeat="card in mulligan.withCoin.cards track by $index" class="mulliganCards">
+                                <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};" ng-repeat="card in current.withCoin.cards track by $index" class="mulliganCards">
                                     <img ng-src="{{app.cdn}}cards/{{card.photos.large}}" />
                                 </div>
                             </div>
@@ -352,10 +352,10 @@
                         <div class="col-xs-4 right">
                             <div class="list-card" ng-repeat="card in deck.cards track by $index">
                                 <button ng-click="deck.toggleMulligan(mulligan, true, card)">
-                                    <div class="mana-cost">{{card.cost}}</div>
-                                    {{card.name}}
-                                    <div ng-if="card.qty == 2" class="pull-right m-r-sm">2</div>
-                                    <div ng-if="card.legendary" class="legendary pull-right"><i class="fa fa-star"></i></div>
+                                    <div class="mana-cost">{{card.card.cost}}</div>
+                                    {{card.card.name}}
+                                    <div ng-if="card.card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
+                                    <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right"><i class="fa fa-star"></i></div>
                                 </button>
                             </div>
                         </div>
@@ -382,10 +382,10 @@
                         <div class="col-xs-4 right">
                             <div class="list-card" ng-repeat="card in deck.cards track by $index">
                                 <button ng-click="deck.toggleMulligan(mulligan, false, card)">
-                                    <div class="mana-cost">{{card.cost}}</div>
-                                    {{card.name}}
-                                    <div ng-if="card.qty == 2" class="pull-right m-r-sm">2</div>
-                                    <div ng-if="card.legendary" class="legendary pull-right"><i class="fa fa-star"></i></div>
+                                    <div class="mana-cost">{{card.card.cost}}</div>
+                                    {{card.card.name}}
+                                    <div ng-if="card.card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
+                                    <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right"><i class="fa fa-star"></i></div>
                                 </button>
                             </div>
                         </div>

@@ -2510,19 +2510,34 @@ var app = angular.module('app', [
                                                 deckType: true,
                                                 viewCount: true
                                             },
-                                            include: {
-                                                relation: 'cards',
-                                                scope: {
-                                                    include: 'card',
+                                            include: [
+                                                {
+                                                    relation: 'mulligans',
                                                     scope: {
-                                                        include: 'mulligansWithCoin'
+                                                        include: 'deck'
+                                                    }
+                                                },
+                                                {
+                                                    relation: 'cards',
+                                                    scope: {
+                                                        include: 'card'
                                                     }
                                                 }
-                                            }
+                                            ]
                                         }
                                     }
                                 };
                             }],
+                            
+                            mulligans: ['Mulligan', function(Mulligan) {
+                                return Mulligan.findById({
+                                    id: '563268357912e98557c1f33c',
+                                    filter: {
+                                        include: 'cardsWithCoin'
+                                    }
+                                }).$promise;
+                            }],
+                            
                             deck: ['$stateParams', 'resolveParams', 'Deck', function ($stateParams, resolveParams, Deck) {
                                 var deckID = $stateParams.deckID;
                                 return Deck.findById({ 

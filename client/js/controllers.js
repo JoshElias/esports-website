@@ -4306,10 +4306,11 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams',
-        function ($state, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams) {
+    .controller('AdminDeckEditCtrl', ['$state', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'mulligans',
+        function ($state, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, mulligans) {
             // find me easy
             console.log('init deck: ',deck);
+            console.log('mulligans: ', mulligans);
 //            console.log('class cards: ',classCardsList);
 //            console.log('neutral cards: ',neutralCardsList);
 //            console.log('class card count: ',classCardsCount);
@@ -4340,8 +4341,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
             
 //            console.log('classes: ', $scope.classes);
-            
-            
             
             //get the hero name based on the index of portraitSettings' index
             $scope.getName = function (index, klass) {
@@ -4452,6 +4451,7 @@ angular.module('app.controllers', ['ngCookies'])
 //            }
             
             function updateCards (page, perpage, search, mechanics, mana, callback) {
+                console.log('search: ', search);
                 $scope.fetching = true;
                 
                 var options = {
@@ -4481,13 +4481,13 @@ angular.module('app.controllers', ['ngCookies'])
                 if ($scope.search.length > 0) {
                     options.filter.where.or = [
                         { name: { regexp: search } },
-                        { description: { regexp: search } },
+                        { text: { regexp: search } },
                         { content: { regexp: search } }
                     ]
                     
                     countOptionsClass.where.or = [
                         { name: { regexp: search } },
-                        { description: { regexp: search } },
+                        { text: { regexp: search } },
                         { content: { regexp: search } }
                     ]
                 }
@@ -4557,7 +4557,7 @@ angular.module('app.controllers', ['ngCookies'])
                     var d = $q.defer();
 
                     updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
-                        d.resolve(data.classTotal);
+                        d.resolve(data[0]);
                     });
 
                     return d.promise;
@@ -4569,7 +4569,7 @@ angular.module('app.controllers', ['ngCookies'])
                     var d = $q.defer();
 
                     updateCards(page, perpage, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana, function (data) {
-                        d.resolve(data.neutralTotal);
+                        d.resolve(data[1]);
                     });
                     return d.promise;
                 }
@@ -4683,6 +4683,7 @@ angular.module('app.controllers', ['ngCookies'])
             
 //            $scope.className = deck.playerClass;
             
+            // $scope.className === $scope.app.settings.deck.playerClass was removed from this
             $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null) ? DeckBuilder.new($scope.className, deck) : DeckBuilder.new($scope.clasName);
             
             console.log('deck now: ', deck);
@@ -4704,18 +4705,18 @@ angular.module('app.controllers', ['ngCookies'])
                     public: $scope.deck.public,
                     id: $scope.deck.id
                 };
-                console.log('newest deck: ', $scope.deck);
-                console.log('deck name: ', $scope.deck.name);
+                console.log('newest $scope.deck: ', $scope.deck);
             }, true);
-            
-            console.log('settings now: ', $scope.app.settings);
 
             // current mulligan
-            $scope.currentMulligan = $scope.deck.getMulligan($scope.className);
+            $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
 
             $scope.setMulligan = function (mulligan) {
                 $scope.currentMulligan = mulligan;
             };
+            
+            console.log('current mulligan: ', $scope.currentMulligan);
+            console.log('$scope.mulligan: ', $scope.mulligan);
 
             $scope.isMulliganSet = function (mulligan) {
                 return (mulligan.withCoin.cards.length || mulligan.withCoin.instructions.length || mulligan.withoutCoin.cards.length || mulligan.withoutCoin.instructions.length);
