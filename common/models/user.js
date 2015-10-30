@@ -1,11 +1,17 @@
-var async = require("async");
-var uuid = require("node-uuid");
-var loopback = require("loopback");
-var bcrypt = require('bcrypt-nodejs');
-var utils = require("../../lib/utils");
-
 
 module.exports = function(User) {
+    var async = require("async");
+    var uuid = require("node-uuid");
+    var loopback = require("loopback");
+    var bcrypt = require('bcrypt-nodejs');
+    var utils = require("./../../lib/utils");
+
+
+
+    var DEFAULT_TTL = 1209600; // 2 weeks in seconds
+    var DEFAULT_RESET_PW_TTL = 15 * 60; // 15 mins in seconds
+    var DEFAULT_MAX_TTL = 31556926; // 1 year in seconds
+
 
   User.afterRemote("login", function(ctx, remoteMethodOutput, next) {
     var weirdOutput = JSON.parse(JSON.stringify(remoteMethodOutput));
@@ -178,8 +184,8 @@ module.exports = function(User) {
             vars: [{
                 "rcpt": info.email,
                 "vars": [{
-                    'name': 'ID',
-                    'content': info.user.id.toString()
+                    'name': 'EMAIL',
+                    'content': info.email
                 },{
                     'name': 'TOKEN',
                     'content': info.accessToken.id.toString()
@@ -198,114 +204,216 @@ module.exports = function(User) {
     });
 
 
-    User.changePassword = function(userId, newPassword, cb) {
-        console.log("entering butthole");
-        /*
+    User.changePassword = function(data, cb) {
         cb = cb || utils.createPromiseCallback();
 
-        console.log("changing password");
-        User.findById(userId, function(err, user) {
+        User.findOne({where:{email:data.email}}, function(err, user) {
             if (err) {
                 cb(err);
             } else if (user) {
-                console.log("help");
-                user.updateAttribute("password", User.hashPassword(newPassword), function(err) {
-                    console.log('done');
-                    if(err) {
-                        var err = new Error('unable to save new password');
-                        err.statusCode = 400;
-                        err.code = 'UNABLE_TO_CHANGE_PASSWORD';
-                        return cb(err);
-                    }
-                    cb();
+
+                var err = new Error('unable to save new password');
+                err.statusCode = 400;
+                err.code = 'UNABLE_TO_CHANGE_PASSWORD';
+
+                // check if the user has the access token
+                user.accessTokens.findById(data.token, function(tokenErr, accessToken) {
+                    if(tokenErr) return cb(err);
+
+                    var newPassword = User.hashPassword(data.password);
+                    user.updateAttribute("password", newPassword, function(err, instance) {
+                        if(err) {
+                            var err = new Error('unable to save new password');
+                            err.statusCode = 400;
+                            err.code = 'UNABLE_TO_CHANGE_PASSWORD';
+                            return cb(err);
+                        }
+                        cb();
+                    });
                 });
+
             } else {
                 var err = new Error('no user found');
                 err.statusCode = 400;
                 err.code = 'USER_NOT_FOUND';
                 cb(err);
-
             }
         });
 
         return cb.promise;
-        */
     };
 
-/*
-  User.prototype.changeEmail = function(newEmail, finalCallback) {
-    var user = this;
-    var userModel = this.constructor;
-    var registry = userModel.registry;
 
-    async.waterfall([
-      // Generate new verification code
-      function(seriesCallback) {
-        generateVerificationToken(user, seriesCallback);
-      },
-      // Save user with new code
-      function(newToken, seriesCallback) {
-        user.updateAttribute("newEmailCode", newToken, function(err, user) {
-          seriesCallback(err, newToken);
-        });
-      },
-      // Send email with new code
-      function(newToken, seriesCallback) {
-        var emailOptions = {
-          from: { name: "Tempostorm", email: "admin@tempostorm.com" },
-          to: { name: user.username, email: user.email, type: "to"},
-          template : {
-            name: "email-change-confirmation",
-          },
-          subject: "Confirm New Email",
-          vars: [{
-              "rcpt": user.email,
-              "vars": [{
-                    'name': 'EMAIL',
-                    'content': user.email
-                },{
-                    'name': 'USERNAME',
-                    'content': user.username
-                },{
-                    'name': 'TOKEN',
-                    'content': newToken
-              }]
-          }],
-          tags: [ "email-change-confirmation" ]
-        };
+  User.resetEmail = function(data, cb) {
+      cb = cb || utils.createPromiseCallback();
+      var ttl = User.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
-        var Email = userModel.email;
-        Email.send(emailOptions, function(err, email) {
-          seriesCallback(err);
-        });
-      }],
-    finalCallback);
+      if (typeof data.email === 'string') {
+          var err = new Error('unable to find user');
+          err.statusCode = 400;
+          err.code = 'USER_NOT_FOUND';
+
+          User.findById(data.uid, function(userErr, user) {
+              if (userErr) {
+                  cb(err);
+              } else if (user) {
+                  user.accessTokens.create({ttl: ttl}, function(tokenErr, accessToken) {
+                      if (tokenErr) {
+                          var err = new Error('unable to create access token for user');
+                          err.statusCode = 400;
+                          err.code = 'UNABLE_TO_GENERATE_TOKEN';
+                          return cb(err);
+                      }
+
+                      var mailOptions = {
+                          from: { name: "Tempostorm", email: "admin@tempostorm.com" },
+                          to: { name: user.username, email: data.email, type: "to"},
+                          template : {
+                              name: "test-email-change-confirmed"
+                          },
+                          subject: "Email Updated",
+                          //text: "text message",
+                          //html: "<b>message</b>"
+                          vars: [{
+                              "rcpt": data.email,
+                              "vars": [{
+                                  'name': 'UID',
+                                  'content': user.id.toString()
+                              },{
+                                  'name': 'TOKEN',
+                                  'content': accessToken.id.toString()
+                              },{
+                                  'name': 'EMAIL',
+                                  'content': data.email
+                              }]
+                          }],
+                          tags: [ "signup" ]
+                      };
+
+                      var Email = User.app.models.Email;
+                      Email.send(mailOptions, function(err, email) {
+                          if(err) {
+                              var err = new Error('unable to send verification email');
+                              err.statusCode = 400;
+                              err.code = 'UNABLE_TO_SEND_EMAIL';
+                              return cb(err);
+                          }
+                          return cb();
+                      });
+
+                  });
+              } else {
+                  var err = new Error('email is required');
+                  err.statusCode = 400;
+                  err.code = 'EMAIL_REQUIRED';
+                  cb(err);
+              }
+          });
+      } else {
+          var err = new Error('email is required');
+          err.statusCode = 400;
+          err.code = 'EMAIL_REQUIRED';
+          cb(err);
+      }
+      return cb.promise;
   }
 
 
-  User.remoteMethod(
-    "changeEmail",
-    {
-      accepts: {arg: "newEmail", type: "string"},
-      returns: {arg: "fuck", type: "string"},
-      description: "Changes user email and verifies that it's correct",
-      http: { path: "/changeEmail", verb: "post"}
-    }
-  );
-  */
+    User.changeEmail = function(uid, token, email, cb) {
+        cb = cb || utils.createPromiseCallback();
+
+        User.findById(uid, function(err, user) {
+            if (err) {
+                cb(err);
+            } else if (user) {
+
+                var err = new Error('unable to change email');
+                err.statusCode = 400;
+                err.code = 'UNABLE_TO_CHANGE_EMAIL';
+
+                // check if the user has the access token
+                user.accessTokens.findById(token, function(tokenErr, accessToken) {
+                    if(tokenErr) return cb(err);
+
+                    user.updateAttribute("email", email, function(emailErr, emailInstance) {
+                        if(emailErr) return cb(emailErr);
+                        
+                        var ctx = loopback.getCurrentContext();
+                        if(ctx.active) {
+                            var res = ctx.active.http.res;
+                            var req = ctx.active.http.req;
+                            user.createAccessToken("1209600", function(err, loginToken) {
+                                if (err) return cb(err);
+                                loginToken.__data.user = user;
+                                req.logIn(user, function(err) {
+                                    if(err) return next(err);
+
+                                    res.cookie('access_token', loginToken.id.toString(), {
+                                        signed: req.signedCookies ? true : false,
+                                        // maxAge is in ms
+                                        maxAge: loginToken.ttl
+                                    });
+                                    res.cookie('userId', user.id.toString(), {
+                                        signed: req.signedCookies ? true : false,
+                                        maxAge: loginToken.ttl
+                                    });
+
+                                    res.redirect("https://52.26.75.137");
+                                });
+                                cb();
+                            });
+                        } else {
+                        cb()
+                        }
+                    });
+                });
+
+            } else {
+                var err = new Error('no user found');
+                err.statusCode = 400;
+                err.code = 'USER_NOT_FOUND';
+                cb(err);
+            }
+        });
+
+        return cb.promise;
+    };
+
 
     User.remoteMethod(
         'changePassword',
         {
-            description: "Changes user's emails",
-            accepts: [
-                {arg: 'uid', type: 'string', required: true},
-                {arg: 'newPassword', type: 'string', required: true}
-            ],
-            http: {verb: 'post'}
+            description: "Changes user's password",
+            accepts: { arg: 'data', type: 'object', http: { source: 'body' } },
+            http: {verb: 'post'},
+            isStatic: true
         }
     );
-    /*
+
+    User.remoteMethod(
+        'resetEmail',
+        {
+            description: "Resets a user's email",
+            accepts: { arg: 'data', type: 'object', http: { source: 'body' } },
+            http: {verb: 'post'},
+            isStatic: true
+        }
+    );
+
+    User.remoteMethod(
+        'changeEmail',
+        {
+            description: "Changes user's email",
+            accepts: [
+                { arg: 'uid', type: 'string', http: { source: 'query' } },
+                { arg: 'token', type: 'string', http: { source: 'query' } },
+                { arg: 'email', type: 'string', http: { source: 'query' } },
+            ],
+            http: {verb: 'get'},
+            isStatic: true
+        }
+    );
+
 
 
 /*

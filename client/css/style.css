@@ -4053,7 +4053,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .member-modal .content-wrapper p { 
     color: #BABABA;
     font-size: 16px;
-    white-space: normal;
+    white-space: pre-wrap;
     text-overflow: ellipsis;
 }
 .member-modal img { width:100% }
