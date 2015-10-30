@@ -1199,6 +1199,17 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 .tier-deck-Warrior .deck-portrait-Warrior { background: url(../img/meta-snapshot/hero-portrait/Warrior.png) no-repeat top center; }
 .deck-portrait-Warrior-sm { background: url(../img/meta-snapshot/hero-portrait/warrior-sm.png) no-repeat top right; }
 
+/* article filters */
+.article-filters { margin-bottom: 15px; }
+.article-filters ul { margin: 0; padding: 0; margin-top: -5px; }
+.article-filters ul li { list-style: none; float: left; margin-right: 5px; }
+.article-filters ul li button { width: 40px; height: 40px; background: url('../img/article-type-icon.png') no-repeat; background-position: 0px 0px; border: none; outline: none; opacity: .5; overflow: hidden; text-indent: -99999px; }
+.article-filters ul li button:hover { opacity: .7; }
+.article-filters ul li button.active { opacity: 1; }
+.article-filters ul li button.ts { background-position: 0px 0px; }
+.article-filters ul li button.hs { background-position: -40px 0px; }
+.article-filters ul li button.hots { background-position: -80px 0px; }
+.article-filters ul li button.overwatch { background-position: -120px 0px; }
 
 /* article */
 .articles-list { margin-right: -20px; }
