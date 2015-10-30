@@ -1836,33 +1836,60 @@ var app = angular.module('app', [
                         controller: 'TeamCtrl',
                         templateUrl: tpl + 'views/frontend/teams.html',
                         resolve: {
-                            teams: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({})
-                                .$promise
-                                .then(function (results) {
-                                    var teams = {
-                                        members     : results,
-                                        hsMembers   : [],
-                                        hotsMembers : [],
-                                        wowMembers  : [],
-                                        fifaMembers : [],
-                                        fgcMembers  : []
+                            hsTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'hs',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
                                     }
-
-                                    for (var i=0; i != results.length; i++) {
-                                        console.log(results[i]);
-                                        var type = results[i].gameName;
-                                        switch (type) {
-                                            case 'hs' : teams.hsMembers.push(results[i]); break;
-                                            case 'hots' : teams.hotsMembers.push(results[i]); break;
-                                            case 'wow' : teams.wowMembers.push(results[i]); break;
-                                            case 'fifa' : teams.fifaMembers.push(results[i]); break;
-                                            case 'fgc' : teams.fgcMembers.push(results[i]); break;
-                                        }
+                                }).$promise;
+                            }],
+                            hotsTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'hots',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
                                     }
-
-                                    return teams;
-                                });
+                                }).$promise;
+                            }],
+                            wowTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'wow',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                }).$promise;
+                            }],
+                            fifaTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'fifa',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                }).$promise;
+                            }],
+                            fgcTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'fgc',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
