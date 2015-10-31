@@ -123,10 +123,12 @@
                     </span>
                     <div class="deck-list">
                         <div class="list-card" ng-repeat="card in app.settings.deck track by $index" ng-click="deck.removeCardFromDeck(card)">
-                            <div class="mana-cost">{{card.cost}}</div>
-                            {{card.name}}
-                            <div ng-if="card.qty == 2" class="pull-right m-r-sm">2</div>
-                            <div ng-if="card.legendary" class="legendary pull-right"><i class="fa fa-star"></i></div>
+                            <div class="mana-cost">{{card.card.cost}}</div>
+                            {{card.card.name}}
+                            <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
+                            <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
+                                <i class="fa fa-star"></i>
+                            </div>
                         </div>
                     </div>
                     <div class="db-deck-dust db-deck-footer db-deck-{{className | lowercase}} {{deck.heroName | lowercase}}">
@@ -352,8 +354,8 @@
                         <div class="col-xs-4 right">
                             <div class="list-card" ng-repeat="card in deck.cards track by $index">
                                 <button ng-click="deck.toggleMulligan(mulligan, true, card)">
-                                    <div class="mana-cost">{{card.cost}}</div>
-                                    {{card.name}}
+                                    <div class="mana-cost">{{card.card.cost}}</div>
+                                    {{card.card.name}}
                                     <div ng-if="card.qty == 2" class="pull-right m-r-sm">2</div>
                                     <div ng-if="card.legendary" class="legendary pull-right"><i class="fa fa-star"></i></div>
                                 </button>

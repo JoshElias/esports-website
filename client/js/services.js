@@ -1246,7 +1246,7 @@ angular.module('app.services', [])
     
     return ow;
 })
-.factory('DeckBuilder', ['$sce', '$http', '$q', function ($sce, $http, $q) {
+.factory('DeckBuilder', ['$sce', '$http', '$q', function ($sce, $http, $q, Util) {
 
     var deckBuilder = {};
 
@@ -1259,8 +1259,10 @@ angular.module('app.services', [])
         var db = {
             id: data.id || null,
             name: data.name || '',
+            allowComments: data.allowComments || true,
+            dust: data.dust || 0,
             description: data.description || '',
-            deckType: data.deckType || 'None',
+            deckType: data.deckType || 1,
             chapters: data.chapters || [],
             type: data.type || 1,
             basic: data.basic || false,
@@ -1268,104 +1270,79 @@ angular.module('app.services', [])
             cards: data.cards || [],
             heroName: data.heroName || '',
             playerClass: playerClass,
-            mulligans: data.mulligans || [{
-                    klass: 'Mage',
-                    withCoin: {
-                        cards: [],
-                        instructions: ''
-                    },
-                    withoutCoin: {
-                        cards: [],
-                        instructions: ''
-                    }
-                },{
-                    klass: 'Shaman',
-                    withCoin: {
-                        cards: [],
-                        instructions: ''
-                    },
-                    withoutCoin: {
-                        cards: [],
-                        instructions: ''
-                    }
-                },{
-                    klass: 'Warrior',
-                    withCoin: {
-                        cards: [],
-                        instructions: ''
-                    },
-                    withoutCoin: {
-                        cards: [],
-                        instructions: ''
-                    }
-                },{
-                    klass: 'Rogue',
-                    withCoin: {
-                        cards: [],
-                        instructions: ''
-                    },
-                    withoutCoin: {
-                        cards: [],
-                        instructions: ''
-                    }
-                },{
-                    klass: 'Paladin',
-                    withCoin: {
-                        cards: [],
-                        instructions: ''
-                    },
-                    withoutCoin: {
-                        cards: [],
-                        instructions: ''
-                    }
-                },{
-                    klass: 'Priest',
-                    withCoin: {
-                        cards: [],
-                        instructions: ''
-                    },
-                    withoutCoin: {
-                        cards: [],
-                        instructions: ''
-                    }
-                },{
-                    klass: 'Warlock',
-                    withCoin: {
-                        cards: [],
-                        instructions: ''
-                    },
-                    withoutCoin: {
-                        cards: [],
-                        instructions: ''
-                    }
-                },{
-                    klass: 'Hunter',
-                    withCoin: {
-                        cards: [],
-                        instructions: ''
-                    },
-                    withoutCoin: {
-                        cards: [],
-                        instructions: ''
-                    }
-                },{
-                    klass: 'Druid',
-                    withCoin: {
-                        cards: [],
-                        instructions: ''
-                    },
-                    withoutCoin: {
-                        cards: [],
-                        instructions: ''
-                    }
-            }],
             video: data.video || '',
             premium: data.premium || {
                 isPremium: false,
                 expiryDate: d
             },
-            featured: data.featured || false,
-            public: data.public || 'true'
+            slug: data.slug || '',
+            isFeatured: data.isFeatured || false,
+            isPublic: data.isPublic || 'true',
+            mulligans: data.mulligans || [
+                {
+                    className: 'Druid',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Hunter',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Mage',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Paladin',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Priest',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Rogue',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Shaman',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Warlock',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Warrior',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+            ]
         };
 
         db.validVideo = function () {
@@ -1423,13 +1400,16 @@ angular.module('app.services', [])
 
         db.toggleMulligan = function (mulligan, withCoin, card) {
             console.log('mulligan: ', mulligan);
-            var c = (withCoin) ? mulligan.withCoin.cards : mulligan.withoutCoin.cards,
+            console.log('card: ', card);
+            console.log('with coin: ', withCoin);
+            
+            var coinMulligan = (withCoin) ? mulligan.cardsWithCoin : mulligan.cardsWithoutCoin,
                 exists = false,
                 index = -1;
-
+            
             // check if card already exists
-            for (var i = 0; i < c.length; i++) {
-                if (c[i].id === card.id) {
+            for (var i = 0; i < coinMulligan.length; i++) {
+                if (coinMulligan[i].id === card.id) {
                     exists = true;
                     index = i;
                     break;
@@ -1437,10 +1417,14 @@ angular.module('app.services', [])
             }
 
             if (exists) {
-                c.splice(index, 1);
+                coinMulligan.splice(index, 1);
+                console.log('spliced coinMulligan: ', coinMulligan);
+                return coinMulligan;
             } else {
-                if (c.length < 6) {
-                    c.push(card);
+                if (coinMulligan.length < 6) {
+                    coinMulligan.push(card);
+                    console.log('mully array: ', coinMulligan);
+                    return coinMulligan;
                 }
             }
         }
@@ -1449,6 +1433,7 @@ angular.module('app.services', [])
             var mulligans = db.mulligans;
             for (var i = 0; i < mulligans.length; i++) {
                 if (mulligans[i].className === klass) {
+                    console.log('mulligan: ', mulligans[i]);
                     return mulligans[i];
                 }
             }
@@ -1466,7 +1451,7 @@ angular.module('app.services', [])
 
             // check if card already exists
             for (var i = 0; i < db.cards.length; i++) {
-                if (db.cards[i].id === card.id) {
+                if (db.cards[i].cardId === card.id) {
                     exists = true;
                     index = i;
                     break;
@@ -1482,13 +1467,21 @@ angular.module('app.services', [])
 
         // add card
         db.addCard = function (card) {
+            
             var exists = false,
                 index = -1,
-                isLegendary = (card.rarity === 'Legendary') ? true : false;
+                isLegendary = (card.rarity === 'Legendary') ? true : false,
+                totalCards = db.getSize();
+            
+            if(totalCards >= 30) {
+                return;
+            }
+            
+            console.log('adding card: ', card);
 
             // check if card already exists
             for (var i = 0; i < db.cards.length; i++) {
-                if (db.cards[i].card.id === card.id) {
+                if (db.cards[i].cardId === card.id) {
                     exists = true;
                     index = i;
                     break;
@@ -1498,7 +1491,6 @@ angular.module('app.services', [])
             // add card
             if (exists) {
                 // increase qty by one
-                console.log('isLegendary: ', isLegendary);
                 if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
                     db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
                 }
@@ -1508,6 +1500,7 @@ angular.module('app.services', [])
                     deckId: db.id,
                     cardId: card.id,
                     cardQuantity: 1,
+                    isPublic: db.isPublic,
                     card: {
                         active: card.active,
                         artist: card.artist,
@@ -1574,7 +1567,7 @@ angular.module('app.services', [])
         db.removeCardFromDeck = function (card) {
             console.log('card to rem: ', card);
             for (var i = 0; i < db.cards.length; i++) {
-                if (card.id == db.cards[i].id) {
+                if (card.cardId == db.cards[i].cardId) {
                     if (db.cards[i].cardQuantity > 1) {
                         db.cards[i].cardQuantity = db.cards[i].cardQuantity - 1;
                         return;
@@ -1696,6 +1689,7 @@ angular.module('app.services', [])
         }
 
         db.newMatch = function (klass) {
+            console.log('vhat class?: ', klass);
             var m = {
                 deckName: '',
                 className: '',

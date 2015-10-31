@@ -184,7 +184,7 @@
                                                             </div>
                                                         </div>
                                                         <ul class="list-group">
-                                                            <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cardTech | orderBy : c.card._id" class="list-group-item">
+                                                            <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cardTech | orderBy : c.card.id" class="list-group-item">
                                                                  <button class="cardBtn" ng-click="( c.toss == false ) ? c.toss = true : c.toss = false"><i class="fa" ng-class="{ 'fa-minus' : c.toss == true, 'fa-plus' : c.toss == false }"></i></button>
                                                                 {{c.card.name}}
                                                                 <button class="pull-right cardBtn" ng-click="removeTechCard(tech, c)"><i class="fa fa-close"></i></button>
@@ -267,6 +267,7 @@
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
             <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="editSnapshot()">Edit Meta Snapshot</button>
+            <button class="btn btn-blue btn-lg" ng-click="freshMatches()">Regen Matchups</button>
         </div>
     </div>
     </form>

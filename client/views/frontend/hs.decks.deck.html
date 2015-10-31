@@ -24,10 +24,10 @@
             <div class="pull-right">
                 <!-- deck-votes -->
                 <div class="deck-votes clearfix">
-                    <div class="vote-count vote-large m-l-sm pull-right"><span><em ng-show="deck.votesCount > 0">+</em>{{deck.voteScore}}</span></div>
+                    <div class="vote-count vote-large m-l-sm pull-right"><span><em ng-show="deck.votesCount > 0">+</em>{{deck.votesCount}}</span></div>
                     <div class="vote-count-btns vote-large pull-left">
-                        <a href="#" class="btn-vote-up vote-large" ng-class="{active: deck.voted === 1}" ng-click="voteUp(deck)"><i class="fa fa-plus-square"></i></a>
-                        <a href="#" class="btn-vote-down vote-large" ng-class="{active: deck.voted === -1}" ng-click="voteDown(deck)"><i class="fa fa-minus-square"></i></a>
+                        <a href="#" class="btn-vote-up vote-large" ng-class="{active: deck.votes[0].direction === 1}" ng-click="voteUp(deck)"><i class="fa fa-plus-square"></i></a>
+                        <a href="#" class="btn-vote-down vote-large" ng-class="{active: deck.votes[0].direction === -1}" ng-click="voteDown(deck)"><i class="fa fa-minus-square"></i></a>
                     </div>
                 </div>
                 <!-- / deck-votes -->
