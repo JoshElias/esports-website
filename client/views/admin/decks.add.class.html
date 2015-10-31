@@ -16,17 +16,15 @@
             </span>
         </div>
         <div class="db-classes clearfix">
-            <div ng-repeat="hero in heroes track by $index" no-animate class="db-class db-class-{{hero.class}}" 
-                 ng-class="{ 'active': hero.secondary, 'no-select': ($parent.klass && $parent.klass != hero.class) || ($parent.selectedHero && $parent.selectedHero != hero.class)}" 
-                 ng-mouseover="(!$parent.selectedHero) ? $parent.klass = hero.class : false" 
-                 ng-mouseout="(!$parent.selectedHero) ? $parent.klass = false : false">
+            <div ng-repeat="hero in heroes track by $index" no-animate class="db-class db-class-{{hero.class}} {{getName($index, false)}}"
+                 ng-class="{ 'no-select': ($parent.klass && $parent.klass != hero.class) || ($parent.selectedHero && $parent.selectedHero != hero.class)}" 
+                 ng-mouseover="$parent.klass = hero.class" ng-mouseout="$parent.klass = false">
                 <div class="db-class-clip">
-                    <button class="select-hero-btn" ui-sref="app.admin.hearthstone.decks.addBuild({ playerClass: hero.class })">
+                    <button class="select-hero-btn" ui-sref="app.hs.deckBuilder.build({ playerClass: hero.class })">
                         <div class="hero-img"></div>
                     </button>
                 </div>
-                <button class="switch-hero-btn" ng-disabled="!hero.hasSecondary" 
-                        ng-click="hero.secondary = !hero.secondary; updateHero(hero.secondary, $index)" ng-class="{'active': hero.secondary}">
+                <button class="switch-hero-btn" ng-disabled="!hero.hasSecondary" ng-click="updateHero($index)">
                     <span ng-if="hero.hasSecondary">SWITCH HERO</span>
                     <span ng-if="!hero.hasSecondary">COMING SOON</span>
                 </button>

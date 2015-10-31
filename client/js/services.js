@@ -1275,72 +1275,72 @@ angular.module('app.services', [])
                 isPremium: false,
                 expiryDate: d
             },
-            slug: data.slug || Util.slugify(data.name),
+            slug: data.slug || '',
             isFeatured: data.isFeatured || false,
             isPublic: data.isPublic || 'true',
             mulligans: data.mulligans || [
                 {
-                    className: 'Mage',
-                    cardsWithoutCoin: data.mulligans.cardsWithoutCoin || [],
-                    cardsWithCoin: data.mulligans.cardsWithCoin || [],
-                    instructionsWithCoin: data.mulligans.instructionsWithCoin || '',
-                    instructionsWithoutCoin: data.mulligans.instructionsWithoutCoin || ''
-                },
-                {
-                    className: 'Shaman',
-                    cardsWithoutCoin: data.mulligans.cardsWithoutCoin || [],
-                    cardsWithCoin: data.mulligans.cardsWithCoin || [],
-                    instructionsWithCoin: data.mulligans.instructionsWithCoin || '',
-                    instructionsWithoutCoin: data.mulligans.instructionsWithoutCoin || ''
-                },
-                {
-                    className: 'Warrior',
-                    cardsWithoutCoin: data.mulligans.cardsWithoutCoin || [],
-                    cardsWithCoin: data.mulligans.cardsWithCoin || [],
-                    instructionsWithCoin: data.mulligans.instructionsWithCoin || '',
-                    instructionsWithoutCoin: data.mulligans.instructionsWithoutCoin || ''
-                },
-                {
-                    className: 'Rogue',
-                    cardsWithoutCoin: data.mulligans.cardsWithoutCoin || [],
-                    cardsWithCoin: data.mulligans.cardsWithCoin || [],
-                    instructionsWithCoin: data.mulligans.instructionsWithCoin || '',
-                    instructionsWithoutCoin: data.mulligans.instructionsWithoutCoin || ''
-                },
-                {
-                    className: 'Paladin',
-                    cardsWithoutCoin: data.mulligans.cardsWithoutCoin || [],
-                    cardsWithCoin: data.mulligans.cardsWithCoin || [],
-                    instructionsWithCoin: data.mulligans.instructionsWithCoin || '',
-                    instructionsWithoutCoin: data.mulligans.instructionsWithoutCoin || ''
-                },
-                {
-                    className: 'Priest',
-                    cardsWithoutCoin: data.mulligans.cardsWithoutCoin || [],
-                    cardsWithCoin: data.mulligans.cardsWithCoin || [],
-                    instructionsWithCoin: data.mulligans.instructionsWithCoin || '',
-                    instructionsWithoutCoin: data.mulligans.instructionsWithoutCoin || ''
-                },
-                {
-                    className: 'Warlock',
-                    cardsWithoutCoin: data.mulligans.cardsWithoutCoin || [],
-                    cardsWithCoin: data.mulligans.cardsWithCoin || [],
-                    instructionsWithCoin: data.mulligans.instructionsWithCoin || '',
-                    instructionsWithoutCoin: data.mulligans.instructionsWithoutCoin || ''
+                    className: 'Druid',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
                 },
                 {
                     className: 'Hunter',
-                    cardsWithoutCoin: data.mulligans.cardsWithoutCoin || [],
-                    cardsWithCoin: data.mulligans.cardsWithCoin || [],
-                    instructionsWithCoin: data.mulligans.instructionsWithCoin || '',
-                    instructionsWithoutCoin: data.mulligans.instructionsWithoutCoin || ''
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
                 },
                 {
-                    className: 'Druid',
-                    cardsWithoutCoin: data.mulligans.cardsWithoutCoin || [],
-                    cardsWithCoin: data.mulligans.cardsWithCoin || [],
-                    instructionsWithCoin: data.mulligans.instructionsWithCoin || '',
-                    instructionsWithoutCoin: data.mulligans.instructionsWithoutCoin || ''
+                    className: 'Mage',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Paladin',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Priest',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Rogue',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Shaman',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Warlock',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
+                },
+                {
+                    className: 'Warrior',
+                    cardsWithoutCoin: [],
+                    cardsWithCoin: [],
+                    instructionsWithCoin: '',
+                    instructionsWithoutCoin: ''
                 },
             ]
         };
@@ -1409,7 +1409,7 @@ angular.module('app.services', [])
             
             // check if card already exists
             for (var i = 0; i < coinMulligan.length; i++) {
-                if (coinMulligan[i].cardId === card.card.id) {
+                if (coinMulligan[i].id === card.id) {
                     exists = true;
                     index = i;
                     break;
@@ -1419,10 +1419,12 @@ angular.module('app.services', [])
             if (exists) {
                 coinMulligan.splice(index, 1);
                 console.log('spliced coinMulligan: ', coinMulligan);
+                return coinMulligan;
             } else {
                 if (coinMulligan.length < 6) {
                     coinMulligan.push(card);
                     console.log('mully array: ', coinMulligan);
+                    return coinMulligan;
                 }
             }
         }
@@ -1687,6 +1689,7 @@ angular.module('app.services', [])
         }
 
         db.newMatch = function (klass) {
+            console.log('vhat class?: ', klass);
             var m = {
                 deckName: '',
                 className: '',

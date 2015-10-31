@@ -132,7 +132,7 @@ var app = angular.module('app', [
             'self',
             tpl + '**'
         ]);
-        
+
         // ignore ng-animate on font awesome spin
         $animateProvider.classNameFilter(/^((?!(fa-spin)).)*$/);
 
@@ -229,7 +229,7 @@ var app = angular.module('app', [
                         resolve: {
                             articles: ['Article', function (Article) {
                                 var perpage = 6;
-                                
+
                                 return Article.find({
                                     filter: {
                                         where: {
@@ -269,6 +269,28 @@ var app = angular.module('app', [
                     overwatch: {
                         templateUrl: tpl + 'views/frontend/overwatch.heroes.html'
                     }
+                }
+            })
+            .state('app.overwatch.heroes.redirect', {
+                url: '',
+                resolve: {
+                    hero: ['OverwatchHero', function (OverwatchHero) {
+                        return OverwatchHero.findOne({
+                            filter: {
+                                where: {
+                                    isActive: true
+                                },
+                                fields: {
+                                    className: true
+                                },
+                                sort: 'orderNum ASC'
+                            }
+                        }).$promise;
+                    }],
+                    redirect: ['$q', '$state', 'hero', function ($q, $state, hero) {
+                        $state.go('app.overwatch.heroes.hero', { slug: hero.className });
+                        return $q.reject();
+                    }]
                 }
             })
             .state('app.overwatch.heroes.hero', {
@@ -884,6 +906,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.deck-builder.build.html',
                         controller: 'DeckBuilderCtrl',
                         resolve: {
+                            
                             classCardsList: ['$stateParams', 'Card', function ($stateParams, Card) {
                                 var perpage = 15,
                                     playerClass = $stateParams.playerClass;
@@ -900,7 +923,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise;
                             }],
-                            
+
                             neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
@@ -914,7 +937,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise;
                             }],
-                            
+
                             classCardsCount: ['$stateParams', 'Card', function ($stateParams, Card) {
                                 var playerClass = $stateParams.playerClass;
 
@@ -925,7 +948,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise;
                             }],
-                            
+
                             neutralCardsCount: ['Card', function (Card) {
                                 return Card.count({
                                     where: {
@@ -934,7 +957,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise;
                             }],
-                            
+
                             toStep: ['$stateParams', function ($stateParams) {
                                 if ($stateParams.goTo) {
                                     return $stateParams.goTo;
@@ -976,7 +999,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.home.html',
                         controller: 'HOTSHomeCtrl',
                         resolve: {
-                            
+
                             dataArticles: ['Article', function (Article) {
                               var filters = 'all',
                                   offset = 0,
@@ -994,7 +1017,7 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
-                            
+
                             dataGuidesCommunity: ['Guide', function (Guide) {
                               return Guide.find({
                                 filter: {
@@ -1036,7 +1059,7 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
-                            
+
                             communityTalentDict: ['dataGuidesCommunity', function (dataGuidesCommunity) {
                                 var dict = {};
                                 for (var i = 0; i < dataGuidesCommunity.length; i++) {
@@ -1049,7 +1072,7 @@ var app = angular.module('app', [
                                 }
                                 return dict;
                             }],
-                            
+
                             dataGuidesFeatured: ['Guide', function (Guide) {
                               return Guide.find({
                                 filter: {
@@ -1085,7 +1108,7 @@ var app = angular.module('app', [
                                 }
                               }).$promise;
                             }],
-                            
+
                             featuredTalentDict: ['dataGuidesFeatured', function (dataGuidesFeatured) {
                                 var dict = {};
                                 for (var i = 0; i < dataGuidesFeatured.length; i++) {
@@ -1098,7 +1121,7 @@ var app = angular.module('app', [
                                 }
                                 return dict;
                             }],
-                            
+
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
                                   filter: {
@@ -1106,7 +1129,7 @@ var app = angular.module('app', [
                                   }
                               }).$promise;
                             }],
-                            
+
                             dataMaps: ['Map', function (Map) {
                               return Map.find({}).$promise;
                             }]
@@ -1369,17 +1392,17 @@ var app = angular.module('app', [
                                 return talents;
                             }],
                             heroes: ['Hero', function(Hero) {
-                                
+
                                 return Hero.find({
-                                    
+
                                 })
                                 .$promise
-                                
+
                             }],
                             maps: ['Map', function(Map) {
-                                
+
                                 return Map.find({
-                                    
+
                                 })
                                 .$promise;
                             }]
@@ -1805,33 +1828,60 @@ var app = angular.module('app', [
                         controller: 'TeamCtrl',
                         templateUrl: tpl + 'views/frontend/teams.html',
                         resolve: {
-                            teams: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({})
-                                .$promise
-                                .then(function (results) {
-                                    var teams = {
-                                        members     : results,
-                                        hsMembers   : [],
-                                        hotsMembers : [],
-                                        wowMembers  : [],
-                                        fifaMembers : [],
-                                        fgcMembers  : []
+                            hsTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'hs',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
                                     }
-
-                                    for (var i=0; i != results.length; i++) {
-                                        console.log(results[i]);
-                                        var type = results[i].gameName;
-                                        switch (type) {
-                                            case 'hs' : teams.hsMembers.push(results[i]); break;
-                                            case 'hots' : teams.hotsMembers.push(results[i]); break;
-                                            case 'wow' : teams.wowMembers.push(results[i]); break;
-                                            case 'fifa' : teams.fifaMembers.push(results[i]); break;
-                                            case 'fgc' : teams.fgcMembers.push(results[i]); break;
-                                        }
+                                }).$promise;
+                            }],
+                            hotsTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'hots',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
                                     }
-
-                                    return teams;
-                                });
+                                }).$promise;
+                            }],
+                            wowTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'wow',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                }).$promise;
+                            }],
+                            fifaTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'fifa',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                }).$promise;
+                            }],
+                            fgcTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'fgc',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -1947,22 +1997,6 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/reset-password.html',
                         controller: 'UserResetPasswordCtrl'
                     }
-                },
-                resolve: {
-                    // Load the current user data if we don't have it
-                    currentUser: ['$stateParams', 'User', 'LoopBackAuth',
-                        function($stateParams, User, LoopBackAuth) {
-
-                            // Check if credentials were sent with the request
-                            var userId = $stateParams.userId;
-                            var access_token = $stateParams.access_token;
-                            if(!User.isAuthenticated() && userId && access_token) {
-                                LoopBackAuth.setUser(access_token, userId);
-                                LoopBackAuth.save();
-                                return User.getCurrent().$promise;
-                            }
-                        }
-                    ]
                 },
                 access: { noauth: true },
                 seo: { title: 'Reset your Password', description: '', keywords: '' }
@@ -2409,11 +2443,11 @@ var app = angular.module('app', [
                                     }
                                 };
                             }],
-                            
+
                             decksCount: ['Deck', function(Deck) {
                                 return Deck.count({}).$promise;
                             }],
-                            
+
                             decks: ['Deck', 'paginationParams', function (Deck, paginationParams) {
                                 var page = paginationParams.page,
                                     perpage = paginationParams.perpage,
@@ -2453,16 +2487,51 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.add.build.html',
                         controller: 'AdminDeckAddCtrl',
                         resolve: {
-                            data: ['$stateParams', 'DeckBuilder', function ($stateParams, DeckBuilder) {
-                                var page = 1,
-                                    perpage = 15,
-                                    search = "",
-                                    mechanics = [],
-                                    mana = 'all',
-                                    playerClass = $stateParams.playerClass;
+                            
+                            classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
+                                    var playerClass = $stateParams.playerClass;
 
-                                return DeckBuilder.loadCards(page, perpage, search, mechanics, mana, playerClass);
-                            }]
+                                return Card.find({
+                                    filter: {
+                                        where: {
+                                            playerClass: playerClass,
+                                            deckable: true
+                                        },
+                                        order: ['cost ASC', 'cardType ASC', 'name ASC'],
+                                        limit: 15
+                                    }
+                                }).$promise;
+                            }],
+
+                            classCardsCount: ['$stateParams', 'deck', 'Card', function ($stateParams, deck, Card) {
+                                var playerClass = $stateParams.playerClass;
+                                return Card.count({
+                                    where: {
+                                        playerClass: playerClass
+                                    }
+                                }).$promise;
+                            }],
+
+                            neutralCardsCount: ['Card', function (Card) {
+                                return Card.count({
+                                    where: {
+                                        playerClass: 'Neutral'
+                                    }
+                                }).$promise;
+                            }],
+
+                            neutralCardsList: ['Card', function (Card) {
+                                return Card.find({
+                                    filter: {
+                                        where: {
+                                            playerClass: 'Neutral',
+                                            deckable: true
+                                        },
+                                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                                        limit: 15
+                                    }
+                                }).$promise;
+                            }],
                         }
                     }
                 },
@@ -2524,17 +2593,6 @@ var app = angular.module('app', [
                                 };
                             }],
                             
-                            deck: ['$stateParams', 'resolveParams', 'Deck', function ($stateParams, resolveParams, Deck) {
-                                var deckID = $stateParams.deckID;
-                                return Deck.findById({ 
-                                    id: deckID,
-                                    filter: resolveParams.options.filter
-                                }).$promise
-                                .catch(function(err) {
-                                    console.log('err: ', err);
-                                });
-                            }],
-                            
                             mulligans: ['Mulligan', '$stateParams', function(Mulligan, $stateParams) {
                                 var deckID = $stateParams.deckID;
                                 console.log('deckID: ', deckID);
@@ -2554,11 +2612,27 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-                            
+            
+                            deck: ['$stateParams', 'mulligans', 'resolveParams', 'Deck', function ($stateParams, mulligans, resolveParams, Deck) {
+                                var deckID = $stateParams.deckID;
+                                return Deck.findById({
+                                    id: deckID,
+                                    filter: resolveParams.options.filter
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    data.mulligans = mulligans;
+                                    return data;
+                                })
+                                .catch(function(err) {
+                                    console.log('err: ', err);
+                                });
+                            }],
+                                
                             classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
                                 var perpage = 15,
                                     playerClass = deck.playerClass;
-                                
+
                                 return Card.find({
                                     filter: {
                                         where: {
@@ -2570,7 +2644,7 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-                            
+
                             classCardsCount: ['$stateParams', 'deck', 'Card', function ($stateParams, deck, Card) {
                                 var deckID = $stateParams.deckID;
                                 return Card.count({
@@ -2579,7 +2653,7 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-                            
+
                             neutralCardsCount: ['Card', function (Card) {
                                 return Card.count({
                                     where: {
@@ -2587,7 +2661,7 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-                            
+
                             neutralCardsList: ['Card', function (Card) {
                                 return Card.find({
                                     filter: {
@@ -2600,13 +2674,13 @@ var app = angular.module('app', [
                                     }
                                 }).$promise;
                             }],
-                            
+
                             toStep: ['$stateParams', function ($stateParams) {
                                 if($stateParams.goTo) {
                                     return $stateParams.goTo;
                                 }
                             }]
-                            
+
                         }
                     }
                 },
@@ -3415,10 +3489,10 @@ var app = angular.module('app', [
                                     })
                                     console.log(snapshot.tiers);
                                     //BUILD TIERS//
-                                    
+
                                     //BUILD MATCHES//
                                     snapshot.matches = snapshot.deckMatchups;
-                                           
+
                                     return snapshot;
                                 });
                             }]
@@ -3528,7 +3602,7 @@ var app = angular.module('app', [
                                         fields: paginationParams.options.filter.fields
                                     }
                                 };
-                                
+
                                 return Vod.find(options).$promise;
                             }]
                         }
@@ -3646,7 +3720,7 @@ var app = angular.module('app', [
                         resolve: {
                             hero: ['$stateParams', 'OverwatchHero', function ($stateParams, OverwatchHero) {
                                 var heroID = $stateParams.heroID;
-                                
+
                                 return OverwatchHero.findOne({
                                     filter: {
                                         where: {
