@@ -3342,7 +3342,10 @@ var app = angular.module('app', [
                                                 relation: "authors",
                                                 scope: {
                                                     include: {
-                                                        relation: "user"
+                                                        relation: "user",
+                                                        scope: {
+                                                            fields: ["username"]
+                                                        }
                                                     }
                                                 }
                                             },
@@ -3351,7 +3354,10 @@ var app = angular.module('app', [
                                                 scope: {
                                                     include: [
                                                         {
-                                                            relation: "deck"
+                                                            relation: "deck",
+                                                            scope: {
+                                                                fields: ["name"]
+                                                            }
                                                         },
                                                         {
                                                             relation: "deckTech",
@@ -3360,7 +3366,10 @@ var app = angular.module('app', [
                                                                     relation: "cardTech",
                                                                     scope: {
                                                                         include: {
-                                                                            relation: "card"
+                                                                            relation: "card",
+                                                                            scope: {
+                                                                                fields: ["name"]
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
