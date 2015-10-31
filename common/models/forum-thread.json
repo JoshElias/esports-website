@@ -24,6 +24,9 @@
     },
     "slug": {
       "type": "object"
+    },
+    "oldPosts": {
+      "type": ["string"]
     }
   },
   "validations": [],

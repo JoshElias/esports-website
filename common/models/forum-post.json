@@ -36,6 +36,9 @@
     "votesCount": {
       "type": "number"
     },
+    "votes": {
+      "type": "object"
+    },
     "forumThreadId": {
       "type": "string"
     },

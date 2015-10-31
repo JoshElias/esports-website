@@ -34,7 +34,7 @@
       "type": "boolean"
     },
     "votes": {
-      "type": "array"
+      "type": ["object"]
     },
     "votesCount": {
       "type": "number"
@@ -71,6 +71,9 @@
     },
     "talentTiers": {
       "type": "object"
+    },
+    "synergy": {
+      "type": ["string"]
     }
   },
   "validations": [],
