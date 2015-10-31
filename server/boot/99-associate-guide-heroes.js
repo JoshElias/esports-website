@@ -1,7 +1,6 @@
 
 var async = require("async");
 
-var talentsAdded = 0;
 module.exports = function(server) {
     /*
     var Guide = server.models.guide;

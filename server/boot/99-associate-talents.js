@@ -2,7 +2,7 @@
 var async = require("async");
 var util = require("util");
 
-var talentsAdded = 0;
+
 module.exports = function(server) {
 /*
 	 var Talent = server.models.talent;
