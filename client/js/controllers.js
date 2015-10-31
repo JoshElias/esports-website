@@ -113,30 +113,28 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('UserResetPasswordCtrl', ['$scope', '$state', '$stateParams', 'LoopBackAuth', 'User',
-        function ($scope, $state, $stateParams, LoopBackAuth, User) {
+    .controller('UserResetPasswordCtrl', ['$scope', '$state', '$stateParams', '$location', 'User',
+        function ($scope, $state, $stateParams, $location, User) {
 
             $scope.reset = {
                 password: '',
                 cpassword: ''
             };
 
-            $scope.resetPassword = function () {
-                if(User.isAuthenticated()) {
-                    User.changePassword(LoopBackAuth.currentUserId, $scope.reset.password)
-                        .$promise
-                        .then(function (data) {
-                          AlertService.setSuccess({ show: true, msg: 'Your password has been reset successfully.' });
-                          $state.transitionTo('app.login', {});
-                        })
-                        .catch(function(err) {
-                          $scope.errors = err;
-                          $scope.showError = true;
-                        });
-                } else {
-                    console.log("u wot m8?");
-                }
-            };
+            $scope.resetPassword = function() {
+              var email = $location.search().email;
+              var token = $location.search().token;
+              User.changePassword({email: email, token: token, password: $scope.reset.password})
+                .$promise
+                .then(function (data) {
+                  AlertService.setSuccess({show: true, msg: 'Your password has been reset successfully.'});
+                  $state.transitionTo('app.login', {});
+                })
+                .catch(function (err) {
+                  $scope.errors = err;
+                  $scope.showError = true;
+                });
+            }
         }
     ])
     .controller('HomeCtrl', ['$scope', '$sce', 'articles', 'articlesTotal', 'Article',
@@ -2170,8 +2168,8 @@ angular.module('app.controllers', ['ngCookies'])
                     orderNum : 1
                 };
 
-            
-            
+
+
             $scope.snapshot = snapshot;
             $scope.search = "";
             $scope.decks = [];
@@ -2392,11 +2390,11 @@ angular.module('app.controllers', ['ngCookies'])
                 var where = {
                     isProvider: true
                 }
-                
+
                 if(!_.isEmpty($scope.search)) {
                     where['username'] = { regexp: $scope.search }
                 }
-                
+
                 User.find({
                     filter: {
                         limit: 10,
@@ -2668,7 +2666,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getMatches = function (deckID) {
                 var matches = $scope.snapshot.matches,
                     out = [];
-                
+
                 _.each(matches, function(match) {
                     if (deckID == match.forDeckId || deckID == match.againstDeckId) {
                         out.push(match);
@@ -2788,7 +2786,7 @@ angular.module('app.controllers', ['ngCookies'])
                     deck = $scope.deck,
                     tier = $scope.tier,
                     techCard = angular.copy(defaultTechCards);
-                
+
                 techCard.toss = t;
                 techCard.card = c;
 
@@ -2879,7 +2877,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.editSnapshot = function () {
                 console.log($scope.snapshot);
-                
+
 //                defaultSnap = {
 //                    snapNum : 1,
 //                    title : "",
@@ -2972,8 +2970,16 @@ angular.module('app.controllers', ['ngCookies'])
 //                })
                 
                 
-                async.forEach()
-                
+
+                Snapshot.deckMatchups.destroyAll({
+                    snapshotId: $scope.snapshot.id
+                }, function (data) {
+                    console.log(data);
+                    Snapshot.deckMatchups.createMany({}, $scope.snapshot.matches)
+                })
+
+//                async.forEach()
+
 //                $scope.showError = false;
 //                AdminSnapshotService.editSnapshot($scope.snapshot).success(function (data) {
 //                    if (!data.success) {
@@ -3690,25 +3696,18 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'teams',
-        function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, teams) {
-
-            $scope.members = teams.members;
-
-            $scope.hsMembers = teams.hsMembers;
-            $scope.hotsMembers = teams.hotsMembers;
-            $scope.wowMembers = teams.wowMembers;
-            $scope.fgcMembers = teams.fgcMembers;
-            $scope.fifaMembers = teams.fifaMembers;
+    .controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'hsTeam', 'hotsTeam', 'wowTeam', 'fgcTeam', 'fifaTeam',
+        function ($scope, $compile, $timeout, $location, $anchorScroll, $sce, hsTeam, hotsTeam, wowTeam, fgcTeam, fifaTeam) {
+            $scope.hsMembers = hsTeam;
+            $scope.hotsMembers = hotsTeam;
+            $scope.wowMembers = wowTeam;
+            $scope.fgcMembers = fgcTeam;
+            $scope.fifaMembers = fifaTeam;
 
             if ($location.hash()) {
                 $timeout(function () {
                     $anchorScroll();
                 });
-            }
-
-            for(var i = 0; i < $scope.members.length; i++) {
-                $scope.members[i].description = $scope.members[i].description.replace(/(?:\r\n|\r|\n)/g, '<br />');
             }
 
             $scope.openLink = function ($event, link) {
@@ -3744,15 +3743,9 @@ angular.module('app.controllers', ['ngCookies'])
                 var box = bootbox.dialog({
                     title: member.screenName,
                     className: 'member-modal',
-                    message: $compile('<button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true">×</button><img class="responsive" src="https://cdn-tempostorm.netdna-ssl.com/team/{{member.photo}}" /><div class="wrapper-md content-wrapper "><h1 class="m-b-xs">{{member.screenName}}</h1><span class="btn-team-wrapper-modal"><a href="#" target="_blank" ng-click="openLink($event, \'https://twitter.com/\' + member.social.twitter)" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://twitch.tv/\' + member.social.twitch)" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://youtube.com/\' + member.social.youtube)" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://facebook.com/\' + member.social.facebook)" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://instagram.com/\' + member.social.instagram)" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a></span><h3>{{member.fullName}}</h3><p>{{member.description}}</p></div>')($scope)
+                    message: $compile('<button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true">×</button><img class="responsive" src="https://cdn-tempostorm.netdna-ssl.com/team/{{member.photoName}}" /><div class="wrapper-md content-wrapper "><h1 class="m-b-xs">{{member.screenName}}</h1><span class="btn-team-wrapper-modal"><a href="#" target="_blank" ng-click="openLink($event, \'https://twitter.com/\' + member.social.twitter)" ng-if="member.social.twitter" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitter"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://twitch.tv/\' + member.social.twitch)" ng-if="member.social.twitch" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-twitch"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://youtube.com/\' + member.social.youtube)" ng-if="member.social.youtube" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-youtube"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://facebook.com/\' + member.social.facebook)" ng-if="member.social.facebook" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-facebook"></i></div></a><a href="#" target="_blank" ng-click="openLink($event, \'https://instagram.com/\' + member.social.instagram)" ng-if="member.social.instagram" class="m-r-xs btn-team"><div class="btn-team-inner"><i class="fa fa-instagram"></i></div></a></span><h3>{{member.fullName}}</h3><p>{{member.description}}</p></div>')($scope)
                 });
             }
-
-//        for (var i = 0; i < $scope.members.length; i++) {
-//            var str = $scope.members[i].description;
-//            str.replace(/(?:\r\n|\r|\n)/g, '<br />');
-//            $scope.members[i].description = str;
-//        }
         }
     ])
     .controller('AdminTeamAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'AdminTeamService', 'AlertService',
@@ -4592,7 +4585,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // redirect back to class pick if no data
 //            if (!data || !data.success == 1) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
-            
+
             $scope.isSecondary = function (klass) {
                 switch(klass) {
                     case 'druid': return $scope.app.settings.secondaryPortrait[0]; break;
@@ -4613,7 +4606,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.classes = angular.copy(Hearthstone.classes).splice(1, 9);
 
 //            console.log('classes: ', $scope.classes);
-            
+
             //get the hero name based on the index of portraitSettings' index
             $scope.getName = function (index, klass) {
                 try {
@@ -4623,7 +4616,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.getName(index, caps);
                 }
             }
-            
+
             $scope.getActiveDeckName = function () {
                 return Hearthstone.heroNames[deck.playerClass.slice(0,1).toUpperCase() + deck.playerClass.substr(1)][$scope.isSecondary(deck.playerClass)];
             }
@@ -4644,7 +4637,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return dust
             }
-            
+
             $scope.type = 1;
             $scope.basic = false;
 
@@ -4677,9 +4670,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.isClassCards = function () {
                 return classCards;
             }
-            
+
             $scope.className = deck.playerClass;
-            
+
             $scope.cards = {
                 neutral: neutralCardsList,
                 class: classCardsList,
@@ -4957,7 +4950,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // $scope.className === $scope.app.settings.deck.playerClass was removed from this
             $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null) ? DeckBuilder.new($scope.className, deck) : DeckBuilder.new($scope.clasName);
-            
+
             console.log('deck now: ', deck);
 
             $scope.$watch('deck', function() {
@@ -4986,7 +4979,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.setMulligan = function (mulligan) {
                 $scope.currentMulligan = mulligan;
             };
-            
+
             console.log('current mulligan: ', $scope.currentMulligan);
             console.log('$scope.mulligan: ', $scope.mulligan);
 
@@ -7016,7 +7009,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
             console.log(LoopBackAuth.currentUserId);
             $scope.voteSnapshot = function (snapshot) {
-                
+
                 if (!LoopBackAuth.currentUserId) {
                     LoginModalService.showModal('login', function() {
                         vote(snapshot);
@@ -7029,7 +7022,7 @@ angular.module('app.controllers', ['ngCookies'])
                             filter: {
                                 where: {
                                     id: $scope.snapshot.id
-                                }, 
+                                },
                                 fields: ["votes", "votesCount"]
                             }
                         })
@@ -7042,7 +7035,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     return seriesCallback(undefined, snapshot)
                                 },
                                 function(snapshot, seriesCallback) {
-                                    
+
                                     Snapshot.update({
                                         where: {
                                             id: $scope.snapshot.id
@@ -7290,7 +7283,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.fetching = false;
             $scope.metaservice = MetaService;
             $scope.metaservice.setOg('https://tempostorm.com/articles');
-            
+
             // article filtering
             $scope.articleTypes = ['ts', 'hs', 'hots', 'overwatch'];
             $scope.articleFilter = [];
@@ -7301,14 +7294,14 @@ angular.module('app.controllers', ['ngCookies'])
                 } else {
                     $scope.articleFilter.push(type);
                 }
-                
+
                 $scope.getArticles();
             };
-            
+
             $scope.isArticleFilter = function (type) {
                 return ($scope.articleFilter.indexOf(type) !== -1);
             };
-            
+
             $scope.getArticles = function() {
                 updateArticles(1, $scope.perpage, $scope.search);
             }
@@ -7319,7 +7312,7 @@ angular.module('app.controllers', ['ngCookies'])
 
                 var options = {},
                     countOptions = {};
-                
+
                 countOptions['where'] = {
                     isActive: true,
                     articleType: {
@@ -7502,7 +7495,7 @@ angular.module('app.controllers', ['ngCookies'])
                             filter: {
                                 where: {
                                     id: $scope.article.id
-                                }, 
+                                },
                                 fields: ["votes", "votesCount"]
                             }
                         })
@@ -7510,9 +7503,9 @@ angular.module('app.controllers', ['ngCookies'])
                         .then(function (article) {
                             async.waterfall([
                                 function(seriesCallback) {
-                                    article.votes.push({ 
-                                        userID: LoopBackAuth.currentUserId, 
-                                        direction: 1 
+                                    article.votes.push({
+                                        userID: LoopBackAuth.currentUserId,
+                                        direction: 1
                                     });
                                     article.votesCount += 1;
                                     return seriesCallback(undefined, article)
@@ -10201,7 +10194,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('HOTSGuidesListCtrl', ['$q', '$scope', '$state', '$timeout', '$filter', 'AjaxPagination', 'dataCommunityGuides', 'dataTopGuide', 'dataTempostormGuides', 'dataHeroes', 'dataMaps', 'communityTalents', 'tempostormTalents', 'topGuideTalents', 'Guide', 'tempostormGuideCount', 'communityGuideCount', 'HOTSGuideQueryService',
         function ($q, $scope, $state, $timeout, $filter, AjaxPagination, dataCommunityGuides, dataTopGuide, dataTempostormGuides, dataHeroes, dataMaps, communityTalents, tempostormTalents, topGuideTalents, Guide, tempostormGuideCount, communityGuideCount, HOTSGuideQueryService) {
-            
+
             $scope.tempostormGuides = dataTempostormGuides;
             $scope.tempostormGuideTalents = tempostormTalents;
 
@@ -11313,9 +11306,9 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('HOTSTalentCalculatorHeroCtrl', ['$scope', '$state', '$stateParams', '$location', '$window', 'HOTS', 'Base64', 'hero', 'MetaService',
         function ($scope, $state, $stateParams, $location, $window, HOTS, Base64, hero, MetaService) {
 //        if (!dataHero.success) { return $state.go('app.hots.talentCalculator.hero', { hero: $scope.heroes[0].className }); }
-            
+
             console.log(hero);
-            
+
             $scope.setCurrentHero(hero);
             $scope.currentCharacter = $scope.currentHero.characters[0];
             $scope.currentAbility = false;
@@ -11742,7 +11735,7 @@ angular.module('app.controllers', ['ngCookies'])
             // load vars
             $scope.heroes = heroes;
             $scope.hero = hero;
-            
+
             // seo
             $scope.metaservice = MetaService;
             $scope.metaservice.set($scope.hero.heroName + ' - Overwatch', 'Informaton about the Overwatch hero ' + $scope.hero.heroName);
@@ -11756,13 +11749,13 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             }
-            
+
             $scope.getNextHero = function () {
                 var index = getCurrentHeroIndex();
                 if (index === false) { return $scope.heroes[0].className; }
                 return (index < ($scope.heroes.length - 1)) ? $scope.heroes[index + 1].className : $scope.heroes[0].className;
             }
-            
+
             $scope.getPrevHero = function () {
                 var index = getCurrentHeroIndex();
                 if (index === false) { return $scope.heroes[0].className; }

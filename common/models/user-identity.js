@@ -28,7 +28,7 @@ module.exports = function(UserIdentity) {
 	    }
 	    var autoLogin = options.autoLogin || options.autoLogin === undefined;
   		var provider = (profile.battletag) ? "bnet" : "twitch"; // extend if needed
-console.log("profile id:", profile.id)
+
 	    UserIdentity.findOne({where: {
 	      provider: provider,
 	      externalId: profile.id
