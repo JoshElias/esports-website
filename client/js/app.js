@@ -1645,33 +1645,66 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.home.html',
                         controller: 'ForumCategoryCtrl',
                         resolve: {
-                            forumCategories: ['ForumCategory', function(ForumCategory) {
-                                return ForumCategory.find({
-                                    filter: {
-                                        fields: {
-                                            id: true,
-                                            title: true,
-                                            active: true,
-                                        },
-                                        include: [
-                                            {
-                                                relation: 'forumThreads',
-                                                scope: {
-                                                    fields: ['active', 'id', 'title', 'description', 'slug'],
-                                                    include: [
-                                                        {
-                                                            relation: 'forumPosts',
-                                                            scope: {
-                                                                fields: ['active', 'id', 'content', 'createdDate', 'slug', 'title', 'views', 'votes', 'votesCount'],
-                                                                include: ['author']
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            }
-                                        ]
+                            forumCategories: ['$q', 'ForumCategory', 'ForumThread', function($q, ForumCategory, ForumThread) {
+                                var d = $q.defer();
+                                ForumCategory.find({
+                                    where: {
+                                        isActive: true
+                                    },
+                                    fields: {
+                                        id: true,
+                                        title: true
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (categories) {
+                                    async.forEach(categories, function (category, eachCategoryCallback) {
+                                        ForumCategory.forumThreads({
+                                            id: category.id,
+                                            filter: {
+                                                where: {
+                                                    isActive: true
+                                                },
+                                                fields: {
+                                                    id: true,
+                                                    title: true,
+                                                    description: true,
+                                                    slug: true
+                                                },
+                                                order: 'orderNum ASC'
+                                            }
+                                        }).$promise.then(function (threads) {
+                                            category.forumThreads = threads;
+                                            
+                                            async.forEach(threads, function (thread, eachThreadCallback) {
+                                                ForumThread.forumPosts({
+                                                    id: thread.id,
+                                                    filter: {
+                                                        include: {
+                                                            relation: 'author',
+                                                            scope: {
+                                                                fields: {
+                                                                    username: true,
+                                                                    email: true
+                                                                }
+                                                            }
+                                                        },
+                                                        order: 'createdDate DESC',
+                                                        limit: 1
+                                                    }
+                                                }).$promise.then(function (posts) {
+                                                    thread.forumPosts = posts;
+                                                    return eachThreadCallback();
+                                                });
+                                            }, function () {
+                                                return eachCategoryCallback();
+                                            });
+                                        });
+                                    }, function () {
+                                        console.log(categories);
+                                        d.resolve(categories);
+                                    });
+                                });
+                                return d.promise;
                             }]
                         }
                     }
