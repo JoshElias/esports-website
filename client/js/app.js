@@ -159,11 +159,11 @@ var app = angular.module('app', [
                 },
                 onEnter: ['$cookies', '$state', function($cookies, $state) {
                     // look for redirect cookie
-                    var redirectState = $cookies.get("redirectState");
+                    var redirectState = $cookies.get("redirectStateString");
                     if(redirectState) {
-                      console.log("transitionTo:", redirectState);
-                      $cookies.remove("redirectState");
-                      $state.transitionTo(redirectState);
+                        redirectState = JSON.parse(redirectState);
+                        $cookies.remove("redirectStateString");
+                        $state.go(redirectState.name, redirectState.params);
                     }
                 }]
             })
@@ -269,28 +269,6 @@ var app = angular.module('app', [
                     overwatch: {
                         templateUrl: tpl + 'views/frontend/overwatch.heroes.html'
                     }
-                }
-            })
-            .state('app.overwatch.heroes.redirect', {
-                url: '',
-                resolve: {
-                    hero: ['OverwatchHero', function (OverwatchHero) {
-                        return OverwatchHero.findOne({
-                            filter: {
-                                where: {
-                                    isActive: true
-                                },
-                                fields: {
-                                    className: true
-                                },
-                                sort: 'orderNum ASC'
-                            }
-                        }).$promise;
-                    }],
-                    redirect: ['$q', '$state', 'hero', function ($q, $state, hero) {
-                        $state.go('app.overwatch.heroes.hero', { slug: hero.className });
-                        return $q.reject();
-                    }]
                 }
             })
             .state('app.overwatch.heroes.hero', {
@@ -1637,33 +1615,66 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.home.html',
                         controller: 'ForumCategoryCtrl',
                         resolve: {
-                            forumCategories: ['ForumCategory', function(ForumCategory) {
-                                return ForumCategory.find({
-                                    filter: {
-                                        fields: {
-                                            id: true,
-                                            title: true,
-                                            active: true,
-                                        },
-                                        include: [
-                                            {
-                                                relation: 'forumThreads',
-                                                scope: {
-                                                    fields: ['active', 'id', 'title', 'description', 'slug'],
-                                                    include: [
-                                                        {
-                                                            relation: 'forumPosts',
-                                                            scope: {
-                                                                fields: ['active', 'id', 'content', 'createdDate', 'slug', 'title', 'views', 'votes', 'votesCount'],
-                                                                include: ['author']
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            }
-                                        ]
+                            forumCategories: ['$q', 'ForumCategory', 'ForumThread', function($q, ForumCategory, ForumThread) {
+                                var d = $q.defer();
+                                ForumCategory.find({
+                                    where: {
+                                        isActive: true
+                                    },
+                                    fields: {
+                                        id: true,
+                                        title: true
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (categories) {
+                                    async.forEach(categories, function (category, eachCategoryCallback) {
+                                        ForumCategory.forumThreads({
+                                            id: category.id,
+                                            filter: {
+                                                where: {
+                                                    isActive: true
+                                                },
+                                                fields: {
+                                                    id: true,
+                                                    title: true,
+                                                    description: true,
+                                                    slug: true
+                                                },
+                                                order: 'orderNum ASC'
+                                            }
+                                        }).$promise.then(function (threads) {
+                                            category.forumThreads = threads;
+                                            
+                                            async.forEach(threads, function (thread, eachThreadCallback) {
+                                                ForumThread.forumPosts({
+                                                    id: thread.id,
+                                                    filter: {
+                                                        include: {
+                                                            relation: 'author',
+                                                            scope: {
+                                                                fields: {
+                                                                    username: true,
+                                                                    email: true
+                                                                }
+                                                            }
+                                                        },
+                                                        order: 'createdDate DESC',
+                                                        limit: 1
+                                                    }
+                                                }).$promise.then(function (posts) {
+                                                    thread.forumPosts = posts;
+                                                    return eachThreadCallback();
+                                                });
+                                            }, function () {
+                                                return eachCategoryCallback();
+                                            });
+                                        });
+                                    }, function () {
+                                        console.log(categories);
+                                        d.resolve(categories);
+                                    });
+                                });
+                                return d.promise;
                             }]
                         }
                     }
@@ -1828,60 +1839,33 @@ var app = angular.module('app', [
                         controller: 'TeamCtrl',
                         templateUrl: tpl + 'views/frontend/teams.html',
                         resolve: {
-                            hsTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'hs',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
+                            teams: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({})
+                                .$promise
+                                .then(function (results) {
+                                    var teams = {
+                                        members     : results,
+                                        hsMembers   : [],
+                                        hotsMembers : [],
+                                        wowMembers  : [],
+                                        fifaMembers : [],
+                                        fgcMembers  : []
                                     }
-                                }).$promise;
-                            }],
-                            hotsTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'hots',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
+
+                                    for (var i=0; i != results.length; i++) {
+                                        console.log(results[i]);
+                                        var type = results[i].gameName;
+                                        switch (type) {
+                                            case 'hs' : teams.hsMembers.push(results[i]); break;
+                                            case 'hots' : teams.hotsMembers.push(results[i]); break;
+                                            case 'wow' : teams.wowMembers.push(results[i]); break;
+                                            case 'fifa' : teams.fifaMembers.push(results[i]); break;
+                                            case 'fgc' : teams.fgcMembers.push(results[i]); break;
+                                        }
                                     }
-                                }).$promise;
-                            }],
-                            wowTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'wow',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                }).$promise;
-                            }],
-                            fifaTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'fifa',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                }).$promise;
-                            }],
-                            fgcTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'fgc',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                }).$promise;
+
+                                    return teams;
+                                });
                             }]
                         }
                     }
@@ -3427,7 +3411,10 @@ var app = angular.module('app', [
                                                 relation: "authors",
                                                 scope: {
                                                     include: {
-                                                        relation: "user"
+                                                        relation: "user",
+                                                        scope: {
+                                                            fields: ["username"]
+                                                        }
                                                     }
                                                 }
                                             },
@@ -3436,7 +3423,10 @@ var app = angular.module('app', [
                                                 scope: {
                                                     include: [
                                                         {
-                                                            relation: "deck"
+                                                            relation: "deck",
+                                                            scope: {
+                                                                fields: ["name"]
+                                                            }
                                                         },
                                                         {
                                                             relation: "deckTech",
@@ -3445,7 +3435,10 @@ var app = angular.module('app', [
                                                                     relation: "cardTech",
                                                                     scope: {
                                                                         include: {
-                                                                            relation: "card"
+                                                                            relation: "card",
+                                                                            scope: {
+                                                                                fields: ["name"]
+                                                                            }
                                                                         }
                                                                     }
                                                                 }

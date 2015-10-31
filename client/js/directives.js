@@ -172,8 +172,12 @@ angular.module('app.directives', ['ui.load'])
                 };
 
                 function thirdPartyLogin(provider) {
-                  $cookies.put("redirectState", $state.current.name);
-                  window.location.replace("/login/"+provider);
+                    var redirectObj = {
+                        name: $state.current.name,
+                        params: $state.params
+                    }
+                    $cookies.put("redirectStateString", JSON.stringify(redirectObj));
+                    window.location.replace("/login/"+provider);
                 }
         }]
       }
