@@ -37,7 +37,7 @@
     "votes": {
       "type": ["object"]
     },
-    "votesScore": {
+    "voteScore": {
       "type": "number"
     },
     "viewCount": {

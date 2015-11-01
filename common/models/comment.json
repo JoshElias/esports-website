@@ -24,7 +24,7 @@
       "type": "date",
       "required": true
     },
-    "votesScore": {
+    "voteScore": {
       "type": "number"
     },
     "authorId": {

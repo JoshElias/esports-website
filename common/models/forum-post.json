@@ -34,7 +34,7 @@
     "slug": {
       "type": "object"
     },
-    "votesCount": {
+    "voteScore": {
       "type": "number"
     },
     "votes": {

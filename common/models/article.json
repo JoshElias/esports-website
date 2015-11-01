@@ -39,7 +39,7 @@
         "object"
       ]
     },
-    "votesScore": {
+    "voteScore": {
       "type": "number"
     },
     "isFeatured": {
