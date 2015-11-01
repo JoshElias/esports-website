@@ -3475,12 +3475,21 @@ var app = angular.module('app', [
                                     snapshot.tiers = [];
                                     _.each(snapshot.deckTiers, function (deck) {
                                         if (snapshot.tiers[deck.tier-1] === undefined) {
-                                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier };
+                                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier }; 
                                         }
 
                                         snapshot.tiers[deck.tier-1].decks.push(deck);
+                                    });
+                                    snapshot.tiers = _.filter(snapshot.tiers, function (tier) { return tier; });
+                                    
+                                    var deckNum = 0;
+                                    _.each(snapshot.tiers, function (tier, tIndex) {
+                                        tier.tier = tIndex+1
+                                        _.each(tier.decks, function(deck, dIndex) {
+                                            deck.tier = tIndex+1;
+                                            deck.ranks[0] = ++deckNum;
+                                        })
                                     })
-                                    console.log(snapshot.tiers);
                                     //BUILD TIERS//
 
                                     //BUILD MATCHES//
