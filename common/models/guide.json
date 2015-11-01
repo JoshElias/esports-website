@@ -2,6 +2,7 @@
   "name": "guide",
   "base": "PersistedModel",
   "idInjection": true,
+  "strict": true,
   "options": {
     "validateUpsert": true
   },
@@ -36,7 +37,7 @@
     "votes": {
       "type": ["object"]
     },
-    "votesScore": {
+    "voteScore": {
       "type": "number"
     },
     "viewCount": {

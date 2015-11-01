@@ -8315,13 +8315,10 @@ angular.module('app.controllers', ['ngCookies'])
             );
         }
     ])
-    .controller('ForumAddCtrl', ['$scope', '$location', '$window', '$compile', 'bootbox', 'UserService', 'AuthenticationService', 'SubscriptionService', 'thread', 'User', 'ForumPost', 'Util',
-        function ($scope, $location, $window, $compile, bootbox, UserService, AuthenticationService, SubscriptionService, thread, User, ForumPost, Util) {
+    .controller('ForumAddCtrl', ['$scope', '$state', '$window', '$compile', 'LoginModalService', 'bootbox', 'UserService', 'AuthenticationService', 'SubscriptionService', 'thread', 'User', 'ForumPost', 'Util',
+        function ($scope, $state, $window, $compile, LoginModalService, bootbox, UserService, AuthenticationService, SubscriptionService, thread, User, ForumPost, Util) {
             // thread
             $scope.thread = thread;
-            console.log('thread: ', $scope.thread);
-
-//        $scope.post = angular.copy(defaultPost);
 
             // summernote options
             $scope.options = {
@@ -8338,84 +8335,41 @@ angular.module('app.controllers', ['ngCookies'])
                 ]
             };
 
-            var box,
-                callback;
+            // create post
+            var box;
             $scope.addPost = function () {
                 if (!User.isAuthenticated()) {
-                    box = bootbox.dialog({
-                        title: 'Login Required',
-                        message: $compile('<div login-form></div>')($scope)
-                    });
-                    box.modal('show');
-                    callback = function () {
+                    LoginModalService.showModal('login', function () {
                         $scope.addPost();
-                    };
+                    });
                 } else {
                     // post
                     var newPost = {
                         title: $scope.post.title,
                         content: $scope.post.content,
-                        createdDate: new Date(),
+                        createdDate: new Date().toISOString(),
                         slug: {
                             url: Util.slugify($scope.post.title),
                             linked: true
                         },
                         forumThreadId: $scope.thread.id,
                         authorId: User.getCurrentId(),
-                        active: true,
                         votes: [],
                         votesCount: 0,
-                        views: 0,
+                        viewCount: 0
                     };
-//                ForumService.addPost($scope.thread, $scope.post).success(function (data) {
-//                    if (data.success) {
-//                        $location.path('/forum/' + $scope.thread.slug.url);
-//                    } else {
-//                        $scope.errors = data.errors;
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                    }
-//                });
 
-                    ForumPost.create(newPost).$promise.then(function (data) {
-                        if(data.success) {
-                            $scope.post.title = '';
-                            $scope.post.content = '';
-                            $location.path('/forum/' + $scope.thread.slug.url);
-                        } else {
-                            $scope.errors = data.errors;
-                            $scope.showError = true;
-                            $window.scrollTo(0, 0);
-                        }
+                    ForumPost.create(newPost).$promise
+                    .then(function (results) {
+                        return $state.transitionTo('app.forum.threads', { thread: $scope.thread.slug.url });
+                    })
+                    .catch(function () {
+                        $scope.errors = data.errors;
+                        $scope.showError = true;
+                        $window.scrollTo(0, 0);
                     });
                 }
             };
-
-            // login for modal
-            // TODO: move this to loopback
-//        $scope.login = function login(email, password) {
-//            if (email !== undefined && password !== undefined) {
-//                UserService.login(email, password).success(function(data) {
-//                    AuthenticationService.setLogged(true);
-//                    AuthenticationService.setAdmin(data.isAdmin);
-//                    AuthenticationService.setProvider(data.isProvider);
-//
-//                    SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-//                    SubscriptionService.setTsPlan(data.subscription.plan);
-//                    SubscriptionService.setExpiry(data.subscription.expiry);
-//
-//                    $window.sessionStorage.userID = data.userID;
-//                    $window.sessionStorage.username = data.username;
-//                    $window.sessionStorage.email = data.email;
-//                    $scope.app.settings.token = $window.sessionStorage.token = data.token;
-//                    box.modal('hide');
-//                    callback();
-//                }).error(function() {
-//                    $scope.showError = true;
-//                });
-//            }
-//        }
-
         }
     ])
     .controller('ForumPostCtrl', ['$scope', '$sce', '$compile', '$window', 'bootbox', 'forumPost', 'MetaService', 'User', 'ForumPost',
