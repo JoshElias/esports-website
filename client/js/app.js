@@ -1763,22 +1763,21 @@ var app = angular.module('app', [
                                             slug: true,
                                             title: true
                                         },
-                                        include: [
-                                            {
-                                                relation: 'forumPosts',
-                                                scope: {
-                                                    fields: ['id', 'slug', 'title', 'authorId', 'viewCount', 'createdDate'],
-                                                    include: {
-                                                        relation: 'author',
-                                                        scope: {
-                                                            fields: ['email', 'username']
-                                                        }
-                                                    },
-                                                    order: "createdDate DESC",
-                                                    limit: 20
-                                                }
+                                        include: {
+                                            relation: 'forumPosts',
+                                            scope: {
+                                                fields: ['id', 'slug', 'title', 'authorId', 'viewCount', 'createdDate'],
+                                                include: {
+                                                    relation: 'author',
+                                                    scope: {
+                                                        fields: ['email', 'username']
+                                                    }
+                                                },
+                                                order: "createdDate DESC",
+                                                offset: 0,
+                                                limit: 20
                                             }
-                                        ]
+                                        }
                                     }
                                 }).$promise
                                 .then(function (thread) {
