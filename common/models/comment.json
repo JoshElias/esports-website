@@ -23,7 +23,7 @@
       "type": "date",
       "required": true
     },
-    "votesCount": {
+    "votesScore": {
       "type": "number"
     },
     "authorId": {
