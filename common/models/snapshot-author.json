@@ -2,6 +2,7 @@
   "name": "snapshotAuthor",
   "base": "PersistedModel",
   "idInjection": true,
+  "strict": true,
   "options": {
     "validateUpsert": true
   },

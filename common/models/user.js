@@ -130,7 +130,7 @@ module.exports = function(User) {
                     user.createAccessToken("1209600", function(err, token) {
                       if (err) return fn(err);
                         token.__data.user = user;
-                        ctx.req.logIn(user, function(err) {
+                        req.logIn(user, function(err) {
                             if(err) return next(err);
 
                             res.cookie('access_token', token.id.toString(), {
