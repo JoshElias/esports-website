@@ -8300,7 +8300,7 @@ angular.module('app.controllers', ['ngCookies'])
                     ['misc', ['undo', 'redo']]
                 ]
             };
-
+            
             // create post
             var box;
             $scope.addPost = function () {
@@ -8351,6 +8351,14 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.metaservice.set($scope.post.title + ' - ' + $scope.thread.title);
 
             $scope.metaservice.setOg('https://tempostorm.com/forum/' + $scope.thread.slug.url + '/' + $scope.post.slug.url, $scope.post.title, $scope.post.content);
+
+            // inc post on load
+            $scope.post.viewCount++;
+            ForumPost.upsert($scope.post, function (results) {
+                console.log('new views: ', results.viewCount);
+            }, function (err) {
+                console.log(err);
+            });
 
 
             var defaultComment = {

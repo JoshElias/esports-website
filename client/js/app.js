@@ -1853,15 +1853,13 @@ var app = angular.module('app', [
                                         },
                                         fields: {
                                             id: true,
-                                            active: true,
                                             slug: true,
                                             title: true,
-                                            forumThread: true,
                                             authorId: true,
-                                            author: true,
                                             forumThreadId: true,
                                             comments: true,
                                             content: true,
+                                            viewCount: true,
                                             createdDate: true
                                         },
                                         include: [
