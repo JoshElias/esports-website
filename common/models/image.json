@@ -2,6 +2,7 @@
   "name": "image",
   "base": "Model",
   "idInjection": true,
+  "strict": true,
   "options": {
     "validateUpsert": true
   },
