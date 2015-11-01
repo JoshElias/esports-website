@@ -1816,32 +1816,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.add.html',
                         controller: 'ForumAddCtrl',
                         resolve: {
-//                            data: ['$stateParams', 'ForumService', function ($stateParams, ForumService) {
-//                                var thread = $stateParams.thread;
-//                                return ForumService.getThread(thread);
-//                            }]
                             thread: ['$stateParams', 'ForumThread', function($stateParams, ForumThread) {
                                 var thread = $stateParams.thread;
                                 return ForumThread.findOne({
                                     filter: {
                                         where: {
-                                            'slug.url': thread
+                                            'slug.url': thread,
+                                            isActive: true
                                         },
                                         fields: {
                                             id: true,
-                                            active: true,
-                                            description: true,
                                             slug: true,
                                             title: true
                                         }
-//                                        include: [
-//                                            {
-//                                                relation: 'forumPosts',
-//                                                scope: {
-//                                                    fields: ['id', 'active', 'slug', 'title']
-//                                                }
-//                                            }
-//                                        ]
                                     }
                                 }).$promise;
                             }]
@@ -1874,7 +1861,8 @@ var app = angular.module('app', [
                                             author: true,
                                             forumThreadId: true,
                                             comments: true,
-                                            content: true
+                                            content: true,
+                                            createdDate: true
                                         },
                                         include: [
                                             {
