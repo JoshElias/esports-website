@@ -79,7 +79,7 @@ var app = angular.module('app', [
                 console.log("To State:", toState);
                 console.log("From State", fromState);
                 console.log('State change failed!');
-//                $state.transitionTo('app.404');
+                $state.go('app.404');
             });
 
             var accessToken = getAuthCookie("access_token");
@@ -1671,6 +1671,11 @@ var app = angular.module('app', [
                                                 ForumThread.forumPosts({
                                                     id: thread.id,
                                                     filter: {
+                                                        fields: {
+                                                            title: true,
+                                                            slug: true,
+                                                            authorId: true
+                                                        },
                                                         include: {
                                                             relation: 'author',
                                                             scope: {
@@ -1685,7 +1690,11 @@ var app = angular.module('app', [
                                                     }
                                                 }).$promise.then(function (posts) {
                                                     thread.forumPosts = posts;
-                                                    return eachThreadCallback();
+                                                    ForumThread.forumPosts.count({ id: thread.id }).$promise
+                                                    .then(function (results) {
+                                                        thread.forumPostsCount = results.count;
+                                                        return eachThreadCallback();
+                                                    });
                                                 });
                                             }, function () {
                                                 return eachCategoryCallback();
@@ -1710,50 +1719,91 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/forum.threads.html',
                         controller: 'ForumThreadCtrl',
                         resolve: {
-                            forumPostCount: ['ForumPost', function(ForumPost) {
-                                return ForumPost.count().$promise;
-                            }],
-                            forumThread: ['$stateParams', 'ForumThread', function($stateParams, ForumThread) {
-                                var slug = $stateParams.thread;
-                                return ForumThread.findOne({
+                            forumPostCount: ['$q', '$stateParams', 'ForumThread', function($q, $stateParams, ForumThread) {
+                                var slug = $stateParams.thread,
+                                    d = $q.defer();
+                                
+                                ForumThread.findOne({
                                     filter: {
                                         where: {
-                                            'slug.url': slug
+                                            'slug.url': slug,
+                                            isActive: true
+                                        }
+                                    }
+                                }).$promise
+                                .then(function (thread) {
+                                    ForumThread.forumPosts.count({
+                                        id: thread.id
+                                    }).$promise
+                                    .then(function (count){
+                                        d.resolve(count);
+                                    })
+                                    .catch(function () {
+                                        $q.reject();
+                                    });
+                                })
+                                .catch(function () {
+                                    $q.reject();
+                                });
+                                
+                                return d.promise;
+                            }],
+                            forumThread: ['$q', '$stateParams', 'ForumThread', 'ForumPost', function($q, $stateParams, ForumThread, ForumPost) {
+                                var slug = $stateParams.thread,
+                                    d = $q.defer();
+                                
+                                ForumThread.findOne({
+                                    filter: {
+                                        where: {
+                                            'slug.url': slug,
+                                            isActive: true
                                         },
-                                        // TODO: Fix the order using `order: "createdDate DESC",`
                                         fields: {
                                             id: true,
-                                            active: true,
-                                            description: true,
                                             slug: true,
-                                            title: true,
+                                            title: true
                                         },
                                         include: [
                                             {
                                                 relation: 'forumPosts',
                                                 scope: {
-                                                    order: "createdDate DESC",
-                                                    limit: 20,
-                                                    fields: ['id', 'active', 'description', 'slug', 'title', 'authorId', 'views', 'createdDate'],
-                                                    include: [
-                                                        {
-                                                            relation: 'comments',
-                                                            scope: {
-                                                                fields: ['id', 'active', 'content', 'createdDate', 'slug', 'title', 'views', 'votes', 'votesCount']
-                                                            }
-                                                        },
-                                                        {
-                                                            relation: 'author',
-                                                            scope: {
-                                                                fields: ['id', 'active', 'email', 'username']
-                                                            }
+                                                    fields: ['id', 'slug', 'title', 'authorId', 'viewCount', 'createdDate'],
+                                                    include: {
+                                                        relation: 'author',
+                                                        scope: {
+                                                            fields: ['email', 'username']
                                                         }
-                                                    ]
+                                                    },
+                                                    order: "createdDate DESC",
+                                                    limit: 20
                                                 }
                                             }
                                         ]
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (thread) {
+                                    
+                                    async.each(thread.forumPosts, function (post, eachCallback) {
+                                        ForumPost.comments.count({
+                                            id: post.id
+                                        }).$promise
+                                        .then(function (count) {
+                                            post.commentCount = count.count;
+                                            return eachCallback();
+                                        })
+                                        .catch(function () {
+                                            $q.reject();
+                                        });
+                                    }, function () {
+                                        return d.resolve(thread);
+                                    });
+                                    
+                                })
+                                .catch(function () {
+                                    $q.reject();
+                                });
+                                
+                                return d.promise;
                             }]
                         }
                     }
