@@ -22,7 +22,7 @@
                             <a href="./forum/{{thread.slug.url}}/{{thread.forumPosts[0].slug.url}}" class="title">{{thread.forumPosts[0].title}}</a>
                             <div class="latest-info clearfix">
                                 <div class="author">
-                                    <a href="#" class="avatar hidden-xs"><img gravatar-src-once="thread.forumPosts[0].author.email" alt="{{thread.forumPosts[0].author.username}}" /></a><a href="./user/{{thread.posts[0].author.username}}">@{{thread.forumPosts[0].author.username}}</a>
+                                    <a href="./user/{{thread.forumPosts[0].author.username}}" class="avatar hidden-xs"><img gravatar-src-once="thread.forumPosts[0].author.email" alt="{{thread.forumPosts[0].author.username}}" /></a><a href="./user/{{thread.forumPosts[0].author.username}}">@{{thread.forumPosts[0].author.username}}</a>
                                 </div>
                                 <div class="ago pull-right">
                                     <span am-time-ago="thread.forumPosts[0].createdDate"></span>
@@ -34,7 +34,7 @@
                         </div>
                     </td>
                     <td class="posts hidden-xs">
-                        {{thread.forumPosts.length}}
+                        {{thread.forumPostsCount}}
                     </td>
                 </tr>
             </tbody>

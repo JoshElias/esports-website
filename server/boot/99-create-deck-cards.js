@@ -26,7 +26,7 @@ module.exports = function(server) {
                             deckId: deck.id.toString(),
                             cardQuantity: card.qty
                         }, function(err, newDeckCard) {
-                            if(err) console.log(err);git st
+                            if(err) console.log(err);
                             else console.log("successfully added DeckCard:", newDeckCard.id);
                             innerCallback(err);
                         });
@@ -37,5 +37,5 @@ module.exports = function(server) {
             if(err) console.log("ERR creating card decks:", err);
             else console.log("Donerino");
         });
-        */
+*/
 };
