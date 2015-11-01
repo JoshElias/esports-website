@@ -8183,14 +8183,13 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('ForumCategoryCtrl', ['$scope', 'forumCategories', 'MetaService',
         function ($scope, forumCategories, MetaService) {
             $scope.categories = forumCategories;
-            console.log('categories: ', $scope.categories);
             $scope.metaservice.setOg('https://tempostorm.com/forum');
         }
     ])
     .controller('ForumThreadCtrl', ['$scope', '$q', '$timeout', 'Pagination', 'forumThread', 'MetaService', 'AjaxPagination', 'ForumPost', 'forumPostCount',
         function ($scope, $q, $timeout, Pagination, forumThread, MetaService, AjaxPagination, ForumPost, forumPostCount) {
+            $scope.perpage = 20;
             $scope.total = forumPostCount.count;
-            console.log('thread: ', forumThread);
             $scope.thread = forumThread;
 
             $scope.metaservice = MetaService;
@@ -8203,56 +8202,70 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
 
                 var options = {},
-                    countOptions = {};
+                    countOptions = {
+                        where: {
+                            forumThreadId: $scope.thread.id
+                        }
+                    };
 
                 options.filter = {
-                    isActive: true,
+                    where: {
+                        forumThreadId: $scope.thread.id
+                    },
                     fields: {
                         id: true,
-                        active: true,
-                        description: true,
                         slug: true,
                         title: true,
                         authorId: true,
-                        views: true,
+                        viewCount: true,
                         createdDate: true
                     },
-                    include: [
-                        {
-                            relation: 'comments',
-                            scope: {
-                                fields: ['id', 'active', 'content', 'createdDate', 'slug', 'title', 'views', 'votes', 'votesCount']
-                            }
-                        },
-                        {
-                            relation: 'author',
-                            scope: {
-                                fields: ['id', 'active', 'email', 'username']
-                            }
+                    include: {
+                        relation: 'author',
+                        scope: {
+                            fields: ['email', 'username']
                         }
-                    ],
+                    },
                     order: "createdDate DESC",
                     skip: ((page*perpage)-perpage),
                     limit: 20
                 };
-
-                // counts the amount of items in the db
-                ForumPost.count(countOptions, function (count) {
-                    ForumPost.find(options).$promise.then(function (data) {
-                        console.log('data: ', data);
-                        $scope.forumPagination.total = count.count;
-                        $scope.forumPagination.page = page;
-                        $scope.forumPagination.perpage = perpage;
-
-                        $timeout(function () {
-                            $scope.thread.forumPosts = data;
-                            $scope.fetching = false;
-                            if (callback) {
-                                return callback(count.count);
-                            }
+                
+                async.waterfall([
+                    function (seriesCallback) {
+                        ForumPost.count(countOptions).$promise
+                        .then(function (postCount) {
+                            return seriesCallback(null, postCount);
                         });
-                    });
-                });
+                    },
+                    function (postCount, seriesCallback) {
+                        ForumPost.find(options).$promise
+                        .then(function (posts) {
+                            return seriesCallback(null, postCount, posts);
+                        });
+                    },
+                    function (postCount, posts, seriesCallback) {
+                        async.each(posts, function (post, eachCallback) {
+                            ForumPost.comments.count({ id: post.id }).$promise
+                            .then(function (commentCount) {
+                                post.commentCount = commentCount.count;
+                                return eachCallback();
+                            });
+                        }, function () {
+                            $scope.forumPagination.total = postCount.count;
+                            $scope.forumPagination.page = page;
+                            $scope.forumPagination.perpage = perpage;
+                            
+                            $timeout(function () {
+                                $scope.thread.forumPosts = posts;
+                                $scope.fetching = false;
+                                if (callback) {
+                                    return callback(postCount.count);
+                                }
+                            });
+                        });
+                    }
+                ]);
             }
 
             // page flipping

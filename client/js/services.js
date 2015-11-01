@@ -1048,7 +1048,6 @@ angular.module('app.services', [])
             total: total || 0,
             loading: false,
             callback: function (newTotal) {
-                console.log(newTotal);
                 this.loading = false;
                 this.total = newTotal;
             }
