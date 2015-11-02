@@ -8549,7 +8549,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.perpage = 20;
             $scope.total = forumPostCount.count;
             $scope.thread = forumThread;
-
+            
+            console.log(forumThread);
+            
             $scope.metaservice = MetaService;
             $scope.metaservice.set($scope.thread.title + ' - Forum');
 
@@ -8658,7 +8660,7 @@ angular.module('app.controllers', ['ngCookies'])
                     ['misc', ['undo', 'redo']]
                 ]
             };
-
+            
             // create post
             var box;
             $scope.addPost = function () {
@@ -8679,7 +8681,7 @@ angular.module('app.controllers', ['ngCookies'])
                         forumThreadId: $scope.thread.id,
                         authorId: User.getCurrentId(),
                         votes: [],
-                        votesCount: 0,
+                        voteScore: 0,
                         viewCount: 0
                     };
 
@@ -8700,7 +8702,6 @@ angular.module('app.controllers', ['ngCookies'])
         function ($scope, $sce, $compile, $window, bootbox, forumPost, MetaService, User, ForumPost) {
 
             $scope.post = forumPost;
-            console.log('post: ', $scope.post);
             $scope.ForumService = ForumPost;
 
             $scope.thread = $scope.post.forumThread;
@@ -8710,6 +8711,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.metaservice.setOg('https://tempostorm.com/forum/' + $scope.thread.slug.url + '/' + $scope.post.slug.url, $scope.post.title, $scope.post.content);
 
+            // inc post on load
+            $scope.post.viewCount++;
+            ForumPost.upsert($scope.post);
 
             var defaultComment = {
                 comment: ''
@@ -8719,97 +8723,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.post.getContent = function () {
                 return $sce.trustAsHtml($scope.post.content);
             };
-
-            var box,
-                callback;
-            $scope.commentPost = function () {
-                if (!User.isAuthenticated()) {
-                    box = bootbox.dialog({
-                        title: 'Login Required',
-                        message: $compile('<div login-form></div>')($scope)
-                    });
-                    box.modal('show');
-                    callback = function () {
-                        $scope.commentPost();
-                    };
-                } else {
-                    //TODO: Not sure if this is being used anymore as Comment Directive taking care of Comments
-                    ForumService.addComment($scope.post, $scope.comment).success(function (data) {
-                        if (data.success) {
-                            $scope.post.comments.push(data.comment);
-                            $scope.comment.comment = '';
-                            updateVotes();
-                        }
-                    });
-                }
-            };
-
-            if (User.isAuthenticated()) {
-                updateVotes();
-            }
-            function updateVotes() {
-                $scope.post.comments.forEach(checkVotes);
-
-                function checkVotes (comment) {
-                    var vote = comment.votes.filter(function (vote) {
-                        return (User.getCurrentId() === vote.userID);
-                    })[0];
-
-                    if (vote) {
-                        comment.voted = vote.direction;
-                    }
-                }
-            }
-
-            $scope.voteComment = function (direction, comment) {
-                if (!User.isAuthenticated()) {
-                    box = bootbox.dialog({
-                        title: 'Login Required',
-                        message: $compile('<div login-form></div>')($scope)
-                    });
-                    box.modal('show');
-                    callback = function () {
-                        $scope.voteComment(direction, comment);
-                    };
-                } else {
-                    if (comment.author.id === User.getCurrentId()) {
-                        bootbox.alert("You can't vote for your own content.");
-                        return false;
-                    }
-                    // TODO: Use comment service?
-                    VoteService.voteComment(direction, comment).then(function (data) {
-                        if (data.success) {
-                            comment.voted = direction;
-                            comment.votesCount = data.votesCount;
-                        }
-                    });
-                }
-            };
-
-            // login for modal
-            // TODO: Use loopback services
-            $scope.login = function login(email, password) {
-                if (email !== undefined && password !== undefined) {
-                    UserService.login(email, password).success(function(data) {
-                        AuthenticationService.setLogged(true);
-                        AuthenticationService.setAdmin(data.isAdmin);
-                        AuthenticationService.setProvider(data.isProvider);
-
-                        SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                        SubscriptionService.setTsPlan(data.subscription.plan);
-                        SubscriptionService.setExpiry(data.subscription.expiry);
-
-                        $window.sessionStorage.userID = data.userID;
-                        $window.sessionStorage.username = data.username;
-                        $window.sessionStorage.email = data.email;
-                        $scope.app.settings.token = $window.sessionStorage.token = data.token;
-                        box.modal('hide');
-                        callback();
-                    }).error(function() {
-                        $scope.showError = true;
-                    });
-                }
-            }
         }
     ])
     .controller('AdminForumStructureListCtrl', ['$scope', 'bootbox', 'AlertService', 'AdminForumService', 'data',
@@ -12110,9 +12023,6 @@ angular.module('app.controllers', ['ngCookies'])
             var box;
             $scope.pollsMain = dataPollsMain;
             $scope.pollsSide = dataPollsSide;
-
-            console.log('polls main: ', dataPollsMain);
-            console.log('polls side: ', dataPollsSide);
 
             $scope.toggleItem = function (poll, item) {
                 if (!poll.votes) { poll.votes = []; }
