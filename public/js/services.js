@@ -525,7 +525,8 @@ angular.module('app.services', [])
             return [
                 { name: 'Tempo Storm', value: 'ts' },
                 { name: 'Hearthstone', value: 'hs' },
-                { name: 'Heroes of the Storm', value: 'hots' }
+                { name: 'Heroes of the Storm', value: 'hots' },
+                { name: 'Overwatch', value: 'overwatch' }
             ];
         },
         getAllArticles: function () {
