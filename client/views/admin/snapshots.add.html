@@ -44,31 +44,31 @@
             <div class="col-sm-10 wrapper-none">
                 <ul class="list-group m-b-md" ng-if="snapshot.authors.length!=0">
                     <li ng-repeat="a in snapshot.authors" class="list-group-item">
-                        {{a.user.username}}<span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#{{a.user._id}}" aria-expanded="false" aria-controls="{{a.user._id}}"><i class="fa fa-edit"></i></button><button ng-click="removeAuthor(a.user)"><i class="fa fa-close"></i></button></span>
-                    <div class="collapse clearfix" id="{{a.user._id}}">
-                        <div class="form-group m-t-md">
-                            <label for="authorDescription_{{a.user.username}}" class="col-sm-1 control-label">Description</label>
-                            <div class="col-sm-10">
-                                <textarea class="form-control" name="authorDescription_{{a.user.username}}" ng-model="a.description"></textarea>
+                        {{a.user.username}}<span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#{{a.user.id}}" aria-expanded="false" aria-controls="{{a.user.id}}"><i class="fa fa-edit"></i></button><button ng-click="removeAuthor(a.user)"><i class="fa fa-close"></i></button></span>
+                        <div class="collapse clearfix" id="{{a.user.id}}">
+                            <div class="form-group m-t-md">
+                                <label for="authorDescription_{{a.user.username}}" class="col-sm-1 control-label">Description</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" name="authorDescription_{{a.user.username}}" ng-model="a.description"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="authorClasses_{{a.user.username}}" class="col-sm-1 control-label">Class(es) of Expertise</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="authorClasses{{a.user.username}}" ng-model="a.expertClasses" multiple>
+                                      <option value="druid">Druid</option>
+                                      <option value="hunter">Hunter</option>
+                                      <option value="mage">Mage</option>
+                                      <option value="paladin">Paladin</option>
+                                      <option value="priest">Priest</option>
+                                      <option value="rogue">Rogue</option>
+                                      <option value="shaman">Shaman</option>
+                                      <option value="warlock">Warlock</option>
+                                      <option value="warrior">Warrior</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="authorClasses_{{a.user.username}}" class="col-sm-1 control-label">Class(es) of Expertise</label>
-                            <div class="col-sm-10">
-                                <select class="form-control" name="authorClasses{{a.user.username}}" ng-model="a.klass" multiple>
-                                  <option value="druid">Druid</option>
-                                  <option value="hunter">Hunter</option>
-                                  <option value="mage">Mage</option>
-                                  <option value="paladin">Paladin</option>
-                                  <option value="priest">Priest</option>
-                                  <option value="rogue">Rogue</option>
-                                  <option value="shaman">Shaman</option>
-                                  <option value="warlock">Warlock</option>
-                                  <option value="warrior">Warrior</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
                     </li>
                 </ul>
                 <button class="btn btn-green btn-rounded m-r-sm" ng-click="openAddBox('author')"><i class="fa fa-plus"></i> Add Author</button>
@@ -128,23 +128,22 @@
                     <div id="collapse{{t.tier}}" class="panel-body collapse wrapper-none"> 
                         <ul class="list-group m-b-none" dnd-list="t.decks">
                             <li class="list-group-item" ng-if="t.decks == 0">There are no decks selected yet!</li>
-<!--                            -->
-                            <li class="list-group-item" ng-repeat="d in t.decks" ng-if="t.decks.length != 0" >
-                                <span class="badge pull-left">{{d.rank.current}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index, d)" dnd-disable-if="t.decks.length < 1">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.rank.current}}" aria-expanded="false" aria-controls="deckrank{{d.rank.current}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeckPrompt(d.deck)"><i class="fa fa-close"></i></button></span> 
-                                <div class="collapse" id="deckrank{{d.rank.current}}">
+                            <li class="list-group-item" ng-repeat="d in t.decks" ng-if="t.decks.length != 0">
+                                <span class="badge pull-left">{{d.ranks[0]}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index, d)" dnd-disable-if="t.decks.length < 2">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.ranks[0]}}" aria-expanded="false" aria-controls="deckrank{{d.ranks[0]}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeckPrompt(d.deck, d)"><i class="fa fa-close"></i></button></span> 
+                                <div class="collapse" id="deckrank{{d.ranks[0]}}">
                                     <div class="form-group wrapper-md">
                                         
                                         <div class="clearfix m-b-md">
                                             <label for="deck.name" class="control-label col-sm-1">Deck Name</label>
                                             <div class="col-sm-9">
-                                                <input class="form-control" name="dname" ng-model="d.name"></input>
+                                                <input type="text" class="form-control" name="dname" ng-model="d.name"></input>
                                             </div>
                                         </div>
                                         
                                         <div class="clearfix m-b-md">
                                             <label for="deck.explanation" class="control-label col-sm-1">Explanation</label>
                                             <div class="col-sm-9">
-                                                <textarea class="form-control" name="explanation" ng-model="d.explanation"></textarea>
+                                                <textarea class="form-control" name="explanation" ng-model="d.description"></textarea>
                                             </div>
                                         </div>
                                         
@@ -159,7 +158,7 @@
                                             <label for="deck.weeklyTrend" class="control-label col-sm-1">Weekly Trend</label>
                                             <div class="col-sm-9">
                                                 <div class="col-sm-1" ng-repeat="trend in trends(trendsLength) track by $index">
-                                                    <input class="form-control wrapper-none" type="number" min="0" ng-model="d.rank.last[$index]">
+                                                    <input class="form-control wrapper-none" type="number" ng-model="d.ranks[1+$index]">
                                                     <span># {{snapshot.snapNum - (1+$index)}}</span>
                                                 </div>
                                             </div>
@@ -171,10 +170,11 @@
                                                 <a href="#" ng-click="addTech(d,t)"><i class="fa fa-plus m-t-sm"></i> Add Tech</a>
                                             </div>
                                             <div class="col-sm-9">
-                                                <div class="col-sm-4" ng-repeat="tech in d.tech">
+                                                <div class="col-sm-4" ng-repeat="tech in d.deckTech">
 
                                                     
                                                     <div class="panel panel-default">
+                                                        
                                                         <div class="panel-heading">
                                                             <div class="input-group">
                                                                 <span class="input-group-addon">vs</span>
@@ -185,10 +185,10 @@
                                                             </div>
                                                         </div>
                                                         <ul class="list-group">
-                                                            <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cards | orderBy : c.card._id" class="list-group-item">
-                                                                <button class="cardBtn" ng-click="( c.toss == false ) ? c.toss = true : c.toss = false"><i class="fa" ng-class="{ 'fa-minus' : c.toss == true, 'fa-plus' : c.toss == false }"></i></button>
+                                                            <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cardTech | orderBy : c.card.id" class="list-group-item">
+                                                                 <button class="cardBtn" ng-click="( c.toss == false ) ? c.toss = true : c.toss = false"><i class="fa" ng-class="{ 'fa-minus' : c.toss == true, 'fa-plus' : c.toss == false }"></i></button>
                                                                 {{c.card.name}}
-                                                                <button class="pull-right cardBtnStrip cardBtn" ng-click="removeTechCard(tech, c)"><i class="fa fa-close"></i></button>
+                                                                <button class="pull-right cardBtn" ng-click="removeTechCard(tech, c)"><i class="fa fa-close"></i></button>
                                                                 <button class="pull-right btn btn-small cardBtn" ng-class="{ 'green' : c.both && !c.toss, 'danger' : c.both && c.toss }" ng-click="setBoth(c)">2</button>
                                                             </li>
                                                             <li class="list-group-item">
@@ -205,12 +205,12 @@
                                         <div ng-if="t.tier < 3">
                                             <label class="control-label col-sm-1">Matches</label>
                                             <div class="col-sm-9">
-                                                <div class="col-sm-6" ng-repeat="match in getMatches(d.deck._id) track by $index"> 
-                                                    <div ng-if="d.deck._id != match.against._id">
+                                                <div class="col-sm-6" ng-repeat="match in getMatches(d.deck.id) track by $index"> 
+                                                    <div ng-if="d.deck.id != match.againstDeck.id">
                                                         <div class="panel panel-default wrapper-none">
                                                             <div class="panel-heading">
                                                                 <p class="m-b-none">{{d.deck.name}} vs</p>
-                                                                <p class="m-b-none bold-text ell">{{match.against.name}}</p>
+                                                                <p class="m-b-none bold-text ell">{{match.againstDeck.name}}</p>
                                                             </div>
                                                             <div class="panel-body">
                                                                 <div class="col-sm-12 wrapper-none">
@@ -224,11 +224,11 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div ng-if="d.deck._id == match.against._id">
+                                                    <div ng-if="d.deck.id == match.againstDeck.id">
                                                         <div class="panel panel-default wrapper-none">
                                                             <div class="panel-heading">
                                                                 <p class="m-b-none">{{d.deck.name}} vs</p>
-                                                                <p class="m-b-none bold-text ell">{{match.for.name}}</p>
+                                                                <p class="m-b-none bold-text ell">{{match.forDeck.name}}</p>
                                                             </div>
                                                             <div class="panel-body">
                                                                 <div class="col-sm-12 wrapper-none">
@@ -245,8 +245,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        
                                     </div>
                                 </div>
                             </li>

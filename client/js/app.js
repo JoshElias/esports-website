@@ -485,7 +485,7 @@ var app = angular.module('app', [
 //                    }],
                     data: ['Snapshot', function (Snapshot) {
                         return Snapshot.find({
-
+                            order: "createdDate ASC"
                         }).$promise;
                     }],
 //                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
@@ -3455,8 +3455,105 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/snapshots.add.html',
                         controller: 'AdminSnapshotAddCtrl',
                         resolve: {
-                            dataPrevious: ['AdminSnapshotService', function (AdminSnapshotService){
-                                return AdminSnapshotService.getLatest();
+                            dataPrevious: ['Snapshot', function (Snapshot) {
+                                return Snapshot.findOne({
+                                    filter: {
+                                        limit: 1,
+                                        order: "createdDate ASC",
+                                        fields: {
+//                                            tiers: false
+                                        },
+                                        include: [
+                                            {
+                                                relation: "authors",
+                                                scope: {
+                                                    include: {
+                                                        relation: "user",
+                                                        scope: {
+                                                            fields: ["username"]
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                relation: "deckTiers",
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: "deck",
+                                                            scope: {
+                                                                fields: ["name"]
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: "deckTech",
+                                                            scope: {
+                                                                include: {
+                                                                    relation: "cardTech",
+                                                                    scope: {
+                                                                        include: {
+                                                                            relation: "card",
+                                                                            scope: {
+                                                                                fields: ["name"]
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: "deckMatchups",
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: "forDeck",
+                                                            scope: {
+                                                                fields: ["name"]
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: "againstDeck",
+                                                            scope: {
+                                                                fields: ["name"]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise
+                                .then(function (snapshot) {
+                                    //BUILD TIERS//
+                                    snapshot.tiers = [];
+                                    _.each(snapshot.deckTiers, function (deck) {
+                                        if (snapshot.tiers[deck.tier-1] === undefined) {
+                                            snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier }; 
+                                        }
+                                        
+                                        snapshot.tiers[deck.tier-1].decks.push(deck);
+                                    });
+                                    snapshot.tiers = _.filter(snapshot.tiers, function (tier) { return tier; });
+                                    
+                                    var deckNum = 0;
+                                    _.each(snapshot.tiers, function (tier, tIndex) {
+                                        tier.tier = tIndex+1
+                                        _.each(tier.decks, function(deck, dIndex) {
+                                            deck.tier = tIndex+1;
+                                            deck.ranks[0] = ++deckNum;
+                                        })
+                                    })
+                                    //BUILD TIERS//
+
+                                    //BUILD MATCHES//
+                                    snapshot.matches = snapshot.deckMatchups;
+
+                                    return snapshot;
+                                });
                             }]
                         }
                     }
