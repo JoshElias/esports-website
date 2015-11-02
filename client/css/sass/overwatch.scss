@@ -79,7 +79,7 @@ $pos-y: 4px;
                 
                 @each $abilityName in map-get($ability, class) {
                     
-                &.#{$abilityName} { background-position: #{$incPos}px -10px; }
+                &.#{$abilityName} { background-position: #{$incPos}px -12px; }
 
             }
         }
