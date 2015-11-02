@@ -3,10 +3,9 @@ module.exports = function(OverwatchHero) {
   var utils = require("../../lib/utils");
 
     OverwatchHero.observe("before save", function(ctx, next) {
-        console.log('ctx: ',ctx);
       async.series([
         function(seriesCallback) {
-          utils.validateYoutubeId(ctx.instance, seriesCallback)
+          utils.validateYoutubeId(ctx, seriesCallback)
         },
         function(seriesCallback) {
           assignOrderNum(ctx, seriesCallback);
@@ -16,12 +15,13 @@ module.exports = function(OverwatchHero) {
 
     function assignOrderNum(ctx, finalCallback) {
       if(!ctx.isNewInstance) finalCallback();
+      var data = ctx.data || ctx.instance;
 
       // Assign the orderNum to the current count of heroes
       OverwatchHero.count(function(err, count) {
           if(err) return finalCallback(err);
 
-          ctx.instance.orderNum = count;
+          data.orderNum = count;
           finalCallback();
       });
     }

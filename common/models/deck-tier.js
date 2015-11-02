@@ -4,7 +4,7 @@ module.exports = function(DeckTier) {
   var foreignKeys = ["deckId", "snapshotId"];
   DeckTier.observe("persist", function(ctx, next) {
 
-    utils.convertObjectIds(foreignKeys, ctx.data);
+    utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
 };

@@ -4,7 +4,7 @@ module.exports = function(Mulligan) {
   var foreignKeys = ["deckId"];
   Mulligan.observe("persist", function(ctx, next) {
 
-    utils.convertObjectIds(foreignKeys, ctx.data);
+    utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
 };

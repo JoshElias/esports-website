@@ -4,7 +4,7 @@ module.exports = function(DeckTech) {
   var foreignKeys = ["deckId", "deckTierId"];
   DeckTech.observe("persist", function(ctx, next) {
 
-    utils.convertObjectIds(foreignKeys, ctx.data);
+    utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
 };

@@ -138,7 +138,7 @@ module.exports = function(server) {
 			async.eachSeries(snapshot.oldAuthors, function(author, seriesCallback) {
 				try {
 					var snapshotAuthor = {
-						userId: author.user.toString(),
+						authorId: author.user.toString(),
 						description: author.description,
 						expertClasses: author.klass,
 						snapshotId: snapshot.id.toString()

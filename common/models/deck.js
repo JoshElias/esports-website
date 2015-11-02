@@ -1,15 +1,15 @@
 module.exports = function(Deck) {
   var utils = require("../../lib/utils");
 
+
   Deck.observe("before save", function(ctx, next) {
-    var data = ctx.instance || ctx.data;
-    utils.validateYoutubeId(data, next);
+    utils.validateYoutubeId(ctx, next);
   });
 
   var foreignKeys = ["authorId"];
   Deck.observe("persist", function(ctx, next) {
-    var data = ctx.instance || ctx.data;
-    utils.convertObjectIds(foreignKeys, data);
+
+    utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
 };
