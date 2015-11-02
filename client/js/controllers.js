@@ -5060,11 +5060,10 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'LoopBackAuth', 'userInfo',
-        function ($state, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, LoopBackAuth, userInfo) {
+    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User) {
             // find me easy
             console.log('init deck: ',deck);
-            console.log('user serv: ', LoopBackAuth);
 
             $scope.cards = {
                 neutral: neutralCardsList,
@@ -5113,8 +5112,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.getActiveDeckName = function () {
-                return Hearthstone.heroNames[deck.playerClass.slice(0,1).toUpperCase() + deck.playerClass.substr(1)][$scope.isSecondary(deck.playerClass)];
+                return Hearthstone.heroNames[deck.playerClass.slice(0,1).toUpperCase() + deck.playerClass.substr(1)][$scope.isSecondary(deck.playerClass.toLowerCase())];
             }
+            
+//            $scope.getActiveDeckName = function () {
+//                return Hearthstone.heroNames[$stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1)][$scope.isSecondary($stateParams.playerClass)];
+//            }
 
             // steps
             $scope.stepDesc = {
@@ -6619,6 +6622,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getActiveDeckName = function () {
                 return Hearthstone.heroNames[$stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1)][$scope.isSecondary($stateParams.playerClass)];
             }
+            
+            var test = $scope.getActiveDeckName();
+            console.log('active deck: ',test);
 
             // steps
             $scope.stepDesc = {

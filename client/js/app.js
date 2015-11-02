@@ -2608,21 +2608,6 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.edit.html',
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
-                            userInfo: ['User', function(User) {
-                                var userId = User.getCurrentId();
-                                console.log('userId: ', userId);
-                                
-                                User.findById(userId)
-                                .$promise
-                                .then(function (data) {
-                                    console.log('User data: ', data);
-                                    return data;
-                                })
-                                .catch(function (err) {
-                                    if(err) console.log('error: ',err);
-                                });
-                            }],
-                            
                             resolveParams: [function() {
                                 return {
                                     page: 1,
