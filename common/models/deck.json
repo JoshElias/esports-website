@@ -43,6 +43,9 @@
       "type": "string",
       "required": true
     },
+    "heroName": {
+      "type": "string"
+    },
     "playerClass": {
       "type": "string",
       "required": true
