@@ -379,7 +379,7 @@ module.exports = function(User) {
         return cb.promise;
     };
 
-
+/*
     User.setSubscriptionPlan = function(data, cb) {
         cb = cb || utils.createPromiseCallback();
 
@@ -414,7 +414,7 @@ module.exports = function(User) {
         }
     }
 
-
+*/
 
     User.remoteMethod(
         'changePassword',
@@ -450,7 +450,7 @@ module.exports = function(User) {
         }
     );
 
-
+/*
     // Subscription
     User.remoteMethod(
         'setSubscriptionPlan',
@@ -482,7 +482,7 @@ module.exports = function(User) {
         }
     );
 
-
+*/
 
 /*
   // Filter out sensitive user information depending on ACL
