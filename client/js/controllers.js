@@ -2291,7 +2291,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             function removeCardTechAJAX(id, obj, cb) {
                 if (!obj.id) { return cb(); }
-                
+
                 if (obj.cardTech) {
                     DeckTech.cardTech.destroyAll({
                         id: id
@@ -2762,13 +2762,13 @@ angular.module('app.controllers', ['ngCookies'])
                             removeDeckAJAX(tierDeck.id, deck, function () {
                                 var t = $scope.snapshot.tiers.indexOf(tier);
                                 console.log(t);
-                                
+
                                 if(indexesToRemove[t] == undefined) {
                                     indexesToRemove[t] = [];
                                 }
-                                
+
                                 indexesToRemove[t].push(tier.decks.indexOf(deck));
-                                
+
 //                                tier.decks.splice(k, 1);
                                 return eachCb2();
                             });
@@ -3741,7 +3741,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.wowMembers = wowTeam;
             $scope.fgcMembers = fgcTeam;
             $scope.fifaMembers = fifaTeam;
-            
+
 
             if ($location.hash()) {
                 $timeout(function () {
@@ -8191,9 +8191,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.perpage = 20;
             $scope.total = forumPostCount.count;
             $scope.thread = forumThread;
-            
+
             console.log(forumThread);
-            
+
             $scope.metaservice = MetaService;
             $scope.metaservice.set($scope.thread.title + ' - Forum');
 
@@ -8232,7 +8232,7 @@ angular.module('app.controllers', ['ngCookies'])
                     skip: ((page*perpage)-perpage),
                     limit: 20
                 };
-                
+
                 async.waterfall([
                     function (seriesCallback) {
                         ForumPost.count(countOptions).$promise
@@ -8257,7 +8257,7 @@ angular.module('app.controllers', ['ngCookies'])
                             $scope.forumPagination.total = postCount.count;
                             $scope.forumPagination.page = page;
                             $scope.forumPagination.perpage = perpage;
-                            
+
                             $timeout(function () {
                                 $scope.thread.forumPosts = posts;
                                 $scope.fetching = false;
@@ -8302,7 +8302,7 @@ angular.module('app.controllers', ['ngCookies'])
                     ['misc', ['undo', 'redo']]
                 ]
             };
-            
+
             // create post
             var box;
             $scope.addPost = function () {
@@ -8331,8 +8331,9 @@ angular.module('app.controllers', ['ngCookies'])
                     .then(function (results) {
                         return $state.transitionTo('app.forum.threads', { thread: $scope.thread.slug.url });
                     })
-                    .catch(function () {
-                        $scope.errors = data.errors;
+                    .catch(function (HttpResponse) {
+                        console.log("err from froum post:", HttpResponse);
+                        $scope.errors = HttpResponse.data;
                         $scope.showError = true;
                         $window.scrollTo(0, 0);
                     });

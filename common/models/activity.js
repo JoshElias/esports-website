@@ -1,19 +1,10 @@
 module.exports = function(Activity) {
+  var utils = require("../../lib/utils");
 
-	/*
-	// profileActivity
-	User.findId(user.id, {
-		include : {
-			activities : [
-				{articleId: ["title", "slug", "active"]},
-				{deckId: ["name", "slug", "public"]},
-				{forumPostId: ["title", "slug", "thread"]},
-				{hotsGuideId: ["name", "slug", "public"]},
-				{snapshotId: ["title", "slug", "snapNum"]}
-			]
-		},
-		limit: limit,
-		skip: skip
-	})
-	*/
+  var foreignKeys = ["authorId", "articleId",  "deckId", "snapshotId", "forumPostId"];
+  Activity.observe("persist", function(ctx, next) {
+
+    utils.convertObjectIds(foreignKeys, ctx.data);
+    next();
+  });
 };
