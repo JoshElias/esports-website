@@ -4626,54 +4626,11 @@ p.white { color: #FFF; }
 
 
 
-.hero-back { transition: background .25s ease-in-out; }
-.hero-back.default { background: rgba(0,0,0,0) center center no-repeat; }
 
+
+/* -------------------------------- */
 /* .hero-back.hero moved to hots-heroes.scss
-
-.hero-back.abathur { background: url('../img/hots/heroes/bgs/abathur.png') center center no-repeat; }
-.hero-back.anub-arak { background: url('../img/hots/heroes/bgs/anubarak.png') center center no-repeat; }
-.hero-back.arthas { background: url('../img/hots/heroes/bgs/arthas.png') center center no-repeat; }
-.hero-back.azmodan { background: url('../img/hots/heroes/bgs/azmodan.png') center center no-repeat; }
-.hero-back.brightwing { background: url('../img/hots/heroes/bgs/brightwing.png') center center no-repeat; }
-.hero-back.chen { background: url('../img/hots/heroes/bgs/chen.png') center center no-repeat; }
-.hero-back.diablo { background: url('../img/hots/heroes/bgs/diablo.png') center center no-repeat; }
-.hero-back.etc { background: url('../img/hots/heroes/bgs/etc.png') center center no-repeat; }
-.hero-back.falstad { background: url('../img/hots/heroes/bgs/falstad.png') center center no-repeat; }
-.hero-back.gazlowe { background: url('../img/hots/heroes/bgs/gazlowe.png') center center no-repeat; }
-.hero-back.illidan { background: url('../img/hots/heroes/bgs/illidan.png') center center no-repeat; }
-.hero-back.jaina { background: url('../img/hots/heroes/bgs/jaina.png') center center no-repeat; }
-.hero-back.johanna { background: url('../img/hots/heroes/bgs/johanna.png') center center no-repeat; }
-.hero-back.kaelthas { background: url('../img/hots/heroes/bgs/kaelthas.png') center center no-repeat; }
-.hero-back.kerrigan { background: url('../img/hots/heroes/bgs/kerrigan.png') center center no-repeat; }
-.hero-back.leoric { background: url('../img/hots/heroes/bgs/leoric.png') center center no-repeat; }
-.hero-back.lili { background: url('../img/hots/heroes/bgs/lili.png') center center no-repeat; }
-.hero-back.malfurion { background: url('../img/hots/heroes/bgs/malfurion.png') center center no-repeat; }
-.hero-back.muradin { background: url('../img/hots/heroes/bgs/muradin.png') center center no-repeat; }
-.hero-back.murky { background: url('../img/hots/heroes/bgs/murky.png') center center no-repeat; }
-.hero-back.nazeebo { background: url('../img/hots/heroes/bgs/nazeebo.png') center center no-repeat; }
-.hero-back.nova { background: url('../img/hots/heroes/bgs/nova.png') center center no-repeat; }
-.hero-back.raynor { background: url('../img/hots/heroes/bgs/raynor.png') center center no-repeat; }
-.hero-back.rehgar { background: url('../img/hots/heroes/bgs/rehgar.png') center center no-repeat; }
-.hero-back.rexxar { background: url('../img/hots/heroes/bgs/rexxar.png') center center no-repeat; }
-.hero-back.sgthammer { background: url('../img/hots/heroes/bgs/sgthammer.png') center center no-repeat; }
-.hero-back.sonya { background: url('../img/hots/heroes/bgs/sonya.png') center center no-repeat; }
-.hero-back.stitches { background: url('../img/hots/heroes/bgs/stitches.png') center center no-repeat; }
-.hero-back.sylvanas { background: url('../img/hots/heroes/bgs/sylvanas.png') center center no-repeat; }
-.hero-back.tassadar { background: url('../img/hots/heroes/bgs/tassadar.png') center center no-repeat; }
-.hero-back.the-butcher { background: url('../img/hots/heroes/bgs/thebutcher.png') center center no-repeat; }
-.hero-back.thelostvikings { background: url('../img/hots/heroes/bgs/thelostvikings.png') center center no-repeat; }
-.hero-back.thrall { background: url('../img/hots/heroes/bgs/thrall.png') center center no-repeat; }
-.hero-back.tychus { background: url('../img/hots/heroes/bgs/tychus.png') center center no-repeat; }
-.hero-back.tyrael { background: url('../img/hots/heroes/bgs/tyrael.png') center center no-repeat; }
-.hero-back.tyrande { background: url('../img/hots/heroes/bgs/tyrande.png') center center no-repeat; }
-.hero-back.uther { background: url('../img/hots/heroes/bgs/uther.png') center center no-repeat; }
-.hero-back.valla { background: url('../img/hots/heroes/bgs/valla.png') center center no-repeat; }
-.hero-back.zagara { background: url('../img/hots/heroes/bgs/zagara.png') center center no-repeat; }
-.hero-back.zeratul { background: url('../img/hots/heroes/bgs/zeratul.png') center center no-repeat; }
-.hero-back.kharazim { background: url('../img/hots/heroes/bgs/kharazim.png') center center no-repeat; }
-
-*/
+/* -------------------------------- */
 
 .filters-maps {}
 .filters-maps ul { margin: 0; padding: 0; }
@@ -4774,37 +4731,9 @@ p.white { color: #FFF; }
 /* guide images moved to hots-heroes */
 /* ------------------------------------- */
 
-/* hots map guide images */
-
-.hots-guide.large.blackheartsbay { background: url('../img/hots/maps/guides/bhb.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.large.cursedhollow { background: url('../img/hots/maps/guides/curse.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.large.dragonshrine { background: url('../img/hots/maps/guides/ds.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.large.gardenofterror { background: url('../img/hots/maps/guides/garden.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.large.hauntedmines { background: url('../img/hots/maps/guides/hm.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.large.skytemple { background: url('../img/hots/maps/guides/st.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.large.tomb-of-the-spider-queen { background: url('../img/hots/maps/guides/sq.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.large.battlefield-of-eternity { background: url('../img/hots/maps/guides/bfoe.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.large.infernal-shrine { background: url('../img/hots/maps/guides/shrine.jpg') no-repeat center top; background-size: cover; }
-
-.hots-guide.small.blackheartsbay { background: url('../img/hots/maps/guides/bhb-tab.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.small.cursedhollow { background: url('../img/hots/maps/guides/curse-tab.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.small.dragonshrine { background: url('../img/hots/maps/guides/ds-tab.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.small.gardenofterror { background: url('../img/hots/maps/guides/garden-tab.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.small.hauntedmines { background: url('../img/hots/maps/guides/hm-tab.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.small.skytemple { background: url('../img/hots/maps/guides/st-tab.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.small.tomb-of-the-spider-queen { background: url('../img/hots/maps/guides/sq-tab.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.small.battlefield-of-eternity { background: url('../img/hots/maps/guides/bfoe-tab.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.small.infernal-shrine { background: url('../img/hots/maps/guides/shrine-tab.jpg') no-repeat center top; background-size: cover; }
-
-.hots-guide.long.blackheartsbay { background-image: url('../img/hots/maps/guides/long/blackheart-bay.png'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.cursedhollow { background-image: url('../img/hots/maps/guides/long/cursed-hollow.png'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.dragonshrine { background-image: url('../img/hots/maps/guides/long/dragon-shrine.png'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.gardenofterror { background-image: url('../img/hots/maps/guides/long/garden-of-terror.png'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.hauntedmines { background-image: url('../img/hots/maps/guides/long/haunted-mines.png'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.skytemple { background-image: url('../img/hots/maps/guides/long/sky-temple.png'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.tomb-of-the-spider-queen { background-image: url('../img/hots/maps/guides/long/tomb-of-the-spider-queen.png'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.battlefield-of-eternity { background-image: url('../img/hots/maps/guides/long/battlefield-of-eternity.png'); background-repeat: no-repeat; background-position: right top; }
-.hots-guide.long.infernal-shrine { background-image: url('../img/hots/maps/guides/long/infernal-shrine.png'); background-repeat: no-repeat; background-position: right top; }
+/* ------------------------------------- */
+/* hots map guide images - moved to hots-maps */ 
+/* ------------------------------------- */
 
 /* hots guide list */
 .tri-bottom { background: url('../img/hots/tri-bottom.png') no-repeat center bottom; }

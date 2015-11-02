@@ -3,15 +3,17 @@
 
 //*************************************
 
-// 1... hots heroes Mixin library
-// 2... Original styles
-// 3... hero talent template
-// 5... HOTS heroes talents
-//  5.1.. Heroes talents
-//  5.2.. General Talent icon Styles
-// 6... HOTS hero filter images
-
-// 7... HOTS modal - hereos
+//  1... hots heroes Mixin library
+//  2... Original styles
+//  3... hero talent template
+//  5... HOTS heroes talents
+//      5.1.. Heroes talents
+//      5.2.. General Talent icon Styles
+//  6... HOTS hero filter images
+//  7... HOTS modal - hereos
+//      7.1.. HOTS modal - talents
+//  8... HOTS top guide - heroes
+//  9... HOTS hero-back 
 
 
 
@@ -1441,7 +1443,15 @@ This is the template for hots-hero-talents.
 .hots-modal .talent-text { margin-left: 51px; }
 
 //*************************************
-// 7.1.. HOTS top guide - heroes
+// 8... HOTS top guide - heroes
 //*************************************
 
 .hots-top-guide .hero { position: absolute; top: -65px; right: -160px; width: 557px; height: 364px; z-index: 1; }
+
+//*************************************
+// 9... HOTS hero-back 
+//*************************************
+
+
+.hero-back { transition: background .25s ease-in-out; }
+.hero-back.default { background: rgba(0,0,0,0) center center no-repeat; }
