@@ -1851,19 +1851,6 @@ var app = angular.module('app', [
                                         where: {
                                             'slug.url': post
                                         },
-                                        fields: {
-                                            id: true,
-                                            active: true,
-                                            slug: true,
-                                            title: true,
-                                            forumThread: true,
-                                            authorId: true,
-                                            author: true,
-                                            forumThreadId: true,
-                                            comments: true,
-                                            content: true,
-                                            createdDate: true
-                                        },
                                         include: [
                                             {
                                                 relation: 'forumThread',
@@ -1965,17 +1952,23 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/polls.html',
                         controller: 'PollsCtrl',
                         resolve: {
-//                            dataPollsMain: ['PollService', function(PollService) {
-//                                return PollService.getPolls('main');
-//                            }],
                           dataPollsMain: ['Poll', function (Poll) {
-                            return Poll.find({}).$promise;
+                            return Poll.find({
+                                filter: {
+                                    where: {
+                                        view: 'main'
+                                    }
+                                }
+                            }).$promise;
                           }],
-//                            dataPollsSide: ['PollService', function(PollService) {
-//                                return PollService.getPolls('side');
-//                            }]
                           dataPollsSide: ['Poll', function (Poll) {
-                            return Poll.find({}).$promise;
+                            return Poll.find({
+                                filter: {
+                                    where: {
+                                        view: 'side'
+                                    }
+                                }
+                            }).$promise;
                           }]
                         }
                     }
