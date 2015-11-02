@@ -3,6 +3,7 @@ module.exports = function(OverwatchHero) {
   var utils = require("../../lib/utils");
 
     OverwatchHero.observe("before save", function(ctx, next) {
+        console.log('ctx: ',ctx);
       async.series([
         function(seriesCallback) {
           utils.validateYoutubeId(ctx.instance, seriesCallback)

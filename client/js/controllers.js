@@ -5118,6 +5118,8 @@ angular.module('app.controllers', ['ngCookies'])
 //            $scope.getActiveDeckName = function () {
 //                return Hearthstone.heroNames[$stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1)][$scope.isSecondary($stateParams.playerClass)];
 //            }
+            
+            console.log('active deck name: ', $scope.getActiveDeckName());
 
             // steps
             $scope.stepDesc = {

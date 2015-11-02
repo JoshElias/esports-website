@@ -362,8 +362,9 @@
                                 <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};"
                                      ng-repeat="card in mulligan.cardsWithCoin track by $index" 
                                      class="mulliganCards">
-                                    {{card.card.name}}
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}"/>
+<!--                                    <img ng-src="{{app.cdn}}/cards/{{card.card.photoNames.large}}"/>-->
+                                    
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"/>
                                 </div>
                             </div>
                         </div>  
