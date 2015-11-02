@@ -1263,20 +1263,21 @@ angular.module('app.services', [])
             description: data.description || '',
             deckType: data.deckType || 1,
             chapters: data.chapters || [],
+            arena: data.arena || false,
             type: data.type || 1,
-            basic: data.basic || false,
+//            basic: data.basic || false,
             matches: data.matches || [],
             cards: data.cards || [],
             heroName: data.heroName || '',
             playerClass: playerClass,
-            video: data.video || '',
+            youtubeId: data.youtubeId || '',
             premium: data.premium || {
                 isPremium: false,
                 expiryDate: d
             },
             slug: data.slug || '',
             isFeatured: data.isFeatured || false,
-            isPublic: data.isPublic || 'true',
+            isPublic: data.isPublic || true,
             mulligans: data.mulligans || [
                 {
                     className: 'Druid',
@@ -1422,7 +1423,7 @@ angular.module('app.services', [])
             } else {
                 if (coinMulligan.length < 6) {
                     coinMulligan.push(card);
-                    console.log('mully array: ', coinMulligan);
+                    console.log('added to muligan: ', coinMulligan);
                     return coinMulligan;
                 }
             }
@@ -1458,7 +1459,7 @@ angular.module('app.services', [])
             }
 
             if (exists) {
-                return (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena));
+                return (!isLegendary && db.cards[index].cardQuantity === 1) || db.arena;
             } else {
                 return true;
             }
