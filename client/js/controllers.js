@@ -5108,16 +5108,6 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
 
-            $scope.getActiveDeckName = function () {
-                return Hearthstone.heroNames[deck.playerClass.slice(0,1).toUpperCase() + deck.playerClass.substr(1)][$scope.isSecondary(deck.playerClass.toLowerCase())];
-            }
-            
-//            $scope.getActiveDeckName = function () {
-//                return Hearthstone.heroNames[$stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1)][$scope.isSecondary($stateParams.playerClass)];
-//            }
-            
-            console.log('active deck name: ', $scope.getActiveDeckName());
-
             // steps
             $scope.stepDesc = {
                 1: 'Select the cards for your deck.',
@@ -5565,6 +5555,12 @@ angular.module('app.controllers', ['ngCookies'])
 //                        $window.scrollTo(0,0);
 //                    }
 //                });
+                if(!deck.validDeck()) {
+                    $scope.errors = 'Deck must have 30 cards.';
+                    $scope.showError = true;
+                    $window.scrollTo(0, 0);
+                    return false;
+                }
                 console.log('deck to upsert: ', deck);
                 Deck.upsert(deck, function(data) {
                     console.log('data upserted: ', data);
@@ -8265,14 +8261,14 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'deck', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth',
-        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, deck, Deck, MetaService, LoginModalService, LoopBackAuth) {
+    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'DeckBuilder',
+        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, DeckBuilder) {
 //        if (!data || !data.success) { return $state.go('app.hs.decks.list'); }
 
-            console.log('deck: ',deck);
+            console.log('deck: ',deckWithMulligans);
 
             // load deck
-            $scope.deck = deck;
+            $scope.deck = DeckBuilder.new(deckWithMulligans.playerClass, deckWithMulligans);
             $scope.deckService = Deck;
 
             $scope.premiumTypes = [
@@ -8357,7 +8353,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.isMulliganSet = function (mulligan) {
-                return (mulligan.withCoin.cards.length > 0 || mulligan.withCoin.instructions.length > 0 || mulligan.withoutCoin.cards.length > 0 || mulligan.withoutCoin.instructions.length > 0);
+                return (mulligan.cardsWithCoin.length > 0 || mulligan.instructionsWithCoin.length > 0 || mulligan.cardsWithoutCoin.length > 0 || mulligan.instructionsWithoutCoin.length > 0);
             };
 
             $scope.anyMulliganSet = function () {
@@ -8438,33 +8434,33 @@ angular.module('app.controllers', ['ngCookies'])
                 return dust;
             };
 
-            // mana curve
-            $scope.deck.manaCurve = function (mana) {
-                var big = 0,
-                    cnt;
-                // figure out largest mana count
-                for (var i = 0; i <= 7; i++) {
-                    cnt = $scope.deck.manaCount(i);
-                    if (cnt > big) big = cnt;
-                }
-
-                if (big === 0) return 0;
-
-                console.log('whatisthis: ',Math.ceil($scope.deck.manaCount(mana) / big * 98));
-
-                return Math.ceil($scope.deck.manaCount(mana) / big * 98);
-            };
-
-            // mana count
-            $scope.deck.manaCount = function (mana) {
-                var cnt = 0;
-                for (var i = 0; i < $scope.deck.cards.length; i++) {
-                    if ($scope.deck.cards[i].cost === mana || (mana === 7 && $scope.deck.cards[i].card.cost >= 7)) {
-                        cnt += $scope.deck.cardQuantities[$scope.deck.cards[i].id];
-                    }
-                }
-                return cnt;
-            };
+//            // mana curve
+//            $scope.deck.manaCurve = function (mana) {
+//                var big = 0,
+//                    cnt;
+//                // figure out largest mana count
+//                for (var i = 0; i <= 7; i++) {
+//                    cnt = $scope.deck.manaCount(i);
+//                    if (cnt > big) big = cnt;
+//                }
+//
+//                if (big === 0) return 0;
+//
+//                console.log('whatisthis: ',Math.ceil($scope.deck.manaCount(mana) / big * 98));
+//
+//                return Math.ceil($scope.deck.manaCount(mana) / big * 98);
+//            };
+//
+//            // mana count
+//            $scope.deck.manaCount = function (mana) {
+//                var cnt = 0;
+//                for (var i = 0; i < $scope.deck.cards.length; i++) {
+//                    if ($scope.deck.cards[i].card.cost === mana || (mana === 7 && $scope.deck.cards[i].card.cost >= 7)) {
+//                        cnt += $scope.deck.cardQuantities[$scope.deck.cards[i].id];
+//                    }
+//                }
+//                return cnt;
+//            };
 
             // voting
             $scope.voteDown = function (deck) {
