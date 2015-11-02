@@ -3,26 +3,21 @@ module.exports = function(OverwatchHero) {
   var utils = require("../../lib/utils");
 
     OverwatchHero.observe("before save", function(ctx, next) {
-      async.series([
-        function(seriesCallback) {
-          utils.validateYoutubeId(ctx, seriesCallback)
-        },
-        function(seriesCallback) {
-          assignOrderNum(ctx, seriesCallback);
-        }
-      ], next);
+        assignOrderNum(ctx, next);
     });
 
-    function assignOrderNum(ctx, finalCallback) {
-      if(!ctx.isNewInstance) finalCallback();
+    function assignOrderNum(ctx, finalCb) {
+      if(!ctx.isNewInstance) finalCb();
       var data = ctx.data || ctx.instance;
 
       // Assign the orderNum to the current count of heroes
       OverwatchHero.count(function(err, count) {
-          if(err) return finalCallback(err);
+          if(err) return finalCb(err);
 
           data.orderNum = count;
-          finalCallback();
+          finalCb();
       });
     }
+
+    OverwatchHero.validatesFormatOf('youtubeId', {with: utils.youtubeRegex, message: 'Must provide a valid youtubeId'});
 };

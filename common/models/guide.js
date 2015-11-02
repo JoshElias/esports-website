@@ -9,7 +9,10 @@ module.exports = function(Guide) {
       next();
     });
 
+    /*
     Guide.observe("before save", function(ctx, next) {
         utils.validateYoutubeId(ctx.instance, next);
     });
+*/
+    Guide.validatesFormatOf('youtubeId', {with: utils.youtubeRegex, message: 'Must provide a valid youtubeId'});
 };

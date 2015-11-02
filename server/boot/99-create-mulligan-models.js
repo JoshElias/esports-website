@@ -26,7 +26,7 @@ module.exports = function(server) {
             Mulligan.create({
               className: mulligan.klass,
               instructionsWithCoin: mulligan.withCoin.instructions,
-              instuctionsWithoutCoin: mulligan.withoutCoin.instructions,
+              instructionsWithoutCoin: mulligan.withoutCoin.instructions,
               deckId: deck.id.toString()
             }, function(err, newMulligan) {
               if(err) innerCallback(err);
