@@ -18,7 +18,7 @@
     "snapshotId": {
       "type": "string"
     },
-    "userId": {
+    "authorId": {
       "type": "string"
     }
   },
@@ -27,7 +27,7 @@
     "user": {
       "type": "belongsTo",
       "model": "user",
-      "foreignKey": "userId"
+      "foreignKey": "authorId"
     },
     "snapshot": {
       "type": "belongsTo",
