@@ -9735,19 +9735,19 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .roadhog.skill.scrap-gun {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .roadhog.skill.take-a-breather {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .roadhog.skill.chain-hook {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .roadhog.skill.whole-hog {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -9756,19 +9756,19 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .lucio.skill.sonic-amplifier {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .lucio.skill.crossfade {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .lucio.skill.amp-it-up {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .lucio.skill.sound-barrier {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -9777,23 +9777,23 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .junkrat.skill.frag-launcher {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .junkrat.skill.concussion-mine {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .junkrat.skill.steel-trap {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .junkrat.skill.total-mayhem {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .junkrat.skill.rip-tire {
-  background-position: -680px -10px;
+  background-position: -680px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -9802,23 +9802,23 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .soldier-76.skill.heavy-pulse-rifle {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .soldier-76.skill.helix-rockets {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .soldier-76.skill.sprint {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .soldier-76.skill.biotic-field {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .soldier-76.skill.tactical-visor {
-  background-position: -680px -10px;
+  background-position: -680px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -9827,19 +9827,19 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .zarya.skill.particle-cannon {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .zarya.skill.particle-barrier {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .zarya.skill.projected-barrier {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .zarya.skill.graviton-surge {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -9848,19 +9848,19 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .mccree.skill.peacekeeper {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .mccree.skill.combat-roll {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .mccree.skill.flashbang {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .mccree.skill.deadeye {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -9869,19 +9869,19 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .tracer.skill.pulse-pistol {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .tracer.skill.blink {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .tracer.skill.recall {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .tracer.skill.pulse-bomb {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -9890,19 +9890,19 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .reaper.skill.hellfire-shotguns {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .reaper.skill.wraith-form {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .reaper.skill.shadow-step {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .reaper.skill.death-blossom {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -9911,19 +9911,19 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .widowmaker.skill.widows-kiss {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .widowmaker.skill.grappling-hook {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .widowmaker.skill.venom-mine {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .widowmaker.skill.infra-sight {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -9932,19 +9932,19 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .winston.skill.tesla-cannon {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .winston.skill.jump-pack {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .winston.skill.shield-projector {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .winston.skill.primal-rage {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -9953,19 +9953,19 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .pharah.skill.rocket-launcher {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .pharah.skill.jump-jet {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .pharah.skill.concussive-blast {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .pharah.skill.barrage {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -9974,23 +9974,23 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .reinhardt.skill.rocket-hammer {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .reinhardt.skill.shield {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .reinhardt.skill.charge {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .reinhardt.skill.fire-strike {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .reinhardt.skill.earthshatter {
-  background-position: -680px -10px;
+  background-position: -680px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -9999,19 +9999,19 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .symmetra.skill.photon-projector {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .symmetra.skill.sentry-turret {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .symmetra.skill.photon-shield {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .symmetra.skill.teleporter {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -10020,23 +10020,23 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .torbjorn.skill.rivet-gun {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .torbjorn.skill.forge-hammer {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .torbjorn.skill.build-turret {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .torbjorn.skill.armor-pack {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .torbjorn.skill.molten-core {
-  background-position: -680px -10px;
+  background-position: -680px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -10045,23 +10045,23 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .bastion.skill.config-recon {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .bastion.skill.config-sentry {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .bastion.skill.re-config {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .bastion.skill.self-repair {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .bastion.skill.config-tank {
-  background-position: -680px -10px;
+  background-position: -680px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -10070,19 +10070,19 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .hanzo.skill.storm-bow {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .hanzo.skill.sonic-arrow {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .hanzo.skill.scatter-arrow {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .hanzo.skill.dragonstrike {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -10091,23 +10091,23 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .mercy.skill.caduceus-staff {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .mercy.skill.caduceus-blaster {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .mercy.skill.guardian-angel {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .mercy.skill.angelic-descent {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .mercy.skill.resurrect {
-  background-position: -680px -10px;
+  background-position: -680px -12px;
 }
 
 /* line 72, ../../../css/sass/overwatch.scss */
@@ -10116,19 +10116,19 @@ input[type=range]:focus::-ms-fill-upper {
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .zenyatta.skill.orb-of-destruction {
-  background-position: 0px -10px;
+  background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .zenyatta.skill.orb-of-harmony {
-  background-position: -170px -10px;
+  background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .zenyatta.skill.orb-of-discord {
-  background-position: -340px -10px;
+  background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
 .zenyatta.skill.transcendence {
-  background-position: -510px -10px;
+  background-position: -510px -12px;
 }
 
 /* line 768, ../../../css/sass/overwatch.scss */
@@ -10186,6 +10186,11 @@ input[type=range]:focus::-ms-fill-upper {
 /* mobile */
 @media (min-width: 768px) {
 }
+
+@media (min-width: 1199px) {
+    .col-lg-20p { width: 20%; }
+}
+
 @media (min-width: 768px) and (max-width: 1199px) {
     /* HOME FEEDS */
     .twitch-feed { padding-right: 10px; }
