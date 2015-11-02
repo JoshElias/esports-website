@@ -5111,16 +5111,6 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
 
-            $scope.getActiveDeckName = function () {
-                return Hearthstone.heroNames[deck.playerClass.slice(0,1).toUpperCase() + deck.playerClass.substr(1)][$scope.isSecondary(deck.playerClass.toLowerCase())];
-            }
-            
-//            $scope.getActiveDeckName = function () {
-//                return Hearthstone.heroNames[$stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1)][$scope.isSecondary($stateParams.playerClass)];
-//            }
-            
-            console.log('active deck name: ', $scope.getActiveDeckName());
-
             // steps
             $scope.stepDesc = {
                 1: 'Select the cards for your deck.',
@@ -5568,6 +5558,12 @@ angular.module('app.controllers', ['ngCookies'])
 //                        $window.scrollTo(0,0);
 //                    }
 //                });
+                if(!deck.validDeck()) {
+                    $scope.errors = 'Deck must have 30 cards.';
+                    $scope.showError = true;
+                    $window.scrollTo(0, 0);
+                    return false;
+                }
                 console.log('deck to upsert: ', deck);
                 Deck.upsert(deck, function(data) {
                     console.log('data upserted: ', data);

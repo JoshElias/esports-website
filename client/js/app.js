@@ -865,6 +865,9 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: 'author'
+                                            },
+                                            {
+                                                relation: 'mulligans'
                                             }
                                         ]
                                     }

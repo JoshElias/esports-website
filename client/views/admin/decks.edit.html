@@ -112,7 +112,7 @@
                 </div>
 
                 <div class="deck-info">
-                    <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{ getActiveDeckName() | lowercase }}">
+                    <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{ deck.heroName | lowercase }}">
                         <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                     </div>
                     <span ng-show="deck.basic">
@@ -364,7 +364,7 @@
                                      class="mulliganCards">
 <!--                                    <img ng-src="{{app.cdn}}/cards/{{card.card.photoNames.large}}"/>-->
                                     
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"/>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
                                 </div>
                             </div>
                         </div>  
@@ -404,7 +404,7 @@
                                      ng-repeat="card in mulligan.cardsWithoutCoin track by $index" 
                                      class="mulliganCards">
                                     {{card.card.name}}
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}"/>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
                                 </div>
                             </div>
                         </div>
