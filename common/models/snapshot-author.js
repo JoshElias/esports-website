@@ -4,7 +4,7 @@ module.exports = function(SnapshotAuthor) {
   var foreignKeys = ["snapshotId", "authorId"];
   SnapshotAuthor.observe("persist", function(ctx, next) {
 
-    utils.convertObjectIds(foreignKeys, ctx.data);
+    utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
 };

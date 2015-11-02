@@ -4,7 +4,7 @@ module.exports = function(CardTech) {
   var foreignKeys = ["cardId", "deckTechId"];
   CardTech.observe("persist", function(ctx, next) {
 
-    utils.convertObjectIds(foreignKeys, ctx.data);
+    utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
 };
