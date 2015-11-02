@@ -1,18 +1,41 @@
 
-var async = require("async");
-var config = require("./../../common/config");
-var roles = {
-    PREMIUM: "premium",
-    PROVIDER: "provider",
-    ADMIN: "admin"
-};
+
 
 module.exports = function(server) {
     /*
+    var async = require("async");
+
 	var Role = server.models.Role;
     var User = server.models.user;
     var RoleMapping = server.models.RoleMapping;
 
+    async.waterfall([
+        // Create the different roles
+        function(seriesCallback) {
+            async.eachSeries())
+        }
+            Role.create({name:roleName}, function(err, role) {
+                if(err) {
+                    console.log("ERR creating role");
+                    console.log(err);
+                    seriesCallback(err);
+        }
+        // Get all the users
+        function(seriesCallback) {
+            User.find({}, seriesCallback);
+        },
+        function(users, seriesCallback) {
+            async.forEachOfSeries(users, function(user, key, seriesCallback) {
+
+            });
+        }
+    ])
+
+     var roles = ["premium", "contentProvider",
+     ADMIN: "admin"
+     };
+    */
+/*
     async.forEachOfSeries(roles, function(roleName, key, seriesCallback) {
         console.log("iterating on role:", roleName);
         Role.create({name:roleName}, function(err, role) {
