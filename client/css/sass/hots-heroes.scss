@@ -551,7 +551,7 @@ This is the template for hots-hero-talents.
     ( class: (shadow-shield, rapid-chase, reflexive-block, sixth-sense), pos: 1 ), // -30
     ( class: (regeneration-master), pos: 2 ), // -60
     ( class: (seasoned-marksman), pos: 3 ), // -90
-    ( class: (marked-for-death, lunge, friend-or-foe), pos: 4 ), // -120
+    ( class: (marked-for-death, lunge, friend-or-foe, rapid-chase), pos: 4 ), // -120
     ( class: (thirsting-blade, thrill-of-battle, hunters-onslaught), pos: 5 ), // -150
     ( class: (follow-through), pos: 6 ), // -180
     ( class: (first-aid), pos: 7 ), // -210
@@ -782,7 +782,7 @@ This is the template for hots-hero-talents.
     ( class: (harmony, enduring-growth, life-seed), pos: 2 ), // -60
     ( class: (scouting-drone), pos: 3 ), // -90
     ( class: (vengeful-roots, strangling-vines, tenacious-roots), pos: 4 ), // -120
-    ( class: (versatile), pos: 5 ), // -150
+    ( class: (versatile, shandos-clarity), pos: 5 ), // -150
     ( class: (protective-shield), pos: 6 ), // -180
     ( class: (cleanse), pos: 7 ), // -210
     ( class: (battle-momentum), pos: 8 ), // -240
@@ -922,8 +922,9 @@ This is the template for hots-hero-talents.
     ( class: (battle-momentum), pos: 7 ), // -210
     ( class: (ancestral-healing, farseers-blessing), pos: 9 ), // -270
     ( class: (bloodlust, gladiators-war-shout), pos: 10 ), // -300
-    ( class: (spell-shield, blood-for-blood), pos: 11 ), // -330
+    ( class: (blood-for-blood), pos: 11 ), // -330
     ( class: (berserk), pos: 12 ), // -360
+    ( class: (spell-shield), pos: 13 ), // -390  
     ( class: (rewind), pos: 14 ), // -420
     ( class: (storm-shield), pos: 15 ) // -450
 ) );
@@ -940,7 +941,7 @@ This is the template for hots-hero-talents.
     ( class: (blood-of-the-rhino, critical-care), pos: 6 ), // -180
     ( class: (throwing-axes), pos: 7 ), // -210
     ( class: (aspect-of-the-beast, bear-necessities, barkskin), pos: 8 ), // -240
-    ( class: (bird-of-prey, spirit-bond), pos: 9 ), // -270
+    ( class: (spirit-bond, bestial-wrath), pos: 9 ), // -270
     ( class: (unleash-the-boars, kill-command), pos: 10 ), // -300
     ( class: (wildfire-bear), pos: 11 ), // -330
     ( class: (primal-intimidation), pos: 12 ), // -360
@@ -986,7 +987,7 @@ This is the template for hots-hero-talents.
     ( class: (wrath-of-the-berserker, anger-management), pos: 9 ), // -270
     ( class: (life-funnel, dust-devils, enduring-whirlwind), pos: 10 ), // -300
     ( class: (spell-shield), pos: 11 ), // -330
-    ( class: (mystical-spear, imposing-presence), pos: 12 ), // -360
+    ( class: (imposing-presence), pos: 12 ), // -360
     ( class: (stoneskin), pos: 13 ), // -390
     ( class: (nexus-blades), pos: 14 ), // -420
     ( class: (hardened-shield), pos: 15 ), // -450
@@ -1073,7 +1074,7 @@ This is the template for hots-hero-talents.
 
 //talents: thelostvikings
 
-@include hots-hero-talents ( heroName, (
+@include hots-hero-talents ( thelostvikings, (
     ( class: (olaf-the-stout, hunka-burning-olaf, large-and-in-charge), pos: 0 ), // 0
     ( class: (spy-games, its-a-sabotage, hardheaded-redhead, erik-the-swift), pos: 1 ), // -30
     ( class: (viking-hoard), pos: 2 ), // -60
@@ -1423,3 +1424,24 @@ This is the template for hots-hero-talents.
 .hots-modal .hots-modal-hero p.title { color: #d3eefa; letter-spacing: 2px; text-transform: uppercase; }
 .hots-modal .hots-modal-hero p.description { margin-bottom: 68px; }
 
+.hots-modal .hero { position: absolute; top: -65px; right: -160px; width: 557px; height: 364px; z-index: 1002; }
+
+.hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
+.hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
+.hots-modal .universe.diablo { background: url('../img/hots/modal/universe/diablo.png') no-repeat; }
+.hots-modal .universe.starcraft { background: url('../img/hots/modal/universe/sc.png') no-repeat; }
+.hots-modal .universe.warcraft { background: url('../img/hots/modal/universe/wow.png') no-repeat; }
+
+//*************************************
+// 7.1.. HOTS modal - talents
+//*************************************
+
+/* hots modal - talents */
+.hots-modal .hots-talent-icon { position: absolute; top: 20px; left: -51px; }
+.hots-modal .talent-text { margin-left: 51px; }
+
+//*************************************
+// 7.1.. HOTS top guide - heroes
+//*************************************
+
+.hots-top-guide .hero { position: absolute; top: -65px; right: -160px; width: 557px; height: 364px; z-index: 1; }

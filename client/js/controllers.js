@@ -3520,14 +3520,15 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeAuthor = function (a) {
-                async.each($scope.snapshot.authors, function(author, eachCb) {
+                var toDelete = undefined;
+                _.each($scope.snapshot.authors, function(author, eachCb) {
                     if (a.id === author.user.id) {
                         removeAuthorAJAX(author, function () {
-                            $scope.snapshot.authors.splice($scope.snapshot.authors.indexOf(author), 1);
+                            toDelete = $scope.snapshot.authors.indexOf(author);
                         });
                     }
-                    return eachCb();
-                })
+                });
+                $scope.snapshot.authors.splice(toDelete, 1);
             }
             /* AUTHOR METHODS */
 
@@ -3732,7 +3733,6 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 }, function (err) {
                     async.forEachOf(indexesToRemove, function(i, index, eachCb3) {
-                        console.log(i, index);
                         _.each(i, function (j) {
                             console.log(j);
                             $scope.snapshot.tiers[index].decks.splice(j, 1);
@@ -3938,9 +3938,42 @@ angular.module('app.controllers', ['ngCookies'])
                 })
                 .$promise
                 .then(function (snapshot) {
+                    
+                    var stripped = {};
+                    stripped['authors'] = _.map(snapshot.authors, function (author) { author.id = undefined; return author });
+
+                    stripped['matches'] = _.map(snapshot.deckMatchups, function (matchup) { matchup.id = undefined; return matchup });
+
+                    stripped['decks'] = _.map(snapshot.tiers, function (tier) { 
+                        tier.decks = _.map(tier.decks, function(deck) { 
+                            deck.id = undefined;
+                            deck.deckTech = _.map(deck.deckTech, function(deckTech) {
+                                deckTech.id = undefined;
+                                deckTech.cardTech = _.map(deckTech.cardTech, function (cardTech) {
+                                    cardTech.id = undefined;
+                                    return cardTech;
+                                });
+                                return deckTech;
+                            });
+                            return deck; 
+                        })
+                        
+                        return tier.decks; 
+                    });
+                    stripped['decks'] = _.flatten(stripped['decks'], false);
+                    
+                    
+
+                    stripped['deckTech'] = _.map(stripped.decks, function (deck) { return deck.deckTech });
+//
+//                    stripped['cardTech'] = _.map(stripped.deckTech, function (deckTech) { return deckTech.cardTech });
+                    
+//                    console.log(newArr);
+                    
+                    
                     //BUILD TIERS//
                     snapshot.tiers = [];
-                    _.each(snapshot.deckTiers, function (deck) {
+                    _.each(stripped['decks'], function (deck) {
                         if (snapshot.tiers[deck.tier-1] === undefined) {
                             snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier }; 
                         }
@@ -3957,60 +3990,24 @@ angular.module('app.controllers', ['ngCookies'])
                             deck.ranks[0] = ++deckNum;
                         })
                     })
-                    //BUILD TIERS//
 
                     //BUILD MATCHES//
-                    snapshot.matches = snapshot.deckMatchups;
-                    
-                    
-                    console.log(snapshot);
-                    
+                    snapshot.matches = stripped['matches'];
                     $scope.loaded = true;
                     
                     $scope.snapshot.comments = [];
                     $scope.snapshot.snapNum++;
                     $scope.matches = [];
-//                    for (var i = 0; i < $scope.snapshot.tiers.length; i++) {
-//                        for (var k = 0; k < $scope.snapshot.tiers[i].decks.length; k++) {
-//                            if (i < 2) {
-//                                $scope.matches.push(snapshot.tiers[i].decks[k]);
-//                            }
-//                            $scope.snapshot.tiers[i].decks[k].ranks.splice(0,0,snapshot.tiers[i].decks[k].ranks[0]);
-//                            if ($scope.snapshot.tiers[i].decks[k].ranks.length > 13) {
-//                                $scope.snapshot.tiers[i].decks[k].ranks.pop();
-//                            }
-//                        }
-//                    }
                     $scope.snapshot = snapshot;
                     
                     $scope.deckRanks();
                     $scope.setSlug();
                     
-                    _.each($scope.snapshot, function(val, key, list) {
-                        console.log(val, key);
-                        
-                        
-                        
-                    })
-                    
-                    function cleanIds (data) {
-                        
-                        if (typeof data !== "object") return;
-                        
-                        _.each(data, function(value, key, list) {
-                            if (key === "id") {
-                                delete data[key];
-                            } else if (typeof value === "object") {
-                                cleanIds(value);
-                            }
-                        });
-                        
-                    }
-                    
-                    cleanIds($scope.snapshot);
-//                    console.log(newArr);
-                    
                     console.log($scope.snapshot);
+                    
+
+                    
+                    
                 });
             }
 
@@ -5111,16 +5108,6 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
 
-            $scope.getActiveDeckName = function () {
-                return Hearthstone.heroNames[deck.playerClass.slice(0,1).toUpperCase() + deck.playerClass.substr(1)][$scope.isSecondary(deck.playerClass.toLowerCase())];
-            }
-            
-//            $scope.getActiveDeckName = function () {
-//                return Hearthstone.heroNames[$stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1)][$scope.isSecondary($stateParams.playerClass)];
-//            }
-            
-            console.log('active deck name: ', $scope.getActiveDeckName());
-
             // steps
             $scope.stepDesc = {
                 1: 'Select the cards for your deck.',
@@ -5568,6 +5555,12 @@ angular.module('app.controllers', ['ngCookies'])
 //                        $window.scrollTo(0,0);
 //                    }
 //                });
+                if(!deck.validDeck()) {
+                    $scope.errors = 'Deck must have 30 cards.';
+                    $scope.showError = true;
+                    $window.scrollTo(0, 0);
+                    return false;
+                }
                 console.log('deck to upsert: ', deck);
                 Deck.upsert(deck, function(data) {
                     console.log('data upserted: ', data);
@@ -8268,14 +8261,14 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'deck', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth',
-        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, deck, Deck, MetaService, LoginModalService, LoopBackAuth) {
+    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'DeckBuilder',
+        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, DeckBuilder) {
 //        if (!data || !data.success) { return $state.go('app.hs.decks.list'); }
 
-            console.log('deck: ',deck);
+            console.log('deck: ',deckWithMulligans);
 
             // load deck
-            $scope.deck = deck;
+            $scope.deck = DeckBuilder.new(deckWithMulligans.playerClass, deckWithMulligans);
             $scope.deckService = Deck;
 
             $scope.premiumTypes = [
@@ -8360,7 +8353,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.isMulliganSet = function (mulligan) {
-                return (mulligan.withCoin.cards.length > 0 || mulligan.withCoin.instructions.length > 0 || mulligan.withoutCoin.cards.length > 0 || mulligan.withoutCoin.instructions.length > 0);
+                return (mulligan.cardsWithCoin.length > 0 || mulligan.instructionsWithCoin.length > 0 || mulligan.cardsWithoutCoin.length > 0 || mulligan.instructionsWithoutCoin.length > 0);
             };
 
             $scope.anyMulliganSet = function () {
@@ -8441,33 +8434,33 @@ angular.module('app.controllers', ['ngCookies'])
                 return dust;
             };
 
-            // mana curve
-            $scope.deck.manaCurve = function (mana) {
-                var big = 0,
-                    cnt;
-                // figure out largest mana count
-                for (var i = 0; i <= 7; i++) {
-                    cnt = $scope.deck.manaCount(i);
-                    if (cnt > big) big = cnt;
-                }
-
-                if (big === 0) return 0;
-
-                console.log('whatisthis: ',Math.ceil($scope.deck.manaCount(mana) / big * 98));
-
-                return Math.ceil($scope.deck.manaCount(mana) / big * 98);
-            };
-
-            // mana count
-            $scope.deck.manaCount = function (mana) {
-                var cnt = 0;
-                for (var i = 0; i < $scope.deck.cards.length; i++) {
-                    if ($scope.deck.cards[i].cost === mana || (mana === 7 && $scope.deck.cards[i].card.cost >= 7)) {
-                        cnt += $scope.deck.cardQuantities[$scope.deck.cards[i].id];
-                    }
-                }
-                return cnt;
-            };
+//            // mana curve
+//            $scope.deck.manaCurve = function (mana) {
+//                var big = 0,
+//                    cnt;
+//                // figure out largest mana count
+//                for (var i = 0; i <= 7; i++) {
+//                    cnt = $scope.deck.manaCount(i);
+//                    if (cnt > big) big = cnt;
+//                }
+//
+//                if (big === 0) return 0;
+//
+//                console.log('whatisthis: ',Math.ceil($scope.deck.manaCount(mana) / big * 98));
+//
+//                return Math.ceil($scope.deck.manaCount(mana) / big * 98);
+//            };
+//
+//            // mana count
+//            $scope.deck.manaCount = function (mana) {
+//                var cnt = 0;
+//                for (var i = 0; i < $scope.deck.cards.length; i++) {
+//                    if ($scope.deck.cards[i].card.cost === mana || (mana === 7 && $scope.deck.cards[i].card.cost >= 7)) {
+//                        cnt += $scope.deck.cardQuantities[$scope.deck.cards[i].id];
+//                    }
+//                }
+//                return cnt;
+//            };
 
             // voting
             $scope.voteDown = function (deck) {
@@ -11031,8 +11024,10 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return out;
             }
-
-            $scope.currentTalents = getCurrentTalents();
+            
+            if($scope.guideType == "hero") {
+                $scope.currentTalents = getCurrentTalents();
+            }
 
             $scope.getTalents = function (hero, tier) {
                 var out = [];
