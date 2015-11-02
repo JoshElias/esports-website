@@ -6642,6 +6642,7 @@ angular.module('app.controllers', ['ngCookies'])
                     case 'hs' : return 'hearthstone'; break;
                     case 'ts' : return 'tempostorm'; break;
                     case 'hots' : return 'heroes'; break;
+                    case 'overwatch' : return 'overwatch'; break;
                 }
             } else {
                 return 'tempostorm';
@@ -10627,6 +10628,55 @@ angular.module('app.controllers', ['ngCookies'])
 .controller('twitchCtrl', ['$scope', 'dataTwitch',
     function($scope, dataTwitch) {
         $scope.streams = dataTwitch.stuff;
+    }
+])
+.controller('OverwatchHomeCtrl', ['$scope', 'articles', 'heroes',
+    function ($scope, articles, heroes) {
+        // load vars
+        $scope.articles = articles.articles;
+        $scope.heroes = heroes.heroes;
+        $scope.heroHover = 'neutral';
+
+        $scope.setHeroHover = function (hero) {
+            $scope.heroHover = hero;
+        };
+
+        $scope.getHeroHover = function () {
+            return $scope.heroHover;
+        };
+    }
+])
+.controller('OverwatchHeroCtrl', ['$scope', 'MetaService', 'hero', 'heroes',
+    function ($scope, MetaService, hero, heroes) {
+        // load vars
+        $scope.heroes = heroes.heroes;
+        $scope.hero = hero.hero;
+
+        // seo
+        $scope.metaservice = MetaService;
+        $scope.metaservice.set($scope.hero.heroName + ' - Overwatch', 'Informaton about the Overwatch hero ' + $scope.hero.heroName);
+
+        // arrows
+        function getCurrentHeroIndex () {
+            for (var i = 0; i < $scope.heroes.length; i++) {
+                if ($scope.heroes[i].className == $scope.hero.className) {
+                    return i;
+                }
+            }
+            return false;
+        }
+
+        $scope.getNextHero = function () {
+            var index = getCurrentHeroIndex();
+            if (index === false) { return $scope.heroes[0].className; }
+            return (index < ($scope.heroes.length - 1)) ? $scope.heroes[index + 1].className : $scope.heroes[0].className;
+        }
+
+        $scope.getPrevHero = function () {
+            var index = getCurrentHeroIndex();
+            if (index === false) { return $scope.heroes[0].className; }
+            return (index > 0) ? $scope.heroes[index - 1].className : $scope.heroes[$scope.heroes.length - 1].className;
+        }
     }
 ])
 ;

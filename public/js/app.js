@@ -1135,6 +1135,81 @@ var app = angular.module('app', [
                 access: { auth: true },
                 seo: { title: 'My Subscription', description: '', keywords: '' }
             })
+            .state('app.overwatch', {
+                abstract: true,
+                url: 'overwatch',
+                views: {
+                    content: {
+                        templateUrl: tpl + 'views/frontend/overwatch.html'
+                    }
+                }
+            })
+            .state('app.overwatch.home', {
+                url: '',
+                views: {
+                    overwatch: {
+                        templateUrl: tpl + 'views/frontend/overwatch.home.html',
+                        controller: 'OverwatchHomeCtrl',
+                        resolve: {
+                            articles: ['ArticleService', function (ArticleService) {
+                                var klass = 'all',
+                                    offset = 0,
+                                    num = 6;
+                                return ArticleService.getArticles('overwatch', klass, offset, num);
+                            }],
+                            heroes: ['OverwatchHero', function (OverwatchHero) {
+                                return OverwatchHero.getHeroes();
+                            }]
+                        }
+                    }
+                },
+                seo: { title: 'Overwatch', description: 'Tempo Storm is your top source for Blizzard Entertainment\'s Overwatch. Tournament news, strategy, and patch details.', keywords: 'blizzard overwatch' }
+            })
+            .state('app.overwatch.heroes', {
+                abstract: true,
+                url: '/heroes',
+                views: {
+                    overwatch: {
+                        templateUrl: tpl + 'views/frontend/overwatch.heroes.html'
+                    }
+                }
+            })
+            .state('app.overwatch.heroes.redirect', {
+                url: '',
+                resolve: {
+                    hero: ['OverwatchHero', function (OverwatchHero) {
+                        return OverwatchHero.getHeroes();
+                    }],
+                    redirect: ['$q', '$state', 'hero', function ($q, $state, hero) {
+                        $state.go('app.overwatch.heroes.hero', { slug: hero.heroes[0].className });
+                        return $q.reject();
+                    }]
+                }
+            })
+            .state('app.overwatch.heroes.hero', {
+                url: '/:slug',
+                views: {
+                    'overwatch-heroes': {
+                        templateUrl: tpl + 'views/frontend/overwatch.heroes.hero.html',
+                        controller: 'OverwatchHeroCtrl',
+                        resolve: {
+                            heroes: ['OverwatchHero', function (OverwatchHero) {
+                                return OverwatchHero.getHeroes();
+                            }],
+                            hero: ['$stateParams', 'OverwatchHero', function ($stateParams, OverwatchHero) {
+                                var slug = $stateParams.slug;
+                                return OverwatchHero.getHero(slug).then(function (result) {
+                                    if (result.success === true) {
+                                        return result;
+                                    } else {
+                                        return $q.reject('Unable to find article');
+                                    }
+                                });
+                            }]
+                        }
+                    }
+                }
+            })
             .state('app.admin', {
                 abstract: true,
                 url: 'admin',

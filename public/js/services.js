@@ -2331,5 +2331,23 @@ angular.module('app.services', [])
     };
     return factory;
   }
-]);
+])
+.factory('OverwatchHero', ['$http', '$q', function ($http, $q) {
+    return {
+        getHeroes: function () {
+            var d = $q.defer();
+            $http.post('/overwatch/heroes', {}).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        },
+        getHero: function (className) {
+            var d = $q.defer();
+            $http.post('/overwatch/hero', { className: className }).success(function (data) {
+                d.resolve(data);
+            });
+            return d.promise;
+        }
+    };
+}])
 ;

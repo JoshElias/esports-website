@@ -183,6 +183,9 @@ app.post('/hots/hero/class', routes.frontend.hots.heroByClass(Schemas));
 
 app.post('/hots/maps', routes.frontend.hots.maps(Schemas));
 
+app.post('/overwatch/heroes', routes.frontend.overwatch.heroes(Schemas));
+app.post('/overwatch/hero', routes.frontend.overwatch.hero(Schemas));
+
 app.post('/forum', routes.frontend.forum(Schemas, async));
 app.post('/forum/thread', routes.frontend.forumThread(Schemas));
 app.post('/forum/post', routes.frontend.forumPost(Schemas));

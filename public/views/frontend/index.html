@@ -25,12 +25,12 @@
                 <div class="collapse navbar-collapse" id="MegaNavbar">
                     <ul class="nav navbar-nav navbar-center">
                         <li class="sub" ng-class="{active:$state.includes('app.articles')}"><a ui-sref="app.articles.list">Articles</a></li>
-                        <li class="dropdown-grid" ng-class="{active:$state.includes('app.hots') || $state.includes('app.hs') || $state.includes('app.snapshot')}">
+                        <li class="dropdown-grid" ng-class="{active:$state.includes('app.hots') || $state.includes('app.hs') || $state.includes('app.snapshot') || $state.includes('app.overwatch')}">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Games<span class="caret"></span></a>
                             <div class="dropdown-grid-wrapper">
-                                <ul class="dropdown-menu no-border-radius col-xs-12 col-sm-7 col-md-6 col-lg-5 clearfix">
+                                <ul class="dropdown-menu no-border-radius col-xs-12 col-sm-7 col-md-7 col-lg-6 clearfix">
                                     <li>
-                                        <ul class="col-xs-12 col-sm-6">
+                                        <ul class="col-xs-12 col-md-4">
                                             <a class="game-head-link" ui-sref="app.hs.home" ng-class="{active:$state.includes('app.hs.home')}" class="dropdown-header">Hearthstone</a>
                                             <li class="sub">
                                                 <a ui-sref="app.snapshot.redirect" ng-class="{active:$state.includes('app.snapshot')}">Meta Snapshot</a>
@@ -38,12 +38,18 @@
                                                 <a ui-sref="app.hs.deckBuilder.class" class="hidden-xs" ng-class="{active:$state.includes('app.hs.deckBuilder')}">Deck Builder</a>
                                             </li>
                                         </ul>
-                                        <ul class="col-xs-12 col-sm-6">
+                                        <ul class="col-xs-12 col-md-4">
                                             <a class="game-head-link" ui-sref="app.hots.home" ng-class="{active:$state.includes('app.hots.home')}" class="dropdown-header">Heroes of the Storm</a>
                                             <li class="sub">
                                                 <a ui-sref="app.hots.guides.list" ng-class="{active:$state.includes('app.hots.guides')}">Guides</a>
                                                 <a ui-sref="app.hots.guideBuilder.step1" class="hidden-xs" ng-class="{active:$state.includes('app.hots.guideBuilder')}">Guide Builder</a>
                                                 <a ui-sref="app.hots.talentCalculator.redirect" ng-class="{active:$state.includes('app.hots.talentCalculator')}">Talent Calculator</a>
+                                            </li>
+                                        </ul>
+                                        <ul class="col-xs-12 col-md-4">
+                                            <a class="game-head-link" ui-sref="app.overwatch.home" ng-class="{active:$state.includes('app.overwatch.home')}" class="dropdown-header">Overwatch</a>
+                                            <li class="sub">
+                                                <a ui-sref="app.overwatch.heroes.redirect" ng-class="{active:$state.includes('app.overwatch.heroes')}">Heroes</a>
                                             </li>
                                         </ul>
                                     </li>

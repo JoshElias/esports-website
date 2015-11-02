@@ -1,5 +1,6 @@
 module.exports = {
     hots: require('./frontend/hots'),
+    overwatch: require('./frontend/overwatch'),
     index: function (config, assets) {
         return function (req, res, next) {
             return res.render(config.APP_INDEX, { cdnUrl: config.CDN_URL, assets: assets });
