@@ -1298,19 +1298,19 @@ This is the template for hots-hero-talents.
 
 // filters styles
 
-/*
-.hots-filters-search { padding: 8px 0px 0px; }
 
-.hero-filters li button { display:inline-block; width:75px; height:75px; overflow:hidden; background-repeat: no-repeat; background-image:url('../img/hots/heroes/hots-hero-select.png'); border-radius: 50%; border: 3px solid #FFF; text-indent: -99999px; background-color: rgba(39,102,173,.2); outline: none; opacity: 1; transition: transform .25s ease-in-out, opacity .25s ease-in-out, background-color .25s ease-in-out; }
-.hero-filters li button:hover { background-color: #2766ad; }
-.hero-filters li button.empty { background-image: none; cursor: default; opacity: .3; }
-.hero-filters li button.empty:hover { background-color: rgba(39,102,173,.2); }
+//.hots-filters-search { padding: 8px 0px 0px; }
 
-.hero-filters li button.filtered { transform: scale(.9,.9); opacity: .3; }
-.hero-filters li button.not-selected { opacity: .3; }
-.hero-filters li button.not-selected:hover { opacity: .8; }
-.hero-filters li button.active { background-color: rgba(255,255,255,1); }
-*/
+//.hero-filters li button { display:inline-block; width:75px; height:75px; overflow:hidden; background-repeat: no-repeat; background-image:url('../img/hots/heroes/hots-hero-select.png'); border-radius: 50%; border: 3px solid #FFF; text-indent: -99999px; background-color: rgba(39,102,173,.2); outline: none; opacity: 1; transition: transform .25s ease-in-out, opacity .25s ease-in-out, background-color .25s ease-in-out; }
+//.hero-filters li button:hover { background-color: #2766ad; }
+//.hero-filters li button.empty { background-image: none; cursor: default; opacity: .3; }
+//.hero-filters li button.empty:hover { background-color: rgba(39,102,173,.2); }
+//
+//.hero-filters li button.filtered { transform: scale(.9,.9); opacity: .3; }
+//.hero-filters li button.not-selected { opacity: .3; }
+//.hero-filters li button.not-selected:hover { opacity: .8; }
+//.hero-filters li button.active { background-color: rgba(255,255,255,1); }
+
 
 //filters mobile styles
 
