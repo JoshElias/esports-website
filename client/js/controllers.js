@@ -3009,7 +3009,8 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                     }, function (stripped, seriesCallback) {
                         async.each(stripped.authors, function (author, authorCB) {
-                            author.userId = author.user.id;
+                            
+                            author.authorId = author.user.id;
                             author.snapshotId = $scope.snapshot.id;
                             SnapshotAuthor.upsert({}, author)
                             .$promise
