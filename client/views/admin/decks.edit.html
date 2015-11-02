@@ -37,8 +37,11 @@
             <!-- db-right -->
             <div class="col-md-push-9 col-md-3">
                 <div class="db-search">
-                    <input type="text" name="search" class="input-sm input-dark" placeholder="Search..." ng-keyup="search()" ng-model="filters.search">
-                    <div class="search-charm"><i class="fa fa-search"></i></div>
+                    <input type="text" name="search" class="input-sm input-dark" 
+                           placeholder="Search..." ng-keyup="search()" ng-model="filters.search">
+                    <div class="search-charm">
+                        <i class="fa fa-search"></i>
+                    </div>
                 </div>
                 <div class="db-mana-curve m-b-md">
                     <div class="db-mana-curve-title">
@@ -109,7 +112,7 @@
                 </div>
 
                 <div class="deck-info">
-                    <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
+                    <div class="db-deck-header db-deck-{{className.toLowerCase()}} {{ getActiveDeckName() | lowercase }}">
                         <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                     </div>
                     <span ng-show="deck.basic">
@@ -117,11 +120,14 @@
                             <input placeholder="DECK NAME..." ng-model="deck.name"/>
                         </div>
                         <div class="deck-description">
-                            <textarea placeholder="Put stuff here" resize="none" ng-model="deck.description"></textarea>
+                            <textarea placeholder="Put stuff here" resize="none" 
+                                      ng-model="deck.description"></textarea>
                         </div>
                     </span>
                     <div class="deck-list">
-                        <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" ng-click="deck.removeCardFromDeck(card)">
+                        <div class="list-card" 
+                             ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" 
+                             ng-click="deck.removeCardFromDeck(card)">
                             <div class="mana-cost">{{card.card.cost}}</div>
                             {{card.card.name}}
                             <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
@@ -273,8 +279,11 @@
                         <!-- cards -->
                             <div class="db-cards-view-wrapper clearfix">
                                 <div class="db-cards-view clearfix" ng-if="!fetching">
-                                    <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" ng-repeat="card in cards.current">
-                                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" ng-click="deck.addCard(card)" ng-right-click="deck.removeCardFromDeck(card)" hs-card>
+                                    <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" 
+                                         ng-repeat="card in cards.current">
+                                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" 
+                                           ng-click="deck.addCard(card)" 
+                                           ng-right-click="deck.removeCardFromDeck(card)" hs-card>
                                             <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="{{card.name}}">
                                         </a>
                                     </div>
@@ -351,9 +360,11 @@
                                       ng-model="mulligan.instructionsWithCoin"></textarea>
                             <div class="mulliganCardWrapper">
                                 <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};"
-                                     ng-repeat="card in mulligan.cardsWithoutCoin track by $index" 
+                                     ng-repeat="card in mulligan.cardsWithCoin track by $index" 
                                      class="mulliganCards">
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}"/>
+<!--                                    <img ng-src="{{app.cdn}}/cards/{{card.card.photoNames.large}}"/>-->
+                                    
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"/>
                                 </div>
                             </div>
                         </div>  
@@ -392,6 +403,7 @@
                                 <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};"
                                      ng-repeat="card in mulligan.cardsWithoutCoin track by $index" 
                                      class="mulliganCards">
+                                    {{card.card.name}}
                                     <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}"/>
                                 </div>
                             </div>
@@ -482,19 +494,23 @@
                             <div class="form-group">
                                 <label for="name" class="control-label col-sm-2">Deck Name</label>
                                 <div class="col-sm-10">
-                                    <input type="text" id="name" name="name" class="form-control input-dark" ng-model="deck.name" required>
+                                    <input type="text" id="name" name="name"
+                                           class="form-control input-dark" ng-model="deck.name" required>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="deckType" class="control-label col-sm-2">Deck Type</label>
                                 <div class="col-sm-10">
                                     <div class="dropdown">
-                                        <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                        <button class="btn input-dark input-dark-block" 
+                                                type="button" data-toggle="dropdown">
                                             <span>{{deck.deckType}}</span>
                                             <b class="caret"></b>
                                         </button>
                                         <ul class="list-group dropdown-menu dropdown-dark">
-                                            <li class="list-group-item" ng-class="{active: deck.deckType === type}" ng-repeat="type in deckTypes">
+                                            <li class="list-group-item" 
+                                                ng-class="{active: deck.deckType === type}" 
+                                                ng-repeat="type in deckTypes">
                                                 <a href="#" ng-click="deck.deckType = type">{{type}}</a>
                                             </li>
                                         </ul>
@@ -511,7 +527,7 @@
                             <div class="form-group">
                                 <label for="video" class="control-label col-sm-2">Video<br><small>(YouTube ID only)</small></label>
                                 <div class="col-sm-10">
-                                    <input type="text" id="video" name="video" class="form-control input-dark" ng-model="deck.video">
+                                    <input type="text" id="video" name="video" class="form-control input-dark" ng-model="deck.youtubeId">
                                 </div>
                             </div>
                             <div ng-if="app.user.isAdmin() || app.user.isProvider()">

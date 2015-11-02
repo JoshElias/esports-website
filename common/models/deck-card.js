@@ -4,7 +4,7 @@ module.exports = function(DeckCard) {
   var foreignKeys = ["cardId", "deckId"];
   DeckCard.observe("persist", function(ctx, next) {
 
-    utils.convertObjectIds(foreignKeys, ctx.data);
+    utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
 };

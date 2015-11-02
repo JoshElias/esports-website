@@ -4,7 +4,7 @@ module.exports = function(DeckMatchup) {
   var foreignKeys = ["forDeckId", "againstDeckId", "snapshotId"];
   DeckMatchup.observe("persist", function(ctx, next) {
 
-    utils.convertObjectIds(foreignKeys, ctx.data);
+    utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
 };

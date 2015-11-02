@@ -4,7 +4,7 @@ module.exports = function(Comment) {
   var foreignKeys = ["authorId", "articleId", "guideId", "deckId", "snapshotId", "forumPostId", "parentCommentId"];
   Comment.observe("persist", function(ctx, next) {
 
-    utils.convertObjectIds(foreignKeys, ctx.data);
+    utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
 };

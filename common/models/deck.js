@@ -3,13 +3,13 @@ module.exports = function(Deck) {
 
 
   Deck.observe("before save", function(ctx, next) {
-    utils.validateYoutubeId(ctx.instance, next);
+    utils.validateYoutubeId(ctx, next);
   });
 
   var foreignKeys = ["authorId"];
   Deck.observe("persist", function(ctx, next) {
 
-    utils.convertObjectIds(foreignKeys, ctx.data);
+    utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
 };
