@@ -3,6 +3,7 @@
   "plural": "decks",
   "base": "PersistedModel",
   "idInjection": true,
+  "strict": true,
   "options": {
     "validateUpsert": true
   },
@@ -38,12 +39,6 @@
     "isFeatured": {
       "type": "boolean"
     },
-    "mulligans": {
-      "type": [
-        "object"
-      ],
-      "required": true
-    },
     "name": {
       "type": "string",
       "required": true
@@ -52,7 +47,7 @@
       "type": "string",
       "required": true
     },
-    "isPremium": {
+    "premium": {
       "type": "object"
     },
     "isPublic": {
@@ -98,6 +93,14 @@
     },
     "youtubeId": {
       "type": "string"
+    },
+    "chapters": {
+      "type": [
+        "object"
+      ]
+    },
+    "dust" : {
+      "type": "number"
     }
   },
   "validations": [],

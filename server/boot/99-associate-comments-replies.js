@@ -2,7 +2,7 @@
 var async = require("async");
 
 module.exports = function(server) {
-/*
+    /*
     var Comment = server.models.comment;
 
     Comment.find({}, function(err, comments) {
@@ -26,5 +26,5 @@ module.exports = function(server) {
             if(!err) console.log("donnerino");
         })
     });
-*/
+    */
 };

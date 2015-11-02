@@ -2,6 +2,7 @@
   "name": "deckCard",
   "base": "PersistedModel",
   "idInjection": true,
+  "strict": true,
   "options": {
     "validateUpsert": true
   },
@@ -15,8 +16,7 @@
       "required": true
     },
     "cardQuantity": {
-      "type": "number",
-      "required": true
+      "type": "number"
     }
   },
   "validations": [],

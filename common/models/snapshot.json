@@ -2,6 +2,7 @@
   "name": "snapshot",
   "base": "PersistedModel",
   "idInjection": true,
+  "strict": true,
   "options": {
     "validateUpsert": true
   },
@@ -32,7 +33,7 @@
     "photoNames": {
       "type": "object"
     },
-    "votesCount": {
+    "voteScore": {
       "type": "number"
     },
     "votes": {

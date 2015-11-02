@@ -3,6 +3,7 @@
   "plural": "forumPosts",
   "base": "PersistedModel",
   "idInjection": true,
+  "strict": true,
   "options": {
     "validateUpsert": true
   },
@@ -33,8 +34,11 @@
     "slug": {
       "type": "object"
     },
-    "votesCount": {
+    "voteScore": {
       "type": "number"
+    },
+    "votes": {
+      "type": "object"
     },
     "forumThreadId": {
       "type": "string"

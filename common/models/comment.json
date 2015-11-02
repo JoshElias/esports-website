@@ -2,6 +2,7 @@
   "name": "comment",
   "base": "PersistedModel",
   "idInjection": true,
+  "strict": true,
   "options": {
     "validateUpsert": true
   },
@@ -23,7 +24,7 @@
       "type": "date",
       "required": true
     },
-    "votesCount": {
+    "voteScore": {
       "type": "number"
     },
     "authorId": {

@@ -3,6 +3,7 @@
   "plural": "users",
   "base": "User",
   "idInjection": true,
+  "strict": true,
   "options": {
     "validateUpsert": true
   },
@@ -39,15 +40,6 @@
     },
     "resetPasswordCode": {
       "type": "string"
-    },
-    "newEmail": {
-      "type": "string"
-    },
-    "newEmailCode": {
-      "type": "string"
-    },
-    "emailVerified": {
-      "type": "boolean"
     },
     "__v": {
       "type": "number"

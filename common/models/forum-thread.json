@@ -3,6 +3,7 @@
   "plural": "forumThreads",
   "base": "PersistedModel",
   "idInjection": true,
+  "strict": true,
   "options": {
     "validateUpsert": true
   },
@@ -24,6 +25,9 @@
     },
     "slug": {
       "type": "object"
+    },
+    "oldPosts": {
+      "type": ["string"]
     }
   },
   "validations": [],

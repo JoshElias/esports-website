@@ -5,16 +5,11 @@
     </div>
     <div class="forum-thread-info clearfix" ng-if="thread.forumPosts.length">
         <div class="pull-right">
-<!--
-            <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == pagination.pages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>
-            </span>
--->
             
-        <!-- page flipping -->
-        <div pagination="forumPagination" theme="default" class="default"></div>
+            <!-- page flipping -->
+            <div pagination="forumPagination" theme="default" class="default"></div>
+            <!-- end page flipping -->
+        
         </div>
     </div>
     <table class="table forum-thread" ng-if="thread.forumPosts.length">
@@ -29,9 +24,9 @@
         <tbody>
             <tr ng-repeat="post in thread.forumPosts">
                 <td class="title"><a href="./forum/{{thread.slug.url}}/{{post.slug.url}}">{{post.title}}</a><em am-time-ago="post.createdDate"></em></td>
-                <td class="author"><a href="#" class="avatar hidden-xs"><img gravatar-src-once="post.author.email" alt="" /></a><a href="./user/{{post.author.username}}">@{{post.author.username}}</a></td>
-                <td class="views hidden-xs">{{post.views}}</td>
-                <td class="comments hidden-xs">{{post.comments.length}}</td>
+                <td class="author"><a href="./user/{{post.author.username}}" class="avatar hidden-xs"><img gravatar-src-once="post.author.email" alt="" /></a><a href="./user/{{post.author.username}}">@{{post.author.username}}</a></td>
+                <td class="views hidden-xs">{{post.viewCount}}</td>
+                <td class="comments hidden-xs">{{post.commentCount}}</td>
             </tr>
         </tbody>
     </table>

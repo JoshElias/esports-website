@@ -2,6 +2,7 @@
   "name": "article",
   "base": "PersistedModel",
   "idInjection": true,
+  "strict": true,
   "options": {
     "validateUpsert": true
   },
@@ -38,7 +39,7 @@
         "object"
       ]
     },
-    "votesScore": {
+    "voteScore": {
       "type": "number"
     },
     "isFeatured": {
@@ -60,11 +61,19 @@
         "string"
       ]
     },
+    "oldComments": {
+      "type": [
+        "string"
+      ]
+    },
     "isActive": {
       "type": "boolean"
     },
     "__v": {
       "type": "number"
+    },
+    "authorId": {
+      "type": "string"
     }
   },
   "validations": [],

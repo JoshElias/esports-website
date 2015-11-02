@@ -128,7 +128,7 @@
                         <ul class="list-group m-b-none" dnd-list="t.decks">
                             <li class="list-group-item" ng-if="t.decks == 0">There are no decks selected yet!</li>
                             <li class="list-group-item" ng-repeat="d in t.decks" ng-if="t.decks.length != 0">
-                                <span class="badge pull-left">{{d.ranks[0]}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index, d)" dnd-disable-if="t.decks.length < 2">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.ranks[0]}}" aria-expanded="false" aria-controls="deckrank{{d.ranks[0]}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeckPrompt(d.deck)"><i class="fa fa-close"></i></button></span> 
+                                <span class="badge pull-left">{{d.ranks[0]}}</span>&nbsp;<span dnd-draggable="d" dnd-moved="updateDND(t.decks, $index, d)" dnd-disable-if="t.decks.length < 2">{{d.deck.name}}</span><span class="pull-right button-block"><button class="m-r-sm" type="button" data-toggle="collapse" data-target="#deckrank{{d.ranks[0]}}" aria-expanded="false" aria-controls="deckrank{{d.ranks[0]}}"><i class="fa fa-edit"></i></button><button ng-click="removeDeckPrompt(d.deck, d)"><i class="fa fa-close"></i></button></span> 
                                 <div class="collapse" id="deckrank{{d.ranks[0]}}">
                                     <div class="form-group wrapper-md">
                                         
@@ -184,7 +184,7 @@
                                                             </div>
                                                         </div>
                                                         <ul class="list-group">
-                                                            <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cardTech | orderBy : c.card._id" class="list-group-item">
+                                                            <li ng-class="{cardToss: c.toss, cardKeep: !c.toss}" ng-repeat="c in tech.cardTech | orderBy : c.card.id" class="list-group-item">
                                                                  <button class="cardBtn" ng-click="( c.toss == false ) ? c.toss = true : c.toss = false"><i class="fa" ng-class="{ 'fa-minus' : c.toss == true, 'fa-plus' : c.toss == false }"></i></button>
                                                                 {{c.card.name}}
                                                                 <button class="pull-right cardBtn" ng-click="removeTechCard(tech, c)"><i class="fa fa-close"></i></button>
@@ -267,6 +267,7 @@
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
             <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="editSnapshot()">Edit Meta Snapshot</button>
+            <button class="btn btn-blue btn-lg" ng-click="freshMatches()">Regen Matchups</button>
         </div>
     </div>
     </form>

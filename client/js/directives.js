@@ -135,20 +135,11 @@ angular.module('app.directives', ['ui.load'])
                     $scope.setLoggingIn(1);
                     console.log(LoopBackAuth);
                     if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
-                      console.log("$scope.remember:", $scope.remember);
-                      console.log("$scope.info.email:", $scope.loginInfo.email);
-//                      console.log("$scope.info.password:", $scope.loginInfo.password);
+
                         User.login({ rememberMe:$scope.remember }, { email:$scope.loginInfo.email, password:$scope.loginInfo.password },
                             function(accessToken) {
-                                console.log("Received access token:", accessToken);
-                                console.log("Current User:", LoopBackAuth.currentUserData);
-                                var next = $location.nextAfterLogin || "/";
-                                $location.nextAfterLogin = null;
-                                $location.path(next);
-
                                 LoginModalService.hideModal();
                                 $scope.setLoggingIn(2);
-
                                 if ($scope.callback) {
                                     $scope.callback(LoopBackAuth);
                                 }
