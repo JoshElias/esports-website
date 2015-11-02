@@ -40,7 +40,7 @@ $pos-y: 4px;
 @mixin ow-hero-list ($hero, $size, $pos-x, $pos-y) { 
      
   .ow-hero-filters li a.#{$hero} {
-        background: url("../../dist/img/overwatch/hero-thumbnails/#{$hero}.png") no-repeat;
+        background: url("../img/overwatch/hero-thumbnails/#{$hero}.png") no-repeat;
         width: 65px;
         height: 65px;
         display: inline-block;
@@ -60,7 +60,7 @@ $pos-y: 4px;
     
     .ow-hero-selected.#{$hero} {
         
-        background: url('../../dist/img/overwatch/hero-sidebar/#{$hero}.png') center ;
+        background: url('../img/overwatch/hero-sidebar/#{$hero}.png') center ;
         }
 }
 
@@ -71,7 +71,7 @@ $pos-y: 4px;
     
         .#{$hero}.skill {
             
-        background: url('../../dist/img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;        
+        background: url('../img/overwatch/abilities-sprite-sheets/#{$hero}-sprite.png') no-repeat;        
         
             @each $ability in $abilities {
             
@@ -196,7 +196,7 @@ $pos-y: 4px;
 .ow-bg {
     margin: 0;
     padding: 0 !important;
-    background: $ts-black url('../../dist/img/overwatch/hero-top-bg.jpg') no-repeat center center;
+    background: $ts-black url('../img/overwatch/hero-top-bg.jpg') no-repeat center center;
     background-size: cover;
     background-attachment: fixed;
 }
@@ -204,7 +204,7 @@ $pos-y: 4px;
 .ow-upper-bg {
     margin: 0;
     padding: 0 !important;
-    background: $ts-black url('../../dist/img/overwatch/hero-top-bg.jpg') no-repeat center center;
+    background: $ts-black url('../img/overwatch/hero-top-bg.jpg') no-repeat center center;
     background-size: cover;
     background-attachment: fixed; 
 }
@@ -212,14 +212,14 @@ $pos-y: 4px;
 .ow-lower-bg {
     margin: 0;
     padding: 0 !important;
-    background: $ts-black url('../../dist/img/overwatch/lower-half-background.jpg') no-repeat center center;
+    background: $ts-black url('../img/overwatch/lower-half-background.jpg') no-repeat center center;
     background-size: cover;
     background-attachment: fixed;
 }
 
 
 .ow-home-title {
-    background: $ts-blue url('../../dist/img/overwatch/top-banner.jpg') no-repeat center center;
+    background: $ts-blue url('../img/overwatch/top-banner.jpg') no-repeat center center;
     background-size: cover;
     
         @media (max-width: 1050px) {
@@ -330,11 +330,11 @@ $pos-y: 4px;
 }
 
 .ow-hero-selected.neutral {
-    background: url('../../dist/img/overwatch/hero-sidebar/neutral.png') center ;
+    background: url('../img/overwatch/hero-sidebar/neutral.png') center ;
 }
 
 .ow-hero-selected.bastion {
-       background: url('../../dist/img/overwatch/hero-sidebar/bastion.png') center ;
+       background: url('../img/overwatch/hero-sidebar/bastion.png') center ;
 }
 
 
@@ -438,7 +438,7 @@ $pos-y: 4px;
 
     li:nth-of-type(2):before {
         width: 100%;
-        content: url(../../dist/img/overwatch/icons/name.png);
+        content: url(../img/overwatch/icons/name.png);
         position: absolute;
         top: 6px;
         left: 0px;
@@ -452,7 +452,7 @@ $pos-y: 4px;
 
     li:nth-of-type(3):before {
         width: 100%;
-        content: url(../../dist/img/overwatch/icons/organization.png);
+        content: url(../img/overwatch/icons/organization.png);
         position: absolute;
         top: 6px;
         left: 0px;
@@ -465,7 +465,7 @@ $pos-y: 4px;
 
     li:nth-of-type(4):before {
         width: 100%;
-        content: url(../../dist/img/overwatch/icons/origin.png);
+        content: url(../img/overwatch/icons/origin.png);
         position: absolute;
         top: 6px;
         left: 0px;
@@ -478,7 +478,7 @@ $pos-y: 4px;
 
     li:nth-of-type(5):before {
         width: 100%;
-        content: url(../../dist/img/overwatch/icons/affiliation.png);
+        content: url(../img/overwatch/icons/affiliation.png);
         position: absolute;
         top: 10px;
         left: 0px;
@@ -497,7 +497,7 @@ $pos-y: 4px;
     }
 
     .ow-role-icon {
-        content: url(../../dist/img/overwatch/icons/support.png);
+        content: url(../img/overwatch/icons/support.png);
         margin-left: 5px;
     }
 
