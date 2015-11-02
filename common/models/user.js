@@ -380,6 +380,42 @@ module.exports = function(User) {
     };
 
 
+    User.setSubscriptionPlan = function(data, cb) {
+        cb = cb || utils.createPromiseCallback();
+
+        if (typeof data.email === 'string') {
+
+
+        var err = new Error('unable to find user');
+        err.statusCode = 400;
+        err.code = 'USER_NOT_FOUND';
+    }
+
+
+    User.setSubscriptionCard = function(data, cb) {
+        cb = cb || utils.createPromiseCallback();
+
+
+        if (typeof data.email === 'string') {
+            var err = new Error('unable to find user');
+            err.statusCode = 400;
+            err.code = 'USER_NOT_FOUND';
+        }
+    }
+
+    User.cancelSubscription = function(data, cb) {
+        cb = cb || utils.createPromiseCallback();
+        var ttl = User.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
+
+        if (typeof data.email === 'string') {
+            var err = new Error('unable to find user');
+            err.statusCode = 400;
+            err.code = 'USER_NOT_FOUND';
+        }
+    }
+
+
+
     User.remoteMethod(
         'changePassword',
         {
@@ -410,6 +446,38 @@ module.exports = function(User) {
                 { arg: 'email', type: 'string', http: { source: 'query' } },
             ],
             http: {verb: 'get'},
+            isStatic: true
+        }
+    );
+
+
+    // Subscription
+    User.remoteMethod(
+        'setSubscriptionPlan',
+        {
+            description: "No idea honestly",
+            accepts: { arg: 'data', type: 'object', http: { source: 'body' } },
+            http: {verb: 'post'},
+            isStatic: true
+        }
+    );
+
+    User.remoteMethod(
+        'setSubscriptionCard',
+        {
+            description: "No idea honestly",
+            accepts: { arg: 'data', type: 'object', http: { source: 'body' } },
+            http: {verb: 'post'},
+            isStatic: true
+        }
+    );
+
+    User.remoteMethod(
+        'cancelSubscription',
+        {
+            description: "No idea honestly",
+            accepts: { arg: 'data', type: 'object', http: { source: 'body' } },
+            http: {verb: 'post'},
             isStatic: true
         }
     );

@@ -1,6 +1,6 @@
 module.exports = function(OverwatchHero) {
 
-
+/*
     OverwatchHero.observe("before save", function(ctx, next) {
 
         assignOrderNum(ctx.data, next);
@@ -23,4 +23,5 @@ module.exports = function(OverwatchHero) {
             });
         });
     }
+    */
 };
