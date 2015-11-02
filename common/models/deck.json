@@ -29,6 +29,9 @@
     "contentMid": {
       "type": "string"
     },
+    "createdDate": {
+      "type": "date"
+    },
     "deckType": {
       "type": "string",
       "required": true
