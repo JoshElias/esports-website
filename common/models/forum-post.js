@@ -4,7 +4,7 @@ module.exports = function(ForumPost) {
     var foreignKeys = ["forumThreadId", "authorId"];
     ForumPost.observe("persist", function(ctx, next) {
 
-        utils.convertObjectIds(foreignKeys, ctx.data);
+        utils.convertObjectIds(foreignKeys, ctx);
         next();
     });
 };

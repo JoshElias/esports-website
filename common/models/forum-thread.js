@@ -4,7 +4,7 @@ module.exports = function(ForumThread) {
   var foreignKeys = ["forumCategoryId"];
   ForumThread.observe("persist", function(ctx, next) {
 
-    utils.convertObjectIds(foreignKeys, ctx.data);
+    utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
 };

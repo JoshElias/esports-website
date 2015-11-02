@@ -5057,8 +5057,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User',
-        function ($state, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User) {
+    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User) {
             // find me easy
             console.log('init deck: ',deck);
 
@@ -5109,8 +5109,14 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.getActiveDeckName = function () {
-                return Hearthstone.heroNames[deck.playerClass.slice(0,1).toUpperCase() + deck.playerClass.substr(1)][$scope.isSecondary(deck.playerClass)];
+                return Hearthstone.heroNames[deck.playerClass.slice(0,1).toUpperCase() + deck.playerClass.substr(1)][$scope.isSecondary(deck.playerClass.toLowerCase())];
             }
+            
+//            $scope.getActiveDeckName = function () {
+//                return Hearthstone.heroNames[$stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1)][$scope.isSecondary($stateParams.playerClass)];
+//            }
+            
+            console.log('active deck name: ', $scope.getActiveDeckName());
 
             // steps
             $scope.stepDesc = {
@@ -5164,18 +5170,19 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.className = deck.playerClass;
 
+            // filters
+            $scope.filters = {
+                search: '',
+                mechanics: [],
+                mana: 'all'
+            };
+
             $scope.setClassCards = function (b) {
                 updateCards(1, 15, $scope.filters.search, $scope.filters.mechanics, $scope.filters.mana);
                 $timeout(function () {
                     classCards = b;
                 });
             }
-
-            $scope.cards = {
-                neutral: neutralCardsList,
-                class: classCardsList,
-                current: classCardsList
-            };
 
             console.log('all cards: ', $scope.cards);
 //        $scope.cards.current = $scope.cards.class;
@@ -5324,13 +5331,6 @@ angular.module('app.controllers', ['ngCookies'])
                     return d.promise;
                 }
             );
-
-            // filters
-            $scope.filters = {
-                search: '',
-                mechanics: [],
-                mana: 'all'
-            };
 
             $scope.setClassCards = function (b) {
                 classCards = b;
@@ -5550,12 +5550,12 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save deck
             $scope.updateDeck = function (deck) {
-                if (!deck.validDeck() || !deck.validVideo()) {
-                    $scope.errors = 'Deck must have 30 cards or Video is not valid';
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
-                    return false;
-                }
+//                if (!deck.validDeck() || !deck.validVideo()) {
+//                    $scope.errors = 'Deck must have 30 cards or Video is not valid';
+//                    $scope.showError = true;
+//                    $window.scrollTo(0,0);
+//                    return false;
+//                }
 //                DeckBuilder.updateDeck($scope.deck).success(function (data) {
 //                    if (data.success) {
 //                        $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
@@ -5565,11 +5565,16 @@ angular.module('app.controllers', ['ngCookies'])
 //                        $window.scrollTo(0,0);
 //                    }
 //                });
+                console.log('deck to upsert: ', deck);
                 Deck.upsert(deck, function(data) {
                     console.log('data upserted: ', data);
                     $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
                 }, function(err) {
                     if(err) console.log('error: ',err);
+                    $scope.errors = err.data.error.message;
+                    $scope.showError = true;
+                    $window.scrollTo(0, 0);
+                    return false;
                 });
             };
 
@@ -6616,6 +6621,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getActiveDeckName = function () {
                 return Hearthstone.heroNames[$stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1)][$scope.isSecondary($stateParams.playerClass)];
             }
+            
+            var test = $scope.getActiveDeckName();
+            console.log('active deck: ',test);
 
             // steps
             $scope.stepDesc = {
