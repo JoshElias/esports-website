@@ -1954,7 +1954,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 
-
 /*
 .btn-twitch { position: relative; padding: 12px 12px; font-size: 20px; color: #FFF !important; background: #6441a5; }
 .btn-twitch:hover,
@@ -3208,19 +3207,10 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .db-deck-header { margin: 0 auto; position: relative; width: 100%; height: 100px; padding: 10px; border: 1px solid #000; }
 
-.db-deck-header.db-deck-mage.jaina { background: url('../img/decks/list/jaina-top.png') center; background-size: cover; }
-.db-deck-header.db-deck-mage.medivh { background: url('../img/decks/list/medivh-top.jpg') center; background-size: cover; }
-.db-deck-header.db-deck-shaman.thrall { background: url('../img/decks/list/thrall-top.png') center; background-size: cover; }
-.db-deck-header.db-deck-warrior.garrosh { background: url('../img/decks/list/garrosh-top.png') center; background-size: cover; }
-.db-deck-header.db-deck-warrior.magni { background: url('../img/decks/list/magni-top.jpg') center; background-size: cover; }
-.db-deck-header.db-deck-rogue.valeera { background: url('../img/decks/list/valeera-top.png') center; background-size: cover; }
-.db-deck-header.db-deck-paladin.uther { background: url('../img/decks/list/uther-top.png') center; background-size: cover; }
-.db-deck-header.db-deck-priest.anduin { background: url('../img/decks/list/anduin-top.png') center; background-size: cover; }
-.db-deck-header.db-deck-warlock.guldan { background: url('../img/decks/list/guldan-top.png') center; background-size: cover; }
-.db-deck-header.db-deck-hunter.rexxar { background: url('../img/decks/list/rexxar-top.png') center; background-size: cover; }
-.db-deck-header.db-deck-hunter.alleria { background: url('../img/decks/list/alleria-top.jpg') center; background-size: cover; }
-.db-deck-header.db-deck-druid.malfurion { background: url('../img/decks/list/malfurion-top.png') center; background-size: cover; }
- 
+/* ---------------------------- */
+/* deck builder - headers - moved to hs-decks */
+/* ---------------------------- */
+
 
 .db-arena { position: absolute; left: 5px; bottom: 5px; font-family: hs; font-size: 20px; line-height: 20px; color: #FFF; font-weight: bold; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; }
 .db-arena.has-hover:hover { color: #66ccff; cursor: pointer; }
@@ -3249,19 +3239,12 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 
 .db-deck-footer { position: absolute; left: 0px; bottom: 0px; width: 100%; height: 30px; }
 
-.db-deck-footer.db-deck-mage.jaina { background: url('../img/decks/list/jaina-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-mage.medivh { background: url('../img/decks/list/medivh-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-shaman.thrall { background: url('../img/decks/list/thrall-bottom.jpg') center bottom no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-warrior.garrosh { background: url('../img/decks/list/garrosh-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-warrior.magni { background: url('../img/decks/list/magni-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-rogue.valeera { background: url('../img/decks/list/valeera-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-paladin.uther { background: url('../img/decks/list/uther-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-priest.anduin { background: url('../img/decks/list/anduin-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-warlock.guldan { background: url('../img/decks/list/guldan-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-hunter.rexxar { background: url('../img/decks/list/rexxar-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-hunter.alleria { background: url('../img/decks/list/alleria-bottom.jpg') center top no-repeat; background-size: cover; }
-.db-deck-footer.db-deck-druid.malfurion { background: url('../img/decks/list/malfurion-bottom.jpg') center bottom no-repeat; background-size: cover; }
- 
+
+/* ---------------------------- */
+/* deck builder - footers - moved to hs-decks */
+/* ---------------------------- */
+
+
 
 .db-deck-footer-wrapper { position: relative; height: 29px; }
 
@@ -3328,13 +3311,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .db-against .close-wrapper { text-align: center; line-height: 5; }
 .db-against .close-button i { color: rgba(255,255,255,.4); font-size: 24px; }
 .db-against .close-button:hover i { color: red }
-
-
-
-
-
-
-
 
 
 .db-sw-title { margin-top: 30px; position: relative; background: rgba(0,0,0,.6); border: 1px solid #000; height: 60px; line-height: 60px; }
@@ -4096,35 +4072,10 @@ p.white { color: #FFF; }
 .darkbox { background: rgba(0,0,0,.6); border-radius: 4px; border: 1px solid #000; }
 
 
+/* ------------------------------------- */
+/* maps moved to hots-maps scss */
+/* ------------------------------------- */
 
-/* maps */
-.map-selection { margin: 70px auto 20px auto; }
-.map-selection .map-row { margin: -50px auto 0 auto; white-space: nowrap; }
-
-.map-selection .map-row.map-row-1 { max-width: 191px; }
-.map-selection .map-row.map-row-2 { max-width: 382px; }
-.map-selection .map-row.map-row-3 { max-width: 573px; }
-.map-selection .map-row.map-row-4 { max-width: 764px; }
-.map-selection .map-row.map-row-5 { max-width: 955px; }
-
-.map-selection .map { margin: 0 5px; display: inline-block; position: relative; width: 181px; height: 208px; }
-.map-selection .map .icon-wrap { width: 181px; height: 208px; display: inline-block; overflow: hidden; }
-
-.map-selection .map .icon-wrap .icon { display: inline-block; overflow: hidden; transform: translate(16px, 30px) scaleX(1.717) rotate(45deg); width: 147px; height: 147px; opacity: .25; transition: opacity .1s linear; }
-.map-selection .map .icon-wrap .icon a { display: inline-block; transform: rotate(-45deg) scaleX(0.59) translate(18px, -34px); width: 181px; height: 208px; }
-
-.map-selection .map .icon-wrap .icon a.icon-blackheartsbay { background: url('../img/hots/maps/blackheart.png') no-repeat center center; }
-.map-selection .map .icon-wrap .icon a.icon-cursedhollow { background: url('../img/hots/maps/cursed.png') no-repeat center center; }
-.map-selection .map .icon-wrap .icon a.icon-dragonshrine { background: url('../img/hots/maps/dragon.png') no-repeat center center; }
-.map-selection .map .icon-wrap .icon a.icon-gardenofterror { background: url('../img/hots/maps/terror.png') no-repeat center center; }
-.map-selection .map .icon-wrap .icon a.icon-hauntedmines { background: url('../img/hots/maps/mine.png') no-repeat center center; }
-.map-selection .map .icon-wrap .icon a.icon-skytemple { background: url('../img/hots/maps/sky.png') no-repeat center center; }
-.map-selection .map .icon-wrap .icon a.icon-tomb-of-the-spider-queen { background: url('../img/hots/maps/spider.png') no-repeat center center; }
-.map-selection .map .icon-wrap .icon a.icon-battlefield-of-eternity { background: url('../img/hots/maps/bfoe.png') no-repeat center center; }
-.map-selection .map .icon-wrap .icon a.icon-shrine { background: url('../img/hots/maps/shrine.png') no-repeat center center; }
-
-.map-selection .map .icon-wrap .icon:hover { opacity: .8; }
-.map-selection .map .icon-wrap .icon.active { opacity: 1; }
 
 /* guide content */
 .gb-content-title { position: relative; min-height: 60px; line-height: 60px; border-bottom: 1px solid #000; background: rgba(0,0,0,.3); }
@@ -4242,19 +4193,9 @@ p.white { color: #FFF; }
 /* hots modal - heroes - moved to hots-heroes */
 /* ------------------------- */
 
-/* hots modal - maps */
-.hots-modal .map-container { float: left; width: 195px; height: 195px; padding: 4px; background: #90d7ed; background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); }
-.hots-modal .map { width: 187px; height: 187px; border: 1px solid #10131c; }
-.hots-modal .map.blackheartsbay { background: url('../img/hots/maps/modal/black.jpg') no-repeat center center; }
-.hots-modal .map.cursedhollow { background: url('../img/hots/maps/modal/curse.jpg') no-repeat center center; }
-.hots-modal .map.dragonshrine { background: url('../img/hots/maps/modal/dragon.jpg') no-repeat center center; }
-.hots-modal .map.gardenofterror { background: url('../img/hots/maps/modal/gt.jpg') no-repeat center center; }
-.hots-modal .map.hauntedmines { background: url('../img/hots/maps/modal/mine.jpg') no-repeat center center; }
-.hots-modal .map.skytemple { background: url('../img/hots/maps/modal/temp.jpg') no-repeat center center; }
-.hots-modal .map.tomb-of-the-spider-queen { background: url('../img/hots/maps/modal/spider.jpg') no-repeat center center; }
-.hots-modal .map.battlefield-of-eternity { background: url('../img/hots/maps/modal/bfoe.jpg') no-repeat center center; }
-.hots-modal .map.shrine { background: url('../img/hots/maps/modal/shrine.jpg') no-repeat center center; }
-.hots-modal .map-text { float: right; width: 185px; }
+/* ------------------------- */
+/* hots modal - maps - moved to hots-maps */
+/* ------------------------- */
 
 
 /* hots - home */
@@ -4623,10 +4564,6 @@ p.white { color: #FFF; }
     .hero-filters li button.zagara {width:43px; height:43px; background-position: -1847px -2px}
     .hero-filters li button.zeratul {width:43px; height:43px; background-position: -1892px -2px}
 }
-
-
-
-
 
 /* -------------------------------- */
 /* .hero-back.hero moved to hots-heroes.scss
