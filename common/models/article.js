@@ -7,4 +7,6 @@ module.exports = function(Article) {
     utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
+
+  Article.validatesUniquenessOf('slug.url', {message: 'Slug url already exists'});
 };
