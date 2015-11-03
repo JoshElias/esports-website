@@ -2507,7 +2507,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
-    /*flex:1 1 auto;*/
+    flex:1 1 auto;
 }
 
 .row-flex-wrap {
@@ -2534,6 +2534,9 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     flex: 1 100%;
 	flex-flow: column nowrap;
 }
+
+/* safari hack for flex-col */
+_::-moz-svg-foreign-content, :root .flex-col { display: block; }
 
 .flex-grow {
     display: -webkit-box;
@@ -8973,7 +8976,6 @@ input[type=range]:focus::-ms-fill-upper {
 .ow-home-logo {
   margin: 33px;
   margin-left: 12.05%;
-  height: 80%;
   width: 360px;
 }
 @media (max-width: 1050px) {
