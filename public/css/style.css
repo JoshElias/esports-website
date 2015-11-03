@@ -2535,9 +2535,6 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 	flex-flow: column nowrap;
 }
 
-/* safari hack for flex-col */
-_::-moz-svg-foreign-content, :root .flex-col { display: block; }
-
 .flex-grow {
     display: -webkit-box;
     display: -moz-box;
@@ -2547,6 +2544,10 @@ _::-moz-svg-foreign-content, :root .flex-col { display: block; }
     -webkit-flex: 2;
     flex: 2;
 }
+
+/* safari hack for flex */
+_::-moz-svg-foreign-content, :root .row-flex { display: block; }
+_::-moz-svg-foreign-content, :root .flex-col { display: block; }
 
 /* date picker */
 .datepicker-input[readonly] { background: #FFF; cursor: auto; }
