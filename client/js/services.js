@@ -536,9 +536,7 @@ angular.module('app.services', [])
     return {
         articleTypes: function () {
             return [
-                { name: 'Tempo Storm', value: 'ts' },
-                { name: 'Hearthstone', value: 'hs' },
-                { name: 'Heroes of the Storm', value: 'hots' }
+                
             ];
         },
         getAllArticles: function () {
@@ -1603,7 +1601,6 @@ angular.module('app.services', [])
         };
 
         db.manaCount = function (mana) {
-            return;
             var cnt = 0;
             for (var i = 0; i < db.cards.length; i++) {
                 if (db.cards[i].card.cost === mana || (mana === 7 && db.cards[i].cost >= 7)) {
