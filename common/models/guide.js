@@ -9,6 +9,7 @@ module.exports = function(Guide) {
       next();
     });
 
+
     Guide.observe("before save", function(ctx, next) {
         utils.validateYoutubeId(ctx.instance, next);
     });
