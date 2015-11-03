@@ -8261,14 +8261,14 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'DeckBuilder',
-        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, DeckBuilder) {
+    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans',
+        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans) {
 //        if (!data || !data.success) { return $state.go('app.hs.decks.list'); }
-
-            console.log('deck: ',deckWithMulligans);
-
+            
             // load deck
-            $scope.deck = DeckBuilder.new(deckWithMulligans.playerClass, deckWithMulligans);
+            $scope.deck = deckWithMulligans;
+            
+            console.log('deck: ', $scope.deck);
             $scope.deckService = Deck;
 
             $scope.premiumTypes = [
@@ -8351,9 +8351,16 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.setMulligan = function (mulligan) {
                 $scope.currentMulligan = mulligan;
             };
-
+            
+            console.log('ismullyset: ', $scope.deck.mulligans.cardsWithCoin);
+            
+            // All this stuff is undefined?
             $scope.isMulliganSet = function (mulligan) {
-                return (mulligan.cardsWithCoin.length > 0 || mulligan.instructionsWithCoin.length > 0 || mulligan.cardsWithoutCoin.length > 0 || mulligan.instructionsWithoutCoin.length > 0);
+                return;
+                return (mulligan.cardsWithCoin.length > 0 
+                        || mulligan.instructionsWithCoin.length > 0 
+                        || mulligan.cardsWithoutCoin.length > 0 
+                        || mulligan.instructionsWithoutCoin.length > 0);
             };
 
             $scope.anyMulliganSet = function () {
@@ -8414,7 +8421,6 @@ angular.module('app.controllers', ['ngCookies'])
                 return $sce.trustAsHtml(content);
             };
 
-
             //matches
             $scope.mouseOver = '';
             $scope.setMouseOver = function (deck) {
@@ -8446,8 +8452,6 @@ angular.module('app.controllers', ['ngCookies'])
 //
 //                if (big === 0) return 0;
 //
-//                console.log('whatisthis: ',Math.ceil($scope.deck.manaCount(mana) / big * 98));
-//
 //                return Math.ceil($scope.deck.manaCount(mana) / big * 98);
 //            };
 //
@@ -8461,6 +8465,30 @@ angular.module('app.controllers', ['ngCookies'])
 //                }
 //                return cnt;
 //            };
+            
+            $scope.deck.manaCurve = function (mana) {
+                var big = 0,
+                    cnt;
+                // figure out largest mana count
+                for (var i = 0; i <= 7; i++) {
+                    cnt = $scope.deck.manaCount(i);
+                    if (cnt > big) big = cnt;
+                }
+
+                if (big === 0) return 0;
+
+                return Math.ceil($scope.deck.manaCount(mana) / big * 100);
+            };
+
+            $scope.deck.manaCount = function (mana) {
+                var cnt = 0;
+                for (var i = 0; i < $scope.deck.cards.length; i++) {
+                    if ($scope.deck.cards[i].card.cost === mana || (mana === 7 && $scope.deck.cards[i].cost >= 7)) {
+                        cnt += $scope.deck.cards[i].cardQuantity;
+                    }
+                }
+                return cnt;
+            };
 
             // voting
             $scope.voteDown = function (deck) {
@@ -8473,7 +8501,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             var box,
                 callback;
-
+            
             updateVotes();
             function updateVotes() {
                 checkVotes($scope.deck);
@@ -8481,7 +8509,7 @@ angular.module('app.controllers', ['ngCookies'])
                 function checkVotes (d) {
                     console.log(d.votes);
                     var vote = d.votes.filter(function (vote) {
-                        return ($scope.getUserInfo().currentUserId === vote.userID);
+                        return (LoopBackAuth.currentUserData.id === vote.userID);
                     })[0];
 
                     if (vote) {
@@ -8489,14 +8517,28 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
             }
-
+            
+            $scope.activeVote = function (deck, direction) {
+                var isActive = false;
+                for(var i = 0; i < deck.votes.length; i++) {
+                    if((deck.votes[i].userID === LoopBackAuth.currentUserData.id)
+                      && (deck.votes[i].direction === direction)) {
+                        isActive = true;
+                        break;
+                    } else {
+                        isActive = false;
+                    }
+                }
+                return isActive;
+            };
+            
             function vote(direction, deck) {
                 if (!$scope.getUserInfo()) {
                     LoginModalService.showModal('login', function () {
                         vote(direction, deck);
                     });
                 } else {
-                    if (deck.author.id === $scope.app.user.getUserID()) {
+                    if (deck.author.id === LoopBackAuth.currentUserData.id) {
                         bootbox.alert("You can't vote for your own content.");
                         return false;
                     }
@@ -8506,38 +8548,55 @@ angular.module('app.controllers', ['ngCookies'])
 //                            deck.votesCount = data.votesCount;
 //                        }
 //                    });
-                    deck.votes.push({
-                        userID: LoopBackAuth.currentUserData.id,
-                        direction: direction
-                    });
-                    Deck.upsert(deck, function(data) {
-                        if(direction === 1) {
-                            deck.votesCount += 1;
-                        } else {
-                            deck.votesCount -= 1;
+                    
+                    // check if user has already voted and edit direction if so
+                    var alreadyVoted = false;
+                    for(var i = 0; i < deck.votes.length; i++) {
+                        if(deck.votes[i].userID === LoopBackAuth.currentUserData.id) {
+                            if(deck.votes[i].direction === direction) {
+                                alreadyVoted = true;
+                                return false;
+                            } else {
+                                deck.votes[i].direction = direction;
+                            }
                         }
-                    }, function(err) {
-                        if(err) console.log('error: ',err);
-                    });
+                    }
+                    
+                    if(!alreadyVoted) {
+                        deck.votes.push({
+                            userID: LoopBackAuth.currentUserData.id,
+                            direction: direction
+                        });
+                        
+                        Deck.upsert(deck, function(data) {
+                            if(direction === 1) {
+                                deck.voteScore += 1;
+                            } else {
+                                deck.voteScore -= 1;
+                            }
+                        }, function(err) {
+                            if(err) console.log('error: ',err);
+                        });
+                    }
                 }
                 updateVotes();
             };
 
             // get premium
             //TODO: This is using old stuff
-            $scope.getPremium = function (plan) {
-                if ($scope.app.user.isLogged()) {
-                    if (!$scope.app.user.isSubscribed()) {
-                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
-                    }
-                } else {
-                    LoginModalService.showModal('login', function () {
-                        if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
-                            $scope.getPremium(plan);
-                        }
-                    });
-                }
-            }
+//            $scope.getPremium = function (plan) {
+//                if ($scope.app.user.isLogged()) {
+//                    if (!$scope.app.user.isSubscribed()) {
+//                        $state.transitionTo('app.profile.subscription', { username: $scope.app.user.getUsername(), plan: plan });
+//                    }
+//                } else {
+//                    LoginModalService.showModal('login', function () {
+//                        if (!$scope.app.user.isSubscribed() && !$scope.app.user.isAdmin() && !$scope.app.user.isProvider()) {
+//                            $scope.getPremium(plan);
+//                        }
+//                    });
+//                }
+//            }
         }
     ])
     .controller('ForumCategoryCtrl', ['$scope', 'forumCategories', 'MetaService',
