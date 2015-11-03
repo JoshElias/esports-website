@@ -1256,7 +1256,6 @@ angular.module('app.services', [])
         var db = {
             id: data.id || null,
             name: data.name || '',
-            allowComments: data.allowComments || true,
             dust: data.dust || 0,
             description: data.description || '',
             deckType: data.deckType || 1,
@@ -1268,7 +1267,6 @@ angular.module('app.services', [])
             cards: data.cards || [],
             heroName: data.heroName || '',
             playerClass: playerClass,
-            youtubeId: data.youtubeId || '',
             premium: data.premium || {
                 isPremium: false,
                 expiryDate: d
@@ -1498,7 +1496,6 @@ angular.module('app.services', [])
                     deckId: db.id,
                     cardId: card.id,
                     cardQuantity: 1,
-                    isPublic: db.isPublic,
                     card: {
                         active: card.active,
                         artist: card.artist,
@@ -1506,8 +1503,10 @@ angular.module('app.services', [])
                         cardType: card.cardType,
                         cost: card.cost,
                         deckable: card.deckable,
+                        deckIds: db.id,
                         durability: card.durability,
                         dust: card.dust,
+                        expansion: card.expansion,
                         flavor: card.flavor,
                         health: card.health,
                         id: card.id,
@@ -1602,6 +1601,7 @@ angular.module('app.services', [])
         };
 
         db.manaCount = function (mana) {
+            return;
             var cnt = 0;
             for (var i = 0; i < db.cards.length; i++) {
                 if (db.cards[i].card.cost === mana || (mana === 7 && db.cards[i].cost >= 7)) {
@@ -1620,14 +1620,22 @@ angular.module('app.services', [])
 //            }
 //            return cnt;
 //        };
-
-        db.getSize = function () {
+        
+        db.getSize = function() {
             var size = 0;
-            for (var i = 0; i <= 7; i++) {
-                size += db.manaCount(i);
+            for(var i = 0; i < db.cards.length; i++) {
+                size += db.cards[i].cardQuantity;
             }
             return size;
         };
+
+//        db.getSize = function () {
+//            var size = 0;
+//            for (var i = 0; i <= 7; i++) {
+//                size += db.manaCount(i);
+//            }
+//            return size;
+//        };
 
         db.getDust = function () {
             var dust = 0;

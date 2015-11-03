@@ -866,17 +866,25 @@ angular.module('app.directives', ['ui.load'])
         controller: ['$scope', function ($scope) {
             $scope.cdn = $scope.$parent.$parent.$parent.$parent.$parent.app.cdn;
 
+//            $scope.getQty = function (id) {
+//                return $scope.deck.cardQuantities[id];
+//            }
+            
             $scope.getQty = function (id) {
-                return $scope.deck.cardQuantities[id];
-            }
-
-            $scope.getDust = function () {
-                var dust = 0;
-                for (var i = 0; i < $scope.deck.cards.length; i++) {
-                    dust += $scope.deck.cards[i].qty * $scope.deck.cards[i].dust;
+                for(var i = 0; i < $scope.deck.cards.length; i++) {
+                    if($scope.deck.cards[i].id == id) {
+                        return $scope.deck.cards[i].cardQuantity;
+                    }
                 }
-                return dust;
             };
+
+//            $scope.getDust = function () {
+//                var dust = 0;
+//                for (var i = 0; i < $scope.deck.cards.length; i++) {
+//                    dust += $scope.deck.cards[i].cardQuantity * $scope.deck.cards[i].dust;
+//                }
+//                return dust;
+//            };
         }],
         templateUrl: tpl + 'views/frontend/directives/db.deck.html'
     }

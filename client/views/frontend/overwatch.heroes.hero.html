@@ -26,8 +26,8 @@
     </div>
     <!--Hero nav ends -->
     <div class="arrows">
-        <a ui-sref="app.overwatch.heroes.hero({ slug: getPrevHero() })" class="arrow-left"><img src="../../dist/img/overwatch/icons/left.png"></a>
-        <a ui-sref="app.overwatch.heroes.hero({ slug: getNextHero() })" class="arrow-right"><img src="../../dist/img/overwatch/icons/right.png"></a>
+        <a ui-sref="app.overwatch.heroes.hero({ slug: getPrevHero() })" class="arrow-left"><img src="../img/overwatch/icons/left.png"></a>
+        <a ui-sref="app.overwatch.heroes.hero({ slug: getNextHero() })" class="arrow-right"><img src="../img/overwatch/icons/right.png"></a>
         <div class="container-fluid container-fluid-max"> <!-- overwatch articles and heroes -->
 
 
@@ -37,7 +37,7 @@
                         <div class="col-lg-6 col-xs-12 ow-hero-brief"  > <!-- hero brief --> 
                             <h1 class="ow-hero-name">{{hero.heroName}}</h1>
                             <ul class="ow-hero-profile">
-                                <li>Role: <img src="../../dist/img/overwatch/icons/{{hero.heroRole.toLowerCase()}}.png" class="ow-role-icon"> <span class="ow-role">{{hero.heroRole}}</span></li>
+                                <li>Role: <img src="../img/overwatch/icons/{{hero.heroRole.toLowerCase()}}.png" class="ow-role-icon"> <span class="ow-role">{{hero.heroRole}}</span></li>
                                 <li><span class="ow-orange-title">Real Name:</span> {{hero.realName}}<span class="hide-me">,</span> <span class="ow-orange-title">Age:</span> {{hero.age}}</li>
                                 <li><span class="ow-orange-title">Occupation:</span> {{hero.occupation}}</li>
                                 <li><span class="ow-orange-title">Base of Operations:</span> {{hero.location}}</li>
@@ -45,7 +45,7 @@
                             </ul>
                         </div> <!-- hero brief ends -->
                         <div class="col-lg-6 ow-character-img hidden-xs"> <!-- hero image --> 
-                            <img src="../../dist/img/overwatch/hero-background/hq/{{hero.className}}.png">
+                            <img src="../img/overwatch/hero-background/hq/{{hero.className}}.png">
                         </div> <!-- hero image ends -->
                     </div> <!-- hero brief ends -->  
                 </div> <!-- upper container ends -->
