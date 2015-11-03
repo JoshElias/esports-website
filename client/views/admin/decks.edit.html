@@ -403,7 +403,6 @@
                                 <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};"
                                      ng-repeat="card in mulligan.cardsWithoutCoin track by $index" 
                                      class="mulliganCards">
-                                    {{card.card.name}}
                                     <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
                                 </div>
                             </div>
@@ -413,8 +412,10 @@
                                 <button ng-click="deck.toggleMulligan(mulligan, false, card)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
-                                    <div ng-if="card.card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
-                                    <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right"><i class="fa fa-star"></i></div>
+                                    <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
+                                    <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
+                                        <i class="fa fa-star"></i>
+                                    </div>
                                 </button>
                             </div>
                         </div>
@@ -426,11 +427,15 @@
                     <div ng-repeat="chapter in deck.chapters track by $index" class="db-section m-b-md">
                         <div class="db-section-chapter-title">
                             <h1><input placeholder="New Chapter Title..." ng-model="chapter.title" /></h1>
-                                <i ng-click="removeChapter($index)" class="fa fa-close pull-right"></i>
+                                <i ng-click="removeChapter($index)" 
+                                   class="fa fa-close pull-right"></i>
                         </div>
-                        <summernote id="contentEarly" config="options" ng-model="chapter.content"></summernote>
+                        <summernote id="contentEarly" config="options" 
+                                    ng-model="chapter.content"></summernote>
                     </div>
-                    <div class="chapter-add-btn" ng-click="newChapter()"><i class="fa fa-plus-circle"></i> Add Chapter</div>
+                    <div class="chapter-add-btn" ng-click="newChapter()">
+                        <i class="fa fa-plus-circle"></i> Add Chapter
+                    </div>
                 </div>
                 <!-- / step 3 -->
                 <!-- step 4 -->

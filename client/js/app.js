@@ -2678,7 +2678,9 @@ var app = angular.module('app', [
                                                 authorId: true,
                                                 deckType: true,
                                                 viewCount: true,
-                                                isPublic: true
+                                                isPublic: true,
+                                                chapters: true,
+                                                deckType: true
                                             },
                                             include: [
 //                                                {

@@ -5144,29 +5144,28 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save deck
             var box;
-            $scope.saveDeck = function () {
-                if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
-                if (!$scope.app.user.isLogged()) {
-                    LoginModalService.showModal('login');
-                } else {
-                    $scope.deck.heroName = $scope.getName();
-                    DeckBuilder.saveDeck($scope.deck).success(function (data) {
-                        if (data.success) {
-                            $scope.app.settings.deck = null;
-                            $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
-                        } else {
-                            $scope.errors = data.errors;
-                            $scope.showError = true;
-                            $window.scrollTo(0,0);
-                        }
-                    });
-                }
+            $scope.saveDeck = function (deck) {
+//                if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
+//                if (!$scope.app.user.isLogged()) {
+//                    LoginModalService.showModal('login');
+//                } else {
+//                    $scope.deck.heroName = $scope.getName();
+//                    DeckBuilder.saveDeck($scope.deck).success(function (data) {
+//                        if (data.success) {
+//                            $scope.app.settings.deck = null;
+//                            $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
+//                        } else {
+//                            $scope.errors = data.errors;
+//                            $scope.showError = true;
+//                            $window.scrollTo(0,0);
+//                        }
+//                    });
+//                }
             };
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User) {
-            // find me easy
+    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'Mulligan',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan) {
             console.log('init deck: ',deck);
 
             $scope.cards = {
@@ -5668,17 +5667,112 @@ angular.module('app.controllers', ['ngCookies'])
                     $window.scrollTo(0, 0);
                     return false;
                 }
+                
                 console.log('deck to upsert: ', deck);
-                Deck.upsert(deck, function(data) {
-                    console.log('data upserted: ', data);
-                    $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
-                }, function(err) {
-                    if(err) console.log('error: ',err);
-                    $scope.errors = err.data.error.message;
-                    $scope.showError = true;
-                    $window.scrollTo(0, 0);
-                    return false;
+                
+//                return Deck.upsert({
+//                    where: {
+//                        id: deck.id
+//                    }
+//                }, deck)
+//                .$promise
+//                .then(function (data) {
+//                    console.log('deck upserted: ', data);
+//                    
+//                    Mulligan.upsert({
+//                        where: {
+//                            deckId: deck.id
+//                        }
+//                    }, deck.mulligans)
+//                    .$promise
+//                    .then(function (data) {
+//                        console.log('mulligan upserted: ',data);
+//                        return;
+//                    
+//                        $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
+//                        
+//                       async.each(deck.mulligans, function(mulligan, mulliganCB) {
+//                            Mulligan.upsert({
+//                                where: {
+//                                    deckId: deck.id
+//                                }
+//                            }, mulligan)
+//                            .$promise
+//                            .then(function (data) {
+//                                console.log('mulligan upserted: ', data);
+//                            })
+//                            .catch(function (err) {
+//                                if (err) return mulliganCB(err);
+//                            });
+//                        }, function (err) {
+//                            if (err) console.log('mulligan card err: ', err);
+//                        }); 
+//                    })
+//                    .catch(function (err) {
+//                        if (err) console.log('mulligan err: ',err);
+//                    });
+//                })
+//                .catch(function (err) {
+//                    if (err) console.log('deck error: ',err);
+//                });
+                
+                async.series([
+                    function(seriesCallback) {
+                        Deck.upsert({
+                            where: {
+                                id: deck.id
+                            }
+                        }, deck)
+                        .$promise
+                        .then(function (data) {
+                            console.log('deck upserted: ',data);
+                            seriesCallback(null, 'deck updated');
+                        })
+                        .catch(function (err) {
+                            if(err) {
+                                console.log('deck upsert err: ', err);
+                                seriesCallback(err);
+                            }
+                        });
+                    },
+                    function(seriesCallback) {
+                        async.each(deck.mulligans, function(mulligan, mulliganCB) {
+//                            console.log('current mull: ', mulligan);
+                            Mulligan.upsert({
+                                where: {
+                                    id: mulligan.id
+                                }
+                            }, mulligan)
+                            .$promise
+                            .then(function (data) {
+                                console.log('mulligan upserted: ', data);
+                                mulliganCB(null, 'two');
+                            })
+                            .catch(function (err) {
+                                if (err) {
+                                    console.log('mulligan err: ', err);
+                                    mulliganCB(err);
+                                }
+                            }); 
+                        }, function(err) {
+                            if (err)  {
+                                console.log('mulligan.each err: ',err);
+                                seriesCallback(err);
+                            }
+                            console.log('mulligan.each result: ',data);
+                            seriesCallback(null, 'mulligans updated');
+                        });   
+                    },
+                    function (seriesCallback) {
+                        
+                    }
+                ], 
+                function(err, results) {
+                    if (err) return console.log('series err: ', err);
+                    console.log('series results: ', results);
+//                    $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
                 });
+                
             };
 
             console.log('deck check: ', $scope.deck);
@@ -8459,8 +8553,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.currentMulligan = mulligan;
             };
             
-            console.log('ismullyset: ', $scope.deck.mulligans.cardsWithCoin);
-            
             // All this stuff is undefined?
             $scope.isMulliganSet = function (mulligan) {
                 return;
@@ -8609,22 +8701,6 @@ angular.module('app.controllers', ['ngCookies'])
             var box,
                 callback;
             
-            updateVotes();
-            function updateVotes() {
-                checkVotes($scope.deck);
-
-                function checkVotes (d) {
-                    console.log(d.votes);
-                    var vote = d.votes.filter(function (vote) {
-                        return (LoopBackAuth.currentUserData.id === vote.userID);
-                    })[0];
-
-                    if (vote) {
-                        d.voted = vote.direction;
-                    }
-                }
-            }
-            
             $scope.activeVote = function (deck, direction) {
                 var isActive = false;
                 for(var i = 0; i < deck.votes.length; i++) {
@@ -8660,8 +8736,8 @@ angular.module('app.controllers', ['ngCookies'])
                     var alreadyVoted = false;
                     for(var i = 0; i < deck.votes.length; i++) {
                         if(deck.votes[i].userID === LoopBackAuth.currentUserData.id) {
+                            alreadyVoted = true;
                             if(deck.votes[i].direction === direction) {
-                                alreadyVoted = true;
                                 return false;
                             } else {
                                 deck.votes[i].direction = direction;
@@ -8674,20 +8750,44 @@ angular.module('app.controllers', ['ngCookies'])
                             userID: LoopBackAuth.currentUserData.id,
                             direction: direction
                         });
-                        
-                        Deck.upsert(deck, function(data) {
-                            if(direction === 1) {
-                                deck.voteScore += 1;
-                            } else {
-                                deck.voteScore -= 1;
-                            }
-                        }, function(err) {
-                            if(err) console.log('error: ',err);
-                        });
                     }
+                    
+                    return Deck.upsert({
+                        where: {
+                            id: deck.id
+                        }
+                    }, deck, function(data) {
+                        $scope.deck.voteScore = updateVotes();
+                    }, function(err) {
+                        if(err) console.log('error: ',err);
+                    });
                 }
-                updateVotes();
+                
+                //            function updateVotes() {
+//                checkVotes($scope.deck);
+//
+//                function checkVotes (d) {
+//                    console.log(d.votes);
+//                    var vote = d.votes.filter(function (vote) {
+//                        return (LoopBackAuth.currentUserData.id === vote.userID);
+//                    })[0];
+//
+//                    if (vote) {
+//                        d.voted = vote.direction;
+//                    }
+//                }
+//            }
             };
+            
+            function updateVotes() {
+                var voteScore = 0;
+                for(var i = 0; i < $scope.deck.votes.length; i++) {
+                    voteScore += $scope.deck.votes[i].direction;
+                }
+                return voteScore;
+            }
+            
+            $scope.deck.voteScore = updateVotes();
 
             // get premium
             //TODO: This is using old stuff
