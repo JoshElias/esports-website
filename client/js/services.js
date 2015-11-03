@@ -536,9 +536,7 @@ angular.module('app.services', [])
     return {
         articleTypes: function () {
             return [
-                { name: 'Tempo Storm', value: 'ts' },
-                { name: 'Hearthstone', value: 'hs' },
-                { name: 'Heroes of the Storm', value: 'hots' }
+                
             ];
         },
         getAllArticles: function () {
