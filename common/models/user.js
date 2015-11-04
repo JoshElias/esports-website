@@ -19,7 +19,7 @@ module.exports = function(User) {
       next(err);
     });
   });
-
+/*
     User.observe("access", function(ctx, next) {
         console.log("access ctx:", ctx);
         var data = ctx.data || ctx.context;
@@ -34,7 +34,7 @@ module.exports = function(User) {
             next(err);
         });
     });
-
+*/
 
  /*!
    * Hash the plain password
