@@ -2440,6 +2440,14 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/articles.add.html',
                         controller: 'AdminArticleAddCtrl',
                         resolve: {
+                            heroes: ['Hero', function (Hero) {
+                                return Hero.find({
+                                    filter: {
+                                        order: "name"
+                                    }
+                                })
+                                .$promise;
+                            }]
 //                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
 //                                return AdminDeckService.getDecks(1, 10, '');
 //                            }],
@@ -2468,28 +2476,62 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/articles.edit.html',
                         controller: 'AdminArticleEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminArticleService', function ($stateParams, AdminArticleService) {
+                            article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var articleID = $stateParams.articleID;
-                                return AdminArticleService.getArticle(articleID);
+                                console.log(articleID);
+                                return Article.findOne({
+                                    filter: {
+                                        where: {
+                                            id: articleID
+                                        },
+                                        include: [
+                                            {
+                                                relation: "guide"
+                                            },
+                                            {
+                                                relation: "deck"
+                                            },
+                                            {
+                                                relation: "author"
+                                            },
+                                            {
+                                                relation: "relatedArticles"
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    data.related = data.relatedArticles;
+                                    return data;
+                                });
                             }],
-                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
-                                var page = 1,
-                                    perpage = 10,
-                                    search = '';
-                                return AdminDeckService.getDecks(page, perpage, search);
-                            }],
-                            dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
-                                return AdminHOTSGuideService.getAllGuides();
-                            }],
-                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
-                                return AdminArticleService.getAllArticles();
-                            }],
-                            dataProviders: ['AdminUserService', function (AdminUserService) {
-                                return AdminUserService.getProviders();
-                            }],
-                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-                                return AdminHeroService.getAllHeroes();
+                            heroes: ['Hero', function (Hero) {
+                                return Hero.find({
+                                    filter: {
+                                        order: "name"
+                                    }
+                                })
+                                .$promise;
                             }]
+//                            dataDecks: ['AdminDeckService', function (AdminDeckService) {
+//                                var page = 1,
+//                                    perpage = 10,
+//                                    search = '';
+//                                return AdminDeckService.getDecks(page, perpage, search);
+//                            }],
+//                            dataGuides: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
+//                                return AdminHOTSGuideService.getAllGuides();
+//                            }],
+//                            dataArticles: ['AdminArticleService', function (AdminArticleService) {
+//                                return AdminArticleService.getAllArticles();
+//                            }],
+//                            dataProviders: ['AdminUserService', function (AdminUserService) {
+//                                return AdminUserService.getProviders();
+//                            }],
+//                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
+//                                return AdminHeroService.getAllHeroes();
+//                            }]
                         }
                     }
                 },

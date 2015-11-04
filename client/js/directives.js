@@ -712,9 +712,19 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/premiumDirective.html'
     };
 })
-.directive('articleItemAdd', function () {
+.directive('articleDeckAdd', function () {
     return {
-        templateUrl: tpl + 'views/admin/articles.item.add.html',
+        templateUrl: tpl + 'views/admin/articles.deck.add.html',
+    };
+})
+.directive('articleGuideAdd', function () {
+    return {
+        templateUrl: tpl + 'views/admin/articles.guide.add.html',
+    };
+})
+.directive('articleAuthorAdd', function () {
+    return {
+        templateUrl: tpl + 'views/admin/articles.author.add.html',
     };
 })
 .directive('articleRelatedAdd', function () {
