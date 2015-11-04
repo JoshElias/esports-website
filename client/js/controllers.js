@@ -5164,8 +5164,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'Mulligan',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan) {
+    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard) {
             console.log('init deck: ',deck);
 
             $scope.cards = {
@@ -5670,54 +5670,8 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 console.log('deck to upsert: ', deck);
                 
-//                return Deck.upsert({
-//                    where: {
-//                        id: deck.id
-//                    }
-//                }, deck)
-//                .$promise
-//                .then(function (data) {
-//                    console.log('deck upserted: ', data);
-//                    
-//                    Mulligan.upsert({
-//                        where: {
-//                            deckId: deck.id
-//                        }
-//                    }, deck.mulligans)
-//                    .$promise
-//                    .then(function (data) {
-//                        console.log('mulligan upserted: ',data);
-//                        return;
-//                    
-//                        $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
-//                        
-//                       async.each(deck.mulligans, function(mulligan, mulliganCB) {
-//                            Mulligan.upsert({
-//                                where: {
-//                                    deckId: deck.id
-//                                }
-//                            }, mulligan)
-//                            .$promise
-//                            .then(function (data) {
-//                                console.log('mulligan upserted: ', data);
-//                            })
-//                            .catch(function (err) {
-//                                if (err) return mulliganCB(err);
-//                            });
-//                        }, function (err) {
-//                            if (err) console.log('mulligan card err: ', err);
-//                        }); 
-//                    })
-//                    .catch(function (err) {
-//                        if (err) console.log('mulligan err: ',err);
-//                    });
-//                })
-//                .catch(function (err) {
-//                    if (err) console.log('deck error: ',err);
-//                });
-                
                 async.series([
-                    function(seriesCallback) {
+                    function (seriesCallback) {
                         Deck.upsert({
                             where: {
                                 id: deck.id
@@ -5735,18 +5689,64 @@ angular.module('app.controllers', ['ngCookies'])
                             }
                         });
                     },
-                    function(seriesCallback) {
+                    function (seriesCallback) {
                         async.each(deck.mulligans, function(mulligan, mulliganCB) {
-//                            console.log('current mull: ', mulligan);
-                            Mulligan.upsert({
-                                where: {
-                                    id: mulligan.id
-                                }
-                            }, mulligan)
+                            Mulligan.upsert({}, mulligan)
                             .$promise
                             .then(function (data) {
                                 console.log('mulligan upserted: ', data);
-                                mulliganCB(null, 'two');
+                                
+                                // update cardsWithCoin & cardsWithoutCoin
+                                async.each(mulligan.cardsWithCoin, function(cardWithCoin, cardWithCoinCB) {
+                                    cardWithCoin.mulliganId = mulligan.id;
+                                    cardWithCoin.cardId = cardWithCoin.id;
+                                    
+                                    console.log('cardwithcoin upserting: ', cardWithCoin);
+                                    CardWithCoin.upsert({}, cardWithCoin)
+                                    .$promise
+                                    .then(function (data) {
+                                        console.log('cardWithCoin upserted: ', data);
+                                        cardWithCoinCB();
+                                    })
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('cardWithCoin err: ', err);
+                                            cardWithCoinCB(err);
+                                        }
+                                    });
+                                }, function(err) {
+                                    if (err) {
+                                        console.log('cardWithCoin.each err: ',err);
+                                        seriesCallback(err);
+                                    } else {
+                                        async.each(mulligan.cardsWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
+                                            cardWithoutCoin.mulliganId = mulligan.id;
+                                            cardWithoutCoin.cardId = cardWithoutCoin.id;
+
+                                            console.log('cardWithoutCoin upserting: ', cardWithoutCoin);
+                                            CardWithoutCoin.upsert({}, cardWithoutCoin)
+                                            .$promise
+                                            .then(function (data) {
+                                                console.log('cardWithoutCoin upserted: ', data);
+                                                cardWithoutCoinCB();
+                                            })
+                                            .catch(function (err) {
+                                                if (err) {
+                                                    console.log('cardWithoutCoin err: ', err);
+                                                    cardWithoutCoinCB(err);
+                                                }
+                                            });
+
+                                        }, function(err) {
+                                            if (err) {
+                                                console.log('cardWithCoin.each err: ',err);
+                                                seriesCallback(err);
+                                            }
+                                            mulliganCB();
+                                        });
+                                    }
+                                });
+                                
                             })
                             .catch(function (err) {
                                 if (err) {
@@ -5755,17 +5755,64 @@ angular.module('app.controllers', ['ngCookies'])
                                 }
                             }); 
                         }, function(err) {
-                            if (err)  {
+                            if (err) {
                                 console.log('mulligan.each err: ',err);
                                 seriesCallback(err);
                             }
-                            console.log('mulligan.each result: ',data);
                             seriesCallback(null, 'mulligans updated');
                         });   
                     },
-                    function (seriesCallback) {
-                        
-                    }
+//                    function (seriesCallback) {
+//                        async.each(deck.mulligans.cardsWithCoin, function(card, cardCB) {
+//                            console.log('card with coin update: ', card);
+//                            CardWithCoin.upsert({
+//                                where: {
+//                                    cardId: card.id
+//                                }
+//                            }, card)
+//                            .$promise
+//                            .then(function (data) {
+//                                console.log('card upserted: ', data);
+//                                cardCB();
+//                            })
+//                            .catch(function (err) {
+//                                if (err) {
+//                                    console.log('cardWithCoin.each err: ', err);
+//                                    cardCB(err);
+//                                }
+//                            });
+//                        }, function (err) {
+//                            if (err) {
+//                                console.log('cardsWithCoin.each err: ',err);
+//                                seriesCallback(err);
+//                            }
+//                            seriesCallback(null, 'cardsWithCoin updated');
+//                        });
+//                        async.each(deck.mulligans, function(mulligan, mulliganCB) {
+//                            CardWithCoin.upsert({
+//                                where: {
+//                                    id: mulligan.car
+//                                }
+//                            }, mulligan)
+//                            .$promise
+//                            .then(function (data) {
+//                                console.log('mulligan upserted: ', data);
+//                                mulliganCB();
+//                            })
+//                            .catch(function (err) {
+//                                if (err) {
+//                                    console.log('mulligan err: ', err);
+//                                    mulliganCB(err);
+//                                }
+//                            }); 
+//                        }, function(err) {
+//                            if (err) {
+//                                console.log('mulligan.each err: ',err);
+//                                seriesCallback(err);
+//                            }
+//                            seriesCallback(null, 'mulligans updated');
+//                        });   
+//                    }
                 ], 
                 function(err, results) {
                     if (err) return console.log('series err: ', err);
