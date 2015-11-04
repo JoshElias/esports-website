@@ -1,5 +1,5 @@
 module.exports = function(server) {
-    /*
+/*
     var async = require("async");
     var _ = require("underscore");
 
@@ -50,8 +50,11 @@ module.exports = function(server) {
                     roleInstances[roleName].principals.create({
                         principalType: RoleMapping.USER,
                         principalId: user.id
-                    }, function(err) {
-                        if(!err) console.log("created principal:", cuntCounter++);
+                    }, function(err, newPrincipal) {
+                        if(!err) {
+                            console.log("created principal:", newPrincipal);
+                            console.log(cuntCounter++);
+                        }
                         return roleCb(err);
                     });
                 } else {

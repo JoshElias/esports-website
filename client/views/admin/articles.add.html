@@ -18,7 +18,7 @@
         <div class="form-group">
             <label for="articleType" class="col-sm-2 control-label">Type</label>
             <div class="col-sm-10">
-                <select id="articleType" name="articleType" size="3" class="form-control" ng-options="articleType.value as articleType.name for articleType in articleTypes" ng-model="article.articleType" multiple required></select>
+                <select id="articleType" name="articleType" size="4" class="form-control" ng-options="articleType.value as articleType.name for articleType in articleTypes" ng-model="article.articleType" multiple required></select>
             </div>
         </div>
         <div class="form-group">
@@ -26,11 +26,11 @@
             <div class="col-sm-10">
                 <div class="input-group">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-green" ng-show="!article.author" ng-click="addItemArticle()">Add Author</button>
-                        <button type="button" class="btn btn-danger" ng-show="article.author" ng-click="modifyItem(undefined)"><i class="fa fa-close"></i></button>
-                        <button type="button" class="btn btn-blue" ng-show="article.author" ng-click="addItemArticle()"><i class="fa fa-exchange"></i></button>
+                        <button type="button" class="btn btn-green" ng-show="!article.author" ng-click="openAuthors()">Add Author</button>
+                        <button type="button" class="btn btn-danger" ng-show="article.author" ng-click="setAuthor(undefined)"><i class="fa fa-close"></i></button>
+                        <button type="button" class="btn btn-blue" ng-show="article.author" ng-click="openAuthors()"><i class="fa fa-exchange"></i></button>
                     </span>
-                    <input type="text" id="deck" name="deck" class="form-control" ng-model="article.author" readonly>
+                    <input type="text" id="deck" name="deck" class="form-control" ng-model="article.author.username" readonly>
                 </div>
             </div>
         </div>
@@ -133,9 +133,9 @@
             <div class="col-sm-10">
                 <div class="input-group">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-green" ng-show="!article.deck" ng-click="addItemArticle()">Add Deck</button>
-                        <button type="button" class="btn btn-danger" ng-show="article.deck" ng-click="modifyItem(undefined)"><i class="fa fa-close"></i></button>
-                        <button type="button" class="btn btn-blue" ng-show="article.deck" ng-click="addItemArticle()"><i class="fa fa-exchange"></i></button>
+                        <button type="button" class="btn btn-green" ng-show="!article.deck" ng-click="openDecks()">Add Deck</button>
+                        <button type="button" class="btn btn-danger" ng-show="article.deck" ng-click="setDeck(undefined)"><i class="fa fa-close"></i></button>
+                        <button type="button" class="btn btn-blue" ng-show="article.deck" ng-click="openDecks()"><i class="fa fa-exchange"></i></button>
                     </span>
                     <input type="text" id="deck" name="deck" class="form-control" ng-model="article.deck.name" readonly>
                 </div>
@@ -146,9 +146,9 @@
             <div class="col-sm-10">
                 <div class="input-group">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-green" ng-show="!article.guide" ng-click="addItemArticle()">Add Guide</button>
-                        <button type="button" class="btn btn-danger" ng-show="article.guide" ng-click="modifyItem(undefined)"><i class="fa fa-close"></i></button>
-                        <button type="button" class="btn btn-blue" ng-show="article.guide" ng-click="addItemArticle()"><i class="fa fa-exchange"></i></button>
+                        <button type="button" class="btn btn-green" ng-show="!article.guide" ng-click="openGuides()">Add Guide</button>
+                        <button type="button" class="btn btn-danger" ng-show="article.guide" ng-click="setGuide(undefined)"><i class="fa fa-close"></i></button>
+                        <button type="button" class="btn btn-blue" ng-show="article.guide" ng-click="openGuides()"><i class="fa fa-exchange"></i></button>
                     </span>
                     <input type="text" id="deck" name="deck" class="form-control" ng-model="article.guide.name" readonly>
                 </div>           
@@ -163,7 +163,7 @@
         <div class="form-group">
             <label for="featured" class="col-sm-2 control-label">Featured</label>
             <div class="col-sm-10">
-                <select id="featured" name="featured" class="form-control" ng-options="featured.value as featured.name for featured in articleFeatured" ng-model="article.featured" required></select>
+                <select id="featured" name="featured" class="form-control" ng-options="featured.value as featured.name for featured in articleFeatured" ng-model="article.isFeatured" required></select>
             </div>
         </div>
         <div class="form-group">
@@ -181,13 +181,13 @@
         <div class="form-group">
             <label for="theme" class="col-sm-2 control-label">Theme</label>
             <div class="col-sm-10">
-                <select id="theme" name="theme" class="form-control" ng-options="theme.value as theme.name for theme in articleTheme" ng-model="article.theme" required></select>
+                <select id="theme" name="theme" class="form-control" ng-options="theme.value as theme.name for theme in articleTheme" ng-model="article.themeName" required></select>
             </div>
         </div>
         <div class="form-group">
             <label for="active" class="col-sm-2 control-label">Active</label>
             <div class="col-sm-10">
-                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in articleActive" ng-model="article.active" required></select>
+                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in articleActive" ng-model="article.isActive" required></select>
             </div>
         </div>
     </div>
