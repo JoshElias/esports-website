@@ -20,11 +20,16 @@
     .hs-deck.small.#{$deck}.#{$character} { background: url('../img/decks/#{$deck}.png') center center no-repeat; background-size: cover; }
     .hs-deck.large.#{$deck}.#{$character} { background: url('../img/decks/#{$deck}-large.png') center center no-repeat; background-size: cover; }
     .hs-deck.long.#{$deck}.#{$character} { background-image: url('../img/decks/long/#{$character}.png'); background-position: right center; background-repeat: no-repeat; }
-
+    
+    //deck builder header and footer iamge
+    
+    .db-deck-header.db-deck-#{$deck}.#{$character} { background: url('../img/decks/list/#{$character}-top.jpg') center; background-size: cover; }
+    .db-deck-footer.db-deck-#{$deck}.#{$character} { background: url('../img/decks/list/#{$character}-bottom.jpg') center top no-repeat; background-size: cover; }
+    
 }
 
 //*************************************
-// 2... HS decks backgrounds 
+// 2... HS decks backgrounds & deck builder header
 //*************************************
 
 

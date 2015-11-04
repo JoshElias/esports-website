@@ -870,7 +870,6 @@ var app = angular.module('app', [
                                 }).$promise
                                 .then(function (data) {
                                     deck.mulligans = data;
-                                    console.log('deck resolv: ',deck);
                                     return deck;
                                 });
                             }],
@@ -881,6 +880,24 @@ var app = angular.module('app', [
                                     filter: {
                                         where: {
                                             slug: stateSlug
+                                        },
+                                        fields: {
+                                            id: true,
+                                            createdDate: true,
+                                            name: true,
+                                            description: true,
+                                            playerClass: true,
+                                            premium: true,
+                                            slug: true,
+                                            dust: true,
+                                            heroName: true,
+                                            authorId: true,
+                                            deckType: true,
+                                            viewCount: true,
+                                            isPublic: true,
+                                            votes: true,
+                                            voteScore: true,
+                                            chapters: true
                                         },
                                         include: [
                                             {
@@ -897,6 +914,9 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: 'mulligans'
+                                            },
+                                            {
+                                                relation: 'matchups'
                                             }
                                         ]
                                     }
