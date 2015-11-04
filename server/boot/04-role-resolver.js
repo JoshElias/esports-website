@@ -9,12 +9,15 @@ module.exports = function(app) {
         }
 
         // if the target model is not project
+        console.log("context:", context);
+        console.log("modelName:", context.modelName);
         if (context.modelName !== 'user') {
             return reject();
         }
 
         // do not allow anonymous users
         var userId = context.accessToken.userId;
+        console.log("userId:", userId);
         if (!userId) {
             return reject();
         }
@@ -24,6 +27,7 @@ module.exports = function(app) {
             if (err || !user)
                 return reject();
 
+            console.log("checking if user is subbed");
             function isSubscribed(subscription) {
                 var now = new Date();
                 return (subscription.isSubscribed

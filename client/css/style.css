@@ -2486,6 +2486,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 	width:100%;
 }
 
+
+
 .flex-col {
     display: -webkit-box;
     display: -moz-box;
@@ -2495,6 +2497,10 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     flex: 1 100%;
 	flex-flow: column nowrap;
 }
+
+/* safari hack for flex-col  */
+_::-moz-svg-foreign-content, :root .flex-col { display: block; }
+
 
 .flex-grow {
     display: -webkit-box;

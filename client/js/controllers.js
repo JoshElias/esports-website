@@ -1334,14 +1334,14 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'LoopBackAuth', 'Guide', 'Article', 'User', 'Hero', 'Deck',
-        function ($scope, $state, $window, $compile, bootbox, Hearthstone, Util, AlertService, LoopBackAuth, Guide, Article, User, Hero, Deck) {
+    .controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'heroes', 'LoopBackAuth', 'Guide', 'Article', 'User', 'Hero', 'Deck', 'ArticleArticle',
+        function ($scope, $state, $window, $compile, bootbox, Hearthstone, Util, AlertService, heroes, LoopBackAuth, Guide, Article, User, Hero, Deck, ArticleArticle) {
             // default article
             var d = new Date();
             d.setMonth(d.getMonth()+1);
-
+            console.log("date", d, typeof d);
             var defaultArticle = {
-                    author: LoopBackAuth.currentUserId,
+                    author: LoopBackAuth.currentUserData,
                     title : '',
                     slug: {
                         url: '',
@@ -1349,7 +1349,7 @@ angular.module('app.controllers', ['ngCookies'])
                     },
                     description: '',
                     content: '',
-                    photos: {
+                    photoNames: {
                         large: '',
                         medium: '',
                         small: '',
@@ -1359,14 +1359,14 @@ angular.module('app.controllers', ['ngCookies'])
                     guide: undefined,
                     related: [],
                     classTags: [],
-                    theme: 'none',
-                    featured: false,
+                    themeName: 'none',
+                    isFeatured: false,
                     premium: {
                         isPremium: false,
                         expiryDate: d
                     },
                     articleType: [],
-                    active: true
+                    isActive: true
                 },
                 deckID,
                 itemAddBox;
@@ -1381,43 +1381,178 @@ angular.module('app.controllers', ['ngCookies'])
 
 
             //search functions
-            $scope.getDecks = function () {
-                AdminDeckService.getDecks(1, 10, escapeStr($scope.search)).then(function (data) {
-                    $scope.decks = data.decks;
+            $scope.getDecks = function (cb) {
+                console.log($scope.search);
+                
+                var options = {
+                    filter: {
+                        limit: 10,
+                        order: "createdDate DESC",
+                        fields: ["name", "id"]
+                    }
+                }
+                
+                if($scope.search) {
+                    console.log("yep");
+                    options.filter.where = {
+                        or: [
+                            {name: { regexp: $scope.search }},
+                            {slug: { regexp: $scope.search }}
+                        ]
+                    }
+                }
+                
+                Deck.find(options)
+                    .$promise
+                    .then(function (data) {
+                    console.log(data);
+                    
+                    $scope.decks = data;
+                    if (cb !== undefined) { return cb(); }
                 });
             }
 
-            $scope.getArticles = function () {
-                AdminArticleService.getArticles(1, 10, escapeStr($scope.search)).then(function (data) {
-                    $scope.articles = data.articles;
+            $scope.getArticles = function (cb) {
+                var options = {
+                    filter: {
+                        limit: 10,
+                        order: "createdDate DESC",
+                        fields: ["title", "id", "photoNames"]
+                    }
+                }
+                
+                if($scope.search) {
+                    options.filter.where = {
+                        or: [
+                            {title: { regexp: $scope.search }},
+                            {slug: { regexp: $scope.search }}
+                        ]
+                    }
+                }
+                
+                Article.find(options)
+                    .$promise
+                    .then(function (data) {
+                    console.log(data);
+                    $scope.articles = data;
+                    if (cb !== undefined) { return cb(); }
                 });
             }
 
-            $scope.getGuides = function () {
-                AdminHOTSGuideService.getGuides(1, 10, escapeStr($scope.search)).then(function (data) {
-                    $scope.guides = data.guides;
+            $scope.getGuides = function (cb) {
+                var options = {
+                    filter: {
+                        limit: 10,
+                        order: "createdDate DESC",
+                        fields: ["name", "id"]
+                    }
+                }
+                
+                if($scope.search) {
+                    options.filter.where = {
+                        or: [
+                            {name: { regexp: $scope.search }},
+                            {slug: { regexp: $scope.search }}
+                        ]
+                    }
+                }
+                
+                Guide.find(options)
+                    .$promise
+                    .then(function (data) {
+                    $scope.guides = data;
+                    if (cb !== undefined) { return cb(); }
+                });
+            }
+            
+            $scope.getUsers = function (cb) {
+                var options = {
+                    filter: {
+                        limit: 10,
+                        order: "createdDate DESC",
+                        fields: ["username", "id"],
+                        where: {
+                            isProvider: true
+                        }
+                    }
+                }
+                
+                if($scope.search) {
+                    options.filter.where = {
+                        or: [
+                            {username: { regexp: $scope.search }}
+                        ]
+                    }
+                }
+                
+                User.find(options)
+                    .$promise
+                    .then(function (data) {
+                    console.log(data);
+                    $scope.users = data;
+                    if (cb !== undefined) { return cb(); }
                 });
             }
             //!search functions
-
-            //open the modal to choose what item to add
-            $scope.addItemArticle = function () {
-                itemAddBox = bootbox.dialog({
-                    message: $compile('<div article-item-add></div>')($scope),
-                    closeButton: true,
-                    animate: true,
-                    onEscape: function () { //We want to clear the search results when we close the bootbox
+            
+            $scope.openAuthors = function () {
+                $scope.getUsers(function () {
+                    itemAddBox = bootbox.dialog({
+                        message: $compile('<div article-author-add></div>')($scope),
+                        closeButton: true,
+                        animate: true,
+                    });
+                    itemAddBox.modal('show');
+                    itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
                         $scope.search = '';
-                        $scope.getDecks();
-                        $scope.getGuides();
-                    }
-                });
-                itemAddBox.modal('show');
-                itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
-                    $scope.search = '';
-                    $scope.getArticles();
+                    });
                 });
             }
+            
+            $scope.setAuthor = function (user) {
+                $scope.article.author = (user) ? user : undefined;
+                $scope.search = '';
+                itemAddBox.modal('hide');
+            }
+            
+            
+            $scope.openDecks = function () {
+                $scope.getDecks(function () {
+                    itemAddBox = bootbox.dialog({
+                        message: $compile('<div article-deck-add></div>')($scope),
+                        closeButton: true,
+                        animate: true,
+                    });
+                    itemAddBox.modal('show');
+                    itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                        $scope.search = '';
+                    });
+                });
+            }
+            
+            $scope.setDeck = function (deck) {
+                $scope.article.deck = (deck) ? deck : undefined;
+            }
+            
+            
+            $scope.openGuides = function () {
+                $scope.getGuides(function () {
+                    itemAddBox = bootbox.dialog({
+                        message: $compile('<div article-guide-add></div>')($scope),
+                        closeButton: true,
+                        animate: true,
+                    });
+                    itemAddBox.modal('show');
+                    itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                        $scope.search = '';
+                    });
+                });
+            }
+            
+            $scope.setGuide = function (guide) {
+                $scope.article.guide = (guide) ? guide : undefined;
+            }
+
 
             $scope.closeBox = function () {
                 itemAddBox.modal('hide');
@@ -1437,21 +1572,23 @@ angular.module('app.controllers', ['ngCookies'])
 
             //this is for the related article modal
             $scope.addRelatedArticle = function () {
-                itemAddBox = bootbox.dialog({
-                    message: $compile('<div article-related-add></div>')($scope),
-                    closeButton: false,
-                    animate: true,
-                });
-                itemAddBox.modal('show');
-                itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
-                    $scope.search = '';
-                    $scope.getArticles();
+                $scope.getArticles(function () {
+                    itemAddBox = bootbox.dialog({
+                        message: $compile('<div article-related-add></div>')($scope),
+                        closeButton: false,
+                        animate: true,
+                    });
+                    itemAddBox.modal('show');
+                    itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                        $scope.search = '';
+                        $scope.getArticles();
+                    });
                 });
             }
 
             $scope.isRelated = function (a) {
                 for (var i = 0; i < $scope.article.related.length; i++) {
-                    if (a._id == $scope.article.related[i]._id) {
+                    if (a.id == $scope.article.related[i].id) {
                         return true;
                     }
                 }
@@ -1468,7 +1605,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.removeRelatedArticle = function (a) {
                 for (var i = 0; i < $scope.article.related.length; i++) {
-                    if (a._id === $scope.article.related[i]._id) {
+                    if (a.id === $scope.article.related[i].id) {
                         $scope.article.related.splice(i, 1);
                     }
                 }
@@ -1518,8 +1655,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 if (isHOTS && !isHS) {
                     var out = [];
-                    for (var i = 0; i < dataHeroes.heroes.length; i++) {
-                        out.push(dataHeroes.heroes[i].name);
+                    for (var i = 0; i < heroes.length; i++) {
+                        out.push(heroes[i].name);
                     }
                     return out;
                 }
@@ -1529,7 +1666,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.articleTypes = [
                 { name: 'Tempo Storm', value: 'ts' },
                 { name: 'Hearthstone', value: 'hs' },
-                { name: 'Heroes of the Storm', value: 'hots' }
+                { name: 'Heroes of the Storm', value: 'hots' },
+                { name: 'Overwatch', value: 'overwatch' }
             ];
 
             // select options
@@ -1601,45 +1739,69 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.getImage = function () {
                 $scope.imgPath = 'articles/';
-                if (!$scope.article) { return 'img/blank.png'; }
-                return ($scope.article.photos && $scope.article.photos.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photos.small;
+                if (!$scope.article.photoNames) { return 'img/blank.png'; }
+                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photoNames.small;
             };
 
 
             $scope.addArticle = function () {
+                console.log($scope.article);
+                var date = new Date();
+                
+                $scope.article.createdDate = d.toISOString();
+                
+                $scope.article.authorId = $scope.article.author.id;
+                $scope.article.createdDate = new Date
+                if($scope.article.deck) {
+                    $scope.article.deckId = $scope.article.deck.id;
+                } else if ($scope.article.guide) {
+                    $scope.article.guideId = $scope.article.guide.id;
+                }
+                
                 $scope.showError = false;
-                AdminArticleService.addArticle($scope.article).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been added successfully.' });
-                        $state.go('app.admin.articles.list');
-                    }
+                Article.upsert({}, $scope.article)
+                .$promise
+                .then(function (data) {
+                    async.each($scope.article.related, function (related, relatedCb) {
+                        var relatedClean = {};
+                        
+                        relatedClean.parentArticleId = data.id;
+                        relatedClean.childArticleId = related.id;
+                        
+                        ArticleArticle.upsert({}, relatedClean)
+                        .$promise
+                        .then(function () {
+                            return relatedCb();
+                        });
+                    });
+                    
+                    AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been added successfully.' });
+                    $state.go('app.admin.articles.list');
                 });
             };
         }
     ])
-    .controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$upload', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'AdminArticleService', 'AdminDeckService', 'AdminHOTSGuideService', 'data', 'dataDecks', 'dataGuides', 'dataArticles', 'dataProviders', 'dataHeroes',
-        function ($scope, $state, $window, $upload, $compile, $filter, bootbox, Hearthstone, Util, AlertService, AdminArticleService, AdminDeckService, AdminHOTSGuideService, data, dataDecks, dataGuides, dataArticles, dataProviders, dataHeroes) {
+    .controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'Article', 'Deck', 'Guide', 'article',
+        function ($scope, $state, $window, $compile, $filter, bootbox, Hearthstone, Util, AlertService, Article, Deck, Guide, article) {
             var itemAddBox,
                 deckID;
+            
+            console.log(article);
 
             // load article
-            $scope.article = data.article;
+            $scope.article = article;
 
-            // load decks
-            $scope.decks = [{_id: undefined, name: 'No deck'}].concat(dataDecks.decks);
-
-            // load guides
-            $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);
-
-            // load articles
-            $scope.articles = dataArticles.articles;
-
-            // load providers
-            $scope.providers = dataProviders.users;
+//            // load decks
+//            $scope.decks = [{_id: undefined, name: 'No deck'}].concat(dataDecks.decks);
+//
+//            // load guides
+//            $scope.guides = [{_id: undefined, name: 'No Guide'}].concat(dataGuides.guides);
+//
+//            // load articles
+//            $scope.articles = dataArticles.articles;
+//
+//            // load providers
+//            $scope.providers = dataProviders.users;
 
             $scope.search = '';
 
@@ -1650,55 +1812,171 @@ angular.module('app.controllers', ['ngCookies'])
 
 
             //search functions
-            $scope.getDecks = function () {
-                AdminDeckService.getDecks(1, 10, escapeStr($scope.search)).then(function (data) {
-                    $scope.decks = data.decks;
+            $scope.getDecks = function (cb) {
+                var options = {
+                    filter: {
+                        limit: 10,
+                        order: "createdDate DESC",
+                        fields: ["name", "id"]
+                    }
+                }
+                
+                if($scope.search) {
+                    options.where = {
+                        or: [
+                            {name: { regexp: $scope.search }},
+                            {slug: { regexp: $scope.search }}
+                        ]
+                    }
+                }
+                
+                Deck.find(options)
+                    .$promise
+                    .then(function (data) {
+                    $scope.decks = data;
+                    if (cb !== undefined) { return cb(); }
                 });
             }
 
-            $scope.getArticles = function () {
-                AdminArticleService.getArticles(1, 10, escapeStr($scope.search)).then(function (data) {
-                    $scope.articles = data.articles;
+            $scope.getArticles = function (cb) {
+                var options = {
+                    filter: {
+                        limit: 10,
+                        order: "createdDate DESC",
+                        fields: ["title", "id", "photoNames"]
+                    }
+                }
+                
+                if($scope.search) {
+                    options.where = {
+                        or: [
+                            {title: { regexp: $scope.search }},
+                            {slug: { regexp: $scope.search }}
+                        ]
+                    }
+                }
+                
+                Article.find(options)
+                    .$promise
+                    .then(function (data) {
+                    $scope.articles = data;
+                    if (cb !== undefined) { return cb(); }
                 });
             }
 
-            $scope.getGuides = function () {
-                AdminHOTSGuideService.getGuides(1, 10, escapeStr($scope.search)).then(function (data) {
-                    $scope.guides = data.guides;
+            $scope.getGuides = function (cb) {
+                var options = {
+                    filter: {
+                        limit: 10,
+                        order: "createdDate DESC",
+                        fields: ["name", "id"]
+                    }
+                }
+                
+                if($scope.search) {
+                    options.where = {
+                        or: [
+                            {name: { regexp: $scope.search }},
+                            {slug: { regexp: $scope.search }}
+                        ]
+                    }
+                }
+                
+                Guide.find(options)
+                    .$promise
+                    .then(function (data) {
+                    $scope.guides = data;
+                    if (cb !== undefined) { return cb(); }
+                });
+            }
+            
+            $scope.getUsers = function (cb) {
+                var options = {
+                    filter: {
+                        limit: 10,
+                        order: "createdDate DESC",
+                        fields: ["username", "id"],
+                        where: {
+                            isProvider: true
+                        }
+                    }
+                }
+                
+                if($scope.search) {
+                    options.where = {
+                        or: [
+                            {name: { regexp: $scope.search }},
+                            {slug: { regexp: $scope.search }}
+                        ]
+                    }
+                }
+                
+                User.find(options)
+                    .$promise
+                    .then(function (data) {
+                    $scope.users = data;
+                    if (cb !== undefined) { return cb(); }
                 });
             }
             //!search functions
-
-            //open the modal to choose what item to add
-            $scope.addItemArticle = function () {
-                itemAddBox = bootbox.dialog({
-                    message: $compile('<div article-item-add></div>')($scope),
-                    closeButton: true,
-                    animate: true,
-                    onEscape: function () { //We want to clear the search results when we close the bootbox
+            
+            $scope.openAuthors = function () {
+                $scope.getUsers(function () {
+                    itemAddBox = bootbox.dialog({
+                        message: $compile('<div article-author-add></div>')($scope),
+                        closeButton: true,
+                        animate: true,
+                    });
+                    itemAddBox.modal('show');
+                    itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
                         $scope.search = '';
-                        $scope.getDecks();
-                        $scope.getGuides();
-                    }
-                });
-                itemAddBox.modal('show');
-                itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
-                    $scope.search = '';
-                    $scope.getArticles();
+                    });
                 });
             }
-
-            //change the article item
-            $scope.modifyItem = function (item) {
-                switch ($scope.article.articleType.toString()) {
-                    case 'hs': $scope.article.deck = item; break;
-                    case 'hots': $scope.article.guide = item; break;
-                }
+            
+            $scope.setAuthor = function (user) {
+                $scope.article.author = (user) ? user : undefined;
                 $scope.search = '';
                 itemAddBox.modal('hide');
             }
-
-
+            
+            
+            $scope.openDecks = function () {
+                $scope.getDecks(function () {
+                    itemAddBox = bootbox.dialog({
+                        message: $compile('<div article-deck-add></div>')($scope),
+                        closeButton: true,
+                        animate: true,
+                    });
+                    itemAddBox.modal('show');
+                    itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                        $scope.search = '';
+                    });
+                });
+            }
+            
+            $scope.setDeck = function (deck) {
+                $scope.article.deck = (deck) ? deck : undefined;
+            }
+            
+            
+            $scope.openGuides = function () {
+                $scope.getDecks(function () {
+                    itemAddBox = bootbox.dialog({
+                        message: $compile('<div article-guide-add></div>')($scope),
+                        closeButton: true,
+                        animate: true,
+                    });
+                    itemAddBox.modal('show');
+                    itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                        $scope.search = '';
+                    });
+                });
+            }
+            
+            $scope.setGuide = function (guide) {
+                $scope.article.guide = (guide) ? guide : undefined;
+            }
 
             //this is for the related article modal
             $scope.addRelatedArticle = function () {
@@ -1716,7 +1994,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.isRelated = function (a) {
                 for (var i = 0; i < $scope.article.related.length; i++) {
-                    if (a._id == $scope.article.related[i]._id) {
+                    if (a.id == $scope.article.related[i].id) {
                         return true;
                     }
                 }
@@ -1733,7 +2011,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.removeRelatedArticle = function (a) {
                 for (var i = 0; i < $scope.article.related.length; i++) {
-                    if (a._id === $scope.article.related[i]._id) {
+                    if (a.id === $scope.article.related[i].id) {
                         $scope.article.related.splice(i, 1);
                     }
                 }
@@ -1753,10 +2031,17 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.setSlug();
             };
 
-
             // photo
-            $scope.cardImg = ($scope.article.photos.small && $scope.article.photos.small.length) ? $scope.app.cdn + 'articles/' + $scope.article.photos.small : $scope.app.cdn + 'img/blank.png';
-
+            $scope.cardImg = getCardImg();
+            
+            function getCardImg () {
+                if (!$scope.article.photoNames) {
+                   return $scope.app.cdn + 'img/blank.png'
+                } else if ($scope.article.photoNames.small && $scope.article.photoNames.small.length) {
+                    return $scope.app.cdn + 'articles/' + $scope.article.photoNames.small;
+                }
+            }
+            
             // tags
             $scope.hasTags = function () {
                 var type = $scope.article.articleType,
@@ -1776,8 +2061,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 if (isHOTS && !isHS) {
                     var out = [];
-                    for (var i = 0; i < dataHeroes.heroes.length; i++) {
-                        out.push(dataHeroes.heroes[i].name);
+                    for (var i = 0; i < heroes.length; i++) {
+                        out.push(heroes[i].name);
                     }
                     return out;
                 }
@@ -1787,7 +2072,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.articleTypes = [
                     { name: 'Tempo Storm', value: 'ts' },
                     { name: 'Hearthstone', value: 'hs' },
-                    { name: 'Heroes of the Storm', value: 'hots' }
+                    { name: 'Heroes of the Storm', value: 'hots' },
+                    { name: 'Overwatch', value: 'overwatch' }
                 ];
 
             // select options
@@ -1828,54 +2114,50 @@ angular.module('app.controllers', ['ngCookies'])
                 ]
             };
 
-            // photo upload
-            $scope.photoUpload = function ($files) {
-                if (!$files.length) return false;
-                var box = bootbox.dialog({
-                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-                    closeButton: false,
-                    animate: false
-                });
-                $scope.uploading = 0;
-                box.modal('show');
-                for (var i = 0; i < $files.length; i++) {
-                    var file = $files[i];
-                    $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/article',
-                        method: 'POST',
-                        file: file
-                    }).progress(function(evt) {
-                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function(data, status, headers, config) {
-                        $scope.article.photos = {
-                            large: data.large,
-                            medium: data.medium,
-                            small: data.small,
-                            square: data.square
-                        };
-                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-                        box.modal('hide');
-                    });
-                }
-            };
+//            // photo upload
+//            $scope.photoUpload = function ($files) {
+//                if (!$files.length) return false;
+//                var box = bootbox.dialog({
+//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+//                    closeButton: false,
+//                    animate: false
+//                });
+//                $scope.uploading = 0;
+//                box.modal('show');
+//                for (var i = 0; i < $files.length; i++) {
+//                    var file = $files[i];
+//                    $scope.upload = $upload.upload({
+//                        url: '/api/admin/upload/article',
+//                        method: 'POST',
+//                        file: file
+//                    }).progress(function(evt) {
+//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+//                    }).success(function(data, status, headers, config) {
+//                        $scope.article.photos = {
+//                            large: data.large,
+//                            medium: data.medium,
+//                            small: data.small,
+//                            square: data.square
+//                        };
+//                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
+//                        box.modal('hide');
+//                    });
+//                }
+//            };
 
             $scope.getImage = function () {
                 $scope.imgPath = 'articles/';
-                if (!$scope.article) { return 'img/blank.png'; }
-                return ($scope.article.photos && $scope.article.photos.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photos.small;
+                if (!$scope.article.photoNames) { return 'img/blank.png'; }
+                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photoNames.small;
             };
 
             $scope.editArticle = function () {
                 $scope.showError = false;
-                AdminArticleService.editArticle($scope.article).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been updated successfully.' });
-                        $state.go('app.admin.articles.list');
-                    }
+                Article.upsert({}, $scope.article)
+                .$promise
+                .then(function (data) {
+                    AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been updated successfully.' });
+                    $state.go('app.admin.articles.list');
                 });
             };
 

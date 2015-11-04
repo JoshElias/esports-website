@@ -231,7 +231,7 @@ $pos-y: 4px;
 .ow-home-logo {
     margin: 33px;
     margin-left: 12.05%; 
-    height: 80%;
+    //height: 80%;
     width: 360px;
     
       @media (max-width: 1050px) {
@@ -315,9 +315,12 @@ $pos-y: 4px;
 .ow-hero-filters li a.active {
     background-color: $ow-yellow;
 } 
-            
-.ow-hero-filters li a:hover {
-    background-color: $ow-yellow;
+
+@media (min-width: 765px) {
+
+    .ow-hero-filters li a:hover {
+        background-color: $ow-yellow;
+    }
 }
 
 .ow-hero-selected {
@@ -812,5 +815,11 @@ $pos-y: 4px;
 
     .ow-vid-div {
         text-align: center;
+        
+        @media (min-width: 1170px) {
+            margin-top: 80px;
+        }
+        
+        
     }
 }

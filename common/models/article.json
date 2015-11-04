@@ -69,6 +69,12 @@
     "isActive": {
       "type": "boolean"
     },
+    "deckId" : {
+        "type": "string"
+    },
+    "guideId" : {
+        "type": "string"
+    },
     "__v": {
       "type": "number"
     },
@@ -99,6 +105,11 @@
       "type": "belongsTo",
       "model": "deck",
       "foreignKey": "deckId"
+    },
+    "guide": {
+      "type": "belongsTo",
+      "model": "guide",
+      "foreignKey": "guideId"
     }
   },
   "acls": [],
