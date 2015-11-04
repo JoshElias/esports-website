@@ -1,9 +1,14 @@
+
+@import 'ts-colors.scss';
+
 // Description: file to build css for adding new decks to HS
 
 //*************************************
 
 // 1... HS deck mixin library
 // 2... HS decks backgrounds 
+// 3... HS decks buider images and mulligans
+// 3.1.. MULLIGANS Styles
 
 //*************************************
 
@@ -25,14 +30,21 @@
     
     .db-deck-header.db-deck-#{$deck}.#{$character} { background: url('../img/decks/list/#{$character}-top.jpg') center; background-size: cover; }
     .db-deck-footer.db-deck-#{$deck}.#{$character} { background: url('../img/decks/list/#{$character}-bottom.jpg') center top no-repeat; background-size: cover; }
-    
+
+}
+
+ //db-class hero-img
+
+@mixin hs-db-and-color ($deck, $character, $image, $color) {
+
+    .db-class-#{$deck}.#{$character} .hero-img{ background: #{$color} url('../img/#{$image}.jpg') center center no-repeat; background-size: 220px; }
+    .db-mulligans .class-#{$deck}.#{$character} { background: #{$color} url('../img/#{$image}.jpg') center center no-repeat; background-size: 195%; }
+
 }
 
 //*************************************
 // 2... HS decks backgrounds & deck builder header
 //*************************************
-
-
 
 @include hs-deck-images (druid, malfurion);
 @include hs-deck-images (hunter, rexxar);
@@ -46,6 +58,101 @@
 @include hs-deck-images (warlock, guldan);
 @include hs-deck-images (warrior, garrosh);
 @include hs-deck-images (warrior, magni);
+
+//*************************************
+// 3... HS decks buider images and mulligans
+//*************************************
+
+@include hs-db-and-color (mage, jaina, mage-large, $mage-blue );
+@include hs-db-and-color (mage, medivh, medivh, $mage-blue );
+@include hs-db-and-color (shaman, thrall, shaman-large, $shaman-blue );
+@include hs-db-and-color (warrior, garrosh, warrior-large, $warrior-tan );
+@include hs-db-and-color (warrior, magni, magni, $warrior-tan );
+@include hs-db-and-color (rogue, valeera, rogue-large, $rogue-yellow );
+@include hs-db-and-color (paladin, uther, paladin-large, $paladin-pink );
+@include hs-db-and-color (priest, anduin, priest-large, $priest-white );
+@include hs-db-and-color (warlock, guldan, warlock-large, $warlock-pink );
+@include hs-db-and-color (hunter, rexxar, hunter-large, $hunter-green );
+@include hs-db-and-color (hunter, alleria, alleria, $hunter-green );
+@include hs-db-and-color (druid, malfurion, druid-large, $druid-orange );
+
+//*************************************
+// 3.1.. MULLIGANS Styles
+//*************************************
+
+.db-mulligans h2 { color: #FFF; font-size: 22px; font-weight: bold; text-shadow: 0px 0px 20px rgba(255,255,255,.4); margin: 0px; }
+.db-mulligans h3 { color: rgba(255,255,255,.6); margin: 0px; font-size: 14px; }
+
+.db-mulligans .class { 
+    position: relative; 
+    width: 11.11%; 
+    height: 440px; 
+    float: left; 
+    border: 1px solid rgba(0,0,0,1); 
+    outline: 1px solid rgba(255,255,255,.2); 
+    outline-offset: -2px; 
+    -moz-transition: .25s;
+    -ms-transition: .25s;
+    -o-transition: .25s;
+    -webkit-transition: .25s;
+    transition: .25s;
+        
+}
+.db-mulligans .class button { width: 100%; height: 100%; outline: none; border: none; background: none; }
+.db-mulligans .class.active { outline: 1px solid rgba(255,255,255,1); }
+.db-mulligans .class span { position: absolute; width: 100%; bottom: 0; left: 0; text-align: center; font-size: 16px; font-weight: bold; color: white; }
+.db-mulligans .class-select { width: 100%; }
+
+
+.db-mulligans .class.no-select { opacity: .4; }
+
+.db-mulligans .description-header { 
+    width: 100%;
+    height: 115px;
+    position: relative;
+    
+    background: rgba(36,104,172,1); 
+    background: -moz-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(36,104,172,1)), color-stop(15%, rgba(36,104,172,1)), color-stop(100%, rgba(0,139,198,1)));
+    background: -webkit-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+    background: -o-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+    background: -ms-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+    background: linear-gradient(to right, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2468ac', endColorstr='#008bc6', GradientType=1 );
+}
+.db-mulligans .big-coin { height: 60px; overflow: hidden; position: absolute; top: 27.5px; left: 27.5px; border-radius: 50%; border: 3px solid white; }
+.db-mulligans .description-header i { color: red; position: absolute; font-size: 100px; top: 5px; left: 22px; opacity: .7; }
+.db-mulligans .header-text { position: absolute; top: 27.5px; left: 100px; }
+
+.db-mulligans .db-mulligan-content { background: rgba(0,0,0,.5) }
+.db-mulligans .db-mulligan-content .left { color: #FFF; padding: 0; min-height: 400px; }
+.db-mulligans .db-mulligan-content .right { color: #FFF; padding: 0; }
+
+
+.db-mulligans .mulliganCardWrapper { position: relative; width: 80%; margin: auto 14%; }
+.db-mulligans .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-bottom: 1px; }
+.db-mulligans .mana-cost { background: #2766AD; height: 28px; width: 28px; float: left; text-align: center; text-indent: 0px; color: white; }
+
+.db-mulligans .db-mulligan-instructions,
+.db-mulligans .db-mulligan-instructions:focus {
+    outline: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    border: none;
+    resize: none!important;
+    width: 100%;
+    height:173px;
+    background: rgba(0,0,0,0);
+    border-bottom: 1px solid rgba(255,255,255,.2);
+    border-right: 1px solid rgba(255,255,255,.2);
+    padding:30px;
+}
+.db-mulligans .db-mulligan-content .mulliganCards { width: 150px; height: 200px; position: absolute; display: block; }
+.db-mulligans .db-mulligan-content .mulliganCards img { width: 100%; height: 100%; float: left; }
+.db-mulligans .db-mulligan-content .list-card .legendary { margin-right: 8px; }
+.db-mulligans .db-mulligan-content .list-card button { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
+.db-mulligans .db-mulligan-content .list-card button:hover { background: rgba(255,255,255,.2); }
+.db-mulligans .list-card button.active { background: rgba(255,255,255,.2) }
 
 
 //*************************************

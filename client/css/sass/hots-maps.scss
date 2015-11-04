@@ -1,3 +1,6 @@
+
+@import 'ts-colors.scss';
+
 // Description: file to build css for adding new maps to hots
 
 //*************************************
@@ -21,6 +24,15 @@
     .hots-guide.long.#{$map} { background-image: url('../img/hots/maps/guides/long/#{$map}.png'); background-repeat: no-repeat; background-position: right top; }
 
 }
+
+
+@mixin hots-map-modal-icon  ($mapName, $shortName) {
+
+    .hots-modal .map.#{$mapName} { background: url('../img/hots/maps/modal/#{$shortName}.jpg') no-repeat center center; }
+    .map-selection .map .icon-wrap .icon a.icon-#{$mapName} { background: url('../img/hots/maps/$shortName.png') no-repeat center center; }
+    
+}
+
 
 //*************************************
 // 2... hots maps
@@ -52,17 +64,7 @@
 .map-selection .map .icon-wrap .icon { display: inline-block; overflow: hidden; transform: translate(16px, 30px) scaleX(1.717) rotate(45deg); width: 147px; height: 147px; opacity: .25; transition: opacity .1s linear; }
 .map-selection .map .icon-wrap .icon a { display: inline-block; transform: rotate(-45deg) scaleX(0.59) translate(18px, -34px); width: 181px; height: 208px; }
 
-
-
-//.map-selection .map .icon-wrap .icon a.icon-blackheartsbay { background: url('../img/hots/maps/blackheart.png') no-repeat center center; }
-//.map-selection .map .icon-wrap .icon a.icon-cursedhollow { background: url('../img/hots/maps/cursed.png') no-repeat center center; }
-//.map-selection .map .icon-wrap .icon a.icon-dragonshrine { background: url('../img/hots/maps/dragon.png') no-repeat center center; }
-//.map-selection .map .icon-wrap .icon a.icon-gardenofterror { background: url('../img/hots/maps/terror.png') no-repeat center center; }
-//.map-selection .map .icon-wrap .icon a.icon-hauntedmines { background: url('../img/hots/maps/mine.png') no-repeat center center; }
-//.map-selection .map .icon-wrap .icon a.icon-skytemple { background: url('../img/hots/maps/sky.png') no-repeat center center; }
-//.map-selection .map .icon-wrap .icon a.icon-tomb-of-the-spider-queen { background: url('../img/hots/maps/spider.png') no-repeat center center; }
-//.map-selection .map .icon-wrap .icon a.icon-battlefield-of-eternity { background: url('../img/hots/maps/bfoe.png') no-repeat center center; }
-//.map-selection .map .icon-wrap .icon a.icon-shrine { background: url('../img/hots/maps/shrine.png') no-repeat center center; }
+// icon-wrap included in mixin below
 
 .map-selection .map .icon-wrap .icon:hover { opacity: .8; }
 .map-selection .map .icon-wrap .icon.active { opacity: 1; }
@@ -73,14 +75,6 @@
 
 .hots-modal .map-container { float: left; width: 195px; height: 195px; padding: 4px; background: #90d7ed; background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); }
 .hots-modal .map { width: 187px; height: 187px; border: 1px solid #10131c; }
-
-
-@mixin hots-map-modal-icon  ($mapName, $shortName) {
-
-    .hots-modal .map.#{$mapName} { background: url('../img/hots/maps/modal/#{$shortName}.jpg') no-repeat center center; }
-    .map-selection .map .icon-wrap .icon a.icon-#{$mapName} { background: url('../img/hots/maps/$shortName.png') no-repeat center center; }
-    
-}
 
 @include hots-map-modal-icon (blackheartsbay, blackheart);
 @include hots-map-modal-icon (cursedhollow, cursed);

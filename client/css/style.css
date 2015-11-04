@@ -2499,6 +2499,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 /* safari hack for flex-col  */
+_::-moz-svg-foreign-content, :root .row-flex { display: block; }
 _::-moz-svg-foreign-content, :root .flex-col { display: block; }
 
 
@@ -2769,26 +2770,12 @@ _::-moz-svg-foreign-content, :root .flex-col { display: block; }
     transform: scale(1.2,1.2);
 }
 
-.db-class-mage.jaina .hero-img{ background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-mage.medivh .hero-img{ background: #69CCF0 url('../img/medivh.jpg') center center no-repeat; background-size: 220px; }
 
-.db-class-shaman.thrall .hero-img{ background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 220px; }
+/* ------------------------------------- */
+/* db-class- added to hs-decks
+/* ------------------------------------- */
 
-.db-class-warrior.garrosh .hero-img{ background: #C79C6E url('../img/warrior-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-warrior.magni .hero-img{ background: #C79C6E url('../img/magni.jpg') center center no-repeat; background-size: 220px; }
 
-.db-class-rogue.valeera .hero-img{ background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 220px; }
-
-.db-class-paladin.uther .hero-img{ background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 220px; }
-
-.db-class-priest.anduin .hero-img{ background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 220px; }
-
-.db-class-warlock.guldan .hero-img{ background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 220px; }
-
-.db-class-hunter.rexxar .hero-img{ background: #ABD473 url('../img/hunter-large.jpg') center center no-repeat; background-size: 220px; }
-.db-class-hunter.alleria .hero-img{ background: #ABD473 url('../img/alleria.jpg') center center no-repeat; background-size: 220px; }
-
-.db-class-druid.malfurion .hero-img{ background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 220px; }
 
 /*.db-class { -webkit-transition: all .25s linear; -moz-transition: all .25s linear; transition: all .25s linear; }*/
 /*.db-class a { -webkit-transition: opacity 1s; -moz-transition: opacity 1s; transition: opacity 1s; opacity: 0; background-position: center center; }*/
@@ -2804,92 +2791,12 @@ _::-moz-svg-foreign-content, :root .flex-col { display: block; }
 .db-class-druid a:hover { background-size: 300px; opacity: 1; }
 */
 
-/* MULLIGANS */
-.db-mulligans h2 { color: #FFF; font-size: 22px; font-weight: bold; text-shadow: 0px 0px 20px rgba(255,255,255,.4); margin: 0px; }
-.db-mulligans h3 { color: rgba(255,255,255,.6); margin: 0px; font-size: 14px; }
-
-.db-mulligans .class { 
-    position: relative; 
-    width: 11.11%; 
-    height: 440px; 
-    float: left; 
-    border: 1px solid rgba(0,0,0,1); 
-    outline: 1px solid rgba(255,255,255,.2); 
-    outline-offset: -2px; 
-    -moz-transition: .25s;
-    -ms-transition: .25s;
-    -o-transition: .25s;
-    -webkit-transition: .25s;
-    transition: .25s;
-        
-}
-.db-mulligans .class button { width: 100%; height: 100%; outline: none; border: none; background: none; }
-.db-mulligans .class.active { outline: 1px solid rgba(255,255,255,1); }
-.db-mulligans .class span { position: absolute; width: 100%; bottom: 0; left: 0; text-align: center; font-size: 16px; font-weight: bold; color: white; }
-.db-mulligans .class-select { width: 100%; }
-
-.db-mulligans .class-mage.jaina { background: #69CCF0 url('../img/mage-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-mage.medivh { background: #69CCF0 url('../img/medivh.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-shaman.thrall { background: #0070DE url('../img/shaman-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-warrior.garrosh { background: #C79C6E url('../img/warrior-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-warrior.magni { background: #C79C6E url('../img/magni.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-rogue.valeera { background: #FFF569 url('../img/rogue-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-paladin.uther { background: #F58CBA url('../img/paladin-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-priest.anduin { background: #FFFFFF url('../img/priest-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-warlock.guldan { background: #9482C9 url('../img/warlock-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-hunter.rexxar { background: #ABD473 url('../img/hunter-large.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-hunter.alleria { background: #ABD473 url('../img/alleria.jpg') center center no-repeat; background-size: 195%; }
-.db-mulligans .class-druid.malfurion { background: #FF7D0A url('../img/druid-large.jpg') center center no-repeat; background-size: 195%; }
-
-.db-mulligans .class.no-select { opacity: .4; }
-
-.db-mulligans .description-header { 
-    width: 100%;
-    height: 115px;
-    position: relative;
-    
-    background: rgba(36,104,172,1); 
-    background: -moz-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
-    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(36,104,172,1)), color-stop(15%, rgba(36,104,172,1)), color-stop(100%, rgba(0,139,198,1)));
-    background: -webkit-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
-    background: -o-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
-    background: -ms-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
-    background: linear-gradient(to right, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2468ac', endColorstr='#008bc6', GradientType=1 );
-}
-.db-mulligans .big-coin { height: 60px; overflow: hidden; position: absolute; top: 27.5px; left: 27.5px; border-radius: 50%; border: 3px solid white; }
-.db-mulligans .description-header i { color: red; position: absolute; font-size: 100px; top: 5px; left: 22px; opacity: .7; }
-.db-mulligans .header-text { position: absolute; top: 27.5px; left: 100px; }
-
-.db-mulligans .db-mulligan-content { background: rgba(0,0,0,.5) }
-.db-mulligans .db-mulligan-content .left { color: #FFF; padding: 0; min-height: 400px; }
-.db-mulligans .db-mulligan-content .right { color: #FFF; padding: 0; }
 
 
-.db-mulligans .mulliganCardWrapper { position: relative; width: 80%; margin: auto 14%; }
-.db-mulligans .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-bottom: 1px; }
-.db-mulligans .mana-cost { background: #2766AD; height: 28px; width: 28px; float: left; text-align: center; text-indent: 0px; color: white; }
+/* ------------------------------------- */
+/* db-mulligans- added to hs-decks
+/* ------------------------------------- */
 
-.db-mulligans .db-mulligan-instructions,
-.db-mulligans .db-mulligan-instructions:focus {
-    outline: none;
-    box-shadow: none;
-    -webkit-box-shadow: none;
-    border: none;
-    resize: none!important;
-    width: 100%;
-    height:173px;
-    background: rgba(0,0,0,0);
-    border-bottom: 1px solid rgba(255,255,255,.2);
-    border-right: 1px solid rgba(255,255,255,.2);
-    padding:30px;
-}
-.db-mulligans .db-mulligan-content .mulliganCards { width: 150px; height: 200px; position: absolute; display: block; }
-.db-mulligans .db-mulligan-content .mulliganCards img { width: 100%; height: 100%; float: left; }
-.db-mulligans .db-mulligan-content .list-card .legendary { margin-right: 8px; }
-.db-mulligans .db-mulligan-content .list-card button { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
-.db-mulligans .db-mulligan-content .list-card button:hover { background: rgba(255,255,255,.2); }
-.db-mulligans .list-card button.active { background: rgba(255,255,255,.2) }
 
 
 /* start glows */
