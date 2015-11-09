@@ -2720,7 +2720,9 @@ var app = angular.module('app', [
                                                 authorId: true,
                                                 deckType: true,
                                                 viewCount: true,
-                                                isPublic: true
+                                                isPublic: true,
+                                                chapters: true,
+                                                deckType: true
                                             },
                                             include: [
 //                                                {
@@ -2758,7 +2760,11 @@ var app = angular.module('app', [
                                             }
                                         ]
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (data) {
+                                    console.log('mulligan data: ', data);
+                                    return data;
+                                });
                             }],
             
                             deck: ['$stateParams', 'mulligans', 'resolveParams', 'Deck', function ($stateParams, mulligans, resolveParams, Deck) {
@@ -2770,6 +2776,7 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (data) {
                                     data.mulligans = mulligans;
+                                    console.log('mulligans resolve: ', mulligans);
                                     return data;
                                 })
                                 .catch(function(err) {

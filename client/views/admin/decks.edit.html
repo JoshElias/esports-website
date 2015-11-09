@@ -134,7 +134,7 @@
                             <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right"><i class="fa fa-star"></i></div>
                         </div>
                     </div>
-                    <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
+                    <div class="db-deck-dust db-deck-footer db-deck-{{deck.playerClass | lowercase}} {{deck.heroName | lowercase}}">
                         {{getDust(deck.cards)}}
                         <div class="dust-bottle-sm"></div>
                     </div>
@@ -360,17 +360,17 @@
                                       ng-model="mulligan.instructionsWithCoin"></textarea>
                             <div class="mulliganCardWrapper">
                                 <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};"
-                                     ng-repeat="card in mulligan.cardsWithCoin track by $index" 
+                                     ng-repeat="card in mulligan.cardsWithCoin | orderBy: 'cost' track by $index" 
                                      class="mulliganCards">
 <!--                                    <img ng-src="{{app.cdn}}/cards/{{card.card.photoNames.large}}"/>-->
                                     
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" alt="{{card.card.name}}"/>
                                 </div>
                             </div>
                         </div>  
                         <div class="col-xs-4 right">
                             <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                <button ng-click="deck.toggleMulligan(mulligan, true, card)">
+                                <button ng-click="deck.toggleMulligan(mulligan, true, card.card)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
                                     <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
@@ -401,20 +401,21 @@
                                       ng-model="mulligan.instructionsWithoutCoin"></textarea>
                             <div class="mulliganCardWrapper">
                                 <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};"
-                                     ng-repeat="card in mulligan.cardsWithoutCoin track by $index" 
+                                     ng-repeat="card in mulligan.cardsWithoutCoin | orderBy: 'cost' track by $index" 
                                      class="mulliganCards">
-                                    {{card.card.name}}
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" alt="{{card.name}}"/>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xs-4 right">
                             <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                <button ng-click="deck.toggleMulligan(mulligan, false, card)">
+                                <button ng-click="deck.toggleMulligan(mulligan, false, card.card)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
-                                    <div ng-if="card.card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
-                                    <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right"><i class="fa fa-star"></i></div>
+                                    <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
+                                    <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
+                                        <i class="fa fa-star"></i>
+                                    </div>
                                 </button>
                             </div>
                         </div>
@@ -426,11 +427,15 @@
                     <div ng-repeat="chapter in deck.chapters track by $index" class="db-section m-b-md">
                         <div class="db-section-chapter-title">
                             <h1><input placeholder="New Chapter Title..." ng-model="chapter.title" /></h1>
-                                <i ng-click="removeChapter($index)" class="fa fa-close pull-right"></i>
+                                <i ng-click="removeChapter($index)" 
+                                   class="fa fa-close pull-right"></i>
                         </div>
-                        <summernote id="contentEarly" config="options" ng-model="chapter.content"></summernote>
+                        <summernote id="contentEarly" config="options" 
+                                    ng-model="chapter.content"></summernote>
                     </div>
-                    <div class="chapter-add-btn" ng-click="newChapter()"><i class="fa fa-plus-circle"></i> Add Chapter</div>
+                    <div class="chapter-add-btn" ng-click="newChapter()">
+                        <i class="fa fa-plus-circle"></i> Add Chapter
+                    </div>
                 </div>
                 <!-- / step 3 -->
                 <!-- step 4 -->
