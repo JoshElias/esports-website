@@ -9,7 +9,7 @@ module.exports = function(OverwatchHero) {
 
     function assignOrderNum(ctx, finalCb) {
       if(!ctx.isNewInstance) finalCb();
-        var data = ctx.data || data.instance;
+        var data = ctx.data || ctx.instance;
 
       // Assign the orderNum to the current count of heroes
       OverwatchHero.count(function(err, count) {

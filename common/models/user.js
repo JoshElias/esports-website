@@ -5,6 +5,7 @@ module.exports = function(User) {
     var loopback = require("loopback");
     var bcrypt = require('bcrypt-nodejs');
     var utils = require("./../../lib/utils");
+    var ObjectId = require("mongodb").ObjectID;
 
 
 
@@ -19,25 +20,39 @@ module.exports = function(User) {
       next(err);
     });
   });
-
-    User.observe("access", function(ctx, next) {
-        console.log("User access");
-        var data = ctx.data || ctx.context;
-        console.log("user data:", data);
+/*
+    User.observe("loaded", function(ctx, next) {
+        var data = ctx.instance;
+        console.log("user context:", data);
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
 
-        /*
+        var err = new Error('no user found');
+        err.statusCode = 400;
+        err.code = 'UNABLE_TO_POPULATE_USER_ROLES';
+
+        if(!data.isNewInstance) {
+            console.log("data id:", data.id, typeof data.id);
+            console.log("user rolemapping:", RoleMapping.USER);
+
+            RoleMapping.find({}{where:{principalId: data.id, principalType:RoleMapping.USER}}, function(err, roleMappings) {
+                if(err) return next(err);
+
+                console.log("roleMappings:", roleMappings);
+            })
+        }
+
+
         Role.principals.find({where:{principalId:})
         Role.getRoles({principalType: RoleMapping.USER, principalId: data.id}, function(err, roles) {
             console.log("shitttY:", roles);  // everyone, authenticated, etc (hopefully)
             next(err);
         });
-        */
+
     });
 
-
+*/
  /*!
    * Hash the plain password
    */
