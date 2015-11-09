@@ -10,6 +10,8 @@ module.exports = function(app) {
 
         // if the target model is not project
         console.log("context:", context);
+        console.log("role:", role);
+        /*
         console.log("modelName:", context.modelName);
         if (context.modelName !== 'user') {
             return reject();
@@ -36,5 +38,6 @@ module.exports = function(app) {
 
             return cb(undefined, isSubscribed(user.subscription));
         });
+        */
     });
 };

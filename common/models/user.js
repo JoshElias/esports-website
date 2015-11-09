@@ -19,22 +19,24 @@ module.exports = function(User) {
       next(err);
     });
   });
-/*
+
     User.observe("access", function(ctx, next) {
-        console.log("access ctx:", ctx);
+        console.log("User access");
         var data = ctx.data || ctx.context;
         console.log("user data:", data);
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
 
-
+        /*
+        Role.principals.find({where:{principalId:})
         Role.getRoles({principalType: RoleMapping.USER, principalId: data.id}, function(err, roles) {
             console.log("shitttY:", roles);  // everyone, authenticated, etc (hopefully)
             next(err);
         });
+        */
     });
-*/
+
 
  /*!
    * Hash the plain password
