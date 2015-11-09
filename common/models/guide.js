@@ -10,7 +10,7 @@ module.exports = function(Guide) {
     });
 
 
-    Guide.observe("before save", function(ctx, next) {
-        utils.validateYoutubeId(ctx.instance, next);
+    Guide.observe("persist", function(ctx, next) {
+        utils.validateYoutubeId(ctx, next);
     });
 };

@@ -20,7 +20,8 @@ module.exports = function(User) {
       next(err);
     });
   });
-/*
+
+    /*
     User.observe("loaded", function(ctx, next) {
         var data = ctx.instance;
         console.log("user context:", data);
@@ -36,23 +37,14 @@ module.exports = function(User) {
             console.log("data id:", data.id, typeof data.id);
             console.log("user rolemapping:", RoleMapping.USER);
 
-            RoleMapping.find({}{where:{principalId: data.id, principalType:RoleMapping.USER}}, function(err, roleMappings) {
-                if(err) return next(err);
+            User.findById(data.id.toString())
 
-                console.log("roleMappings:", roleMappings);
-            })
+            Role.getRoles
+
         }
-
-
-        Role.principals.find({where:{principalId:})
-        Role.getRoles({principalType: RoleMapping.USER, principalId: data.id}, function(err, roles) {
-            console.log("shitttY:", roles);  // everyone, authenticated, etc (hopefully)
-            next(err);
-        });
-
     });
-
 */
+
  /*!
    * Hash the plain password
    */

@@ -49,7 +49,7 @@ module.exports = function(server) {
 
                     roleInstances[roleName].principals.create({
                         principalType: RoleMapping.USER,
-                        principalId: user.id
+                        principalId: user.id.toString()
                     }, function(err, newPrincipal) {
                         if(!err) {
                             console.log("created principal:", newPrincipal);

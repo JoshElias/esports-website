@@ -26,9 +26,6 @@
     "deckId": {
       "type": "string"
     },
-    "guideId": {
-        "type": "string"
-    },
     "snapshotId": {
       "type": "string"
     },
