@@ -60,6 +60,7 @@
                         <li ng-class="{active:$state.includes('app.forum')}"><a ui-sref="app.forum.home">Forum</a></li>
                         <li ng-class="{active:$state.includes('app.sponsors')}"><a ui-sref="app.sponsors">Sponsors</a></li>
                         <li ng-class="{active:$state.includes('app.polls')}"><a ui-sref="app.polls">Vote</a></li>
+                        <li class="hidden-lg hidden-md hidden-sm"><a target="_blank" ng-href="http://store.tempostorm.com">Store</a></li>
                         <li>
                             <span class="dropdown-grid">
                                 <li class="hidden-sm hidden-md hidden-lg sub" ng-click="loginModal('login')" ng-hide="app.user.isLogged()"><a href="#">Login</a></li>
