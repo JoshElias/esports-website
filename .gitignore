@@ -46,5 +46,6 @@ dist
 # Brackets json
 .brackets.json
 
+server/
 client/
 .sass-cache/
