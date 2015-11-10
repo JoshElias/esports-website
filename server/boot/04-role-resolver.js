@@ -1,6 +1,7 @@
 module.exports = function(app) {
     var Role = app.models.Role;
 
+
     Role.registerResolver('premium', function(role, context, cb) {
         function reject() {
             process.nextTick(function() {
@@ -11,6 +12,9 @@ module.exports = function(app) {
         // if the target model is not project
         console.log("context:", context);
         console.log("role:", role);
+
+        cb(undefined, true);
+
         /*
         console.log("modelName:", context.modelName);
         if (context.modelName !== 'user') {
@@ -38,6 +42,6 @@ module.exports = function(app) {
 
             return cb(undefined, isSubscribed(user.subscription));
         });
-        */
+*/
     });
 };

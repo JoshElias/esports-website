@@ -83,8 +83,7 @@
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW",
-      "property": "find"
+      "permission": "ALLOW"
     },
     {
       "principalType": "ROLE",

@@ -21,11 +21,8 @@ module.exports = function(User) {
     });
   });
 
-    /*
-    User.observe("loaded", function(ctx, next) {
-        var data = ctx.instance;
-        console.log("user context:", data);
-
+/*
+    User.observe("after save", function(ctx, next) {
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
 
@@ -33,17 +30,14 @@ module.exports = function(User) {
         err.statusCode = 400;
         err.code = 'UNABLE_TO_POPULATE_USER_ROLES';
 
-        if(!data.isNewInstance) {
-            console.log("data id:", data.id, typeof data.id);
-            console.log("user rolemapping:", RoleMapping.USER);
+        Role.getRoles(ctx, function(roleErr, roles) {
+            if(roleErr) return next(err);
 
-            User.findById(data.id.toString())
-
-            Role.getRoles
-
-        }
+            ctx.instance.roles = roles;
+            next();
+        });
     });
-*/
+    */
 
  /*!
    * Hash the plain password
