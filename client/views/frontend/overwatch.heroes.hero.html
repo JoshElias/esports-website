@@ -58,7 +58,7 @@
             <div class="container-fluid container-fluid-max">
                 <div class="row row-flex row-flex-wrap">
                     <div class="col-xs-12 col-sm-6 ow-skills"
-                         ng-class="{ 'col-md-4 col-lg-20p': hero.overwatchAbilities.length == 5, 'col-lg-3 col-md-3': hero.overwatchAbilities.length == 4 }"
+                         ng-class="{ 'col-lg-3 col-md-3': hero.overwatchAbilities.length == 4, 'col-md-4 col-lg-20p': hero.overwatchAbilities.length == 5, 'col-md-4 col-lg-3': hero.overwatchAbilities.length > 5 }"
                          ng-repeat="ability in hero.overwatchAbilities"
                     >
                         <div class="flex-col">

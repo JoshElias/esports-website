@@ -293,6 +293,9 @@ $pos-y: 4px;
 
     // mixin to add heroes to the hero navbar
 
+    @include ow-hero-list (dva, $size, $pos-x, $pos-y);
+    @include ow-hero-list (mei, $size, $pos-x, $pos-y);
+    @include ow-hero-list (genji, $size, $pos-x, $pos-y);
     @include ow-hero-list (bastion, $size, 5px, $pos-y);
     @include ow-hero-list (hanzo, $size, $pos-x, $pos-y);
     @include ow-hero-list (junkrat, $size, -10px, 1px);
@@ -587,6 +590,35 @@ $pos-y: 4px;
     }
 
     // mixin for heroes ability icons
+
+    // d.va Abilities
+
+    @include ow-hero-abilities (dva, (
+        ( class: (fusion-cannons), pos: 0 ), 
+        ( class: (boosters), pos: 1 ), 
+        ( class: (defense-matrix), pos: 2 ), 
+        ( class: (self-destruct), pos: 3 ), 
+        ( class: (light-gun), pos: 4 ), 
+        ( class: (call-mech), pos: 5 ), 
+    ) );
+
+    // mei Abilities
+
+    @include ow-hero-abilities (mei, (
+        ( class: (endothermic-blaster), pos: 0 ), 
+        ( class: (cryo-freeze), pos: 1 ), 
+        ( class: (ice-wall), pos: 2 ), 
+        ( class: (blizzard), pos: 3 ), 
+    ) );
+
+    // genji Abilities
+
+    @include ow-hero-abilities (genji, (
+        ( class: (shuriken), pos: 0 ), 
+        ( class: (deflect), pos: 1 ), 
+        ( class: (swift-strike), pos: 2 ), 
+        ( class: (dragonblade), pos: 3 ), 
+    ) );
 
     // roadhog Abilities
 
