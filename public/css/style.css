@@ -8843,192 +8843,240 @@ input[type=range]:focus::-ms-fill-upper {
 .contact-banner { background: #2766ad; min-height: 54px; border-bottom: #083f7d; }
 
 /* overwatch */
-/* line 97, ../../../css/sass/overwatch.scss */
-.no-side-pad {
+/* line 98, ../../../css/sass/overwatch.scss */
+.overwatch .no-side-pad {
   padding-left: 0;
   padding-right: 0;
 }
-
-/* line 103, ../../../css/sass/overwatch.scss */
-.no-pad-left {
+/* line 104, ../../../css/sass/overwatch.scss */
+.overwatch .no-pad-left {
   padding-left: 0;
 }
-
-/* line 107, ../../../css/sass/overwatch.scss */
-.ts-div {
+/* line 108, ../../../css/sass/overwatch.scss */
+.overwatch .ts-div {
   background-color: rgba(19, 18, 19, 0.7);
   box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.2);
   outline: 1px solid #000;
 }
-
-/* line 113, ../../../css/sass/overwatch.scss */
-.m-b-18 {
+/* line 114, ../../../css/sass/overwatch.scss */
+.overwatch .m-b-18 {
   margin-bottom: 18px;
 }
-
-/* line 124, ../../../css/sass/overwatch.scss */
-.arrows {
+/* line 125, ../../../css/sass/overwatch.scss */
+.overwatch .arrows {
   position: relative;
 }
-
-/* line 129, ../../../css/sass/overwatch.scss */
-.arrow-left,
-.arrow-right {
+/* line 130, ../../../css/sass/overwatch.scss */
+.overwatch .arrow-left,
+.overwatch .arrow-right {
   position: absolute;
   top: 50%;
   margin-top: -25px;
   z-index: 500;
 }
-/* line 136, ../../../css/sass/overwatch.scss */
-.arrow-left img,
-.arrow-right img {
+/* line 137, ../../../css/sass/overwatch.scss */
+.overwatch .arrow-left img,
+.overwatch .arrow-right img {
   opacity: .5;
 }
-/* line 142, ../../../css/sass/overwatch.scss */
-.arrow-left:hover img,
-.arrow-right:hover img {
+/* line 143, ../../../css/sass/overwatch.scss */
+.overwatch .arrow-left:hover img,
+.overwatch .arrow-right:hover img {
   opacity: 1;
 }
 @media (max-width: 1570px) {
-  /* line 129, ../../../css/sass/overwatch.scss */
-  .arrow-left,
-  .arrow-right {
+  /* line 130, ../../../css/sass/overwatch.scss */
+  .overwatch .arrow-left,
+  .overwatch .arrow-right {
     display: none;
   }
 }
-
-/* line 154, ../../../css/sass/overwatch.scss */
-.arrow-left {
+/* line 155, ../../../css/sass/overwatch.scss */
+.overwatch .arrow-left {
   left: 20px;
 }
-
-/* line 158, ../../../css/sass/overwatch.scss */
-.arrow-right {
+/* line 159, ../../../css/sass/overwatch.scss */
+.overwatch .arrow-right {
   right: 20px;
 }
-
-/* line 169, ../../../css/sass/overwatch.scss */
-.ow-content {
+/* line 170, ../../../css/sass/overwatch.scss */
+.overwatch .ow-content {
   margin-right: -10px;
 }
-
-/* line 173, ../../../css/sass/overwatch.scss */
-.ow-content > .row {
+/* line 174, ../../../css/sass/overwatch.scss */
+.overwatch .ow-content > .row {
   margin: 0 auto;
   max-width: 1448px;
 }
-
-/* line 178, ../../../css/sass/overwatch.scss */
-.ow-content h1.title {
+/* line 179, ../../../css/sass/overwatch.scss */
+.overwatch .ow-content h1.title {
   font-family: 'Open Sans Bold';
   font-size: 26px;
   color: #dddddd;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
-
-/* line 186, ../../../css/sass/overwatch.scss */
-.ow-content h3.sub-title {
+/* line 187, ../../../css/sass/overwatch.scss */
+.overwatch .ow-content h3.sub-title {
   font-size: 14px;
   color: #d3eefa;
 }
-
-/* line 196, ../../../css/sass/overwatch.scss */
-.ow-bg {
+/* line 197, ../../../css/sass/overwatch.scss */
+.overwatch .ow-bg {
   margin: 0;
   padding: 0 !important;
   background: #121111 url("../img/overwatch/hero-top-bg.jpg") no-repeat center center;
   background-size: cover;
   background-attachment: fixed;
 }
-
-/* line 204, ../../../css/sass/overwatch.scss */
-.ow-upper-bg {
+/* line 205, ../../../css/sass/overwatch.scss */
+.overwatch .ow-upper-bg {
   margin: 0;
   padding: 0 !important;
   background: #121111 url("../img/overwatch/hero-top-bg.jpg") no-repeat center center;
   background-size: cover;
   background-attachment: fixed;
 }
-
-/* line 212, ../../../css/sass/overwatch.scss */
-.ow-lower-bg {
+/* line 213, ../../../css/sass/overwatch.scss */
+.overwatch .ow-lower-bg {
   margin: 0;
   padding: 0 !important;
   background: #121111 url("../img/overwatch/lower-half-background.jpg") no-repeat center center;
   background-size: cover;
   background-attachment: fixed;
 }
-
-/* line 221, ../../../css/sass/overwatch.scss */
-.ow-home-title {
+/* line 222, ../../../css/sass/overwatch.scss */
+.overwatch .ow-home-title {
   background: #2766ad url("../img/overwatch/top-banner.jpg") no-repeat center center;
   background-size: cover;
 }
 @media (max-width: 1050px) {
-  /* line 221, ../../../css/sass/overwatch.scss */
-  .ow-home-title {
+  /* line 222, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-home-title {
     background-position: left;
   }
 }
-
-/* line 231, ../../../css/sass/overwatch.scss */
-.ow-home-logo {
+/* line 232, ../../../css/sass/overwatch.scss */
+.overwatch .ow-home-logo {
   margin: 33px;
   margin-left: 12.05%;
   width: 360px;
 }
 @media (max-width: 1050px) {
-  /* line 231, ../../../css/sass/overwatch.scss */
-  .ow-home-logo {
+  /* line 232, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-home-logo {
     margin-left: auto;
     margin-right: auto;
   }
 }
-
-/* line 251, ../../../css/sass/overwatch.scss */
-.ow-hero-list {
+/* line 252, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-list {
   margin: 0;
   padding: 0;
   z-index: 100;
 }
-
-/* line 258, ../../../css/sass/overwatch.scss */
-.ow-heroes {
+/* line 259, ../../../css/sass/overwatch.scss */
+.overwatch .ow-heroes {
   padding: 15px 20px 20px 20px;
 }
-
-/* line 262, ../../../css/sass/overwatch.scss */
-.ow-herobar-home {
+/* line 263, ../../../css/sass/overwatch.scss */
+.overwatch .ow-herobar-home {
   position: relative;
   padding: 22px 0 0 0;
   height: 648px;
 }
 @media (max-width: 1200px) {
-  /* line 262, ../../../css/sass/overwatch.scss */
-  .ow-herobar-home {
+  /* line 263, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-herobar-home {
     height: auto;
   }
 }
-
-/* line 278, ../../../css/sass/overwatch.scss */
-.ow-hero-filters ul {
+/* line 279, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-filters ul {
   text-align: center;
 }
-/* line 282, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li {
+/* line 283, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-filters li {
   list-style: none;
   position: relative;
   display: inline-block;
 }
-/* line 287, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a {
+/* line 288, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-filters li a {
   margin-bottom: 16px;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.bastion {
+.overwatch .ow-hero-filters li a.dva {
+  background: url("../img/overwatch/hero-thumbnails/dva.png") no-repeat;
+  width: 65px;
+  height: 65px;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid #FFF;
+  text-indent: -99999px;
+  outline: none;
+  opacity: 1;
+  float: left;
+  margin-left: 8px;
+  margin-right: 8px;
+  background-position: 2px 4px;
+  background-size: 71px auto;
+  z-index: 100;
+}
+/* line 61, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-selected.dva {
+  background: url("../img/overwatch/hero-sidebar/dva.png") center;
+}
+/* line 42, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-filters li a.mei {
+  background: url("../img/overwatch/hero-thumbnails/mei.png") no-repeat;
+  width: 65px;
+  height: 65px;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid #FFF;
+  text-indent: -99999px;
+  outline: none;
+  opacity: 1;
+  float: left;
+  margin-left: 8px;
+  margin-right: 8px;
+  background-position: 2px 4px;
+  background-size: 71px auto;
+  z-index: 100;
+}
+/* line 61, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-selected.mei {
+  background: url("../img/overwatch/hero-sidebar/mei.png") center;
+}
+/* line 42, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-filters li a.genji {
+  background: url("../img/overwatch/hero-thumbnails/genji.png") no-repeat;
+  width: 65px;
+  height: 65px;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid #FFF;
+  text-indent: -99999px;
+  outline: none;
+  opacity: 1;
+  float: left;
+  margin-left: 8px;
+  margin-right: 8px;
+  background-position: 2px 4px;
+  background-size: 71px auto;
+  z-index: 100;
+}
+/* line 61, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-selected.genji {
+  background: url("../img/overwatch/hero-sidebar/genji.png") center;
+}
+/* line 42, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-filters li a.bastion {
   background: url("../img/overwatch/hero-thumbnails/bastion.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9046,14 +9094,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.bastion {
+.overwatch .ow-hero-selected.bastion {
   background: url("../img/overwatch/hero-sidebar/bastion.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.hanzo {
+.overwatch .ow-hero-filters li a.hanzo {
   background: url("../img/overwatch/hero-thumbnails/hanzo.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9071,14 +9117,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.hanzo {
+.overwatch .ow-hero-selected.hanzo {
   background: url("../img/overwatch/hero-sidebar/hanzo.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.junkrat {
+.overwatch .ow-hero-filters li a.junkrat {
   background: url("../img/overwatch/hero-thumbnails/junkrat.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9096,14 +9140,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.junkrat {
+.overwatch .ow-hero-selected.junkrat {
   background: url("../img/overwatch/hero-sidebar/junkrat.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.lucio {
+.overwatch .ow-hero-filters li a.lucio {
   background: url("../img/overwatch/hero-thumbnails/lucio.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9121,14 +9163,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.lucio {
+.overwatch .ow-hero-selected.lucio {
   background: url("../img/overwatch/hero-sidebar/lucio.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.mccree {
+.overwatch .ow-hero-filters li a.mccree {
   background: url("../img/overwatch/hero-thumbnails/mccree.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9146,14 +9186,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 72px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.mccree {
+.overwatch .ow-hero-selected.mccree {
   background: url("../img/overwatch/hero-sidebar/mccree.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.mercy {
+.overwatch .ow-hero-filters li a.mercy {
   background: url("../img/overwatch/hero-thumbnails/mercy.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9171,14 +9209,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.mercy {
+.overwatch .ow-hero-selected.mercy {
   background: url("../img/overwatch/hero-sidebar/mercy.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.pharah {
+.overwatch .ow-hero-filters li a.pharah {
   background: url("../img/overwatch/hero-thumbnails/pharah.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9196,14 +9232,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.pharah {
+.overwatch .ow-hero-selected.pharah {
   background: url("../img/overwatch/hero-sidebar/pharah.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.reaper {
+.overwatch .ow-hero-filters li a.reaper {
   background: url("../img/overwatch/hero-thumbnails/reaper.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9221,14 +9255,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.reaper {
+.overwatch .ow-hero-selected.reaper {
   background: url("../img/overwatch/hero-sidebar/reaper.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.reinhardt {
+.overwatch .ow-hero-filters li a.reinhardt {
   background: url("../img/overwatch/hero-thumbnails/reinhardt.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9246,14 +9278,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.reinhardt {
+.overwatch .ow-hero-selected.reinhardt {
   background: url("../img/overwatch/hero-sidebar/reinhardt.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.roadhog {
+.overwatch .ow-hero-filters li a.roadhog {
   background: url("../img/overwatch/hero-thumbnails/roadhog.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9271,14 +9301,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.roadhog {
+.overwatch .ow-hero-selected.roadhog {
   background: url("../img/overwatch/hero-sidebar/roadhog.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.soldier-76 {
+.overwatch .ow-hero-filters li a.soldier-76 {
   background: url("../img/overwatch/hero-thumbnails/soldier-76.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9296,14 +9324,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.soldier-76 {
+.overwatch .ow-hero-selected.soldier-76 {
   background: url("../img/overwatch/hero-sidebar/soldier-76.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.symmetra {
+.overwatch .ow-hero-filters li a.symmetra {
   background: url("../img/overwatch/hero-thumbnails/symmetra.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9321,14 +9347,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.symmetra {
+.overwatch .ow-hero-selected.symmetra {
   background: url("../img/overwatch/hero-sidebar/symmetra.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.torbjorn {
+.overwatch .ow-hero-filters li a.torbjorn {
   background: url("../img/overwatch/hero-thumbnails/torbjorn.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9346,14 +9370,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.torbjorn {
+.overwatch .ow-hero-selected.torbjorn {
   background: url("../img/overwatch/hero-sidebar/torbjorn.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.tracer {
+.overwatch .ow-hero-filters li a.tracer {
   background: url("../img/overwatch/hero-thumbnails/tracer.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9371,14 +9393,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.tracer {
+.overwatch .ow-hero-selected.tracer {
   background: url("../img/overwatch/hero-sidebar/tracer.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.widowmaker {
+.overwatch .ow-hero-filters li a.widowmaker {
   background: url("../img/overwatch/hero-thumbnails/widowmaker.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9396,14 +9416,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.widowmaker {
+.overwatch .ow-hero-selected.widowmaker {
   background: url("../img/overwatch/hero-sidebar/widowmaker.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.winston {
+.overwatch .ow-hero-filters li a.winston {
   background: url("../img/overwatch/hero-thumbnails/winston.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9421,14 +9439,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 72px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.winston {
+.overwatch .ow-hero-selected.winston {
   background: url("../img/overwatch/hero-sidebar/winston.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.zarya {
+.overwatch .ow-hero-filters li a.zarya {
   background: url("../img/overwatch/hero-thumbnails/zarya.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9446,14 +9462,12 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.zarya {
+.overwatch .ow-hero-selected.zarya {
   background: url("../img/overwatch/hero-sidebar/zarya.png") center;
 }
-
 /* line 42, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.zenyatta {
+.overwatch .ow-hero-filters li a.zenyatta {
   background: url("../img/overwatch/hero-thumbnails/zenyatta.png") no-repeat;
   width: 65px;
   height: 65px;
@@ -9471,24 +9485,22 @@ input[type=range]:focus::-ms-fill-upper {
   background-size: 71px auto;
   z-index: 100;
 }
-
 /* line 61, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.zenyatta {
+.overwatch .ow-hero-selected.zenyatta {
   background: url("../img/overwatch/hero-sidebar/zenyatta.png") center;
 }
-
-/* line 315, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a.active {
-  background-color: #fdb813;
-}
-
 /* line 319, ../../../css/sass/overwatch.scss */
-.ow-hero-filters li a:hover {
+.overwatch .ow-hero-filters li a.active {
   background-color: #fdb813;
 }
-
-/* line 323, ../../../css/sass/overwatch.scss */
-.ow-hero-selected {
+@media (min-width: 765px) {
+  /* line 325, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-hero-filters li a:hover {
+    background-color: #fdb813;
+  }
+}
+/* line 330, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-selected {
   position: absolute;
   width: 100%;
   height: 550px;
@@ -9496,19 +9508,16 @@ input[type=range]:focus::-ms-fill-upper {
   bottom: 0;
   opacity: 0.3;
 }
-
-/* line 332, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.neutral {
+/* line 339, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-selected.neutral {
   background: url("../img/overwatch/hero-sidebar/neutral.png") center;
 }
-
-/* line 336, ../../../css/sass/overwatch.scss */
-.ow-hero-selected.bastion {
+/* line 343, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-selected.bastion {
   background: url("../img/overwatch/hero-sidebar/bastion.png") center;
 }
-
-/* line 346, ../../../css/sass/overwatch.scss */
-.ow-hero-bar {
+/* line 353, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-bar {
   width: 100%;
   margin: 0 0 20px 0;
   padding: 10px 0 0 0;
@@ -9516,45 +9525,43 @@ input[type=range]:focus::-ms-fill-upper {
   box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.75);
   z-index: 100;
 }
-
-/* line 355, ../../../css/sass/overwatch.scss */
-.ow-hero-bar li a {
+/* line 362, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-bar li a {
   margin-bottom: 10px !important;
 }
-
-/* line 363, ../../../css/sass/overwatch.scss */
-.ow-hero-brief {
+/* line 370, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-brief {
   z-index: 100;
   margin-bottom: 100px;
 }
-/* line 368, ../../../css/sass/overwatch.scss */
-.ow-hero-brief h1 {
+/* line 375, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-brief h1 {
   font-style: italic;
   font-size: 7em;
   margin-top: 75px;
   font-weight: 900;
 }
-/* line 376, ../../../css/sass/overwatch.scss */
-.ow-hero-brief ul {
+/* line 383, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-brief ul {
   padding-left: 0;
 }
-/* line 380, ../../../css/sass/overwatch.scss */
-.ow-hero-brief h1,
-.ow-hero-brief li {
+/* line 387, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-brief h1,
+.overwatch .ow-hero-brief li {
   text-transform: uppercase;
   color: white;
   text-shadow: 2px 2px #121111;
 }
 @media (max-width: 765px) {
-  /* line 391, ../../../css/sass/overwatch.scss */
-  .ow-hero-brief h1 {
+  /* line 398, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-hero-brief h1 {
     font-size: 3em;
     margin-top: 40px;
     text-align: center;
   }
 }
-/* line 400, ../../../css/sass/overwatch.scss */
-.ow-hero-brief li {
+/* line 407, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-brief li {
   list-style-type: none;
   line-height: 3.5em;
   font-weight: 700;
@@ -9562,37 +9569,37 @@ input[type=range]:focus::-ms-fill-upper {
   position: relative;
 }
 @media (max-width: 765px) {
-  /* line 400, ../../../css/sass/overwatch.scss */
-  .ow-hero-brief li {
+  /* line 407, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-hero-brief li {
     line-height: 2em;
     padding-left: 0;
     text-align: center;
   }
-  /* line 415, ../../../css/sass/overwatch.scss */
-  .ow-hero-brief li .hide-me {
+  /* line 422, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-hero-brief li .hide-me {
     display: none;
   }
-  /* line 419, ../../../css/sass/overwatch.scss */
-  .ow-hero-brief li .ow-orange-title {
+  /* line 426, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-hero-brief li .ow-orange-title {
     color: #fdb813;
     display: block;
     margin-top: 15px;
   }
 }
-/* line 428, ../../../css/sass/overwatch.scss */
-.ow-hero-brief li:first-of-type {
+/* line 435, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-brief li:first-of-type {
   margin-bottom: 20px;
   font-size: 1.5em;
   padding-left: 0;
 }
 @media (max-width: 765px) {
-  /* line 428, ../../../css/sass/overwatch.scss */
-  .ow-hero-brief li:first-of-type {
+  /* line 435, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-hero-brief li:first-of-type {
     text-align: center;
   }
 }
-/* line 439, ../../../css/sass/overwatch.scss */
-.ow-hero-brief li:nth-of-type(2):before {
+/* line 446, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-brief li:nth-of-type(2):before {
   width: 100%;
   content: url(../img/overwatch/icons/name.png);
   position: absolute;
@@ -9600,13 +9607,13 @@ input[type=range]:focus::-ms-fill-upper {
   left: 0px;
 }
 @media (max-width: 765px) {
-  /* line 439, ../../../css/sass/overwatch.scss */
-  .ow-hero-brief li:nth-of-type(2):before {
+  /* line 446, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-hero-brief li:nth-of-type(2):before {
     display: none;
   }
 }
-/* line 453, ../../../css/sass/overwatch.scss */
-.ow-hero-brief li:nth-of-type(3):before {
+/* line 460, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-brief li:nth-of-type(3):before {
   width: 100%;
   content: url(../img/overwatch/icons/organization.png);
   position: absolute;
@@ -9614,13 +9621,13 @@ input[type=range]:focus::-ms-fill-upper {
   left: 0px;
 }
 @media (max-width: 765px) {
-  /* line 453, ../../../css/sass/overwatch.scss */
-  .ow-hero-brief li:nth-of-type(3):before {
+  /* line 460, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-hero-brief li:nth-of-type(3):before {
     display: none;
   }
 }
-/* line 466, ../../../css/sass/overwatch.scss */
-.ow-hero-brief li:nth-of-type(4):before {
+/* line 473, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-brief li:nth-of-type(4):before {
   width: 100%;
   content: url(../img/overwatch/icons/origin.png);
   position: absolute;
@@ -9628,13 +9635,13 @@ input[type=range]:focus::-ms-fill-upper {
   left: 0px;
 }
 @media (max-width: 765px) {
-  /* line 466, ../../../css/sass/overwatch.scss */
-  .ow-hero-brief li:nth-of-type(4):before {
+  /* line 473, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-hero-brief li:nth-of-type(4):before {
     display: none;
   }
 }
-/* line 479, ../../../css/sass/overwatch.scss */
-.ow-hero-brief li:nth-of-type(5):before {
+/* line 486, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-brief li:nth-of-type(5):before {
   width: 100%;
   content: url(../img/overwatch/icons/affiliation.png);
   position: absolute;
@@ -9642,26 +9649,25 @@ input[type=range]:focus::-ms-fill-upper {
   left: 0px;
 }
 @media (max-width: 765px) {
-  /* line 479, ../../../css/sass/overwatch.scss */
-  .ow-hero-brief li:nth-of-type(5):before {
+  /* line 486, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-hero-brief li:nth-of-type(5):before {
     display: none;
   }
 }
-/* line 492, ../../../css/sass/overwatch.scss */
-.ow-hero-brief .ow-role {
+/* line 499, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-brief .ow-role {
   font-weight: 900;
   color: #fdb813;
   position: relative;
   margin-left: 5px;
 }
-/* line 499, ../../../css/sass/overwatch.scss */
-.ow-hero-brief .ow-role-icon {
+/* line 506, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-brief .ow-role-icon {
   content: url(../img/overwatch/icons/support.png);
   margin-left: 5px;
 }
-
-/* line 514, ../../../css/sass/overwatch.scss */
-.ow-character-img img {
+/* line 521, ../../../css/sass/overwatch.scss */
+.overwatch .ow-character-img img {
   position: absolute;
   top: -85px;
   left: -210px;
@@ -9669,38 +9675,36 @@ input[type=range]:focus::-ms-fill-upper {
   z-index: 10;
 }
 @media (max-width: 1200px) {
-  /* line 514, ../../../css/sass/overwatch.scss */
-  .ow-character-img img {
+  /* line 521, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-character-img img {
     top: -40px;
     left: 320px;
     width: 70%;
   }
 }
 @media (max-width: 800px) {
-  /* line 514, ../../../css/sass/overwatch.scss */
-  .ow-character-img img {
+  /* line 521, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-character-img img {
     top: 0px;
   }
 }
-
-/* line 540, ../../../css/sass/overwatch.scss */
-.ow-skill-desc {
+/* line 547, ../../../css/sass/overwatch.scss */
+.overwatch .ow-skill-desc {
   color: white;
   min-width: 200px;
 }
-/* line 544, ../../../css/sass/overwatch.scss */
-.ow-skill-desc h3 {
+/* line 551, ../../../css/sass/overwatch.scss */
+.overwatch .ow-skill-desc h3 {
   font-weight: 700;
   text-align: center;
   text-transform: uppercase;
 }
-/* line 550, ../../../css/sass/overwatch.scss */
-.ow-skill-desc p {
+/* line 557, ../../../css/sass/overwatch.scss */
+.overwatch .ow-skill-desc p {
   text-align: center;
 }
-
-/* line 555, ../../../css/sass/overwatch.scss */
-.ow-hero-skillbar {
+/* line 562, ../../../css/sass/overwatch.scss */
+.overwatch .ow-hero-skillbar {
   width: 100%;
   background-color: rgba(39, 102, 173, 0.7);
   border-top: 3px solid #2766ad;
@@ -9709,20 +9713,17 @@ input[type=range]:focus::-ms-fill-upper {
   position: relative;
   padding-bottom: 15px;
 }
-
-/* line 566, ../../../css/sass/overwatch.scss */
-.ow-skills {
+/* line 573, ../../../css/sass/overwatch.scss */
+.overwatch .ow-skills {
   padding-top: 15px;
   min-height: 310px;
 }
-
-/* line 571, ../../../css/sass/overwatch.scss */
-.ow-skill-desc {
+/* line 578, ../../../css/sass/overwatch.scss */
+.overwatch .ow-skill-desc {
   padding-top: 15px;
 }
-
-/* line 575, ../../../css/sass/overwatch.scss */
-.skill {
+/* line 582, ../../../css/sass/overwatch.scss */
+.overwatch .skill {
   display: block;
   overflow: hidden;
   white-space: nowrap;
@@ -9731,416 +9732,465 @@ input[type=range]:focus::-ms-fill-upper {
   width: 166px;
   margin: auto;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.roadhog.skill {
+.overwatch .dva.skill {
+  background: url("../img/overwatch/abilities-sprite-sheets/dva-sprite.png") no-repeat;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .dva.skill.fusion-cannons {
+  background-position: 0px -12px;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .dva.skill.boosters {
+  background-position: -170px -12px;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .dva.skill.defense-matrix {
+  background-position: -340px -12px;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .dva.skill.self-destruct {
+  background-position: -510px -12px;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .dva.skill.light-gun {
+  background-position: -680px -12px;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .dva.skill.call-mech {
+  background-position: -850px -12px;
+}
+/* line 72, ../../../css/sass/overwatch.scss */
+.overwatch .mei.skill {
+  background: url("../img/overwatch/abilities-sprite-sheets/mei-sprite.png") no-repeat;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .mei.skill.endothermic-blaster {
+  background-position: 0px -12px;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .mei.skill.cryo-freeze {
+  background-position: -170px -12px;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .mei.skill.ice-wall {
+  background-position: -340px -12px;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .mei.skill.blizzard {
+  background-position: -510px -12px;
+}
+/* line 72, ../../../css/sass/overwatch.scss */
+.overwatch .genji.skill {
+  background: url("../img/overwatch/abilities-sprite-sheets/genji-sprite.png") no-repeat;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .genji.skill.shuriken {
+  background-position: 0px -12px;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .genji.skill.deflect {
+  background-position: -170px -12px;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .genji.skill.swift-strike {
+  background-position: -340px -12px;
+}
+/* line 82, ../../../css/sass/overwatch.scss */
+.overwatch .genji.skill.dragonblade {
+  background-position: -510px -12px;
+}
+/* line 72, ../../../css/sass/overwatch.scss */
+.overwatch .roadhog.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/roadhog-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.roadhog.skill.scrap-gun {
+.overwatch .roadhog.skill.scrap-gun {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.roadhog.skill.take-a-breather {
+.overwatch .roadhog.skill.take-a-breather {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.roadhog.skill.chain-hook {
+.overwatch .roadhog.skill.chain-hook {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.roadhog.skill.whole-hog {
+.overwatch .roadhog.skill.whole-hog {
   background-position: -510px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.lucio.skill {
+.overwatch .lucio.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/lucio-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.lucio.skill.sonic-amplifier {
+.overwatch .lucio.skill.sonic-amplifier {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.lucio.skill.crossfade {
+.overwatch .lucio.skill.crossfade {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.lucio.skill.amp-it-up {
+.overwatch .lucio.skill.amp-it-up {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.lucio.skill.sound-barrier {
+.overwatch .lucio.skill.sound-barrier {
   background-position: -510px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.junkrat.skill {
+.overwatch .junkrat.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/junkrat-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.junkrat.skill.frag-launcher {
+.overwatch .junkrat.skill.frag-launcher {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.junkrat.skill.concussion-mine {
+.overwatch .junkrat.skill.concussion-mine {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.junkrat.skill.steel-trap {
+.overwatch .junkrat.skill.steel-trap {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.junkrat.skill.total-mayhem {
+.overwatch .junkrat.skill.total-mayhem {
   background-position: -510px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.junkrat.skill.rip-tire {
+.overwatch .junkrat.skill.rip-tire {
   background-position: -680px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.soldier-76.skill {
+.overwatch .soldier-76.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/soldier-76-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.soldier-76.skill.heavy-pulse-rifle {
+.overwatch .soldier-76.skill.heavy-pulse-rifle {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.soldier-76.skill.helix-rockets {
+.overwatch .soldier-76.skill.helix-rockets {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.soldier-76.skill.sprint {
+.overwatch .soldier-76.skill.sprint {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.soldier-76.skill.biotic-field {
+.overwatch .soldier-76.skill.biotic-field {
   background-position: -510px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.soldier-76.skill.tactical-visor {
+.overwatch .soldier-76.skill.tactical-visor {
   background-position: -680px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.zarya.skill {
+.overwatch .zarya.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/zarya-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.zarya.skill.particle-cannon {
+.overwatch .zarya.skill.particle-cannon {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.zarya.skill.particle-barrier {
+.overwatch .zarya.skill.particle-barrier {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.zarya.skill.projected-barrier {
+.overwatch .zarya.skill.projected-barrier {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.zarya.skill.graviton-surge {
+.overwatch .zarya.skill.graviton-surge {
   background-position: -510px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.mccree.skill {
+.overwatch .mccree.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/mccree-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.mccree.skill.peacekeeper {
+.overwatch .mccree.skill.peacekeeper {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.mccree.skill.combat-roll {
+.overwatch .mccree.skill.combat-roll {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.mccree.skill.flashbang {
+.overwatch .mccree.skill.flashbang {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.mccree.skill.deadeye {
+.overwatch .mccree.skill.deadeye {
   background-position: -510px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.tracer.skill {
+.overwatch .tracer.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/tracer-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.tracer.skill.pulse-pistol {
+.overwatch .tracer.skill.pulse-pistol {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.tracer.skill.blink {
+.overwatch .tracer.skill.blink {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.tracer.skill.recall {
+.overwatch .tracer.skill.recall {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.tracer.skill.pulse-bomb {
+.overwatch .tracer.skill.pulse-bomb {
   background-position: -510px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.reaper.skill {
+.overwatch .reaper.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/reaper-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.reaper.skill.hellfire-shotguns {
+.overwatch .reaper.skill.hellfire-shotguns {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.reaper.skill.wraith-form {
+.overwatch .reaper.skill.wraith-form {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.reaper.skill.shadow-step {
+.overwatch .reaper.skill.shadow-step {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.reaper.skill.death-blossom {
+.overwatch .reaper.skill.death-blossom {
   background-position: -510px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.widowmaker.skill {
+.overwatch .widowmaker.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/widowmaker-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.widowmaker.skill.widows-kiss {
+.overwatch .widowmaker.skill.widows-kiss {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.widowmaker.skill.grappling-hook {
+.overwatch .widowmaker.skill.grappling-hook {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.widowmaker.skill.venom-mine {
+.overwatch .widowmaker.skill.venom-mine {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.widowmaker.skill.infra-sight {
+.overwatch .widowmaker.skill.infra-sight {
   background-position: -510px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.winston.skill {
+.overwatch .winston.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/winston-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.winston.skill.tesla-cannon {
+.overwatch .winston.skill.tesla-cannon {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.winston.skill.jump-pack {
+.overwatch .winston.skill.jump-pack {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.winston.skill.shield-projector {
+.overwatch .winston.skill.shield-projector {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.winston.skill.primal-rage {
+.overwatch .winston.skill.primal-rage {
   background-position: -510px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.pharah.skill {
+.overwatch .pharah.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/pharah-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.pharah.skill.rocket-launcher {
+.overwatch .pharah.skill.rocket-launcher {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.pharah.skill.jump-jet {
+.overwatch .pharah.skill.jump-jet {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.pharah.skill.concussive-blast {
+.overwatch .pharah.skill.concussive-blast {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.pharah.skill.barrage {
+.overwatch .pharah.skill.barrage {
   background-position: -510px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.reinhardt.skill {
+.overwatch .reinhardt.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/reinhardt-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.reinhardt.skill.rocket-hammer {
+.overwatch .reinhardt.skill.rocket-hammer {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.reinhardt.skill.shield {
+.overwatch .reinhardt.skill.shield {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.reinhardt.skill.charge {
+.overwatch .reinhardt.skill.charge {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.reinhardt.skill.fire-strike {
+.overwatch .reinhardt.skill.fire-strike {
   background-position: -510px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.reinhardt.skill.earthshatter {
+.overwatch .reinhardt.skill.earthshatter {
   background-position: -680px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.symmetra.skill {
+.overwatch .symmetra.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/symmetra-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.symmetra.skill.photon-projector {
+.overwatch .symmetra.skill.photon-projector {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.symmetra.skill.sentry-turret {
+.overwatch .symmetra.skill.sentry-turret {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.symmetra.skill.photon-shield {
+.overwatch .symmetra.skill.photon-shield {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.symmetra.skill.teleporter {
+.overwatch .symmetra.skill.teleporter {
   background-position: -510px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.torbjorn.skill {
+.overwatch .torbjorn.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/torbjorn-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.torbjorn.skill.rivet-gun {
+.overwatch .torbjorn.skill.rivet-gun {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.torbjorn.skill.forge-hammer {
+.overwatch .torbjorn.skill.forge-hammer {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.torbjorn.skill.build-turret {
+.overwatch .torbjorn.skill.build-turret {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.torbjorn.skill.armor-pack {
+.overwatch .torbjorn.skill.armor-pack {
   background-position: -510px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.torbjorn.skill.molten-core {
+.overwatch .torbjorn.skill.molten-core {
   background-position: -680px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.bastion.skill {
+.overwatch .bastion.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/bastion-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.bastion.skill.config-recon {
+.overwatch .bastion.skill.config-recon {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.bastion.skill.config-sentry {
+.overwatch .bastion.skill.config-sentry {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.bastion.skill.re-config {
+.overwatch .bastion.skill.re-config {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.bastion.skill.self-repair {
+.overwatch .bastion.skill.self-repair {
   background-position: -510px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.bastion.skill.config-tank {
+.overwatch .bastion.skill.config-tank {
   background-position: -680px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.hanzo.skill {
+.overwatch .hanzo.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/hanzo-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.hanzo.skill.storm-bow {
+.overwatch .hanzo.skill.storm-bow {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.hanzo.skill.sonic-arrow {
+.overwatch .hanzo.skill.sonic-arrow {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.hanzo.skill.scatter-arrow {
+.overwatch .hanzo.skill.scatter-arrow {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.hanzo.skill.dragonstrike {
+.overwatch .hanzo.skill.dragonstrike {
   background-position: -510px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.mercy.skill {
+.overwatch .mercy.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/mercy-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.mercy.skill.caduceus-staff {
+.overwatch .mercy.skill.caduceus-staff {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.mercy.skill.caduceus-blaster {
+.overwatch .mercy.skill.caduceus-blaster {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.mercy.skill.guardian-angel {
+.overwatch .mercy.skill.guardian-angel {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.mercy.skill.angelic-descent {
+.overwatch .mercy.skill.angelic-descent {
   background-position: -510px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.mercy.skill.resurrect {
+.overwatch .mercy.skill.resurrect {
   background-position: -680px -12px;
 }
-
 /* line 72, ../../../css/sass/overwatch.scss */
-.zenyatta.skill {
+.overwatch .zenyatta.skill {
   background: url("../img/overwatch/abilities-sprite-sheets/zenyatta-sprite.png") no-repeat;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.zenyatta.skill.orb-of-destruction {
+.overwatch .zenyatta.skill.orb-of-destruction {
   background-position: 0px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.zenyatta.skill.orb-of-harmony {
+.overwatch .zenyatta.skill.orb-of-harmony {
   background-position: -170px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.zenyatta.skill.orb-of-discord {
+.overwatch .zenyatta.skill.orb-of-discord {
   background-position: -340px -12px;
 }
 /* line 82, ../../../css/sass/overwatch.scss */
-.zenyatta.skill.transcendence {
+.overwatch .zenyatta.skill.transcendence {
   background-position: -510px -12px;
 }
-
-/* line 768, ../../../css/sass/overwatch.scss */
-.ow-character-story {
+/* line 804, ../../../css/sass/overwatch.scss */
+.overwatch .ow-character-story {
   z-index: 100;
 }
-/* line 772, ../../../css/sass/overwatch.scss */
-.ow-character-story h1,
-.ow-character-story h2 {
+/* line 808, ../../../css/sass/overwatch.scss */
+.overwatch .ow-character-story h1,
+.overwatch .ow-character-story h2 {
   font-style: italic;
   font-size: 7em;
   font-weight: 900;
@@ -10148,12 +10198,12 @@ input[type=range]:focus::-ms-fill-upper {
   color: white;
   text-shadow: 2px 2px #121111;
 }
-/* line 783, ../../../css/sass/overwatch.scss */
-.ow-character-story h2 {
+/* line 819, ../../../css/sass/overwatch.scss */
+.overwatch .ow-character-story h2 {
   font-size: 4.6em;
 }
-/* line 787, ../../../css/sass/overwatch.scss */
-.ow-character-story p {
+/* line 823, ../../../css/sass/overwatch.scss */
+.overwatch .ow-character-story p {
   color: white;
   white-space: pre-wrap;
   /* css-3 */
@@ -10167,23 +10217,28 @@ input[type=range]:focus::-ms-fill-upper {
   /* Internet Explorer 5.5+ */
 }
 @media (max-width: 765px) {
-  /* line 798, ../../../css/sass/overwatch.scss */
-  .ow-character-story h1 {
+  /* line 834, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-character-story h1 {
     font-size: 3em;
     margin-top: 40px;
     text-align: center;
   }
-  /* line 803, ../../../css/sass/overwatch.scss */
-  .ow-character-story h2 {
+  /* line 839, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-character-story h2 {
     font-size: 2.5em;
     margin-top: 40px;
     text-align: center;
   }
 }
-
-/* line 813, ../../../css/sass/overwatch.scss */
-.ow-character-video .ow-vid-div {
+/* line 849, ../../../css/sass/overwatch.scss */
+.overwatch .ow-character-video .ow-vid-div {
   text-align: center;
+}
+@media (min-width: 1170px) {
+  /* line 849, ../../../css/sass/overwatch.scss */
+  .overwatch .ow-character-video .ow-vid-div {
+    margin-top: 80px;
+  }
 }
 
 /* mobile */
