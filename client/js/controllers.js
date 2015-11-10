@@ -11686,8 +11686,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'guideTalents', 'LoginModalService', 'MetaService', 'LoopBackAuth',
-        function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, guideTalents, LoginModalService, MetaService, LoopBackAuth) {
+    .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'guideTalents', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User',
+        function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, guideTalents, LoginModalService, MetaService, LoopBackAuth, User) {
 
             $scope.guide = guide;
             $scope.Guide = Guide;
@@ -11722,7 +11722,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.currentHero = hero;
                 $scope.currentTalents = getCurrentTalents();
             };
-
+            
             $scope.getCurrentHero = function () {
                 for (var i = 0; i < $scope.guide.heroes.length; i++) {
                     if ($scope.guide.heroes[i].id === $scope.currentHero.id) {
@@ -11806,56 +11806,8 @@ angular.module('app.controllers', ['ngCookies'])
                 return $sce.trustAsHtml(content);
             };
 
-            // voting
-            $scope.voteDown = function (guide) {
-                vote(-1, guide);
-            };
-
-            $scope.voteUp = function (guide) {
-                vote(1, guide)
-            };
-
-            var box,
-                callback;
-
-            console.log(LoopBackAuth);
-
-            updateVotes();
-            function updateVotes() {
-                checkVotes($scope.guide);
-
-                function checkVotes (guide) {
-                    var vote = guide.votes.filter(function (vote) {
-                        return (LoopBackAuth.currentUserId === vote.userID);
-                    })[0];
-
-                    if (vote) {
-                        guide.voted = vote.direction;
-                    }
-                }
-            }
-
-            function vote(direction, guide) {
-                if (!$scope.app.user.isLogged()) {
-                    LoginModalService.showModal('login', function () {
-                        vote(direction, guide);
-                    });
-                } else {
-                    if (guide.author._id === $scope.app.user.getUserID()) {
-                        bootbox.alert("You can't vote for your own content.");
-                        return false;
-                    }
-                    VoteService.voteGuide(direction, guide).then(function (data) {
-                        if (data.success) {
-                            guide.voted = direction;
-                            guide.votesCount = data.votesCount;
-                        }
-                    });
-                }
-                updateVotes();
-                updateCommentVotes();
-            };
-
+            $scope.setCurrentHero($scope.guide.heroes[0]);
+            
             //is premium
             $scope.isPremium = function () {
                 if (!$scope.guide.premium.isPremium) { return false; }
@@ -11867,7 +11819,7 @@ angular.module('app.controllers', ['ngCookies'])
                     return false;
                 }
             }
-
+            
             // get premium
             $scope.getPremium = function (plan) {
                 if ($scope.app.user.isLogged()) {
@@ -12044,7 +11996,7 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                     });
 
-                    console.log($scope.guide.talentTiers);
+                    console.log("saving this:",$scope.guide);
 
                     Guide.upsert({}, $scope.guide)
                     .$promise

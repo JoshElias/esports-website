@@ -1765,47 +1765,6 @@ angular.module('app.services', [])
         return d.promise;
     }
 
-    deckBuilder.saveDeck = function (deck) {
-        return $http.post('/api/deck/add', {
-            name: deck.name,
-            deckType: deck.deckType,
-            description: deck.description,
-            chapters: deck.chapters,
-            matches: deck.matchups,
-            type: deck.type,
-            basic: deck.basic,
-            cards: deck.cards,
-            heroName: deck.heroName,
-            playerClass: deck.playerClass,
-            mulligans: deck.mulligans,
-            video: deck.video,
-            premium: deck.premium,
-            featured: deck.featured,
-            public: deck.public
-        });
-    }
-
-    deckBuilder.updateDeck = function (deck) {
-        return $http.post('/api/deck/update', {
-            id: deck.id,
-            name: deck.name,
-            deckType: deck.deckType,
-            description: deck.description,
-            chapters: deck.chapters,
-            matches: deck.matchups,
-            type: deck.type,
-            basic: deck.basic,
-            cards: deck.cards,
-            heroName: deck.heroName,
-            playerClass: deck.playerClass,
-            mulligans: deck.mulligans,
-            video: deck.video,
-            premium: deck.premium,
-            featured: deck.featured,
-            public: deck.public
-        });
-    }
-
     return deckBuilder;
 }])
 .factory('GuideBuilder', ['$sce', '$http', '$q', 'User', function ($sce, $http, $q, User) {
@@ -1839,7 +1798,8 @@ angular.module('app.services', [])
             },
             isFeatured: data.featured || false,
             isPublic: (data.isPublic) ? data.isPublic.toString() : 'true',
-            votesCount: data.votesCount || 0,
+            voteScore: data.votesCount || 0,
+            votes: data.votes || [],
             viewCount: data.viewcount || 0,
             against: data.against || {
                 weak: [],

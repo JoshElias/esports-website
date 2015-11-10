@@ -1407,6 +1407,9 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
+                                                relation: "author"
+                                            },
+                                            {
                                                 relation: "heroes",
                                                 scope: {
                                                     include: ["talents"]

@@ -11,13 +11,7 @@
                 </div>
                 <div class="pull-right hidden-xs">
                     <!-- guide-votes -->
-                    <div class="guide-votes clearfix">
-                        <div class="vote-count vote-large m-l-sm pull-right"><span><em ng-show="guide.votesCount > 0">+</em>{{guide.votesCount}}</span></div>
-                        <div class="vote-count-btns vote-large pull-left">
-                            <a href="#" class="btn-vote-up vote-large" ng-class="{active: guide.voted === 1}" ng-click="voteUp(guide)"><i class="fa fa-plus-square"></i></a>
-                            <a href="#" class="btn-vote-down vote-large" ng-class="{active: guide.voted === -1}" ng-click="voteDown(guide)"><i class="fa fa-minus-square"></i></a>
-                        </div>
-                    </div>
+                    <vote-widget service="Guide" votable="guide" theme="multi"></vote-widget>
                     <!-- / guide-votes -->
                 </div>
             </div>
@@ -45,7 +39,7 @@
                 <!-- guide talents -->
                 <div class="guide-section" ng-if="guide.guideType == 'hero'">
                     <div class="guide-section-title clearfix">
-                        <a href="#" ng-click="show.talents = !show.talents"><h3 class="pull-left">{{getCurrentHero().hero.name.toUpperCase()}} TALENTS</h3></a>
+                        <a href="#" ng-click="show.talents = !show.talents"><h3 class="pull-left">{{getCurrentHero().name.toUpperCase()}} TALENTS</h3></a>
                         <div class="m-l-md m-r-md pull-right">
                             <a href="#" ng-click="show.talents = !show.talents">
                                 <i class="fa" ng-class="{ 'fa-angle-down': !show.talents, 'fa-angle-up': show.talents }"></i>
