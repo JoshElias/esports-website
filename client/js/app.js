@@ -248,6 +248,9 @@ var app = angular.module('app', [
                             heroes: ['OverwatchHero', function (OverwatchHero) {
                                 return OverwatchHero.find({
                                     filter: {
+                                        where: {
+                                            isActive: true
+                                        },
                                         fields: {
                                             heroName: true,
                                             className: true,
@@ -303,6 +306,9 @@ var app = angular.module('app', [
                             heroes: ['OverwatchHero', function (OverwatchHero) {
                                 return OverwatchHero.find({
                                     filter: {
+                                        where: {
+                                            isActive: true
+                                        },
                                         fields: {
                                             heroName: true,
                                             className: true,
@@ -317,7 +323,8 @@ var app = angular.module('app', [
                                 return OverwatchHero.findOne({
                                     filter: {
                                         where: {
-                                            className: slug
+                                            className: slug,
+                                            isActive: true
                                         },
                                         fields: {
                                             orderNum: false
