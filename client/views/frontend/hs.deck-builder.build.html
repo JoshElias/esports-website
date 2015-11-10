@@ -161,7 +161,8 @@
                                                 <span>Mechanics ({{filters.mechanics.length}})</span>
                                             </button>
                                             <ul class="list-group dropdown-menu dropdown-dark">
-                                                <li class="list-group-item" ng-class="{active: inMechanics(mechanic)}" ng-repeat="mechanic in mechanics">
+                                                <li class="list-group-item" ng-class="{active: inMechanics(mechanic)}" 
+                                                    ng-repeat="mechanic in mechanics">
                                                     <a href="#" ng-click="toggleMechanic(mechanic); pagination.setPage(1); $event.preventDefault(); $event.stopPropagation()">{{mechanic}}</a>
                                                 </li>
                                             </ul>

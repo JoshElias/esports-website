@@ -178,9 +178,9 @@
                             <div ng-if="getMulliganCards().length" class="hidden-xs">
                                 <div class="deck-mulligan-cards">
                                     <div class="deck-mulligan-card" ng-repeat="card in getMulliganCards()">
-                                        <a href="#" data-tooltip-img="{{app.cdn}}cards/{{card.photos.large}}" 
+                                        <a href="#" data-tooltip-img="{{app.cdn}}cards/{{card.photoNames.large}}" 
                                            style="left: {{cardLeft($index)}}%; z-index: {{$index}};" hs-card>
-                                            <img ng-src="{{app.cdn}}cards/{{card.photos.medium}}" alt="">
+                                            <img ng-src="{{app.cdn}}cards/{{card.photoNames.medium}}" alt="">
                                         </a>
                                     </div>
                                 </div>

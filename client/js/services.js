@@ -1256,22 +1256,24 @@ angular.module('app.services', [])
         var db = {
             id: data.id || null,
             name: data.name || '',
-            dust: data.dust || 0,
+            slug: data.slug || '',
+            deckType: data.deckType || 'None',
             description: data.description || '',
-            deckType: data.deckType || 1,
+            playerClass: playerClass,
+            createdDate: data.createdDate || new Date().toISOString(),
             chapters: data.chapters || [],
             arena: data.arena || false,
             type: data.type || 1,
+            basic: data.basic || false,
 //            basic: data.basic || false,
             matchups: data.matchups || [],
             cards: data.cards || [],
             heroName: data.heroName || '',
-            playerClass: playerClass,
+            dust: data.dust || 0,
             premium: data.premium || {
                 isPremium: false,
                 expiryDate: d
             },
-            slug: data.slug || '',
             isFeatured: data.isFeatured || false,
             isPublic: data.isPublic || true,
             mulligans: data.mulligans || [
