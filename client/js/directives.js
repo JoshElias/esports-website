@@ -519,6 +519,133 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 }])
+.directive('voteWidget', ['LoopBackAuth', 'User', function (LoopBackAuth, User) {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            service: '=',
+            votable: '='
+        },
+        templateUrl: function (element, attrs) {
+            var theme = attrs.theme || 'default';
+            return tpl + 'views/frontend/directives/voteWidget/' + theme + '.html';
+        },
+        controller: ['$scope', function ($scope) {
+            
+            $scope.voteDown = function (votable) {
+                vote(-1, votable);
+            };
+
+            $scope.voteUp = function (votable) {
+                vote(1, votable)
+            };
+
+            var box,
+                callback;
+
+            console.log(LoopBackAuth);
+
+            updateVotes();
+            function updateVotes() {
+                checkVotes($scope.votable);
+
+                function checkVotes (votable) {
+                    console.log(votable);
+                    
+                    var vote = votable.votes.filter(function (vote) {
+                        return (LoopBackAuth.currentUserId === vote.userID);
+                    })[0];
+
+                    if (vote) {
+                        votable.voted = vote.direction;
+                    }
+                }
+            }
+            
+            function voteCount(votes) {
+                var out = 0;
+                
+                _.each(votes, function(vote) {
+                    out += vote.direction;
+                });
+                
+                return out;
+            }
+
+            function vote(direction, votable) {
+                console.log(LoopBackAuth, User, direction);
+                if (!User.isAuthenticated) {
+                    LoginModalService.showModal('login', function () {
+                        vote(direction, votable);
+                    });
+                } else {
+//                    if (votable.author.id === LoopBackAuth.currentUserId) {
+//                        bootbox.alert("You can't vote for your own content.");
+//                        return false;
+//                    }
+                    $scope.voting = true;
+                    $scope.service.findOne({
+                        filter: {
+                            where: {
+                                id: votable.id
+                            },
+                            fields: ["votes", "voteScore"]
+                        }
+                    })
+                    .$promise
+                    .then(function (data) {
+                        async.waterfall([
+                            function(waterfallCb) {
+                                var hasVoted = _.find(data.votes, function(vote) { return vote.userID === LoopBackAuth.currentUserId; });
+                                
+                                if(hasVoted) {
+                                    console.log("hasvoted");
+                                    data.votes[data.votes.indexOf(hasVoted)] = {
+                                        userID: LoopBackAuth.currentUserId,
+                                        direction: direction
+                                    };
+                                } else {
+                                    console.log("else");
+                                    data.votes.push({
+                                        userID: LoopBackAuth.currentUserId,
+                                        direction: direction
+                                    });
+                                }
+                                
+                                return waterfallCb(null, data);
+                            }, function (newVoteData, waterfallCb) {
+                                console.log("next cb");
+                                $scope.service.update({
+                                    where: {
+                                        id: votable.id
+                                    }
+                                }, {
+                                    votes: newVoteData.votes,
+                                    voteScore: voteCount(newVoteData.votes)
+                                })
+                                .$promise
+                                .then(function (upData) {
+                                    $scope.votable.votes = upData.votes;
+                                    $scope.votable.voteScore = voteCount(upData.votes);
+                                    return waterfallCb(null);
+                                })
+                                .catch(function (err) {
+                                    return waterfallCb(err);
+                                });
+                            }
+                        ], function (err) {
+                            $scope.voting = false;
+                            if (err) { console.log("Error!", err); }
+                            updateVotes();
+                        });
+                    });
+                }
+            };
+            
+        }]
+    }
+}])
 .directive('ngBackground', function(){
     return function(scope, element, attrs){
         var url = attrs.ngBackground;
