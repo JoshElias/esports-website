@@ -29,7 +29,7 @@
 @mixin hots-map-modal-icon  ($mapName, $shortName) {
 
     .hots-modal .map.#{$mapName} { background: url('../img/hots/maps/modal/#{$shortName}.jpg') no-repeat center center; }
-    .map-selection .map .icon-wrap .icon a.icon-#{$mapName} { background: url('../img/hots/maps/$shortName.png') no-repeat center center; }
+    .map-selection .map .icon-wrap .icon a.icon-#{$mapName} { background: url('../img/hots/maps/#{$shortName}.png') no-repeat center center; }
     
 }
 

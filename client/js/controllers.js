@@ -651,6 +651,8 @@ angular.module('app.controllers', ['ngCookies'])
                 guides: ['createGuide'],
                 forumposts: ['createPost']
             }
+        
+        console.log($scope.activities);
 
 //        $scope.getActivityType = function (activity) {
 //            switch (activity.activityType) {
@@ -671,30 +673,34 @@ angular.module('app.controllers', ['ngCookies'])
 //            }
 //        }
 
-        $scope.isFiltered = function(type) {
+        $scope.isFiltered = function (type) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
                 if ($scope.filterActivities[i] == type) {
                     return true;
                 }
-                return false;
             }
+            return false;
         }
 
         $scope.toggleFilter = function (filter) {
+            
+            
             for (var i = 0; i < $scope.filterActivities.length; i++) {
                 if (filter == $scope.filterActivities[i]) {
                     $scope.filterActivities.splice(i,1);
+                    buildFilter();
                     $scope.loadActivities(true);
+                    console.log("TRUE toggle filter", filter, $scope.filterActivities);
                     return;
                 }
-                $scope.filterActivities.push(filter);
             }
             $scope.filterActivities.push(filter);
-            buildFilter(filter);
+            buildFilter();
+            console.log("FALSE toggle filter", filter, $scope.filterActivities);
             $scope.loadActivities(true);
         }
 
-        var buildFilter = function (callback) {
+        var buildFilter = function () {
             queryFilter = [];
             for (var i = 0; i < $scope.filterActivities.length; i++) {
                 for (var j = 0; j < filters[$scope.filterActivities[i]].length; j++) {
@@ -711,7 +717,7 @@ angular.module('app.controllers', ['ngCookies'])
                         skip: $scope.activities.length,
                         where: {
                             authorId: $scope.user.id,
-                            active: true
+                            isActive: true
                         },
                         include: [
                             {
@@ -727,7 +733,7 @@ angular.module('app.controllers', ['ngCookies'])
             if (isFilter) {
                 options.filter.where = {
                     authorId: $scope.user.id,
-                    active: true,
+                    isActive: true,
                     activityType: { inq : queryFilter }
                 }
             }
@@ -740,37 +746,41 @@ angular.module('app.controllers', ['ngCookies'])
             });
         }
 
-            $scope.activities.forEach(function (activity) {
-                activity.getActivity = function () {
-                    return $sce.trustAsHtml(activity.activity);
-                };
-            });
+        $scope.activities.forEach(function (activity) {
+            activity.getActivity = function () {
+                return $sce.trustAsHtml(activity.activity);
+            };
+        });
 
-            $scope.loadActivities = function () {
-                Activity.find({
-                    filter: {
-                        order: "createdDate DESC",
-                        limit: 3,
-                        skip: $scope.activities.length,
-                        where: {
-                            authorId: $scope.user.id,
-                            active: true
-                        },
-                        include: [
-                            {
-                                relation: 'article'
-                            },
-                            {
-                                relation: 'deck'
-                            }
-                        ]
-                    }
-                })
-                    .$promise
-                    .then(function (data) {
-                        $scope.activities = $scope.activities.concat(data);
-                    });
-            }
+//            $scope.loadActivities = function () {
+//                Activity.find({
+//                    filter: {
+//                        order: "createdDate DESC",
+//                        limit: 3,
+//                        skip: $scope.activities.length,
+//                        where: {
+//                            authorId: $scope.user.id,
+//                            active: true
+//                        },
+//                        include: [
+//                            {
+//                                relation: 'article'
+//                            },
+//                            {
+//                                relation: 'deck'
+//                            }
+//                        ]
+//                    }
+//                })
+//                .$promise
+//                .then(function (data) {
+//                    console.log("activity data:", data);
+//                    $scope.activities = $scope.activities.concat(data);
+//                })
+//                .catch(function (err) {
+//                    console.log("err loading activity data:", err);
+//                });
+//            }
 
             // delete guide
             $scope.deleteGuide = function deleteGuide(activity) {
@@ -11875,33 +11885,88 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
+
+                
                 if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
                     return false;
                 }
                 if (!User.isAuthenticated()) {
-                    LoginModalService.showModal('login');
+                    LoginModalService.showModal('login', function () {
+                        $scope.saveGuide();
+                    });
                 } else {
                     $scope.guide.slug = Util.slugify($scope.guide.name);
-                    console.log('guide going in: ', $scope.guide);
+//                    $scope.authorId = LoopBackAuth.currentUserId;
 
-                    Guide.create({}, $scope.guide, function(guide) {
-                        console.log('created guide: ', guide);
+                    var tiers = {
+                        tier1: 1,
+                        tier4: 4, 
+                        tier7: 7,
+                        tier10: 10,
+                        tier13: 13,
+                        tier16: 16,
+                        tier20: 20
+                    }
 
-                        // DEFINITELY SOMETHING WRONG HERE
-                        Guide.heroes.createMany({
-                            id: guide.id,
-                        }, $scope.guide.heroes, function(heroGuide) {
-                            $scope.app.settings.guide = null;
-                            console.log('slug: ', $scope.guide.slug);
-                            $state.go('app.hots.guides.guide', { slug: guide.slug });
-
-                        }, function(error) {
-                            if(error) console.log('error: ', error);
+                    _.each($scope.guide.heroes, function (hero) {
+                        $scope.guide.talentTiers[hero.hero.id] = {};
+                        _.each(hero.talents, function (talent, key) {
+                            $scope.guide.talentTiers[hero.hero.id][tiers[key]] = talent;
                         });
+                    });
 
-//                        $state.go('app.hots.guides.guide', { slug: guide.slug });
-                    }, function(err) {
-                        if(err) console.log('error: ',err);
+                    console.log($scope.guide.talentTiers);
+
+                    Guide.upsert({}, $scope.guide)
+                    .$promise
+                    .then(function(data) {
+                        console.log("Guide add successful!");
+                        async.series([
+                            function (seriesCb) {
+                                async.each($scope.guide.heroes, function (hero, eachCb) {
+                                    Guide.heroes.link({
+                                        id: data.id,
+                                        fk: hero.hero.id
+                                    }, null)
+                                    .$promise
+                                    .then(function(hData) {
+                                        console.log("hero link:", hData);
+                                        return eachCb();
+                                    })
+                                    .catch(function(err) {
+                                        console.log("hero link FAILED:", err);
+                                        return seriesCb(err);
+                                    });
+                                }, function () {
+                                    return seriesCb(null);
+                                });
+                            }, function (seriesCb) {
+                                async.each($scope.guide.maps, function (map, eachCb) {
+                                    Guide.maps.link({
+                                        id: data.id,
+                                        fk: map
+                                    }, null)
+                                    .$promise
+                                    .then(function (mData) {
+                                        console.log("map link:", mData);
+                                        return eachCb();
+                                    })
+                                    .catch(function (err) {
+                                        console.log("map link FAILED:", err);
+                                    });
+                                }, function () {
+                                    return seriesCb(null);
+                                });
+                            }
+                        ], function (err) {
+                            if (err) { console.log("Something went wrong!", err); return; }
+
+                            console.log("YEP");
+                            $state.go('app.hots.guides.guide', { slug: data.slug });
+                        });
+                    })
+                    .catch(function (err) {
+                        console.log("Guide add FAILED:",err);
                     });
                 }
             };

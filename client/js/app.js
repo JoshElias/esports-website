@@ -1209,7 +1209,7 @@ var app = angular.module('app', [
                               return Guide.find({
                                 filter: {
                                   limit: 10,
-                                  order: 'createdDate ASC',
+                                  order: 'createdDate DESC',
                                   fields: {
                                     authorId: true,
                                     name: true,
@@ -2192,8 +2192,7 @@ var app = angular.module('app', [
                                         order: "createdDate DESC",
                                         limit: 3,
                                         where: {
-                                            authorId: userProfile.id,
-                                            active: true
+                                            authorId: userProfile.id
                                         },
                                         include: [
                                             {
@@ -2201,11 +2200,18 @@ var app = angular.module('app', [
                                             },
                                             {
                                                 relation: 'deck'
+                                            },
+                                            {
+                                                relation: 'guide'
                                             }
                                         ]
                                     }
                                 })
-                                .$promise;
+                                .$promise
+                                .then(function(data) {
+                                    console.log(data);
+                                    return data;
+                                });
                             }],
                             activityCount: ['userProfile', 'Activity', function (userProfile, Activity) {
                                 return Activity.count({
