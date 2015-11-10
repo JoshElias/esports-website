@@ -148,10 +148,11 @@
                             <h3 class="pull-left">MULLIGANS</h3>
                             <div class="m-r-md pull-right clearfix">
                                 <ul class="deck-mulligan-classes pull-left clearfix">
-                                    <li ng-class="{ active: currentMulligan.klass === class }" ng-repeat="class in classes">
+                                    <li ng-class="{ active: currentMulligan.className === class }" 
+                                        ng-repeat="class in classes">
                                         <a href="#" class="{{class.toLowerCase()}}" 
                                            ng-class="{ active: isMulliganSet(getMulligan(class)) }" 
-                                           ng-click="show.mulligans = (currentMulligan.klass != class); setMulligan(getMulligan(class)); (!show.mulligans) ? setMulligan(false) : false "
+                                           ng-click="show.mulligans = (currentMulligan.className != class); setMulligan(getMulligan(class)); (!show.mulligans) ? setMulligan(false) : false"
                                            ng-tooltip title="{{class}}">{{class}}</a>
                                     </li>
                                 </ul>
@@ -161,15 +162,26 @@
                         <div class="deck-section-content deck-mulligan-details pos-rl" ng-show="show.mulligans && currentMulligan">
                             <a href="#" class="mulligan-coin pull-left" ng-class="{active:coin}" ng-click="toggleCoin()"></a>
                             <div>
-                                <h3>{{currentMulligan.klass.toUpperCase()}} MULLIGAN</h3>
-                                <p ng-if="getMulliganCards().length"><span ng-repeat="card in getMulliganCards()"><span ng-if="$last && getMulliganCards().length > 1"> and </span>{{card.name}}<span ng-if="!$last">, </span></span></p>
+                                <h3>{{currentMulligan.className.toUpperCase()}} MULLIGAN</h3>
+                                <p ng-if="getMulliganCards().length">
+                                    <span ng-repeat="card in getMulliganCards()">
+                                        <span ng-if="$last && getMulliganCards().length > 1"> and </span>{{card.name}}<span ng-if="!$last">, 
+                                        </span>
+                                    </span>
+                                </p>
                                 <p ng-if="getMulliganInstructions().length">{{getMulliganInstructions()}}</p>
-                                <p ng-if="!getMulliganCards().length">There is no mulligan set for <Strong>{{currentMulligan.klass}}</Strong> <span ng-if="coin">with</span><span ng-if="!coin">without</span> the coin.</p>
+                                <p ng-if="!getMulliganCards().length">
+                                    There is no mulligan set for <strong>{{currentMulligan.className}}</strong> 
+                                    <span ng-if="coin">with</span><span ng-if="!coin">without</span> the coin.
+                                </p>
                             </div>
                             <div ng-if="getMulliganCards().length" class="hidden-xs">
                                 <div class="deck-mulligan-cards">
                                     <div class="deck-mulligan-card" ng-repeat="card in getMulliganCards()">
-                                        <a href="#" data-tooltip-img="{{app.cdn}}cards/{{card.photos.large}}" style="left: {{cardLeft($index)}}%; z-index: {{$index}};" hs-card><img ng-src="{{app.cdn}}cards/{{card.photos.medium}}" alt=""></a>
+                                        <a href="#" data-tooltip-img="{{app.cdn}}cards/{{card.photos.large}}" 
+                                           style="left: {{cardLeft($index)}}%; z-index: {{$index}};" hs-card>
+                                            <img ng-src="{{app.cdn}}cards/{{card.photos.medium}}" alt="">
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -234,7 +246,7 @@
 
                                         <svg height="100%" width="98%" x="1.5%">
                                             <svg class="bar-wrap" 
-                                                 ng-repeat="match in deck.matches | orderBy: 'klass'" 
+                                                 ng-repeat="match in deck.matchups | orderBy: 'klass'" 
                                                  ng-mouseover="setMouseOver(match.deckName)" 
                                                  ng-mouseleave="setMouseOver(false)" 
                                                  ng-class="{ 'no-mouse' : getMouseOver() != false && getMouseOver(match.deckName) != match.deckName }">

@@ -1243,7 +1243,7 @@ angular.module('app.services', [])
     
     return ow;
 })
-.factory('DeckBuilder', ['$sce', '$http', '$q', function ($sce, $http, $q, Util) {
+.factory('DeckBuilder', ['$sce', '$http', '$q', 'CardWithoutCoin', 'CardWithCoin', function ($sce, $http, $q, CardWithoutCoin, CardWithCoin) {
 
     var deckBuilder = {};
 
@@ -1263,7 +1263,7 @@ angular.module('app.services', [])
             arena: data.arena || false,
             type: data.type || 1,
 //            basic: data.basic || false,
-            matches: data.matches || [],
+            matchups: data.matchups || [],
             cards: data.cards || [],
             heroName: data.heroName || '',
             playerClass: playerClass,
@@ -1393,34 +1393,79 @@ angular.module('app.services', [])
             }
             return false;
         }
-
-        db.toggleMulligan = function (mulligan, withCoin, card) {
+        
+        /*
+         * Toggle Mulligan:
+         * @params: mulligan (object) - the mulligan object for the currently selected class
+         * @params: withCoin (boolean) - whether the mulligan includes coin or not
+         * @params: card (object) - the card object being added to mulligan
+         * @params: destroyCoinMulls (optional array) - tracks coin mulligans that need to be removed from DB on save
+         * @params: destroyNoCoinMulls (optional array) - tracks no coin mulligans that need to be removed from DB on save
+         */
+        db.toggleMulligan = function (mulligan, withCoin, card, destroyCoinMulls, destroyNoCoinMulls) {
             console.log('mulligan: ', mulligan);
             console.log('card: ', card);
             console.log('with coin: ', withCoin);
             
-            var coinMulligan = (withCoin) ? mulligan.cardsWithCoin : mulligan.cardsWithoutCoin,
+            var cardMulligans = (withCoin) ? mulligan.cardsWithCoin : mulligan.cardsWithoutCoin,
                 exists = false,
                 index = -1;
             
             // check if card already exists
-            for (var i = 0; i < coinMulligan.length; i++) {
-                if (coinMulligan[i].id === card.id) {
+            for (var i = 0; i < cardMulligans.length; i++) {
+                if (cardMulligans[i].id === card.id) {
                     exists = true;
                     index = i;
                     break;
                 }
             }
-
+            
+            // card exists in client
             if (exists) {
-                coinMulligan.splice(index, 1);
-                console.log('spliced coinMulligan: ', coinMulligan);
-                return coinMulligan;
+                // with coin
+                if (withCoin) {
+                    console.log('With Coin Mulligans: ', cardMulligans);
+                    // if array was provided
+                    if (destroyCoinMulls) {
+                        var mullExists = destroyCoinMulls.indexOf(card);
+                        if (mullExists === -1) {
+                            destroyCoinMulls.push(card);
+                            console.log('added card to dest: ', destroyCoinMulls);
+                        }
+                    }
+                    cardMulligans.splice(index, 1);
+                    return cardMulligans;
+                } else {
+                // without coin
+                    console.log('Without Coin Mulligans: ', cardMulligans);
+                    if (destroyNoCoinMulls) {
+                        var mullExists = destroyNoCoinMulls.indexOf(card);
+                        if (mullExists === -1) {
+                            destroyNoCoinMulls.push(card);
+                            console.log('added card to dest: ', destroyNoCoinMulls);
+                        }
+                    }
+                    cardMulligans.splice(index, 1);
+                    return cardMulligans;
+                }
+                // card doesn't exist in client
             } else {
-                if (coinMulligan.length < 6) {
-                    coinMulligan.push(card);
-                    console.log('added to muligan: ', coinMulligan);
-                    return coinMulligan;
+                if (cardMulligans.length < 6) {
+                    if (withCoin) {
+                        var toDestroyIndex = destroyCoinMulls.indexOf(card);
+                        console.log('toDestroyIndex: ', toDestroyIndex);
+                        if (toDestroyIndex !== -1) {
+                            destroyCoinMulls.splice(toDestroyIndex, 1);
+                        }
+                    } else {
+                        var toDestroyIndex = destroyNoCoinMulls.indexOf(card);
+                        if (toDestroyIndex !== -1) {
+                            destroyNoCoinMulls.splice(toDestroyIndex, 1);
+                        }
+                    }
+                    cardMulligans.push(card);
+                    console.log('added to mulligan: ', cardMulligans);
+                    return cardMulligans;
                 }
             }
         }
@@ -1698,15 +1743,15 @@ angular.module('app.services', [])
             var m = {
                 deckName: '',
                 className: '',
-                match: 0
+                forChance: 0
             };
 
             m.className = klass;
-            db.matches.push(m);
+            db.matchups.push(m);
         }
 
         db.removeMatch = function (index) {
-            db.matches.splice(index,1);
+            db.matchups.splice(index,1);
         }
 
         return db;
@@ -1726,7 +1771,7 @@ angular.module('app.services', [])
             deckType: deck.deckType,
             description: deck.description,
             chapters: deck.chapters,
-            matches: deck.matches,
+            matches: deck.matchups,
             type: deck.type,
             basic: deck.basic,
             cards: deck.cards,
@@ -1747,7 +1792,7 @@ angular.module('app.services', [])
             deckType: deck.deckType,
             description: deck.description,
             chapters: deck.chapters,
-            matches: deck.matches,
+            matches: deck.matchups,
             type: deck.type,
             basic: deck.basic,
             cards: deck.cards,
