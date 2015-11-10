@@ -370,7 +370,7 @@
                         </div>  
                         <div class="col-xs-4 right">
                             <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                <button ng-click="deck.toggleMulligan(mulligan, true, card.card)">
+                                <button ng-click="deck.toggleMulligan(mulligan, true, card.card, destroyCoinMulls, destroyNoCoinMulls)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
                                     <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
@@ -409,7 +409,7 @@
                         </div>
                         <div class="col-xs-4 right">
                             <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                <button ng-click="deck.toggleMulligan(mulligan, false, card.card)">
+                                <button ng-click="deck.toggleMulligan(mulligan, false, card.card, destroyCoinMulls, destroyNoCoinMulls)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
                                     <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
@@ -455,19 +455,24 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="match col-md-12" ng-repeat="match in deck.matches track by $index">
+                            <div class="match col-md-12" ng-repeat="match in deck.matchups track by $index">
                                 <div class="row">
                                     <div class="col-md-1">
-                                        <a class="db-sw-class-icon class-icon large {{match.klass.toLowerCase()}}"></a>
+                                        <a class="db-sw-class-icon class-icon large {{match.className | lowercase}}"></a>
                                     </div>
                                     <div class="col-md-4">
                                         <input class="deck-name" placeholder="Deck Name..." ng-model="match.deckName">
                                     </div>
                                     <div class="col-md-6">
-                                        <input class="pull-left match-slider" type="range" ng-model="match.match" min="0" value="50" max="100" step="5"><span class="pull-right match-number">{{match.match}} %</span>
+                                        <input class="pull-left match-slider" type="range" 
+                                               ng-model="match.forChance" 
+                                               min="0" value="50" max="100" step="5">
+                                        <span class="pull-right match-number">{{match.forChance}} %</span>
                                     </div>
                                     <div class="col-md-1 close-wrapper">
-                                        <button class="close-button" ng-click="removeMatch($index)"><i class="fa fa-close"></i></button>
+                                        <button class="close-button" ng-click="removeMatch($index, destroyMatchups)">
+                                            <i class="fa fa-close"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

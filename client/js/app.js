@@ -907,7 +907,10 @@ var app = angular.module('app', [
                                                 }
                                             },
                                             {
-                                                relation: "comments"
+                                                relation: "comments",
+                                                scope: {
+                                                    incldue: ['author']
+                                                }
                                             },
                                             {
                                                 relation: 'author'
@@ -2725,17 +2728,14 @@ var app = angular.module('app', [
                                                 deckType: true
                                             },
                                             include: [
-//                                                {
-//                                                    relation: 'mulligans',
-//                                                    scope: {
-//                                                        include: ['cardsWithCoin', 'cardsWithoutCoin']
-//                                                    }
-//                                                },
                                                 {
                                                     relation: 'cards',
                                                     scope: {
                                                         include: 'card'
                                                     }
+                                                },
+                                                {
+                                                    relation: 'matchups'
                                                 }
                                             ]
                                         }
@@ -2762,7 +2762,7 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (data) {
-                                    console.log('mulligan data: ', data);
+//                                    console.log('mulligan data: ', data);
                                     return data;
                                 });
                             }],
@@ -2776,7 +2776,7 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (data) {
                                     data.mulligans = mulligans;
-                                    console.log('mulligans resolve: ', mulligans);
+//                                    console.log('mulligans resolve: ', mulligans);
                                     return data;
                                 })
                                 .catch(function(err) {
