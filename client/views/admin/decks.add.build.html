@@ -526,7 +526,9 @@
                                 <div class="form-group" ng-show="deck.premium.isPremium">
                                     <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
                                     <div class="col-sm-10">
-                                        <div date-picker data-id="expiryDate" data-name="expiryDate" data-class="input-dark" ng-model="deck.premium.expiryDate" ng-disabled="!deck.premium.isPremium"></div>
+                                        <div date-picker data-id="expiryDate" data-name="expiryDate" data-class="input-dark" 
+                                             ng-model="deck.premium.expiryDate" ng-disabled="!deck.premium.isPremium">
+                                        </div>
                                     </div>
                                 </div>
                             </div>

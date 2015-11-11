@@ -139,8 +139,13 @@
                         <div class="dust-bottle-sm"></div>
                     </div>
                 </div>
-                <button ng-if="deck.basic" class="basic-submit-btn m-t-md">
-                    SUBMIT
+                <button ng-if="deck.basic" class="basic-submit-btn m-t-md"
+                        ng-click="updateDeck(deck)" ng-disabled="deckSubmitting">
+                    <span ng-if="!deckSubmitting">SUBMIT</span>
+                    <span ng-if="deckSubmitting">SUBMITTING</span>
+                    <span ng-if="deckSubmitting">
+                        <i class="fa fa-spinner fa-pulse"></i>
+                    </span>
                 </button>
             </div>
             <!-- / db-right -->
@@ -148,7 +153,6 @@
 
                 <div class="col-md-pull-3 col-md-9" ng-hide="step !== 1">
                     <div class="db-section-title clearfix">
-
                         <div class="row">
                             <div class="col-md-2">
                                 <h1>CLASS</h1>
@@ -266,12 +270,19 @@
                         </div><!-- / db-filters -->
                     </div>
                     <div class="db-cards">
-
-                        <div ng-show="isClassCards()" pagination="classPagination" theme="deckbuilder" class="db-pagination db-pagination-left"></div>
-                        <div ng-show="isClassCards()" pagination="classPagination" theme="deckbuilder" class="db-pagination db-pagination-right"></div>
-
-                        <div ng-show="!isClassCards()" pagination="neutralPagination" theme="deckbuilder" class="db-pagination db-pagination-left"></div>
-                        <div ng-show="!isClassCards()" pagination="neutralPagination" theme="deckbuilder" class="db-pagination db-pagination-right"></div>
+                        <!-- Pagination Buttons -->
+                        <div ng-show="isClassCards()" pagination="classPagination" 
+                             theme="deckbuilder" class="db-pagination db-pagination-left">
+                        </div>
+                        <div ng-show="isClassCards()" pagination="classPagination" 
+                             theme="deckbuilder" class="db-pagination db-pagination-right">
+                        </div>
+                        <div ng-show="!isClassCards()" pagination="neutralPagination" 
+                             theme="deckbuilder" class="db-pagination db-pagination-left">
+                        </div>
+                        <div ng-show="!isClassCards()" pagination="neutralPagination" 
+                             theme="deckbuilder" class="db-pagination db-pagination-right">
+                        </div>
 
                         <!-- arrows --><!--
                         <button class="btn db-arrow db-arrow-left" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
@@ -487,15 +498,17 @@
                 <!-- / step 4 -->
                 <!-- step 5 -->
                 <div class="db-section" ng-hide="step !== 5">
+                    
                     <div class="panel panel-danger error-modal animated" ng-show="showError">
                         <div class="panel-heading">
                             <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-                            <strong>Unable to add deck</strong>
+                            <strong>Unable to save deck</strong>
                         </div>
                         <div class="panel-body">
                             <span>{{errors}}</span>
                         </div>
                     </div>
+                    
                     <div class="db-section-title">
                         <h1>SAVE YOUR DECK</h1>
                     </div>
@@ -599,7 +612,13 @@
                             <div class="form-group m-b-none">
                                 <div class="col-sm-10 col-sm-offset-2">
                                     <button type="submit" class="btn btn-blue" 
-                                            ng-click="updateDeck(deck)">Save Deck</button>
+                                            ng-click="updateDeck(deck)" ng-disabled="deckSubmitting">
+                                        <span ng-if="!deckSubmitting">Save Deck</span>
+                                        <span ng-if="deckSubmitting">Submitting</span>
+                                        <span ng-if="deckSubmitting">
+                                            <i class="fa fa-spinner fa-pulse"></i>
+                                        </span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
