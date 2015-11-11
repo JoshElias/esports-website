@@ -538,7 +538,7 @@ var app = angular.module('app', [
                                             active: true,
                                             snapNum: true,
                                             votes: true,
-                                            votesCount: true,
+                                            voteScore: true,
                                             title: true,
                                             content: true,
                                             slug: true,

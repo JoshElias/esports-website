@@ -11995,9 +11995,7 @@ angular.module('app.controllers', ['ngCookies'])
                             $scope.guide.talentTiers[hero.hero.id][tiers[key]] = talent;
                         });
                     });
-
-                    console.log("saving this:",$scope.guide);
-
+                    
                     Guide.upsert({}, $scope.guide)
                     .$promise
                     .then(function(data) {
