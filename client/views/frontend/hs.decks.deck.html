@@ -23,6 +23,8 @@
             </div>
             <div class="pull-right">
                 <!-- deck-votes -->
+                <vote-widget service="deckService" votable="deck" theme="multi"></vote-widget>
+<!--
                 <div class="deck-votes clearfix">
                     <div class="vote-count vote-large m-l-sm pull-right">
                         <span><em ng-show="deck.voteScore > 0">+</em>{{deck.voteScore}}</span>
@@ -40,6 +42,7 @@
                         </a>
                     </div>
                 </div>
+-->
                 <!-- / deck-votes -->
             </div>
         </div>
@@ -178,9 +181,9 @@
                             <div ng-if="getMulliganCards().length" class="hidden-xs">
                                 <div class="deck-mulligan-cards">
                                     <div class="deck-mulligan-card" ng-repeat="card in getMulliganCards()">
-                                        <a href="#" data-tooltip-img="{{app.cdn}}cards/{{card.photoNames.large}}" 
+                                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" 
                                            style="left: {{cardLeft($index)}}%; z-index: {{$index}};" hs-card>
-                                            <img ng-src="{{app.cdn}}cards/{{card.photoNames.medium}}" alt="">
+                                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="">
                                         </a>
                                     </div>
                                 </div>

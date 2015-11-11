@@ -6016,7 +6016,8 @@ angular.module('app.controllers', ['ngCookies'])
                                         box.modal('hide');
                                     }
                                 }
-                            }
+                            },
+                            closeButton: false
                         });
                         box.modal('show');
                         return false;
@@ -6081,6 +6082,7 @@ angular.module('app.controllers', ['ngCookies'])
                                         seriesCallback(err);
                                     } else {
                                         async.each(mulligan.cardsWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
+                                            
                                             cardWithoutCoin.mulliganId = mulligan.id;
                                             cardWithoutCoin.cardId = cardWithoutCoin.id;
 
@@ -6154,27 +6156,32 @@ angular.module('app.controllers', ['ngCookies'])
                         
                         async.each($scope.destroyCoinMulls, function (cardMull, cardMullCB) {
                             
-                            CardWithCoin.exists({
-                                id: cardMull.id
+                            console.log('THIS: ', cardMull);
+                            
+                            Mulligan.cardsWithCoin.exists({
+                                id: '56351dd0d27b7ba90f895869',
+                                fk: '5411d4889d2333d418373db4'
                             })
                             .$promise
                             .then(function (data) {
                                 if (data.exists) {
                                     // destroy the mulligan
-                                    CardWithCoin.destroyById({
-                                        id: cardMull.id
-                                    })
-                                    .$promise
-                                    .then(function (data) {
-//                                        console.log('card w/ coin mull destroyed: ', data);
-                                        cardMullCB();
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-//                                            console.log('card w/ coin mull err: ', err);
-                                            cardMullCB(err);
-                                        }
-                                    });
+                                    console.log('EXIIIIIIIIIIIIIIIIISTS');
+//                                    Mulligan.cardsWithCoin.destroyById({
+//                                        id: '56351dd4d27b7ba90f8962b6',
+//                                        fk: cardMull.id
+//                                    })
+//                                    .$promise
+//                                    .then(function (data) {
+////                                        console.log('card w/ coin mull destroyed: ', data);
+//                                        cardMullCB();
+//                                    })
+//                                    .catch(function (err) {
+//                                        if (err) {
+////                                            console.log('card w/ coin mull err: ', err);
+//                                            cardMullCB(err);
+//                                        }
+//                                    });
                                 } else {
                                     cardMullCB();
                                 }
