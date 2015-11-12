@@ -6159,8 +6159,8 @@ angular.module('app.controllers', ['ngCookies'])
                             console.log('THIS: ', cardMull);
                             
                             Mulligan.cardsWithCoin.exists({
-                                id: '56351dd0d27b7ba90f895869',
-                                fk: '5411d4889d2333d418373db4'
+                                id: '56351dd0d27b7ba90f895869', // mullId
+                                fk: '5411d4889d2333d418373db4' // card.id
                             })
                             .$promise
                             .then(function (data) {
