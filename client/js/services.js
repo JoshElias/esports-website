@@ -1800,7 +1800,7 @@ angular.module('app.services', [])
             },
             isFeatured: data.featured || false,
             isPublic: (data.isPublic) ? data.isPublic.toString() : 'true',
-            voteScore: data.votesCount || 0,
+            voteScore: data.votesCount || 1,
             votes: data.votes || [],
             viewCount: data.viewcount || 0,
             against: data.against || {

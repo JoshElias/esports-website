@@ -528,119 +528,135 @@ angular.module('app.directives', ['ui.load'])
             votable: '='
         },
         templateUrl: function (element, attrs) {
-            var theme = attrs.theme || 'default';
+            var theme = attrs.theme || 'multi';
             return tpl + 'views/frontend/directives/voteWidget/' + theme + '.html';
         },
-        controller: ['$scope', function ($scope) {
-            
-            $scope.voteDown = function (votable) {
-                vote(-1, votable);
-            };
-
-            $scope.voteUp = function (votable) {
-                vote(1, votable)
-            };
-
+        controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
             var box,
                 callback;
+            
+            function voteCount(votes) {
+                var out = 0;
+                
+                if ($attrs.theme === 'multi') {
+                    _.each(votes, function(vote) {
+                        out += vote.direction;
+                    });
+                } else {
+                    return $scope.votable.votes.length;
+                }
+                
+                return out;
+            }
 
-            console.log(LoopBackAuth);
-
-            updateVotes();
             function updateVotes() {
                 checkVotes($scope.votable);
 
                 function checkVotes (votable) {
                     console.log(votable);
                     
-                    var vote = votable.votes.filter(function (vote) {
-                        return (LoopBackAuth.currentUserId === vote.userID);
-                    })[0];
+                    var vote = function () {
+                        if ($attrs.theme === 'multi') {
+                            return votable.votes.filter(function (vote) {
+                                return (LoopBackAuth.currentUserId === vote.userID);
+                            })[0];
+                        } else {
+                            return _.find(votable.votes, function(vote) { return vote === LoopBackAuth.currentUserId; });
+                        }
+                    }
 
-                    if (vote) {
-                        votable.voted = vote.direction;
+                    if (vote()) {
+                        $scope.voted = ($attrs.theme === 'multi') ? vote.direction : true;
                     }
                 }
+                
+                $scope.votable.voteScore = voteCount($scope.votable.votes);
             }
+            updateVotes();
             
-            function voteCount(votes) {
-                var out = 0;
-                
-                _.each(votes, function(vote) {
-                    out += vote.direction;
-                });
-                
-                return out;
-            }
-
-            function vote(direction, votable) {
-                console.log(LoopBackAuth, User, direction);
+            $scope.vote = function (obj, direction) {
+            console.log($scope.votable);    
                 if (!User.isAuthenticated) {
                     LoginModalService.showModal('login', function () {
-                        vote(direction, votable);
+                        $scope.vote(obj, direction);
                     });
+                } else if ($scope.votable.author !== undefined && $scope.votable.author.id === LoopBackAuth.currentUserId) {
+                    bootbox.alert("You can't vote for your own content.");
+                    return false;
                 } else {
-//                    if (votable.author.id === LoopBackAuth.currentUserId) {
-//                        bootbox.alert("You can't vote for your own content.");
-//                        return false;
-//                    }
-                    $scope.voting = true;
-                    $scope.service.findOne({
-                        filter: {
-                            where: {
-                                id: votable.id
-                            },
-                            fields: ["votes", "voteScore"]
-                        }
-                    })
-                    .$promise
-                    .then(function (data) {
-                        async.waterfall([
-                            function(waterfallCb) {
-                                var hasVoted = _.find(data.votes, function(vote) { return vote.userID === LoopBackAuth.currentUserId; });
-                                
-                                if(hasVoted) {
-                                    console.log("hasvoted");
-                                    data.votes[data.votes.indexOf(hasVoted)] = {
-                                        userID: LoopBackAuth.currentUserId,
-                                        direction: direction
-                                    };
-                                } else {
-                                    console.log("else");
-                                    data.votes.push({
-                                        userID: LoopBackAuth.currentUserId,
-                                        direction: direction
-                                    });
-                                }
-                                
-                                return waterfallCb(null, data);
-                            }, function (newVoteData, waterfallCb) {
-                                console.log("next cb");
-                                $scope.service.update({
-                                    where: {
-                                        id: votable.id
-                                    }
-                                }, {
-                                    votes: newVoteData.votes,
-                                    voteScore: voteCount(newVoteData.votes)
-                                })
-                                .$promise
-                                .then(function (upData) {
-                                    $scope.votable.votes = upData.votes;
-                                    $scope.votable.voteScore = voteCount(upData.votes);
-                                    return waterfallCb(null);
-                                })
-                                .catch(function (err) {
-                                    return waterfallCb(err);
-                                });
-                            }
-                        ], function (err) {
-                            $scope.voting = false;
-                            if (err) { console.log("Error!", err); }
-                            updateVotes();
-                        });
-                    });
+                    vote(obj, direction);
                 }
+                
+            }
+
+            function vote(obj, direction) {
+                $scope.voting = true;
+                $scope.service.findOne({
+                    filter: {
+                        where: {
+                            id: obj.id
+                        },
+                        fields: ["votes"]
+                    }
+                })
+                .$promise
+                .then(function (data) {
+                    async.waterfall([
+                        function(waterfallCb) {
+                            var hasVoted = _.find(data.votes, function(vote) { return vote.userID === LoopBackAuth.currentUserId; });
+
+                            if (hasVoted && $attrs.theme === 'multi') {
+                                data.votes[data.votes.indexOf(hasVoted)] = {
+                                    userID: LoopBackAuth.currentUserId,
+                                    direction: direction
+                                };
+                            } else if ($attrs.theme === 'multi') {
+                                data.votes.push({
+                                    userID: LoopBackAuth.currentUserId,
+                                    direction: direction
+                                });
+                            } else {
+                                data.votes.push(LoopBackAuth.currentUserId);
+                            }
+
+                            return waterfallCb(null, data);
+                        }, function (newVoteData, waterfallCb) {
+                            var voteObject = function () {
+                                if ($attrs.theme === 'multi') {
+                                    return {
+                                        votes: newVoteData.votes,
+                                        voteScore: voteCount(newVoteData.votes)
+                                    }
+                                } else {
+                                    return {
+                                        votes: newVoteData.votes
+                                    }
+                                }
+                            }
+                            
+                            console.log(voteObject());
+                            
+                            $scope.service.update({
+                                where: {
+                                    id: obj.id
+                                }
+                            }, voteObject())
+                            .$promise
+                            .then(function (upData) {
+                                $scope.votable.votes = upData.votes;
+                                return waterfallCb(null);
+                            })
+                            .catch(function (err) {
+                                return waterfallCb(err);
+                            });
+                        }
+                    ], function (err) {
+                        $scope.voting = false;
+                        if (err) { console.log("Error!", err); }
+                        updateVotes();
+                    });
+                });
+                
             };
             
         }]

@@ -4,7 +4,7 @@
         <i ng-if="voting" class="fa fa-spinner fa-pulse"></i>
     </div>
     <div class="vote-count-btns vote-large pull-left">
-        <button href="#" class="btn btn-vote-up vote-large" ng-class="{active: votable.voted === 1}" ng-click="voteUp(votable)" ng-disabled="votable.voted === 1"><i class="fa fa-plus-square"></i></button>
-        <button href="#" class="btn btn-vote-down vote-large" ng-class="{active: votable.voted === -1}" ng-click="voteDown(votable)" ng-disabled="votable.voted === -1"><i class="fa fa-minus-square"></i></button>
+        <button href="#" class="btn btn-vote-up vote-large" ng-class="{active: votable.voted === 1}" ng-click="voteUp(votable, 1)" ng-disabled="votable.voted === 1"><i class="fa fa-plus-square"></i></button>
+        <button href="#" class="btn btn-vote-down vote-large" ng-class="{active: votable.voted === -1}" ng-click="voteDown(votable, -1)" ng-disabled="votable.voted === -1"><i class="fa fa-minus-square"></i></button>
     </div>
 </div>
