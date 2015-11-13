@@ -860,22 +860,45 @@ var app = angular.module('app', [
                             deckWithMulligans: ['Mulligan', 'deck', function(Mulligan, deck) {
                                 var deckID = deck.id;
                                 
-                                return Mulligan.find({
+                                Mulligan.find({
                                     filter: {
                                         where: {
                                             deckId: deckID
                                         },
-                                        include: [
-                                            {
-                                                relation: 'cardsWithCoin'
-                                            },
-                                            {
-                                                relation: 'cardsWithoutCoin'
+                                        include: {
+                                            relation: 'cardsWithCoin',
+                                            scope: {
+                                                include: {
+                                                    relation: 'card'
+                                                }
                                             }
-                                        ]
+                                        }
+//                                        include: [
+//                                            {
+//                                                relation: 'cardsWithCoin',
+//                                                scope: {
+//                                                    include: [
+//                                                        {
+//                                                            relation: 'card'
+//                                                        }
+//                                                    ]
+//                                                }
+//                                            },
+//                                            {
+//                                                relation: 'cardsWithoutCoin',
+//                                                scope: {
+//                                                    include: [
+//                                                        {
+//                                                            relation: 'card'
+//                                                        }
+//                                                    ]
+//                                                }
+//                                            }
+//                                        ]
                                     }
                                 }).$promise
                                 .then(function (data) {
+                                    console.log('cardWithCoin: ', data);
                                     deck.mulligans = data;
                                     return deck;
                                 });
@@ -2769,16 +2792,22 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: 'cardsWithCoin'
+                                                relation: 'cardsWithCoin',
+                                                scope: {
+                                                    include: 'card'
+                                                }
                                             },
                                             {
-                                                relation: 'cardsWithoutCoin'
+                                                relation: 'cardsWithoutCoin',
+                                                scope: {
+                                                    include: 'card'
+                                                }
                                             }
                                         ]
                                     }
                                 }).$promise
                                 .then(function (data) {
-//                                    console.log('mulligan data: ', data);
+                                    console.log('mulligan data: ', data);
                                     return data;
                                 });
                             }],

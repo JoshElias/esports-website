@@ -26,15 +26,13 @@
   "relations": {
     "cardsWithCoin": {
       "type": "hasMany",
-      "model": "card",
-      "foreignKey": "mulliganId",
-      "through": "cardWithCoin"
+      "model": "cardWithCoin",
+      "foreignKey": "mulliganId"
     },
     "cardsWithoutCoin": {
       "type": "hasMany",
-      "model": "card",
-      "foreignKey": "mulliganId",
-      "through": "cardWithoutCoin"
+      "model": "cardWithoutCoin",
+      "foreignKey": "mulliganId"
     },
     "deck": {
       "type": "belongsTo",

@@ -94,13 +94,16 @@
                 </div>
                 
                 <div class="row db-btn-wrapper">
-                    <div ng-click="deck.type = 1" class="col-md-4" ng-class="{ 'active': deck.type == 1 }">
+                    <div ng-click="deck.setDeckType('constructed')" class="col-md-4" 
+                         ng-class="{ 'active': deck.constructed === true || ((deck.arena === false || deck.arena === undefined) && (deck.brawl === false || deck.brawl === undefined)) }">
                         Constructed
                     </div>
-                    <div ng-click="deck.type = 2" class="col-md-4" ng-class="{ 'active': deck.type == 2 }">
+                    <div ng-click="deck.setDeckType('arena')" class="col-md-4" 
+                         ng-class="{ 'active': deck.arena === true }">
                         Arena
                     </div>
-                    <div ng-click="deck.type = 3" class="col-md-4" ng-class="{ 'active': deck.type == 3 }">
+                    <div ng-click="deck.setDeckType('brawl')" class="col-md-4" 
+                         ng-class="{ 'active': deck.brawl === true }">
                         Brawl
                     </div>
                     <div ng-click="deck.basic = false" class="col-md-6" ng-class="{ 'active' : deck.basic == false }">
@@ -130,7 +133,7 @@
                              ng-click="deck.removeCardFromDeck(card)">
                             <div class="mana-cost">{{card.card.cost}}</div>
                             {{card.card.name}}
-                            <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
+                            <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
                             <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right"><i class="fa fa-star"></i></div>
                         </div>
                     </div>
@@ -290,7 +293,7 @@
                         <!-- cards -->
                             <div class="db-cards-view-wrapper clearfix">
                                 <div class="db-cards-view clearfix" ng-if="!fetching">
-                                    <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" 
+                                    <div class="db-card" ng-class="{'db-card-disabled': !deck.isAddable(card) || deck.validDeck()}" 
                                          ng-repeat="card in cards.current">
                                         <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" 
                                            ng-click="deck.addCard(card)" 
@@ -375,7 +378,7 @@
                                      class="mulliganCards">
 <!--                                    <img ng-src="{{app.cdn}}/cards/{{card.card.photoNames.large}}"/>-->
                                     
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" alt="{{card.card.name}}"/>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
                                 </div>
                             </div>
                         </div>  
@@ -384,7 +387,7 @@
                                 <button ng-click="deck.toggleMulligan(mulligan, true, card.card, destroyCoinMulls, destroyNoCoinMulls)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
-                                    <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
+                                    <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
                                     <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
                                         <i class="fa fa-star"></i>
                                     </div>
@@ -414,7 +417,7 @@
                                 <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};"
                                      ng-repeat="card in mulligan.cardsWithoutCoin | orderBy: 'cost' track by $index" 
                                      class="mulliganCards">
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" alt="{{card.name}}"/>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
                                 </div>
                             </div>
                         </div>
@@ -423,7 +426,7 @@
                                 <button ng-click="deck.toggleMulligan(mulligan, false, card.card, destroyCoinMulls, destroyNoCoinMulls)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
-                                    <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
+                                    <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
                                     <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
                                         <i class="fa fa-star"></i>
                                     </div>

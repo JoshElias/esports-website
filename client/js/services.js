@@ -1405,67 +1405,87 @@ angular.module('app.services', [])
          * @params: destroyNoCoinMulls (optional array) - tracks no coin mulligans that need to be removed from DB on save
          */
         db.toggleMulligan = function (mulligan, withCoin, card, destroyCoinMulls, destroyNoCoinMulls) {
-            console.log('mulligan: ', mulligan);
-            console.log('card: ', card);
-            console.log('with coin: ', withCoin);
+//            console.log('mulligan: ', mulligan);
+//            console.log('card: ', card);
+//            console.log('with coin: ', withCoin);
             
             var cardMulligans = (withCoin) ? mulligan.cardsWithCoin : mulligan.cardsWithoutCoin,
                 exists = false,
-                index = -1;
+                index = -1,
+                cardWithOrWithoutCoin = { cardId: card.id, mulliganId: mulligan.id };
             
             // check if card already exists
             for (var i = 0; i < cardMulligans.length; i++) {
-                if (cardMulligans[i].id === card.id) {
+                if (cardMulligans[i].cardId === card.id) {
                     exists = true;
                     index = i;
                     break;
                 }
             }
             
+            console.log('exists: ', exists);
             // card exists in client
             if (exists) {
                 // with coin
                 if (withCoin) {
-                    console.log('With Coin Mulligans: ', cardMulligans);
+//                    console.log('With Coin Mulligans: ', cardMulligans);
                     // if array was provided
                     if (destroyCoinMulls) {
-                        var mullExists = destroyCoinMulls.indexOf(card);
-                        if (mullExists === -1) {
-                            destroyCoinMulls.push(card);
-                            console.log('added card to dest: ', destroyCoinMulls);
+                        var cardToDestroyExists = destroyCoinMulls.indexOf(cardWithOrWithoutCoin);
+                        if (cardToDestroyExists === -1) {
+                            destroyCoinMulls.push(cardWithOrWithoutCoin);
                         }
                     }
+                    console.log('destroyCoinMulls: ', destroyCoinMulls);
                     cardMulligans.splice(index, 1);
                     return cardMulligans;
                 } else {
                 // without coin
-                    console.log('Without Coin Mulligans: ', cardMulligans);
+//                    console.log('Without Coin Mulligans: ', cardMulligans);
                     if (destroyNoCoinMulls) {
-                        var mullExists = destroyNoCoinMulls.indexOf(card);
-                        if (mullExists === -1) {
-                            destroyNoCoinMulls.push(card);
-                            console.log('added card to dest: ', destroyNoCoinMulls);
-                        }
+                        _.each(destroyNoCoinMulls, function(cardIndex) {
+                            if (destroyNoCoinMulls[cardIndex].cardId === cardWithOrWithoutCoin.cardId) {
+                                destroyNoCoinMulls.push(cardWithOrWithoutCoin);
+                                return;
+                            }
+                        });
                     }
                     cardMulligans.splice(index, 1);
                     return cardMulligans;
                 }
-                // card doesn't exist in client
             } else {
+                // card doesn't exist in deck.mulligans
                 if (cardMulligans.length < 6) {
                     if (withCoin) {
-                        var toDestroyIndex = destroyCoinMulls.indexOf(card);
-                        console.log('toDestroyIndex: ', toDestroyIndex);
-                        if (toDestroyIndex !== -1) {
-                            destroyCoinMulls.splice(toDestroyIndex, 1);
+                        // remove it from array to destroy
+                        if (destroyCoinMulls) {
+                            for(var i = 0; i < destroyCoinMulls.length; i++) {
+                                if (destroyCoinMulls[i].cardId === cardWithOrWithoutCoin.cardId) {
+                                    destroyCoinMulls.splice(i, 1);
+                                    console.log('destroyCoinMulls ', destroyCoinMulls);
+                                    break;
+                                }
+                            }
                         }
                     } else {
-                        var toDestroyIndex = destroyNoCoinMulls.indexOf(card);
-                        if (toDestroyIndex !== -1) {
-                            destroyNoCoinMulls.splice(toDestroyIndex, 1);
+                        if (destroyNoCoinMulls) {
+                            _.each(destroyNoCoinMulls, function(cardIndex) {
+                                if (destroyNoCoinMulls[cardIndex].cardId === cardWithOrWithoutCoin.cardId) {
+                                    destroyNoCoinMulls.splice(cardIndex, 1);
+                                    return;
+                                }
+                            });
                         }
                     }
-                    cardMulligans.push(card);
+                    
+                    var cardToAdd = {
+                        cardId: card.id,
+                        mulliganId: mulligan.id,
+                        card: card
+                    };
+                    
+                    
+                    cardMulligans.push(cardToAdd);
                     console.log('added to mulligan: ', cardMulligans);
                     return cardMulligans;
                 }
@@ -1488,6 +1508,8 @@ angular.module('app.services', [])
         }
 
         db.isAddable = function (card) {
+            if (db.arena) { return true; }
+            
             var exists = false,
                 index = -1,
                 isLegendary = (card.rarity === 'Legendary') ? true : false;
@@ -1507,6 +1529,26 @@ angular.module('app.services', [])
                 return true;
             }
         }
+        
+        db.setDeckType = function (deckType) {
+            if (deckType === 'arena') {
+                db.constructed = false;
+                db.brawl = false;
+                db.arena = true;
+            }
+            
+            if (deckType === 'constructed') {
+                db.constructed = true;
+                db.brawl = false;
+                db.arena = false;
+            }
+            
+            if (deckType === 'brawl') {
+                db.constructed = false;
+                db.brawl = true;
+                db.arena = false;
+            }
+        };
 
         // add card
         db.addCard = function (card) {
@@ -1517,7 +1559,7 @@ angular.module('app.services', [])
                 totalCards = db.getSize();
             
             if(totalCards >= 30) {
-                return;
+                return false;
             }
             
             console.log('adding card: ', card);
@@ -1534,8 +1576,16 @@ angular.module('app.services', [])
             // add card
             if (exists) {
                 // increase qty by one
-                if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
-                    db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
+                if (!isLegendary && (db.cards[index].cardQuantity >= 1 || db.arena)) {
+                    if(db.arena === false && db.cards[index].cardQuantity === 1) {
+                        db.cards[index].cardQuantity += 1;
+                        console.log(db.cards[index].cardQuantity);
+                        return true;
+                    } else if (db.arena === true) {
+                        db.cards[index].cardQuantity += 1;
+                        return true;
+                    }
+                    return false;
                 }
             } else {
                 // add new card
@@ -1695,12 +1745,14 @@ angular.module('app.services', [])
             // 30 cards in deck
             if (db.getSize() !== 30) {
                 return false;
+            } else if (db.getSize() === 30) {
+                return true;
             }
 
             // make sure not more than 2 of same cards in non-arena deck
             if (!db.arena) {
                 for (var i = 0; i < db.cards.length; i++) {
-                    if (db.cards[i].cardQuantity > 2) {
+                    if (db.cards[i].cardQuantity >= 2) {
                         return false;
                     }
                 }
