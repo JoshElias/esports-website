@@ -36,7 +36,7 @@
     },
     "votes": {
       "type": [
-        "object"
+        "string"
       ]
     },
     "voteScore": {

@@ -1,28 +1,28 @@
 <div class="db-deck clearfix">
     <div class="db-deck-header db-deck-{{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
         <div class="db-arena">
-            <span ng-show="deck.deckType == 1">Constructed</span>
-            <span ng-show="deck.deckType == 2">Arena</span>
-            <span ng-show="deck.deckType == 3">Brawl</span>
-            <span ng-show="deck.deckType == 'None'">{{deck.heroName}}</span>
+            <span ng-show="deck.gameModeType === 'constructed'">Constructed</span>
+            <span ng-show="deck.gameModeType === 'arena'">Arena</span>
+            <span ng-show="deck.gameModeType === 'brawl'">Brawl</span>
+            <span ng-show="deck.gameModeType === ''">{{deck.heroName}}</span>
         </div>
     </div>
     <div class="db-deck-cards">
-        <div class="db-deck-card" ng-class="{multi:getQty(item.id) > 1 || item.rarity == 'Legendary', 'mulligan-hide': mulliganHide(item)}" 
-             ng-repeat="item in deck.cards | orderBy: 'cost'" 
-             data-tooltip-img="{{app.cdn}}/cards/{{item.card.photos.large}}" 
+        <div class="db-deck-card" ng-class="{multi:getQty(card.id) > 1 || card.card.rarity == 'Legendary', 'mulligan-hide': mulliganHide(card)}" 
+             ng-repeat="card in deck.cards | orderBy: 'cost'" 
+             data-tooltip-img="{{app.cdn}}/cards/{{card.card.photoNames.large}}" 
              data-tooltip-pos="left" hs-card>
-            <div class="db-deck-card-mana">{{item.card.cost}}</div>
-            <div class="db-deck-card-qty" ng-show="getQty(item.id) > 1">{{getQty(item.id)}}</div>
-            <div class="db-deck-card-legendary" ng-show="item.card.rarity == 'Legendary'">
+            <div class="db-deck-card-mana">{{card.card.cost}}</div>
+            <div class="db-deck-card-qty" ng-show="getQty(card.id) > 1">{{getQty(card.id)}}</div>
+            <div class="db-deck-card-legendary" ng-show="card.card.rarity == 'Legendary'">
                 <i class="fa fa-star"></i>
             </div>
             <div class="db-deck-card-photo">
-                <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{item.card.photoNames.small}}" alt="item.card.name">
-<!--                <img ng-src="{{app.cdn}}/cards/{{item.card.photoNames.small}}" alt="item.card.name">-->
+                <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" alt="card.card.name">
+<!--                <img ng-src="{{app.cdn}}/cards/{{card.card.photoNames.small}}" alt="card.card.name">-->
             </div>
             
-            <div class="db-deck-card-name">{{item.card.name}}</div>
+            <div class="db-deck-card-name">{{card.card.name}}</div>
         </div>
         <div class="db-deck-footer db-deck-{{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
             <div class="db-deck-footer-wrapper">

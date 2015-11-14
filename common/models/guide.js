@@ -25,7 +25,7 @@ module.exports = function(Guide) {
             _.each(data.talentTiers, function(tierValue, tierKey) {
                 _.each(tierValue, function(value, key) {
                     if(typeof value !== "object")
-                        data[tierKey][key] = new ObjectId(value);
+                        data.talentTiers[tierKey][key] = new ObjectId(value);
                 })
             });
         }

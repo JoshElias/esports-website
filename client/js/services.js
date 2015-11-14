@@ -1243,7 +1243,7 @@ angular.module('app.services', [])
     
     return ow;
 })
-.factory('DeckBuilder', ['$sce', '$http', '$q', function ($sce, $http, $q, Util) {
+.factory('DeckBuilder', ['$sce', '$http', '$q', 'CardWithoutCoin', 'CardWithCoin', function ($sce, $http, $q, CardWithoutCoin, CardWithCoin) {
 
     var deckBuilder = {};
 
@@ -1256,22 +1256,26 @@ angular.module('app.services', [])
         var db = {
             id: data.id || null,
             name: data.name || '',
-            dust: data.dust || 0,
+            slug: data.slug || '',
+            deckType: data.deckType || 'None',
+            gameModeType: data.gameModeType || '',
             description: data.description || '',
-            deckType: data.deckType || 1,
+            playerClass: playerClass,
+            createdDate: data.createdDate || new Date().toISOString(),
             chapters: data.chapters || [],
             arena: data.arena || false,
             type: data.type || 1,
+            basic: data.basic || false,
 //            basic: data.basic || false,
-            matches: data.matches || [],
+            matchups: data.matchups || [],
             cards: data.cards || [],
             heroName: data.heroName || '',
-            playerClass: playerClass,
+            dust: data.dust || 0,
+            youtubeId: data.youtubeId || '',
             premium: data.premium || {
                 isPremium: false,
                 expiryDate: d
             },
-            slug: data.slug || '',
             isFeatured: data.isFeatured || false,
             isPublic: data.isPublic || true,
             mulligans: data.mulligans || [
@@ -1393,37 +1397,54 @@ angular.module('app.services', [])
             }
             return false;
         }
-
+        
+        /*
+         * Toggle Mulligan:
+         * @params: mulligan (object) - the mulligan object for the currently selected class
+         * @params: withCoin (boolean) - whether the mulligan includes coin or not
+         * @params: card (object) - the card object being added to mulligan
+         */
         db.toggleMulligan = function (mulligan, withCoin, card) {
-            console.log('mulligan: ', mulligan);
-            console.log('card: ', card);
-            console.log('with coin: ', withCoin);
+//            console.log('mulligan: ', mulligan);
+//            console.log('card: ', card);
+//            console.log('with coin: ', withCoin);
             
-            var coinMulligan = (withCoin) ? mulligan.cardsWithCoin : mulligan.cardsWithoutCoin,
+            var cardMulligans = (withCoin) ? mulligan.cardsWithCoin : mulligan.cardsWithoutCoin,
                 exists = false,
-                index = -1;
+                index = -1,
+                cardWithOrWithoutCoin = { cardId: card.id, mulliganId: mulligan.id };
             
             // check if card already exists
-            for (var i = 0; i < coinMulligan.length; i++) {
-                if (coinMulligan[i].id === card.id) {
+            for (var i = 0; i < cardMulligans.length; i++) {
+                if (cardMulligans[i].cardId === card.id) {
                     exists = true;
                     index = i;
                     break;
                 }
             }
-
+            
+            console.log('exists: ', exists);
+            // card exists in client
             if (exists) {
-                coinMulligan.splice(index, 1);
-                console.log('spliced coinMulligan: ', coinMulligan);
-                return coinMulligan;
+                cardMulligans.splice(index, 1);
             } else {
-                if (coinMulligan.length < 6) {
-                    coinMulligan.push(card);
-                    console.log('added to muligan: ', coinMulligan);
-                    return coinMulligan;
+                // card doesn't exist in deck.mulligans
+                if (cardMulligans.length < 6) {
+                    var cardToAdd = {
+                        cardId: card.id,
+                        mulliganId: mulligan.id,
+                        card: card
+                    };
+                    cardMulligans.push(cardToAdd);
+                    console.log('added to mulligan: ', cardMulligans);
+                    return cardMulligans;
                 }
             }
         }
+        
+        db.toggleGameMode = function(gameMode) {
+            db.gameModeType = gameMode;
+        };
 
         db.getMulligan = function (klass) {
             var mulligans = db.mulligans;
@@ -1441,6 +1462,8 @@ angular.module('app.services', [])
         }
 
         db.isAddable = function (card) {
+            if (db.arena) { return true; }
+            
             var exists = false,
                 index = -1,
                 isLegendary = (card.rarity === 'Legendary') ? true : false;
@@ -1455,7 +1478,7 @@ angular.module('app.services', [])
             }
 
             if (exists) {
-                return (!isLegendary && db.cards[index].cardQuantity === 1) || db.arena;
+                return (!isLegendary && db.cards[index].cardQuantity === 1) || db.gameModeType === 'arena';
             } else {
                 return true;
             }
@@ -1463,14 +1486,14 @@ angular.module('app.services', [])
 
         // add card
         db.addCard = function (card) {
-            
+            console.log('card to add: ', card);
             var exists = false,
                 index = -1,
                 isLegendary = (card.rarity === 'Legendary') ? true : false,
                 totalCards = db.getSize();
             
             if(totalCards >= 30) {
-                return;
+                return false;
             }
             
             console.log('adding card: ', card);
@@ -1484,40 +1507,47 @@ angular.module('app.services', [])
                 }
             }
 
-            // add card
+            // card exists
             if (exists) {
-                // increase qty by one
-                if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
-                    db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
+                // check gameModeType
+                if(db.gameModeType === 'arena') {
+                    db.cards[index].cardQuantity += 1;
+                    return true;
+                } else {
+                    // mode is constructed or brawl mode
+                    if (!isLegendary && db.cards[index].cardQuantity === 1) {
+                        db.cards[index].cardQuantity += 1;
+                        return true;
+                    }
                 }
+                // if card is legendary
+//                if (isLegendary && db.gameModeType === 'arena') {
+//                    db.cards[index].cardQuantity += 1;
+//                    return true;
+//                } else {
+//                    // regular cards
+//                    if (db.gameModeType === 'brawl' || db.gameModeType === 'constructed') {
+//                        if (db.cards[index].cardQuantity === 1) {
+//                            db.cards[index].cardQuantity += 1;
+//                            return true;
+//                        } else {
+//                            // inc quantity for arena decks
+//                            return false;
+//                        }
+//                    } else {
+//                        // game mode type is arena
+//                        db.cards[index].cardQuantity += 1;
+//                    }
+//                }
+                
+                
             } else {
-                // add new card
+                // card doesn't exist
                 db.cards.push({
                     deckId: db.id,
                     cardId: card.id,
                     cardQuantity: 1,
-                    card: {
-                        active: card.active,
-                        artist: card.artist,
-                        attack: card.attack,
-                        cardType: card.cardType,
-                        cost: card.cost,
-                        deckable: card.deckable,
-                        deckIds: db.id,
-                        durability: card.durability,
-                        dust: card.dust,
-                        expansion: card.expansion,
-                        flavor: card.flavor,
-                        health: card.health,
-                        id: card.id,
-                        mechanics: card.mechanics,
-                        name: card.name,
-                        photoNames: card.photoNames,
-                        playerClass: card.playerClass,
-                        race: card.race,
-                        rarity: card.rarity,
-                        text: card.text
-                    }
+                    card: card
                 });
                 // sort deck
                 db.sortDeck();
@@ -1562,17 +1592,89 @@ angular.module('app.services', [])
         };
 
         db.removeCardFromDeck = function (card) {
+            var cardRemovedFromDeck = false;
             console.log('card to rem: ', card);
             for (var i = 0; i < db.cards.length; i++) {
-                if (card.cardId == db.cards[i].cardId) {
+                if (card.card.id === db.cards[i].card.id) {
                     if (db.cards[i].cardQuantity > 1) {
                         db.cards[i].cardQuantity = db.cards[i].cardQuantity - 1;
                         return;
                     } else {
                         var index = db.cards.indexOf(card);
-                        db.cards.splice(index, 1);
-                        return;
+                        console.log('index: ', index);
+                        if (index !== -1) {
+                            cardRemovedFromDeck = true;
+                            db.cards.splice(index, 1);
+                        }
                     }
+                }
+            }
+            // 
+            if(cardRemovedFromDeck) {
+                var cardMulliganExists = false;
+                console.log('card was removed');
+                // search all card with coin mulligans
+                for(var i = 0; i < db.mulligans.length; i++) {
+                    for(var j = 0; j < db.mulligans[i].cardsWithCoin.length; j++) {
+                        if (db.mulligans[i].cardsWithCoin[j].card.id === card.card.id) {
+                            cardMulliganExists = true;
+                            break;
+                        }
+                    }
+                }
+                // search all cards without coin mulligans
+                for(var i = 0; i < db.mulligans.length; i++) {
+                    for(var j = 0; j < db.mulligans[i].cardsWithoutCoin.length; j++) {
+                        if (db.mulligans[i].cardsWithoutCoin[j].card.id === card.card.id) {
+                            cardMulliganExists = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (cardMulliganExists) {
+                    var mulligans = db.mulligans;
+                    
+                    var box = bootbox.dialog({
+                        title: 'Are you sure you want to remove <strong>' + card.card.name + '</strong>?',
+                        message: 'Current mulligans for ' + card.card.name + ' will be lost as well.',
+                        buttons: {
+                            delete: {
+                                label: 'Continue',
+                                className: 'btn-danger',
+                                scope: mulligans,
+                                callback: function (evnt) {
+                                    console.log('passed through: ', mulligans);
+                                    for(var i = 0; i < mulligans.length; i++) {
+                                        for(var j = 0; j < mulligans[i].cardsWithCoin.length; j++) {
+                                            if (mulligans[i].cardsWithCoin[j].card.id === card.card.id) {
+                                                $scope.$apply(delete mulligans[i].cardsWithCoin[j]);
+                                                console.log('mulligans[i].cardsWithCoin[j]: ', mulligans[i].cardsWithCoin[j]);
+                                            }
+                                        }
+                                    }
+                                    // search all cards without coin mulligans
+                                    for(var i = 0; i < mulligans.length; i++) {
+                                        for(var j = 0; j < mulligans[i].cardsWithoutCoin.length; j++) {
+                                            if (mulligans[i].cardsWithoutCoin[j].card.id === card.card.id) {
+                                                delete mulligans[i].cardsWithoutCoin[j];
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            cancel: {
+                                label: 'Cancel',
+                                className: 'btn-default pull-left',
+                                callback: function () {
+                                    db.addCard(card.card);
+                                    box.modal('hide');
+                                }
+                            }
+                        },
+                        closeButton: false
+                    });
+                    box.modal('show');
                 }
             }
         };
@@ -1648,12 +1750,14 @@ angular.module('app.services', [])
             // 30 cards in deck
             if (db.getSize() !== 30) {
                 return false;
+            } else if (db.getSize() === 30) {
+                return true;
             }
 
             // make sure not more than 2 of same cards in non-arena deck
             if (!db.arena) {
                 for (var i = 0; i < db.cards.length; i++) {
-                    if (db.cards[i].cardQuantity > 2) {
+                    if (db.cards[i].cardQuantity >= 2) {
                         return false;
                     }
                 }
@@ -1698,15 +1802,15 @@ angular.module('app.services', [])
             var m = {
                 deckName: '',
                 className: '',
-                match: 0
+                forChance: 0
             };
 
             m.className = klass;
-            db.matches.push(m);
+            db.matchups.push(m);
         }
 
         db.removeMatch = function (index) {
-            db.matches.splice(index,1);
+            db.matchups.splice(index,1);
         }
 
         return db;
@@ -1718,47 +1822,6 @@ angular.module('app.services', [])
             d.resolve(data);
         });
         return d.promise;
-    }
-
-    deckBuilder.saveDeck = function (deck) {
-        return $http.post('/api/deck/add', {
-            name: deck.name,
-            deckType: deck.deckType,
-            description: deck.description,
-            chapters: deck.chapters,
-            matches: deck.matches,
-            type: deck.type,
-            basic: deck.basic,
-            cards: deck.cards,
-            heroName: deck.heroName,
-            playerClass: deck.playerClass,
-            mulligans: deck.mulligans,
-            video: deck.video,
-            premium: deck.premium,
-            featured: deck.featured,
-            public: deck.public
-        });
-    }
-
-    deckBuilder.updateDeck = function (deck) {
-        return $http.post('/api/deck/update', {
-            id: deck.id,
-            name: deck.name,
-            deckType: deck.deckType,
-            description: deck.description,
-            chapters: deck.chapters,
-            matches: deck.matches,
-            type: deck.type,
-            basic: deck.basic,
-            cards: deck.cards,
-            heroName: deck.heroName,
-            playerClass: deck.playerClass,
-            mulligans: deck.mulligans,
-            video: deck.video,
-            premium: deck.premium,
-            featured: deck.featured,
-            public: deck.public
-        });
     }
 
     return deckBuilder;
@@ -1780,7 +1843,7 @@ angular.module('app.services', [])
             description: data.description || '',
             content: data.content || [],
             heroes: data.heroes || [],
-            createdDate: d,
+            createdDate: new Date().toISOString(),
             maps: data.maps || [],
             synergy: data.synergy || [],
             against: data.against || {
@@ -1794,23 +1857,15 @@ angular.module('app.services', [])
             },
             isFeatured: data.featured || false,
             isPublic: (data.isPublic) ? data.isPublic.toString() : 'true',
+            voteScore: data.voteScore || 1,
             votes: data.votes || [],
-            votesCount: data.votesCount || 0,
             viewCount: data.viewcount || 0,
             against: data.against || {
                 weak: [],
                 strong: []
             },
             authorId: data.authorId || User.getCurrentId(),
-            talentTiers: data.talentTiers || {
-                1: null,
-                4: null,
-                7: null,
-                10: null,
-                13: null,
-                16: null,
-                20: null
-            }
+            talentTiers: data.talentTiers || {}
         };
 
         // constrain maps to 1 if map guide
@@ -1937,10 +1992,12 @@ angular.module('app.services', [])
 //        };
 
         gb.talentsByTier = function (hero, tier) {
+            
             var talents = [];
             for (var i = 0; i < hero.talents.length; i++) {
                 var talentId = hero.talents[i].id;
-                if (hero.talentTiers[talentId] === tier) {
+//                console.log(talentId);
+                if (hero.talentTiers[talentId] == tier) {
                     talents.push(hero.talents[i]);
                 }
             }
@@ -2116,14 +2173,6 @@ angular.module('app.services', [])
         };
 
         return gb;
-    }
-
-    guideBuilder.saveGuide = function (guide) {
-        return $http.post('/api/guide/add', guide);
-    }
-
-    guideBuilder.updateGuide = function (guide) {
-        return $http.post('/api/guide/update', guide);
     }
 
     return guideBuilder;
@@ -2318,7 +2367,7 @@ angular.module('app.services', [])
             
         },
         getGuides: function (filters, isFeatured, limit, finalCallback) {
-            var order = "votesCount DESC",
+            var order = "voteScore DESC",
                 heroWhere = {}, 
                 guideWhere = {
                     guideType: "hero"
@@ -2344,7 +2393,7 @@ angular.module('app.services', [])
             
             if (isFeatured !== null) {
                 guideWhere.isFeatured = isFeatured;
-                order = "createdDate ASC";
+                order = "createdDate DESC";
             }
             
             
@@ -2378,7 +2427,7 @@ angular.module('app.services', [])
                         selectedGuideIds.push(_.map(hero.guides, function (guide) { return guide.id }));
                     })
                     selectedGuideIds = _.flatten(selectedGuideIds);
-                    return seriesCallback(undefined, selectedGuideIds)
+                    return seriesCallback(undefined, selectedGuideIds);
                 }, function (selectedGuideIds, seriesCallback) {
                     guideWhere.id = { inq: selectedGuideIds };
                     
@@ -2391,7 +2440,7 @@ angular.module('app.services', [])
                                 "name", 
                                 "authorId", 
                                 "slug", 
-                                "votesCount", 
+                                "voteScore", 
                                 "guideType", 
                                 "premium", 
                                 "id", 
@@ -2419,7 +2468,9 @@ angular.module('app.services', [])
             ])
         },
         getHeroGuides: function (filters, isFeatured, limit, finalCallback) {
-            var selectedHeroes = filters.heroes;
+            console.log("is it?",isFeatured);
+            var selectedHeroes = filters.heroes,
+                order = "voteScore DESC";
 
             if (_.isEmpty(selectedHeroes)) {
                 return;
@@ -2431,6 +2482,7 @@ angular.module('app.services', [])
             
             if (isFeatured !== null) {
                 where.isFeatured = isFeatured
+                order = "createdDate DESC";
             }
 
             async.waterfall([
@@ -2477,7 +2529,7 @@ angular.module('app.services', [])
                     Guide.find({
                         filter: {
                             limit: limit,
-                            sort: "createdDate ASC",
+                            order: order,
                             where: {
                                 id: { inq: guideIds }
                             },
@@ -2485,7 +2537,7 @@ angular.module('app.services', [])
                                 "name", 
                                 "authorId", 
                                 "slug", 
-                                "votesCount", 
+                                "voteScore", 
                                 "guideType", 
                                 "premium", 
                                 "id", 
@@ -2505,6 +2557,7 @@ angular.module('app.services', [])
                             ]
                         }
                     }).$promise.then(function (guides) {
+                        console.log(guides);
                         return finalCallback(undefined, guides);
                     }).catch(function (err) {
                         return finalCallback(err);
@@ -2559,7 +2612,7 @@ angular.module('app.services', [])
                         Guide.find({
                             filter: {
                                 limit: limit,
-                                sort: "createdDate ASC",
+                                order: "createdDate DESC",
                                 where: {
                                     id: { inq: guideIds }
                                 },
@@ -2567,7 +2620,7 @@ angular.module('app.services', [])
                                     "id",
                                     "name",
                                     "createdDate",
-                                    "votesCount",
+                                    "voteScore",
                                     "slug",
                                     "guideType",
                                     "authorId",
@@ -2671,7 +2724,7 @@ angular.module('app.services', [])
                     Guide.find({
                         filter: {
                             limit: limit,
-                            order: "createdDate ASC",
+                            order: "createdDate DESC",
                             where: {
                                 id: { inq: selectedGuideIds }
                             },
@@ -2679,7 +2732,7 @@ angular.module('app.services', [])
                                 "name", 
                                 "authorId", 
                                 "slug", 
-                                "votesCount", 
+                                "voteScore", 
                                 "guideType", 
                                 "premium", 
                                 "id", 

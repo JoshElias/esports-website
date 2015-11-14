@@ -1,0 +1,7 @@
+<span>
+    <div class="vote-count single vote-large m-l-sm pull-right">
+        <span ng-if="!voting">{{votable.voteScore}}</span>
+        <i ng-if="voting" class="fa fa-spinner fa-pulse"></i>
+    </div>
+    <a ng-if="!votable.voted && !voting" class="btn-vote-up vote-large" ng-click="vote(votable)"><p><i class="fa fa-thumbs-up"></i></p></a>
+</span>

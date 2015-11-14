@@ -9,11 +9,7 @@
         <div class="snapshot-votes pull-right clearfix"> 
                 
             <span class="snapVoteWrap">
-                <div class="vote-count vote-large m-l-sm pull-right">
-                    <span ng-if="!processingVote">{{snapshot.votesCount}}</span>
-                    <span ng-if="processingVote"><i class="fa fa-cog fa-spin"></i></span>
-                </div>
-                <a ng-if="!hasVoted" class="btn-vote-up vote-large" ng-click="voteSnapshot(snapshot)"><p><i class="fa fa-thumbs-up"></i></p></a>
+                <vote-widget service="SnapshotService" votable="snapshot" theme="single"></vote-widget>
             </span>
 
         </div>
@@ -204,25 +200,25 @@
                                                 <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
                                                     <h3 class="m-b-lg">RANKING</h3>
                                                     <div class="deck-rank m-b-lg">
-                                                <div class="{{(deck.ranks[0] <= deck.ranks[deck.ranks.length - 1] || deck.ranks[deck.ranks.length - 1] == 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{(deck.ranks[0] <= deck.ranks[1] || deck.ranks[1] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         CURRENT
                                                     </div>
                                                     {{deck.ranks[0]}}
                                                 </div>
-                                                <div class="{{(deck.ranks[deck.ranks.length - 1] >= deck.ranks[0] || deck.ranks[deck.ranks.length - 1] == 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{(deck.ranks[1] >= deck.ranks[0] || deck.ranks[1] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         LAST WEEK
                                                     </div>
-                                                    <span ng-if="deck.ranks[deck.ranks.length - 1] != 0 && deck.ranks[deck.ranks.length - 1] != undefined">{{deck.ranks[deck.ranks.length - 1]}}</span>
-                                                    <span ng-if="deck.ranks[deck.ranks.length - 1] == 0 || deck.ranks[deck.ranks.length - 1] == undefined">N/A</span>
+                                                    <span ng-if="deck.ranks[1] != 0 && deck.ranks[1] != undefined">{{deck.ranks[1]}}</span>
+                                                    <span ng-if="deck.ranks[1] == 0 || deck.ranks[1] == undefined">N/A</span>
                                                 </div>
-                                                <div class="{{((deck.ranks[deck.ranks.length - 1] - deck.ranks[0]) >= 0 || deck.ranks[deck.ranks.length - 1] == 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{((deck.ranks[1] - deck.ranks[0]) >= 0 || deck.ranks[1] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         CHANGE
                                                     </div>
-                                                    <span ng-if="deck.ranks[deck.ranks.length - 1] != 0 && deck.ranks[deck.ranks.length - 1] != undefined">{{deck.ranks[deck.ranks.length - 1] - deck.ranks[0]}}</span>
-                                                    <span ng-if="deck.ranks[deck.ranks.length - 1] == 0 || deck.ranks[deck.ranks.length - 1] == undefined">N/A</span>
+                                                    <span ng-if="deck.ranks[1] != 0 && deck.ranks[1] != undefined">{{deck.ranks[1] - deck.ranks[0]}}</span>
+                                                    <span ng-if="deck.ranks[1] == 0 || deck.ranks[1] == undefined">N/A</span>
                                                 </div>
                                             </div>
                                                 </div>

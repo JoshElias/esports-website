@@ -14,8 +14,8 @@
     "allowComments": {
       "type": "boolean"
     },
-    "arena": {
-      "type": "boolean"
+    "gameModeType": {
+      "type": "string"
     },
     "cardQuantities": {
       "type": "object"

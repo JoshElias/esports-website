@@ -94,13 +94,16 @@
                 </div>
                 
                 <div class="row db-btn-wrapper">
-                    <div ng-click="deck.type = 1" class="col-md-4" ng-class="{ 'active': deck.type == 1 }">
+                    <div ng-click="deck.toggleGameMode('constructed')" class="col-md-4" 
+                         ng-class="{ 'active': deck.gameModeType === 'constructed' }">
                         Constructed
                     </div>
-                    <div ng-click="deck.type = 2" class="col-md-4" ng-class="{ 'active': deck.type == 2 }">
+                    <div ng-click="deck.toggleGameMode('arena')" class="col-md-4" 
+                         ng-class="{ 'active': deck.gameModeType === 'arena' }">
                         Arena
                     </div>
-                    <div ng-click="deck.type = 3" class="col-md-4" ng-class="{ 'active': deck.type == 3 }">
+                    <div ng-click="deck.toggleGameMode('brawl')" class="col-md-4" 
+                         ng-class="{ 'active': deck.gameModeType === 'brawl' }">
                         Brawl
                     </div>
                     <div ng-click="deck.basic = false" class="col-md-6" ng-class="{ 'active' : deck.basic == false }">
@@ -127,10 +130,10 @@
                     <div class="deck-list">
                         <div class="list-card" 
                              ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" 
-                             ng-click="deck.removeCardFromDeck(card)">
+                             ng-click="deck.removeCardFromDeck(card)" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" hs-card>
                             <div class="mana-cost">{{card.card.cost}}</div>
                             {{card.card.name}}
-                            <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
+                            <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
                             <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right"><i class="fa fa-star"></i></div>
                         </div>
                     </div>
@@ -139,8 +142,13 @@
                         <div class="dust-bottle-sm"></div>
                     </div>
                 </div>
-                <button ng-if="deck.basic" class="basic-submit-btn m-t-md">
-                    SUBMIT
+                <button ng-if="deck.basic" class="basic-submit-btn m-t-md"
+                        ng-click="updateDeck(deck)" ng-disabled="deckSubmitting">
+                    <span ng-if="!deckSubmitting">SUBMIT</span>
+                    <span ng-if="deckSubmitting">SUBMITTING</span>
+                    <span ng-if="deckSubmitting">
+                        <i class="fa fa-spinner fa-pulse"></i>
+                    </span>
                 </button>
             </div>
             <!-- / db-right -->
@@ -148,7 +156,6 @@
 
                 <div class="col-md-pull-3 col-md-9" ng-hide="step !== 1">
                     <div class="db-section-title clearfix">
-
                         <div class="row">
                             <div class="col-md-2">
                                 <h1>CLASS</h1>
@@ -266,12 +273,19 @@
                         </div><!-- / db-filters -->
                     </div>
                     <div class="db-cards">
-
-                        <div ng-show="isClassCards()" pagination="classPagination" theme="deckbuilder" class="db-pagination db-pagination-left"></div>
-                        <div ng-show="isClassCards()" pagination="classPagination" theme="deckbuilder" class="db-pagination db-pagination-right"></div>
-
-                        <div ng-show="!isClassCards()" pagination="neutralPagination" theme="deckbuilder" class="db-pagination db-pagination-left"></div>
-                        <div ng-show="!isClassCards()" pagination="neutralPagination" theme="deckbuilder" class="db-pagination db-pagination-right"></div>
+                        <!-- Pagination Buttons -->
+                        <div ng-show="isClassCards()" pagination="classPagination" 
+                             theme="deckbuilder" class="db-pagination db-pagination-left">
+                        </div>
+                        <div ng-show="isClassCards()" pagination="classPagination" 
+                             theme="deckbuilder" class="db-pagination db-pagination-right">
+                        </div>
+                        <div ng-show="!isClassCards()" pagination="neutralPagination" 
+                             theme="deckbuilder" class="db-pagination db-pagination-left">
+                        </div>
+                        <div ng-show="!isClassCards()" pagination="neutralPagination" 
+                             theme="deckbuilder" class="db-pagination db-pagination-right">
+                        </div>
 
                         <!-- arrows --><!--
                         <button class="btn db-arrow db-arrow-left" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
@@ -279,7 +293,7 @@
                         <!-- cards -->
                             <div class="db-cards-view-wrapper clearfix">
                                 <div class="db-cards-view clearfix" ng-if="!fetching">
-                                    <div class="db-card" ng-class="{'db-card-disabled':!deck.isAddable(card)}" 
+                                    <div class="db-card" ng-class="{'db-card-disabled': !deck.isAddable(card) || deck.validDeck()}" 
                                          ng-repeat="card in cards.current">
                                         <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" 
                                            ng-click="deck.addCard(card)" 
@@ -364,16 +378,16 @@
                                      class="mulliganCards">
 <!--                                    <img ng-src="{{app.cdn}}/cards/{{card.card.photoNames.large}}"/>-->
                                     
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" alt="{{card.card.name}}"/>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
                                 </div>
                             </div>
                         </div>  
                         <div class="col-xs-4 right">
-                            <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                <button ng-click="deck.toggleMulligan(mulligan, true, card.card)">
+                            <div class="list-card" ng-repeat="card in deck.cards track by $index" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" hs-card>
+                                <button ng-click="deck.toggleMulligan(mulligan, true, card.card, destroyCoinMulls, destroyNoCoinMulls)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
-                                    <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
+                                    <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
                                     <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
                                         <i class="fa fa-star"></i>
                                     </div>
@@ -403,16 +417,17 @@
                                 <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};"
                                      ng-repeat="card in mulligan.cardsWithoutCoin | orderBy: 'cost' track by $index" 
                                      class="mulliganCards">
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" alt="{{card.name}}"/>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xs-4 right">
-                            <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                <button ng-click="deck.toggleMulligan(mulligan, false, card.card)">
+                            <div class="list-card" ng-repeat="card in deck.cards track by $index"
+                                 data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" hs-card>
+                                <button ng-click="deck.toggleMulligan(mulligan, false, card.card, destroyCoinMulls, destroyNoCoinMulls)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
-                                    <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
+                                    <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
                                     <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
                                         <i class="fa fa-star"></i>
                                     </div>
@@ -455,19 +470,24 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="match col-md-12" ng-repeat="match in deck.matches track by $index">
+                            <div class="match col-md-12" ng-repeat="match in deck.matchups track by $index">
                                 <div class="row">
                                     <div class="col-md-1">
-                                        <a class="db-sw-class-icon class-icon large {{match.klass.toLowerCase()}}"></a>
+                                        <a class="db-sw-class-icon class-icon large {{match.className | lowercase}}"></a>
                                     </div>
                                     <div class="col-md-4">
                                         <input class="deck-name" placeholder="Deck Name..." ng-model="match.deckName">
                                     </div>
                                     <div class="col-md-6">
-                                        <input class="pull-left match-slider" type="range" ng-model="match.match" min="0" value="50" max="100" step="5"><span class="pull-right match-number">{{match.match}} %</span>
+                                        <input class="pull-left match-slider" type="range" 
+                                               ng-model="match.forChance" 
+                                               min="0" value="50" max="100" step="5">
+                                        <span class="pull-right match-number">{{match.forChance}} %</span>
                                     </div>
                                     <div class="col-md-1 close-wrapper">
-                                        <button class="close-button" ng-click="removeMatch($index)"><i class="fa fa-close"></i></button>
+                                        <button class="close-button" ng-click="removeMatch($index, destroyMatchups)">
+                                            <i class="fa fa-close"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -482,15 +502,17 @@
                 <!-- / step 4 -->
                 <!-- step 5 -->
                 <div class="db-section" ng-hide="step !== 5">
+                    
                     <div class="panel panel-danger error-modal animated" ng-show="showError">
                         <div class="panel-heading">
                             <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-                            <strong>Unable to add deck</strong>
+                            <strong>Unable to save deck</strong>
                         </div>
                         <div class="panel-body">
                             <span>{{errors}}</span>
                         </div>
                     </div>
+                    
                     <div class="db-section-title">
                         <h1>SAVE YOUR DECK</h1>
                     </div>
@@ -594,7 +616,13 @@
                             <div class="form-group m-b-none">
                                 <div class="col-sm-10 col-sm-offset-2">
                                     <button type="submit" class="btn btn-blue" 
-                                            ng-click="updateDeck(deck)">Save Deck</button>
+                                            ng-click="updateDeck(deck)" ng-disabled="deckSubmitting">
+                                        <span ng-if="!deckSubmitting">Save Deck</span>
+                                        <span ng-if="deckSubmitting">Submitting</span>
+                                        <span ng-if="deckSubmitting">
+                                            <i class="fa fa-spinner fa-pulse"></i>
+                                        </span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
