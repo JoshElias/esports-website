@@ -1258,6 +1258,7 @@ angular.module('app.services', [])
             name: data.name || '',
             slug: data.slug || '',
             deckType: data.deckType || 'None',
+            gameModeType: data.gameModeType || '',
             description: data.description || '',
             playerClass: playerClass,
             createdDate: data.createdDate || new Date().toISOString(),
@@ -1270,6 +1271,7 @@ angular.module('app.services', [])
             cards: data.cards || [],
             heroName: data.heroName || '',
             dust: data.dust || 0,
+            youtubeId: data.youtubeId || '',
             premium: data.premium || {
                 isPremium: false,
                 expiryDate: d
@@ -1401,10 +1403,8 @@ angular.module('app.services', [])
          * @params: mulligan (object) - the mulligan object for the currently selected class
          * @params: withCoin (boolean) - whether the mulligan includes coin or not
          * @params: card (object) - the card object being added to mulligan
-         * @params: destroyCoinMulls (optional array) - tracks coin mulligans that need to be removed from DB on save
-         * @params: destroyNoCoinMulls (optional array) - tracks no coin mulligans that need to be removed from DB on save
          */
-        db.toggleMulligan = function (mulligan, withCoin, card, destroyCoinMulls, destroyNoCoinMulls) {
+        db.toggleMulligan = function (mulligan, withCoin, card) {
 //            console.log('mulligan: ', mulligan);
 //            console.log('card: ', card);
 //            console.log('with coin: ', withCoin);
@@ -1426,71 +1426,25 @@ angular.module('app.services', [])
             console.log('exists: ', exists);
             // card exists in client
             if (exists) {
-                // with coin
-                if (withCoin) {
-//                    console.log('With Coin Mulligans: ', cardMulligans);
-                    // if array was provided
-                    if (destroyCoinMulls) {
-                        var cardToDestroyExists = destroyCoinMulls.indexOf(cardWithOrWithoutCoin);
-                        if (cardToDestroyExists === -1) {
-                            destroyCoinMulls.push(cardWithOrWithoutCoin);
-                        }
-                    }
-                    console.log('destroyCoinMulls: ', destroyCoinMulls);
-                    cardMulligans.splice(index, 1);
-                    return cardMulligans;
-                } else {
-                // without coin
-//                    console.log('Without Coin Mulligans: ', cardMulligans);
-                    if (destroyNoCoinMulls) {
-                        _.each(destroyNoCoinMulls, function(cardIndex) {
-                            if (destroyNoCoinMulls[cardIndex].cardId === cardWithOrWithoutCoin.cardId) {
-                                destroyNoCoinMulls.push(cardWithOrWithoutCoin);
-                                return;
-                            }
-                        });
-                    }
-                    cardMulligans.splice(index, 1);
-                    return cardMulligans;
-                }
+                cardMulligans.splice(index, 1);
             } else {
                 // card doesn't exist in deck.mulligans
                 if (cardMulligans.length < 6) {
-                    if (withCoin) {
-                        // remove it from array to destroy
-                        if (destroyCoinMulls) {
-                            for(var i = 0; i < destroyCoinMulls.length; i++) {
-                                if (destroyCoinMulls[i].cardId === cardWithOrWithoutCoin.cardId) {
-                                    destroyCoinMulls.splice(i, 1);
-                                    console.log('destroyCoinMulls ', destroyCoinMulls);
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        if (destroyNoCoinMulls) {
-                            _.each(destroyNoCoinMulls, function(cardIndex) {
-                                if (destroyNoCoinMulls[cardIndex].cardId === cardWithOrWithoutCoin.cardId) {
-                                    destroyNoCoinMulls.splice(cardIndex, 1);
-                                    return;
-                                }
-                            });
-                        }
-                    }
-                    
                     var cardToAdd = {
                         cardId: card.id,
                         mulliganId: mulligan.id,
                         card: card
                     };
-                    
-                    
                     cardMulligans.push(cardToAdd);
                     console.log('added to mulligan: ', cardMulligans);
                     return cardMulligans;
                 }
             }
         }
+        
+        db.toggleGameMode = function(gameMode) {
+            db.gameModeType = gameMode;
+        };
 
         db.getMulligan = function (klass) {
             var mulligans = db.mulligans;
@@ -1524,35 +1478,15 @@ angular.module('app.services', [])
             }
 
             if (exists) {
-                return (!isLegendary && db.cards[index].cardQuantity === 1) || db.arena;
+                return (!isLegendary && db.cards[index].cardQuantity === 1) || db.gameModeType === 'arena';
             } else {
                 return true;
             }
         }
-        
-        db.setDeckType = function (deckType) {
-            if (deckType === 'arena') {
-                db.constructed = false;
-                db.brawl = false;
-                db.arena = true;
-            }
-            
-            if (deckType === 'constructed') {
-                db.constructed = true;
-                db.brawl = false;
-                db.arena = false;
-            }
-            
-            if (deckType === 'brawl') {
-                db.constructed = false;
-                db.brawl = true;
-                db.arena = false;
-            }
-        };
 
         // add card
         db.addCard = function (card) {
-            
+            console.log('card to add: ', card);
             var exists = false,
                 index = -1,
                 isLegendary = (card.rarity === 'Legendary') ? true : false,
@@ -1573,48 +1507,47 @@ angular.module('app.services', [])
                 }
             }
 
-            // add card
+            // card exists
             if (exists) {
-                // increase qty by one
-                if (!isLegendary && (db.cards[index].cardQuantity >= 1 || db.arena)) {
-                    if(db.arena === false && db.cards[index].cardQuantity === 1) {
-                        db.cards[index].cardQuantity += 1;
-                        console.log(db.cards[index].cardQuantity);
-                        return true;
-                    } else if (db.arena === true) {
+                // check gameModeType
+                if(db.gameModeType === 'arena') {
+                    db.cards[index].cardQuantity += 1;
+                    return true;
+                } else {
+                    // mode is constructed or brawl mode
+                    if (!isLegendary && db.cards[index].cardQuantity === 1) {
                         db.cards[index].cardQuantity += 1;
                         return true;
                     }
-                    return false;
                 }
+                // if card is legendary
+//                if (isLegendary && db.gameModeType === 'arena') {
+//                    db.cards[index].cardQuantity += 1;
+//                    return true;
+//                } else {
+//                    // regular cards
+//                    if (db.gameModeType === 'brawl' || db.gameModeType === 'constructed') {
+//                        if (db.cards[index].cardQuantity === 1) {
+//                            db.cards[index].cardQuantity += 1;
+//                            return true;
+//                        } else {
+//                            // inc quantity for arena decks
+//                            return false;
+//                        }
+//                    } else {
+//                        // game mode type is arena
+//                        db.cards[index].cardQuantity += 1;
+//                    }
+//                }
+                
+                
             } else {
-                // add new card
+                // card doesn't exist
                 db.cards.push({
                     deckId: db.id,
                     cardId: card.id,
                     cardQuantity: 1,
-                    card: {
-                        active: card.active,
-                        artist: card.artist,
-                        attack: card.attack,
-                        cardType: card.cardType,
-                        cost: card.cost,
-                        deckable: card.deckable,
-                        deckIds: db.id,
-                        durability: card.durability,
-                        dust: card.dust,
-                        expansion: card.expansion,
-                        flavor: card.flavor,
-                        health: card.health,
-                        id: card.id,
-                        mechanics: card.mechanics,
-                        name: card.name,
-                        photoNames: card.photoNames,
-                        playerClass: card.playerClass,
-                        race: card.race,
-                        rarity: card.rarity,
-                        text: card.text
-                    }
+                    card: card
                 });
                 // sort deck
                 db.sortDeck();
@@ -1659,17 +1592,89 @@ angular.module('app.services', [])
         };
 
         db.removeCardFromDeck = function (card) {
+            var cardRemovedFromDeck = false;
             console.log('card to rem: ', card);
             for (var i = 0; i < db.cards.length; i++) {
-                if (card.cardId == db.cards[i].cardId) {
+                if (card.card.id === db.cards[i].card.id) {
                     if (db.cards[i].cardQuantity > 1) {
                         db.cards[i].cardQuantity = db.cards[i].cardQuantity - 1;
                         return;
                     } else {
                         var index = db.cards.indexOf(card);
-                        db.cards.splice(index, 1);
-                        return;
+                        console.log('index: ', index);
+                        if (index !== -1) {
+                            cardRemovedFromDeck = true;
+                            db.cards.splice(index, 1);
+                        }
                     }
+                }
+            }
+            // 
+            if(cardRemovedFromDeck) {
+                var cardMulliganExists = false;
+                console.log('card was removed');
+                // search all card with coin mulligans
+                for(var i = 0; i < db.mulligans.length; i++) {
+                    for(var j = 0; j < db.mulligans[i].cardsWithCoin.length; j++) {
+                        if (db.mulligans[i].cardsWithCoin[j].card.id === card.card.id) {
+                            cardMulliganExists = true;
+                            break;
+                        }
+                    }
+                }
+                // search all cards without coin mulligans
+                for(var i = 0; i < db.mulligans.length; i++) {
+                    for(var j = 0; j < db.mulligans[i].cardsWithoutCoin.length; j++) {
+                        if (db.mulligans[i].cardsWithoutCoin[j].card.id === card.card.id) {
+                            cardMulliganExists = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (cardMulliganExists) {
+                    var mulligans = db.mulligans;
+                    
+                    var box = bootbox.dialog({
+                        title: 'Are you sure you want to remove <strong>' + card.card.name + '</strong>?',
+                        message: 'Current mulligans for ' + card.card.name + ' will be lost as well.',
+                        buttons: {
+                            delete: {
+                                label: 'Continue',
+                                className: 'btn-danger',
+                                scope: mulligans,
+                                callback: function (evnt) {
+                                    console.log('passed through: ', mulligans);
+                                    for(var i = 0; i < mulligans.length; i++) {
+                                        for(var j = 0; j < mulligans[i].cardsWithCoin.length; j++) {
+                                            if (mulligans[i].cardsWithCoin[j].card.id === card.card.id) {
+                                                $scope.$apply(delete mulligans[i].cardsWithCoin[j]);
+                                                console.log('mulligans[i].cardsWithCoin[j]: ', mulligans[i].cardsWithCoin[j]);
+                                            }
+                                        }
+                                    }
+                                    // search all cards without coin mulligans
+                                    for(var i = 0; i < mulligans.length; i++) {
+                                        for(var j = 0; j < mulligans[i].cardsWithoutCoin.length; j++) {
+                                            if (mulligans[i].cardsWithoutCoin[j].card.id === card.card.id) {
+                                                delete mulligans[i].cardsWithoutCoin[j];
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            cancel: {
+                                label: 'Cancel',
+                                className: 'btn-default pull-left',
+                                callback: function () {
+                                    db.addCard(card.card);
+                                    box.modal('hide');
+                                }
+                            }
+                        },
+                        closeButton: false
+                    });
+                    box.modal('show');
                 }
             }
         };

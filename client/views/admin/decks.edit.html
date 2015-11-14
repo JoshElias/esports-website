@@ -94,16 +94,16 @@
                 </div>
                 
                 <div class="row db-btn-wrapper">
-                    <div ng-click="deck.setDeckType('constructed')" class="col-md-4" 
-                         ng-class="{ 'active': deck.constructed === true || ((deck.arena === false || deck.arena === undefined) && (deck.brawl === false || deck.brawl === undefined)) }">
+                    <div ng-click="deck.toggleGameMode('constructed')" class="col-md-4" 
+                         ng-class="{ 'active': deck.gameModeType === 'constructed' }">
                         Constructed
                     </div>
-                    <div ng-click="deck.setDeckType('arena')" class="col-md-4" 
-                         ng-class="{ 'active': deck.arena === true }">
+                    <div ng-click="deck.toggleGameMode('arena')" class="col-md-4" 
+                         ng-class="{ 'active': deck.gameModeType === 'arena' }">
                         Arena
                     </div>
-                    <div ng-click="deck.setDeckType('brawl')" class="col-md-4" 
-                         ng-class="{ 'active': deck.brawl === true }">
+                    <div ng-click="deck.toggleGameMode('brawl')" class="col-md-4" 
+                         ng-class="{ 'active': deck.gameModeType === 'brawl' }">
                         Brawl
                     </div>
                     <div ng-click="deck.basic = false" class="col-md-6" ng-class="{ 'active' : deck.basic == false }">
@@ -130,7 +130,7 @@
                     <div class="deck-list">
                         <div class="list-card" 
                              ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" 
-                             ng-click="deck.removeCardFromDeck(card)">
+                             ng-click="deck.removeCardFromDeck(card)" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" hs-card>
                             <div class="mana-cost">{{card.card.cost}}</div>
                             {{card.card.name}}
                             <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
@@ -383,7 +383,7 @@
                             </div>
                         </div>  
                         <div class="col-xs-4 right">
-                            <div class="list-card" ng-repeat="card in deck.cards track by $index">
+                            <div class="list-card" ng-repeat="card in deck.cards track by $index" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" hs-card>
                                 <button ng-click="deck.toggleMulligan(mulligan, true, card.card, destroyCoinMulls, destroyNoCoinMulls)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
@@ -422,7 +422,8 @@
                             </div>
                         </div>
                         <div class="col-xs-4 right">
-                            <div class="list-card" ng-repeat="card in deck.cards track by $index">
+                            <div class="list-card" ng-repeat="card in deck.cards track by $index"
+                                 data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" hs-card>
                                 <button ng-click="deck.toggleMulligan(mulligan, false, card.card, destroyCoinMulls, destroyNoCoinMulls)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}

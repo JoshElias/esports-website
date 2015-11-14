@@ -857,53 +857,6 @@ var app = angular.module('app', [
                         controller: 'DeckCtrl',
                         resolve: {
                             
-                            deckWithMulligans: ['Mulligan', 'deck', function(Mulligan, deck) {
-                                var deckID = deck.id;
-                                
-                                Mulligan.find({
-                                    filter: {
-                                        where: {
-                                            deckId: deckID
-                                        },
-                                        include: {
-                                            relation: 'cardsWithCoin',
-                                            scope: {
-                                                include: {
-                                                    relation: 'card'
-                                                }
-                                            }
-                                        }
-//                                        include: [
-//                                            {
-//                                                relation: 'cardsWithCoin',
-//                                                scope: {
-//                                                    include: [
-//                                                        {
-//                                                            relation: 'card'
-//                                                        }
-//                                                    ]
-//                                                }
-//                                            },
-//                                            {
-//                                                relation: 'cardsWithoutCoin',
-//                                                scope: {
-//                                                    include: [
-//                                                        {
-//                                                            relation: 'card'
-//                                                        }
-//                                                    ]
-//                                                }
-//                                            }
-//                                        ]
-                                    }
-                                }).$promise
-                                .then(function (data) {
-                                    console.log('cardWithCoin: ', data);
-                                    deck.mulligans = data;
-                                    return deck;
-                                });
-                            }],
-                            
                             deck: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var stateSlug = $stateParams.slug;
                                 return Deck.findOne({
@@ -927,7 +880,9 @@ var app = angular.module('app', [
                                             isPublic: true,
                                             votes: true,
                                             voteScore: true,
-                                            chapters: true
+                                            chapters: true,
+                                            youtubeId: true,
+                                            gameModeType: true
                                         },
                                         include: [
                                             {
@@ -946,9 +901,6 @@ var app = angular.module('app', [
                                                 relation: 'author'
                                             },
                                             {
-                                                relation: 'mulligans'
-                                            },
-                                            {
                                                 relation: 'matchups'
                                             }
                                         ]
@@ -956,9 +908,47 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (deck) {
+//                                    console.log('deck: ', deck);
                                     return deck;
                                 });
 
+                            }],
+                            
+                            deckWithMulligans: ['Mulligan', 'deck', function(Mulligan, deck) {
+                                var deckID = deck.id;
+//                                console.log('deckid: ', deck.id);
+                                
+                                return Mulligan.find({
+                                    filter: {
+                                        where: {
+                                            deckId: deckID
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'cardsWithCoin',
+                                                scope: {
+                                                    include: 'card'
+                                                }
+                                            },
+                                            {
+                                                relation: 'cardsWithoutCoin',
+                                                scope: {
+                                                    include: 'card'
+                                                }
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise
+                                .then(function (mulligans) {
+//                                    console.log('mullies: ', mulligans);
+                                    deck.mulligans = mulligans;
+//                                    console.log('deck in resolve: ', deck);
+                                    return deck;
+                                })
+                                .catch(function (err) {
+                                    if (err) console.log('err: ', err);
+                                });
                             }]
                         }
                     }
@@ -2760,11 +2750,12 @@ var app = angular.module('app', [
                                                 dust: true,
                                                 heroName: true,
                                                 authorId: true,
-                                                deckType: true,
                                                 viewCount: true,
                                                 isPublic: true,
                                                 chapters: true,
-                                                deckType: true
+                                                deckType: true,
+                                                gameModeType: true,
+                                                youtubeId: true
                                             },
                                             include: [
                                                 {
@@ -2807,7 +2798,7 @@ var app = angular.module('app', [
                                     }
                                 }).$promise
                                 .then(function (data) {
-                                    console.log('mulligan data: ', data);
+//                                    console.log('mulligan data: ', data);
                                     return data;
                                 });
                             }],
