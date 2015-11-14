@@ -6039,6 +6039,7 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.errors = 'Deck must at least have 30 cards.';
                     $scope.showError = true;
                     $window.scrollTo(0, 0);
+                    $scope.deckSubmitting = false;
                     return false;
                 }
                 
@@ -6123,6 +6124,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return false;
             };
             
+            // Updates Deck, Mulligan, and Matchup Models
             function updateDeck(deck) {
                 async.series([
                     function (seriesCallback) {
@@ -6132,13 +6134,54 @@ angular.module('app.controllers', ['ngCookies'])
                             }
                         }, deck)
                         .$promise
-                        .then(function (data) {
-//                            console.log('deck upserted: ',data);
+                        .then(function (deckUpdated) {
+                            console.log('deck upserted: ',deckUpdated);
                             seriesCallback(null, 'deck updated');
                         })
                         .catch(function (err) {
                             if(err) {
-//                                console.log('deck upsert err: ', err);
+                                console.log('deck upsert err: ', err);
+                                seriesCallback(err);
+                            }
+                        });
+                    },
+                    function(seriesCallback) {
+                        // Destroy all cards
+                        Deck.cards.destroyAll({
+                            id: deck.id
+                        })
+                        .$promise
+                        .then(function (allCardsDeleted) {
+                            // now create new deck
+                            async.each(deck.cards, function(deckCard, deckCardCB) {
+                                var deckId = deck.id;
+                                deckCard.deckId = deckId;
+                                
+                                DeckCard.create(deckCard)
+                                .$promise
+                                .then(function (newCard) {
+                                    console.log('newCard: ', newCard);
+                                    
+                                    // goto next card
+                                    deckCardCB();
+                                })
+                                .catch(function (err) {
+                                    if (err) {
+                                        console.log('deckCard create err: ', err);
+                                        deckCardCB(err);
+                                    }
+                                });
+                            }, function(err) {
+                                if (err) {
+                                    console.log('deckCard destroy err: ', err);
+                                    seriesCallback(err);
+                                }
+                                seriesCallback(null, 'new deck created');
+                            });
+                        })
+                        .catch(function (err) {
+                            if (err) {
+                                console.log('allCardsDestroy err: ',err);
                                 seriesCallback(err);
                             }
                         });
@@ -6147,11 +6190,12 @@ angular.module('app.controllers', ['ngCookies'])
                         // cycle through each mulligan
                         async.each(deck.mulligans, function(mulligan, mulliganCB) {
                             // Update all mulligan instruction info
-                            Mulligan.upsert({}, mulligan)
+                            Mulligan.upsert(mulligan)
                             .$promise
                             .then(function (currentMulligan) {
                                 console.log('currentMulligan: ', mulligan);
                                 
+                                // Destroy all cards with coin and recreate them
                                 Mulligan.cardsWithCoin.destroyAll({
                                     id: mulligan.id
                                 })
@@ -6160,22 +6204,20 @@ angular.module('app.controllers', ['ngCookies'])
                                     console.log('deleted: ', deleted);
                                     
                                     async.each(mulligan.cardsWithCoin, function(cardWithCoin, cardWithCoinCB) {
-                                        CardWithCoin.upsert({}, cardWithCoin)
+                                        CardWithCoin.upsert(cardWithCoin)
                                         .$promise
                                         .then(function (cardUpserted) {
-                                            console.log('card upserted: ', cardUpserted);
+                                            console.log('cardWithCoin upserted: ', cardUpserted);
                                             
                                             cardWithCoinCB();
                                         })
                                         .catch(function (err) {
                                             if (err) {
-                                                console.log('card upsert err: ', err);
+                                                console.log('cardWithCoin upsert err: ', err);
                                                 cardWithCoinCB(err);
                                             }
                                         });
                                     });
-                                    
-                                    mulliganCB();
                                 })
                                 .catch(function (err) {
                                     if (err) {
@@ -6183,6 +6225,41 @@ angular.module('app.controllers', ['ngCookies'])
                                         mulliganCB(err);
                                     }
                                 });
+                                
+                                // Destroy all cards without coin and recreate them
+                                Mulligan.cardsWithoutCoin.destroyAll({
+                                    id: mulligan.id
+                                })
+                                .$promise
+                                .then(function (deleted) {
+                                    console.log('deleted: ', deleted);
+                                    
+                                    async.each(mulligan.cardsWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
+                                        CardWithoutCoin.upsert(cardWithoutCoin)
+                                        .$promise
+                                        .then(function (cardUpserted) {
+                                            console.log('cardWithoutCoin upserted: ', cardUpserted);
+                                            
+                                            cardWithoutCoinCB();
+                                        })
+                                        .catch(function (err) {
+                                            if (err) {
+                                                console.log('cardWithoutCoin upsert err: ', err);
+                                                cardWithCoinCB(err);
+                                            }
+                                        });
+                                    });
+                                })
+                                .catch(function (err) {
+                                    if (err) {
+                                        console.log('cardWithoutCoin destroyAll err: ', err);
+                                        mulliganCB(err);
+                                    }
+                                });
+                                
+                                // next mulligan
+                                mulliganCB();
+                                
                             })
                             .catch(function (err) {
                                 if (err) {
@@ -6197,250 +6274,52 @@ angular.module('app.controllers', ['ngCookies'])
                                 seriesCallback(err);
                             }
                             seriesCallback(null, 'deck mulligans done');
-                        });
-                        
-//                        async.each(deck.mulligans, function(mulligan, mulliganCB) {
-//                            Mulligan.upsert({}, mulligan)
-//                            .$promise
-//                            .then(function (data) {
-////                                console.log('mulligan upserted: ', data);
-//                                
-//                                // update cardsWithCoin & cardsWithoutCoin
-//                                async.each(mulligan.cardsWithCoin, function(cardWithCoin, cardWithCoinCB) {
-//                                    
-//                                    cardWithCoin.mulliganId = mulligan.id;
-//                                    cardWithCoin.cardId = cardWithCoin.id;
-//                                    
-//                                    console.log('cardwithcoin upserting: ', cardWithCoin);
-//                                    CardWithCoin.upsert({}, cardWithCoin)
-//                                    .$promise
-//                                    .then(function (data) {
-//                                        console.log('cardWithCoin upserted: ', data);
-//                                        cardWithCoinCB();
-//                                    })
-//                                    .catch(function (err) {
-//                                        if (err) {
-//                                            console.log('cardWithCoin err: ', err);
-//                                            cardWithCoinCB(err);
-//                                        }
-//                                    });
-//                                    
-//                                }, function(err) {
-//                                    if (err) {
-//                                        console.log('cardWithCoin.each err: ',err);
-//                                        seriesCallback(err);
-//                                    } else {
-//                                        async.each(mulligan.cardsWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
-//                                            
-//                                            cardWithoutCoin.mulliganId = mulligan.id;
-//                                            cardWithoutCoin.cardId = cardWithoutCoin.id;
-//
-//                                            console.log('cardWithoutCoin upserting: ', cardWithoutCoin);
-//                                            CardWithoutCoin.upsert({}, cardWithoutCoin)
-//                                            .$promise
-//                                            .then(function (data) {
-//                                                console.log('cardWithoutCoin upserted: ', data);
-//                                                cardWithoutCoinCB();
-//                                            })
-//                                            .catch(function (err) {
-//                                                if (err) {
-//                                                    console.log('cardWithoutCoin err: ', err);
-//                                                    cardWithoutCoinCB(err);
-//                                                }
-//                                            });
-//
-//                                        }, function(err) {
-//                                            if (err) {
-//                                                console.log('cardWithCoin.each err: ',err);
-//                                                seriesCallback(err);
-//                                            }
-//                                            mulliganCB();
-//                                        });
-//                                    }
-//                                });
-//                                
-//                            })
-//                            .catch(function (err) {
-//                                if (err) {
-//                                    console.log('mulligan err: ', err);
-//                                    mulliganCB(err);
-//                                }
-//                            }); 
-//                        }, function(err) {
-//                            if (err) {
-//                                console.log('mulligan.each err: ',err);
-//                                seriesCallback(err);
-//                            }
-//                            seriesCallback(null, 'mulligans updated');
-//                        });   
+                        }); 
                     },
                     function (seriesCallback) {
-//                        console.log('matchups update: ', deck.matchups);
-                        async.each(deck.matchups, function(matchup, matchupCB) {
+                        // destroy deck matchups, then recreate
+                        Deck.matchups.destroyAll({
+                            id: deck.id
+                        })
+                        .$promise
+                        .then(function (deleted) {
+                            console.log('deleted: ', deleted);
                             
-                            matchup.deckId = deck.id;
-                            
-                            DeckMatchup.upsert({}, matchup)
-                            .$promise
-                            .then(function (data) {
-//                                console.log('matchup upserted: ', data);
-                                matchupCB();
-                            })
-                            .catch(function (err) {
+                            async.each(deck.matchups, function(matchup, matchupCB) {
+                                matchup.deckId = deck.id;
+                                
+                                DeckMatchup.upsert(matchup)
+                                .$promise
+                                .then(function (newMatchup) {
+                                    console.log('newMatchup: ', newMatchup);
+                                    matchupCB();
+                                })
+                                .catch(function (err) {
+                                    if (err) {
+                                        console.log('matchup upsert err: ', err);
+                                        matchupCB(err);
+                                    }
+                                });
+                            }, function (err) {
                                 if (err) {
-//                                    console.log('matchup.each err: ', err);
-                                    matchupCB(err);
+                                    seriesCallback(err);
                                 }
+                                seriesCallback(null, 'matchups destroyed then updated');
                             });
-                        }, function (err) {
+                            
+                        })
+                        .catch(function (err) {
                             if (err) {
-//                                console.log('matchup err: ', err);
+                                console.log('matchup destroyAll err: ', err);
                                 seriesCallback(err);
                             }
-                            seriesCallback(null, 'matchups updated');
-                        })
-                    },
-//                    function (seriesCallback) {
-//                        console.log('coin mulls to destroy: ', $scope.destroyCoinMulls);
-//                        
-//                        async.each($scope.destroyCoinMulls, function(cardWithCoin, cardWithCoinCB) {
-//                            console.log('cardWithCoin: ', cardWithCoin);
-//
-//                            Mulligan.cardsWithCoin.exists({
-//                                id: cardWithCoin.mulliganId,
-//                                fk: cardWithCoin.id
-//                            })
-//                            .$promise
-//                            .then(function (data) {
-//                                console.log('cardWithCoin exists: ', data);
-//                                Mulligan.cardsWithCoin.unlink({
-//                                    id: cardWithCoin.mulliganId,
-//                                    fk: cardWithCoin.id
-//                                })
-//                                .$promise
-//                                .then(function (cardUnlinked) {
-//                                    console.log('card unlinked: ', cardUnlinked);
-//
-//
-//
-//                                    return cardWithCoinCB();
-//                                })
-//                                .catch(function (err) {
-//                                    if (err) {
-//                                        console.log('card unlink err: ', err);
-//                                        cardWithCoinCB(err);
-//                                    }
-//                                });
-//                            })
-//                            .catch(function (err) {
-//                                if (err) {
-//                                    console.log('cardWithCoin exist err: ',err);
-//                                    cardWithCoinCB();
-//                                }
-//                            });
-//
-//                        }, function(err) {
-//                            if (err) {
-//                                console.log('cardWithCoin unlink err: ',err);
-//                                seriesCallback(err);
-//                            }
-//                            seriesCallback(null, 'cardsWithCoins unlinked');
-//                        });
-//                    },
-//                    function (seriesCallback) {
-//                        console.log('no coin mulls to destroy: ', $scope.destroyNoCoinMulls);
-//                        
-//                        async.each($scope.destroyNoCoinMulls, function(cardWithoutCoin, cardWithoutCoinCB) {
-//                            console.log('cardWithoutCoin: ', cardWithoutCoin);
-//
-//                            Mulligan.cardsWithoutCoin.exists({
-//                                id: cardWithoutCoin.mulliganId,
-//                                fk: cardWithoutCoin.id
-//                            })
-//                            .$promise
-//                            .then(function (data) {
-//                                console.log('cardWithoutCoin exists: ', data);
-//                                Mulligan.cardsWithoutCoin.unlink({
-//                                    id: cardWithoutCoin.mulliganId,
-//                                    fk: cardWithoutCoin.id
-//                                })
-//                                .$promise
-//                                .then(function (cardUnlinked) {
-//                                    console.log('card unlinked: ', cardUnlinked);
-//
-//
-//
-//                                    return cardWithoutCoinCB();
-//                                })
-//                                .catch(function (err) {
-//                                    if (err) {
-//                                        console.log('card unlink err: ', err);
-//                                        return cardWithoutCoinCB(err);
-//                                    }
-//                                });
-//                            })
-//                            .catch(function (err) {
-//                                if (err) {
-//                                    console.log('cardWithoutcoin exist err: ',err);
-//                                    return cardWithoutCoinCB();
-//                                }
-//                            });
-//
-//                        }, function(err) {
-//                            if (err) {
-//                                console.log('cardWithoutCoin unlink err: ',err);
-//                                seriesCallback(err);
-//                            }
-//                            seriesCallback(null, 'cardsWithoutCoins unlinked');
-//                        });
-//                        
-//                    },
-//                    function (seriesCallback) {
-//                        async.each($scope.destroyMatchups, function (matchup, matchupCB) {
-////                            console.log('matchup to destroy: ', matchup);
-//                            
-//                            DeckMatchup.exists({
-//                                id: matchup.id
-//                            })
-//                            .$promise
-//                            .then(function (data) {
-//                                if (data.exists) {
-//                                    // destroy matchup
-//                                    DeckMatchup.destroyById({
-//                                        id: matchup.id
-//                                    })
-//                                    .$promise
-//                                    .then(function (data) {
-////                                        console.log('matchup removed: ', data);
-//                                        matchupCB();
-//                                    })
-//                                    .catch(function (err) {
-//                                        if (err) {
-////                                            console.log('matchup remove err: ', err);
-//                                            matchupCB(err);
-//                                        }
-//                                    });
-//                                }
-//                            })
-//                            .catch(function (err) {
-//                                if (err) {
-////                                    console.log('matchup exist err: ', err);
-//                                    matchupCB(err);
-//                                }
-//                            });
-//                        }, function (err) {
-//                            if (err) {
-////                                console.log('matchup destroy err: ', err);
-//                                seriesCallback(err);
-//                            }
-//                            seriesCallback(null, 'removed matchups destroyed');
-//                        })
-//                    }
+                        });
+                    }
                 ], 
                 function(err, results) {
                     if (err) {
                         console.log('series err: ', err);
-                        $scope.errors = err.data.error.name;
+                        $scope.errors = err.data.error.message;
                         $scope.showError = true;
                         $window.scrollTo(0,0);
                         $scope.deckSubmitting = false;
@@ -6448,7 +6327,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                     console.log('series results: ', results);
                     $scope.deckSubmitting = false;
-//                    $state.transitionTo('app.hs.decks.deck', { slug: deck.slug });
+                    $state.transitionTo('app.hs.decks.deck', { slug: deck.slug });
                 });
             }
         }
@@ -9116,7 +8995,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             // load deck
             $scope.deck = deckWithMulligans;
-            console.log('deck: ', $scope.deck);
+            console.log('deck: ', deckWithMulligans);
             
             $scope.currentMulligan = $scope.deck.mulligans[0];
 //            console.log('currentMulligan: ', $scope.currentMulligan);
@@ -9162,6 +9041,7 @@ angular.module('app.controllers', ['ngCookies'])
                 };
             }
             $scope.show = $scope.app.settings.show.deck;
+            console.log($scope.show);
             $scope.$watch('show', function(){ $scope.app.settings.show.deck = $scope.show; }, true);
 
             $scope.getUserInfo = function () {
@@ -9202,6 +9082,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.setMulligan = function (mulligan) {
                 $scope.currentMulligan = mulligan;
+                console.log('mulligan: ', mulligan);
             };
             
             $scope.isMulliganSet = function (mulligan) {
@@ -9229,10 +9110,9 @@ angular.module('app.controllers', ['ngCookies'])
                 var cards = ($scope.coin) ? $scope.currentMulligan.cardsWithCoin : $scope.currentMulligan.cardsWithoutCoin;
                 
 //                console.log('cards: ', cards);
-                return;
 
                 for (var i = 0; i < cards.length; i++) {
-                    if (cards[i] === card.id) { return false; }
+                    if (cards[i].card.id === card.id) { return false; }
                 }
 
                 return true;

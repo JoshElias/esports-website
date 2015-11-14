@@ -168,7 +168,7 @@
                                 <h3>{{currentMulligan.className.toUpperCase()}} MULLIGAN</h3>
                                 <p ng-if="getMulliganCards().length">
                                     <span ng-repeat="card in getMulliganCards()">
-                                        <span ng-if="$last && getMulliganCards().length > 1"> and </span>{{card.name}}<span ng-if="!$last">, 
+                                        <span ng-if="$last && getMulliganCards().length > 1"> and </span>{{card.card.name}}<span ng-if="!$last">, 
                                         </span>
                                     </span>
                                 </p>
@@ -181,9 +181,9 @@
                             <div ng-if="getMulliganCards().length" class="hidden-xs">
                                 <div class="deck-mulligan-cards">
                                     <div class="deck-mulligan-card" ng-repeat="card in getMulliganCards()">
-                                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" 
+                                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" 
                                            style="left: {{cardLeft($index)}}%; z-index: {{$index}};" hs-card>
-                                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="">
+                                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.medium}}" alt="">
                                         </a>
                                     </div>
                                 </div>
@@ -193,7 +193,7 @@
                     <!-- / deck-mulligans -->
 
                     <!-- deck video -->
-                    <div class="deck-section" ng-if="deck.video && deck.video.length">
+                    <div class="deck-section" ng-if="deck.youtubeId.length > 0">
                         <div class="deck-section-title clearfix">
                             <a href="#" ng-click="show.video = !show.video"><h3 class="pull-left">VIDEO</h3></a>
                             <div class="m-l-md m-r-md pull-right">
@@ -209,7 +209,7 @@
                     <!-- / deck video -->
 
                     <!-- deck-against -->
-                    <div class="deck-section" ng-if="deck.matches.length > 0">
+                    <div class="deck-section" ng-if="deck.matchups.length > 0">
                         <div class="deck-section-title clearfix">
                             <h3 class="m-b-lg">MATCH-UPS<span ng-if="getMouseOver()">&nbsp;- {{getMouseOver()}}</span></h3>
                         </div>
@@ -249,11 +249,15 @@
 
                                         <svg height="100%" width="98%" x="1.5%">
                                             <svg class="bar-wrap" 
-                                                 ng-repeat="match in deck.matchups | orderBy: 'klass'" 
+                                                 ng-repeat="match in deck.matchups | orderBy: 'className'" 
                                                  ng-mouseover="setMouseOver(match.deckName)" 
                                                  ng-mouseleave="setMouseOver(false)" 
                                                  ng-class="{ 'no-mouse' : getMouseOver() != false && getMouseOver(match.deckName) != match.deckName }">
-                                            <rect class="bar bar-{{match.klass}}" ng-attr-width="{{(100/deck.matches.length)-.8}}%" ng-attr-height="{{match.match}}%" ng-attr-x="{{(100/deck.matches.length)*$index}}%" ng-attr-y="{{100-match.match}}%"></rect>
+                                            <rect class="bar bar-{{match.className}}" 
+                                                  ng-attr-width="{{(100/deck.matchups.length)-.8}}%"
+                                                  ng-attr-height="{{match.forChance}}%" 
+                                                  ng-attr-x="{{(100/deck.matchups.length)*$index}}%" 
+                                                  ng-attr-y="{{100-match.forChance}}%"></rect>
                                             </svg>
                                         </svg>
                                     </svg>
