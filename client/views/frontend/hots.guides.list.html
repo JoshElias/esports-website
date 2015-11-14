@@ -32,7 +32,7 @@
                         <div class="row-flex-col">
                             <h1>TOP GUIDE</h1>
                             <h3>{{topGuide.name}}</h3>
-                            <div class="hots-top-guide-votes">{{topGuide.votesCount}}</div>
+                            <div class="hots-top-guide-votes">{{topGuide.voteScore}}</div>
                             <ul class="hots-top-guide-talents clearfix">
                                 <li>
                                     <a href="#" class="talents-icon active large {{getGuideClass(topGuide)}} {{ getTalent(getGuideCurrentHero(topGuide), topGuide, 1).className }}" 
@@ -134,7 +134,7 @@
                             <div class="bt-shadow" ng-if="guide.guideType == 'hero'"></div>
                             <h1>{{guide.name}}</h1>
                             <h3>by {{guide.author.username || '[Deleted User]'}} - <span am-time-ago="guide.createdDate"></span></h3>
-                            <div class="hots-guide-votes">{{guide.votesCount}}</div>
+                            <div class="hots-guide-votes">{{guide.voteScore}}</div>
                             <div class="hero-flip btn-group" ng-if="guide.heroes.length > 1">
                                 <button class="btn btn-xs btn-blue" ng-click="guidePrevHero($event, guide)"><span class="fa fa-angle-left"></span></button>
                                 <button class="btn btn-xs btn-blue" ng-click="guideNextHero($event, guide)"><span class="fa fa-angle-right"></span></button>
@@ -248,7 +248,7 @@
                                 </div>
                                 <div class="hidden-xs hidden-sm hidden-md col-lg-1">
                                     <div class="row-col">
-                                        <p class="hots-guide-votes text-center">{{guide.votesCount}}</p>
+                                        <p class="hots-guide-votes text-center">{{guide.voteScore}}</p>
                                     </div>
                                 </div>
                                 <div class="hidden-xs hidden-sm col-md-4 col-lg-4">

@@ -123,7 +123,7 @@
                             </div>
                         </span>
                         <div class="deck-list">
-                            <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" ng-click="deck.removeCardFromDeck(card)">
+                            <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" ng-click="deck.removeCardFromDeck(card)" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" data-tooltip-pos="left" hs-card>
                                 <div class="mana-cost">{{card.card.cost}}</div>
                                 {{card.card.name}}
                                 <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
@@ -353,7 +353,7 @@
                             </div>
                             <div class="col-xs-4 right">
                                 <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                    <button ng-click="deck.toggleMulligan(mulligan, true, card.card)" ng-class="{ 'active' : isMulliganCard(true, card) }">
+                                    <button ng-click="deck.toggleMulligan(mulligan, true, card.card)" ng-class="{ 'active' : isMulliganCard(true, card) }" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" data-tooltip-pos="left" hs-card>
                                         <div class="mana-cost">{{card.card.cost}}</div>
                                         {{card.card.name}}
                                         <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
@@ -384,7 +384,7 @@
                             </div>
                             <div class="col-xs-4 right">
                                 <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                    <button ng-click="deck.toggleMulligan(mulligan, false, card.card)" ng-class="{ 'active' : isMulliganCard(true, card) }">
+                                    <button ng-click="deck.toggleMulligan(mulligan, false, card.card)" ng-class="{ 'active' : isMulliganCard(true, card) }" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" data-tooltip-pos="left" hs-card>
                                         <div class="mana-cost">{{card.card.cost}}</div>
                                         {{card.card.name}}
                                         <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
@@ -556,12 +556,12 @@
                                     <div class="col-sm-10 col-sm-offset-2">
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="public" ng-model="deck.public" value="true"> Make this deck public
+                                                <input type="radio" name="public" ng-model="deck.isPublic" value="true"> Make this deck public
                                             </label>
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="public" ng-model="deck.public" value="false"> Make this deck private
+                                                <input type="radio" name="public" ng-model="deck.isPublic" value="false"> Make this deck private
                                             </label>
                                         </div>
                                     </div>

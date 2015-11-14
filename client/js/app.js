@@ -79,7 +79,7 @@ var app = angular.module('app', [
                 console.log("To State:", toState);
                 console.log("From State", fromState);
                 console.log('State change failed!');
-                $state.go('app.404');
+//                $state.go('app.404');
             });
 
             var accessToken = getAuthCookie("access_token");
@@ -491,8 +491,10 @@ var app = angular.module('app', [
 //                        });
 //                    }],
                     data: ['Snapshot', function (Snapshot) {
-                        return Snapshot.find({
-                            order: "createdDate ASC"
+                        return Snapshot.findOne({
+                            filter: {
+                                order: "createdDate DESC"
+                            }
                         }).$promise;
                     }],
 //                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
@@ -500,8 +502,7 @@ var app = angular.module('app', [
 //                        return $q.reject();
 //                    }]
                     redirect: ['$q', '$state', 'data', function ($q, $state, data) {
-                        console.log(data);
-                        $state.go('app.snapshot.snapshot', { slug: data[0].slug.url });
+                        $state.go('app.snapshot.snapshot', { slug: data.slug.url });
                         return $q.reject();
                     }]
                 }
@@ -712,7 +713,8 @@ var app = angular.module('app', [
                                       heroName: true,
                                       premium: true,
                                       voteScore: true,
-                                      authorId: true
+                                      authorId: true,
+                                      slug: true
                                     },
                                     include: ['author']
                                   }
@@ -733,7 +735,8 @@ var app = angular.module('app', [
                                       heroName: true,
                                       premium: true,
                                       voteScore: true,
-                                      authorId: true
+                                      authorId: true,
+                                      slug: true
                                     },
                                     include: ['author']
                                   }
@@ -781,7 +784,7 @@ var app = angular.module('app', [
                                             heroName: true,
                                             authorId: true,
                                             voteScore: true,
-                                            playerClass: true,
+                                            playerClass: true
                                         },
                                         include: ["author"],
                                         order: "createdDate DESC",
@@ -823,7 +826,8 @@ var app = angular.module('app', [
                                             heroName: true,
                                             authorId: true,
                                             voteScore: true,
-                                            playerClass: true
+                                            playerClass: true,
+                                            dust: true
                                         },
                                         include: ["author"],
                                         order: "createdDate DESC",
@@ -856,7 +860,6 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.decks.deck.html',
                         controller: 'DeckCtrl',
                         resolve: {
-                            
                             deckWithMulligans: ['Mulligan', 'deck', function(Mulligan, deck) {
                                 var deckID = deck.id;
                                 
@@ -956,6 +959,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (deck) {
+                                    console.log(deck);
                                     return deck;
                                 });
 
@@ -1106,12 +1110,14 @@ var app = angular.module('app', [
                               return Guide.find({
                                 filter: {
                                   limit: 10,
+                                    order: "createdDate DESC",
                                   where: {
-                                    isFeatured: false
+                                    isFeatured: false,
+                                      isPublic: true
                                   },
                                   fields: {
                                     name: true,
-                                    votesCount: true,
+                                    voteScore: true,
                                     authorId: true,
                                     createdDate: true,
                                     premium: true,
@@ -1161,12 +1167,14 @@ var app = angular.module('app', [
                               return Guide.find({
                                 filter: {
                                   limit: 10,
+                                    order: "createdDate DESC",
                                   where: {
-                                    isFeatured: true
+                                    isFeatured: true,
+                                      isPublic: true
                                   },
                                   fields: {
                                     name: true,
-                                    votesCount: true,
+                                    voteScore: true,
                                     authorId: true,
                                     createdDate: true,
                                     premium: true,
@@ -1246,7 +1254,7 @@ var app = angular.module('app', [
                                   fields: {
                                     authorId: true,
                                     name: true,
-                                    votesCount: true,
+                                    voteScore: true,
                                     createdDate: true,
                                     premium: true,
                                     guideType: true,
@@ -1256,7 +1264,8 @@ var app = angular.module('app', [
                                     slug: true
                                   },
                                   where: {
-                                    isFeatured: false
+                                    isFeatured: false,
+                                      isPublic: true
                                   },
                                   include: [
                                     {
@@ -1308,7 +1317,7 @@ var app = angular.module('app', [
                                   fields: {
                                     authorId: true,
                                     name: true,
-                                    votesCount: true,
+                                    voteScore: true,
                                     createdDate: true,
                                     premium: true,
                                     guideType: true,
@@ -1357,7 +1366,7 @@ var app = angular.module('app', [
                                   fields: {
                                     authorId: true,
                                     name: true,
-                                    votesCount: true,
+                                    voteScore: true,
                                     createdDate: true,
                                     premium: true,
                                     guideType: true,
@@ -3784,8 +3793,13 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (snapshot) {
+                                    console.log("resolve snapshot:", snapshot);
+                                    
+                                    snapshot.deckTiers.sort(function(a,b) { return (a.ranks[0] - b.ranks[0]) });
+                                    
                                     //BUILD TIERS//
                                     snapshot.tiers = [];
+                                    console.log("post resolve snapshot:", snapshot);
                                     _.each(snapshot.deckTiers, function (deck) {
                                         if (snapshot.tiers[deck.tier-1] === undefined) {
                                             snapshot.tiers[deck.tier-1] = { decks: [], tier: deck.tier }; 
