@@ -1,8 +1,8 @@
 {
   "name": "teamMember",
   "base": "PersistedModel",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },

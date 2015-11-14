@@ -1,14 +1,15 @@
 module.exports = function(server) {
-/*
+    /*
     var async = require("async");
     var _ = require("underscore");
+    var ObjectId = require("mongodb").ObjectID;
 
 
 	var Role = server.models.Role;
     var User = server.models.user;
     var RoleMapping = server.models.RoleMapping;
 
-    var roles = ["contentProvider", "admin"];
+    var roles = ["$contentProvider", "$admin"];
     var roleInstances = {};
     async.waterfall([
         // Create the different roles
@@ -44,8 +45,8 @@ module.exports = function(server) {
         async.eachSeries(users, function(user, userCb) {
             async.eachSeries(roles, function(roleName, roleCb) {
 
-                if ((roleName === "admin" && user.isAdmin)
-                    || (roleName === "contentProvider" && user.isProvider)) {
+                if ((roleName === "$admin" && user.isAdmin)
+                    || (roleName === "$contentProvider" && user.isProvider)) {
 
                     roleInstances[roleName].principals.create({
                         principalType: RoleMapping.USER,

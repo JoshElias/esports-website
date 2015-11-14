@@ -2,8 +2,8 @@
   "name": "post",
   "plural": "posts",
   "base": "PersistedModel",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },

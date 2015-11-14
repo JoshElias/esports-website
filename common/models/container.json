@@ -1,8 +1,8 @@
 {
   "name": "container",
   "base": "Model",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },

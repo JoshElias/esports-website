@@ -2,8 +2,8 @@
   "name": "forumThread",
   "plural": "forumThreads",
   "base": "PersistedModel",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },
@@ -27,7 +27,9 @@
       "type": "object"
     },
     "oldPosts": {
-      "type": ["string"]
+      "type": [
+        "string"
+      ]
     }
   },
   "validations": [],
