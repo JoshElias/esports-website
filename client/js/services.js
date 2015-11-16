@@ -1643,13 +1643,14 @@ angular.module('app.services', [])
                                 label: 'Continue',
                                 className: 'btn-danger',
                                 scope: mulligans,
-                                callback: function (evnt) {
+                                callback: function () {
+                                    console.log('element: ', element);
                                     console.log('passed through: ', mulligans);
                                     for(var i = 0; i < mulligans.length; i++) {
                                         for(var j = 0; j < mulligans[i].cardsWithCoin.length; j++) {
                                             if (mulligans[i].cardsWithCoin[j].card.id === card.card.id) {
-                                                $scope.$apply(delete mulligans[i].cardsWithCoin[j]);
-                                                console.log('mulligans[i].cardsWithCoin[j]: ', mulligans[i].cardsWithCoin[j]);
+                                                mulligans[i].cardsWithCoin.splice(j, 1);
+                                                break;
                                             }
                                         }
                                     }
@@ -1657,7 +1658,8 @@ angular.module('app.services', [])
                                     for(var i = 0; i < mulligans.length; i++) {
                                         for(var j = 0; j < mulligans[i].cardsWithoutCoin.length; j++) {
                                             if (mulligans[i].cardsWithoutCoin[j].card.id === card.card.id) {
-                                                delete mulligans[i].cardsWithoutCoin[j];
+                                                mulligans[i].cardsWithoutCoin.splice(j, 1);
+                                                break;
                                             }
                                         }
                                     }

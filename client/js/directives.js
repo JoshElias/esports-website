@@ -35,6 +35,10 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         link: function (scope, el, attr) {
+            // fix bug for card tooltip not removing
+            el.on('click', function() {
+                console.log(attr['data-cardQuantity'].value);
+            });
             var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -344 : 60;
             el.wTooltip({
                 delay: 500,

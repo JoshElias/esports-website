@@ -130,7 +130,8 @@
                     <div class="deck-list">
                         <div class="list-card" 
                              ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" 
-                             ng-click="deck.removeCardFromDeck(card)" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" hs-card>
+                             ng-click="deck.removeCardFromDeck(card)" 
+                             data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" data-cardQuantity="card.cardQuantity" hs-card>
                             <div class="mana-cost">{{card.card.cost}}</div>
                             {{card.card.name}}
                             <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
@@ -383,7 +384,7 @@
                             </div>
                         </div>  
                         <div class="col-xs-4 right">
-                            <div class="list-card" ng-repeat="card in deck.cards track by $index" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" hs-card>
+                            <div class="list-card" ng-repeat="card in deck.cards track by $index">
                                 <button ng-click="deck.toggleMulligan(mulligan, true, card.card, destroyCoinMulls, destroyNoCoinMulls)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
