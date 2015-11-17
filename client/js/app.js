@@ -905,7 +905,8 @@ var app = angular.module('app', [
 //                                            }
 //                                        ]
                                     }
-                                }).$promise
+                                })
+                                .$promise
                                 .then(function (data) {
                                     console.log('cardWithCoin: ', data);
                                     deck.mulligans = data;
@@ -2828,6 +2829,36 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.edit.html',
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
+                            isUserAdmin: ['User', function(User) {
+                                return User.isRole({
+                                    roleName: '$admin'
+                                })
+                                .$promise
+                                .then(function (isAdmin) {
+                                    console.log('isAdmin: ', isAdmin.isRole);
+                                    return isAdmin.isRole;
+                                })
+                                .catch(function (err) {
+                                    if (err) {
+                                        console.log('resolve err: ', err);
+                                    }
+                                });
+                            }],
+                            isUserContentProvider: ['User', function(User) {
+                                return User.isRole({
+                                    roleName: '$contentProvider'
+                                })
+                                .$promise
+                                .then(function (isContentProvider) {
+                                    console.log('isContentProvider: ', isContentProvider.isRole);
+                                    return isContentProvider.isRole;
+                                })
+                                .catch(function (err) {
+                                    if (err) {
+                                        console.log('resolve err: ', err);
+                                    }
+                                });
+                            }],
                             resolveParams: [function() {
                                 return {
                                     page: 1,
@@ -2908,6 +2939,7 @@ var app = angular.module('app', [
                                 .then(function (data) {
                                     data.mulligans = mulligans;
 //                                    console.log('mulligans resolve: ', mulligans);
+//                                    data.isUserContentProvider = isUserContentProvider;
                                     return data;
                                 })
                                 .catch(function(err) {

@@ -1,16 +1,16 @@
 <div class="db-deck clearfix">
     <div class="db-deck-header db-deck-{{deck.playerClass.toLowerCase()}} {{deck.heroName.toLowerCase()}}">
         <div class="db-arena">
-            <span ng-show="deck.gameModeType === 'constructed'">Constructed</span>
-            <span ng-show="deck.gameModeType === 'arena'">Arena</span>
-            <span ng-show="deck.gameModeType === 'brawl'">Brawl</span>
-            <span ng-show="deck.gameModeType === ''">{{deck.heroName}}</span>
+            <span ng-if="deck.gameModeType === 'constructed'">Constructed</span>
+            <span ng-if="deck.gameModeType === 'arena'">Arena</span>
+            <span ng-if="deck.gameModeType === 'brawl'">Brawl</span>
+            <span ng-if="deck.gameModeType === ''">{{deck.heroName}}</span>
         </div>
     </div>
     <div class="db-deck-cards">
         <div class="db-deck-card" ng-class="{multi:getQty(card.id) > 1 || card.card.rarity == 'Legendary', 'mulligan-hide': mulliganHide(card)}" 
              ng-repeat="card in deck.cards | orderBy: 'cost'" 
-             data-tooltip-img="{{app.cdn}}/cards/{{card.card.photoNames.large}}" 
+             data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" 
              data-tooltip-pos="left" hs-card>
             <div class="db-deck-card-mana">{{card.card.cost}}</div>
             <div class="db-deck-card-qty" ng-show="getQty(card.id) > 1">{{getQty(card.id)}}</div>

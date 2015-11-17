@@ -1,0 +1,229 @@
+@import 'ts-colors.scss';
+
+// Description: General styles for the talent calculator
+
+//*************************************
+
+// 1... General tc Styles
+// 2... range 
+
+//*************************************
+
+//*************************************
+// 1... General tc Styles
+//*************************************
+
+
+/* talent calculator */
+.tc-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
+.tc-section-title { font-size: 20px; line-height: 60px; min-height: 60px; color: #FFF; background: rgba(0,0,0,.3); border-top: none; }
+.tc-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; text-transform: uppercase; }
+
+.tc-characters { border-top: 1px solid #000; }
+.tc-characters .tc-character { margin-right: 10px; padding: 5px 10px; color: #FFF; font-size: 14px; background: rgba(0,0,0,.4); border: 1px solid #000; }
+.tc-characters .tc-character:last-child { margin-right: 0px; }
+.tc-characters .tc-character.active { background: #2766ad; }
+
+.tc-section-content { padding: 20px; border-top: 1px solid #000; }
+.tc-section-content.unpadded { padding: 0px; }
+.tc-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
+.tc-section-content p { color: #FFF; }
+
+.tc-section .hero-list { padding-right: 3px; max-height: 435px; overflow-y: scroll; }
+
+.tc-abilities-title,
+.tc-heroics-title,
+.tc-trait-title { padding: 3px 10px; font-size: 14px; color: #FFF; letter-spacing: 2px; }
+
+.tc-abilities-title { background: #2766ad; }
+.tc-heroics-title { background: #a9782a; }
+.tc-trait-title { background: #4d286c; }
+
+.tc-ability,
+.tc-heroic,
+.tc-trait { padding: 5px 0; }
+
+.tc-ability-wrapper,
+.tc-heroic-wrapper,
+.tc-trait-wrapper { padding: 2px; cursor: pointer; }
+
+.tc-ability-wrapper:hover,
+.tc-ability-wrapper:hover .tc-ability,
+.tc-ability-wrapper.active .tc-ability { background: #2c3d59; }
+
+.tc-heroic-wrapper:hover,
+.tc-heroic-wrapper:hover .tc-heroic,
+.tc-heroic-wrapper.active .tc-heroic { background: #54422a; }
+
+.tc-trait-wrapper:hover,
+.tc-trait-wrapper:hover .tc-trait,
+.tc-trait-wrapper.active .tc-trait { background: #342544; }
+
+.tc-ability-wrapper.active { background: #90d7ed; background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); }
+
+.tc-heroic-wrapper.active { background: #e49625; background: -moz-linear-gradient(top,  #e49625 42%, #87371c 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(42%,#e49625), color-stop(100%,#87371c)); background: -webkit-linear-gradient(top,  #e49625 42%,#87371c 100%); background: -o-linear-gradient(top,  #e49625 42%,#87371c 100%); background: -ms-linear-gradient(top,  #e49625 42%,#87371c 100%); background: linear-gradient(to bottom,  #e49625 42%,#87371c 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e49625', endColorstr='#87371c',GradientType=0 ); }
+
+.tc-trait-wrapper.active { background: #ba86bb; background: -moz-linear-gradient(top,  #ba86bb 42%, #692c78 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(42%,#ba86bb), color-stop(100%,#692c78)); background: -webkit-linear-gradient(top,  #ba86bb 42%,#692c78 100%); background: -o-linear-gradient(top,  #ba86bb 42%,#692c78 100%); background: -ms-linear-gradient(top,  #ba86bb 42%,#692c78 100%); background: linear-gradient(to bottom,  #ba86bb 42%,#692c78 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ba86bb', endColorstr='#692c78',GradientType=0 ); }
+
+.tc-ability-wrapper:hover .talents-icon,
+.tc-heroic-wrapper:hover .talents-icon,
+.tc-trait-wrapper:hover .talents-icon,
+.tc-ability-wrapper.active .talents-icon,
+.tc-heroic-wrapper.active .talents-icon,
+.tc-trait-wrapper.active .talents-icon { opacity: 1; }
+
+.tc-ability .talents-icon,
+.tc-heroic .talents-icon,
+.tc-trait .talents-icon { margin: 0 auto; }
+
+.tc-talents-tiers { margin: 0; padding: 0; }
+.tc-talents-tiers li { list-style: none; height: 40px; }
+.tc-talents-tiers li span { float: left; line-height: 30px; padding: 5px; margin-right: 5px; color: #FFF; width: 40px; height: 40px; text-align: center; border: 1px solid #000; background: rgba(0,0,0,.3); }
+.tc-talents-icons { margin: 0; padding: 0; float: left; }
+.tc-talents-icons li { float: left; list-style: none; margin-right: 5px; padding: 5px; width: 40px; height: 40px; }
+.tc-talents-icons li:last-child { margin-right: 0px; }
+
+.tc-damage { height: 280px; background: rgba(0,0,0,.8); box-shadow: 0px 0px 5px rgba(0,0,0,.5); overflow-y: auto; }
+.tc-damage.tc-damage-ability { border: 2px solid #2766ad; }
+.tc-damage.tc-damage-heroic { border: 2px solid #a9782a; }
+.tc-damage.tc-damage-trait { border: 2px solid #4d286c; }
+
+.tc-damage .talents-icon { position: absolute; top: 0px; left: 0px; opacity: 1; }
+.tc-damage .tc-damage-ability h3 { padding-left: 50px; color: #4791d0; text-transform: uppercase; font-family: 'Open Sans Bold'; text-shadow: 2px 2px 2px rgba(0,0,0,.75); }
+.tc-damage .tc-damage-talent h3 { padding-left: 50px; color: #e8cc00; font-size: 12px; text-transform: uppercase; font-family: 'Open Sans Bold'; text-shadow: 2px 2px 2px rgba(0,0,0,.75); }
+.tc-damage p { padding-left: 50px; font-size: 10px; }
+
+.tc-data-fix { margin-right: -10px !important; }
+.tc-datas { }
+.tc-data-wrapper { float: left; padding-right: 10px; width: 50%; }
+.tc-data {  }
+.tc-data-title { padding: 3px 10px; font-size: 14px; color: #FFF; letter-spacing: 2px; text-align: center; text-transform: uppercase; }
+.tc-data-green .tc-data-title { background: #24aa51; }
+.tc-data-blue .tc-data-title { background: #2766ad; }
+.tc-data-yellow .tc-data-title { background: #ebc41b; }
+.tc-data-red .tc-data-title { background: #aa2526; }
+
+.tc-data-number { padding: 10px 0px; font-size: 24px; color: #bbb; text-align: center; background: #000; }
+
+.tc-url-box { padding: 7px 10px; border: 1px solid #000; background: rgba(0,0,0,.4); }
+.tc-url { font-size: 10px; text-align: right !important; }
+
+.tc-levels { margin-right: 0px; margin-left: 0px; border: 1px solid #000; background: rgba(0,0,0,.4); }
+.tc-level-title,
+.tc-level { line-height: 46px; color: #FFF; font-size: 14px; letter-spacing: 2px; }
+.tc-level { text-align: center; }
+.tc-level-slider { margin-right: 40px; }
+
+.tc-hero { }
+
+//-----------------------------------------
+// tc-hero.hero moved to hots-heroes mixin
+//-----------------------------------------
+
+/* talent calculator link */
+.talent-calculator-link { padding: 2px; width: 100%; height: 200px; background: #9b81b6; /* Old browsers */
+    background: -moz-linear-gradient(top,  #9b81b6 40%, #6b3f98 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(40%,#9b81b6), color-stop(100%,#6b3f98)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #9b81b6 40%,#6b3f98 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #9b81b6 40%,#6b3f98 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #9b81b6 40%,#6b3f98 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #9b81b6 40%,#6b3f98 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9b81b6', endColorstr='#6b3f98',GradientType=0 ); /* IE6-9 */
+    -webkit-animation-name: glow-purple; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow-purple; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
+.talent-calculator-link-inner { position: relative; height: 196px; background: url('../img/hots/talent-calculator-back.jpg') right top; }
+.talent-calculator-link-inner a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/hots/talent-calculator-front.png') no-repeat; background-position: center 0px; -webkit-transition: background-position ease-in-out .3s; transition: background-position ease-in-out .3s; }
+.talent-calculator-link-inner a:hover { background-position: center -196px; }
+
+//*************************************
+// 2... range
+//*************************************
+
+
+input[type=range] {
+  -webkit-appearance: none;
+  margin: 18px 0;
+  width: 100%;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: #3071a9;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -6px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #367ebd;
+}
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: #3071a9;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 36px;
+  width: 16px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: transparent;
+  border-color: transparent;
+  border-width: 16px 0;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #2a6495;
+  border: 0.2px solid #010101;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+input[type=range]::-ms-fill-upper {
+  background: #3071a9;
+  border: 0.2px solid #010101;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+input[type=range]::-ms-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 36px;
+  width: 16px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: #3071a9;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: #367ebd;
+}

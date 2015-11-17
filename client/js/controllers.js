@@ -5440,7 +5440,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.deckTypes = Hearthstone.deckTypes;
 
             // current mulligan
-            $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
+            $scope.currentMulligan = $scope.deck.getMulligan('Druid');
 
             $scope.setMulligan = function (mulligan) {
                 $scope.currentMulligan = mulligan;
@@ -5521,7 +5521,7 @@ angular.module('app.controllers', ['ngCookies'])
             ];
 
             $scope.isFeatured = function () {
-                var featured = $scope.deck.featured;
+                var featured = $scope.deck.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
                     if ($scope.featuredTypes[i].value === featured) {
                         return $scope.featuredTypes[i].text;
@@ -5551,9 +5551,19 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService) {
+    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'isUserAdmin', 'isUserContentProvider',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, isUserAdmin, isUserContentProvider) {
             console.log('init deck: ',deck);
+            
+            console.log('isUserAdmin: ', isUserAdmin)
+            console.log('isUserContentProvider: ', isUserContentProvider);
+            
+            $scope.isUserAdmin = isUserAdmin;
+            $scope.isUserContentProvider = isUserContentProvider;
+            
+            $scope.testing = function() {
+                console.log('hi');
+            };
 
             $scope.cards = {
                 neutral: neutralCardsList,
@@ -5888,57 +5898,38 @@ angular.module('app.controllers', ['ngCookies'])
 
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
-
-
-
-//            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
-
-//            $scope.$watch('deck', function() {
-//                $scope.app.settings.deck = {
-//                    name: $scope.deck.name,
-//                    deckType: $scope.deck.deckType,
-//                    description: $scope.deck.description,
-//                    chapters: $scope.deck.chapters,
-//                    matches: $scope.deck.matches,
-//                    cards: $scope.deck.cards,
-//                    heroName: $scope.deck.heroName,
-//                    playerClass: $scope.deck.playerClass,
-//                    type: $scope.deck.type,
-//                    basic: $scope.deck.basic,
-//                    mulligans: $scope.deck.mulligans,
-//                    video: $scope.deck.video,
-//                    public: $scope.deck.public
-//                };
-//            }, true);
-//            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName);
-
-//            $scope.className = deck.playerClass;
-
-             $scope.deck = DeckBuilder.new($scope.className, deck);
-//            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null) ? DeckBuilder.new($scope.className, deck) : DeckBuilder.new($scope.clasName, deck);
+            
+//            $scope.deck = DeckBuilder.new($scope.className, deck);
+            
+            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.id === deck.id) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className, deck);
 
             $scope.$watch('deck', function() {
                 $scope.app.settings.deck = {
+                    id: $scope.deck.id,
                     name: $scope.deck.name,
+                    slug: $scope.deck.slug,
                     deckType: $scope.deck.deckType,
+                    gameModeType: $scope.deck.gameModeType,
                     description: $scope.deck.description,
+                    playerClass: $scope.deck.playerClass,
+                    createdDate: $scope.deck.createdDate,
                     chapters: $scope.deck.chapters,
-                    matches: $scope.deck.matchups,
+                    basic: $scope.deck.basic,
+                    matchups: $scope.deck.matchups,
                     cards: $scope.deck.cards,
                     heroName: $scope.deck.heroName,
-                    playerClass: $scope.deck.playerClass,
-                    type: $scope.deck.type,
-                    basic: $scope.deck.basic,
-                    mulligans: $scope.deck.mulligans,
-                    video: $scope.deck.video,
-                    public: $scope.deck.public,
-                    id: $scope.deck.id
+                    dust: $scope.deck.dust,
+                    youtubeId: $scope.deck.youtubeId,
+                    premium: $scope.deck.premium,
+                    isFeatured: $scope.deck.isFeatured,
+                    isPublic: $scope.deck.isPublic,
+                    mulligans: $scope.deck.mulligans
                 };
-//                console.log('deck changed: ', $scope.deck);
+                console.log('deck: ', $scope.deck);
             }, true);
 
             // current mulligan
-            $scope.currentMulligan = $scope.deck.getMulligan($scope.deck.mulligans[0].className);
+            $scope.currentMulligan = $scope.deck.getMulligan('Druid');
 
             $scope.setMulligan = function (mulligan) {
                 $scope.currentMulligan = mulligan;
@@ -6012,6 +6003,23 @@ angular.module('app.controllers', ['ngCookies'])
                     return pixels;
                 }
             };
+            
+            // FIX THIS
+            $scope.isMulliganCard = function (coin, card) {
+                if (coin) {
+                    for (var i = 0; i < $scope.currentMulligan.cardsWithCoin.length; i++) {
+                        if ($scope.currentMulligan.cardsWithCoin[i].card.id == card.card.id) {
+                            return true;
+                        }
+                    }
+                } else {
+                    for (var i = 0; i < $scope.currentMulligan.cardsWithoutCoin.length; i++) {
+                        if ($scope.currentMulligan.cardsWithoutCoin[i].card.id == card.card.id) {
+                            return true;
+                        }
+                    }
+                }
+            };
 
             // featured
             $scope.featuredTypes = [
@@ -6020,7 +6028,7 @@ angular.module('app.controllers', ['ngCookies'])
             ];
 
             $scope.isFeatured = function () {
-                var featured = $scope.deck.featured;
+                var featured = $scope.deck.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
                     if ($scope.featuredTypes[i].value === featured) {
                         return $scope.featuredTypes[i].text;
@@ -6036,7 +6044,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.deckSubmitting = true;
                 
                 if(!deck.validDeck()) {
-                    $scope.errors = 'Deck must at least have 30 cards.';
+                    $scope.errors = 'Deck must have exactly 30 cards.';
                     $scope.showError = true;
                     $window.scrollTo(0, 0);
                     $scope.deckSubmitting = false;
@@ -6059,15 +6067,19 @@ angular.module('app.controllers', ['ngCookies'])
                     for(var i = 0; i < deck.mulligans.length; i++) {
                         if(deck.mulligans[i].instructionsWithCoin.length > 0) {
                             hasMulligan = true;
+                            break;
                         }
                         if(deck.mulligans[i].instructionsWithoutCoin.length > 0) {
                             hasMulligan = true;
+                            break;
                         }
                         if(deck.mulligans[i].cardsWithCoin.length > 0) {
                             hasMulligan = true;
+                            break;
                         }
                         if(deck.mulligans[i].cardsWithoutCoin.length > 0) {
                             hasMulligan = true;
+                            break;
                         }
                     }
                     
@@ -6080,18 +6092,6 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                     
                     if(hasMulligan || hasChapter || hasMatchup) {
-                        
-                        for(var i = 0; i < deck.mulligans.length; i++) {
-                            deck.mulligans[i].instructionsWithCoin = '';
-                            deck.mulligans[i].instructionsWithoutCoin = '';
-                            for(var j = 0; j < deck.mulligans[i].cardsWithCoin.length; j++) {
-                                $scope.destroyCoinMulls.push(deck.mulligans[i].cardsWithCoin[j]);
-                            }
-                            for(var j = 0; j < deck.mulligans[i].cardsWithoutCoin.length; j++) {
-                                $scope.destroyNoCoinMulls.push(deck.mulligans[i].cardsWithoutCoin[j]);
-                            }
-                        }
-                        
                         var box = bootbox.dialog({
                             title: 'Are you sure you want <strong>' + deck.name + '</strong>' + ' to be a basic deck?',
                             message: 'Any previous mulligans, chapters and matchups will be lost.',
@@ -6100,6 +6100,14 @@ angular.module('app.controllers', ['ngCookies'])
                                     label: 'Continue',
                                     className: 'btn-danger',
                                     callback: function () {
+                                        for(var i = 0; i < deck.mulligans.length; i++) {
+                                            deck.mulligans[i].instructionsWithCoin = '';
+                                            deck.mulligans[i].instructionsWithoutCoin = '';
+                                            deck.mulligans[i].cardsWithCoin = [];
+                                            deck.mulligans[i].cardsWithoutcoin = [];
+                                        }
+                                        deck.chapters = [];
+                                        deck.matchups = [];
                                         updateDeck(deck);
                                     }
                                 },
@@ -7317,12 +7325,51 @@ angular.module('app.controllers', ['ngCookies'])
             // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
 
-            $scope.deck = DeckBuilder.new($stateParams.playerClass);
-//            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.className === $scope.app.settings.deck.playerClass) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.clasName, deck);
-
-            console.log('db deck: ', $scope.deck);
-
             $scope.className = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
+
+            // deck
+            $scope.deckTypes = Hearthstone.deckTypes;
+
+            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.playerClass === $scope.className) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className);
+
+            $scope.$watch('deck', function() {
+                $scope.app.settings.deck = {
+                    id: $scope.deck.id,
+                    name: $scope.deck.name,
+                    slug: $scope.deck.slug,
+                    deckType: $scope.deck.deckType,
+                    gameModeType: $scope.deck.gameModeType,
+                    description: $scope.deck.description,
+                    playerClass: $scope.className,
+                    createdDate: $scope.deck.createdDate,
+                    chapters: $scope.deck.chapters,
+                    basic: $scope.deck.basic,
+                    matchups: $scope.deck.matchups,
+                    cards: $scope.deck.cards,
+                    heroName: $scope.deck.heroName,
+                    dust: $scope.deck.dust,
+                    youtubeId: $scope.deck.youtubeId,
+                    premium: $scope.deck.premium,
+                    isFeatured: $scope.deck.isFeatured,
+                    isPublic: $scope.deck.isPublic,
+                    mulligans: $scope.deck.mulligans
+                };
+                console.log('deck: ', $scope.deck);
+            }, true);
+            
+            //match-ups
+            var defaultMatchUp = {
+                deckName: '',
+                className: '',
+                forChance: 0,
+                deckId: ''
+            };
+
+            $scope.newMatch = function (klass) {
+                var m = angular.copy(defaultMatchUp);
+                m.className = klass;
+                $scope.deck.matchups.push(m);
+            }
 
             $scope.cards = {
                 neutral: neutralCardsList,
@@ -7628,29 +7675,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
 
-            // deck
-            $scope.deckTypes = Hearthstone.deckTypes;
-
-            $scope.$watch('deck', function() {
-                $scope.app.settings.deck = {
-                    name: $scope.deck.name,
-                    deckType: $scope.deck.deckType,
-                    description: $scope.deck.description,
-                    chapters: $scope.deck.chapters,
-                    matches: $scope.deck.matchups,
-                    cards: $scope.deck.cards,
-                    heroName: $scope.deck.heroName,
-                    playerClass: $scope.deck.playerClass,
-                    type: $scope.deck.type,
-                    basic: $scope.deck.basic,
-                    mulligans: $scope.deck.mulligans,
-                    video: $scope.deck.video,
-                    public: $scope.deck.public
-                };
-            }, true);
-
             // current mulligan
-            $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[0]);
+            $scope.currentMulligan = $scope.deck.getMulligan('Druid');
 
             $scope.setMulligan = function (mulligan) {
                 $scope.currentMulligan = mulligan;
@@ -7674,7 +7700,7 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     }
                 }
-            }
+            };
 
             // premium
             $scope.premiumTypes = [
@@ -7980,7 +8006,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.deck = DeckBuilder.new(data.deck.className, data.deck);
 
             // current mulligan
-            $scope.currentMulligan = $scope.deck.getMulligan($scope.classes[2]);
+            $scope.currentMulligan = $scope.deck.getMulligan('Druid');
 
             $scope.setMulligan = function (mulligan) {
                 $scope.currentMulligan = mulligan;
@@ -8997,7 +9023,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.deck = deckWithMulligans;
             console.log('deck: ', deckWithMulligans);
             
-            $scope.currentMulligan = $scope.deck.mulligans[0];
 //            console.log('currentMulligan: ', $scope.currentMulligan);
             
             $scope.deckService = Deck;
@@ -9102,6 +9127,8 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             };
+            
+            $scope.currentMulligan = $scope.getFirstMulligan(deckWithMulligans.mulligans);
 
             $scope.mulliganHide = function (card) {
                 if (!$scope.anyMulliganSet()) { return false; }
@@ -9110,9 +9137,10 @@ angular.module('app.controllers', ['ngCookies'])
                 var cards = ($scope.coin) ? $scope.currentMulligan.cardsWithCoin : $scope.currentMulligan.cardsWithoutCoin;
                 
 //                console.log('cards: ', cards);
+//                console.log('card: ', card);
 
                 for (var i = 0; i < cards.length; i++) {
-                    if (cards[i].card.id === card.id) { return false; }
+                    if (cards[i].card.id === card.card.id) { return false; }
                 }
 
                 return true;

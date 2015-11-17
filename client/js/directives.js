@@ -35,7 +35,6 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         link: function (scope, el, attr) {
-            console.log(attr);
             var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -344 : 60;
             el.wTooltip({
                 delay: 500,
