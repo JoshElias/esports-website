@@ -74,9 +74,15 @@
     },
     {
       "principalType": "ROLE",
-      "principalId": "$premium",
+      "principalId": "$everyone",
       "permission": "ALLOW",
       "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
     }
   ],
   "methods": {}

@@ -7,6 +7,7 @@ module.exports = function(User) {
     var bcrypt = require('bcrypt-nodejs');
     var utils = require("./../../lib/utils");
     var ObjectId = require("mongodb").ObjectID;
+    var subscription = require("./../../lib/subscription");
 
 
 
@@ -426,36 +427,35 @@ module.exports = function(User) {
 
 
 
-    User.setSubscriptionPlan = function(data, cb) {
+    User.setSubscriptionPlan = function(plan, cctoken, cb) {
         cb = cb || utils.createPromiseCallback();
 
+        User.getCurrent(function(err, currentUser) {
+            if(err) cb(err);
 
-        var err = new Error('unable to find user');
-        err.statusCode = 400;
-        err.code = 'USER_NOT_FOUND';
+            subscription.setPlan(currentUser, plan, cctoken, cb);
+        });
     };
 
 
-    User.setSubscriptionCard = function(data, cb) {
+    User.setSubscriptionCard = function(cctoken, cb) {
         cb = cb || utils.createPromiseCallback();
 
+        User.getCurrent(function(err, currentUser) {
+            if(err) cb(err);
 
-        if (typeof data.email === 'string') {
-            var err = new Error('unable to find user');
-            err.statusCode = 400;
-            err.code = 'USER_NOT_FOUND';
-        }
+            subscription.setCard(currentUser, cctoken, cb);
+        });
     };
 
-    User.cancelSubscription = function(data, cb) {
+    User.cancelSubscription = function(cb) {
         cb = cb || utils.createPromiseCallback();
-        var ttl = User.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
-        if (typeof data.email === 'string') {
-            var err = new Error('unable to find user');
-            err.statusCode = 400;
-            err.code = 'USER_NOT_FOUND';
-        }
+        User.getCurrent(function(err, currentUser) {
+            if(err) cb(err);
+
+            subscription.cancel(currentUser, cb);
+        });
     };
 
 
@@ -515,7 +515,10 @@ module.exports = function(User) {
         'setSubscriptionPlan',
         {
             description: "derp",
-            accepts: { arg: 'data', type: 'object', http: { source: 'body' } },
+            accepts: [
+                { arg: 'plan', type: 'string', http: { source: 'form' } },
+                { arg: 'cctoken', type: 'string', http: { source: 'form' } }
+            ],
             http: {verb: 'post'},
             isStatic: true
         }
@@ -525,7 +528,7 @@ module.exports = function(User) {
         'setSubscriptionCard',
         {
             description: "derp",
-            accepts: { arg: 'data', type: 'object', http: { source: 'body' } },
+            accepts: { arg: 'cctoken', type: 'string', http: { source: 'form' } },
             http: {verb: 'post'},
             isStatic: true
         }
@@ -535,7 +538,6 @@ module.exports = function(User) {
         'cancelSubscription',
         {
             description: "derp",
-            accepts: { arg: 'data', type: 'object', http: { source: 'body' } },
             http: {verb: 'post'},
             isStatic: true
         }

@@ -26,13 +26,15 @@
   "relations": {
     "cardsWithCoin": {
       "type": "hasMany",
-      "model": "cardWithCoin",
-      "foreignKey": "mulliganId"
+      "model": "card",
+      "foreignKey": "mulliganId",
+      "through": "cardWithCoin"
     },
     "cardsWithoutCoin": {
       "type": "hasMany",
-      "model": "cardWithoutCoin",
-      "foreignKey": "mulliganId"
+      "model": "card",
+      "foreignKey": "mulliganId",
+      "through": "cardWithoutCoin"
     },
     "deck": {
       "type": "belongsTo",
@@ -40,6 +42,30 @@
       "foreignKey": "deckId"
     }
   },
-  "acls": [],
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "accessType": "WRITE"
+    }
+  ],
   "methods": {}
 }
