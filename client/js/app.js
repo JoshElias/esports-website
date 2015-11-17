@@ -444,7 +444,7 @@ var app = angular.module('app', [
                                                         "isActive",
                                                         "photoNames",
                                                         "authorId",
-                                                        "votesCount",
+                                                        "voteScore",
                                                         "articleType",
                                                         "slug"
                                                     ],
@@ -648,7 +648,11 @@ var app = angular.module('app', [
                                             }
                                         ]
                                     }
-                                }).$promise;
+                                }).$promise
+                                .then(function (data) {
+                                    console.log(data);
+                                    return data;
+                                });
                             }]
                         }
                     }
@@ -784,7 +788,8 @@ var app = angular.module('app', [
                                             heroName: true,
                                             authorId: true,
                                             voteScore: true,
-                                            playerClass: true
+                                            playerClass: true,
+                                            createdDate: true
                                         },
                                         include: ["author"],
                                         order: "createdDate DESC",
@@ -827,7 +832,8 @@ var app = angular.module('app', [
                                             authorId: true,
                                             voteScore: true,
                                             playerClass: true,
-                                            dust: true
+                                            dust: true,
+                                            createdDate: true
                                         },
                                         include: ["author"],
                                         order: "createdDate DESC",
@@ -899,7 +905,8 @@ var app = angular.module('app', [
 //                                            }
 //                                        ]
                                     }
-                                }).$promise
+                                })
+                                .$promise
                                 .then(function (data) {
                                     console.log('cardWithCoin: ', data);
                                     deck.mulligans = data;
@@ -1685,6 +1692,7 @@ var app = angular.module('app', [
                             heroes: ['Hero', function (Hero) {
                                 return Hero.find({
                                     filter: {
+                                        order: "name DESC",
                                         fields: {
                                             className: true,
                                             description: true,
@@ -1735,11 +1743,19 @@ var app = angular.module('app', [
                                         where: {
                                             className: hero
                                         },
-                                        include: ['talents']
+                                        include: [
+                                            {
+                                                relation: 'talents',
+                                                scope: {
+                                                    order: "orderNum ASC"
+                                                }
+                                            }
+                                        ]
                                     }
                                 })
                                 .$promise
                                 .then(function (hero) {
+                                    console.log(hero);
                                     return hero;
                                 })
                                 .catch(function(err) {
@@ -2201,6 +2217,7 @@ var app = angular.module('app', [
                 resolve: {
                     userProfile: ['$stateParams', 'User', function ($stateParams, User) {
                       var username = $stateParams.username;
+                        console.log("what");
                       return User.find({
                         filter: {
                             where: {
@@ -2210,6 +2227,7 @@ var app = angular.module('app', [
                       })
                       .$promise
                       .then(function (data) {
+                          console.log(data);
                           return data[0];
                       });
                     }]
@@ -2267,6 +2285,7 @@ var app = angular.module('app', [
                         controller: 'ProfileActivityCtrl',
                         resolve: {
                             activities: ['userProfile', 'Activity', function (userProfile, Activity) {
+                                console.log("o-o-o-o-okay", userProfile.id);
                                 return Activity.find({
                                     filter: {
                                         order: "createdDate DESC",
@@ -2287,11 +2306,7 @@ var app = angular.module('app', [
                                         ]
                                     }
                                 })
-                                .$promise
-                                .then(function(data) {
-                                    console.log(data);
-                                    return data;
-                                });
+                                .$promise;
                             }],
                             activityCount: ['userProfile', 'Activity', function (userProfile, Activity) {
                                 return Activity.count({
@@ -2394,19 +2409,46 @@ var app = angular.module('app', [
             })
             .state('app.profile.edit', {
                 url: '/edit',
+                abstract: true,
                 views: {
                     profile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.html',
                         controller: 'ProfileEditCtrl',
-                        resolve: {
-                            dataProfileEdit: ['$stateParams', 'ProfileService', function ($stateParams, ProfileService) {
-                                var username = $stateParams.username;
-                                return ProfileService.getUserProfile(username);
-                            }]
-                        }
                     }
                 },
                 access: { auth: true },
+            })
+            .state('app.profile.edit.basic', {
+                url: '',
+                views: {
+                    editprofile: {
+                        templateUrl: tpl + 'views/frontend/profile.edit.basic.html'
+                    }
+                }
+            })
+            .state('app.profile.edit.connect', {
+                url: '/connect',
+                views: {
+                    editprofile: {
+                        templateUrl: tpl + 'views/frontend/profile.edit.connect.html'
+                    }
+                }
+            })
+            .state('app.profile.edit.social', {
+                url: '/social',
+                views: {
+                    editprofile: {
+                        templateUrl: tpl + 'views/frontend/profile.edit.social.html'
+                    }
+                }
+            })
+            .state('app.profile.edit.premium', {
+                url: '/premium',
+                views: {
+                    editprofile: {
+                        templateUrl: tpl + 'views/frontend/profile.edit.premium.html'
+                    }
+                }
             })
             .state('app.profile.changeEmail', {
                 url: '/email-change-confirm?code',
@@ -2787,6 +2829,36 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.edit.html',
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
+                            isUserAdmin: ['User', function(User) {
+                                return User.isRole({
+                                    roleName: '$admin'
+                                })
+                                .$promise
+                                .then(function (isAdmin) {
+                                    console.log('isAdmin: ', isAdmin.isRole);
+                                    return isAdmin.isRole;
+                                })
+                                .catch(function (err) {
+                                    if (err) {
+                                        console.log('resolve err: ', err);
+                                    }
+                                });
+                            }],
+                            isUserContentProvider: ['User', function(User) {
+                                return User.isRole({
+                                    roleName: '$contentProvider'
+                                })
+                                .$promise
+                                .then(function (isContentProvider) {
+                                    console.log('isContentProvider: ', isContentProvider.isRole);
+                                    return isContentProvider.isRole;
+                                })
+                                .catch(function (err) {
+                                    if (err) {
+                                        console.log('resolve err: ', err);
+                                    }
+                                });
+                            }],
                             resolveParams: [function() {
                                 return {
                                     page: 1,
@@ -2867,6 +2939,7 @@ var app = angular.module('app', [
                                 .then(function (data) {
                                     data.mulligans = mulligans;
 //                                    console.log('mulligans resolve: ', mulligans);
+//                                    data.isUserContentProvider = isUserContentProvider;
                                     return data;
                                 })
                                 .catch(function(err) {

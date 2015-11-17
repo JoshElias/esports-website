@@ -412,29 +412,6 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 
 }
 
-/* start filters */
-.hs-filter-bar { padding: 20px 0; background: rgba(36,104,171,.3); }
-
-.hs-filter-bar .filter-class { margin: 0; padding: 0px; }
-.hs-filter-bar .filter-class li { list-style: none; margin-right: 30px; display: inline-block; *display: inline; zoom: 1; width: 62px; height: 63px; }
-.hs-filter-bar .filter-class li:last-child { margin-right: 0px; }
-
-.hs-filter-bar .filter-class li a { display: block; width: 62px; height: 63px; overflow: hidden; text-indent: -99999px; background: url('../img/class-icons.png') no-repeat; opacity: .5; }
-.hs-filter-bar .filter-class li a.active { opacity: 1; }
-.hs-filter-bar .filter-class li a.not-selected { opacity: .3; }
-.hs-filter-bar .filter-class li a.not-selected:hover { opacity: .6; }
-
-
-.hs-filter-bar .filter-class li .warlock { background-position: 0px 0px; }
-.hs-filter-bar .filter-class li .warrior { background-position: 0px -63px; }
-.hs-filter-bar .filter-class li .hunter { background-position: 0px -126px; }
-.hs-filter-bar .filter-class li .rogue { background-position: 0px -189px; }
-.hs-filter-bar .filter-class li .priest { background-position: 0px -252px; }
-.hs-filter-bar .filter-class li .paladin { background-position: 0px -315px; }
-.hs-filter-bar .filter-class li .mage { background-position: 0px -378px; }
-.hs-filter-bar .filter-class li .druid { background-position: 0px -441px; }
-.hs-filter-bar .filter-class li .shaman { background-position: 0px -504px; }
-/* end filters */
 
 /* content start */
 .games-btns { background: #000; }
@@ -530,9 +507,7 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .deck-builder-link-inner a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/decks/deck-builder-button.png') no-repeat; background-position: center 0px; -webkit-transition: background-position ease-in-out .3s; transition: background-position ease-in-out .3s; }
 .deck-builder-link-inner a:hover { background-position: center -196px; }
 
-/* hs - home */
-.hs-home-title { background: #2766ad url('../img/hs/top-banner.jpg') center center no-repeat; background-size: cover; }
-.hs-home-logo { margin: 60px auto; }
+
 
 /* start decks */
 
@@ -549,573 +524,11 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 
 .section-search { margin: 10px 0; width: 200px; }
 
-/* meta snapshot */
 
-.head-img {
-    border-bottom: 1px solid rgba(255,255,255,.2);
-}
+/* ------------------------------------- */
+/* Meta snapshot styles moved to meta=snapshot
+/* ------------------------------------- */
 
-.snapshot-votes { position: absolute; right: 20px; top: 20px; }
-.snapshot-votes .snapVoteWrap { position: relative; }
-
-.pin-stripe { 
-    border:1px solid rgba(255,255,255,.4);
-    outline: 1px solid rgba(0,0,0,1);
-    outline-offset: -2px;
-}
-.drop-shadow {
-    box-shadow: 2px 2px 2px 2px rgba(0,0,0,.4);
-}
-
-.bg-override {
-    background-image: url(../img/backgrounds/meta-bg.jpg);
-    background-color: #000000;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: top;
-}
-.bg-override.profile {
-    background-image: url(../img/backgrounds/classes/mage.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-.bg-override.deck-builder {
-    background-image: url(../img/backgrounds/meta-bg.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    min-height: 800px;
-}
-.bg-override.team-page {
-    background-image: url(../img/backgrounds/meta-bg.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.meta-snapshot {
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.article {
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-    min-height: 1250px;
-}
-.bg-override.polls {
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.sponsors {
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.druid {
-    background-image: url(../img/backgrounds/classes/druid.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.hunter {
-    background-image: url(../img/backgrounds/classes/hunter.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.mage {
-    background-image: url(../img/backgrounds/classes/mage.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.paladin {
-    background-image: url(../img/backgrounds/classes/paladin.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.priest {
-    background-image: url(../img/backgrounds/classes/priest.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.rogue {
-    background-image: url(../img/backgrounds/classes/rogue.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.shaman {
-    background-image: url(../img/backgrounds/classes/shaman.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.warlock {
-    background-image: url(../img/backgrounds/classes/warlock.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-.bg-override.warrior {
-    background-image: url(../img/backgrounds/classes/warrior.jpg);
-    background-color: #121111;
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-attachment: fixed;
-}
-@media (max-width: 1248px) {
-    .bg-override { background-size: cover!important; }
-}
-
-
-.heading { position:relative; }
-
-.snapTitle { position: absolute; top: 20px; left: 20px; text-shadow: 1px 1px 0px rgba(0,0,0,.7); }
-.snapTitle img { width: 100%; }
-.snapTitle h1 { color: white; font-weight: bolder; padding-right: 100px; }
-.snapTitle h3 { color: white; color: #d7effa; font-weight: bold; font-size: 18px; letter-spacing: 1px; padding-right: 100px; }
-
-@media (max-width: 767px) {
-    .snapTitle h1,
-    .snapTitle h3 { font-size: 14px; }
-}
-
-.sideBorders { border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid rgba(255,255,255,.2); }
-
-.meta-container { background: rgba(0,0,0,.8); }
-
-.rightSide,
-.leftSide { height: auto; color: #d7effa; }
-
-.leftSide { padding-right: 20px !important; }
-
-@media (max-width: 1199px) {
-    .leftSide { padding-right: 0px !important; }
-}
-
-.leftSide .content {
-    background: -webkit-linear-gradient(bottom, rgba(31,38,80,.9), rgba(32,54,95,.9)); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(top, rgba(31,38,80,.9), rgba(32,54,95,.9)); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(top, rgba(31,38,80,.9), rgba(32,54,95,.9)); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(to top, rgba(31,38,80,.9) , rgba(32,54,95,.9)); /* Standard syntax */
-}
-
-.leftSide .content h2 { color: white; font-weight: bold; letter-spacing: 4px; font-size: 24px; }
-.leftSide .content .hr { border-top: 1px solid rgba(255,255,255,.5); border-bottom: 2px solid rgba(0,0,0,.4); background: none; width: 225px; }
-.leftSide .content .inner { background: url(../img/meta-snapshot/meta-cloud-overlay.png); border: 1px solid rgba(255,255,255,.2); }
-.leftSide .content p { white-space: pre-wrap; }
-
-.rightSide .sideTier button { border: none; padding: 0px; margin-top: 0px; outline: none; }
-.rightSide .sideTier .sideTierHead { 
-    height: 65px; 
-    background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
-}
-.rightSide .sideTier .sideTierHead .inner { position: relative; height: 65px; border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid rgba(255,255,255,.2); }
-.rightSide .sideTier .sideTierHead .inner i { line-height: 65px; position: absolute; right: 20px; }
-.rightSide .sideTier .sideTierHead .inner h3 { padding:18px; }
-
-.rightSide .sideTier .sideTierHead:first-child .inner { border-top: 1px solid rgba(255,255,255,.2); }
-.rightSide .sideTier .sideTierHead:last-child .inner { border-bottom: 1px solid rgba(255,255,255,.2); }
-
-.rightSide .sideTier .sideTierBody { -webkit-transition-duration: .2s; transition-duration: .2s; }
-.rightSide .sideTier .sideTierBody .sideTierDeck { background-color: #404759; background-repeat: no-repeat; background-position:right; height:50px; border-bottom: 1px solid black; }
-.rightSide .sideTier .sideTierBody .sideTierDeck:nth-child(even) { background-color: #36455A; }
-.rightSide .sideTier .sideTierBody .sideTierDeck:hover { opacity: .9 }
-.rightSide .sideTier .sideTierBody .sideTierDeck a { display: block; width: 100%; height: 100% }
-.rightSide .sideTier .sideTierBody h4 { font-size: 14px; font-weight: bold; color: white; margin: 0px; line-height: 45px; text-align: center; }
-.rightSide .sideTier .sideTierBody .sideTierDeck .sideTierDeckRank { position: relative; height: 49px; width:50px; border: 1px solid rgba(255,255,255,.2); }
-.rightSide .sideTier .sideTierBody .sideTierDeck .sideTierDeckName { position: relative; height: 50px; max-width: 215px; padding-left: 10px; }
-
-/* TRENDS */
-
-.trends-wrapper { background: url('../img/meta-snapshot/trends-bg.jpg') no-repeat center top; background-size: cover; }
-.trends-wrapper .inner { border: 1px solid rgba(255,255,255,.2); padding: 20px; }
-.trends-wrapper h2 { color: white; font-weight: bold; letter-spacing: 4px; font-size: 24px; text-align: center; }
-.trends-wrapper .hr { margin: 0 auto; border-top: 1px solid rgba(255,255,255,.5); border-bottom: 2px solid rgba(0,0,0,.4); background: none; width: 225px; }
-
-.trends { width: 100%; height: 450px; }
-.trends g.deck { opacity: 1; transition: opacity .25s ease-in-out; }
-.trends g.deck.not-selected { opacity: .2; }
-
-.snapshot-trends-keys { margin: 0px 5% 20px; }
-.snapshot-trends-keys a { margin: 5px 10px; position: relative; display: block; color: rgba(255,255,255,.8); z-index: 3; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.snapshot-trends-keys a:hover { color: rgba(255,255,255,1); }
-.snapshot-trends-keys a.active { color: rgba(255,255,255,1); }
-.snapshot-trends-keys .trends-key { margin: 4px 5px 0 0; display: inline-block; width: 10px; height: 10px; border: 1px solid rgba(255,255,255,.2); }
-
-.snapshot-trends-keys .trends-key.Druid { background: rgb(255, 125, 10); }
-.snapshot-trends-keys .trends-key.Hunter { background: rgb(171, 212, 115); }
-.snapshot-trends-keys .trends-key.Mage { background: rgb(105, 204, 240); }
-.snapshot-trends-keys .trends-key.Paladin { background: rgb(245, 140, 186); }
-.snapshot-trends-keys .trends-key.Priest { background: rgb(255,255,255); }
-.snapshot-trends-keys .trends-key.Rogue { background: rgb(255, 245, 105); }
-.snapshot-trends-keys .trends-key.Shaman { background: rgb(0, 112, 222); }
-.snapshot-trends-keys .trends-key.Warlock { background: rgb(148, 130, 201); }
-.snapshot-trends-keys .trends-key.Warrior { background: rgb(199, 156, 110); }
-
-.snapshot-trends-tiers { margin: 20px 0px 20px 0px; padding: 0; text-align: center; }
-.snapshot-trends-tiers li { list-style: none; display: inline-block; margin-right: 20px; }
-.snapshot-trends-tiers li:last-child { margin-right: 0px; }
-.snapshot-trends-tiers li a { position: relative; font-family: 'Open Sans Bold'; font-size: 30px; color: rgba(255,255,255,.8); letter-spacing: 2px; z-index: 3; }
-.snapshot-trends-tiers li a:hover { color: rgba(255,255,255,1); }
-.snapshot-trends-tiers li a.active { color: rgba(255,255,255,1); border-bottom: 2px solid #FFF; }
-
-@media (max-width: 767px) {
-    .trends-wrapper .inner { padding: 10px; }
-    .snapshot-trends-tiers li a { font-size: 12px; }
-}
-
-/* /TRENDS */
-
-.tier h4,
-.tier h3,
-.tier h2 {
-    color: #CEEAF6
-} 
-
-.tier .tier-body .tier-deck-body h4,
-.tier .tier-body .tier-deck-body h3,
-.tier .tier-body .tier-deck-body h2 {
-    font-size: 20px;
-    font-weight: bold
-} 
-
-.tier p {
-    color: #FEFEFE;
-}
-
-.tier .btn-tier-collapse { padding: 0px; border: 0; border-radius: 0px; outline: none; height: 65px; }
-.tier .btn-tier-collapse:active { outline: none; }
-.tier .tier-heading { 
-    background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
-    border: 1px solid rgba(255,255,255,.2);
-    height: 65px;
-    outline: none;
-}
-.tier .tier-heading h2 { color: #FEFEFE; margin: auto 0px auto 20px; font-weight: bolder; letter-spacing:7px; line-height:63px }
-
-.tier-body { -webkit-transition-duration: .2s; transition-duration: .2s; }
-
-.tier-body .tier-deck { height: auto; }
-.tier-body .tier-deck h4 { padding-right: 200px; text-indent: 30px; line-height: 48px; font-weight: bold; color: #F0EFEB; text-shadow: 1px 1px 0px rgba(0,0,0,.7); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-
-
-.tier-body .tier-deck-heading { height: 50px !important; border: 1px solid rgba(255, 255, 255, .2); position: relative; width:100%; outline: none; -webkit-appearance: none; -moz-appearance: none; appearance: none; cursor: pointer; }
-.tier-body .tier-deck-heading .deck-button { position: absolute; top: 12px; right: 150px; display: block; background: rgba(0, 0, 0, .25); border: 1px rgba(255, 255, 255, .7) solid; color: rgba(255, 255, 255, 1); padding: 2px 25px; outline: none; }
-.tier-body .tier-deck-heading .deck-button:hover { background: rgba(255, 255, 255, .7); border: 1px rgba(0, 0, 0, .7) solid; color: rgba(0, 0, 0, 1);  }
-
-@media (max-width: 767px) {
-    .tier-body .tier-deck h4 { padding-right: 120px; }
-    .tier-body .tier-deck-heading .deck-button { right: 20px; }
-    .tier-body .tier-deck-heading { background: none !important; }
-}
-
-.green-back { background-color: rgba(17, 153, 71, .7) }
-.red-back { background-color: rgba(170, 30, 33, .7) }
-
-.tier-body .tier-deck .tier-deck-body { border: 1px black solid; -webkit-transition-duration: .2s; transition-duration: .2s }
-.tier-body .tier-deck .tier-deck-body .deck-rank { height: 88px; }
-.tier-body .tier-deck .tier-deck-body .deck-rank > div { float: left; height: 84px; width: 33.33%; text-align: center; border: 1px black solid; font-size: 32px; line-height: 55px; color: white; font-weight: bold; }
-.tier-body .tier-deck .tier-deck-body .deck-rank div:nth-child(2) { border-left: none; border-right: none }
-.tier-body .tier-deck .tier-deck-body .deck-rank div div { height: 20px; background-color: rgba(0, 0, 0, .5); font-size: 12px; font-weight: bold; border: none; color: white; line-height: 18px; }
-.tier-body .tier-deck .tier-deck-body .tier-deck-body-inner { border: rgba(255, 255, 255, .1) 1px solid; border-top: 0px; }
-.tier-body .tier-deck .tier-deck-body .tier-deck-body-inner-inner { padding-top: 30px; }
-.tier-body .tier-deck .tier-deck-body .deck-portrait { height:345px }
-
-/* TECH */
-.tier-body .tier-deck .tier-deck-body .deck-techs .tech {}
-.tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-heading { background: rgba(128, 128, 128, .5); padding: 4px 0px 4px 10px; color: #FEFEFE; border: 1px solid black; border-top: 0px; height: 30px }
-.tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card { position: relative; }
-.tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body { height:27px; border: 1px solid black; border-top: 0px; background: rgb(37, 37, 37); color: #FEFEFE; line-height: 25px; text-shadow: 0px 0px 1px black; background-repeat: no-repeat; background-position: right; }
-.tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card .both-token { height:27px; width: 27px; background: rgb(37, 37, 37); color: #cbb800; text-align:center; position: absolute; top: 0; right: 0; line-height: 1.25; border-right: 1px solid black; font-family: hs; font-size: 20px }
-.tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body.multi { width: 228px; }
-.tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .toss, 
-.tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .keep { width: 27px; height: 27px; text-align: center; border-bottom: 1px solid black; border-right: 1px solid black; margin-right: 5px; }
-.tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .toss { background: rgb(17, 153, 71) }
-.tier-body .tier-deck .tier-deck-body .deck-techs .tech .tech-card-body .keep { background: rgb(170, 30, 33) }
-/* !TECH */
-
-
-.meta-author {
-    
-    background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
-    
-    border-left: 1px solid rgba(255,255,255,.2);
-    border-right: 1px solid rgba(255,255,255,.2);
-    border-top: 1px solid rgba(255,255,255,.2);
-    border-bottom: 1px solid rgba(255,255,255,.2);
-    
-
-    
-    margin-bottom: 1px;
-}
-
-.meta-author .meta-author-collapser { position: relative; background: none; border: none; outline: none; height: 100px; width: 100%; }
-
-.meta-author h2 { color: white; letter-spacing: 4px; font-size: 24px; font-weight: bold; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-transform: uppercase; }
-.meta-author h3 { color: #F6981E; letter-spacing: 4px; font-size: 14px; text-indent: 30px; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-
-.author-img-wrapper { position: relative; height: 60px; width: 70px; }
-.author-class-icon { position: absolute; top: 0; left: 0; display: block; }
-.author-text-wrapper .classExpert { text-transform: uppercase; }
-.author-text-wrapper h3 { text-transform: uppercase; }
-.author-collapse { -webkit-transition-duration: .2s; transition-duration: .2s; padding: 0;  }
-.author-collapse p { color: white; padding: 0px 75px 20px 105px; font-size: 14px; }
-
-.twitch-btn { background: #6441A5 }
-.twitch-btn:hover { background: #6441A5 }
-.twitch-btn i { margin-left: -2px }
-.twitter-btn { background: #55acee }
-
-.soc-btns { position: absolute; z-index: 1; top: 25px; right: 0; width: 110px;}
-.soc-btn { height: 50px; width: 50px; border-radius: 100%; right: 25px;  }
-.soc-btn.disable { opacity: .3 }
-.soc-btn i { font-size: 28px; color: white; line-height:1.35 }
-
-@media (max-width: 767px) {
-    .meta-author h2 { text-indent: 0px; }
-    .meta-author h3 { text-indent: 0px; }
-    .author-collapse p { padding: 0px 20px 20px; }
-    .soc-btns { position: relative; top: 0px; left: 0px; padding-left: 20px; }
-}
-
-.match-graph { height: 300px; }
-.match-graph svg { overflow: visible }
-.match-graph line { stroke:rgba(255,255,255,.5); }
-
-.no-mouse { opacity: .5; -webkit-transition-duration: .2s; transition-duration: .2s; }
-.bar-wrap { -webkit-transition-duration: .2s; transition-duration: .2s; }
-.bar { stroke: rgb(255, 255 ,255); stroke-width: 1px; opacity:.8; }
-
-.bar-Druid { fill: rgb(255, 125, 10) }
-.bar-Hunter { fill: rgb(171, 212, 115) }
-.bar-Mage { fill: rgb(105, 204, 240) }
-.bar-Paladin { fill: rgb(245, 140, 186) }
-.bar-Priest { fill: white }
-.bar-Rogue { fill: rgb(255, 245, 105) }
-.bar-Shaman { fill: rgb(0, 112, 222) }
-.bar-Warlock { fill: rgb(148, 130, 201) }
-.bar-Warrior { fill: rgb(199, 156, 110) }
-.bar-druid { fill: rgb(255, 125, 10) }
-.bar-hunter { fill: rgb(171, 212, 115) }
-.bar-mage { fill: rgb(105, 204, 240) }
-.bar-paladin { fill: rgb(245, 140, 186) }
-.bar-priest { fill: white }
-.bar-rogue { fill: rgb(255, 245, 105) }
-.bar-shaman { fill: rgb(0, 112, 222) }
-.bar-warlock { fill: rgb(148, 130, 201) }
-.bar-warrior { fill: rgb(199, 156, 110) }
-
-.dot-Druid { stroke: rgb(255, 125, 10); fill: rgb(255, 125, 10); }
-.dot-Hunter { stroke: rgb(171, 212, 115); fill: rgb(171, 212, 115); }
-.dot-Mage { stroke: rgb(105, 204, 240); fill: rgb(105, 204, 240); }
-.dot-Paladin { stroke: rgb(245, 140, 186); fill: rgb(245, 140, 186); }
-.dot-Priest { stroke: rgb(255,255,255); fill: rgb(255,255,255); }
-.dot-Rogue { stroke: rgb(255, 245, 105); fill: rgb(255, 245, 105); }
-.dot-Shaman { stroke: rgb(0, 112, 222); fill: rgb(0, 112, 222); }
-.dot-Warlock { stroke: rgb(148, 130, 201); fill: rgb(148, 130, 201); }
-.dot-Warrior { stroke: rgb(199, 156, 110); fill: rgb(199, 156, 110); }
-
-#snapshot-chart {
-    width:800px;
-}
-
-#snapshot-chart g {
-    fill: white;
-}
-#snapshot-chart line {
-    fill: white;
-    stroke: white;
-}
-#snapshot-chart .domain {
-    stroke: white;
-}
-
-#meta-graph-Rogue {
-    color: yellow
-}
-
-.snapshot-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
-.snapshot-section-title { font-size: 20px; line-height: 60px; min-height: 60px; color: #FFF; background: rgba(0,0,0,.3); }
-.snapshot-section-title a { color: #FFF; }
-.snapshot-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; }
-.snapshot-section-content { padding: 20px; border-top: 1px solid #000; }
-.snapshot-section-content.unpadded { padding: 0px; }
-.snapshot-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
-.snapshot-section-content p { color: #FFF; }
-
-
-.tier-deck-Druid {
-    background: -webkit-linear-gradient(left, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
-    background: -o-linear-gradient(right, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
-    background: -moz-linear-gradient(right, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
-    background: linear-gradient(to right, rgba(255, 125, 10, .65), rgba(255, 125, 10, 1));
-}
-.tier-deck-Druid .tier-deck-body { 
-    background-color: rgba(0,0,0,.5);
-    background-image: url(../img/meta-snapshot/deck-backgrounds/druid.jpg);
-    background-size: cover;
-    background-blend-mode: multiply;
-}
-.tier-deck-Druid .deck-portrait-Druid { background: url(../img/meta-snapshot/hero-portrait/Druid.png) no-repeat top center; }
-.deck-portrait-Druid-sm { background: url(../img/meta-snapshot/hero-portrait/druid-sm.png) no-repeat top right; }
-
-
-
-.tier-deck-Hunter { 
-    background: -webkit-linear-gradient(left, rgba(171, 212, 115, .65), rgba(171, 212, 115, 1));
-    background: -o-linear-gradient(right, rgba(171, 212, 115, .65), rgba(171, 212, 115, 1));
-    background: -moz-linear-gradient(right, rgba(171, 212, 115, .65), rgba(171, 212, 115, 1));
-    background: linear-gradient(to right, rgba(171, 212, 115, .65), rgba(171, 212, 115, 1));
-}
-.tier-deck-Hunter .tier-deck-body { 
-    background-color: rgba(0,0,0,.5);
-    background-image: url(../img/meta-snapshot/deck-backgrounds/hunter.jpg);
-    background-size: cover;
-    background-blend-mode: multiply;
-}
-.tier-deck-Hunter .deck-portrait-Hunter { background: url(../img/meta-snapshot/hero-portrait/Hunter.png) no-repeat top center; }
-.deck-portrait-Hunter-sm { background: url(../img/meta-snapshot/hero-portrait/hunter-sm.png) no-repeat top right; }
-
-
-.tier-deck-Mage {
-    background: -webkit-linear-gradient(left, rgba(105, 204, 240, .65), rgba(105, 204, 240, 1)); 
-    background: -o-linear-gradient(right, rgba(105, 204, 240, .65), rgba(105, 204, 240, 1));
-    background: -moz-linear-gradient(right, rgba(105, 204, 240, .65), rgba(105, 204, 240, 1));
-    background: linear-gradient(to right, rgba(105, 204, 240, .65), rgba(105, 204, 240, 1));
-}
-.tier-deck-Mage .tier-deck-body { 
-    background-color: rgba(0,0,0,.5);
-    background-image: url(../img/meta-snapshot/deck-backgrounds/mage.jpg);
-    background-size: cover;
-    background-blend-mode: multiply;
-}
-.tier-deck-Mage .deck-portrait-Mage { background: url(../img/meta-snapshot/hero-portrait/Mage.png) no-repeat top center; }
-.deck-portrait-Mage-sm { background: url(../img/meta-snapshot/hero-portrait/mage-sm.png) no-repeat top right; }
-
-
-.tier-deck-Paladin { 
-    background: -webkit-linear-gradient(left, rgba(245, 140, 186, .65), rgba(245, 140, 186, 1)); 
-    background: -o-linear-gradient(right, rgba(245, 140, 186, .65), rgba(245, 140, 186, 1));
-    background: -moz-linear-gradient(right, rgba(245, 140, 186, .65), rgba(245, 140, 186, 1));
-    background: linear-gradient(to right, rgba(245, 140, 186, .65), rgba(245, 140, 186, 1));
-}
-.tier-deck-Paladin .tier-deck-body { 
-    background-color: rgba(0,0,0,.5);
-    background-image: url(../img/meta-snapshot/deck-backgrounds/paladin.jpg);
-    background-size: cover;
-    background-blend-mode: multiply;
-}
-.tier-deck-Paladin .deck-portrait-Paladin { background: url(../img/meta-snapshot/hero-portrait/Paladin.png) no-repeat top center; }
-.deck-portrait-Paladin-sm { background: url(../img/meta-snapshot/hero-portrait/paladin-sm.png) no-repeat top right; }
-
-
-.tier-deck-Priest { 
-    background: -webkit-linear-gradient(left, rgba(255, 255, 255, .65), rgba(255, 255, 255, 1));
-    background: -o-linear-gradient(right, rgba(255, 255, 255, .65), rgba(255, 255, 255, 1));
-    background: -moz-linear-gradient(right, rgba(255, 255, 255, .65), rgba(255, 255, 255, 1));
-    background: linear-gradient(to right, rgba(255, 255, 255, .65), rgba(255, 255, 255, 1));
-}
-.tier-deck-Priest .tier-deck-body { 
-    background-color: rgba(0,0,0,.5);
-    background-image: url(../img/meta-snapshot/deck-backgrounds/priest.jpg);
-    background-size: cover;
-    background-blend-mode: multiply;
-}
-.tier-deck-Priest .deck-portrait-Priest { background: url(../img/meta-snapshot/hero-portrait/Priest.png) no-repeat top center; }
-.deck-portrait-Priest-sm { background: url(../img/meta-snapshot/hero-portrait/priest-sm.png) no-repeat top right; }
-
-
-.tier-deck-Rogue { 
-    background: -webkit-linear-gradient(left, rgba(255, 245, 105, .65), rgba(255, 245, 105, 1));
-    background: -o-linear-gradient(right, rgba(255, 245, 105, .65), rgba(255, 245, 105, 1));
-    background: -moz-linear-gradient(right, rgba(255, 245, 105, .65), rgba(255, 245, 105, 1));
-    background: linear-gradient(to right, rgba(255, 245, 105, .65), rgba(255, 245, 105, 1));
-}
-.tier-deck-Rogue .tier-deck-body { 
-    background-color: rgba(0,0,0,.5);
-    background-image: url(../img/meta-snapshot/deck-backgrounds/rogue.jpg);
-    background-size: cover;
-    background-blend-mode: multiply;
-}
-.tier-deck-Rogue .deck-portrait-Rogue { background: url(../img/meta-snapshot/hero-portrait/Rogue.png) no-repeat top center; }
-.deck-portrait-Rogue-sm { background: url(../img/meta-snapshot/hero-portrait/rogue-sm.png) no-repeat top right; }
-
-
-.tier-deck-Shaman { 
-    background: -webkit-linear-gradient(left, rgba(0, 112, 222, .65), rgba(0, 112, 222, 1));
-    background: -o-linear-gradient(right, rgba(0, 112, 222, .65), rgba(0, 112, 222, 1));
-    background: -moz-linear-gradient(right, rgba(0, 112, 222, .65), rgba(0, 112, 222, 1));
-    background: linear-gradient(to right, rgba(0, 112, 222, .65), rgba(0, 112, 222, 1));
-}
-.tier-deck-Shaman .tier-deck-body { 
-    background-color: rgba(0,0,0,.5);
-    background-image: url(../img/meta-snapshot/deck-backgrounds/shaman.jpg);
-    background-size: cover;
-    background-blend-mode: multiply;
-}
-.tier-deck-Shaman .deck-portrait-Shaman { background: url(../img/meta-snapshot/hero-portrait/Shaman.png) no-repeat top center; }
-.deck-portrait-Shaman-sm { background: url(../img/meta-snapshot/hero-portrait/shaman-sm.png) no-repeat top right; }
-
-
-.tier-deck-Warlock { 
-    background: -webkit-linear-gradient(left, rgba(148, 130, 201, .65), rgba(148, 130, 201, 1));
-    background: -o-linear-gradient(right, rgba(148, 130, 201, .65), rgba(148, 130, 201, 1));
-    background: -moz-linear-gradient(right, rgba(148, 130, 201, .65), rgba(148, 130, 201, 1));
-    background: linear-gradient(to right, rgba(148, 130, 201, .65), rgba(148, 130, 201, 1));
-}
-.tier-deck-Warlock .tier-deck-body { 
-    background-color: rgba(0,0,0,.5);
-    background-image: url(../img/meta-snapshot/deck-backgrounds/warlock.jpg);
-    background-size: cover;
-    background-blend-mode: multiply;
-}
-.tier-deck-Warlock .deck-portrait-Warlock { background: url(../img/meta-snapshot/hero-portrait/Warlock.png) no-repeat top center; }
-.deck-portrait-Warlock-sm { background: url(../img/meta-snapshot/hero-portrait/warlock-sm.png) no-repeat top right; }
-
-
-.tier-deck-Warrior { 
-    background: -webkit-linear-gradient(left, rgba(199, 156, 110, .65), rgba(199, 156, 110, 1));
-    background: -o-linear-gradient(right, rgba(199, 156, 110, .65), rgba(199, 156, 110, 1));
-    background: -moz-linear-gradient(right, rgba(199, 156, 110, .65), rgba(199, 156, 110, 1));
-    background: linear-gradient(to right, rgba(199, 156, 110, .65), rgba(199, 156, 110, 1));
-}
-.tier-deck-Warrior .tier-deck-body { 
-    background-color: rgba(0,0,0,.5);
-    background-image: url(../img/meta-snapshot/deck-backgrounds/warrior.jpg);
-    background-size: cover;
-    background-blend-mode: multiply;
-}
-.tier-deck-Warrior .deck-portrait-Warrior { background: url(../img/meta-snapshot/hero-portrait/Warrior.png) no-repeat top center; }
-.deck-portrait-Warrior-sm { background: url(../img/meta-snapshot/hero-portrait/warrior-sm.png) no-repeat top right; }
 
 /* article filters */
 .article-filters { margin-bottom: 15px; }
@@ -2426,6 +1839,167 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-deck-class.warlock { background-position: 0px -420px; }
 .profile-deck-class.hunter { background-position: 0px -240px; }
 .profile-deck-class.druid { background-position: 0px -180px; }
+
+/* profile edit*/
+.edit-profile-view {
+    padding: 50px 0px;
+}
+
+.profile-edit-wrapper {
+    background: rgba(25,25,25,.95);
+    padding:35px;
+    border: 2px solid rgba(255,255,255,.2);
+    margin-bottom: 50px;
+}
+
+.profile-edit-wrapper h2 {
+    font-size: 12px;
+    color: white;
+    font-weight: bold;
+    margin: 0px;
+}
+
+.profile-edit-wrapper h3 {
+    font-size: 12px;
+    color: rgba(255,255,255,.3);
+    margin: 8px 0px;
+}
+
+.profile-edit-wrapper .basic-wrapper {
+    margin-top: 40px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.profile-edit-wrapper .gravatar {
+    width: 75%;
+    margin: 0px auto 20px auto;
+}
+
+.profile-edit-nav button {
+    background: none;
+    margin-right: 40px;
+    border: none;
+    text-align: center;
+    padding: 6px 5px;
+}
+
+.profile-edit-nav button.active {
+    border-bottom: 3px #2268AD solid;
+}
+.profile-edit-nav button.focus {
+    border-bottom: 3px #2268AD solid;
+}
+
+.profile-edit-wrapper .gravatar-button {
+    border-right: 2px rgba(25,25,25,1) solid;
+    padding:10px;
+    text-align: center;
+    line-height: 2.5;
+    background: #2268AD;
+}
+
+.profile-edit-wrapper .basic-form div,
+.profile-edit-wrapper .basic-form span {
+    margin: 5px 0px;
+    padding: 0px;
+}
+
+.profile-edit-wrapper .basic-form textarea {
+    width: 98%;
+    margin: 0px 1%;
+    padding: 15px;
+    border-radius: 0px;
+    border: 1px solid rgba(255,255,255,.2);
+    background: black;
+    color: rgba(255,255,255,.7);
+    resize: vertical;
+}
+
+.profile-edit-wrapper .basic-form input {
+    height: 45px;
+    border-radius: 0px;
+    border: 1px solid rgba(255,255,255,.2);
+    background: black;
+    margin: auto;
+    width: 95%;
+    color: rgba(255,255,255,.7);
+}
+
+.profile-edit-wrapper .reset-password {
+    border: none;
+    outline: none;
+    margin: 0px 2.5%;
+    width: 95%;
+    background: #cd201f;
+}
+
+.profile-edit-wrapper .reset-password h2 {
+    height:47px;
+    line-height: 3.75;
+}
+
+
+
+/*PROFILE CONNECT*/
+
+.twitchBack {
+    background: #6441a5;
+}
+.twitchBorder {
+    border: 1px #6441a5 solid;
+}
+.blizzBack {
+    background: #22324B;
+}
+.blizzBorder {
+    border: 1px #22324B solid;
+}
+.gravBack {
+    background: #1e8cbe;
+}
+.gravBorder {
+    border: 1px #1e8cbe solid;
+}
+
+.profile-edit-wrapper .connect-wrapper {
+    margin: 0px 0px;
+}
+.profile-edit-wrapper .connect-wrapper .connect {
+    margin: 10px 0px;
+    height: 100px;
+    width: 100%;
+    background: black;
+}
+
+.profile-edit-wrapper .connect-wrapper .connect .logo-wrapper {
+    text-align: center;
+    width: 100px;
+    height: 100%;
+}
+
+.profile-edit-wrapper .connect-wrapper .connect .logo-wrapper i {
+    line-height: 2.5;
+    font-size: 40px;
+    color: white;
+}
+
+.profile-edit-wrapper .connect-wrapper .connect img {
+    padding: 30px;
+    width: 100%;
+    height: 100%;
+}
+
+.profile-edit-wrapper .connect-wrapper .connect .connect-body {
+    
+}
+
+.profile-edit-wrapper .update-profile-btn {
+    background: #2268AD;
+    border: none;
+    border-radius: none;
+    padding: 10px 20px;
+}
 
 /* profile guides */
 .profile-guides { margin: 15px -15px; }
@@ -3941,149 +3515,7 @@ ul[dnd-list] .dndPlaceholder {
     min-height: 52px;
 }
 
-/* hots guide - step 1 */
-.guide-builder { margin: 40px 0 120px 0; }
-.hots-gb-step1 { margin: 0 auto; width: 695px; }
-.hots-gb-step1-left { margin: 0 20px 0 0; width: 366px; }
-.hots-gb-step1-right { width: 309px; }
 
-.hots-guide-hero { margin: 72px auto 20px; width: 366px; height: 356px; background: url('../img/hots/heroguide.png'); }
-.hots-guide-map { margin: 0 auto 20px; width: 309px; height: 428px; background: url('../img/hots/mapguide.png'); }
-.hots-button { margin: 0 auto; display: block; width: 300px; height: 66px; line-height: 66px; text-align: center; color: #FFF; border: 1px solid #FFF; text-decoration: none; transition: background .1s linear; }
-.hots-button:hover,
-.hots-button:focus { background: #2766ad; color: #FFF; text-decoration: none; }
-
-/* hots guide - step 2 */
-.hero-selection { margin: 40px auto 20px auto; }
-.hero-selection .hero-row { margin: -20px auto 0 auto; white-space: nowrap; }
-
-.hero-selection .hero-row.hero-1 { max-width: 90px; }
-.hero-selection .hero-row.hero-2 { max-width: 180px; }
-.hero-selection .hero-row.hero-3 { max-width: 270px; }
-.hero-selection .hero-row.hero-4 { max-width: 360px; }
-.hero-selection .hero-row.hero-5 { max-width: 450px; }
-.hero-selection .hero-row.hero-6 { max-width: 540px; }
-.hero-selection .hero-row.hero-7 { max-width: 630px; }
-.hero-selection .hero-row.hero-8 { max-width: 720px; }
-.hero-selection .hero-row.hero-9 { max-width: 810px; }
-.hero-selection .hero-row.hero-10 { max-width: 900px; }
-
-.hero-selection .hero { margin: 0 5px; display: inline-block; position: relative; width: 80px; height: 92px; }
-.hero-icon { width: 80px; height: 92px; }
-
-.hero-icon .icon-wrap,
-.hero-selection .hero .icon-wrap { width: 80px; height: 92px; display: inline-block; overflow: hidden; }
-
-.hero-icon .icon-wrap .icon,
-.hero-selection .hero .icon-wrap .icon { display: inline-block; overflow: hidden; transform: translate(7px, 13px) scaleX(1.717) rotate(45deg); width: 65px; height: 65px; background-color: rgba(88, 43, 128, .25); transition: background-color .1s linear; }
-.hero-icon .icon-wrap .icon { background-color: rgba(88,43,128,1) !important; }
-
-.hero-icon .icon-wrap a,
-.hero-selection .hero .icon-wrap .icon a,
-.hero-selection .hero .icon-wrap .icon span { display: inline-block; transform: rotate(-45deg) scaleX(0.59) translate(7px, -14px); width: 80px; height: 92px; }
-
-.hero-selection .hero .icon-wrap .icon span.icon-ts { background: url('../img/hots/heroes/ts-hex.png') no-repeat center center; }
-
-
-/* ------------------------------------- */
-/* icon-hero moved to hots-heroes scss */
-/* ------------------------------------- */
-
-
-.hero-selection .hero .icon-wrap .icon:hover { background-color: rgba(88, 43, 128, 1); }
-.hero-selection .hero .icon-wrap .icon.active { background-color: #2766ad; }
-
-p.white { color: #FFF; }
-.darkbox { background: rgba(0,0,0,.6); border-radius: 4px; border: 1px solid #000; }
-
-
-/* ------------------------------------- */
-/* maps moved to hots-maps scss */
-/* ------------------------------------- */
-
-
-/* guide content */
-.gb-content-title { position: relative; min-height: 60px; line-height: 60px; border-bottom: 1px solid #000; background: rgba(0,0,0,.3); }
-.input-content-title { padding-right: 125px; height: 60px; line-height: 60px; font-size: 20px; color: #FFF; font-family: 'Open Sans Bold'; background: transparent; border: none; text-transform: uppercase; }
-.gb-content-btns { position: absolute; top: 20px; right: 20px; }
-.gb-content-down,
-.gb-content-up,
-.gb-content-delete { float: left; width: 20px; height: 20px; line-height: 20px; text-align: center; background: rgba(255,255,255,.4); color: #000 !important; border-radius: 4px; font-size: 20px; }
-
-.gb-content-down:hover,
-.gb-content-up:hover,
-.gb-content-delete:hover { background: rgba(255,255,255,.8); }
-
-.gb-content-down.disabled,
-.gb-content-up.disabled { opacity: .3; cursor: default; }
-
-/* synergy */
-.gb-synergy,
-.gb-strong,
-.gb-weak { border: 1px solid #000; padding: 10px 20px; }
-
-.gb-synergy { background: #6cbd45; }
-.gb-strong { background: #2766ad; }
-.gb-weak { background: #e94c3d; }
-
-.gb-synergy h1,
-.gb-strong h1,
-.gb-weak h1 { margin: 0; font-size: 20px; font-family: 'Open Sans Bold'; color: #FFF; }
-
-.gb-synergy span,
-.gb-strong span,
-.gb-weak span { font-size: 10px; color: #FFF; }
-
-/* hero list */
-.hero-list { margin: 0; padding: 0; border: 1px solid #000; }
-.hero-list li { list-style: none; height: 29px; border-bottom: 1px solid #000; background: rgba(0,0,0,.4); transition: background .1s linear; }
-.hero-list li:last-child { border-bottom: none; }
-.hero-list li:hover { background: rgba(88,43,128,.8); }
-.hero-list li.active { background: rgba(39,102,173,.8); }
-
-.hero-list li a { display: block; padding: 0 20px; height: 28px; color: #FFF; font-size: 16px; line-height: 28px; text-decoration: none; }
-.hero-list li a:hover { text-decoration: none; }
-
-/* ------------------------------------- */
-/* hero-list li a.hero moved to hots-heroes scss
-/* ------------------------------------- */
-
-/* guide steps */
-.gb-steps { margin: 0 0 20px 0; padding: 0 1px; }
-.gb-steps li { float: left; list-style: none; }
-
-.gb-steps li button { display: block; width: 154px; height: 60px; padding: 5px 10px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.5); color: #FFF; font-size: 20px; text-decoration: none; -webkit-transition: all .1s linear; transition: all .1s linear; text-align: left; }
-.gb-steps.gb-steps-map li button { width: 215px; }
-.gb-steps li button:hover { background: rgba(88, 43, 128, .8); }
-.gb-steps li.steps-arrow button { padding: 0; width: 30px; font-size: 30px; line-height: 60px; text-align: center; }
-
-.gb-steps li.steps-arrow-prev button { border-top-left-radius: 4px; border-bottom-left-radius: 4px; }
-.gb-steps li.steps-arrow-next button { border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
-
-.gb-steps li button small { display: block; font-size: 14px; }
-.gb-steps li.active button { background: rgba(39,102,173,.8); color: #FFF; }
-
-/* guide text */
-.guide-text { margin: 20px auto; width: 260px; height: 152px; oveflow: hidden; white-space: nowrap; text-indent: -99999px; }
-.guide-text.guide-builder { background: url('../img/hots/guides/guide-builder.png'); }
-.guide-text.hero-discussion { background: url('../img/hots/guides/hero-discussion.png'); }
-.guide-text.hero-information { background: url('../img/hots/guides/hero-information.png'); }
-.guide-text.hero-select { background: url('../img/hots/guides/hero-select.png'); }
-.guide-text.map-discussion { background: url('../img/hots/guides/map-discussion.png'); }
-.guide-text.map-select { background: url('../img/hots/guides/map-select.png'); }
-.guide-text.save-guide-now { background: url('../img/hots/guides/save-guide-now.png'); }
-.guide-text.talent-select { background: url('../img/hots/guides/talent-select.png'); }
-
-/* talents */
-.gb-talents { margin-bottom: 30px; border: 1px solid #000; background: rgba(0,0,0,.3); }
-.gb-talents-title { padding: 0 20px; height: 60px; line-height: 60px; color: #FFF; background: rgba(0,0,0,.3); border-bottom: 1px solid #000; font-family: 'Open Sans Bold';
-  font-size: 20px; }
-.gb-talents-tiers { margin: 0; padding: 0; }
-.gb-talents-tiers li { list-style: none; height: 40px; }
-.gb-talents-tiers li span { float: left; line-height: 30px; padding: 5px; margin-right: 5px; color: #FFF; width: 40px; height: 40px; text-align: center; border-right: 1px solid #000; background: rgba(0,0,0,.3); }
-.gb-talents-icons { margin: 0; padding: 0; float: left; }
-.gb-talents-icons li { float: left; list-style: none; margin-right: 5px; padding: 5px; width: 40px; height: 40px; }
-.gb-talents-icons li:last-child { margin-right: 0px; }
 
 /* ------------------------------------- */
 /* talents - titles moved to hots-heroes */
@@ -4093,26 +3525,10 @@ p.white { color: #FFF; }
 /* talents icons - moved to hots-heroes.scss*/
 /* ------------------------------------- */
 
-/* hots modal */
-.hots-modal { position: relative; padding: 2px; background: #90d7ed; /* Old browsers */
-    background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* IE10+ */
-    background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); /* IE6-9 */
-    /*box-shadow: 0px 0px 10px #d3eefa;*/
-    -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite;
-}
+/* ------------------------------------- */
+/* hots-modal - moved to hots-home */
+/* ------------------------------------- */
 
-.hots-modal-inner { padding: 40px; width: 500px; background: #141316 url('../img/hots/modal/modalbg.jpg') no-repeat right top; }
-.hots-modal-inner.heroes-modal { min-height: 270px; }
-.hots-modal-top-glow { position: absolute; top: -84px; left: 0px; width: 324px; height: 84px; background: url('../img/hots/modal/top-glow.png') no-repeat; z-index: 1001; }
-.hots-modal-bot-glow { position: absolute; bottom: -84px; left: 0px; width: 324px; height: 84px; background: url('../img/hots/modal/bottom-glow.png') no-repeat; z-index: 1001; }
-
-.hots-modal h1 { position: relative; padding: 0; color: #4992cf; font-size: 22px; font-family: 'Open Sans Bold'; text-transform: uppercase; text-shadow: 1px 1px 1px #000; z-index: 1003; }
-.hots-modal p { position: relative; padding: 0; /*color: #bcbbbb;*/ color: #F2F2F2; font-size: 12px; text-shadow: 1px 1px 5px #000; z-index: 1003; }
 
 /* ------------------------- */
 /* hots modal - heroes - moved to hots-heroes */
@@ -4122,454 +3538,16 @@ p.white { color: #FFF; }
 /* hots modal - maps - moved to hots-maps */
 /* ------------------------- */
 
-
-/* hots - home */
-.hots-dark { background: #121111; }
-
-.filters-back { transition: background .6s ease-in-out; }
-.filters-back.default { background: #121111 url('../img/hots/maps/bgs/base.jpg') center top no-repeat; }
-.filters-back.battlefield-of-eternity { background: #121111 url('../img/hots/maps/bgs/bfoe.jpg') center top no-repeat; }
-.filters-back.blackheartsbay { background: #121111 url('../img/hots/maps/bgs/blackheart.jpg') center top no-repeat; }
-.filters-back.cursedhollow { background: #121111 url('../img/hots/maps/bgs/curse.jpg') center top no-repeat; }
-.filters-back.dragonshrine { background: #121111 url('../img/hots/maps/bgs/dragon.jpg') center top no-repeat; }
-.filters-back.gardenofterror { background: #121111 url('../img/hots/maps/bgs/garden.jpg') center top no-repeat; }
-.filters-back.hauntedmines { background: #121111 url('../img/hots/maps/bgs/mine.jpg') center top no-repeat; }
-.filters-back.skytemple { background: #121111 url('../img/hots/maps/bgs/sky.jpg') center top no-repeat; }
-.filters-back.tomb-of-the-spider-queen { background: #121111 url('../img/hots/maps/bgs/spider.jpg') center top no-repeat; }
-.filters-back.shrine { background: #121111 url('../img/hots/maps/bgs/shrine.jpg') center top no-repeat; }
-
-.hots-home-title { background: #2766ad url('../img/hots/top-banner.jpg') center center no-repeat; background-size: cover; }
-.hots-home-logo { margin: 60px auto; }
-
-.sub-nav-wrapper { height: 71px; position: relative; }
-.sub-nav-wrapper.sticky { height: 61px; }
-.sub-nav { background: #2766ad; box-shadow: inset 0px 4px 10px rgba(0,0,0,.7); border-bottom: 1px solid #000; }
-.sub-nav .now-streaming { position: absolute; width: 250px; margin: 15px 0px; }
-.sub-nav.sticky .now-streaming { margin: 10px 0px; }
-.sub-nav .now-streaming div { padding: 0; }
-.sub-nav .now-streaming .now-streaming-text { color: white; font-weight: bold; text-align: right; }
-.sub-nav .now-streaming .now-streaming-icon { padding: 0px 15px; }
-.sub-nav .now-streaming .now-streaming-icon a {  }
-.sub-nav .now-streaming .now-streaming-icon img { width: 40px; height: 40px; border-radius: 50%; border: 2px white solid; background: rgba(255,255,255,.2); }
-.sub-nav .now-streaming .now-streaming-info {  }
-.sub-nav .now-streaming .now-streaming-info a { color: #E6BE20; white-space: nowrap; }
-.sub-nav .now-streaming .now-streaming-info a:focus { outline: none; border: none; }
-.sub-nav .now-streaming .now-streaming-info .name { color: #E6BE20; width: 125%; }
-.sub-nav .now-streaming .now-streaming-info .viewers { color: white; font-weight: bold; }
-.sub-nav .now-streaming .pagination { position: absolute; text-align: center; margin: 0; width:105%; top: 50%; }
-.sub-nav .now-streaming .pagination i { color: white; }
-.sub-nav .now-streaming .pagination button { background: none; border: none; outline: none; position: absolute; }
-.sub-nav .now-streaming .pagination button.left { left: 0; }
-.sub-nav .now-streaming .pagination button.right { right: 0; }
-.sub-nav .sub-nav-links { text-align: center; }
-.sub-nav .sub-nav-links ul { margin: 15px 0; padding: 0; }
-.sub-nav .sub-nav-links ul button,
-.sub-nav .sub-nav-links ul li { list-style: none; display: inline-block; line-height: 40px; font-weight: bold; padding: 0 25px; border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid #000; }
-.sub-nav .sub-nav-links ul li:first-child { border-left: none; padding-left: 0px; }
-.sub-nav .sub-nav-links ul li:last-child { border-right: none; padding-right: 0px; }
-.sub-nav .sub-nav-links ul li button,
-.sub-nav .sub-nav-links ul li a { color: rgba(255,255,255,.7); }
-.sub-nav .sub-nav-links ul li button,
-.sub-nav .sub-nav-links ul li a:hover { color: rgba(255,255,255,1); }
-.sub-nav .sub-nav-links ul li a.active { color: rgba(255,255,255,1) }
-
-.sub-nav.sticky { position: fixed; top: 52px; z-index: 1000; width: 100%; box-shadow: none; }
-.sub-nav.sticky .sub-nav-links ul { margin: 10px 0; }
-
-.btn-hots { padding: 0px; width: 200px; font-family: 'Open Sans Bold'; color: rgba(255,255,255,.8); letter-spacing: 2px; background: #2766ad; border-radius: 0px; }
-.btn-hots .inner { width: 198px; padding: 15px 0px; border: 1px solid rgba(255,255,255,.2); }
-.btn-hots:hover { color: rgba(255,255,255,1); box-shadow: 0px 0px 20px rgba(255,255,255,.5); }
-
-@media (max-width: 767px) {
-    .btn-hots { margin-right: none !important; width: 100%; }
-    .btn-hots .inner { width: 100%; }
-}
-
-/* hots - home filters */
-.hero-name { margin-bottom: -10px; font-family: 'Open Sans Bold'; font-size: 60px; color: #FFF; text-shadow: 0px 0px 20px rgba(255,255,255,.6); text-transform: uppercase; }
-.hero-description { font-family: 'Open Sans Bold'; font-size: 20px; color: #d3eefa; letter-spacing: 2px; text-transform: uppercase; }
-
-.hero-roles,
-.hero-universes { width: 172px; padding: 0; float: left; }
-
-.hero-roles { margin: 0 10px 0 0; }
-
-.hero-roles li,
-.hero-universes li { list-style: none; float: left; width: 43px; height: 49px; }
-
-.hero-roles li button,
-.hero-universes li button { width: 43px; height: 49px; border: none; outline: none; background-repeat: no-repeat; background: url('../img/hots/filter-sprites.png'); }
-
-.hero-roles li button.warrior { background-position: 0px 0px; }
-.hero-roles li button.assassin { background-position: 0px -49px; }
-.hero-roles li button.support { background-position: 0px -98px; }
-.hero-roles li button.specialist { background-position: 0px -147px; }
-
-.hero-roles li button.warrior.active { background-position: -43px 0px; }
-.hero-roles li button.assassin.active { background-position: -43px -49px; }
-.hero-roles li button.support.active { background-position: -43px -98px; }
-.hero-roles li button.specialist.active { background-position: -43px -147px; }
-
-.hero-universes li button.warcraft { background-position: -86px 0px; }
-.hero-universes li button.starcraft { background-position: -86px -49px; }
-.hero-universes li button.diablo { background-position: -86px -98px; }
-.hero-universes li button.retro { background-position: -86px -147px; }
-
-.hero-universes li button.warcraft.active { background-position: -129px 0px; }
-.hero-universes li button.starcraft.active { background-position: -129px -49px; }
-.hero-universes li button.diablo.active { background-position: -129px -98px; }
-.hero-universes li button.retro.active { background-position: -129px -147px; }
-
-
-.hero-filters { position: relative; margin: 0 auto; max-width: 1448px; height: 510px; padding: 0; }
-.hero-filters li { list-style: none; position: absolute; }
-
-.hero-filters li:nth-child(1) { top: 0px; left: 129px; }
-.hero-filters li:nth-child(2) { top: 0px; left: 215px; }
-.hero-filters li:nth-child(3) { top: 0px; left: 301px; }
-.hero-filters li:nth-child(4) { top: 0px; left: 387px; }
-.hero-filters li:nth-child(5) { top: 0px; left: 473px; }
-
-.hero-filters li:nth-child(6) { top: 0px; right: 473px; }
-.hero-filters li:nth-child(7) { top: 0px; right: 387px; }
-.hero-filters li:nth-child(8) { top: 0px; right: 301px; }
-.hero-filters li:nth-child(9) { top: 0px; right: 215px; }
-.hero-filters li:nth-child(10) { top: 0px; right: 129px; }
-
-.hero-filters li:nth-child(11) { top: 80px; left: 86px; }
-.hero-filters li:nth-child(12) { top: 80px; left: 172px; }
-.hero-filters li:nth-child(13) { top: 80px; left: 258px; }
-.hero-filters li:nth-child(14) { top: 80px; left: 344px; }
-.hero-filters li:nth-child(15) { top: 80px; left: 430px; }
-
-.hero-filters li:nth-child(16) { top: 80px; right: 430px; }
-.hero-filters li:nth-child(17) { top: 80px; right: 344px; }
-.hero-filters li:nth-child(18) { top: 80px; right: 258px; }
-.hero-filters li:nth-child(19) { top: 80px; right: 172px; }
-.hero-filters li:nth-child(20) { top: 80px; right: 86px; }
-
-.hero-filters li:nth-child(21) { top: 160px; left: 43px; }
-.hero-filters li:nth-child(22) { top: 160px; left: 129px; }
-.hero-filters li:nth-child(23) { top: 160px; left: 215px; }
-.hero-filters li:nth-child(24) { top: 160px; left: 301px; }
-.hero-filters li:nth-child(25) { top: 160px; left: 387px; }
-
-.hero-filters li:nth-child(26) { top: 160px; right: 387px; }
-.hero-filters li:nth-child(27) { top: 160px; right: 301px; }
-.hero-filters li:nth-child(28) { top: 160px; right: 215px; }
-.hero-filters li:nth-child(29) { top: 160px; right: 129px; }
-.hero-filters li:nth-child(30) { top: 160px; right: 43px; }
-
-.hero-filters li:nth-child(31) { top: 240px; left: 0px; }
-.hero-filters li:nth-child(32) { top: 240px; left: 86px; }
-.hero-filters li:nth-child(33) { top: 240px; left: 172px; }
-.hero-filters li:nth-child(34) { top: 240px; left: 258px; }
-.hero-filters li:nth-child(35) { top: 240px; left: 344px; }
-
-.hero-filters li:nth-child(36) { top: 240px; right: 344px; }
-.hero-filters li:nth-child(37) { top: 240px; right: 258px; }
-.hero-filters li:nth-child(38) { top: 240px; right: 172px; }
-.hero-filters li:nth-child(39) { top: 240px; right: 86px; }
-.hero-filters li:nth-child(40) { top: 240px; right: 0px; }
-
-.hero-filters li:nth-child(41) { top: 320px; left: 43px; }
-.hero-filters li:nth-child(42) { top: 320px; left: 129px; }
-.hero-filters li:nth-child(43) { top: 320px; left: 215px; }
-.hero-filters li:nth-child(44) { top: 320px; left: 301px; }
-
-.hero-filters li:nth-child(45) { top: 320px; right: 301px; }
-.hero-filters li:nth-child(46) { top: 320px; right: 215px; }
-.hero-filters li:nth-child(47) { top: 320px; right: 129px; }
-.hero-filters li:nth-child(48) { top: 320px; right: 43px; }
-
-.hero-filters li:nth-child(49) { top: 400px; left: 86px; }
-.hero-filters li:nth-child(50) { top: 400px; left: 172px; }
-.hero-filters li:nth-child(51) { top: 400px; left: 258px; }
-.hero-filters li:nth-child(52) { top: 400px; left: 344px; }
-
-.hero-filters li:nth-child(53) { top: 400px; right: 344px; }
-.hero-filters li:nth-child(54) { top: 400px; right: 258px; }
-.hero-filters li:nth-child(55) { top: 400px; right: 172px; }
-.hero-filters li:nth-child(56) { top: 400px; right: 86px; }
-
-@media (min-width: 980px) and (max-width: 1199px) {
-    .hero-filters { margin-top: -30px; height: 460px; }
-    
-    .hero-filters li { transform: scale(.8,.8); backface-visibility: hidden; }
-    .hero-filters li:nth-child(1) { top: 30px; left: 69px; }
-    .hero-filters li:nth-child(2) { top: 30px; left: 145px; }
-    .hero-filters li:nth-child(3) { top: 30px; left: 221px; }
-    .hero-filters li:nth-child(4) { top: 30px; left: 297px; }
-    .hero-filters li:nth-child(5) { top: 30px; left: 373px; }
-
-    .hero-filters li:nth-child(6) { top: 30px; right: 373px; }
-    .hero-filters li:nth-child(7) { top: 30px; right: 297px; }
-    .hero-filters li:nth-child(8) { top: 30px; right: 221px; }
-    .hero-filters li:nth-child(9) { top: 30px; right: 145px; }
-    .hero-filters li:nth-child(10) { top: 30px; right: 69px; }
-
-    .hero-filters li:nth-child(11) { top: 100px; left: 46px; }
-    .hero-filters li:nth-child(12) { top: 100px; left: 122px; }
-    .hero-filters li:nth-child(13) { top: 100px; left: 198px; }
-    .hero-filters li:nth-child(14) { top: 100px; left: 274px; }
-    .hero-filters li:nth-child(15) { top: 100px; left: 350px; }
-
-    .hero-filters li:nth-child(16) { top: 100px; right: 350px; }
-    .hero-filters li:nth-child(17) { top: 100px; right: 274px; }
-    .hero-filters li:nth-child(18) { top: 100px; right: 198px; }
-    .hero-filters li:nth-child(19) { top: 100px; right: 122px; }
-    .hero-filters li:nth-child(20) { top: 100px; right: 46px; }
-
-    .hero-filters li:nth-child(21) { top: 170px; left: 23px; }
-    .hero-filters li:nth-child(22) { top: 170px; left: 99px; }
-    .hero-filters li:nth-child(23) { top: 170px; left: 175px; }
-    .hero-filters li:nth-child(24) { top: 170px; left: 251px; }
-    .hero-filters li:nth-child(25) { top: 170px; left: 327px; }
-
-    .hero-filters li:nth-child(26) { top: 170px; right: 327px; }
-    .hero-filters li:nth-child(27) { top: 170px; right: 251px; }
-    .hero-filters li:nth-child(28) { top: 170px; right: 175px; }
-    .hero-filters li:nth-child(29) { top: 170px; right: 99px; }
-    .hero-filters li:nth-child(30) { top: 170px; right: 23px; }
-
-    .hero-filters li:nth-child(31) { top: 240px; left: 0px; }
-    .hero-filters li:nth-child(32) { top: 240px; left: 76px; }
-    .hero-filters li:nth-child(33) { top: 240px; left: 152px; }
-    .hero-filters li:nth-child(34) { top: 240px; left: 228px; }
-    .hero-filters li:nth-child(35) { top: 240px; left: 304px; }
-
-    .hero-filters li:nth-child(36) { top: 240px; right: 304px; }
-    .hero-filters li:nth-child(37) { top: 240px; right: 228px; }
-    .hero-filters li:nth-child(38) { top: 240px; right: 152px; }
-    .hero-filters li:nth-child(39) { top: 240px; right: 76px; }
-    .hero-filters li:nth-child(40) { top: 240px; right: 0px; }
-
-    .hero-filters li:nth-child(41) { top: 310px; left: 23px; }
-    .hero-filters li:nth-child(42) { top: 310px; left: 99px; }
-    .hero-filters li:nth-child(43) { top: 310px; left: 175px; }
-    .hero-filters li:nth-child(44) { top: 310px; left: 251px; }
-
-    .hero-filters li:nth-child(45) { top: 310px; right: 251px; }
-    .hero-filters li:nth-child(46) { top: 310px; right: 175px; }
-    .hero-filters li:nth-child(47) { top: 310px; right: 99px; }
-    .hero-filters li:nth-child(48) { top: 310px; right: 23px; }
-
-    .hero-filters li:nth-child(49) { top: 380px; left: 46px; }
-    .hero-filters li:nth-child(50) { top: 380px; left: 122px; }
-    .hero-filters li:nth-child(51) { top: 380px; left: 198px; }
-    .hero-filters li:nth-child(52) { top: 380px; left: 274px; }
-
-    .hero-filters li:nth-child(53) { top: 380px; right: 274px; }
-    .hero-filters li:nth-child(54) { top: 380px; right: 198px; }
-    .hero-filters li:nth-child(55) { top: 380px; right: 122px; }
-    .hero-filters li:nth-child(56) { top: 380px; right: 46px; }
-}
-
-@media (max-width: 979px) {
-    .hero-filters { height: auto; margin-bottom: 20px; text-align: center; }
-    .hero-filters li { position: inherit !important; display: inline-block; left: auto !important; top: auto !important; right: auto !important; vertical-align: top; }
-    .hero-filters li button { margin: 0 5px 5px 0; }
-    .hero-filters li button.empty { display: none; }
-    .hero-back { background: none !important; }
-    .hero-name,
-    .hero-description { display: none; }
-}
-
-@media (max-width: 768px) {
-    .hero-roles,
-    .hero-universes { float: none; margin: 0 auto; }
-
-    .hero-filters li button { width: 43px !important; height: 43px !important; border-width: 1px !important; }
-    .filters-maps li { margin: 0 5px 5px 0 !important; }
-    .filters-maps li button { width: 43px !important; height: 43px !important; border-width: 1px !important; }
-}
-
-
-
-.hots-filters-search { padding: 8px 0px 0px; }
-
-.hero-filters li button { display:inline-block; width:75px; height:75px; overflow:hidden; background-repeat: no-repeat; background-image:url('../img/hots/heroes/hots-hero-select.png'); border-radius: 50%; border: 3px solid #FFF; text-indent: -99999px; background-color: rgba(39,102,173,.2); outline: none; opacity: 1; transition: transform .25s ease-in-out, opacity .25s ease-in-out, background-color .25s ease-in-out; }
-.hero-filters li button:hover { background-color: #2766ad; }
-.hero-filters li button.empty { background-image: none; cursor: default; opacity: .3; }
-.hero-filters li button.empty:hover { background-color: rgba(39,102,173,.2); }
-
-.hero-filters li button.filtered { transform: scale(.9,.9); opacity: .3; }
-.hero-filters li button.not-selected { opacity: .3; }
-.hero-filters li button.not-selected:hover { opacity: .8; }
-.hero-filters li button.active { background-color: rgba(255,255,255,1); }
-
-.hero-filters li button.abathur {width:75px; height:75px; background-position: -2px -2px}
-.hero-filters li button.anub-arak {width:75px; height:75px; background-position: -2px -79px}
-.hero-filters li button.artanis {width:75px; height:75px; background-position: -79px -2px}
-.hero-filters li button.arthas {width:75px; height:75px; background-position: -79px -79px}
-.hero-filters li button.azmodan {width:75px; height:75px; background-position: -156px -2px}
-.hero-filters li button.brightwing {width:75px; height:75px; background-position: -156px -79px}
-.hero-filters li button.chen {width:75px; height:75px; background-position: -233px -2px}
-.hero-filters li button.diablo {width:75px; height:75px; background-position: -233px -79px}
-.hero-filters li button.etc {width:75px; height:75px; background-position: -310px -2px}
-.hero-filters li button.falstad {width:75px; height:75px; background-position: -310px -79px}
-.hero-filters li button.gazlowe {width:75px; height:75px; background-position: -387px -2px}
-.hero-filters li button.illidan {width:75px; height:75px; background-position: -387px -79px}
-.hero-filters li button.jaina {width:75px; height:75px; background-position: -464px -2px}
-.hero-filters li button.johanna {width:75px; height:75px; background-position: -464px -79px}
-.hero-filters li button.kaelthas {width:75px; height:75px; background-position: -541px -2px}
-.hero-filters li button.kerrigan {width:75px; height:75px; background-position: -541px -79px}
-.hero-filters li button.kharazim {width:75px; height:75px; background-position: -618px -2px}
-.hero-filters li button.leoric {width:75px; height:75px; background-position: -618px -79px}
-.hero-filters li button.lili {width:75px; height:75px; background-position: -695px -2px}
-.hero-filters li button.malfurion {width:75px; height:75px; background-position: -695px -79px}
-.hero-filters li button.morales {width:75px; height:75px; background-position: -772px -2px}
-.hero-filters li button.muradin {width:75px; height:75px; background-position: -772px -79px}
-.hero-filters li button.murky {width:75px; height:75px; background-position: -849px -2px}
-.hero-filters li button.nazeebo {width:75px; height:75px; background-position: -849px -79px}
-.hero-filters li button.nova {width:75px; height:75px; background-position: -926px -2px}
-.hero-filters li button.raynor {width:75px; height:75px; background-position: -926px -79px}
-.hero-filters li button.rehgar {width:75px; height:75px; background-position: -1003px -2px}
-.hero-filters li button.rexxar {width:75px; height:75px; background-position: -1003px -79px}
-.hero-filters li button.sgthammer {width:75px; height:75px; background-position: -1080px -2px}
-.hero-filters li button.sonya {width:75px; height:75px; background-position: -1080px -79px}
-.hero-filters li button.stitches {width:75px; height:75px; background-position: -1157px -2px}
-.hero-filters li button.sylvanas {width:75px; height:75px; background-position: -1157px -79px}
-.hero-filters li button.tassadar {width:75px; height:75px; background-position: -1234px -2px}
-.hero-filters li button.the-butcher {width:75px; height:75px; background-position: -1234px -79px}
-.hero-filters li button.thelostvikings {width:75px; height:75px; background-position: -1311px -2px}
-.hero-filters li button.thrall {width:75px; height:75px; background-position: -1311px -79px}
-.hero-filters li button.tychus {width:75px; height:75px; background-position: -1388px -2px}
-.hero-filters li button.tyrael {width:75px; height:75px; background-position: -1388px -79px}
-.hero-filters li button.tyrande {width:75px; height:75px; background-position: -1465px -2px}
-.hero-filters li button.uther {width:75px; height:75px; background-position: -1465px -79px}
-.hero-filters li button.valla {width:75px; height:75px; background-position: -1542px -2px}
-.hero-filters li button.zagara {width:75px; height:75px; background-position: -1542px -79px}
-.hero-filters li button.zeratul {width:75px; height:75px; background-position: -1619px -2px}
-
-@media (max-width: 767px) {
-    .hero-filters li button { width:43px; height:43px; background-image:url('../img/hots/heroes/hots-hero-select-small.png'); }
-
-    .hero-filters li button.abathur {width:43px; height:43px; background-position: -2px -2px}
-    .hero-filters li button.anub-arak {width:43px; height:43px; background-position: -47px -2px}
-    .hero-filters li button.artanis {width:43px; height:43px; background-position: -92px -2px}
-    .hero-filters li button.arthas {width:43px; height:43px; background-position: -137px -2px}
-    .hero-filters li button.azmodan {width:43px; height:43px; background-position: -182px -2px}
-    .hero-filters li button.brightwing {width:43px; height:43px; background-position: -227px -2px}
-    .hero-filters li button.chen {width:43px; height:43px; background-position: -272px -2px}
-    .hero-filters li button.diablo {width:43px; height:43px; background-position: -317px -2px}
-    .hero-filters li button.etc {width:43px; height:43px; background-position: -362px -2px}
-    .hero-filters li button.falstad {width:43px; height:43px; background-position: -407px -2px}
-    .hero-filters li button.gazlowe {width:43px; height:43px; background-position: -452px -2px}
-    .hero-filters li button.illidan {width:43px; height:43px; background-position: -497px -2px}
-    .hero-filters li button.jaina {width:43px; height:43px; background-position: -542px -2px}
-    .hero-filters li button.johanna {width:43px; height:43px; background-position: -587px -2px}
-    .hero-filters li button.kaelthas {width:43px; height:43px; background-position: -632px -2px}
-    .hero-filters li button.kerrigan {width:43px; height:43px; background-position: -677px -2px}
-    .hero-filters li button.kharazim {width:43px; height:43px; background-position: -722px -2px}
-    .hero-filters li button.leoric {width:43px; height:43px; background-position: -767px -2px}
-    .hero-filters li button.lili {width:43px; height:43px; background-position: -812px -2px}
-    .hero-filters li button.malfurion {width:43px; height:43px; background-position: -857px -2px}
-    .hero-filters li button.morales {width:43px; height:43px; background-position: -902px -2px}
-    .hero-filters li button.muradin {width:43px; height:43px; background-position: -947px -2px}
-    .hero-filters li button.murky {width:43px; height:43px; background-position: -992px -2px}
-    .hero-filters li button.nazeebo {width:43px; height:43px; background-position: -1037px -2px}
-    .hero-filters li button.nova {width:43px; height:43px; background-position: -1082px -2px}
-    .hero-filters li button.raynor {width:43px; height:43px; background-position: -1127px -2px}
-    .hero-filters li button.rehgar {width:43px; height:43px; background-position: -1172px -2px}
-    .hero-filters li button.rexxar {width:43px; height:43px; background-position: -1217px -2px}
-    .hero-filters li button.sgthammer {width:43px; height:43px; background-position: -1262px -2px}
-    .hero-filters li button.sonya {width:43px; height:43px; background-position: -1307px -2px}
-    .hero-filters li button.stitches {width:43px; height:43px; background-position: -1352px -2px}
-    .hero-filters li button.sylvanas {width:43px; height:43px; background-position: -1397px -2px}
-    .hero-filters li button.tassadar {width:43px; height:43px; background-position: -1442px -2px}
-    .hero-filters li button.the-butcher {width:43px; height:43px; background-position: -1487px -2px}
-    .hero-filters li button.thelostvikings {width:43px; height:43px; background-position: -1532px -2px}
-    .hero-filters li button.thrall {width:43px; height:43px; background-position: -1577px -2px}
-    .hero-filters li button.tychus {width:43px; height:43px; background-position: -1622px -2px}
-    .hero-filters li button.tyrael {width:43px; height:43px; background-position: -1667px -2px}
-    .hero-filters li button.tyrande {width:43px; height:43px; background-position: -1712px -2px}
-    .hero-filters li button.uther {width:43px; height:43px; background-position: -1757px -2px}
-    .hero-filters li button.valla {width:43px; height:43px; background-position: -1802px -2px}
-    .hero-filters li button.zagara {width:43px; height:43px; background-position: -1847px -2px}
-    .hero-filters li button.zeratul {width:43px; height:43px; background-position: -1892px -2px}
-}
+/* ------------------------- */
+/* hots home - maps - moved to hots-home */
+/* ------------------------- */
 
 /* -------------------------------- */
 /* .hero-back.hero moved to hots-heroes.scss
 /* -------------------------------- */
 
-.filters-maps {}
-.filters-maps ul { margin: 0; padding: 0; }
-.filters-maps ul li { list-style: none; display: inline-block; margin: 0 10px 10px 0; }
-.filters-maps ul li:last-child { margin-right: 0px; }
 
-.filters-maps ul li button { display:inline-block; width:55px; height:55px; border-radius: 50%; border: 2px solid #FFF; overflow:hidden; background-repeat: no-repeat; background: url('../img/hots/maps/hots-map-sprite.png'); white-space: nowrap; text-indent: -99999px; outline: none; transition: transform .25s ease-in-out, opacity .25s ease-in-out; }
 
-.filters-maps ul li button.not-selected { opacity: .3; transform: scale(.9,.9); }
-
-.filters-maps ul li button.battlefield-of-eternity { background-position: -2px -2px; }
-.filters-maps ul li button.blackheartsbay { background-position: -59px -2px; }
-.filters-maps ul li button.cursedhollow { background-position: -116px -2px; }
-.filters-maps ul li button.dragonshrine { background-position: -173px -2px; }
-.filters-maps ul li button.gardenofterror { background-position: -230px -2px; }
-.filters-maps ul li button.hauntedmines { background-position: -287px -2px; }
-.filters-maps ul li button.skytemple { background-position: -344px -2px; }
-.filters-maps ul li button.tomb-of-the-spider-queen { background-position: -401px -2px; }
-
-.filters-maps ul li button.battlefield-of-eternity {width:55px; height:55px; background-position: -2px -2px}
-.filters-maps ul li button.blackheartsbay {width:55px; height:55px; background-position: -59px -2px}
-.filters-maps ul li button.cursedhollow {width:55px; height:55px; background-position: -116px -2px}
-.filters-maps ul li button.dragonshrine {width:55px; height:55px; background-position: -173px -2px}
-.filters-maps ul li button.gardenofterror {width:55px; height:55px; background-position: -230px -2px}
-.filters-maps ul li button.hauntedmines {width:55px; height:55px; background-position: -287px -2px}
-.filters-maps ul li button.shrine {width:55px; height:55px; background-position: -344px -2px}
-.filters-maps ul li button.skytemple {width:55px; height:55px; background-position: -401px -2px}
-.filters-maps ul li button.tomb-of-the-spider-queen {width:55px; height:55px; background-position: -458px -2px}
-
-/* hs - content */
-.hs-content { margin-right: -10px; padding-top: 80px; }
-.hs-content > .row { margin: 0 auto; max-width: 1448px; }
-.hs-content h1.title { font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
-.hs-content h3.sub-title { font-size: 14px; color: #d3eefa; }
-
-/* hots - home content */
-.hots-content { margin-right: -10px; padding-top: 80px; }
-.hots-content > .row { margin: 0 auto; max-width: 1448px; }
-.hots-content h1.title { font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
-.hots-content h3.sub-title { font-size: 14px; color: #d3eefa; }
-
-.hots-article { position: relative; top: 0px; left: 0px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out; }
-.hots-article:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
-.hots-article .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 2; }
-.hots-article .hots-article-content { margin: -1px 1px 0px 1px; padding: 15px 20px 20px 20px; border-top: 1px solid rgba(255,255,255,.2); }
-.hots-article .hots-article-content h1 { margin-bottom: 20px; font-family: 'Open Sans Bold'; font-size: 16px; letter-spacing: 2px; color: #8968ad; padding-right: 15px; }
-.hots-article .hots-article-content p { margin-bottom: 0px; color: #bababa; }
-
-/* hots - home guides list */
-.hots-guides { margin: 0; padding: 0; }
-.hots-guides li { list-style: none; margin-bottom: 10px; }
-.hots-guide { position: relative; top: 0px; left: 0px; display: block; height: 99px; padding: 10px 15px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }
-.hots-guide.small:hover,
-.hots-guide.large:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
-.hots-guide.large { height: 220px; }
-
-.hots-guide .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 4; }
-.hots-guide .bt-shadow { position: absolute; right: 0px; bottom: 0px; left: 0px; height: 40px; background: url('../img/hots/bt-shadow.png') repeat-x; z-index: 2; }
-.hots-guide .hots-guide-owner { position: absolute; right: 15px; bottom: 55px; z-index: 6; }
-.hots-guide h1 { padding-right: 30px; font-family: 'Open Sans Bold'; font-size: 10px; color: #f7ef22; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
-.hots-guide h3 { padding-right: 30px; font-size: 12px; color: #ccc; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
-
-.hots-guide .hots-guide-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
-.hots-guide .hero-flip { position: absolute; bottom: 7px; right: 5px; z-index: 6; }
-.hots-guide.small .hots-guide-votes,
-.hots-guide.large .hots-guide-votes { position: absolute; top: 30px; right: 5px; width: 30px; height: 30px; line-height: 26px; border-radius: 50%; border: 2px solid #FFF; background: rgba(0,0,0,.7); color: #FFF; font-size: 12px; text-align: center; opacity: .7; z-index: 3; }
-.hots-guide .hots-guide-talents { margin: 0; padding: 5px 0 0 5px; position: absolute; bottom: 0px; left: 0px; right: 0px; height: 40px; z-index: 5; }
-.hots-guide .hots-guide-talents li { list-style: none; float: left; margin: 0 5px 0 0; width: 30px; height: 30px; }
-
-.hots-guide.large .hots-guide-talents { left: 10px; bottom: 10px; }
-
-.hots-guide.long h1 { margin: 12px 0 18px 0; font-size: 14px; }
-.hots-guide.long .hots-guide-talents { bottom: 50%; margin-bottom: -20px; }
-.hots-guide.long .hots-guide-votes,
-.hots-guide.long .hots-guide-hero-name { margin-bottom: 0; font-family: 'Open Sans Bold'; font-size: 14px; color: #FFF; line-height: 79px; }
-.hots-guide.long .hots-guide-hero-name { text-shadow: 0px 0px 10px rgba(255,255,255,.6); }
-.hots-guide.long:hover { background-color: rgba(255,255,255,.2); }
 
 /* tempostorm tv */
 .tempostorm-tv { margin: 0; padding: 0; }
@@ -4589,543 +3567,19 @@ p.white { color: #FFF; }
     .tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content { margin-left: 0px; }
 }
 
-/* ------------------------------------- */
-/* guide images moved to hots-heroes */
-/* ------------------------------------- */
-
-/* ------------------------------------- */
-/* hots map guide images - moved to hots-maps */ 
-/* ------------------------------------- */
-
-/* hots guide list */
-.tri-bottom { background: url('../img/hots/tri-bottom.png') no-repeat center bottom; }
-.tri-top { background: url('../img/hots/tri-top.png') no-repeat center top; }
-.tri-both { background: url('../img/hots/tri-top.png') no-repeat center top, url('../img/hots/tri-bottom.png') no-repeat center bottom; }
-
-.hots-top-guide { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center -200px; }
-.hots-top-guide h1 { font-family: 'Open Sans Bold'; font-size: 40px; color: #FFF; text-shadow: 0px 0px 20px rgba(255,255,255,.6); text-transform: uppercase; }
-.hots-top-guide h3 { font-family: 'Open Sans Bold'; font-size: 20px; color: #d3eefa; letter-spacing: 2px; text-transform: uppercase; }
-.hots-top-guide p { padding: 0 0 72px 0; color: #FFF; max-width: 265px; }
-.hots-top-guide .btn { position: absolute; bottom: 0px; }
-.hots-top-guide-inner { padding: 20px 0px; }
-.hots-top-guide .hots-top-guide-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
-.hots-top-guide .hots-top-guide-votes { position: absolute; top: 0px; right: 30px; width: 60px; height: 60px; line-height: 56px; border-radius: 50%; border: 2px solid #FFF; background: rgba(0,0,0,.7); color: #FFF; font-size: 20px; text-align: center; opacity: .7; z-index: 3; }
-
-.hots-top-guide-talents { margin: 0; padding: 0; }
-.hots-top-guide-talents li { list-style: none; display: inline-block; vertical-align: top; }
-
 /*-----------------------------------------*/
-/* Hots top guide heroes moved to hots-heroes */
+/* guides styles moved to hots-guides */
 /*-----------------------------------------*/
 
-.hots-list-ts-guides { margin-top: 50px; margin-bottom: 50px; }
-.hots-list-ts-guides-wrapper { margin-right: -20px; }
-
-.hots-list-guides-title { margin: 0 0 30px 0; }
-.hots-list-guides-title h1 { float: left; font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
-.hots-list-guides-title .hots-mini-filters { float: right; }
-.hots-list-guides-title .hots-mini-filters .hero-roles,
-.hots-list-guides-title .hots-mini-filters .hero-universes,
-.hots-list-guides-title .hots-mini-filters .hots-filters-search { float: left; }
-.hots-list-guides-title .hots-mini-filters .hots-filters-search .input-group-btn { width: auto; }
-
-.hots-list-ts-guides .hots-list-ts-guides-title .hots-search { max-width: 200px; }
-
-.hots-list-ts-guides .hots-guides li .hots-guide { margin-right: 20px; }
-
-.hots-guide-list { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center top; }
-.hots-guide-list-inner { padding: 30px 0; }
-
-.hots-guides-long-title { margin-left: 0px; margin-right: 0px; padding: 15px 0px !important; border: 1px solid rgba(255,255,255,.3); background: rgba(77, 40, 108, .7); }
-.hots-guides-long-title h1 { margin-bottom: 0px; font-family: 'Open Sans Bold'; font-size: 14px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
-
-/* guides */
-.guide-header { background: #2766ad url('../img/hots/hots-blue-banner.png') no-repeat right top; border-bottom: 1px solid #083f7d; }
-.guide-header h1 { margin-top: 10px; font-family: 'Open Sans Bold'; color: #FFF; }
-.guide-header p,
-.guide-header p a { color: #FFF; }
-
-.guide-votes { margin: 15px 0; }
-
-.guide-page .guide-right { float: right; width: 300px; }
-.guide-page .guide-left { margin-right: 320px; overflow: hidden; }
-
-.guide-page .guide-content { position: relative; }
-.guide-page .guide-content iframe { width: 100% !important; }
-
-.guide-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
-.guide-section-title { font-size: 20px; line-height: 60px; min-height: 60px; color: #FFF; background: rgba(0,0,0,.3); }
-.guide-section-title a { color: #FFF; }
-.guide-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; }
-.guide-section-content { padding: 20px; border-top: 1px solid #000; }
-.guide-section-content.unpadded { padding: 0px; }
-.guide-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
-.guide-section-content p { color: #FFF; }
-
-.guide-heroes { margin-right: -20px; }
-.guide-hero-wrapper { float: left; padding-right: 20px; }
-.guide-hero { border: 1px solid #000; opacity: .5; }
-.guide-hero:hover { opacity: .8; }
-.guide-hero.active { border: 1px solid #2766ad; opacity: 1; }
-
-.guide-hero a { text-decoration: none; }
-
-.guide-hero-title { padding: 5px 10px; font-family: 'Open Sans Bold'; color: #FFF; text-transform: uppercase; background: #222; }
-.guide-hero.active .guide-hero-title { background: #2766ad; }
-.guide-hero-image { height: 60px; border-top: 1px solid #000; }
-.guide-hero.active .guide-hero-image { border-top: 1px solid #2766ad; }
-
-
 /*-----------------------------------------*/
-/* Hots top guide heroes image moved to hots-heroes */
+/* talent calculator styles moved to tc-styles */
 /*-----------------------------------------*/
 
-.guide-heroes-1 { width: 100%; }
-.guide-heroes-2 { width: 50%; }
-.guide-heroes-3 { width: 33.33%; }
-.guide-heroes-4 { width: 25%; }
-.guide-heroes-5 { width: 20%; }
-
-.guide-talents { margin-right: -10px; }
-.guide-talent-wrapper { float: left; width: 14.28%; padding-right: 10px; }
-.guide-talent { border: 1px solid #000; background: rgba(0,0,0,.4); }
-.guide-talent-level { padding: 5px 0px; font-family: 'Open Sans Bold'; color: #FFF; text-transform: uppercase; background: #2766ad; text-align: center; border-bottom: 1px solid #000; }
-.guide-talent-icon { margin: 10px auto; }
-
-.guide-talent-dots { margin: 10px auto; width: 80px; padding: 3px 0; text-align: center; border-radius: 4px; background: rgba(0,0,0,.3); border: 1px solid rgba(0,0,0,.8); }
-.guide-talent-dot { margin-right: 3px; display: inline-block; *display: inline; zoom: 1; width: 10px; height: 10px; background: #666; border-radius: 50%; }
-.guide-talent-dot:last-child { margin-right: 0px; }
-.guide-talent-dot.active { background: #2766ad; }
-
-.guide-map-header { margin-bottom: 20px; width: 100%; height: auto; }
-.guide-content-title { text-transform: uppercase; }
-
-/* guide synergy */
-.guide-synergy,
-.guide-strong,
-.guide-weak { border: 1px solid #000; padding: 10px 20px; }
-
-.guide-synergy { background: #6cbd45; }
-.guide-strong { background: #2766ad; }
-.guide-weak { background: #e94c3d; }
-
-.guide-synergy h1,
-.guide-strong h1,
-.guide-weak h1 { margin: 0; font-size: 20px; font-family: 'Open Sans Bold'; color: #FFF; }
-
-.guide-synergy span,
-.guide-strong span,
-.guide-weak span { font-size: 10px; color: #FFF; }
-
-.guide-votes { float: right; }
-
-.guide-video { width: 100%; border: none; }
-
-.guide-maps { padding: 0 20px 20px 0; }
-.guide-map { float: left; margin: 20px 0 0 20px; display: block; width: 92px; height: 92px; }
-.guide-map.blackheartsbay { background: url('../img/hots/maps/blackheart_small.png') no-repeat center center; }
-.guide-map.cursedhollow { background: url('../img/hots/maps/cursed_small.png') no-repeat center center; }
-.guide-map.dragonshrine { background: url('../img/hots/maps/dragon_small.png') no-repeat center center; }
-.guide-map.gardenofterror { background: url('../img/hots/maps/terror_small.png') no-repeat center center; }
-.guide-map.hauntedmines { background: url('../img/hots/maps/mine_small.png') no-repeat center center; }
-.guide-map.skytemple { background: url('../img/hots/maps/sky_small.png') no-repeat center center; }
-.guide-map.tomb-of-the-spider-queen { background: url('../img/hots/maps/spider_small.png') no-repeat center center; }
-.guide-map.battlefield-of-eternity { background: url('../img/hots/maps/bfoe_small.png') no-repeat center center; }
-.guide-map.shrine { background: url('../img/hots/maps/shrine_small.png') no-repeat center center; }
-
-.guide-subscribe > h1 { margin-top: 20px; color: #2766ad; font-family: 'Open Sans Bold'; }
-.guide-subscribe > h2 { margin-bottom: 20px; font-size: 20px; color: #FFF; }
-
-/* guide builder link */
-.guide-builder-link { padding: 2px; width: 100%; height: 200px; background: #90d7ed; /* Old browsers */
-    background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* IE10+ */
-    background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); /* IE6-9 */
-    -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
-.guide-builder-link-inner { position: relative; height: 196px; background: #141316 url('../img/hots/modal/modalbg.jpg') no-repeat right top; }
-.guide-builder-link-inner a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/hots/guide-builder-button.png') no-repeat; background-position: center 0px; -webkit-transition: background-position ease-in-out .3s; transition: background-position ease-in-out .3s; }
-.guide-builder-link-inner a:hover { background-position: center -196px; }
-
-/* talent calculator */
-.tc-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
-.tc-section-title { font-size: 20px; line-height: 60px; min-height: 60px; color: #FFF; background: rgba(0,0,0,.3); border-top: none; }
-.tc-section-title h3 { margin: 0 20px 0; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; text-transform: uppercase; }
-
-.tc-characters { border-top: 1px solid #000; }
-.tc-characters .tc-character { margin-right: 10px; padding: 5px 10px; color: #FFF; font-size: 14px; background: rgba(0,0,0,.4); border: 1px solid #000; }
-.tc-characters .tc-character:last-child { margin-right: 0px; }
-.tc-characters .tc-character.active { background: #2766ad; }
-
-.tc-section-content { padding: 20px; border-top: 1px solid #000; }
-.tc-section-content.unpadded { padding: 0px; }
-.tc-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
-.tc-section-content p { color: #FFF; }
-
-.tc-section .hero-list { padding-right: 3px; max-height: 435px; overflow-y: scroll; }
-
-.tc-abilities-title,
-.tc-heroics-title,
-.tc-trait-title { padding: 3px 10px; font-size: 14px; color: #FFF; letter-spacing: 2px; }
-
-.tc-abilities-title { background: #2766ad; }
-.tc-heroics-title { background: #a9782a; }
-.tc-trait-title { background: #4d286c; }
-
-.tc-ability,
-.tc-heroic,
-.tc-trait { padding: 5px 0; }
-
-.tc-ability-wrapper,
-.tc-heroic-wrapper,
-.tc-trait-wrapper { padding: 2px; cursor: pointer; }
-
-.tc-ability-wrapper:hover,
-.tc-ability-wrapper:hover .tc-ability,
-.tc-ability-wrapper.active .tc-ability { background: #2c3d59; }
-
-.tc-heroic-wrapper:hover,
-.tc-heroic-wrapper:hover .tc-heroic,
-.tc-heroic-wrapper.active .tc-heroic { background: #54422a; }
-
-.tc-trait-wrapper:hover,
-.tc-trait-wrapper:hover .tc-trait,
-.tc-trait-wrapper.active .tc-trait { background: #342544; }
-
-.tc-ability-wrapper.active { background: #90d7ed; background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); }
-
-.tc-heroic-wrapper.active { background: #e49625; background: -moz-linear-gradient(top,  #e49625 42%, #87371c 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(42%,#e49625), color-stop(100%,#87371c)); background: -webkit-linear-gradient(top,  #e49625 42%,#87371c 100%); background: -o-linear-gradient(top,  #e49625 42%,#87371c 100%); background: -ms-linear-gradient(top,  #e49625 42%,#87371c 100%); background: linear-gradient(to bottom,  #e49625 42%,#87371c 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e49625', endColorstr='#87371c',GradientType=0 ); }
-
-.tc-trait-wrapper.active { background: #ba86bb; background: -moz-linear-gradient(top,  #ba86bb 42%, #692c78 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(42%,#ba86bb), color-stop(100%,#692c78)); background: -webkit-linear-gradient(top,  #ba86bb 42%,#692c78 100%); background: -o-linear-gradient(top,  #ba86bb 42%,#692c78 100%); background: -ms-linear-gradient(top,  #ba86bb 42%,#692c78 100%); background: linear-gradient(to bottom,  #ba86bb 42%,#692c78 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ba86bb', endColorstr='#692c78',GradientType=0 ); }
-
-.tc-ability-wrapper:hover .talents-icon,
-.tc-heroic-wrapper:hover .talents-icon,
-.tc-trait-wrapper:hover .talents-icon,
-.tc-ability-wrapper.active .talents-icon,
-.tc-heroic-wrapper.active .talents-icon,
-.tc-trait-wrapper.active .talents-icon { opacity: 1; }
-
-.tc-ability .talents-icon,
-.tc-heroic .talents-icon,
-.tc-trait .talents-icon { margin: 0 auto; }
-
-.tc-talents-tiers { margin: 0; padding: 0; }
-.tc-talents-tiers li { list-style: none; height: 40px; }
-.tc-talents-tiers li span { float: left; line-height: 30px; padding: 5px; margin-right: 5px; color: #FFF; width: 40px; height: 40px; text-align: center; border: 1px solid #000; background: rgba(0,0,0,.3); }
-.tc-talents-icons { margin: 0; padding: 0; float: left; }
-.tc-talents-icons li { float: left; list-style: none; margin-right: 5px; padding: 5px; width: 40px; height: 40px; }
-.tc-talents-icons li:last-child { margin-right: 0px; }
-
-.tc-damage { height: 280px; background: rgba(0,0,0,.8); box-shadow: 0px 0px 5px rgba(0,0,0,.5); overflow-y: auto; }
-.tc-damage.tc-damage-ability { border: 2px solid #2766ad; }
-.tc-damage.tc-damage-heroic { border: 2px solid #a9782a; }
-.tc-damage.tc-damage-trait { border: 2px solid #4d286c; }
-
-.tc-damage .talents-icon { position: absolute; top: 0px; left: 0px; opacity: 1; }
-.tc-damage .tc-damage-ability h3 { padding-left: 50px; color: #4791d0; text-transform: uppercase; font-family: 'Open Sans Bold' text-shadow: 2px 2px 2px rgba(0,0,0,.75); }
-.tc-damage .tc-damage-talent h3 { padding-left: 50px; color: #e8cc00; font-size: 12px; text-transform: uppercase; font-family: 'Open Sans Bold' text-shadow: 2px 2px 2px rgba(0,0,0,.75); }
-.tc-damage p { padding-left: 50px; font-size: 10px; }
-
-.tc-data-fix { margin-right: -10px !important; }
-.tc-datas { }
-.tc-data-wrapper { float: left; padding-right: 10px; width: 50%; }
-.tc-data {  }
-.tc-data-title { padding: 3px 10px; font-size: 14px; color: #FFF; letter-spacing: 2px; text-align: center; text-transform: uppercase; }
-.tc-data-green .tc-data-title { background: #24aa51; }
-.tc-data-blue .tc-data-title { background: #2766ad; }
-.tc-data-yellow .tc-data-title { background: #ebc41b; }
-.tc-data-red .tc-data-title { background: #aa2526; }
-
-.tc-data-number { padding: 10px 0px; font-size: 24px; color: #bbb; text-align: center; background: #000; }
-
-.tc-url-box { padding: 7px 10px; border: 1px solid #000; background: rgba(0,0,0,.4); }
-.tc-url { font-size: 10px; text-align: right !important; }
-
-.tc-levels { margin-right: 0px; margin-left: 0px; border: 1px solid #000; background: rgba(0,0,0,.4); }
-.tc-level-title,
-.tc-level { line-height: 46px; color: #FFF; font-size: 14px; letter-spacing: 2px; }
-.tc-level { text-align: center; }
-.tc-level-slider { margin-right: 40px; }
-
-.tc-hero { }
-
 /*-----------------------------------------*/
-/*tc-hero.hero moved to hots-heroes mixin */
+/* talent calculator range styles moved to tc-styles */
 /*-----------------------------------------*/
-
-
-/* talent calculator link */
-.talent-calculator-link { padding: 2px; width: 100%; height: 200px; background: #9b81b6; /* Old browsers */
-    background: -moz-linear-gradient(top,  #9b81b6 40%, #6b3f98 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(40%,#9b81b6), color-stop(100%,#6b3f98)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #9b81b6 40%,#6b3f98 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #9b81b6 40%,#6b3f98 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #9b81b6 40%,#6b3f98 100%); /* IE10+ */
-    background: linear-gradient(to bottom,  #9b81b6 40%,#6b3f98 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9b81b6', endColorstr='#6b3f98',GradientType=0 ); /* IE6-9 */
-    -webkit-animation-name: glow-purple; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow-purple; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite; }
-.talent-calculator-link-inner { position: relative; height: 196px; background: url('../img/hots/talent-calculator-back.jpg') right top; }
-.talent-calculator-link-inner a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/hots/talent-calculator-front.png') no-repeat; background-position: center 0px; -webkit-transition: background-position ease-in-out .3s; transition: background-position ease-in-out .3s; }
-.talent-calculator-link-inner a:hover { background-position: center -196px; }
-
-
-/* range */
-input[type=range] {
-  -webkit-appearance: none;
-  margin: 18px 0;
-  width: 100%;
-}
-input[type=range]:focus {
-  outline: none;
-}
-input[type=range]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 8.4px;
-  cursor: pointer;
-  animate: 0.2s;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  background: #3071a9;
-  border-radius: 1.3px;
-  border: 0.2px solid #010101;
-}
-input[type=range]::-webkit-slider-thumb {
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  border: 1px solid #000000;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: #ffffff;
-  cursor: pointer;
-  -webkit-appearance: none;
-  margin-top: -6px;
-}
-input[type=range]:focus::-webkit-slider-runnable-track {
-  background: #367ebd;
-}
-input[type=range]::-moz-range-track {
-  width: 100%;
-  height: 8.4px;
-  cursor: pointer;
-  animate: 0.2s;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  background: #3071a9;
-  border-radius: 1.3px;
-  border: 0.2px solid #010101;
-}
-input[type=range]::-moz-range-thumb {
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  border: 1px solid #000000;
-  height: 36px;
-  width: 16px;
-  border-radius: 3px;
-  background: #ffffff;
-  cursor: pointer;
-}
-input[type=range]::-ms-track {
-  width: 100%;
-  height: 8.4px;
-  cursor: pointer;
-  animate: 0.2s;
-  background: transparent;
-  border-color: transparent;
-  border-width: 16px 0;
-  color: transparent;
-}
-input[type=range]::-ms-fill-lower {
-  background: #2a6495;
-  border: 0.2px solid #010101;
-  border-radius: 2.6px;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-}
-input[type=range]::-ms-fill-upper {
-  background: #3071a9;
-  border: 0.2px solid #010101;
-  border-radius: 2.6px;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-}
-input[type=range]::-ms-thumb {
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  border: 1px solid #000000;
-  height: 36px;
-  width: 16px;
-  border-radius: 3px;
-  background: #ffffff;
-  cursor: pointer;
-}
-input[type=range]:focus::-ms-fill-lower {
-  background: #3071a9;
-}
-input[type=range]:focus::-ms-fill-upper {
-  background: #367ebd;
-}
 
 /* contact */
 .contact-wrapper { background: url(../img/black-60.png); background-size: 100%; padding: 20px; border-radius: 4px; border: 1px solid #000; }
 .contact-wrapper p { color: #FFF; margin: 0; }
 .contact-banner { background: #2766ad; min-height: 54px; border-bottom: #083f7d; }
-
-/* mobile */
-@media (min-width: 768px) {
-}
-
-@media (min-width: 1199px) {
-    .col-lg-20p { width: 20%; }
-}
-
-
-
-@media (min-width: 768px) and (max-width: 1199px) {
-    /* HOME FEEDS */
-    .twitch-feed { padding-right: 10px; }
-    .twitter-feed { padding-left: 10px; }
-    
-    /* filters */
-    .filter-bar h1 { font-size: 20px; line-height: 32px; }
-    .filter-bar h1 br { display: none; }
-    .filter-class li { margin-right: 10px; width: 31px; height: 32px; }
-    .filter-class li a { width: 31px; height: 32px; }
-    .filter-class li a.warlock { background-position: -124px 0px; }
-    .filter-class li a.warrior { background-position: -124px -32px; }
-    .filter-class li a.hunter { background-position: -124px -64px; }
-    .filter-class li a.rogue { background-position: -124px -96px; }
-    .filter-class li a.priest { background-position: -124px -128px; }
-    .filter-class li a.paladin { background-position: -124px -160px; }
-    .filter-class li a.mage { background-position: -124px -192px; }
-    .filter-class li a.druid { background-position: -124px -224px; }
-    .filter-class li a.shaman { background-position: -124px -256px; }
-    .filter-class li a.all { background-position: -124px -288px; }
-    
-    /* article */
-    .article-page .article-left { margin-right: 0px; }
-    .article-page .article-right { display: none; }
-    
-    /* talent calc */
-    .tc-section-content { background-image: none !important; }
-
-    /* guides */
-    .gb-steps { padding: 0 30px; position: relative; }
-    .gb-steps li { display: none; float: none; }
-    .gb-steps li.active,
-    .gb-steps li.steps-arrow-prev,
-    .gb-steps li.steps-arrow-next { display: block; }
-    .gb-steps li.steps-arrow-prev,
-    .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
-    .gb-steps li.steps-arrow-prev { left: 0px; }
-    .gb-steps li.steps-arrow-next { right: 0px; }
-    
-    .gb-steps li.active,
-    .gb-steps li.active button { width: 100%; }
-
-}
-
-@media (min-width: 768px) and (max-width: 979px) {
-    /* home */
-    .twitch-feed { padding-right: 0px; }
-    .twitter-feed { padding-left: 0px; }
-    
-    /* forums */
-    .forum-post { padding-right: 0px; }
-    
-    /* decks */
-    .deck-page .deck-right { float: none; margin: 0 auto; }
-    .deck-page .deck-left { margin-right: 0px; }
-
-    /* talent calc */
-    .tc-section-content { background-image: none !important; }
-    
-    /* guides */
-    .guide-header { background: #2766ad; }
-    .guide-header h1 { font-size: 20px; }
-    .guide-hero-wrapper { margin: 0 0 10px 0; width: 100%; }
-    .guide-hero-wrapper:last-child { margin: 0; }
-
-    .gb-steps { padding: 0 30px; position: relative; }
-    .gb-steps li { display: none; float: none; }
-    .gb-steps li.active,
-    .gb-steps li.steps-arrow-prev,
-    .gb-steps li.steps-arrow-next { display: block; }
-    .gb-steps li.steps-arrow-prev,
-    .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
-    .gb-steps li.steps-arrow-prev { left: 0px; }
-    .gb-steps li.steps-arrow-next { right: 0px; }
-    
-    .gb-steps li.active,
-    .gb-steps li.active button { width: 100%; }
-
-}
-
-@media (max-width: 767px) {
-    /* home */
-    .twitch-feed { padding-right: 0px; }
-    .twitter-feed { padding-left: 0px; }
-    
-    /* banners */
-    
-    .games-btn {height: 110px; }
-    .games-btn:hover .games-btn-back { -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); opacity: 1; }
-    .games-btn:hover .games-btn-logo { -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); }
-    
-    .games-btn-logo {width: 200px;}
-    
-    /* filters */
-    .filter-bar { display: none; }
-    .filter-class li { display: none; }
-    .filter-class li.active { display: block; }
-    
-    /* forum */
-    .forum-post { padding-right: 0px; }
-
-    /* article */
-    .article-page .article-left { margin-right: 0px; }
-    .article-page .article-right { display: none; }
-    
-    /* deck builder */
-    .db-steps li { display: none; }
-    .db-steps li.steps-arrow,
-    .db-steps li.active { display: block; }
-    
-    /* decks */
-    .deck-page .deck-right { float: none; margin: 0 auto; }
-    .deck-page .deck-left { margin-right: 0px; }
-    .deck-header-inner { background: #2766ad !important; }
-    
-    /* team page */
-    .team-member { margin-left: 25px; }
-    .team-member-content { padding-left: 35px; }
-    .team-member-content h1 { font-size: 18px; }
-    .team-member-photo { left: -25px; width: 50px; height: 50px; }
-    .team-member-photo img { width: 38px; height: 38px; }
-
-    /* talent calc */
-    .tc-section-content { background-image: none !important; }
-
-    /* guides */
-    .guide-header { background: #2766ad; }
-    .guide-header h1 { font-size: 20px; }
-    .guide-hero-wrapper { margin: 0 0 10px 0; width: 100%; }
-    .guide-hero-wrapper:last-child { margin: 0; }
-    
-    .gb-steps { padding: 0 30px; position: relative; }
-    .gb-steps li { display: none; float: none; }
-    .gb-steps li.active,
-    .gb-steps li.steps-arrow-prev,
-    .gb-steps li.steps-arrow-next { display: block; }
-    .gb-steps li.steps-arrow-prev,
-    .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
-    .gb-steps li.steps-arrow-prev { left: 0px; }
-    .gb-steps li.steps-arrow-next { right: 0px; }
-    
-    .gb-steps li.active,
-    .gb-steps li.active button { width: 100%; }
-        
-    /* polls */
-    .poll-page .poll-left { margin-right: 20px; }
-    .poll-item-img-wrapper,
-    .poll-item-img-wrapper:hover { 
-        transition-property: none;
-        transition-duration: 0s; !important 
-    }
-}
