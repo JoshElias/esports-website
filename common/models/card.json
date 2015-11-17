@@ -2,8 +2,8 @@
   "name": "card",
   "plural": "cards",
   "base": "PersistedModel",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },

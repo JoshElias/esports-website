@@ -1243,7 +1243,7 @@ angular.module('app.services', [])
     
     return ow;
 })
-.factory('DeckBuilder', ['$sce', '$http', '$q', 'CardWithoutCoin', 'CardWithCoin', function ($sce, $http, $q, CardWithoutCoin, CardWithCoin) {
+.factory('DeckBuilder', ['$sce', '$http', '$q', '$timeout', 'CardWithoutCoin', 'CardWithCoin', function ($sce, $http, $q, $timeout, CardWithoutCoin, CardWithCoin) {
 
     var deckBuilder = {};
 
@@ -1258,15 +1258,12 @@ angular.module('app.services', [])
             name: data.name || '',
             slug: data.slug || '',
             deckType: data.deckType || 'None',
-            gameModeType: data.gameModeType || '',
+            gameModeType: data.gameModeType || 'constructed',
             description: data.description || '',
             playerClass: playerClass,
             createdDate: data.createdDate || new Date().toISOString(),
             chapters: data.chapters || [],
-            arena: data.arena || false,
-            type: data.type || 1,
             basic: data.basic || false,
-//            basic: data.basic || false,
             matchups: data.matchups || [],
             cards: data.cards || [],
             heroName: data.heroName || '',
@@ -1423,7 +1420,7 @@ angular.module('app.services', [])
                 }
             }
             
-            console.log('exists: ', exists);
+//            console.log('exists: ', exists);
             // card exists in client
             if (exists) {
                 cardMulligans.splice(index, 1);
@@ -1436,14 +1433,58 @@ angular.module('app.services', [])
                         card: card
                     };
                     cardMulligans.push(cardToAdd);
-                    console.log('added to mulligan: ', cardMulligans);
+//                    console.log('added to mulligan: ', cardMulligans);
                     return cardMulligans;
                 }
             }
         }
         
         db.toggleGameMode = function(gameMode) {
-            db.gameModeType = gameMode;
+            var cardQtyMoreThan2 = false;
+            if (gameMode === 'constructed' || gameMode === 'brawl') {
+                for(var i = 0; i < db.cards.length; i++) {
+                    if (db.cards[i].cardQuantity > 2) {
+                        cardQtyMoreThan2 = true;
+                        break;
+                    }
+                }
+                if (cardQtyMoreThan2) {
+                    // Alert user that all cards with more than 2 will be reduced to 2
+                    var box = bootbox.dialog({
+                        title: 'Are you sure you want to change this deck from <strong>' + db.gameModeType + '</strong> to <strong>' + gameMode + '</strong>?',
+                        message: 'All cards with more than 2 will be reduced to 2.',
+                        buttons: {
+                            delete: {
+                                label: 'Continue',
+                                className: 'btn-danger',
+                                callback: function () {
+                                    $timeout(function() {
+                                        for(var i = 0; i < db.cards.length; i++) {
+                                            if (db.cards[i].cardQuantity > 2) {
+                                                db.cards[i].cardQuantity = 2;
+                                            }
+                                        }
+                                        db.gameModeType = gameMode;
+                                    });
+                                }
+                            },
+                            cancel: {
+                                label: 'Cancel',
+                                className: 'btn-default pull-left',
+                                callback: function () {
+                                    box.modal('hide');
+                                }
+                            }
+                        },
+                        closeButton: false
+                    });
+                    box.modal('show');
+                } else {
+                    db.gameModeType = gameMode;
+                }
+            } else {
+                db.gameModeType = gameMode;
+            }
         };
 
         db.getMulligan = function (klass) {
@@ -1462,7 +1503,7 @@ angular.module('app.services', [])
         }
 
         db.isAddable = function (card) {
-            if (db.arena) { return true; }
+            if (db.gameModeType === 'arena') { return true; }
             
             var exists = false,
                 index = -1,
@@ -1478,7 +1519,7 @@ angular.module('app.services', [])
             }
 
             if (exists) {
-                return (!isLegendary && db.cards[index].cardQuantity === 1) || db.gameModeType === 'arena';
+                return (!isLegendary && db.cards[index].cardQuantity === 1);
             } else {
                 return true;
             }
@@ -1486,17 +1527,13 @@ angular.module('app.services', [])
 
         // add card
         db.addCard = function (card) {
-            console.log('card to add: ', card);
+//            console.log('card to add: ', card);
             var exists = false,
                 index = -1,
                 isLegendary = (card.rarity === 'Legendary') ? true : false,
                 totalCards = db.getSize();
             
-            if(totalCards >= 30) {
-                return false;
-            }
-            
-            console.log('adding card: ', card);
+//            console.log('adding card: ', card);
 
             // check if card already exists
             for (var i = 0; i < db.cards.length; i++) {
@@ -1592,7 +1629,9 @@ angular.module('app.services', [])
         };
 
         db.removeCardFromDeck = function (card) {
-            var cardRemovedFromDeck = false;
+            var cardRemovedFromDeck = false,
+                index = -1;
+            
             console.log('card to rem: ', card);
             for (var i = 0; i < db.cards.length; i++) {
                 if (card.card.id === db.cards[i].card.id) {
@@ -1600,18 +1639,19 @@ angular.module('app.services', [])
                         db.cards[i].cardQuantity = db.cards[i].cardQuantity - 1;
                         return;
                     } else {
-                        var index = db.cards.indexOf(card);
+                        index = db.cards.indexOf(card);
                         console.log('index: ', index);
                         if (index !== -1) {
                             cardRemovedFromDeck = true;
-                            db.cards.splice(index, 1);
                         }
                     }
                 }
             }
-            // 
+            
             if(cardRemovedFromDeck) {
-                var cardMulliganExists = false;
+                var cardMulliganExists = false,
+                    cancel = false;
+                
                 console.log('card was removed');
                 // search all card with coin mulligans
                 for(var i = 0; i < db.mulligans.length; i++) {
@@ -1621,9 +1661,6 @@ angular.module('app.services', [])
                             break;
                         }
                     }
-                }
-                // search all cards without coin mulligans
-                for(var i = 0; i < db.mulligans.length; i++) {
                     for(var j = 0; j < db.mulligans[i].cardsWithoutCoin.length; j++) {
                         if (db.mulligans[i].cardsWithoutCoin[j].card.id === card.card.id) {
                             cardMulliganExists = true;
@@ -1633,8 +1670,6 @@ angular.module('app.services', [])
                 }
                 
                 if (cardMulliganExists) {
-                    var mulligans = db.mulligans;
-                    
                     var box = bootbox.dialog({
                         title: 'Are you sure you want to remove <strong>' + card.card.name + '</strong>?',
                         message: 'Current mulligans for ' + card.card.name + ' will be lost as well.',
@@ -1642,24 +1677,19 @@ angular.module('app.services', [])
                             delete: {
                                 label: 'Continue',
                                 className: 'btn-danger',
-                                scope: mulligans,
                                 callback: function () {
-                                    console.log('element: ', element);
-                                    console.log('passed through: ', mulligans);
-                                    for(var i = 0; i < mulligans.length; i++) {
-                                        for(var j = 0; j < mulligans[i].cardsWithCoin.length; j++) {
-                                            if (mulligans[i].cardsWithCoin[j].card.id === card.card.id) {
-                                                mulligans[i].cardsWithCoin.splice(j, 1);
-                                                break;
+                                    $timeout(function() {
+                                        db.cards.splice(index, 1);
+                                    });
+                                    for(var i = 0; i < db.mulligans.length; i++) {
+                                        for(var j = 0; j < db.mulligans[i].cardsWithCoin.length; j++) {
+                                            if (db.mulligans[i].cardsWithCoin[j].card.id === card.card.id) {
+                                                db.mulligans[i].cardsWithCoin.splice(j, 1);
                                             }
                                         }
-                                    }
-                                    // search all cards without coin mulligans
-                                    for(var i = 0; i < mulligans.length; i++) {
-                                        for(var j = 0; j < mulligans[i].cardsWithoutCoin.length; j++) {
-                                            if (mulligans[i].cardsWithoutCoin[j].card.id === card.card.id) {
-                                                mulligans[i].cardsWithoutCoin.splice(j, 1);
-                                                break;
+                                        for(var j = 0; j < db.mulligans[i].cardsWithoutCoin.length; j++) {
+                                            if (db.mulligans[i].cardsWithoutCoin[j].card.id === card.card.id) {
+                                                db.mulligans[i].cardsWithoutCoin.splice(j, 1);
                                             }
                                         }
                                     }
@@ -1669,7 +1699,6 @@ angular.module('app.services', [])
                                 label: 'Cancel',
                                 className: 'btn-default pull-left',
                                 callback: function () {
-                                    db.addCard(card.card);
                                     box.modal('hide');
                                 }
                             }
@@ -1677,6 +1706,8 @@ angular.module('app.services', [])
                         closeButton: false
                     });
                     box.modal('show');
+                } else {
+                    db.cards.splice(index, 1);
                 }
             }
         };
@@ -1755,17 +1786,6 @@ angular.module('app.services', [])
             } else if (db.getSize() === 30) {
                 return true;
             }
-
-            // make sure not more than 2 of same cards in non-arena deck
-            if (!db.arena) {
-                for (var i = 0; i < db.cards.length; i++) {
-                    if (db.cards[i].cardQuantity >= 2) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
         };
 
         db.moveChapterUp = function (chapter) {
@@ -1859,7 +1879,7 @@ angular.module('app.services', [])
             },
             isFeatured: data.featured || false,
             isPublic: (data.isPublic) ? data.isPublic.toString() : 'true',
-            voteScore: data.votesCount || 1,
+            voteScore: data.voteScore || 1,
             votes: data.votes || [],
             viewCount: data.viewcount || 0,
             against: data.against || {
@@ -1994,10 +2014,12 @@ angular.module('app.services', [])
 //        };
 
         gb.talentsByTier = function (hero, tier) {
+            
             var talents = [];
             for (var i = 0; i < hero.talents.length; i++) {
                 var talentId = hero.talents[i].id;
-                if (hero.talentTiers[talentId] === tier) {
+//                console.log(talentId);
+                if (hero.talentTiers[talentId] == tier) {
                     talents.push(hero.talents[i]);
                 }
             }
@@ -2367,7 +2389,7 @@ angular.module('app.services', [])
             
         },
         getGuides: function (filters, isFeatured, limit, finalCallback) {
-            var order = "votesCount DESC",
+            var order = "voteScore DESC",
                 heroWhere = {}, 
                 guideWhere = {
                     guideType: "hero"
@@ -2393,7 +2415,7 @@ angular.module('app.services', [])
             
             if (isFeatured !== null) {
                 guideWhere.isFeatured = isFeatured;
-                order = "createdDate ASC";
+                order = "createdDate DESC";
             }
             
             
@@ -2427,7 +2449,7 @@ angular.module('app.services', [])
                         selectedGuideIds.push(_.map(hero.guides, function (guide) { return guide.id }));
                     })
                     selectedGuideIds = _.flatten(selectedGuideIds);
-                    return seriesCallback(undefined, selectedGuideIds)
+                    return seriesCallback(undefined, selectedGuideIds);
                 }, function (selectedGuideIds, seriesCallback) {
                     guideWhere.id = { inq: selectedGuideIds };
                     
@@ -2440,7 +2462,7 @@ angular.module('app.services', [])
                                 "name", 
                                 "authorId", 
                                 "slug", 
-                                "votesCount", 
+                                "voteScore", 
                                 "guideType", 
                                 "premium", 
                                 "id", 
@@ -2468,7 +2490,9 @@ angular.module('app.services', [])
             ])
         },
         getHeroGuides: function (filters, isFeatured, limit, finalCallback) {
-            var selectedHeroes = filters.heroes;
+            console.log("is it?",isFeatured);
+            var selectedHeroes = filters.heroes,
+                order = "voteScore DESC";
 
             if (_.isEmpty(selectedHeroes)) {
                 return;
@@ -2480,6 +2504,7 @@ angular.module('app.services', [])
             
             if (isFeatured !== null) {
                 where.isFeatured = isFeatured
+                order = "createdDate DESC";
             }
 
             async.waterfall([
@@ -2526,7 +2551,7 @@ angular.module('app.services', [])
                     Guide.find({
                         filter: {
                             limit: limit,
-                            sort: "createdDate ASC",
+                            order: order,
                             where: {
                                 id: { inq: guideIds }
                             },
@@ -2534,7 +2559,7 @@ angular.module('app.services', [])
                                 "name", 
                                 "authorId", 
                                 "slug", 
-                                "votesCount", 
+                                "voteScore", 
                                 "guideType", 
                                 "premium", 
                                 "id", 
@@ -2554,6 +2579,7 @@ angular.module('app.services', [])
                             ]
                         }
                     }).$promise.then(function (guides) {
+                        console.log(guides);
                         return finalCallback(undefined, guides);
                     }).catch(function (err) {
                         return finalCallback(err);
@@ -2608,7 +2634,7 @@ angular.module('app.services', [])
                         Guide.find({
                             filter: {
                                 limit: limit,
-                                sort: "createdDate ASC",
+                                order: "createdDate DESC",
                                 where: {
                                     id: { inq: guideIds }
                                 },
@@ -2616,7 +2642,7 @@ angular.module('app.services', [])
                                     "id",
                                     "name",
                                     "createdDate",
-                                    "votesCount",
+                                    "voteScore",
                                     "slug",
                                     "guideType",
                                     "authorId",
@@ -2720,7 +2746,7 @@ angular.module('app.services', [])
                     Guide.find({
                         filter: {
                             limit: limit,
-                            order: "createdDate ASC",
+                            order: "createdDate DESC",
                             where: {
                                 id: { inq: selectedGuideIds }
                             },
@@ -2728,7 +2754,7 @@ angular.module('app.services', [])
                                 "name", 
                                 "authorId", 
                                 "slug", 
-                                "votesCount", 
+                                "voteScore", 
                                 "guideType", 
                                 "premium", 
                                 "id", 

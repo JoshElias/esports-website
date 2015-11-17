@@ -2,8 +2,8 @@
   "name": "activity",
   "plural": "activities",
   "base": "PersistedModel",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },
@@ -66,6 +66,18 @@
       "foreignKey": "forumPostId"
     }
   },
-  "acls": [],
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$premium",
+      "permission": "ALLOW",
+      "accessType": "READ"
+    }
+  ],
   "methods": {}
 }

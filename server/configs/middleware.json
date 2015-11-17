@@ -1,5 +1,11 @@
 {
   "initial:before": {
+    "loopback#context": {
+      "params": {
+        "enableHttpContext": true
+      }
+    },
+    "loopback#token":{},
     "loopback#favicon": {
         "params": "$!../favicon.ico"
     }
@@ -16,7 +22,9 @@
   },
   "session": {},
   "auth": {},
-  "parse": {},
+  "parse": {
+    "../middleware/current-user": {}
+  },
   "routes": {},
   "files": {},
   "final": {

@@ -2,8 +2,8 @@
   "name": "deckTech",
   "plural": "deckTechs",
   "base": "PersistedModel",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },

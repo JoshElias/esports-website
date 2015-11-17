@@ -2,8 +2,8 @@
   "name": "deck",
   "plural": "decks",
   "base": "PersistedModel",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },
@@ -105,7 +105,7 @@
         "object"
       ]
     },
-    "dust" : {
+    "dust": {
       "type": "number"
     }
   },

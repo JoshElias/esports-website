@@ -1,8 +1,8 @@
 {
   "name": "guide",
   "base": "PersistedModel",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },
@@ -35,7 +35,9 @@
       "type": "boolean"
     },
     "votes": {
-      "type": ["object"]
+      "type": [
+        "object"
+      ]
     },
     "voteScore": {
       "type": "number"
@@ -74,7 +76,9 @@
       "type": "object"
     },
     "synergy": {
-      "type": ["string"]
+      "type": [
+        "string"
+      ]
     }
   },
   "validations": [],

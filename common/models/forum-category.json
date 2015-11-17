@@ -2,8 +2,8 @@
   "name": "forumCategory",
   "plural": "forumCategories",
   "base": "PersistedModel",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },

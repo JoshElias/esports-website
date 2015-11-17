@@ -200,25 +200,25 @@
                                                 <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12">
                                                     <h3 class="m-b-lg">RANKING</h3>
                                                     <div class="deck-rank m-b-lg">
-                                                <div class="{{(deck.ranks[0] <= deck.ranks[deck.ranks.length - 1] || deck.ranks[deck.ranks.length - 1] == 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{(deck.ranks[0] <= deck.ranks[1] || deck.ranks[1] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         CURRENT
                                                     </div>
                                                     {{deck.ranks[0]}}
                                                 </div>
-                                                <div class="{{(deck.ranks[deck.ranks.length - 1] >= deck.ranks[0] || deck.ranks[deck.ranks.length - 1] == 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{(deck.ranks[1] >= deck.ranks[0] || deck.ranks[1] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         LAST WEEK
                                                     </div>
-                                                    <span ng-if="deck.ranks[deck.ranks.length - 1] != 0 && deck.ranks[deck.ranks.length - 1] != undefined">{{deck.ranks[deck.ranks.length - 1]}}</span>
-                                                    <span ng-if="deck.ranks[deck.ranks.length - 1] == 0 || deck.ranks[deck.ranks.length - 1] == undefined">N/A</span>
+                                                    <span ng-if="deck.ranks[1] != 0 && deck.ranks[1] != undefined">{{deck.ranks[1]}}</span>
+                                                    <span ng-if="deck.ranks[1] == 0 || deck.ranks[1] == undefined">N/A</span>
                                                 </div>
-                                                <div class="{{((deck.ranks[deck.ranks.length - 1] - deck.ranks[0]) >= 0 || deck.ranks[deck.ranks.length - 1] == 0) ? 'green-back' : 'red-back'}}">
+                                                <div class="{{((deck.ranks[1] - deck.ranks[0]) >= 0 || deck.ranks[1] == 0) ? 'green-back' : 'red-back'}}">
                                                     <div>
                                                         CHANGE
                                                     </div>
-                                                    <span ng-if="deck.ranks[deck.ranks.length - 1] != 0 && deck.ranks[deck.ranks.length - 1] != undefined">{{deck.ranks[deck.ranks.length - 1] - deck.ranks[0]}}</span>
-                                                    <span ng-if="deck.ranks[deck.ranks.length - 1] == 0 || deck.ranks[deck.ranks.length - 1] == undefined">N/A</span>
+                                                    <span ng-if="deck.ranks[1] != 0 && deck.ranks[1] != undefined">{{deck.ranks[1] - deck.ranks[0]}}</span>
+                                                    <span ng-if="deck.ranks[1] == 0 || deck.ranks[1] == undefined">N/A</span>
                                                 </div>
                                             </div>
                                                 </div>

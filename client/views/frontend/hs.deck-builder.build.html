@@ -93,21 +93,24 @@
                     </div>
 
                     <div class="row db-btn-wrapper">
-                        <div ng-click="deck.type = 1" class="col-md-4" ng-class="{ 'active': deck.type == 1 }">
-                            Constructed
-                        </div>
-                        <div ng-click="deck.type = 2" class="col-md-4" ng-class="{ 'active': deck.type == 2 }">
-                            Arena
-                        </div>
-                        <div ng-click="deck.type = 3" class="col-md-4" ng-class="{ 'active': deck.type == 3 }">
-                            Brawl
-                        </div>
-                        <div ng-click="deck.basic = false" class="col-md-6" ng-class="{ 'active' : deck.basic == false }">
-                            Advanced
-                        </div>
-                        <div ng-click="deck.basic = true" class="col-md-6" ng-class="{ 'active' : deck.basic == true }">
-                            Basic
-                        </div>
+                        <div ng-click="deck.toggleGameMode('constructed')" class="col-md-4" 
+                         ng-class="{ 'active': deck.gameModeType === 'constructed' }">
+                        Constructed
+                    </div>
+                    <div ng-click="deck.toggleGameMode('arena')" class="col-md-4" 
+                         ng-class="{ 'active': deck.gameModeType === 'arena' }">
+                        Arena
+                    </div>
+                    <div ng-click="deck.toggleGameMode('brawl')" class="col-md-4" 
+                         ng-class="{ 'active': deck.gameModeType === 'brawl' }">
+                        Brawl
+                    </div>
+                    <div ng-click="deck.basic = false" class="col-md-6" ng-class="{ 'active' : deck.basic == false }">
+                        Advanced
+                    </div>
+                    <div ng-click="deck.basic = true" class="col-md-6" ng-class="{ 'active' : deck.basic == true }">
+                        Basic
+                    </div>
                     </div>
 
                     <div class="deck-info">
@@ -126,8 +129,10 @@
                             <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" ng-click="deck.removeCardFromDeck(card)">
                                 <div class="mana-cost">{{card.card.cost}}</div>
                                 {{card.card.name}}
-                                <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
-                                <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right"><i class="fa fa-star"></i></div>
+                                <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
+                                <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
+                                    <i class="fa fa-star"></i>
+                                </div>
                             </div>
                         </div>
                         <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}} {{getActiveDeckName().toLowerCase()}}">
@@ -135,16 +140,29 @@
                             <div class="dust-bottle-sm"></div>
                         </div>
                     </div>
-                    <button ng-if="deck.basic" class="basic-submit-btn m-t-md" ng-click="saveDeck()">
-                        SUBMIT
+                    <button ng-if="deck.basic" class="basic-submit-btn m-t-md"
+                            ng-click="updateDeck(deck)" ng-disabled="deckSubmitting">
+                        <span ng-if="!deckSubmitting">SUBMIT</span>
+                        <span ng-if="deckSubmitting">SUBMITTING</span>
+                        <span ng-if="deckSubmitting">
+                            <i class="fa fa-spinner fa-pulse"></i>
+                        </span>
                     </button>
                 </div>
                 <!-- / db-right -->
 
 
                     <div class="col-md-pull-3 col-md-9" ng-hide="step !== 1">
+                        <div class="panel panel-danger error-modal animated" ng-show="showError">
+                            <div class="panel-heading">
+                                <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+                                <strong>Unable to save deck</strong>
+                            </div>
+                            <div class="panel-body">
+                                <span>{{errors}}</span>
+                            </div>
+                        </div>
                         <div class="db-section-title clearfix">
-
                             <div class="row">
                                 <div class="col-md-2">
                                     <h1>CLASS</h1>
@@ -338,26 +356,37 @@
                                 <img src="../../img/bigcoin.png" />
                             </div>   
                             <span class="header-text">
-                                <h2>CARDS TO KEEP AGAINST {{currentMulligan.klass.toUpperCase()}}</h2>
+                                <h2>CARDS TO KEEP AGAINST {{currentMulligan.className | uppercase}}</h2>
                                 <h3>WITH COIN</h3>
                             </span>
                         </div>
-                        <div class="db-mulligan-content row m-r-none m-l-none" ng-repeat="mulligan in deck.mulligans" ng-show="currentMulligan == mulligan">
+                        <div class="db-mulligan-content row m-r-none m-l-none" 
+                             ng-repeat="mulligan in deck.mulligans"
+                             ng-show="currentMulligan == mulligan">
                             <div class="col-xs-8 left clearfix">
-                                <textarea class="db-mulligan-instructions" placeholder="Type your mulligan instructions here" resize="none" ng-model="mulligan.instructionsWithCoin"></textarea>
+                                <textarea class="db-mulligan-instructions" 
+                                          placeholder="Type your mulligan instructions here" 
+                                          resize="none" 
+                                          ng-model="mulligan.instructionsWithCoin"></textarea>
                                 <div class="mulliganCardWrapper">
-                                    <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};" ng-repeat="card in mulligan.cardsWithCoin track by $index" class="mulliganCards">
-                                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}"/>
+                                    <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};"
+                                         ng-repeat="card in mulligan.cardsWithCoin | orderBy: 'cost' track by $index" 
+                                         class="mulliganCards">
+    <!--                                    <img ng-src="{{app.cdn}}/cards/{{card.card.photoNames.large}}"/>-->
+
+                                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
                                     </div>
                                 </div>
-                            </div>
+                            </div>  
                             <div class="col-xs-4 right">
-                                <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                    <button ng-click="deck.toggleMulligan(mulligan, true, card.card)" ng-class="{ 'active' : isMulliganCard(true, card) }">
+                                <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
+                                    <button ng-click="deck.toggleMulligan(mulligan, true, card.card)">
                                         <div class="mana-cost">{{card.card.cost}}</div>
                                         {{card.card.name}}
-                                        <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
-                                        <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right"><i class="fa fa-star"></i></div>
+                                        <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
+                                        <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
+                                            <i class="fa fa-star"></i>
+                                        </div>
                                     </button>
                                 </div>
                             </div>
@@ -368,27 +397,35 @@
                             </div> 
                             <i class="fa fa-close"></i>
                             <span class="header-text">
-                                <h2>CARDS TO KEEP AGAINST {{currentMulligan.klass.toUpperCase()}}</h2>
+                                <h2>CARDS TO KEEP AGAINST {{currentMulligan.className | uppercase}}</h2>
                                 <h3>WITHOUT COIN</h3>
                             </span>
                         </div>
-                        <div class="db-mulligan-content row m-r-none m-l-none" ng-repeat="mulligan in deck.mulligans" ng-show="currentMulligan == mulligan">
+                        <div class="db-mulligan-content row m-r-none m-l-none" 
+                             ng-repeat="mulligan in deck.mulligans" 
+                             ng-show="currentMulligan == mulligan">
                             <div class="col-xs-8 left clearfix">
-                                <textarea class="db-mulligan-instructions" placeholder="Type your mulligan instructions here" resize="none" ng-model="mulligan.instructionsWithoutCoin"></textarea>
+                                <textarea class="db-mulligan-instructions" 
+                                          placeholder="Type your mulligan instructions here"
+                                          resize="none" 
+                                          ng-model="mulligan.instructionsWithoutCoin"></textarea>
                                 <div class="mulliganCardWrapper">
-                                    <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};" 
-                                         ng-repeat="card in mulligan.cardsWithoutCoin track by $index" class="mulliganCards">
-                                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}"/>
+                                    <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};"
+                                         ng-repeat="card in mulligan.cardsWithoutCoin | orderBy: 'cost' track by $index" 
+                                         class="mulliganCards">
+                                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xs-4 right">
-                                <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                    <button ng-click="deck.toggleMulligan(mulligan, false, card.card)" ng-class="{ 'active' : isMulliganCard(true, card) }">
+                                <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
+                                    <button ng-click="deck.toggleMulligan(mulligan, false, card.card, destroyCoinMulls, destroyNoCoinMulls)">
                                         <div class="mana-cost">{{card.card.cost}}</div>
                                         {{card.card.name}}
-                                        <div ng-if="card.cardQuantity == 2" class="pull-right m-r-sm">2</div>
-                                        <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right"><i class="fa fa-star"></i></div>
+                                        <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
+                                        <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
+                                            <i class="fa fa-star"></i>
+                                        </div>
                                     </button>
                                 </div>
                             </div>
@@ -416,7 +453,7 @@
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="match-header col-md-12">
-                                    <div ng-if="deck.matches.length != 0" class="row">
+                                    <div class="row">
                                         <div class="col-md-1 match-title">
                                             CLASS
                                         </div>
@@ -427,34 +464,33 @@
                                             CHANCE TO WIN
                                         </div>
                                     </div>
-                                    <div ng-if="deck.matches.length == 0" class="row">
-                                        <div class="col-md-12 match-title">
-                                            No matches currently selected
-                                        </div>
-                                    </div>
                                 </div>
-                                <div class="match col-md-12" ng-repeat="match in deck.matches track by $index">
+                                <div class="match col-md-12" ng-repeat="match in deck.matchups track by $index">
                                     <div class="row">
                                         <div class="col-md-1">
-                                            <a class="db-sw-class-icon class-icon large {{match.className.toLowerCase()}}"></a>
+                                            <a class="db-sw-class-icon class-icon large {{match.className | lowercase}}"></a>
                                         </div>
                                         <div class="col-md-4">
                                             <input class="deck-name" placeholder="Deck Name..." ng-model="match.deckName">
                                         </div>
                                         <div class="col-md-6">
-                                            <input class="pull-left match-slider" type="range" ng-model="match.match" min="0" value="50" max="100" step="5"><span class="pull-right match-number">{{match.match}} %</span>
+                                            <input class="pull-left match-slider" type="range" 
+                                                   ng-model="match.forChance" 
+                                                   min="0" value="50" max="100" step="5">
+                                            <span class="pull-right match-number">{{match.forChance}} %</span>
                                         </div>
                                         <div class="col-md-1 close-wrapper">
-                                            <button class="close-button" ng-click="deck.removeMatch($index)"><i class="fa fa-close"></i></button>
+                                            <button class="close-button" ng-click="removeMatch($index, destroyMatchups)">
+                                                <i class="fa fa-close"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="match-add-wrapper m-t-lg col-md-12">
-                            <button ng-disabled="match <= 8" 
-                                    ng-repeat="class in classes" ng-click="deck.newMatch(class.toLowerCase())">
-                                <img class="db-sw-class-icon class-icon large {{class.toLowerCase()}}" /> 
+                            <button ng-repeat="class in classes" ng-click="newMatch(class.toLowerCase())">
+                                <img class="db-sw-class-icon class-icon large {{class.toLowerCase()}}" />
                             </button>
                         </div>
                     </div>
@@ -556,12 +592,12 @@
                                     <div class="col-sm-10 col-sm-offset-2">
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="public" ng-model="deck.public" value="true"> Make this deck public
+                                                <input type="radio" name="public" ng-model="deck.isPublic" value="true"> Make this deck public
                                             </label>
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="public" ng-model="deck.public" value="false"> Make this deck private
+                                                <input type="radio" name="public" ng-model="deck.isPublic" value="false"> Make this deck private
                                             </label>
                                         </div>
                                     </div>

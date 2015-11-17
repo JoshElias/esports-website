@@ -1,8 +1,8 @@
 {
   "name": "mulligan",
   "base": "PersistedModel",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },

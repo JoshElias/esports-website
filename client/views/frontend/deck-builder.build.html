@@ -116,7 +116,7 @@
                     <div class="db-deck-count">{{deck.getSize()}} / 30</div>
                 </div>
                 <div class="db-deck-cards">
-                    <div class="db-deck-card" ng-class="{multi:card.qty > 1 || card.legendary}" ng-click="deck.removeCard(card)" ng-right-click="deck.removeCard(card)" ng-repeat="card in deck.cards" data-tooltip-img="{{app.cdn}}cards/{{card.photos.large}}" data-tooltip-pos="left" hs-card>
+                    <div class="db-deck-card" ng-class="{multi:card.qty > 1 || card.legendary}" ng-click="deck.removeCard(card)" ng-right-click="deck.removeCard(card)" ng-repeat="card in deck.cards" data-tooltip-img="{{app.cdn}}cards/{{card.photoNames.large}}" data-tooltip-pos="left" hs-card>
                         <div class="db-deck-card-mana">{{card.cost}}</div>
                         <div class="db-deck-card-qty" ng-show="card.qty > 1">{{card.qty}}</div>
                         <div class="db-deck-card-legendary" ng-show="card.legendary"><i class="fa fa-star"></i></div>

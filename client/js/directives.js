@@ -35,10 +35,6 @@ angular.module('app.directives', ['ui.load'])
     return {
         restrict: 'A',
         link: function (scope, el, attr) {
-            // fix bug for card tooltip not removing
-            el.on('click', function() {
-                console.log(attr['data-cardQuantity'].value);
-            });
             var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -344 : 60;
             el.wTooltip({
                 delay: 500,
@@ -281,7 +277,15 @@ angular.module('app.directives', ['ui.load'])
             $scope.commentable;
             $scope.service;
             $scope.app = $rootScope.app;
-
+            
+            $scope.calculateVotes = function (comment) {
+                var out;
+                _.each(comment.votes, function (vote) {
+                    out =+ vote.direction;
+                })
+                console.log(out);
+                return out;
+            }
 
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
@@ -523,7 +527,7 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 }])
-.directive('voteWidget', ['LoopBackAuth', 'User', function (LoopBackAuth, User) {
+.directive('voteWidget', ['LoopBackAuth', 'User', 'LoginModalService', function (LoopBackAuth, User, LoginModalService) {
     return {
         restrict: 'E',
         replace: true,
@@ -552,35 +556,43 @@ angular.module('app.directives', ['ui.load'])
                 
                 return out;
             }
+            
+            function checkVotes (votable) {
+                var direction = undefined;
 
-            function updateVotes() {
-                checkVotes($scope.votable);
-
-                function checkVotes (votable) {
-                    console.log(votable);
-                    
-                    var vote = function () {
-                        if ($attrs.theme === 'multi') {
-                            return votable.votes.filter(function (vote) {
-                                return (LoopBackAuth.currentUserId === vote.userID);
-                            })[0];
-                        } else {
-                            return _.find(votable.votes, function(vote) { return vote === LoopBackAuth.currentUserId; });
-                        }
-                    }
-
-                    if (vote()) {
-                        $scope.voted = ($attrs.theme === 'multi') ? vote.direction : true;
+                var vote = function () {
+                    if ($attrs.theme === 'multi') {
+                        return _.filter(votable.votes, function (vote) {
+                            console.log(vote);
+                            if (LoopBackAuth.currentUserId === vote.userID) {
+                                direction = vote.direction;
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        })[0];
+                    } else {
+                        return _.find(votable.votes, function(vote) { return vote === LoopBackAuth.currentUserId; });
                     }
                 }
+
+                if (vote()) {
+                    $scope.votable.voted = ($attrs.theme === 'multi') ? direction : true;
+                }
+            }
+
+            function updateVotes(direction) {
+                checkVotes($scope.votable);
+
+                
                 
                 $scope.votable.voteScore = voteCount($scope.votable.votes);
             }
             updateVotes();
             
             $scope.vote = function (obj, direction) {
-            console.log($scope.votable);    
-                if (!User.isAuthenticated) {
+            console.log($scope.votable, User.isAuthenticated());    
+                if (!User.isAuthenticated()) {
                     LoginModalService.showModal('login', function () {
                         $scope.vote(obj, direction);
                     });
@@ -588,6 +600,7 @@ angular.module('app.directives', ['ui.load'])
                     bootbox.alert("You can't vote for your own content.");
                     return false;
                 } else {
+                    console.log(obj,direction);
                     vote(obj, direction);
                 }
                 
@@ -657,7 +670,7 @@ angular.module('app.directives', ['ui.load'])
                     ], function (err) {
                         $scope.voting = false;
                         if (err) { console.log("Error!", err); }
-                        updateVotes();
+                        updateVotes(direction);
                     });
                 });
                 

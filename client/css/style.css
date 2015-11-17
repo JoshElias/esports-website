@@ -556,9 +556,7 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 }
 
 .snapshot-votes { position: absolute; right: 20px; top: 20px; }
-.snapshot-votes .snapVoteWrap { position: relative; text-align: center; }
-.snapshot-votes .snapVoteWrap a { cursor: pointer; background:  }
-.snapshot-votes .snapVoteWrap i { margin-top: 10px; font-size: 24px }
+.snapshot-votes .snapVoteWrap { position: relative; }
 
 .pin-stripe { 
     border:1px solid rgba(255,255,255,.4);
@@ -3478,6 +3476,10 @@ _::-moz-svg-foreign-content, :root .flex-col { display: block; }
 
 .btn-vote-up:focus,
 .btn-vote-down:focus { outline: none; border: none; }
+
+.btn-vote-up { cursor: pointer; text-align: center; }
+.btn-vote-up,
+.vote-count.single i { margin-top: 1px; font-size: 28px; }
 
 /* comments */
 .comments { }

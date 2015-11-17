@@ -1,8 +1,8 @@
 {
   "name": "article",
   "base": "PersistedModel",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },
@@ -36,7 +36,7 @@
     },
     "votes": {
       "type": [
-        "object"
+        "string"
       ]
     },
     "voteScore": {
@@ -69,11 +69,11 @@
     "isActive": {
       "type": "boolean"
     },
-    "deckId" : {
-        "type": "string"
+    "deckId": {
+      "type": "string"
     },
-    "guideId" : {
-        "type": "string"
+    "guideId": {
+      "type": "string"
     },
     "__v": {
       "type": "number"

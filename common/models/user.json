@@ -2,8 +2,8 @@
   "name": "user",
   "plural": "users",
   "base": "User",
-  "idInjection": true,
   "strict": true,
+  "idInjection": true,
   "options": {
     "validateUpsert": true
   },
@@ -46,9 +46,6 @@
     },
     "twitchID": {
       "type": "string"
-    },
-    "roles": {
-      "type": ["string"]
     }
   },
   "validations": [],
@@ -83,7 +80,8 @@
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW"
+      "permission": "ALLOW",
+      "property": "find"
     },
     {
       "principalType": "ROLE",
@@ -95,22 +93,34 @@
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "property": "changePassword",
-      "accessType": "EXECUTE"
+      "property": "updateAttributes"
     },
     {
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "$admin",
       "permission": "ALLOW",
-      "property": "resetEmail",
-      "accessType": "EXECUTE"
+      "property": "isRole"
     },
     {
+      "accessType": "EXECUTE",
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "property": "changeEmail",
-      "accessType": "EXECUTE"
+      "property": "changePassword"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "resetEmail"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "changeEmail"
     }
   ],
   "methods": {}

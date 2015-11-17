@@ -32,16 +32,17 @@
         </div>
     </div>
     <div class="container-fluid-max" ng-hide="step !== 1">
+        
         <form class="form-horizontal" name="dbForm" novalidate>
         <div class="db-builder row clearfix">
             <!-- db-right -->
             <div class="col-md-push-9 col-md-3">
                 <div class="db-search">
-                    <input type="text" name="search" class="input-sm input-dark" 
-                           placeholder="Search..." ng-keyup="search()" ng-model="filters.search">
-                    <div class="search-charm">
+                    <input type="text" class="input-sm input-dark" 
+                           placeholder="Search..." ng-model="filters.search">
+                    <button type="button" class="search-charm" style="border: 0px;" ng-click="search()">
                         <i class="fa fa-search"></i>
-                    </div>
+                    </button>
                 </div>
                 <div class="db-mana-curve m-b-md">
                     <div class="db-mana-curve-title">
@@ -130,12 +131,14 @@
                     <div class="deck-list">
                         <div class="list-card" 
                              ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" 
-                             ng-click="deck.removeCardFromDeck(card)" 
-                             data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" data-cardQuantity="card.cardQuantity" hs-card>
+                             ng-click="deck.removeCardFromDeck(card)">
                             <div class="mana-cost">{{card.card.cost}}</div>
                             {{card.card.name}}
                             <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
-                            <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right"><i class="fa fa-star"></i></div>
+                            <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" class="pull-right">
                         </div>
                     </div>
                     <div class="db-deck-dust db-deck-footer db-deck-{{deck.playerClass | lowercase}} {{deck.heroName | lowercase}}">
@@ -156,6 +159,16 @@
 
 
                 <div class="col-md-pull-3 col-md-9" ng-hide="step !== 1">
+        
+                    <div class="panel panel-danger error-modal animated" ng-show="showError">
+                        <div class="panel-heading">
+                            <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+                            <strong>Unable to save deck</strong>
+                        </div>
+                        <div class="panel-body">
+                            <span>{{errors}}</span>
+                        </div>
+                    </div>
                     <div class="db-section-title clearfix">
                         <div class="row">
                             <div class="col-md-2">
@@ -294,7 +307,7 @@
                         <!-- cards -->
                             <div class="db-cards-view-wrapper clearfix">
                                 <div class="db-cards-view clearfix" ng-if="!fetching">
-                                    <div class="db-card" ng-class="{'db-card-disabled': !deck.isAddable(card) || deck.validDeck()}" 
+                                    <div class="db-card" ng-class="{'db-card-disabled': !deck.isAddable(card)}" 
                                          ng-repeat="card in cards.current">
                                         <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" 
                                            ng-click="deck.addCard(card)" 
@@ -384,14 +397,16 @@
                             </div>
                         </div>  
                         <div class="col-xs-4 right">
-                            <div class="list-card" ng-repeat="card in deck.cards track by $index">
-                                <button ng-click="deck.toggleMulligan(mulligan, true, card.card, destroyCoinMulls, destroyNoCoinMulls)">
+                            <div ng-class="{'active': isMulliganCard(true, card)}"
+                                 class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
+                                <button ng-click="deck.toggleMulligan(mulligan, true, card.card)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
                                     <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
                                     <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
                                         <i class="fa fa-star"></i>
                                     </div>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" class="pull-right">
                                 </button>
                             </div>
                         </div>
@@ -423,15 +438,16 @@
                             </div>
                         </div>
                         <div class="col-xs-4 right">
-                            <div class="list-card" ng-repeat="card in deck.cards track by $index"
-                                 data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" hs-card>
-                                <button ng-click="deck.toggleMulligan(mulligan, false, card.card, destroyCoinMulls, destroyNoCoinMulls)">
+                            <div ng-class="{'active': isMulliganCard(false, card)}"
+                                 class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
+                                <button ng-click="deck.toggleMulligan(mulligan, false, card.card)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
                                     <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
                                     <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
                                         <i class="fa fa-star"></i>
                                     </div>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" class="pull-right">
                                 </button>
                             </div>
                         </div>
@@ -443,13 +459,15 @@
                     <div ng-repeat="chapter in deck.chapters track by $index" class="db-section m-b-md">
                         <div class="db-section-chapter-title">
                             <h1><input placeholder="New Chapter Title..." ng-model="chapter.title" /></h1>
-                                <i ng-click="removeChapter($index)" 
-                                   class="fa fa-close pull-right"></i>
+                                <i ng-click="deck.removeChapter($index)" class="fa fa-close pull-right"></i>
                         </div>
-                        <summernote id="contentEarly" config="options" 
-                                    ng-model="chapter.content"></summernote>
+                        <div class="chapter-carets">
+                            <a href="#" class="move-chapter-down" ng-class="{ 'disabled': $index == (deck.chapters.length - 1) }" ng-show="deck.chapters.length > 1" ng-click="deck.moveChapterDown(chapter)"><i class="fa fa-caret-down"></i></a>
+                            <a href="#" class="move-chapter-up" ng-class="{ 'disabled': $index == 0 }" ng-show="deck.chapters.length > 1" ng-click="deck.moveChapterUp(chapter)"><i class="fa fa-caret-up"></i></a>
+                        </div>
+                        <summernote id="contentEarly" config="options" ng-model="chapter.content"></summernote>
                     </div>
-                    <div class="chapter-add-btn" ng-click="newChapter()">
+                    <div class="chapter-add-btn" ng-click="deck.addChapter()">
                         <i class="fa fa-plus-circle"></i> Add Chapter
                     </div>
                 </div>
@@ -558,7 +576,7 @@
                                     <input type="text" id="video" name="video" class="form-control input-dark" ng-model="deck.youtubeId">
                                 </div>
                             </div>
-                            <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                            <div ng-if="isUserAdmin || isUserContentProvider">
                                 <div class="form-group">
                                     <label for="premium" class="col-sm-2 control-label">Premium</label>
                                     <div class="col-sm-10">
@@ -582,7 +600,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div ng-if="app.user.isAdmin() || app.user.isProvider()">
+                            <div ng-if="isUserAdmin || isUserContentProvider">
                                 <div class="form-group">
                                     <label for="premium" class="col-sm-2 control-label">Featured</label>
                                     <div class="col-sm-10">
@@ -592,8 +610,8 @@
                                                 <b class="caret"></b>
                                             </button>
                                             <ul class="list-group dropdown-menu dropdown-dark">
-                                                <li class="list-group-item" ng-class="{active: deck.featured === type.value}" ng-repeat="type in featuredTypes">
-                                                    <a href="#" ng-click="deck.featured = type.value">{{type.text}}</a>
+                                                <li class="list-group-item" ng-class="{active: deck.isFeatured === type.value}" ng-repeat="type in featuredTypes">
+                                                    <a href="#" ng-click="deck.isFeatured = type.value">{{type.text}}</a>
                                                 </li>
                                             </ul>
                                         </div>

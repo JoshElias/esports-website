@@ -1,5 +1,6 @@
 
 module.exports = function(User) {
+    var _ = require("underscore");
     var async = require("async");
     var uuid = require("node-uuid");
     var loopback = require("loopback");
@@ -21,23 +22,6 @@ module.exports = function(User) {
     });
   });
 
-/*
-    User.observe("after save", function(ctx, next) {
-        var Role = User.app.models.Role;
-        var RoleMapping = User.app.models.RoleMapping;
-
-        var err = new Error('no user found');
-        err.statusCode = 400;
-        err.code = 'UNABLE_TO_POPULATE_USER_ROLES';
-
-        Role.getRoles(ctx, function(roleErr, roles) {
-            if(roleErr) return next(err);
-
-            ctx.instance.roles = roles;
-            next();
-        });
-    });
-    */
 
  /*!
    * Hash the plain password
@@ -397,17 +381,33 @@ module.exports = function(User) {
         return cb.promise;
     };
 
-/*
-    User.setSubscriptionPlan = function(data, cb) {
+
+
+    User.isRole = function(roleName, cb) {
+        var Role = User.app.models.Role;
+        var RoleMapping = User.app.models.RoleMapping;
+
         cb = cb || utils.createPromiseCallback();
 
-        if (typeof data.email === 'string') {
+        var ctx = loopback.getCurrentContext();
+        var accessToken = ctx.get("accessToken");
+        var userId = accessToken.userId;
+
+        Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, cb);
+
+        return cb.promise;
+    };
+
+
+
+    User.setSubscriptionPlan = function(data, cb) {
+        cb = cb || utils.createPromiseCallback();
 
 
         var err = new Error('unable to find user');
         err.statusCode = 400;
         err.code = 'USER_NOT_FOUND';
-    }
+    };
 
 
     User.setSubscriptionCard = function(data, cb) {
@@ -419,7 +419,7 @@ module.exports = function(User) {
             err.statusCode = 400;
             err.code = 'USER_NOT_FOUND';
         }
-    }
+    };
 
     User.cancelSubscription = function(data, cb) {
         cb = cb || utils.createPromiseCallback();
@@ -430,9 +430,24 @@ module.exports = function(User) {
             err.statusCode = 400;
             err.code = 'USER_NOT_FOUND';
         }
-    }
+    };
 
-*/
+
+
+
+    User.remoteMethod(
+        'isRole',
+        {
+            description: "Changes user's email",
+            accepts: [
+                { arg: 'roleName', type: 'string', http: { source: 'query' } }
+            ],
+            returns: {arg: 'isRole', type: 'boolean'},
+            http: {verb: 'get'},
+            isStatic: true
+        }
+    );
+
 
     User.remoteMethod(
         'changePassword',
@@ -468,12 +483,12 @@ module.exports = function(User) {
         }
     );
 
-/*
+
     // Subscription
     User.remoteMethod(
         'setSubscriptionPlan',
         {
-            description: "No idea honestly",
+            description: "derp",
             accepts: { arg: 'data', type: 'object', http: { source: 'body' } },
             http: {verb: 'post'},
             isStatic: true
@@ -483,7 +498,7 @@ module.exports = function(User) {
     User.remoteMethod(
         'setSubscriptionCard',
         {
-            description: "No idea honestly",
+            description: "derp",
             accepts: { arg: 'data', type: 'object', http: { source: 'body' } },
             http: {verb: 'post'},
             isStatic: true
@@ -493,50 +508,46 @@ module.exports = function(User) {
     User.remoteMethod(
         'cancelSubscription',
         {
-            description: "No idea honestly",
+            description: "derp",
             accepts: { arg: 'data', type: 'object', http: { source: 'body' } },
             http: {verb: 'post'},
             isStatic: true
         }
     );
-
-*/
+};
 
 /*
-  // Filter out sensitive user information depending on ACL
-  var sensitiveProperties = ["subscription", "isProvider", "isAdmin", "lastLoginDate",
-    "resetPasswordCode", "newEmail", "newEmailCode", "verified"]
+ // Filter out sensitive user information depending on ACL
+ var sensitiveProperties = ["subscription", "isProvider", "isAdmin", "lastLoginDate",
+ "resetPasswordCode", "newEmail", "newEmailCode", "verified"]
 
-  User.afterRemote("find", function(context, user, next) {
-    var userModel = this.constructor
-
-
-    function filterUser() {
-      for(var i = 0; i<sensitiveProperties.length; i++) {
-        var sensitiveProperty = sensitiveProperties[i];
-        if(user[sensitiveProperty]) {
-          delete user[sensitiveProperty];
-        }
-      }
-      next();
-    }
-
-    // Check if the user is authorized to view the sensitive properties
-    if(!context.token || !context.token.userId) {
-      var userId =  context.token.userId;
-      var Role = User.app.models.Role;
-      var RoleMapping = User.app.models.RoleMapping;
-
-      Role.getRoles({principalType: RoleMapping.USER, principalId: userId}, function(err, roles) {
-        if(err) next(err);
-        else if(roles.indexOf("admin") !== -1 || roles.indexOf("owner") !== -1) next();
-        else filterUser();
-      });
-    } else {
-      filterUser();
-    }
-  });
-*/
+ User.afterRemote("find", function(context, user, next) {
+ var userModel = this.constructor
 
 
-};
+ function filterUser() {
+ for(var i = 0; i<sensitiveProperties.length; i++) {
+ var sensitiveProperty = sensitiveProperties[i];
+ if(user[sensitiveProperty]) {
+ delete user[sensitiveProperty];
+ }
+ }
+ next();
+ }
+
+ // Check if the user is authorized to view the sensitive properties
+ if(!context.token || !context.token.userId) {
+ var userId =  context.token.userId;
+ var Role = User.app.models.Role;
+ var RoleMapping = User.app.models.RoleMapping;
+
+ Role.getRoles({principalType: RoleMapping.USER, principalId: userId}, function(err, roles) {
+ if(err) next(err);
+ else if(roles.indexOf("admin") !== -1 || roles.indexOf("owner") !== -1) next();
+ else filterUser();
+ });
+ } else {
+ filterUser();
+ }
+ });
+ */
