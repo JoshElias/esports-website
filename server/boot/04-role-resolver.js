@@ -13,16 +13,23 @@ module.exports = function(server) {
             });
         }
 
-        var loopbackContext = loopback.getCurrentContext();
-        var currentUser = loopbackContext.get("currentUser");
-        if(!currentUser) return reject();
+
+        var ctx = loopback.getCurrentContext();
+        if(!ctx || !ctx.active) return reject();
+
+        var res = ctx.active.http.res;
+        var req = ctx.active.http.req;
+
+        User.getCurrent(function(err, currentUser) {
+           if(err) return cb(err);
+
+           return cb(undefined, isSubscribed(currentUser));
+        });
 
         function isSubscribed(user) {
             var now = new Date();
             return (user.subscription.isSubscribed
             && (user.subscription.expiryDate > now));
         }
-
-        return cb(undefined, isSubscribed(currentUser));
     });
 };

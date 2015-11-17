@@ -22,9 +22,7 @@
   },
   "session": {},
   "auth": {},
-  "parse": {
-    "../middleware/current-user": {}
-  },
+  "parse": {},
   "routes": {},
   "files": {},
   "final": {

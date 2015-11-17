@@ -390,6 +390,10 @@ module.exports = function(User) {
         cb = cb || utils.createPromiseCallback();
 
         var ctx = loopback.getCurrentContext();
+        var res = ctx.active.http.res;
+        var req = ctx.active.http.req;
+
+
         var accessToken = ctx.get("accessToken");
         var userId = accessToken.userId;
 
@@ -397,6 +401,28 @@ module.exports = function(User) {
 
         return cb.promise;
     };
+
+    User.getCurrent = function(finalCb) {
+        var err = new Error('no user found');
+        err.statusCode = 400;
+        err.code = 'USER_NOT_FOUND';
+
+        var ctx = loopback.getCurrentContext();
+        if(!ctx || !ctx.active) return finalCb(err);
+
+        var res = ctx.active.http.res;
+        var req = ctx.active.http.req;
+
+        if(req.currentUser) return finalCb(undefined, req.currentUser);
+
+        var accessToken = ctx.get("accessToken");
+        if(!accessToken) return finalCb(err);
+        req.app.models.user.findById(accessToken.userId, function(err, user) {
+            if (err || !user) return finalCb(err);
+            req.currentUser = user;
+            finalCb(undefined, user);
+        });
+    }
 
 
 
