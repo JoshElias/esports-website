@@ -81,19 +81,19 @@
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "property": "find"
+      "accessType": "READ"
     },
     {
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "$owner",
       "permission": "ALLOW",
-      "property": "findById"
+      "accessType": "WRITE"
     },
     {
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "$owner",
       "permission": "ALLOW",
-      "property": "updateAttributes"
+      "property": "isRole"
     },
     {
       "principalType": "ROLE",

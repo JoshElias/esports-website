@@ -383,6 +383,30 @@ module.exports = function(User) {
     };
 
 
+    User.assignRole = function(roleName, cb) {
+
+        var Role = User.app.models.Role;
+
+        async.waterfall([
+            // check if user is already that role
+            function(seriesCb) {
+                Role.isInRole(roleName, function(err, isRole) {
+                })
+            },
+            function(seriesCb) {
+            },
+
+
+        ],
+        cb);
+/*
+                        roleInstances[roleName].principals.create({
+                            principalType: RoleMapping.USER,
+                            principalId: user.id.toString()
+                        }, function(err, newPrincipal) {
+                          */
+    }
+
 
     User.isRole = function(roleName, cb) {
         var Role = User.app.models.Role;
