@@ -9,7 +9,7 @@ module.exports = function(server) {
     var User = server.models.user;
     var RoleMapping = server.models.RoleMapping;
 
-    var roles = ["$contentProvider", "$admin"];
+    var roles = ["$contentProvider", "$admin", "$active"];
     var roleInstances = {};
     async.waterfall([
         // Create the different roles
@@ -46,7 +46,8 @@ module.exports = function(server) {
             async.eachSeries(roles, function(roleName, roleCb) {
 
                 if ((roleName === "$admin" && user.isAdmin)
-                    || (roleName === "$contentProvider" && user.isProvider)) {
+                    || (roleName === "$contentProvider" && user.isProvider)
+                    || (roleName === "$active" && user.isActive)) {
 
                     roleInstances[roleName].principals.create({
                         principalType: RoleMapping.USER,
