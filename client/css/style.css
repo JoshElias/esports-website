@@ -2427,6 +2427,167 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-deck-class.hunter { background-position: 0px -240px; }
 .profile-deck-class.druid { background-position: 0px -180px; }
 
+/* profile edit*/
+.edit-profile-view {
+    padding: 50px 0px;
+}
+
+.profile-edit-wrapper {
+    background: rgba(25,25,25,.95);
+    padding:35px;
+    border: 2px solid rgba(255,255,255,.2);
+    margin-bottom: 50px;
+}
+
+.profile-edit-wrapper h2 {
+    font-size: 12px;
+    color: white;
+    font-weight: bold;
+    margin: 0px;
+}
+
+.profile-edit-wrapper h3 {
+    font-size: 12px;
+    color: rgba(255,255,255,.3);
+    margin: 8px 0px;
+}
+
+.profile-edit-wrapper .basic-wrapper {
+    margin-top: 40px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.profile-edit-wrapper .gravatar {
+    width: 75%;
+    margin: 0px auto 20px auto;
+}
+
+.profile-edit-nav button {
+    background: none;
+    margin-right: 40px;
+    border: none;
+    text-align: center;
+    padding: 6px 5px;
+}
+
+.profile-edit-nav button.active {
+    border-bottom: 3px #2268AD solid;
+}
+.profile-edit-nav button.focus {
+    border-bottom: 3px #2268AD solid;
+}
+
+.profile-edit-wrapper .gravatar-button {
+    border-right: 2px rgba(25,25,25,1) solid;
+    padding:10px;
+    text-align: center;
+    line-height: 2.5;
+    background: #2268AD;
+}
+
+.profile-edit-wrapper .basic-form div,
+.profile-edit-wrapper .basic-form span {
+    margin: 5px 0px;
+    padding: 0px;
+}
+
+.profile-edit-wrapper .basic-form textarea {
+    width: 98%;
+    margin: 0px 1%;
+    padding: 15px;
+    border-radius: 0px;
+    border: 1px solid rgba(255,255,255,.2);
+    background: black;
+    color: rgba(255,255,255,.7);
+    resize: vertical;
+}
+
+.profile-edit-wrapper .basic-form input {
+    height: 45px;
+    border-radius: 0px;
+    border: 1px solid rgba(255,255,255,.2);
+    background: black;
+    margin: auto;
+    width: 95%;
+    color: rgba(255,255,255,.7);
+}
+
+.profile-edit-wrapper .reset-password {
+    border: none;
+    outline: none;
+    margin: 0px 2.5%;
+    width: 95%;
+    background: #cd201f;
+}
+
+.profile-edit-wrapper .reset-password h2 {
+    height:47px;
+    line-height: 3.75;
+}
+
+
+
+/*PROFILE CONNECT*/
+
+.twitchBack {
+    background: #6441a5;
+}
+.twitchBorder {
+    border: 1px #6441a5 solid;
+}
+.blizzBack {
+    background: #22324B;
+}
+.blizzBorder {
+    border: 1px #22324B solid;
+}
+.gravBack {
+    background: #1e8cbe;
+}
+.gravBorder {
+    border: 1px #1e8cbe solid;
+}
+
+.profile-edit-wrapper .connect-wrapper {
+    margin: 0px 0px;
+}
+.profile-edit-wrapper .connect-wrapper .connect {
+    margin: 10px 0px;
+    height: 100px;
+    width: 100%;
+    background: black;
+}
+
+.profile-edit-wrapper .connect-wrapper .connect .logo-wrapper {
+    text-align: center;
+    width: 100px;
+    height: 100%;
+}
+
+.profile-edit-wrapper .connect-wrapper .connect .logo-wrapper i {
+    line-height: 2.5;
+    font-size: 40px;
+    color: white;
+}
+
+.profile-edit-wrapper .connect-wrapper .connect img {
+    padding: 30px;
+    width: 100%;
+    height: 100%;
+}
+
+.profile-edit-wrapper .connect-wrapper .connect .connect-body {
+    
+}
+
+.profile-edit-wrapper .update-profile-btn {
+    background: #2268AD;
+    border: none;
+    border-radius: none;
+    padding: 10px 20px;
+}
+
 /* profile guides */
 .profile-guides { margin: 15px -15px; }
 

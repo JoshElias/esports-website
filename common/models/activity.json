@@ -66,18 +66,6 @@
       "foreignKey": "forumPostId"
     }
   },
-  "acls": [
-    {
-      "principalType": "ROLE",
-      "principalId": "$everyone",
-      "permission": "DENY"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$premium",
-      "permission": "ALLOW",
-      "accessType": "READ"
-    }
-  ],
+  "acls": [],
   "methods": {}
 }

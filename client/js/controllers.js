@@ -448,15 +448,15 @@ angular.module('app.controllers', ['ngCookies'])
 //        };
         }
     ])
-    .controller('ProfileEditCtrl', ['$scope', '$state', 'ProfileService', 'AlertService', 'dataProfileEdit',
-        function ($scope, $state, ProfileService, AlertService, dataProfileEdit) {
-            $scope.profile = dataProfileEdit.user;
-
-            // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
+    .controller('ProfileEditCtrl', ['$scope', '$state', 'AlertService',
+        function ($scope, $state, AlertService) {
+//            $scope.profile = dataProfileEdit.user;
+//
+//            // grab alerts
+//            if (AlertService.hasAlert()) {
+//                $scope.success = AlertService.getSuccess();
+//                AlertService.reset();
+//            }
 
             $scope.editProfile = function () {
                 ProfileService.updateProfile($scope.profile).success(function (data) {

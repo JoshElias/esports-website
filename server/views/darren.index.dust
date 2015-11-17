@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="./vendor/summernote/dist/summernote.css" type="text/css" />
     <link rel="stylesheet" href="./css/vendor/animations/animation.css" type="text/css" />
     <link rel="stylesheet" href="./css/vendor/animate.css" type="text/css" />
-    <link rel="stylesheet" href="./dist/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="./css/style.css" type="text/css" />
 </head>
 <body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
 

@@ -1,10 +1,26 @@
-<div class="container">
-    <div class="panel panel-success animated m-t-md" ng-show="success.show">
-        <div class="panel-heading">
-            <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
-            <strong>{{success.msg}}</strong>
-        </div>
+<div class="panel panel-success animated m-t-md" ng-show="success.show">
+    <div class="panel-heading">
+        <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
+        <strong>{{success.msg}}</strong>
     </div>
+</div>
+
+<div class="profile-col-header"></div>
+
+<div class="profile-edit-wrapper row">
+
+    <div class="profile-edit-nav">
+        <button ng-class="{active: $state.includes('app.profile.edit.basic')}" ui-sref="app.profile.edit.basic"><h2>PROFILE</h2></button>
+        <button ng-class="{active: $state.includes('app.profile.edit.social')}" ui-sref="app.profile.edit.social"><h2>SOCIAL</h2></button>
+        <button ng-class="{active: $state.includes('app.profile.edit.connect')}" ui-sref="app.profile.edit.connect"><h2>CONNECT</h2></button>
+        <button ng-class="{active: $state.includes('app.profile.edit.premium')}" ui-sref="app.profile.edit.premium"><h2>PREMIUM</h2></button>
+    </div>
+    
+    <div class="edit-profile-view" ui-view="editprofile"></div>
+
+    <button class="update-profile-btn" ng-if="!$state.includes('app.profile.edit.premium')"><h2>Save Profile</h2></button>
+</div>
+<!--
     <div class="panel panel-default m-t-md">
         <div class="panel-heading">
             Edit Profile
@@ -135,4 +151,4 @@
         </div>
         </form>
     </div>
-</div>
+-->
