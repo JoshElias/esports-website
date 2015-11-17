@@ -448,9 +448,19 @@ angular.module('app.controllers', ['ngCookies'])
 //        };
         }
     ])
-    .controller('ProfileEditCtrl', ['$scope', '$state', 'AlertService',
-        function ($scope, $state, AlertService) {
-//            $scope.profile = dataProfileEdit.user;
+    .controller('ProfileEditCtrl', ['$scope', '$state', 'AlertService', 'user',
+        function ($scope, $state, AlertService, user) {
+            console.log(user);
+            
+            $scope.user = user;
+            
+            $scope.testString = function (str) {
+                var pattern = /[.*/.*,.*\s+$.*]/,
+                    word = $scope.user.social[str];
+                
+                console.log(pattern.test(word));
+                return pattern.test(word);
+            }
 //
 //            // grab alerts
 //            if (AlertService.hasAlert()) {
