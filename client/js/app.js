@@ -866,53 +866,6 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.decks.deck.html',
                         controller: 'DeckCtrl',
                         resolve: {
-                            deckWithMulligans: ['Mulligan', 'deck', function(Mulligan, deck) {
-                                var deckID = deck.id;
-                                
-                                Mulligan.find({
-                                    filter: {
-                                        where: {
-                                            deckId: deckID
-                                        },
-                                        include: {
-                                            relation: 'cardsWithCoin',
-                                            scope: {
-                                                include: {
-                                                    relation: 'card'
-                                                }
-                                            }
-                                        }
-//                                        include: [
-//                                            {
-//                                                relation: 'cardsWithCoin',
-//                                                scope: {
-//                                                    include: [
-//                                                        {
-//                                                            relation: 'card'
-//                                                        }
-//                                                    ]
-//                                                }
-//                                            },
-//                                            {
-//                                                relation: 'cardsWithoutCoin',
-//                                                scope: {
-//                                                    include: [
-//                                                        {
-//                                                            relation: 'card'
-//                                                        }
-//                                                    ]
-//                                                }
-//                                            }
-//                                        ]
-                                    }
-                                })
-                                .$promise
-                                .then(function (data) {
-                                    console.log('cardWithCoin: ', data);
-                                    deck.mulligans = data;
-                                    return deck;
-                                });
-                            }],
                             deck: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var stateSlug = $stateParams.slug;
                                 return Deck.findOne({
@@ -938,7 +891,8 @@ var app = angular.module('app', [
                                             voteScore: true,
                                             chapters: true,
                                             youtubeId: true,
-                                            gameModeType: true
+                                            gameModeType: true,
+                                            isActive: true
                                         },
                                         include: [
                                             {
@@ -981,16 +935,10 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: 'cardsWithCoin',
-                                                scope: {
-                                                    include: 'card'
-                                                }
+                                                relation: 'cardsWithCoin'
                                             },
                                             {
-                                                relation: 'cardsWithoutCoin',
-                                                scope: {
-                                                    include: 'card'
-                                                }
+                                                relation: 'cardsWithoutCoin'
                                             }
                                         ]
                                     }
@@ -1036,7 +984,44 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.deck-builder.build.html',
                         controller: 'DeckBuilderCtrl',
                         resolve: {
-                            
+                            isUserAdmin: ['User', function(User) {
+                                if (User.isAuthenticated() === false) {
+                                    return false;
+                                } else {
+                                    return User.isRole({
+                                        roleName: '$admin'
+                                    })
+                                    .$promise
+                                    .then(function (isAdmin) {
+    //                                    console.log('isAdmin: ', isAdmin.isRole);
+                                        return isAdmin.isRole;
+                                    })
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('resolve err: ', err);
+                                        }
+                                    });
+                                }
+                            }],
+                            isUserContentProvider: ['User', function(User) {
+                                if (User.isAuthenticated() === false) {
+                                    return false;
+                                } else {
+                                    return User.isRole({
+                                        roleName: '$contentProvider'
+                                    })
+                                    .$promise
+                                    .then(function (isContentProvider) {
+    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
+                                        return isContentProvider.isRole;
+                                    })
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('resolve err: ', err);
+                                        }
+                                    });
+                                }
+                            }],
                             classCardsList: ['$stateParams', 'Card', function ($stateParams, Card) {
                                 var perpage = 15,
                                     playerClass = $stateParams.playerClass;
@@ -2847,7 +2832,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (isAdmin) {
-                                    console.log('isAdmin: ', isAdmin.isRole);
+//                                    console.log('isAdmin: ', isAdmin.isRole);
                                     return isAdmin.isRole;
                                 })
                                 .catch(function (err) {
@@ -2862,7 +2847,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (isContentProvider) {
-                                    console.log('isContentProvider: ', isContentProvider.isRole);
+//                                    console.log('isContentProvider: ', isContentProvider.isRole);
                                     return isContentProvider.isRole;
                                 })
                                 .catch(function (err) {
@@ -2922,15 +2907,9 @@ var app = angular.module('app', [
                                         include: [
                                             {
                                                 relation: 'cardsWithCoin',
-                                                scope: {
-                                                    include: 'card'
-                                                }
                                             },
                                             {
-                                                relation: 'cardsWithoutCoin',
-                                                scope: {
-                                                    include: 'card'
-                                                }
+                                                relation: 'cardsWithoutCoin'
                                             }
                                         ]
                                     }
@@ -2938,6 +2917,9 @@ var app = angular.module('app', [
                                 .then(function (data) {
 //                                    console.log('mulligan data: ', data);
                                     return data;
+                                })
+                                .catch(function (err) {
+                                    if (err) console.log('err: ', err);
                                 });
                             }],
             
