@@ -50,7 +50,7 @@
     "dust": {
       "type": "number"
     },
-    "active": {
+    "isActive": {
       "type": "boolean",
       "required": true
     },

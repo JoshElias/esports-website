@@ -2680,7 +2680,8 @@ _::-moz-svg-foreign-content, :root .flex-col { display: block; }
 .db-builder .deck-list .list-card .card-charm { color: gold; position: relative; width:28px;  }
 .db-builder .deck-list .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-top: 1px; cursor: pointer; cursor: hand; position: relative; }
 .db-builder .deck-list .list-card .card-name { position: absolute; left: 28px; }
-.db-builder .deck-list .list-card .legendary { padding: 0px 7px; }
+.db-builder .deck-list .list-card .legendary { padding: 0px 7px; width: 28px }
+.db-builder .deck-list .list-card .legendary i { margin-left: -19px; margin-top: 6px; }
 /*
 .db-builder .deck-list .list-card { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
 .db-builder .deck-list .list-card { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }

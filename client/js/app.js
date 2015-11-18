@@ -874,36 +874,14 @@ var app = angular.module('app', [
                                         where: {
                                             deckId: deckID
                                         },
-                                        include: {
-                                            relation: 'cardsWithCoin',
-                                            scope: {
-                                                include: {
-                                                    relation: 'card'
-                                                }
+                                        include: [
+                                            {
+                                                relation: 'cardsWithCoin'
+                                            },
+                                            {
+                                                relation: 'cardsWithoutCoin'
                                             }
-                                        }
-//                                        include: [
-//                                            {
-//                                                relation: 'cardsWithCoin',
-//                                                scope: {
-//                                                    include: [
-//                                                        {
-//                                                            relation: 'card'
-//                                                        }
-//                                                    ]
-//                                                }
-//                                            },
-//                                            {
-//                                                relation: 'cardsWithoutCoin',
-//                                                scope: {
-//                                                    include: [
-//                                                        {
-//                                                            relation: 'card'
-//                                                        }
-//                                                    ]
-//                                                }
-//                                            }
-//                                        ]
+                                        ]
                                     }
                                 })
                                 .$promise
@@ -938,7 +916,8 @@ var app = angular.module('app', [
                                             voteScore: true,
                                             chapters: true,
                                             youtubeId: true,
-                                            gameModeType: true
+                                            gameModeType: true,
+                                            active: true
                                         },
                                         include: [
                                             {
@@ -981,16 +960,10 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: 'cardsWithCoin',
-                                                scope: {
-                                                    include: 'card'
-                                                }
+                                                relation: 'cardsWithCoin'
                                             },
                                             {
-                                                relation: 'cardsWithoutCoin',
-                                                scope: {
-                                                    include: 'card'
-                                                }
+                                                relation: 'cardsWithoutCoin'
                                             }
                                         ]
                                     }
@@ -2829,36 +2802,36 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.edit.html',
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
-                            isUserAdmin: ['User', function(User) {
-                                return User.isRole({
-                                    roleName: '$admin'
-                                })
-                                .$promise
-                                .then(function (isAdmin) {
-                                    console.log('isAdmin: ', isAdmin.isRole);
-                                    return isAdmin.isRole;
-                                })
-                                .catch(function (err) {
-                                    if (err) {
-                                        console.log('resolve err: ', err);
-                                    }
-                                });
-                            }],
-                            isUserContentProvider: ['User', function(User) {
-                                return User.isRole({
-                                    roleName: '$contentProvider'
-                                })
-                                .$promise
-                                .then(function (isContentProvider) {
-                                    console.log('isContentProvider: ', isContentProvider.isRole);
-                                    return isContentProvider.isRole;
-                                })
-                                .catch(function (err) {
-                                    if (err) {
-                                        console.log('resolve err: ', err);
-                                    }
-                                });
-                            }],
+//                            isUserAdmin: ['User', function(User) {
+//                                return User.isRole({
+//                                    roleName: '$admin'
+//                                })
+//                                .$promise
+//                                .then(function (isAdmin) {
+////                                    console.log('isAdmin: ', isAdmin.isRole);
+//                                    return isAdmin.isRole;
+//                                })
+//                                .catch(function (err) {
+//                                    if (err) {
+//                                        console.log('resolve err: ', err);
+//                                    }
+//                                });
+//                            }],
+//                            isUserContentProvider: ['User', function(User) {
+//                                return User.isRole({
+//                                    roleName: '$contentProvider'
+//                                })
+//                                .$promise
+//                                .then(function (isContentProvider) {
+////                                    console.log('isContentProvider: ', isContentProvider.isRole);
+//                                    return isContentProvider.isRole;
+//                                })
+//                                .catch(function (err) {
+//                                    if (err) {
+//                                        console.log('resolve err: ', err);
+//                                    }
+//                                });
+//                            }],
                             resolveParams: [function() {
                                 return {
                                     page: 1,
@@ -2910,15 +2883,9 @@ var app = angular.module('app', [
                                         include: [
                                             {
                                                 relation: 'cardsWithCoin',
-                                                scope: {
-                                                    include: 'card'
-                                                }
                                             },
                                             {
-                                                relation: 'cardsWithoutCoin',
-                                                scope: {
-                                                    include: 'card'
-                                                }
+                                                relation: 'cardsWithoutCoin'
                                             }
                                         ]
                                     }
@@ -2926,6 +2893,9 @@ var app = angular.module('app', [
                                 .then(function (data) {
 //                                    console.log('mulligan data: ', data);
                                     return data;
+                                })
+                                .catch(function (err) {
+                                    if (err) console.log('err: ', err);
                                 });
                             }],
             

@@ -1402,18 +1402,17 @@ angular.module('app.services', [])
          * @params: card (object) - the card object being added to mulligan
          */
         db.toggleMulligan = function (mulligan, withCoin, card) {
-//            console.log('mulligan: ', mulligan);
-//            console.log('card: ', card);
-//            console.log('with coin: ', withCoin);
+            console.log('mulligan: ', mulligan);
+            console.log('card: ', card);
+            console.log('with coin: ', withCoin);
             
             var cardMulligans = (withCoin) ? mulligan.cardsWithCoin : mulligan.cardsWithoutCoin,
                 exists = false,
-                index = -1,
-                cardWithOrWithoutCoin = { cardId: card.id, mulliganId: mulligan.id };
+                index = -1;
             
             // check if card already exists
-            for (var i = 0; i < cardMulligans.length; i++) {
-                if (cardMulligans[i].cardId === card.id) {
+            for(var i = 0; i < cardMulligans.length; i++) {
+                if (cardMulligans[i].id === card.id) {
                     exists = true;
                     index = i;
                     break;
@@ -1427,17 +1426,23 @@ angular.module('app.services', [])
             } else {
                 // card doesn't exist in deck.mulligans
                 if (cardMulligans.length < 6) {
-                    var cardToAdd = {
-                        cardId: card.id,
-                        mulliganId: mulligan.id,
-                        card: card
-                    };
-                    cardMulligans.push(cardToAdd);
+                    cardMulligans.push(card);
 //                    console.log('added to mulligan: ', cardMulligans);
-                    return cardMulligans;
                 }
             }
         }
+        
+        db.calcImgPosition = function(card) {
+            var pos = 0;
+            var pxRatio = 28;
+            if (card.cardQuantity > 1) {
+                pos += 1;
+            }
+            if (card.card.rarity === 'Legendary') {
+                pos += 1;
+            }
+            return pxRatio * pos;
+        };
         
         db.toggleGameMode = function(gameMode) {
             var cardQtyMoreThan2 = false;
@@ -1527,17 +1532,15 @@ angular.module('app.services', [])
 
         // add card
         db.addCard = function (card) {
-//            console.log('card to add: ', card);
+            console.log('card to add: ', card);
             var exists = false,
                 index = -1,
                 isLegendary = (card.rarity === 'Legendary') ? true : false,
                 totalCards = db.getSize();
-            
-//            console.log('adding card: ', card);
 
             // check if card already exists
             for (var i = 0; i < db.cards.length; i++) {
-                if (db.cards[i].cardId === card.id) {
+                if (db.cards[i].card.id === card.id) {
                     exists = true;
                     index = i;
                     break;
@@ -1580,12 +1583,15 @@ angular.module('app.services', [])
                 
             } else {
                 // card doesn't exist
-                db.cards.push({
+                var newCard = {
                     deckId: db.id,
                     cardId: card.id,
                     cardQuantity: 1,
                     card: card
-                });
+                };
+                db.cards.push(newCard);
+                console.log('newCard: ', newCard);
+                console.log('db.cards: ', db.cards);
                 // sort deck
                 db.sortDeck();
             }
@@ -1656,13 +1662,13 @@ angular.module('app.services', [])
                 // search all card with coin mulligans
                 for(var i = 0; i < db.mulligans.length; i++) {
                     for(var j = 0; j < db.mulligans[i].cardsWithCoin.length; j++) {
-                        if (db.mulligans[i].cardsWithCoin[j].card.id === card.card.id) {
+                        if (db.mulligans[i].cardsWithCoin[j].id === card.card.id) {
                             cardMulliganExists = true;
                             break;
                         }
                     }
                     for(var j = 0; j < db.mulligans[i].cardsWithoutCoin.length; j++) {
-                        if (db.mulligans[i].cardsWithoutCoin[j].card.id === card.card.id) {
+                        if (db.mulligans[i].cardsWithoutCoin[j].id === card.card.id) {
                             cardMulliganExists = true;
                             break;
                         }
@@ -1683,12 +1689,12 @@ angular.module('app.services', [])
                                     });
                                     for(var i = 0; i < db.mulligans.length; i++) {
                                         for(var j = 0; j < db.mulligans[i].cardsWithCoin.length; j++) {
-                                            if (db.mulligans[i].cardsWithCoin[j].card.id === card.card.id) {
+                                            if (db.mulligans[i].cardsWithCoin[j].id === card.card.id) {
                                                 db.mulligans[i].cardsWithCoin.splice(j, 1);
                                             }
                                         }
                                         for(var j = 0; j < db.mulligans[i].cardsWithoutCoin.length; j++) {
-                                            if (db.mulligans[i].cardsWithoutCoin[j].card.id === card.card.id) {
+                                            if (db.mulligans[i].cardsWithoutCoin[j].id === card.card.id) {
                                                 db.mulligans[i].cardsWithoutCoin.splice(j, 1);
                                             }
                                         }

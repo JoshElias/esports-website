@@ -38,11 +38,13 @@
             <!-- db-right -->
             <div class="col-md-push-9 col-md-3">
                 <div class="db-search">
-                    <input type="text" class="input-sm input-dark" 
-                           placeholder="Search..." ng-model="filters.search">
-                    <button type="button" class="search-charm" style="border: 0px;" ng-click="search()">
-                        <i class="fa fa-search"></i>
-                    </button>
+                    <form novalidate>
+                        <input type="text" class="input-sm input-dark" 
+                               placeholder="Search..." ng-model="filters.search">
+                        <button ng-click="search()" type="submit" class="search-charm" style="border: 0px;">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </form>
                 </div>
                 <div class="db-mana-curve m-b-md">
                     <div class="db-mana-curve-title">
@@ -128,6 +130,21 @@
                                       ng-model="deck.description"></textarea>
                         </div>
                     </span>
+                    
+<!--
+                    <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
+                        <button ng-class="{'active': isMulliganCard(true, card)}"
+                                ng-click="deck.toggleMulligan(mulligan, true, card.card)">
+                            <div class="mana-cost">{{card.card.cost}}</div>
+                            {{card.card.name}}
+                            <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
+                            <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" class="pull-right">
+                        </button>
+                    </div>
+-->
                     <div class="deck-list">
                         <div class="list-card" 
                              ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" 
@@ -138,7 +155,8 @@
                             <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
                                 <i class="fa fa-star"></i>
                             </div>
-                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" class="pull-right">
+                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" 
+                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px">
                         </div>
                     </div>
                     <div class="db-deck-dust db-deck-footer db-deck-{{deck.playerClass | lowercase}} {{deck.heroName | lowercase}}">
@@ -392,21 +410,22 @@
                                      class="mulliganCards">
 <!--                                    <img ng-src="{{app.cdn}}/cards/{{card.card.photoNames.large}}"/>-->
                                     
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" alt="{{card.card.name}}"/>
                                 </div>
                             </div>
                         </div>  
                         <div class="col-xs-4 right">
-                            <div ng-class="{'active': isMulliganCard(true, card)}"
-                                 class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
-                                <button ng-click="deck.toggleMulligan(mulligan, true, card.card)">
+                            <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
+                                <button ng-class="{'active': isMulliganCard(true, card)}"
+                                        ng-click="deck.toggleMulligan(mulligan, true, card.card)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
                                     <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
                                     <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
                                         <i class="fa fa-star"></i>
                                     </div>
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" class="pull-right">
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" 
+                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px">
                                 </button>
                             </div>
                         </div>
@@ -433,21 +452,22 @@
                                 <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};"
                                      ng-repeat="card in mulligan.cardsWithoutCoin | orderBy: 'cost' track by $index" 
                                      class="mulliganCards">
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" alt="{{card.card.name}}"/>
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" alt="{{card.card.name}}"/>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xs-4 right">
-                            <div ng-class="{'active': isMulliganCard(false, card)}"
-                                 class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
-                                <button ng-click="deck.toggleMulligan(mulligan, false, card.card)">
+                            <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
+                                <button ng-class="{'active': isMulliganCard(false, card)}"
+                                        ng-click="deck.toggleMulligan(mulligan, false, card.card)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
                                     {{card.card.name}}
                                     <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
                                     <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
                                         <i class="fa fa-star"></i>
                                     </div>
-                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" class="pull-right">
+                                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" 
+                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px">
                                 </button>
                             </div>
                         </div>
@@ -635,7 +655,7 @@
                             <div class="form-group m-b-none">
                                 <div class="col-sm-10 col-sm-offset-2">
                                     <button type="submit" class="btn btn-blue" 
-                                            ng-click="updateDeck(deck)" ng-disabled="deckSubmitting">
+                                            ng-click="updateDeck(deck)" ng-disabled="dbForm.$invalid || deckSubmitting">
                                         <span ng-if="!deckSubmitting">Save Deck</span>
                                         <span ng-if="deckSubmitting">Submitting</span>
                                         <span ng-if="deckSubmitting">
