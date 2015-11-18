@@ -448,9 +448,42 @@ angular.module('app.controllers', ['ngCookies'])
 //        };
         }
     ])
-    .controller('ProfileEditCtrl', ['$scope', '$state', 'AlertService',
-        function ($scope, $state, AlertService) {
-//            $scope.profile = dataProfileEdit.user;
+    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', 'AlertService', 'user',
+        function ($scope, $state, $cookies, AlertService, user) {
+            console.log(user);
+            
+            $scope.user = user;
+            
+            $scope.testString = function (str) {
+                var pattern = /[.*/.*,.*\s+$.*]/,
+                    word = $scope.user.social[str];
+                
+                console.log(pattern.test(word));
+                return pattern.test(word);
+            }
+            
+            $scope.linkTwitch = function () {
+                var ip = location.host;
+            }
+            
+            $scope.twitchLink = function () {
+                  thirdPartyLogin('twitch');
+                };
+
+            $scope.bnetLink = function () {
+              thirdPartyLogin("bnet");
+            };
+
+            function thirdPartyLogin(provider) {
+                var redirectObj = {
+                    name: $state.current.name,
+                    params: $state.params
+                }
+                var ip = location.host;
+                
+                $cookies.put("redirectStateString", JSON.stringify(redirectObj));
+                window.location.replace(ip + "/link/" + provider);
+            }
 //
 //            // grab alerts
 //            if (AlertService.hasAlert()) {
