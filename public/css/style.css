@@ -4167,6 +4167,8 @@ ul[dnd-list] .dndPlaceholder {
 .icon-rexxar { background: url('../img/hots/heroes/rexxar-hex.png') no-repeat center center; }
 .icon-morales { background: url('../img/hots/heroes/morales-hex.png') no-repeat center center; }
 .icon-artanis { background: url('../img/hots/heroes/artanis-hex.png') no-repeat center center; }
+.icon-cho { background: url('../img/hots/heroes/cho-hex.png') no-repeat center center; }
+.icon-gall { background: url('../img/hots/heroes/gall-hex.png') no-repeat center center; }
 
 .hero-selection .hero .icon-wrap .icon:hover { background-color: rgba(88, 43, 128, 1); }
 .hero-selection .hero .icon-wrap .icon.active { background-color: #2766ad; }
@@ -4199,6 +4201,7 @@ p.white { color: #FFF; }
 .map-selection .map .icon-wrap .icon a.icon-tomb-of-the-spider-queen { background: url('../img/hots/maps/spider.png') no-repeat center center; }
 .map-selection .map .icon-wrap .icon a.icon-battlefield-of-eternity { background: url('../img/hots/maps/bfoe.png') no-repeat center center; }
 .map-selection .map .icon-wrap .icon a.icon-shrine { background: url('../img/hots/maps/shrine.png') no-repeat center center; }
+.map-selection .map .icon-wrap .icon a.icon-towers-of-doom { background: url('../img/hots/maps/towers-of-doom.png') no-repeat center center; }
 
 .map-selection .map .icon-wrap .icon:hover { opacity: .8; }
 .map-selection .map .icon-wrap .icon.active { opacity: 1; }
@@ -4288,6 +4291,8 @@ p.white { color: #FFF; }
 .hero-list li a.rexxar { background: url('../img/hots/heroes/28x/rexxar28.png') no-repeat center right; }
 .hero-list li a.morales { background: url('../img/hots/heroes/28x/morales28.png') no-repeat center right; }
 .hero-list li a.artanis { background: url('../img/hots/heroes/28x/artanis28.png') no-repeat center right; }
+.hero-list li a.cho { background: url('../img/hots/heroes/28x/cho28.png') no-repeat center right; }
+.hero-list li a.gall { background: url('../img/hots/heroes/28x/gall28.png') no-repeat center right; }
 
 /* guide steps */
 .gb-steps { margin: 0 0 20px 0; padding: 0 1px; }
@@ -4371,6 +4376,8 @@ p.white { color: #FFF; }
 .talents-title.rexxar { background: url('../img/hots/heroes/60x/rexxar60.png') no-repeat; }
 .talents-title.morales { background: url('../img/hots/heroes/60x/morales60.png') no-repeat; }
 .talents-title.artanis { background: url('../img/hots/heroes/60x/artanis60.png') no-repeat; }
+.talents-title.cho { background: url('../img/hots/heroes/60x/cho60.png') no-repeat; }
+.talents-title.gall { background: url('../img/hots/heroes/60x/gall60.png') no-repeat; }
 
 /* talents icons */
 .talents-icon { display: block; width: 30px; height: 30px; overflow: hidden; white-space: nowrap; text-indent: -99999px; opacity: .5; transition: opacity .1s linear; }
@@ -4424,6 +4431,8 @@ p.white { color: #FFF; }
 .talents-icon.rexxar { background: url('../img/hots/talents/rexxar.png') no-repeat; }
 .talents-icon.morales { background: url('../img/hots/talents/morales.png') no-repeat; }
 .talents-icon.artanis { background: url('../img/hots/talents/artanis.png') no-repeat; }
+.talents-icon.cho { background: url('../img/hots/talents/cho.png') no-repeat; }
+.talents-icon.gall { background: url('../img/hots/talents/gall.png') no-repeat; }
 
 /* talents - the-butcher - small */
 /* Tier 1 */
@@ -5763,6 +5772,146 @@ p.white { color: #FFF; }
   66% { background-position: -30px -204px; }
   100% { background-position: -30px 0px; }
 }
+
+/* talents - cho - small */
+/* Tier 1 */
+.talents-icon.cho.surging-dash { background-position: 0px 0px; }
+.talents-icon.cho.blazing-bulwark { background-position: 0px -30px; }
+.talents-icon.cho.fuel-for-the-flame { background-position: 0px -60px; }
+
+/* Tier 2 */
+.talents-icon.cho.runed-gauntlet { background-position: 0px -90px; }
+.talents-icon.cho.rollback { background-position: 0px -120px; }
+.talents-icon.cho.seared-flesh { background-position: 0px -30px; }
+
+/* Tier 3 */
+.talents-icon.cho.power-surge { background-position: 0px 0px; }
+.talents-icon.cho.fire-eater { background-position: 0px -30px; }
+.talents-icon.cho.frenzied-fists { background-position: 0px -150px; }
+
+/* Tier 4 */
+.talents-icon.cho.hammer-of-twilight { background-position: 0px -180px; }
+.talents-icon.cho.upheaval { background-position: 0px -210px; }
+
+/* Tier 5 */
+.talents-icon.cho.runic-feedback { background-position: 0px -90px; }
+.talents-icon.cho.i-am-hurrying { background-position: 0px -270px; }
+.talents-icon.cho.molten-block { background-position: 0px -240px; }
+
+/* Tier 6 */
+.talents-icon.cho.twilight-veil { background-position: 0px -30px; }
+.talents-icon.cho.surge-of-stamina { background-position: 0px 0px; }
+.talents-icon.cho.crippling-blow { background-position: 0px -150px; }
+
+/* Tier 7 */
+.talents-icon.cho.cthuns-gift { background-position: 0px -180px; }
+.talents-icon.cho.favor-of-the-old-gods { background-position: 0px -210px; }
+.talents-icon.cho.the-will-of-gall { background-position: 0px -270px; }
+
+/* talents - cho - large */
+/* Tier 1 */
+.talents-icon.cho.large.surging-dash { background-position: -30px 0px; }
+.talents-icon.cho.large.blazing-bulwark { background-position: -30px -102px; }
+.talents-icon.cho.large.fuel-for-the-flame { background-position: -30px -204px; }
+
+/* Tier 2 */
+.talents-icon.cho.large.runed-gauntlet { background-position: -30px -306px; }
+.talents-icon.cho.large.rollback { background-position: -30px -408px; }
+.talents-icon.cho.large.seared-flesh { background-position: -30px -102px; }
+
+/* Tier 3 */
+.talents-icon.cho.large.power-surge { background-position: -30px 0px; }
+.talents-icon.cho.large.fire-eater { background-position: -30px -102px; }
+.talents-icon.cho.large.frenzied-fists { background-position: -30px -510px; }
+
+/* Tier 4 */
+.talents-icon.cho.large.hammer-of-twilight { background-position: -30px -612px; }
+.talents-icon.cho.large.upheaval { background-position: -30px -714px; }
+
+/* Tier 5 */
+.talents-icon.cho.large.runic-feedback { background-position: -30px -306px; }
+.talents-icon.cho.large.i-am-hurrying { background-position: -30px -918px; }
+.talents-icon.cho.large.molten-block { background-position: -30px -816px; }
+
+/* Tier 6 */
+.talents-icon.cho.large.twilight-veil { background-position: -30px -102px; }
+.talents-icon.cho.large.surge-of-stamina { background-position: -30px 0px; }
+.talents-icon.cho.large.crippling-blow { background-position: -30px -510px; }
+
+/* Tier 7 */
+.talents-icon.cho.large.cthuns-gift { background-position: -30px -612px; }
+.talents-icon.cho.large.favor-of-the-old-gods { background-position: -30px -714px; }
+.talents-icon.cho.large.the-will-of-gall { background-position: -30px -918px; }
+
+/* talents - gall - small */
+/* Tier 1 */
+.talents-icon.gall.shadowflare { background-position: 0px 0px; }
+.talents-icon.gall.spurred-onward { background-position: 0px -30px; }
+.talents-icon.gall.eye-of-kilrogg { background-position: 0px -60px; }
+
+/* Tier 2 */
+.talents-icon.gall.bombs-away { background-position: 0px -90px; }
+.talents-icon.gall.siphoning-runes { background-position: 0px -120px; }
+.talents-icon.gall.double-back { background-position: 0px -150px; }
+
+/* Tier 3 */
+.talents-icon.gall.edge-of-madness { background-position: 0px 0px; }
+.talents-icon.gall.double-trouble { background-position: 0px -180px; }
+.talents-icon.gall.dark-descent { background-position: 0px -120px; }
+
+/* Tier 4 */
+.talents-icon.gall.shadow-bolt-volley { background-position: 0px -210px; }
+.talents-icon.gall.twisting-nether { background-position: 0px -240px; }
+
+/* Tier 5 */
+.talents-icon.gall.rising-dread { background-position: 0px -150px; }
+.talents-icon.gall.speed-of-twilight { background-position: 0px -270px; }
+.talents-icon.gall.dread-shield { background-position: 0px -300px; }
+
+/* Tier 6 */
+.talents-icon.gall.twilight-nova { background-position: 0px -150px; }
+.talents-icon.gall.giant-scorcher { background-position: 0px 0px; }
+.talents-icon.gall.shove { background-position: 0px -330px; }
+
+/* Tier 7 */
+.talents-icon.gall.shadowfury { background-position: 0px -210px; }
+.talents-icon.gall.the-nether-calls { background-position: 0px -240px; }
+.talents-icon.gall.psychotic-break { background-position: 0px -360px; }
+
+/* talents - gall - large */
+/* Tier 1 */
+.talents-icon.gall.large.shadowflare { background-position: -30px 0px; }
+.talents-icon.gall.large.spurred-onward { background-position: -30px -102px; }
+.talents-icon.gall.large.eye-of-kilrogg { background-position: -30px -204px; }
+
+/* Tier 2 */
+.talents-icon.gall.large.bombs-away { background-position: -30px -306px; }
+.talents-icon.gall.large.siphoning-runes { background-position: -30px -408px; }
+.talents-icon.gall.large.double-back { background-position: -30px -510px; }
+
+/* Tier 3 */
+.talents-icon.gall.large.edge-of-madness { background-position: -30px 0px; }
+.talents-icon.gall.large.double-trouble { background-position: -30px -612px; }
+.talents-icon.gall.large.dark-descent { background-position: -30px -408px; }
+
+/* Tier 4 */
+.talents-icon.gall.large.shadow-bolt-volley { background-position: -30px -714px; }
+.talents-icon.gall.large.twisting-nether { background-position: -30px -816px; }
+
+/* Tier 5 */
+.talents-icon.gall.large.rising-dread { background-position: -30px -510px; }
+.talents-icon.gall.large.speed-of-twilight { background-position: -30px -918px; }
+.talents-icon.gall.large.dread-shield { background-position: -30px -1020px; }
+
+/* Tier 6 */
+.talents-icon.gall.large.twilight-nova { background-position: -30px -510px; }
+.talents-icon.gall.large.giant-scorcher { background-position: -30px 0px; }
+.talents-icon.gall.large.shove { background-position: -30px -1122px; }
+
+/* Tier 7 */
+.talents-icon.gall.large.shadowfury { background-position: -30px -714px; }
+.talents-icon.gall.large.the-nether-calls { background-position: -30px -816px; }
+.talents-icon.gall.large.psychotic-break { background-position: -30px -1224px; }
 
 /* talents - Leoric - small */
 /* Tier 1 */
@@ -7661,6 +7810,8 @@ p.white { color: #FFF; }
 .hots-modal .hero.rexxar { background: url('../img/hots/modal/heroes/rexxar.png') no-repeat center right; }
 .hots-modal .hero.morales { background: url('../img/hots/modal/heroes/morales.png') no-repeat center right; }
 .hots-modal .hero.artanis { background: url('../img/hots/modal/heroes/artanis.png') no-repeat center right; }
+.hots-modal .hero.cho { background: url('../img/hots/modal/heroes/cho.png') no-repeat center right; }
+.hots-modal .hero.gall { background: url('../img/hots/modal/heroes/gall.png') no-repeat center right; }
 
 .hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
 .hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
@@ -7680,6 +7831,7 @@ p.white { color: #FFF; }
 .hots-modal .map.tomb-of-the-spider-queen { background: url('../img/hots/maps/modal/spider.jpg') no-repeat center center; }
 .hots-modal .map.battlefield-of-eternity { background: url('../img/hots/maps/modal/bfoe.jpg') no-repeat center center; }
 .hots-modal .map.shrine { background: url('../img/hots/maps/modal/shrine.jpg') no-repeat center center; }
+.hots-modal .map.towers-of-doom { background: url('../img/hots/maps/modal/towers-of-doom.jpg') no-repeat center center; }
 .hots-modal .map-text { float: right; width: 185px; }
 
 /* hots modal - talents */
@@ -7700,6 +7852,7 @@ p.white { color: #FFF; }
 .filters-back.skytemple { background: #121111 url('../img/hots/maps/bgs/sky.jpg') center top no-repeat; }
 .filters-back.tomb-of-the-spider-queen { background: #121111 url('../img/hots/maps/bgs/spider.jpg') center top no-repeat; }
 .filters-back.shrine { background: #121111 url('../img/hots/maps/bgs/shrine.jpg') center top no-repeat; }
+.filters-back.towers-of-doom { background: #121111 url('../img/hots/maps/bgs/towers-of-doom.jpg') center top no-repeat; }
 
 .hots-home-title { background: #2766ad url('../img/hots/top-banner.jpg') center center no-repeat; background-size: cover; }
 .hots-home-logo { margin: 60px auto; }
@@ -7961,47 +8114,49 @@ p.white { color: #FFF; }
 
 .hero-filters li button.abathur {width:75px; height:75px; background-position: -2px -2px}
 .hero-filters li button.anub-arak {width:75px; height:75px; background-position: -2px -79px}
-.hero-filters li button.artanis {width:75px; height:75px; background-position: -79px -2px}
-.hero-filters li button.arthas {width:75px; height:75px; background-position: -79px -79px}
-.hero-filters li button.azmodan {width:75px; height:75px; background-position: -156px -2px}
-.hero-filters li button.brightwing {width:75px; height:75px; background-position: -156px -79px}
-.hero-filters li button.chen {width:75px; height:75px; background-position: -233px -2px}
-.hero-filters li button.diablo {width:75px; height:75px; background-position: -233px -79px}
-.hero-filters li button.etc {width:75px; height:75px; background-position: -310px -2px}
-.hero-filters li button.falstad {width:75px; height:75px; background-position: -310px -79px}
-.hero-filters li button.gazlowe {width:75px; height:75px; background-position: -387px -2px}
-.hero-filters li button.illidan {width:75px; height:75px; background-position: -387px -79px}
-.hero-filters li button.jaina {width:75px; height:75px; background-position: -464px -2px}
-.hero-filters li button.johanna {width:75px; height:75px; background-position: -464px -79px}
-.hero-filters li button.kaelthas {width:75px; height:75px; background-position: -541px -2px}
-.hero-filters li button.kerrigan {width:75px; height:75px; background-position: -541px -79px}
-.hero-filters li button.kharazim {width:75px; height:75px; background-position: -618px -2px}
-.hero-filters li button.leoric {width:75px; height:75px; background-position: -618px -79px}
-.hero-filters li button.lili {width:75px; height:75px; background-position: -695px -2px}
-.hero-filters li button.malfurion {width:75px; height:75px; background-position: -695px -79px}
-.hero-filters li button.morales {width:75px; height:75px; background-position: -772px -2px}
-.hero-filters li button.muradin {width:75px; height:75px; background-position: -772px -79px}
-.hero-filters li button.murky {width:75px; height:75px; background-position: -849px -2px}
-.hero-filters li button.nazeebo {width:75px; height:75px; background-position: -849px -79px}
-.hero-filters li button.nova {width:75px; height:75px; background-position: -926px -2px}
-.hero-filters li button.raynor {width:75px; height:75px; background-position: -926px -79px}
-.hero-filters li button.rehgar {width:75px; height:75px; background-position: -1003px -2px}
-.hero-filters li button.rexxar {width:75px; height:75px; background-position: -1003px -79px}
-.hero-filters li button.sgthammer {width:75px; height:75px; background-position: -1080px -2px}
-.hero-filters li button.sonya {width:75px; height:75px; background-position: -1080px -79px}
-.hero-filters li button.stitches {width:75px; height:75px; background-position: -1157px -2px}
-.hero-filters li button.sylvanas {width:75px; height:75px; background-position: -1157px -79px}
-.hero-filters li button.tassadar {width:75px; height:75px; background-position: -1234px -2px}
-.hero-filters li button.the-butcher {width:75px; height:75px; background-position: -1234px -79px}
-.hero-filters li button.thelostvikings {width:75px; height:75px; background-position: -1311px -2px}
-.hero-filters li button.thrall {width:75px; height:75px; background-position: -1311px -79px}
-.hero-filters li button.tychus {width:75px; height:75px; background-position: -1388px -2px}
-.hero-filters li button.tyrael {width:75px; height:75px; background-position: -1388px -79px}
-.hero-filters li button.tyrande {width:75px; height:75px; background-position: -1465px -2px}
-.hero-filters li button.uther {width:75px; height:75px; background-position: -1465px -79px}
-.hero-filters li button.valla {width:75px; height:75px; background-position: -1542px -2px}
-.hero-filters li button.zagara {width:75px; height:75px; background-position: -1542px -79px}
-.hero-filters li button.zeratul {width:75px; height:75px; background-position: -1619px -2px}
+.hero-filters li button.artanis {width:75px; height:75px; background-position: -2px -156px}
+.hero-filters li button.arthas {width:75px; height:75px; background-position: -79px -2px}
+.hero-filters li button.azmodan {width:75px; height:75px; background-position: -79px -79px}
+.hero-filters li button.brightwing {width:75px; height:75px; background-position: -79px -156px}
+.hero-filters li button.chen {width:75px; height:75px; background-position: -156px -2px}
+.hero-filters li button.cho {width:75px; height:75px; background-position: -156px -79px}
+.hero-filters li button.diablo {width:75px; height:75px; background-position: -156px -156px}
+.hero-filters li button.etc {width:75px; height:75px; background-position: -233px -2px}
+.hero-filters li button.falstad {width:75px; height:75px; background-position: -233px -79px}
+.hero-filters li button.gall {width:75px; height:75px; background-position: -233px -156px}
+.hero-filters li button.gazlowe {width:75px; height:75px; background-position: -310px -2px}
+.hero-filters li button.illidan {width:75px; height:75px; background-position: -310px -79px}
+.hero-filters li button.jaina {width:75px; height:75px; background-position: -310px -156px}
+.hero-filters li button.johanna {width:75px; height:75px; background-position: -387px -2px}
+.hero-filters li button.kaelthas {width:75px; height:75px; background-position: -387px -79px}
+.hero-filters li button.kerrigan {width:75px; height:75px; background-position: -387px -156px}
+.hero-filters li button.kharazim {width:75px; height:75px; background-position: -464px -2px}
+.hero-filters li button.leoric {width:75px; height:75px; background-position: -464px -79px}
+.hero-filters li button.lili {width:75px; height:75px; background-position: -464px -156px}
+.hero-filters li button.malfurion {width:75px; height:75px; background-position: -541px -2px}
+.hero-filters li button.morales {width:75px; height:75px; background-position: -541px -79px}
+.hero-filters li button.muradin {width:75px; height:75px; background-position: -541px -156px}
+.hero-filters li button.murky {width:75px; height:75px; background-position: -618px -2px}
+.hero-filters li button.nazeebo {width:75px; height:75px; background-position: -618px -79px}
+.hero-filters li button.nova {width:75px; height:75px; background-position: -618px -156px}
+.hero-filters li button.raynor {width:75px; height:75px; background-position: -695px -2px}
+.hero-filters li button.rehgar {width:75px; height:75px; background-position: -695px -79px}
+.hero-filters li button.rexxar {width:75px; height:75px; background-position: -695px -156px}
+.hero-filters li button.sgthammer {width:75px; height:75px; background-position: -772px -2px}
+.hero-filters li button.sonya {width:75px; height:75px; background-position: -772px -79px}
+.hero-filters li button.stitches {width:75px; height:75px; background-position: -772px -156px}
+.hero-filters li button.sylvanas {width:75px; height:75px; background-position: -849px -2px}
+.hero-filters li button.tassadar {width:75px; height:75px; background-position: -849px -79px}
+.hero-filters li button.the-butcher {width:75px; height:75px; background-position: -849px -156px}
+.hero-filters li button.thelostvikings {width:75px; height:75px; background-position: -926px -2px}
+.hero-filters li button.thrall {width:75px; height:75px; background-position: -926px -79px}
+.hero-filters li button.tychus {width:75px; height:75px; background-position: -926px -156px}
+.hero-filters li button.tyrael {width:75px; height:75px; background-position: -1003px -2px}
+.hero-filters li button.tyrande {width:75px; height:75px; background-position: -1080px -2px}
+.hero-filters li button.uther {width:75px; height:75px; background-position: -1003px -79px}
+.hero-filters li button.valla {width:75px; height:75px; background-position: -1003px -156px}
+.hero-filters li button.zagara {width:75px; height:75px; background-position: -1080px -79px}
+.hero-filters li button.zeratul {width:75px; height:75px; background-position: -1080px -156px}
 
 @media (max-width: 767px) {
     .hero-filters li button { width:43px; height:43px; background-image:url('../img/hots/heroes/hots-hero-select-small.png'); }
@@ -8013,42 +8168,44 @@ p.white { color: #FFF; }
     .hero-filters li button.azmodan {width:43px; height:43px; background-position: -182px -2px}
     .hero-filters li button.brightwing {width:43px; height:43px; background-position: -227px -2px}
     .hero-filters li button.chen {width:43px; height:43px; background-position: -272px -2px}
-    .hero-filters li button.diablo {width:43px; height:43px; background-position: -317px -2px}
-    .hero-filters li button.etc {width:43px; height:43px; background-position: -362px -2px}
-    .hero-filters li button.falstad {width:43px; height:43px; background-position: -407px -2px}
-    .hero-filters li button.gazlowe {width:43px; height:43px; background-position: -452px -2px}
-    .hero-filters li button.illidan {width:43px; height:43px; background-position: -497px -2px}
-    .hero-filters li button.jaina {width:43px; height:43px; background-position: -542px -2px}
-    .hero-filters li button.johanna {width:43px; height:43px; background-position: -587px -2px}
-    .hero-filters li button.kaelthas {width:43px; height:43px; background-position: -632px -2px}
-    .hero-filters li button.kerrigan {width:43px; height:43px; background-position: -677px -2px}
-    .hero-filters li button.kharazim {width:43px; height:43px; background-position: -722px -2px}
-    .hero-filters li button.leoric {width:43px; height:43px; background-position: -767px -2px}
-    .hero-filters li button.lili {width:43px; height:43px; background-position: -812px -2px}
-    .hero-filters li button.malfurion {width:43px; height:43px; background-position: -857px -2px}
-    .hero-filters li button.morales {width:43px; height:43px; background-position: -902px -2px}
-    .hero-filters li button.muradin {width:43px; height:43px; background-position: -947px -2px}
-    .hero-filters li button.murky {width:43px; height:43px; background-position: -992px -2px}
-    .hero-filters li button.nazeebo {width:43px; height:43px; background-position: -1037px -2px}
-    .hero-filters li button.nova {width:43px; height:43px; background-position: -1082px -2px}
-    .hero-filters li button.raynor {width:43px; height:43px; background-position: -1127px -2px}
-    .hero-filters li button.rehgar {width:43px; height:43px; background-position: -1172px -2px}
-    .hero-filters li button.rexxar {width:43px; height:43px; background-position: -1217px -2px}
-    .hero-filters li button.sgthammer {width:43px; height:43px; background-position: -1262px -2px}
-    .hero-filters li button.sonya {width:43px; height:43px; background-position: -1307px -2px}
-    .hero-filters li button.stitches {width:43px; height:43px; background-position: -1352px -2px}
-    .hero-filters li button.sylvanas {width:43px; height:43px; background-position: -1397px -2px}
-    .hero-filters li button.tassadar {width:43px; height:43px; background-position: -1442px -2px}
-    .hero-filters li button.the-butcher {width:43px; height:43px; background-position: -1487px -2px}
-    .hero-filters li button.thelostvikings {width:43px; height:43px; background-position: -1532px -2px}
-    .hero-filters li button.thrall {width:43px; height:43px; background-position: -1577px -2px}
-    .hero-filters li button.tychus {width:43px; height:43px; background-position: -1622px -2px}
-    .hero-filters li button.tyrael {width:43px; height:43px; background-position: -1667px -2px}
-    .hero-filters li button.tyrande {width:43px; height:43px; background-position: -1712px -2px}
-    .hero-filters li button.uther {width:43px; height:43px; background-position: -1757px -2px}
-    .hero-filters li button.valla {width:43px; height:43px; background-position: -1802px -2px}
-    .hero-filters li button.zagara {width:43px; height:43px; background-position: -1847px -2px}
-    .hero-filters li button.zeratul {width:43px; height:43px; background-position: -1892px -2px}
+    .hero-filters li button.cho {width:43px; height:43px; background-position: -317px -2px}
+    .hero-filters li button.diablo {width:43px; height:43px; background-position: -362px -2px}
+    .hero-filters li button.etc {width:43px; height:43px; background-position: -407px -2px}
+    .hero-filters li button.falstad {width:43px; height:43px; background-position: -452px -2px}
+    .hero-filters li button.gall {width:43px; height:43px; background-position: -497px -2px}
+    .hero-filters li button.gazlowe {width:43px; height:43px; background-position: -542px -2px}
+    .hero-filters li button.illidan {width:43px; height:43px; background-position: -587px -2px}
+    .hero-filters li button.jaina {width:43px; height:43px; background-position: -632px -2px}
+    .hero-filters li button.johanna {width:43px; height:43px; background-position: -677px -2px}
+    .hero-filters li button.kaelthas {width:43px; height:43px; background-position: -722px -2px}
+    .hero-filters li button.kerrigan {width:43px; height:43px; background-position: -767px -2px}
+    .hero-filters li button.kharazim {width:43px; height:43px; background-position: -812px -2px}
+    .hero-filters li button.leoric {width:43px; height:43px; background-position: -857px -2px}
+    .hero-filters li button.lili {width:43px; height:43px; background-position: -902px -2px}
+    .hero-filters li button.malfurion {width:43px; height:43px; background-position: -947px -2px}
+    .hero-filters li button.morales {width:43px; height:43px; background-position: -992px -2px}
+    .hero-filters li button.muradin {width:43px; height:43px; background-position: -1037px -2px}
+    .hero-filters li button.murky {width:43px; height:43px; background-position: -1082px -2px}
+    .hero-filters li button.nazeebo {width:43px; height:43px; background-position: -1127px -2px}
+    .hero-filters li button.nova {width:43px; height:43px; background-position: -1172px -2px}
+    .hero-filters li button.raynor {width:43px; height:43px; background-position: -1217px -2px}
+    .hero-filters li button.rehgar {width:43px; height:43px; background-position: -1262px -2px}
+    .hero-filters li button.rexxar {width:43px; height:43px; background-position: -1307px -2px}
+    .hero-filters li button.sgthammer {width:43px; height:43px; background-position: -1352px -2px}
+    .hero-filters li button.sonya {width:43px; height:43px; background-position: -1397px -2px}
+    .hero-filters li button.stitches {width:43px; height:43px; background-position: -1442px -2px}
+    .hero-filters li button.sylvanas {width:43px; height:43px; background-position: -1487px -2px}
+    .hero-filters li button.tassadar {width:43px; height:43px; background-position: -1532px -2px}
+    .hero-filters li button.the-butcher {width:43px; height:43px; background-position: -1577px -2px}
+    .hero-filters li button.thelostvikings {width:43px; height:43px; background-position: -1622px -2px}
+    .hero-filters li button.thrall {width:43px; height:43px; background-position: -1667px -2px}
+    .hero-filters li button.tychus {width:43px; height:43px; background-position: -1712px -2px}
+    .hero-filters li button.tyrael {width:43px; height:43px; background-position: -1757px -2px}
+    .hero-filters li button.tyrande {width:43px; height:43px; background-position: -1802px -2px}
+    .hero-filters li button.uther {width:43px; height:43px; background-position: -1847px -2px}
+    .hero-filters li button.valla {width:43px; height:43px; background-position: -1892px -2px}
+    .hero-filters li button.zagara {width:43px; height:43px; background-position: -1937px -2px}
+    .hero-filters li button.zeratul {width:43px; height:43px; background-position: -1982px -2px}
 }
 
 .hero-back { transition: background .25s ease-in-out; }
@@ -8096,6 +8253,8 @@ p.white { color: #FFF; }
 .hero-back.kharazim { background: url('../img/hots/heroes/bgs/kharazim.png') center center no-repeat; }
 .hero-back.morales { background: url('../img/hots/heroes/bgs/morales.png') center center no-repeat; }
 .hero-back.artanis { background: url('../img/hots/heroes/bgs/artanis.png') center center no-repeat; }
+.hero-back.cho { background: url('../img/hots/heroes/bgs/cho.png') center center no-repeat; }
+.hero-back.gall { background: url('../img/hots/heroes/bgs/gall.png') center center no-repeat; }
 
 .filters-maps {}
 .filters-maps ul { margin: 0; padding: 0; }
@@ -8236,6 +8395,8 @@ p.white { color: #FFF; }
 .hots-guide.large.kharazim { background: url('../img/hots/heroes/guide-images/1/kharazim.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.large.morales { background: url('../img/hots/heroes/guide-images/1/morales.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.large.artanis { background: url('../img/hots/heroes/guide-images/1/artanis.jpg') no-repeat center top; background-size: cover; }
+.hots-guide.large.cho { background: url('../img/hots/heroes/guide-images/1/cho.jpg') no-repeat center top; background-size: cover; }
+.hots-guide.large.gall { background: url('../img/hots/heroes/guide-images/1/gall.jpg') no-repeat center top; background-size: cover; }
 
 .hots-guide.small.abathur { background: url('../img/hots/heroes/guide-images/side/1/abathur.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.small.anub-arak { background: url('../img/hots/heroes/guide-images/side/1/anub-arak.jpg') no-repeat center top; background-size: cover; }
@@ -8280,6 +8441,8 @@ p.white { color: #FFF; }
 .hots-guide.small.kharazim { background: url('../img/hots/heroes/guide-images/side/1/kharazim.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.small.morales { background: url('../img/hots/heroes/guide-images/side/1/morales.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.small.artanis { background: url('../img/hots/heroes/guide-images/side/1/artanis.jpg') no-repeat center top; background-size: cover; }
+.hots-guide.small.cho { background: url('../img/hots/heroes/guide-images/side/1/cho.jpg') no-repeat center top; background-size: cover; }
+.hots-guide.small.gall { background: url('../img/hots/heroes/guide-images/side/1/gall.jpg') no-repeat center top; background-size: cover; }
 
 .hots-guide.long.abathur { background-image: url('../img/hots/heroes/guide-images/long/abathur.png'); background-repeat: no-repeat; background-position: right top; }
 .hots-guide.long.anub-arak { background-image: url('../img/hots/heroes/guide-images/long/anub-arak.png'); background-repeat: no-repeat; background-position: right top; }
@@ -8324,6 +8487,8 @@ p.white { color: #FFF; }
 .hots-guide.long.kharazim { background-image: url('../img/hots/heroes/guide-images/long/kharazim.png'); background-repeat: no-repeat; background-position: right top; }
 .hots-guide.long.morales { background-image: url('../img/hots/heroes/guide-images/long/morales.png'); background-repeat: no-repeat; background-position: right top; }
 .hots-guide.long.artanis { background-image: url('../img/hots/heroes/guide-images/long/artanis.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-guide.long.cho { background-image: url('../img/hots/heroes/guide-images/long/cho.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-guide.long.gall { background-image: url('../img/hots/heroes/guide-images/long/gall.png'); background-repeat: no-repeat; background-position: right top; }
 
 .hots-guide.large.blackheartsbay { background: url('../img/hots/maps/guides/bhb.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.large.cursedhollow { background: url('../img/hots/maps/guides/curse.jpg') no-repeat center top; background-size: cover; }
@@ -8334,6 +8499,7 @@ p.white { color: #FFF; }
 .hots-guide.large.tomb-of-the-spider-queen { background: url('../img/hots/maps/guides/sq.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.large.battlefield-of-eternity { background: url('../img/hots/maps/guides/bfoe.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.large.infernal-shrine { background: url('../img/hots/maps/guides/shrine.jpg') no-repeat center top; background-size: cover; }
+.hots-guide.large.towers-of-doom { background: url('../img/hots/maps/guides/towers-of-doom.jpg') no-repeat center top; background-size: cover; }
 
 .hots-guide.small.blackheartsbay { background: url('../img/hots/maps/guides/bhb-tab.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.small.cursedhollow { background: url('../img/hots/maps/guides/curse-tab.jpg') no-repeat center top; background-size: cover; }
@@ -8344,6 +8510,7 @@ p.white { color: #FFF; }
 .hots-guide.small.tomb-of-the-spider-queen { background: url('../img/hots/maps/guides/sq-tab.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.small.battlefield-of-eternity { background: url('../img/hots/maps/guides/bfoe-tab.jpg') no-repeat center top; background-size: cover; }
 .hots-guide.small.infernal-shrine { background: url('../img/hots/maps/guides/shrine-tab.jpg') no-repeat center top; background-size: cover; }
+.hots-guide.small.towers-of-doom { background: url('../img/hots/maps/guides/towers-of-doom-tab.jpg') no-repeat center top; background-size: cover; }
 
 .hots-guide.long.blackheartsbay { background-image: url('../img/hots/maps/guides/long/blackheart-bay.png'); background-repeat: no-repeat; background-position: right top; }
 .hots-guide.long.cursedhollow { background-image: url('../img/hots/maps/guides/long/cursed-hollow.png'); background-repeat: no-repeat; background-position: right top; }
@@ -8354,6 +8521,7 @@ p.white { color: #FFF; }
 .hots-guide.long.tomb-of-the-spider-queen { background-image: url('../img/hots/maps/guides/long/tomb-of-the-spider-queen.png'); background-repeat: no-repeat; background-position: right top; }
 .hots-guide.long.battlefield-of-eternity { background-image: url('../img/hots/maps/guides/long/battlefield-of-eternity.png'); background-repeat: no-repeat; background-position: right top; }
 .hots-guide.long.infernal-shrine { background-image: url('../img/hots/maps/guides/long/infernal-shrine.png'); background-repeat: no-repeat; background-position: right top; }
+.hots-guide.long.towers-of-doom { background-image: url('../img/hots/maps/guides/long/towers-of-doom.png'); background-repeat: no-repeat; background-position: right top; }
 
 /* hots guide list */
 .tri-bottom { background: url('../img/hots/tri-bottom.png') no-repeat center bottom; }
@@ -8416,6 +8584,8 @@ p.white { color: #FFF; }
 .hots-top-guide .hero.kharazim { background: url('../img/hots/modal/heroes/kharazim.png') no-repeat center right; }
 .hots-top-guide .hero.morales { background: url('../img/hots/modal/heroes/morales.png') no-repeat center right; }
 .hots-top-guide .hero.artanis { background: url('../img/hots/modal/heroes/artanis.png') no-repeat center right; }
+.hots-top-guide .hero.cho { background: url('../img/hots/modal/heroes/cho.png') no-repeat center right; }
+.hots-top-guide .hero.gall { background: url('../img/hots/modal/heroes/gall.png') no-repeat center right; }
 
 .hots-list-ts-guides { margin-top: 50px; margin-bottom: 50px; }
 .hots-list-ts-guides-wrapper { margin-right: -20px; }
@@ -8517,6 +8687,8 @@ p.white { color: #FFF; }
 .guide-hero-image.kharazim { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/kharazim60.png') no-repeat right top; }
 .guide-hero-image.morales { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/morales60.png') no-repeat right top; }
 .guide-hero-image.artanis { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/artanis60.png') no-repeat right top; }
+.guide-hero-image.cho { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/cho60.png') no-repeat right top; }
+.guide-hero-image.gall { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/gall60.png') no-repeat right top; }
 
 .guide-heroes-1 { width: 100%; }
 .guide-heroes-2 { width: 50%; }
@@ -8570,6 +8742,7 @@ p.white { color: #FFF; }
 .guide-map.tomb-of-the-spider-queen { background: url('../img/hots/maps/spider_small.png') no-repeat center center; }
 .guide-map.battlefield-of-eternity { background: url('../img/hots/maps/bfoe_small.png') no-repeat center center; }
 .guide-map.shrine { background: url('../img/hots/maps/shrine_small.png') no-repeat center center; }
+.guide-map.towers-of-doom { background: url('../img/hots/maps/towers-of-doom_small.png') no-repeat center center; }
 
 .guide-subscribe > h1 { margin-top: 20px; color: #2766ad; font-family: 'Open Sans Bold'; }
 .guide-subscribe > h2 { margin-bottom: 20px; font-size: 20px; color: #FFF; }
@@ -8732,6 +8905,8 @@ p.white { color: #FFF; }
 .tc-hero.rexxar { background: url('../img/hots/modal/heroes/rexxar.png') no-repeat right 120px; }
 .tc-hero.morales { background: url('../img/hots/modal/heroes/morales.png') no-repeat right 120px; }
 .tc-hero.artanis { background: url('../img/hots/modal/heroes/artanis.png') no-repeat right 120px; }
+.tc-hero.cho { background: url('../img/hots/modal/heroes/cho.png') no-repeat right 120px; }
+.tc-hero.gall { background: url('../img/hots/modal/heroes/gall.png') no-repeat right 120px; }
 
 /* talent calculator link */
 .talent-calculator-link { padding: 2px; width: 100%; height: 200px; background: #9b81b6; /* Old browsers */
