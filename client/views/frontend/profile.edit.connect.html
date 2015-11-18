@@ -8,7 +8,8 @@
             <i class="fa fa-twitch"></i>
         </div>
         <div class="connect-body">
-            <button ng-class="{ 'twitchBack' : true }" class="link"><i class="fa fa-chain-broken"></i></button>
+            Link your twitter account.
+            <button ng-click="twitchLink()" ng-class="{ 'twitchBack' : true }" class="link"><i class="fa fa-chain-broken"></i></button>
         </div>
     </div>
     
@@ -17,17 +18,8 @@
             <img src="../../img/BattleNet_white.png">
         </div>
         <div class="connect-body">
-            <button class="link"><i class="fa fa-chain-broken"></i></button>
+            Link your Battlenet account
+            <button ng-click="bnetLink()" class="link"><i class="fa fa-chain-broken"></i></button>
         </div>
     </div>
-    
-    <div class="connect gravBorder">
-        <div class="logo-wrapper gravBack">
-            <img src="../../img/gravatar_white_sm.png">
-        </div>
-        <div class="connect-body">
-            <button class="link"><i class="fa fa-chain-broken"></i></button>
-        </div>
-    </div>
-    
 </div>

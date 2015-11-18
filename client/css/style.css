@@ -1903,6 +1903,16 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-edit-wrapper .basic-form span {
     margin: 5px 0px;
     padding: 0px;
+    position: relative;
+}
+
+.profile-edit-wrapper .email-charm {
+    font-size: 18px;
+    color: rgba(255,255,255,.75);
+    font-weight: bold;
+    right: 25px;
+    top: 5px;
+    position: absolute !important;
 }
 
 .profile-edit-wrapper .basic-form textarea {
@@ -1917,6 +1927,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 .profile-edit-wrapper .basic-form input {
+    padding-right: 40px;
     height: 45px;
     border-radius: 0px;
     border: 1px solid rgba(255,255,255,.2);
@@ -1946,6 +1957,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 .profile-edit-wrapper .social-wrapper .link {
+    transition: .1s;
+    
     margin-top: 15px;
     display: flex;
 }
@@ -1958,6 +1971,12 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     color: white;
     border: none;
     background: none;
+}
+
+@media (max-width: 768px) {
+    .profile-edit-wrapper .social-wrapper .link input {
+        padding: 0px 10px;
+    }
 }
 
 .profile-edit-wrapper .social-wrapper .social-input {
