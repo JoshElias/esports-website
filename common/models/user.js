@@ -511,6 +511,23 @@ module.exports = function(User) {
         return cb.promise;
     };
 
+    User.isLinked = function (provider, cb) {
+        cb = cb || utils.createPromiseCallback();
+
+        var UserIdentity = User.app.models.userIdentity;
+
+        var ctx = loopback.getCurrentContext();
+        var accessToken = ctx.get("accessToken");
+        var userId = accessToken.userId.toString();
+
+        UserIdentity.findOne({where:{userId:userId, provider:provider}}, function(err, identity) {
+            if(err) return cb(err);
+            return cb(undefined, !!identity)
+        });
+
+        return cb.promise;
+    };
+
     User.getCurrent = function (finalCb) {
         var err = new Error('no user found');
         err.statusCode = 400;
@@ -570,11 +587,24 @@ module.exports = function(User) {
     User.remoteMethod(
         'isRole',
         {
-            description: "Changes user's email",
+            description: "Checks if a user is of role",
             accepts: [
                 {arg: 'roleName', type: 'string', http: {source: 'query'}}
             ],
             returns: {arg: 'isRole', type: 'boolean'},
+            http: {verb: 'get'},
+            isStatic: true
+        }
+    );
+
+    User.remoteMethod(
+        'isLinked',
+        {
+            description: "Checks if a user has a 3rd party link",
+            accepts: [
+                {arg: 'provider', type: 'string', http: {source: 'query'}}
+            ],
+            returns: {arg: 'isLinked', type: 'boolean'},
             http: {verb: 'get'},
             isStatic: true
         }
@@ -615,8 +645,6 @@ module.exports = function(User) {
         }
     );
 
-
-    // Subscription
     User.remoteMethod(
         'setSubscriptionPlan',
         {

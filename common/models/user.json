@@ -46,9 +46,6 @@
     },
     "twitchID": {
       "type": "string"
-    },
-    "social": {
-        "type": "object"
     }
   },
   "validations": [],
@@ -116,6 +113,18 @@
       "principalId": "$admin",
       "permission": "ALLOW",
       "property": "assignRole"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "isLinked"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "isLinked"
     },
     {
       "accessType": "EXECUTE",
