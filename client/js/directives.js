@@ -170,9 +170,10 @@ angular.module('app.directives', ['ui.load'])
                     $cookies.put("redirectStateString", JSON.stringify(redirectObj));
                     window.location.replace("/login/"+provider);
                 }
-        }]
-      }
-}])
+            }]
+        }
+    }
+])
 .directive('signupForm', ['$state', 'User', 'LoginModalService', function ($state, User, LoginModalService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/signup.form.html',
@@ -277,15 +278,7 @@ angular.module('app.directives', ['ui.load'])
             $scope.commentable;
             $scope.service;
             $scope.app = $rootScope.app;
-            
-            $scope.calculateVotes = function (comment) {
-                var out;
-                _.each(comment.votes, function (vote) {
-                    out =+ vote.direction;
-                })
-                console.log(out);
-                return out;
-            }
+
 
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
@@ -527,158 +520,6 @@ angular.module('app.directives', ['ui.load'])
         }]
     }
 }])
-.directive('voteWidget', ['LoopBackAuth', 'User', 'LoginModalService', function (LoopBackAuth, User, LoginModalService) {
-    return {
-        restrict: 'E',
-        replace: true,
-        scope: {
-            service: '=',
-            votable: '='
-        },
-        templateUrl: function (element, attrs) {
-            var theme = attrs.theme || 'multi';
-            return tpl + 'views/frontend/directives/voteWidget/' + theme + '.html';
-        },
-        controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
-            var box,
-                callback;
-            
-            function voteCount(votes) {
-                var out = 0;
-                
-                if ($attrs.theme === 'multi') {
-                    _.each(votes, function(vote) {
-                        out += vote.direction;
-                    });
-                } else {
-                    return $scope.votable.votes.length;
-                }
-                
-                return out;
-            }
-            
-            function checkVotes (votable) {
-                var direction = undefined;
-
-                var vote = function () {
-                    if ($attrs.theme === 'multi') {
-                        return _.filter(votable.votes, function (vote) {
-                            console.log(vote);
-                            if (LoopBackAuth.currentUserId === vote.userID) {
-                                direction = vote.direction;
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        })[0];
-                    } else {
-                        return _.find(votable.votes, function(vote) { return vote === LoopBackAuth.currentUserId; });
-                    }
-                }
-
-                if (vote()) {
-                    $scope.votable.voted = ($attrs.theme === 'multi') ? direction : true;
-                }
-            }
-
-            function updateVotes(direction) {
-                checkVotes($scope.votable);
-
-                
-                
-                $scope.votable.voteScore = voteCount($scope.votable.votes);
-            }
-            updateVotes();
-            
-            $scope.vote = function (obj, direction) {
-            console.log($scope.votable, User.isAuthenticated());    
-                if (!User.isAuthenticated()) {
-                    LoginModalService.showModal('login', function () {
-                        $scope.vote(obj, direction);
-                    });
-                } else if ($scope.votable.author !== undefined && $scope.votable.author.id === LoopBackAuth.currentUserId) {
-                    bootbox.alert("You can't vote for your own content.");
-                    return false;
-                } else {
-                    console.log(obj,direction);
-                    vote(obj, direction);
-                }
-                
-            }
-
-            function vote(obj, direction) {
-                $scope.voting = true;
-                $scope.service.findOne({
-                    filter: {
-                        where: {
-                            id: obj.id
-                        },
-                        fields: ["votes"]
-                    }
-                })
-                .$promise
-                .then(function (data) {
-                    async.waterfall([
-                        function(waterfallCb) {
-                            var hasVoted = _.find(data.votes, function(vote) { return vote.userID === LoopBackAuth.currentUserId; });
-
-                            if (hasVoted && $attrs.theme === 'multi') {
-                                data.votes[data.votes.indexOf(hasVoted)] = {
-                                    userID: LoopBackAuth.currentUserId,
-                                    direction: direction
-                                };
-                            } else if ($attrs.theme === 'multi') {
-                                data.votes.push({
-                                    userID: LoopBackAuth.currentUserId,
-                                    direction: direction
-                                });
-                            } else {
-                                data.votes.push(LoopBackAuth.currentUserId);
-                            }
-
-                            return waterfallCb(null, data);
-                        }, function (newVoteData, waterfallCb) {
-                            var voteObject = function () {
-                                if ($attrs.theme === 'multi') {
-                                    return {
-                                        votes: newVoteData.votes,
-                                        voteScore: voteCount(newVoteData.votes)
-                                    }
-                                } else {
-                                    return {
-                                        votes: newVoteData.votes
-                                    }
-                                }
-                            }
-                            
-                            console.log(voteObject());
-                            
-                            $scope.service.update({
-                                where: {
-                                    id: obj.id
-                                }
-                            }, voteObject())
-                            .$promise
-                            .then(function (upData) {
-                                $scope.votable.votes = upData.votes;
-                                return waterfallCb(null);
-                            })
-                            .catch(function (err) {
-                                return waterfallCb(err);
-                            });
-                        }
-                    ], function (err) {
-                        $scope.voting = false;
-                        if (err) { console.log("Error!", err); }
-                        updateVotes(direction);
-                    });
-                });
-                
-            };
-            
-        }]
-    }
-}])
 .directive('ngBackground', function(){
     return function(scope, element, attrs){
         var url = attrs.ngBackground;
@@ -872,19 +713,9 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/frontend/premiumDirective.html'
     };
 })
-.directive('articleDeckAdd', function () {
+.directive('articleItemAdd', function () {
     return {
-        templateUrl: tpl + 'views/admin/articles.deck.add.html',
-    };
-})
-.directive('articleGuideAdd', function () {
-    return {
-        templateUrl: tpl + 'views/admin/articles.guide.add.html',
-    };
-})
-.directive('articleAuthorAdd', function () {
-    return {
-        templateUrl: tpl + 'views/admin/articles.author.add.html',
+        templateUrl: tpl + 'views/admin/articles.item.add.html',
     };
 })
 .directive('articleRelatedAdd', function () {

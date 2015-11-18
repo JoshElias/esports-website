@@ -168,8 +168,8 @@
                                 <h3>{{currentMulligan.className.toUpperCase()}} MULLIGAN</h3>
                                 <p ng-if="getMulliganCards().length">
                                     <span ng-repeat="card in getMulliganCards()">
-                                        <span ng-if="$last && getMulliganCards().length > 1"> and </span>{{card.card.name}}<span ng-if="!$last">, 
-                                        </span>
+                                        <span ng-if="$last && getMulliganCards().length > 1"> and </span>{{card.name}}
+                                        <span ng-if="!$last">, </span>
                                     </span>
                                 </p>
                                 <p ng-if="getMulliganInstructions().length">{{getMulliganInstructions()}}</p>
@@ -181,9 +181,9 @@
                             <div ng-if="getMulliganCards().length" class="hidden-xs">
                                 <div class="deck-mulligan-cards">
                                     <div class="deck-mulligan-card" ng-repeat="card in getMulliganCards()">
-                                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}" 
+                                        <a href="#" data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" 
                                            style="left: {{cardLeft($index)}}%; z-index: {{$index}};" hs-card>
-                                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.medium}}" alt="">
+                                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" alt="">
                                         </a>
                                     </div>
                                 </div>
