@@ -15,21 +15,18 @@
 // 1... hots map Mixin library
 //*************************************
 
-// map=map name, filename= (file).jpg
+// hots map images covers all images related to maps for Hots. 
+// Enter the class name for the map and make sure all files share the same naming convention.
 
-@mixin hots-map-images ($map, $filename) {
+@mixin hots-map-images ($map) {
 
-    .hots-guide.large.#{$map} { background: url('../img/hots/maps/guides/#{$filename}.jpg') no-repeat center top; background-size: cover; }
-    .hots-guide.small.#{$map} { background: url('../img/hots/maps/guides/#{$filename}-tab.jpg') no-repeat center top; background-size: cover; }
+    .hots-guide.large.#{$map} { background: url('../img/hots/maps/guides/#{$map}.jpg') no-repeat center top; background-size: cover; }
+    .hots-guide.small.#{$map} { background: url('../img/hots/maps/guides/#{$map}-tab.jpg') no-repeat center top; background-size: cover; }
     .hots-guide.long.#{$map} { background-image: url('../img/hots/maps/guides/long/#{$map}.png'); background-repeat: no-repeat; background-position: right top; }
-
-}
-
-
-@mixin hots-map-modal-icon  ($mapName, $shortName) {
-
-    .hots-modal .map.#{$mapName} { background: url('../img/hots/maps/modal/#{$shortName}.jpg') no-repeat center center; }
-    .map-selection .map .icon-wrap .icon a.icon-#{$mapName} { background: url('../img/hots/maps/#{$shortName}.png') no-repeat center center; }
+    .guide-map.#{$map} { background: url('../img/hots/maps/#{$map}_small.png') no-repeat center center; }
+    .filters-back.#{$map} { background: #121111 url('../img/hots/maps/bgs/#{$map}.jpg') center top no-repeat; }
+    .hots-modal .map.#{$map} { background: url('../img/hots/maps/modal/#{$map}.jpg') no-repeat center center; }
+    .map-selection .map .icon-wrap .icon a.icon-#{$map} { background: url('../img/hots/maps/#{$map}.png') no-repeat center center; }
     
 }
 
@@ -38,15 +35,16 @@
 // 2... hots maps
 //*************************************
 
-@include hots-map-images (blackheartsbay, bhb);
-@include hots-map-images (cursedhollow, curse);
-@include hots-map-images (dragonshrine, ds);
-@include hots-map-images (gardenofterror, garden);
-@include hots-map-images (hauntedmines, hm);
-@include hots-map-images (skytemple, st);
-@include hots-map-images (tomb-of-the-spider-queen, sq);
-@include hots-map-images (battlefield-of-eternity, bfoe);
-@include hots-map-images (infernal-shrine, shrine);
+@include hots-map-images (blackhearts-bay);
+@include hots-map-images (cursed-hollow);
+@include hots-map-images (dragon-shrine);
+@include hots-map-images (garden-of-terror);
+@include hots-map-images (haunted-mines);
+@include hots-map-images (sky-temple);
+@include hots-map-images (tomb-of-the-spider-queen);
+@include hots-map-images (battlefield-of-eternity);
+@include hots-map-images (infernal-shrine);
+@include hots-map-images (towers-of-doom);
 
 /* maps */
 .map-selection { margin: 70px auto 20px auto; }
@@ -76,14 +74,5 @@
 .hots-modal .map-container { float: left; width: 195px; height: 195px; padding: 4px; background: #90d7ed; background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); }
 .hots-modal .map { width: 187px; height: 187px; border: 1px solid #10131c; }
 
-@include hots-map-modal-icon (blackheartsbay, blackheart);
-@include hots-map-modal-icon (cursedhollow, cursed);
-@include hots-map-modal-icon (dragonshrine, dragon);
-@include hots-map-modal-icon (gardenofterror, terror);
-@include hots-map-modal-icon (hauntedmines, mine);
-@include hots-map-modal-icon (skytemple, sky);
-@include hots-map-modal-icon (tomb-of-the-spider-queen, spider);
-@include hots-map-modal-icon (battlefield-of-eternity, bfoe);
-@include hots-map-modal-icon (shrine, shrine);
 
 .hots-modal .map-text { float: right; width: 185px; }

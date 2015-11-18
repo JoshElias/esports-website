@@ -163,8 +163,12 @@
 .hs-decks { margin: 0; padding: 0; }
 .hs-decks li { list-style: none; margin-bottom: 10px; }
 .hs-deck { position: relative; top: 0px; left: 0px; display: block; height: 99px; padding: 10px 15px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }
+
+@media (min-width: 768px) {
 .hs-deck.small:hover,
 .hs-deck.large:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
+}
+    
 .hs-deck.large { height: 220px; }
 
 .hs-deck .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 4; }
@@ -188,4 +192,6 @@
 .hs-deck.long .hs-deck-votes,
 .hs-deck.long .hs-deck-hero-name { margin-bottom: 0; font-family: 'Open Sans Bold'; font-size: 14px; color: #FFF; line-height: 79px; }
 .hs-deck.long .hs-deck-hero-name { text-shadow: 0px 0px 10px rgba(255,255,255,.6); }
+@media (min-width: 768px) {
 .hs-deck.long:hover { background-color: rgba(255,255,255,.2); }
+}

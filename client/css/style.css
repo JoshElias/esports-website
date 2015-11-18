@@ -448,8 +448,11 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-article-wrapper { display: inline-block; padding: 0 10px; height: 400px; vertical-align: top; }
 
 .home-article { position: relative; top: 0px; left: 0px; display: block; height: 320px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out; overflow: hidden; }
-.article-wrapper .home-article:hover,
-.home-article.active:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
+
+@media (min-width: 768px) {
+    .article-wrapper .home-article:hover,
+    .home-article.active:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
+}
 
 .home-article .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 2; }
 .home-article .article-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
@@ -481,7 +484,10 @@ li.open .profile-avatar-sm img { border-color: #FFF; }
 .home-content h3.sub-title { font-size: 14px; color: #d3eefa; }
 
 .home-resource { display: block; position: relative; top: 0px; left: 0px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }
+
+@media (min-width: 768px) {
 .home-resource:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); background: #2766ad; }
+}
 
 .home-resource img { width: 100%; height: auto; }
 .home-resource .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 2; }
@@ -529,110 +535,10 @@ h1.section-title { margin: 0; font-family: 'Open Sans Bold'; color: #FFF; font-s
 /* Meta snapshot styles moved to meta=snapshot
 /* ------------------------------------- */
 
+/* ------------------------------------- */
+/* article css moved to articles.scss
+/* ------------------------------------- */
 
-/* article filters */
-.article-filters { margin-bottom: 15px; }
-.article-filters ul { margin: 0; padding: 0; margin-top: -5px; }
-.article-filters ul li { list-style: none; float: left; margin-right: 5px; }
-.article-filters ul li button { width: 40px; height: 40px; background: url('../img/article-type-icon.png') no-repeat; background-position: 0px 0px; border: none; outline: none; opacity: .5; overflow: hidden; text-indent: -99999px; }
-.article-filters ul li button:hover { opacity: .7; }
-.article-filters ul li button.active { opacity: 1; }
-.article-filters ul li button.ts { background-position: 0px 0px; }
-.article-filters ul li button.hs { background-position: -40px 0px; }
-.article-filters ul li button.hots { background-position: -80px 0px; }
-.article-filters ul li button.overwatch { background-position: -120px 0px; }
-
-/* article */
-.articles-list { margin-right: -20px; }
-.articles-list .article-wrapper { margin-right: 20px; }
-.articles-list-sm { margin-right: -10px; }
-
-.article-votes { position: absolute; right: 20px; top: 20px; }
-.article-votes .vote-wrap { position: relative; text-align: center; }
-.article-votes .vote-wrap a { cursor: pointer; }
-.article-votes .vote-wrap i { margin-top: 10px; font-size: 24px }
-
-
-.article-photo-banner { width: 100%; min-height: 293px; border-bottom: 1px solid rgba(255,255,255,.2); }
-.article-page { background: rgba(0,0,0,.5); border-left: 1px solid rgba(255,255,255,.2); border-right: 1px solid rgba(255,255,255,.2); padding: 0; position: relative; }
-.article-page .title-wrapper { padding: 30px 90px 30px 30px; }
-.article-page .title-wrapper h1 { color: #FFFFFF; text-shadow: 1px 1px 1px black; font-weight: bold; letter-spacing: 3px; }
-.article-page .title-wrapper h2 { color: #FFFFFF; font-size: 18px; text-shadow: 1px 1px 1px black; }
-
-@media (min-width: 768px) and (max-width: 979px) {
-    .article-page .title-wrapper h1 { font-size: 24px; }
-}
-
-@media (max-width: 767px) {
-    .article-page .title-wrapper h1 { font-size: 20px; }
-}
-
-.article-comments h3,
-.article-related h3 { color: #FFF; font-family: 'Open Sans Bold'; }
-
-.article-page .article-left {  }
-.article-page .article-right {  }
-
-.article-page .article-deck { width: auto; }
-
-.article-page .article-related {  }
-.article-page .article-related .related { background: rgba(10,10,10,.8); height: 60px; opacity: .8; position: relative; }
-.article-page .article-related .related:nth-child(even) { background: rgba(95,95,95,.2); height: 60px; }
-.article-page .article-related .related:hover { opacity: 1; }
-.article-page .article-related .related p { margin-bottom: 0; width: 200px; position: absolute; left: 108px; text-decoration: none; }
-.article-page .article-related .related .top { top: 5px; }
-.article-page .article-related .related .bot { bottom: 5px; font-size: 12px; color: #9E9E9E }
-.article-page .article-related .related .votes { top: 5px; right: 28px; font-size: 12px; color: #9E9E9E; left: auto; width: 5px; }
-.article-page .article-related .related a { height: 60px; width: 100%; display:block; }
-.article-page .article-related .related-img { height: 60px; width: 98px; background-size: cover; background-position: center }
-.article-page .article-related .related-info { height: 60px; width: auto; }
-
-.article-page .article-related .related-title-hearthstone { color: #D27B2C; }
-.article-page .article-related .related-title-tempostorm { color: #66A1D9; }
-.article-page .article-related .related-title-heroes { color: #8869AD; }
-.article-page .article-related .related-title-overwatch { color: #FDB813; }
-
-.article-page .article-header { position: relative; margin-top: 20px; color: #FFF; }
-.article-page .article-votes { float: right; margin: 0 0 20px 20px; }
-
-
-.article-page .article-author { background-color: #2268AE; width: 100%; padding-bottom: 15px; position: relative; margin-bottom: 50px; } 
-.article-page .article-author img {  width: 80px; height: 80px; border: 4px solid white; border-radius: 80px; background: white; position: absolute; top: 40px; left: 40px; } 
-
-.article-page .article-author .author-content { color: white; margin: 25px 0px 0px 150px; padding: 25px; min-height: 120px; } 
-.article-page .article-author .author-content h2 { font-weight: bold; margin-bottom: 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; } 
-.article-page .article-author .author-content p { line-height: 1.25 } 
-.article-page .article-author .author-social { float: right; margin-left: 20px; } 
-.article-page .article-author .author-social a { width:36px; height: 36px; border-radius: 100%; } 
-.article-page .article-author .author-social a div { width:30px; height: 30px; border-radius: 100%; } 
-.article-page .article-author .author-social a div i { font-size: 16px; line-height: 2 } 
-
-@media (max-width: 767px) {
-    .article-page .article-author .author-content { margin: 25px 0px 0px 25px; }
-    .article-page .article-author .author-social { margin-left: 0px; }
-}
-
-.article-page .article-title { margin: 0; color: #2766ad; font-family: 'Open Sans Bold'; } 
-.article-page .article-page-content { color: #FFF; padding-left: 10px; }
-.article-page .article-page-content p { font-size: 17px; }
-.article-page .article-comments { margin: 20px 0; }
-
-.article-section { margin: 0 0 20px; border: 1px solid #000; background: rgba(0,0,0,.3); }
-.article-section-title { font-size: 20px; line-height: 60px; height: 60px; color: #FFF; background: rgba(0,0,0,.3); }
-.article-section-title a { color: #FFF; }
-.article-section-title h3 { margin: 0 0 0 20px; font-size: 20px; font-family: 'Open Sans Bold'; line-height: 60px; }
-.article-section-content { padding: 20px; border-top: 1px solid #000; }
-.article-section-content.unpadded { padding: 0px; }
-.article-section-content h3 { color: #FFF; font-size: 20px; font-family: 'Open Sans Bold'; }
-.article-section-content p { color: #FFF; }
-
-.article-subscribe p { color: #FFF; }
-
-.article-subscribe > h1 { margin-top: 20px; }
-.article-subscribe > h2 { margin-bottom: 20px; font-size: 20px; color: #FFF; }
-
-
-.edit-button-fix { display:block }
 
 
 /* admin team */
