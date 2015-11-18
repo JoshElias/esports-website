@@ -23,13 +23,10 @@ module.exports = function(User) {
         });
     });
 
-/*
-    User.observe("loaded", function(ctx, next) {
-        console.log("CTX:", ctx);
-        var data = ctx.data || ctx.instance;
-        cleanPrivateFields(data, next);
+
+    User.observe("access", function(ctx, next) {
+        removePrivateFields(ctx, next);
     });
-*/
 
 
     // Handle user registeration
@@ -119,17 +116,19 @@ module.exports = function(User) {
     var privateFields = ["subscription", "isProvider", "isAdmin", "lastLoginDate",
         "resetPasswordCode", "newEmail", "newEmailCode", "emailVerified"];
 
-    function cleanPrivateFields(data, finalCb) {
-
+    function removePrivateFields(ctx, finalCb) {
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
 
-        function deleteFields() {
+        // sets the private fields to false
+        function removeFields() {
             try {
+                if(!ctx.query.fields)
+                    ctx.query.fields = {};
+
                 for (var i = 0; i < privateFields.length; i++) {
                     var privateField = privateFields[i];
-                    if (typeof data[privateField] !== "undefined")
-                        data[privateField] = undefined;
+                    ctx.query.fields[privateField] = false;
                 }
                 return finalCb();
             } catch(err) {
@@ -137,21 +136,21 @@ module.exports = function(User) {
             }
         }
 
-        var ctx = loopback.getCurrentContext();
-        var accessToken = ctx.get("accessToken");
+        var loopbackContext = loopback.getCurrentContext();
+        var accessToken = loopbackContext.get("accessToken");
         if(!accessToken || !accessToken.userId)
-            return deleteFields();
+            return removeFields();
 
         async.series([
             function(seriesCb) {
-                Role.isInRole("$owner", {principalType: RoleMapping.USER, principalId: data.id}, function (err, isRole) {
+                Role.isInRole("$owner", {principalType: RoleMapping.USER, principalId: accessToken.userId}, function (err, isRole) {
                     if (err) return seriesCb(err);
                     if (isRole) return seriesCb("ok");
                     else return seriesCb();
                 });
             },
             function(seriesCb) {
-                Role.isInRole("$admin", {principalType: RoleMapping.USER, principalId: data.id}, function (err, isRole) {
+                Role.isInRole("$admin", {principalType: RoleMapping.USER, principalId: accessToken.userId}, function (err, isRole) {
                     if (err) return seriesCb(err);
                     if (isRole) return seriesCb("ok");
                     else return seriesCb();
@@ -159,9 +158,9 @@ module.exports = function(User) {
             }
         ],
         function(err) {
-            if(err) return finalCb(err);
-            else if(err === "ok") return finalCb();
-            else return deleteFields();
+            if(err === "ok") return finalCb();
+            else if(err) return finalCb(err);
+            else return removeFields();
         });
     };
 
