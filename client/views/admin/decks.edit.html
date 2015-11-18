@@ -131,24 +131,12 @@
                         </div>
                     </span>
                     
-<!--
-                    <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
-                        <button ng-class="{'active': isMulliganCard(true, card)}"
-                                ng-click="deck.toggleMulligan(mulligan, true, card.card)">
-                            <div class="mana-cost">{{card.card.cost}}</div>
-                            {{card.card.name}}
-                            <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
-                            <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" class="pull-right">
-                        </button>
-                    </div>
--->
                     <div class="deck-list">
                         <div class="list-card" 
                              ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" 
-                             ng-click="deck.removeCardFromDeck(card)">
+                             ng-click="deck.removeCardFromDeck(card)" 
+                             data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                             data-tooltip-pos="left" hs-card>
                             <div class="mana-cost">{{card.card.cost}}</div>
                             {{card.card.name}}
                             <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
@@ -156,9 +144,10 @@
                                 <i class="fa fa-star"></i>
                             </div>
                             <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" 
-                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px">
+                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px" alt="{{card.card.name}}">
                         </div>
                     </div>
+                    
                     <div class="db-deck-dust db-deck-footer db-deck-{{deck.playerClass | lowercase}} {{deck.heroName | lowercase}}">
                         {{getDust(deck.cards)}}
                         <div class="dust-bottle-sm"></div>
@@ -415,7 +404,9 @@
                             </div>
                         </div>  
                         <div class="col-xs-4 right">
-                            <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
+                            <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index"
+                                 data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                                 data-tooltip-pos="left" hs-card>
                                 <button ng-class="{'active': isMulliganCard(true, card)}"
                                         ng-click="deck.toggleMulligan(mulligan, true, card.card)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
@@ -425,7 +416,7 @@
                                         <i class="fa fa-star"></i>
                                     </div>
                                     <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" 
-                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px">
+                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px" alt="{{card.card.name}}">
                                 </button>
                             </div>
                         </div>
@@ -457,7 +448,9 @@
                             </div>
                         </div>
                         <div class="col-xs-4 right">
-                            <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
+                            <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index"
+                                 data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                                 data-tooltip-pos="left" hs-card>
                                 <button ng-class="{'active': isMulliganCard(false, card)}"
                                         ng-click="deck.toggleMulligan(mulligan, false, card.card)">
                                     <div class="mana-cost">{{card.card.cost}}</div>
@@ -467,7 +460,7 @@
                                         <i class="fa fa-star"></i>
                                     </div>
                                     <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" 
-                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px">
+                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px" alt="{{card.card.name}}">
                                 </button>
                             </div>
                         </div>

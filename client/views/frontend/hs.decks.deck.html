@@ -168,8 +168,8 @@
                                 <h3>{{currentMulligan.className.toUpperCase()}} MULLIGAN</h3>
                                 <p ng-if="getMulliganCards().length">
                                     <span ng-repeat="card in getMulliganCards()">
-                                        <span ng-if="$last && getMulliganCards().length > 1"> and </span>{{card.card.name}}<span ng-if="!$last">, 
-                                        </span>
+                                        <span ng-if="$last && getMulliganCards().length > 1"> and </span>{{card.name}}
+                                        <span ng-if="!$last">, </span>
                                     </span>
                                 </p>
                                 <p ng-if="getMulliganInstructions().length">{{getMulliganInstructions()}}</p>

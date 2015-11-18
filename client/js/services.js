@@ -1243,7 +1243,7 @@ angular.module('app.services', [])
     
     return ow;
 })
-.factory('DeckBuilder', ['$sce', '$http', '$q', '$timeout', 'CardWithoutCoin', 'CardWithCoin', function ($sce, $http, $q, $timeout, CardWithoutCoin, CardWithCoin) {
+.factory('DeckBuilder', ['$sce', '$http', '$q', '$timeout', 'CardWithoutCoin', 'CardWithCoin', 'User', 'Hearthstone', function ($sce, $http, $q, $timeout, CardWithoutCoin, CardWithCoin, User, Hearthstone) {
 
     var deckBuilder = {};
 
@@ -1257,6 +1257,7 @@ angular.module('app.services', [])
             id: data.id || null,
             name: data.name || '',
             slug: data.slug || '',
+            authorId: data.authorId || User.getCurrentId(),
             deckType: data.deckType || 'None',
             gameModeType: data.gameModeType || 'constructed',
             description: data.description || '',
@@ -1273,6 +1274,13 @@ angular.module('app.services', [])
                 isPremium: false,
                 expiryDate: d
             },
+            votes: data.votes || [
+                {
+                    userID: User.getCurrentId(),
+                    direction: 1
+                }
+            ],
+            voteScore: data.voteScore || 1,
             isFeatured: data.isFeatured || false,
             isPublic: data.isPublic || true,
             mulligans: data.mulligans || [
@@ -1560,27 +1568,6 @@ angular.module('app.services', [])
                         return true;
                     }
                 }
-                // if card is legendary
-//                if (isLegendary && db.gameModeType === 'arena') {
-//                    db.cards[index].cardQuantity += 1;
-//                    return true;
-//                } else {
-//                    // regular cards
-//                    if (db.gameModeType === 'brawl' || db.gameModeType === 'constructed') {
-//                        if (db.cards[index].cardQuantity === 1) {
-//                            db.cards[index].cardQuantity += 1;
-//                            return true;
-//                        } else {
-//                            // inc quantity for arena decks
-//                            return false;
-//                        }
-//                    } else {
-//                        // game mode type is arena
-//                        db.cards[index].cardQuantity += 1;
-//                    }
-//                }
-                
-                
             } else {
                 // card doesn't exist
                 var newCard = {

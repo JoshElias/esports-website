@@ -866,31 +866,6 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.decks.deck.html',
                         controller: 'DeckCtrl',
                         resolve: {
-                            deckWithMulligans: ['Mulligan', 'deck', function(Mulligan, deck) {
-                                var deckID = deck.id;
-                                
-                                Mulligan.find({
-                                    filter: {
-                                        where: {
-                                            deckId: deckID
-                                        },
-                                        include: [
-                                            {
-                                                relation: 'cardsWithCoin'
-                                            },
-                                            {
-                                                relation: 'cardsWithoutCoin'
-                                            }
-                                        ]
-                                    }
-                                })
-                                .$promise
-                                .then(function (data) {
-                                    console.log('cardWithCoin: ', data);
-                                    deck.mulligans = data;
-                                    return deck;
-                                });
-                            }],
                             deck: ['$stateParams', 'Deck', function ($stateParams, Deck) {
                                 var stateSlug = $stateParams.slug;
                                 return Deck.findOne({
@@ -917,7 +892,7 @@ var app = angular.module('app', [
                                             chapters: true,
                                             youtubeId: true,
                                             gameModeType: true,
-                                            active: true
+                                            isActive: true
                                         },
                                         include: [
                                             {
@@ -1009,7 +984,44 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.deck-builder.build.html',
                         controller: 'DeckBuilderCtrl',
                         resolve: {
-                            
+                            isUserAdmin: ['User', function(User) {
+                                if (User.isAuthenticated() === false) {
+                                    return false;
+                                } else {
+                                    return User.isRole({
+                                        roleName: '$admin'
+                                    })
+                                    .$promise
+                                    .then(function (isAdmin) {
+    //                                    console.log('isAdmin: ', isAdmin.isRole);
+                                        return isAdmin.isRole;
+                                    })
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('resolve err: ', err);
+                                        }
+                                    });
+                                }
+                            }],
+                            isUserContentProvider: ['User', function(User) {
+                                if (User.isAuthenticated() === false) {
+                                    return false;
+                                } else {
+                                    return User.isRole({
+                                        roleName: '$contentProvider'
+                                    })
+                                    .$promise
+                                    .then(function (isContentProvider) {
+    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
+                                        return isContentProvider.isRole;
+                                    })
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('resolve err: ', err);
+                                        }
+                                    });
+                                }
+                            }],
                             classCardsList: ['$stateParams', 'Card', function ($stateParams, Card) {
                                 var perpage = 15,
                                     playerClass = $stateParams.playerClass;
@@ -2814,36 +2826,36 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.edit.html',
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
-//                            isUserAdmin: ['User', function(User) {
-//                                return User.isRole({
-//                                    roleName: '$admin'
-//                                })
-//                                .$promise
-//                                .then(function (isAdmin) {
-////                                    console.log('isAdmin: ', isAdmin.isRole);
-//                                    return isAdmin.isRole;
-//                                })
-//                                .catch(function (err) {
-//                                    if (err) {
-//                                        console.log('resolve err: ', err);
-//                                    }
-//                                });
-//                            }],
-//                            isUserContentProvider: ['User', function(User) {
-//                                return User.isRole({
-//                                    roleName: '$contentProvider'
-//                                })
-//                                .$promise
-//                                .then(function (isContentProvider) {
-////                                    console.log('isContentProvider: ', isContentProvider.isRole);
-//                                    return isContentProvider.isRole;
-//                                })
-//                                .catch(function (err) {
-//                                    if (err) {
-//                                        console.log('resolve err: ', err);
-//                                    }
-//                                });
-//                            }],
+                            isUserAdmin: ['User', function(User) {
+                                return User.isRole({
+                                    roleName: '$admin'
+                                })
+                                .$promise
+                                .then(function (isAdmin) {
+//                                    console.log('isAdmin: ', isAdmin.isRole);
+                                    return isAdmin.isRole;
+                                })
+                                .catch(function (err) {
+                                    if (err) {
+                                        console.log('resolve err: ', err);
+                                    }
+                                });
+                            }],
+                            isUserContentProvider: ['User', function(User) {
+                                return User.isRole({
+                                    roleName: '$contentProvider'
+                                })
+                                .$promise
+                                .then(function (isContentProvider) {
+//                                    console.log('isContentProvider: ', isContentProvider.isRole);
+                                    return isContentProvider.isRole;
+                                })
+                                .catch(function (err) {
+                                    if (err) {
+                                        console.log('resolve err: ', err);
+                                    }
+                                });
+                            }],
                             resolveParams: [function() {
                                 return {
                                     page: 1,

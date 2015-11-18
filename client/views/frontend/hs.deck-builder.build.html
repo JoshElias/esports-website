@@ -131,14 +131,17 @@
                         <div class="deck-list">
                         <div class="list-card" 
                              ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index" 
-                             ng-click="deck.removeCardFromDeck(card)">
+                             ng-click="deck.removeCardFromDeck(card)"
+                             data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                             data-tooltip-pos="left" hs-card>
                             <div class="mana-cost">{{card.card.cost}}</div>
                             {{card.card.name}}
                             <div ng-if="card.cardQuantity >= 2" class="pull-right m-r-sm">{{card.cardQuantity}}</div>
                             <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
                                 <i class="fa fa-star"></i>
                             </div>
-                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" class="pull-right">
+                            <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" 
+                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px" alt="{{card.card.name}}">
                         </div>
                     </div>
                         <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}} {{getActiveDeckName().toLowerCase()}}">
@@ -385,7 +388,9 @@
                                 </div>
                             </div>  
                             <div class="col-xs-4 right">
-                                <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
+                                <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index"
+                                     data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                                     data-tooltip-pos="left" hs-card>
                                     <button ng-class="{'active': isMulliganCard(true, card)}"
                                             ng-click="deck.toggleMulligan(mulligan, true, card.card)">
                                         <div class="mana-cost">{{card.card.cost}}</div>
@@ -394,7 +399,8 @@
                                         <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
                                             <i class="fa fa-star"></i>
                                         </div>
-                                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" class="pull-right">
+                                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" 
+                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px" alt="{{card.card.name}}">
                                     </button>
                                 </div>
                             </div>
@@ -426,7 +432,9 @@
                                 </div>
                             </div>
                             <div class="col-xs-4 right">
-                                <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index">
+                                <div class="list-card" ng-repeat="card in deck.cards | orderBy: 'card.cost' track by $index"
+                                     data-tooltip-img="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.large}}"
+                                     data-tooltip-pos="left" hs-card>
                                     <button ng-class="{'active': isMulliganCard(false, card)}"
                                             ng-click="deck.toggleMulligan(mulligan, false, card.card)">
                                         <div class="mana-cost">{{card.card.cost}}</div>
@@ -435,7 +443,8 @@
                                         <div ng-if="card.card.rarity == 'Legendary'" class="legendary pull-right">
                                             <i class="fa fa-star"></i>
                                         </div>
-                                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" class="pull-right">
+                                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" 
+                                         style="position: absolute; right: {{deck.calcImgPosition(card)}}px" alt="{{card.card.name}}">
                                     </button>
                                 </div>
                             </div>
@@ -553,51 +562,51 @@
                                 <div class="form-group">
                                     <label for="video" class="control-label col-sm-2">Video<br><small>(YouTube ID only)</small></label>
                                     <div class="col-sm-10">
-                                        <input type="text" id="video" name="video" class="form-control input-dark" ng-model="deck.video">
+                                        <input type="text" id="video" name="video" class="form-control input-dark" ng-model="deck.youtubeId">
                                     </div>
                                 </div>
-                                <div ng-if="app.user.isAdmin() || app.user.isProvider()">
-                                    <div class="form-group">
-                                        <label for="premium" class="col-sm-2 control-label">Premium</label>
-                                        <div class="col-sm-10">
-                                            <div class="dropdown">
-                                                <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
-                                                    <span>{{isPremium()}}</span>
-                                                    <b class="caret"></b>
-                                                </button>
-                                                <ul class="list-group dropdown-menu dropdown-dark">
-                                                    <li class="list-group-item" ng-class="{active: deck.premium.isPremium === type.value}" ng-repeat="type in premiumTypes">
-                                                        <a href="#" ng-click="deck.premium.isPremium = type.value">{{type.text}}</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" ng-show="deck.premium.isPremium">
-                                        <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
-                                        <div class="col-sm-10">
-                                            <div date-picker data-id="expiryDate" data-name="expiryDate" data-class="input-dark" ng-model="deck.premium.expiryDate" ng-disabled="!deck.premium.isPremium"></div>
+                            <div ng-if="isUserAdmin || isUserContentProvider">
+                                <div class="form-group">
+                                    <label for="premium" class="col-sm-2 control-label">Premium</label>
+                                    <div class="col-sm-10">
+                                        <div class="dropdown">
+                                            <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                                <span>{{isPremium()}}</span>
+                                                <b class="caret"></b>
+                                            </button>
+                                            <ul class="list-group dropdown-menu dropdown-dark">
+                                                <li class="list-group-item" ng-class="{active: deck.premium.isPremium === type.value}" ng-repeat="type in premiumTypes">
+                                                    <a href="#" ng-click="deck.premium.isPremium = type.value">{{type.text}}</a>
+                                                </li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
-                                <div ng-if="app.user.isAdmin() || app.user.isProvider()">
-                                    <div class="form-group">
-                                        <label for="premium" class="col-sm-2 control-label">Featured</label>
-                                        <div class="col-sm-10">
-                                            <div class="dropdown">
-                                                <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
-                                                    <span>{{isFeatured()}}</span>
-                                                    <b class="caret"></b>
-                                                </button>
-                                                <ul class="list-group dropdown-menu dropdown-dark">
-                                                    <li class="list-group-item" ng-class="{active: deck.featured === type.value}" ng-repeat="type in featuredTypes">
-                                                        <a href="#" ng-click="deck.featured = type.value">{{type.text}}</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
+                                <div class="form-group" ng-show="deck.premium.isPremium">
+                                    <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
+                                    <div class="col-sm-10">
+                                        <div date-picker data-id="expiryDate" data-name="expiryDate" data-class="input-dark" ng-model="deck.premium.expiryDate" ng-disabled="!deck.premium.isPremium"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-if="isUserAdmin || isUserContentProvider">
+                                <div class="form-group">
+                                    <label for="premium" class="col-sm-2 control-label">Featured</label>
+                                    <div class="col-sm-10">
+                                        <div class="dropdown">
+                                            <button class="btn input-dark input-dark-block" type="button" data-toggle="dropdown">
+                                                <span>{{isFeatured()}}</span>
+                                                <b class="caret"></b>
+                                            </button>
+                                            <ul class="list-group dropdown-menu dropdown-dark">
+                                                <li class="list-group-item" ng-class="{active: deck.isFeatured === type.value}" ng-repeat="type in featuredTypes">
+                                                    <a href="#" ng-click="deck.isFeatured = type.value">{{type.text}}</a>
+                                                </li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                                 <div class="form-group">
                                     <div class="col-sm-10 col-sm-offset-2">
                                         <div class="radio">
