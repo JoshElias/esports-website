@@ -1903,6 +1903,16 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 .profile-edit-wrapper .basic-form span {
     margin: 5px 0px;
     padding: 0px;
+    position: relative;
+}
+
+.profile-edit-wrapper .email-charm {
+    font-size: 18px;
+    color: rgba(255,255,255,.75);
+    font-weight: bold;
+    right: 25px;
+    top: 5px;
+    position: absolute !important;
 }
 
 .profile-edit-wrapper .basic-form textarea {
@@ -1917,6 +1927,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 .profile-edit-wrapper .basic-form input {
+    padding-right: 40px;
     height: 45px;
     border-radius: 0px;
     border: 1px solid rgba(255,255,255,.2);
@@ -1939,27 +1950,126 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     line-height: 3.75;
 }
 
+/*PROFILE SOCIAL*/
 
+.profile-edit-wrapper .social-wrapper {
+    margin: 0px 0px;
+}
+
+.profile-edit-wrapper .social-wrapper .link {
+    transition: .1s;
+    
+    margin-top: 15px;
+    display: flex;
+}
+
+.profile-edit-wrapper .social-wrapper .link.invalid {
+    background: rgba(255, 0,0,.25);
+}
+
+.profile-edit-wrapper .social-wrapper .link input {
+    color: white;
+    border: none;
+    background: none;
+}
+
+@media (max-width: 768px) {
+    .profile-edit-wrapper .social-wrapper .link input {
+        padding: 0px 10px;
+    }
+}
+
+.profile-edit-wrapper .social-wrapper .social-input {
+    width: 100%;
+}
+
+.profile-edit-wrapper .social-wrapper .link .logo-wrapper {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    float: left;
+}
+
+.profile-edit-wrapper .social-wrapper .link .logo-wrapper i {
+    color: white;
+    font-size: 18px;
+    line-height: 2.25;
+    width: 40px;
+}
+
+.profile-edit-wrapper .social-wrapper .static-text {
+    color: rgba(95,95,95,.90) !important;
+    padding-left: 10px;
+}
+
+.twitchWidth {
+    padding: none;
+    width: 148px;
+}
+
+.youtubeWidth {
+    padding: none;
+    width: 329px;
+}
+
+.twitterWidth {
+    padding: none;
+    width: 138px;
+}
+
+.facebookWidth {
+    padding: none;
+    width: 155px;
+}
+
+.instagramWidth {
+    padding: none;
+    width: 160px;
+}
 
 /*PROFILE CONNECT*/
 
 .twitchBack {
-    background: #6441a5;
+    background: #6441a5 !important;
 }
 .twitchBorder {
-    border: 1px #6441a5 solid;
+    border: 2px #6441a5 solid !important;
 }
 .blizzBack {
-    background: #22324B;
+    background: #22324B !important;
 }
 .blizzBorder {
-    border: 1px #22324B solid;
+    border: 2px #22324B solid !important;
 }
 .gravBack {
-    background: #1e8cbe;
+    background: #1e8cbe !important;
 }
 .gravBorder {
-    border: 1px #1e8cbe solid;
+    border: 2px #1e8cbe solid !important;
+}
+.youtubeBack {
+    background: #cd201f !important;
+}
+.youtubeBorder {
+    border: 2px #cd201f solid !important;
+}
+.twitterBack {
+    background: #55acee !important;
+}
+.twitterBorder {
+    border: 2px #55acee solid !important;
+}
+.facebookBack {
+    background: #3b5998 !important;
+}
+.facebookBorder {
+    border: 2px #3b5998 solid !important;
+}
+.instagramBack {
+    background: #3f729b !important;
+}
+.instagramBorder {
+    border: 2px #3f729b solid !important;
 }
 
 .profile-edit-wrapper .connect-wrapper {
@@ -1976,6 +2086,7 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     text-align: center;
     width: 100px;
     height: 100%;
+    float: left;
 }
 
 .profile-edit-wrapper .connect-wrapper .connect .logo-wrapper i {
@@ -1991,7 +2102,20 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 .profile-edit-wrapper .connect-wrapper .connect .connect-body {
-    
+    height: 100%;
+}
+
+.profile-edit-wrapper .connect-wrapper .connect .connect-body .link {
+    padding: 5px 10px;
+    border-radius: none;
+    border: none;
+    background: rgba(65,65,65,.75);
+    margin: 35px 25px 0px 0px;
+    float: right;
+}
+
+.profile-edit-wrapper .connect-wrapper .connect .connect-body .link i {
+    color: white;
 }
 
 .profile-edit-wrapper .update-profile-btn {

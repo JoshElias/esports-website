@@ -2414,6 +2414,18 @@ var app = angular.module('app', [
                     profile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.html',
                         controller: 'ProfileEditCtrl',
+                        resolve: {
+                            user: ['$stateParams', 'User', function ($stateParams, User) {
+                                return User.findOne({
+                                    filter: {
+                                        where: {
+                                            username: $stateParams.username
+                                        }
+                                    }
+                                })
+                                .$promise;
+                            }]
+                        }
                     }
                 },
                 access: { auth: true },
