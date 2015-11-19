@@ -8265,15 +8265,6 @@ p.white { color: #FFF; }
 
 .filters-maps ul li button.not-selected { opacity: .3; transform: scale(.9,.9); }
 
-.filters-maps ul li button.battlefield-of-eternity { background-position: -2px -2px; }
-.filters-maps ul li button.blackheartsbay { background-position: -59px -2px; }
-.filters-maps ul li button.cursedhollow { background-position: -116px -2px; }
-.filters-maps ul li button.dragonshrine { background-position: -173px -2px; }
-.filters-maps ul li button.gardenofterror { background-position: -230px -2px; }
-.filters-maps ul li button.hauntedmines { background-position: -287px -2px; }
-.filters-maps ul li button.skytemple { background-position: -344px -2px; }
-.filters-maps ul li button.tomb-of-the-spider-queen { background-position: -401px -2px; }
-
 .filters-maps ul li button.battlefield-of-eternity {width:55px; height:55px; background-position: -2px -2px}
 .filters-maps ul li button.blackheartsbay {width:55px; height:55px; background-position: -59px -2px}
 .filters-maps ul li button.cursedhollow {width:55px; height:55px; background-position: -116px -2px}
@@ -8282,7 +8273,8 @@ p.white { color: #FFF; }
 .filters-maps ul li button.hauntedmines {width:55px; height:55px; background-position: -287px -2px}
 .filters-maps ul li button.shrine {width:55px; height:55px; background-position: -344px -2px}
 .filters-maps ul li button.skytemple {width:55px; height:55px; background-position: -401px -2px}
-.filters-maps ul li button.tomb-of-the-spider-queen {width:55px; height:55px; background-position: -458px -2px}
+.filters-maps ul li button.towers-of-doom {width:55px; height:55px; background-position: -458px -2px}
+.filters-maps ul li button.tomb-of-the-spider-queen {width:55px; height:55px; background-position: -515px -2px}
 
 /* hs - content */
 .hs-content { margin-right: -10px; padding-top: 80px; }

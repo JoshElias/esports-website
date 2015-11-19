@@ -10444,53 +10444,75 @@ angular.module('app.controllers', ['ngCookies'])
         
         $scope.getHealth = function () {
             var char = $scope.getCurrentCharacter(),
-                level = $scope.level;
+                level = $scope.level,
+                val = char.stats.base.health * Math.pow(1 + char.stats.gain.health, level - 1);
             
-            return (char.stats.base.health + ((level * char.stats.gain.health) - char.stats.gain.health));
+            //return (char.stats.base.health + ((level * char.stats.gain.health) - char.stats.gain.health));
+            return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
         };
         $scope.getHealthRegen = function () {
             var char = $scope.getCurrentCharacter(),
                 level = $scope.level,
-                val = (char.stats.base.healthRegen + ((level * char.stats.gain.healthRegen) - char.stats.gain.healthRegen));
+                val = char.stats.base.healthRegen * Math.pow(1 + char.stats.gain.healthRegen, level - 1);
             
-            return (isNum(val)) ? val : +val.toFixed(2);
+            //return (isNum(val)) ? val : +val.toFixed(2);
+            return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
         };
         $scope.getMana = function () {
             var char = $scope.getCurrentCharacter(),
-                level = $scope.level;
+                level = $scope.level,
+                val = char.stats.base.mana + (char.stats.gain.mana * (level - 1));
             
-            return (char.stats.base.mana + ((level * char.stats.gain.mana) - char.stats.gain.mana)) || 'N/A';
+            //return (char.stats.base.mana + ((level * char.stats.gain.mana) - char.stats.gain.mana)) || 'N/A';
+            if (val) {
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
+            } else {
+                return 'N/A';
+            }
         };
         $scope.getManaRegen = function () {
             var char = $scope.getCurrentCharacter(),
                 level = $scope.level,
-                val = (char.stats.base.manaRegen + ((level * char.stats.gain.manaRegen) - char.stats.gain.manaRegen));
+                val = char.stats.base.manaRegen + (char.stats.gain.manaRegen * (level - 1));
             
-            return (isNum(val)) ? val || 'N/A' : +val.toFixed(2);
+            //return (isNum(val)) ? val || 'N/A' : +val.toFixed(2);
+            if (val) {
+                return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
+            } else {
+                return 'N/A';
+            }
+
         };
         $scope.getSpeed = function () {
             var char = $scope.getCurrentCharacter(),
                 level = $scope.level,
-                val = (char.stats.base.attackSpeed + ((level * char.stats.gain.attackSpeed) - char.stats.gain.attackSpeed));
+                val = char.stats.base.attackSpeed * Math.pow(1 + char.stats.gain.attackSpeed, level - 1);
             
-            return (isNum(val)) ? val : +val.toFixed(2);
+            //return (isNum(val)) ? val : +val.toFixed(2);
+            return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
         };
         $scope.getRange = function () {
             var char = $scope.getCurrentCharacter(),
                 level = $scope.level,
-                val = (char.stats.base.range + ((level * char.stats.gain.range) - char.stats.gain.range));
+                val = char.stats.base.range * Math.pow(1 + char.stats.gain.range, level - 1);
             
-            return (isNum(val)) ? val : +val.toFixed(2);
+            //return (isNum(val)) ? val : +val.toFixed(2);
+            return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
         };
         $scope.getDamage = function () {
             var char = $scope.getCurrentCharacter(),
-                level = $scope.level;
+                level = $scope.level,
+                val = char.stats.base.damage * Math.pow(1 + char.stats.gain.damage, level - 1);
             
-            return (char.stats.base.damage + ((level * char.stats.gain.damage) - char.stats.gain.damage));
+            //return (char.stats.base.damage + ((level * char.stats.gain.damage) - char.stats.gain.damage));
+            return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val.toFixed(2));
         };
         $scope.getDPS = function () {
             var val = ($scope.getSpeed() * $scope.getDamage());
-            return (isNum(val)) ? val : +val.toFixed(2);
+                        //e + h * parseInt(f) : e * Math.pow(1 + h, parseInt(f))
+            console.log('val: ', val);
+            console.log('new val: ', val.toString().indexOf('.'));
+            return (val.toString().indexOf('.') === -1) ? parseInt(val) : parseFloat(val).toFixed(2);
         };
         
         // copy
