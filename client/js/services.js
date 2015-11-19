@@ -103,16 +103,6 @@ angular.module('app.services', [])
         },
         setExpiry: function (value) {
             expiry = (value) ? new Date(value).getTime(): value;
-        },
-        setPlan: function (plan, cctoken) {
-            cctoken = cctoken || false;
-            return $http.post('/api/subscription/setplan', { plan: plan, cctoken: cctoken });
-        },
-        setCard: function (cctoken) {
-            return $http.post('/api/subscription/setcard', { cctoken: cctoken });
-        },
-        cancel: function () {
-            return $http.post('/api/subscription/cancel', {});
         }
     };
 }])

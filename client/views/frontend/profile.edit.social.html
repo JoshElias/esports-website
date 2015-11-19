@@ -3,7 +3,7 @@
 
 <div class="row social-wrapper">
     
-    <div ng-class="{ 'invalid': testString('twitch') }" class="link twitchBorder clearfix">
+    <div ng-class="{ 'invalid': !testString('twitch') }" class="link twitchBorder clearfix">
         <div class="logo-wrapper twitchBack">
             <i class="fa fa-twitch"></i>
         </div>
@@ -11,7 +11,7 @@
         <input class="social-input" placeholder="Enter things here" ng-model="user.social.twitch">
     </div>
 
-    <div ng-class="{ 'invalid': testString('youtube') }" class="link youtubeBorder clearfix">
+    <div ng-class="{ 'invalid': !testString('youtube') }" class="link youtubeBorder clearfix">
         <div class="logo-wrapper youtubeBack">
             <i class="fa fa-youtube-play"></i>
         </div>
@@ -19,7 +19,7 @@
         <input class="social-input" placeholder="Enter things here" ng-model="user.social.youtube">
     </div>
 
-    <div ng-class="{ 'invalid': testString('twitter') }" class="link twitterBorder clearfix">
+    <div ng-class="{ 'invalid': !testString('twitter') }" class="link twitterBorder clearfix">
         <div class="logo-wrapper twitterBack">
             <i class="fa fa-twitter"></i>
         </div>
@@ -27,7 +27,7 @@
         <input class="social-input" placeholder="Enter things here" ng-model="user.social.twitter">
     </div>
 
-    <div ng-class="{ 'invalid': testString('facebook') }" class="link facebookBorder clearfix">
+    <div ng-class="{ 'invalid': !testString('facebook') }" class="link facebookBorder clearfix">
         <div class="logo-wrapper facebookBack">
             <i class="fa fa-facebook"></i>
         </div>
@@ -35,7 +35,7 @@
         <input class="social-input" placeholder="Enter things here" ng-model="user.social.facebook">
     </div>
 
-    <div ng-class="{ 'invalid': testString('instagram') }" class="link instagramBorder clearfix">
+    <div ng-class="{ 'invalid': !testString('instagram') }" class="link instagramBorder clearfix">
         <div class="logo-wrapper instagramBack">
             <i class="fa fa-instagram"></i>
         </div>

@@ -1,7 +1,11 @@
 <h2>BASIC INFORMATION</h2>
 <h3>Edit your basic profile information including name, email, bio, and photo.</h3>
 
+
 <div class="row basic-wrapper">
+    <div class="notification clearfix" ng-class="{ 'hidden' : user.email === email }">
+        <div class="pull-left">!</div> <p>Make sure to check your inbox for a confirmation email after you save your new changes.</p>
+    </div>
     <div class="col-sm-3">
         <div class="row no-wrap">
             <img gravatar-src="user.email" class="img-responsive img-circle gravatar">
@@ -14,7 +18,7 @@
         
         <div class="form-group basic-form">
             <div class="row">
-                <span class="col-sm-6"><input ng-model="user.email" type="email" class="form-control" placeholder="Email"><div class="email-charm">@</div></span>
+                <span class="col-sm-6"><input ng-model="email" type="email" class="form-control" placeholder="Email"><div class="email-charm">@</div></span>
                 <span class="col-sm-6"><input ng-model="user.firstName" type="firstname" class="form-control" placeholder="First Name"></span>
             </div>
             <div class="row">
