@@ -114,7 +114,7 @@ module.exports = function(User) {
 
     // Filter out sensitive user information depending on ACL
     var privateFields = ["subscription", "isProvider", "isAdmin", "lastLoginDate",
-        "resetPasswordCode", "newEmail", "newEmailCode", "emailVerified"];
+        "resetPasswordCode", "newEmail", "newEmailCode"];
 
     function removePrivateFields(ctx, finalCb) {
         var Role = User.app.models.Role;
