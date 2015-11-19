@@ -3,7 +3,7 @@ var async = require("async");
 
 
 module.exports = function(server) {
-/*
+    /*
 	var UserIdentity = server.models.UserIdentity;
     var User = server.models.user;
 
@@ -40,5 +40,5 @@ module.exports = function(server) {
     	if(err) console.log("ERR creating user identities:", err);
     	else console.log("Donerino");
     });
-*/
+    */
 };

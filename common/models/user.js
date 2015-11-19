@@ -26,6 +26,7 @@ module.exports = function(User) {
 
     User.observe("access", function(ctx, next) {
         removePrivateFields(ctx, next);
+        next();
     });
 
 
@@ -91,7 +92,6 @@ module.exports = function(User) {
             finalCallback);
         }
     });
-
     /*!
      * Hash the plain password
      */
@@ -114,7 +114,7 @@ module.exports = function(User) {
 
     // Filter out sensitive user information depending on ACL
     var privateFields = ["subscription", "isProvider", "isAdmin", "lastLoginDate",
-        "resetPasswordCode", "newEmail", "newEmailCode", "emailVerified"];
+        "resetPasswordCode", "newEmail", "newEmailCode"];
 
     function removePrivateFields(ctx, finalCb) {
         var Role = User.app.models.Role;
@@ -137,6 +137,8 @@ module.exports = function(User) {
         }
 
         var loopbackContext = loopback.getCurrentContext();
+        if(!loopbackContext) return removeFields();
+
         var accessToken = loopbackContext.get("accessToken");
         if(!accessToken || !accessToken.userId)
             return removeFields();
@@ -529,6 +531,7 @@ module.exports = function(User) {
     };
 
     User.getCurrent = function (finalCb) {
+        console.log("wtff")
         var err = new Error('no user found');
         err.statusCode = 400;
         err.code = 'USER_NOT_FOUND';
@@ -545,8 +548,17 @@ module.exports = function(User) {
         if (!accessToken) return finalCb(err);
         req.app.models.user.findById(accessToken.userId, function (err, user) {
             if (err || !user) return finalCb(err);
-            req.currentUser = user;
-            finalCb(undefined, user);
+            var Role = User.app.models.Role;
+            var RoleMapping = User.app.models.RoleMapping;
+            /*
+            Role.getRoles({principalType: RoleMapping.USER, principalId: accessToken.userId}, function(err, roles) {
+                console.log("bitches:", err)
+                if(err) return finalCb(err);
+*/
+                //console.log("roles:", roles);
+                req.currentUser = user;
+                finalCb(undefined, user);
+            //});
         });
     };
 

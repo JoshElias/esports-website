@@ -2,7 +2,7 @@
 var async = require("async");
 
 module.exports = function(server) {
-/*
+    /*
 		var Snapshot = server.models.snapshot;
 	  var DeckTier = server.models.deckTier;
 		var DeckTech = server.models.deckTech;
@@ -184,5 +184,5 @@ module.exports = function(server) {
 				finalCallback(err, snapshot);
 			});
 		}
-*/
+		*/
 };
