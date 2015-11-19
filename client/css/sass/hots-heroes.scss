@@ -284,9 +284,11 @@ This is the template for hots-hero-talents.
 @include hots-hero(azmodan);
 @include hots-hero(brightwing);
 @include hots-hero(chen);
+@include hots-hero(cho);
 @include hots-hero(diablo);
 @include hots-hero(etc);
 @include hots-hero(falstad);
+@include hots-hero(gall);
 @include hots-hero(gazlowe);
 @include hots-hero(illidan);
 @include hots-hero(jaina);
@@ -467,6 +469,21 @@ This is the template for hots-hero-talents.
     ( class: (relentless), pos: 11 ) // -330
 ) );
 
+// talents: cho
+
+@include hots-hero-talents ( cho, (
+    ( class: (surging-dash, seared-flesh, power-surge, surge-of-stamina), pos: 0 ), // 0
+    ( class: (blazing-bulwark, fire-eater, twilight-veil), pos: 1 ), // -30
+    ( class: (fuel-for-the-flame), pos: 2 ), // -60
+    ( class: (runed-gauntlet, runic-feedback), pos: 3 ), // -90
+    ( class: (rollback), pos: 4 ), // -120
+    ( class: (frenzied-fists), pos: 5 ), // -150
+    ( class: (hammer-of-twilight, cthuns-gift), pos: 6 ), // -180
+    ( class: (upheaval, favor-of-the-old-gods, favor-of-the-old-gods), pos: 7 ), // -210
+    ( class: (molten-block), pos: 8 ), // -240
+    ( class: (i-am-hurrying), pos: 9 ) // -270
+) );
+
 //talents: diablo
 
 @include hots-hero-talents ( diablo, (
@@ -525,6 +542,25 @@ This is the template for hots-hero-talents.
     ( class: (nexus-frenzy), pos: 15 ), // -450
     ( class: (epic-mount), pos: 16 ) // -480
 ) );
+
+// talents: Gall
+
+@include hots-hero-talents ( gall, (
+    ( class: (shadowflare, edge-of-madness, giant-scorcher), pos: 0 ), // 0
+    ( class: (spurred-onward), pos: 1 ), // -30
+    ( class: (eye-of-kilrogg), pos: 2 ), // -60
+    ( class: (bombs-away), pos: 3 ), // -90
+    ( class: (siphoning-runes, dark-descent), pos: 4 ), // -120
+    ( class: (double-back, rising-dread, twilight-nova), pos: 5 ), // -150
+    ( class: (double-trouble), pos: 6 ), // -180
+    ( class: (shadow-bolt-volley, shadowfury), pos: 7 ), // -210
+    ( class: (twisting-nether, the-nether-calls), pos: 8 ), // -240
+    ( class: (speed-of-twilight), pos: 9 ), // -270
+    ( class: (dread-shield), pos: 10 ), // -300
+    ( class: (shove), pos: 11 ), // -330
+    ( class: (psychotic-break), pos: 12 ) // -360
+) );
+
 
 //talents: Gazlowe
 
@@ -1094,7 +1130,7 @@ This is the template for hots-hero-talents.
     ( class: (sixtyfour-kb-marathon), pos: 11 ), // -330
     ( class: (norse-force), pos: 12 ), // -360
     ( class: (the-sequel), pos: 13 ), // -390
-    ( class: (viking-fury-of-the-storm), pos: 14 ), // -420
+    ( class: (fury-of-the-storm), pos: 14 ), // -420
     ( class: (nordic-attack-squad), pos: 15 ) // -450
 ) );
 

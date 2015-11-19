@@ -119,7 +119,9 @@ var app = angular.module('app', [
         app.service    = $provide.service;
         app.constant   = $provide.constant;
         app.value      = $provide.value;
-
+        
+        Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
+        
         $bootboxProvider.setDefaults({ locale: "en" });
 
         $locationProvider.html5Mode(true);
@@ -2418,7 +2420,7 @@ var app = angular.module('app', [
             .state('app.profile.edit.basic', {
                 url: '',
                 views: {
-                    editprofile: {
+                    editProfile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.basic.html'
                     }
                 }
@@ -2426,7 +2428,7 @@ var app = angular.module('app', [
             .state('app.profile.edit.connect', {
                 url: '/connect',
                 views: {
-                    editprofile: {
+                    editProfile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.connect.html'
                     }
                 }
@@ -2434,7 +2436,7 @@ var app = angular.module('app', [
             .state('app.profile.edit.social', {
                 url: '/social',
                 views: {
-                    editprofile: {
+                    editProfile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.social.html'
                     }
                 }
@@ -2442,7 +2444,7 @@ var app = angular.module('app', [
             .state('app.profile.edit.premium', {
                 url: '/premium',
                 views: {
-                    editprofile: {
+                    editProfile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.premium.html'
                     }
                 }

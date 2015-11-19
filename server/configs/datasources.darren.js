@@ -2,7 +2,7 @@ module.exports = {
 	"mongodb": {
 	    "host": "54.68.67.60",
 	    "port": 27017,
-	    "database": "darrenisawesomedb",
+	    "database": "supercooldb",
 	    "name": "mongodb",
 	    "connector": "mongodb",
 	    "server": {

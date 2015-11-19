@@ -16,9 +16,9 @@
         <button ng-class="{active: $state.includes('app.profile.edit.premium')}" ui-sref="app.profile.edit.premium"><h2>PREMIUM</h2></button>
     </div>
     
-    <div class="edit-profile-view" ui-view="editprofile"></div>
+    <div class="edit-profile-view" ui-view="editProfile"></div>
 
-    <button class="update-profile-btn" ng-if="!$state.includes('app.profile.edit.premium')"><h2>Save Profile</h2></button>
+    <button class="update-profile-btn" ng-if="!$state.includes('app.profile.edit.premium')" ng-click="updateProfile()"><h2>Save Profile</h2></button>
 </div>
 <!--
     <div class="panel panel-default m-t-md">
