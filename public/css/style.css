@@ -3897,7 +3897,8 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .sponsor-page { padding-top: 50px; padding-bottom: 50px; }
 .sponsor-page p { color: #FFF; }
 .sponsor-logo-twitch { margin: 0 auto; width: 275px; height: 80px; background: url('../img/twitch.png') no-repeat; }
-.sponsor-logo-g2a { margin: 0 auto; width: 275px; height: 80px; background: url('../img/g2a.png') no-repeat; }
+.sponsor-logo-g2a { margin: 0 auto; width: 275px; height: 80px; background: url('../img/g2a.png') no-repeat; position: relative; }
+.sponsor-logo-g2a a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; }
 .sponsor-logo-namecheap { margin: 0 auto; width: 275px; height: 80px; background: url('../img/namecheap.png') no-repeat; }
 .sponsor-logo-func { margin: 0 auto; width: 275px; height: 80px; background: url('../img/func.png') no-repeat; }
 /*.sponsor-page a { margin: 0 auto; display: block; width: 20px; color: #FFF; opacity: .6; font-size: 20px; }*/
