@@ -7831,7 +7831,7 @@ p.white { color: #FFF; }
 .hots-modal .map.tomb-of-the-spider-queen { background: url('../img/hots/maps/modal/spider.jpg') no-repeat center center; }
 .hots-modal .map.battlefield-of-eternity { background: url('../img/hots/maps/modal/bfoe.jpg') no-repeat center center; }
 .hots-modal .map.shrine { background: url('../img/hots/maps/modal/shrine.jpg') no-repeat center center; }
-.hots-modal .map.towers-of-doom { background: url('../img/hots/maps/modal/towers-of-doom.jpg') no-repeat center center; }
+.hots-modal .map.towers-of-doom { background: url('../img/hots/maps/modal/towers-of-doom.png') no-repeat center center; }
 .hots-modal .map-text { float: right; width: 185px; }
 
 /* hots modal - talents */
