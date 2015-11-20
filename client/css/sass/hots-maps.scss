@@ -30,49 +30,53 @@
     
 }
 
+.hots-styles { //hots styles wrapper
+    
+    //*************************************
+    // 2... hots maps
+    //*************************************
 
-//*************************************
-// 2... hots maps
-//*************************************
-
-@include hots-map-images (blackhearts-bay);
-@include hots-map-images (cursed-hollow);
-@include hots-map-images (dragon-shrine);
-@include hots-map-images (garden-of-terror);
-@include hots-map-images (haunted-mines);
-@include hots-map-images (sky-temple);
-@include hots-map-images (tomb-of-the-spider-queen);
-@include hots-map-images (battlefield-of-eternity);
-@include hots-map-images (infernal-shrine);
-@include hots-map-images (towers-of-doom);
-
-/* maps */
-.map-selection { margin: 70px auto 20px auto; }
-.map-selection .map-row { margin: -50px auto 0 auto; white-space: nowrap; }
-
-.map-selection .map-row.map-row-1 { max-width: 191px; }
-.map-selection .map-row.map-row-2 { max-width: 382px; }
-.map-selection .map-row.map-row-3 { max-width: 573px; }
-.map-selection .map-row.map-row-4 { max-width: 764px; }
-.map-selection .map-row.map-row-5 { max-width: 955px; }
-
-.map-selection .map { margin: 0 5px; display: inline-block; position: relative; width: 181px; height: 208px; }
-.map-selection .map .icon-wrap { width: 181px; height: 208px; display: inline-block; overflow: hidden; }
-
-.map-selection .map .icon-wrap .icon { display: inline-block; overflow: hidden; transform: translate(16px, 30px) scaleX(1.717) rotate(45deg); width: 147px; height: 147px; opacity: .25; transition: opacity .1s linear; }
-.map-selection .map .icon-wrap .icon a { display: inline-block; transform: rotate(-45deg) scaleX(0.59) translate(18px, -34px); width: 181px; height: 208px; }
-
-// icon-wrap included in mixin below
-
-.map-selection .map .icon-wrap .icon:hover { opacity: .8; }
-.map-selection .map .icon-wrap .icon.active { opacity: 1; }
-
-//*************************************
-// 3... hots modal - maps
-//*************************************
-
-.hots-modal .map-container { float: left; width: 195px; height: 195px; padding: 4px; background: #90d7ed; background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); }
-.hots-modal .map { width: 187px; height: 187px; border: 1px solid #10131c; }
+    @include hots-map-images (blackhearts-bay);
+    @include hots-map-images (cursed-hollow);
+    @include hots-map-images (dragon-shrine);
+    @include hots-map-images (garden-of-terror);
+    @include hots-map-images (haunted-mines);
+    @include hots-map-images (sky-temple);
+    @include hots-map-images (tomb-of-the-spider-queen);
+    @include hots-map-images (battlefield-of-eternity);
+    @include hots-map-images (infernal-shrine);
+    @include hots-map-images (towers-of-doom);
 
 
-.hots-modal .map-text { float: right; width: 185px; }
+
+    /* maps */
+    .map-selection { margin: 70px auto 20px auto; }
+    .map-selection .map-row { margin: -50px auto 0 auto; white-space: nowrap; }
+
+    .map-selection .map-row.map-row-1 { max-width: 191px; }
+    .map-selection .map-row.map-row-2 { max-width: 382px; }
+    .map-selection .map-row.map-row-3 { max-width: 573px; }
+    .map-selection .map-row.map-row-4 { max-width: 764px; }
+    .map-selection .map-row.map-row-5 { max-width: 955px; }
+
+    .map-selection .map { margin: 0 5px; display: inline-block; position: relative; width: 181px; height: 208px; }
+    .map-selection .map .icon-wrap { width: 181px; height: 208px; display: inline-block; overflow: hidden; }
+
+    .map-selection .map .icon-wrap .icon { display: inline-block; overflow: hidden; transform: translate(16px, 30px) scaleX(1.717) rotate(45deg); width: 147px; height: 147px; opacity: .25; transition: opacity .1s linear; }
+    .map-selection .map .icon-wrap .icon a { display: inline-block; transform: rotate(-45deg) scaleX(0.59) translate(18px, -34px); width: 181px; height: 208px; }
+
+    // icon-wrap included in mixin below
+
+    .map-selection .map .icon-wrap .icon:hover { opacity: .8; }
+    .map-selection .map .icon-wrap .icon.active { opacity: 1; }
+
+    //*************************************
+    // 3... hots modal - maps
+    //*************************************
+
+    .hots-modal .map-container { float: left; width: 195px; height: 195px; padding: 4px; background: #90d7ed; background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); }
+    .hots-modal .map { width: 187px; height: 187px; border: 1px solid #10131c; }
+
+
+    .hots-modal .map-text { float: right; width: 185px; }
+}

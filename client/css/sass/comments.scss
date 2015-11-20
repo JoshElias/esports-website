@@ -1,0 +1,83 @@
+@import 'ts-colors.scss';
+
+// Description: file for global styles related to comments
+
+//*************************************
+
+// 1... comments
+
+//*************************************
+
+
+//*************************************
+// 1... comments
+//*************************************
+
+.comments { }
+
+.comment { min-height: 100px; opacity: .9; }
+.comment-section-title { color: white; }
+.comment-section-title h3 { font-weight: bold; letter-spacing: 2px; }
+.comment .deleted-user { color: red; font-size: 15px; }
+.comment .avatar-wrapper { float: left; padding-left: 0px; }
+.comment .avatar { background: white; width: 60px; height: 60px; border-radius: 50%; }
+.comment .avatar img { width: 60px; height: 60px; padding:2px; }
+
+@media (max-width: 767px) {
+    .comment .avatar { width: 30px; height: 30px; }
+    .comment .avatar img { width: 30px; height: 30px; }
+}
+
+.comment .panel-heading { color: #FFF; padding: 0; }
+.comment .panel-heading a { color: #9C9C9C; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; transition: .15s; }
+.comment .panel-body { color: #FFF; background: #1B1B1B; overflow: hidden; }
+.comment .comment-panel { color: white; border-radius: 0px; background: #262626; margin: 0; padding: 25px; transition: all .15s; -webkit-transition: all .15s; -moz-transition: all .15s; }
+.comment .comment-body { overflow: hidden; white-space:pre-wrap; }
+.comment .comment-ago { float:right; color: #2267B2; transition: .15s; }
+.comment:hover .comment-panel { background-color: #2267B2; }
+.comment:hover .panel-heading a { color: #FFF; }
+.comment:hover .comment-ago { color: #9c9c9c } 
+
+.comment .comment { margin-left: 50px;  }
+.comment .comment.first { margin-top: 10px; }
+.comment .comment:last-child { border-left: 1px solid transparent; padding-bottom: 0px; }
+
+.comment-add { position: relative; background: #262626; padding: 0px 0px 0px 10px; opacity: .9; }
+.comment-add.active, 
+.comment-add:hover { background: #2267B2; transition: all .15s; -webkit-transition: all .15s; -moz-transition: all .15s; }
+.comment-add .row { margin: 0px; }
+.comment-add .comment-add-bot { height: 35px; margin-top: -5px; }
+.comment-add .avatar { width: 60px; height: 60px; background: rgba(255,255,255,1); border-radius: 50%; margin-top:15px; }
+.comment-add .avatar img { width: 60px; height: 60px; padding: 2px; }
+
+@media (max-width: 767px) {
+    .comment-add .avatar { width: 30px; height: 30px; }
+    .comment-add .avatar img { width: 30px; height: 30px; }
+}
+
+.comment-add .comment-form { padding-right: 0; }
+.comment-add .form-group { margin-bottom: 0px; }
+.comment-add textarea { width: 100%; border-radius: 0px; border-color: transparent; resize: none; background: none; color: white; padding:10px; transition: .15s }
+.comment-add textarea:focus { background: none; outline:none; }
+.comment-add .remaining { color: white; height: 100%; border-right: 1px solid rgba(0,0,0,.4); }
+.comment-add .remaining span { padding-top:8px; }
+.comment-add .post { padding-right: 0; border-left: 1px solid rgba(255,255,255,.4); height:100%; padding: 0; }
+.comment-add .post button { width:100%; height: 100%; background: none; outline: none; border: none; color: white; padding: 0; font-weight: bold; }
+
+.comment-votes { text-align: right; margin-right: 2px; }
+.comment-votes .vote-count { background: #2766ad; }
+.comment-vote { font-size: 20px; text-align: right; }
+
+.no-comments { 
+    font-size: 18px;
+    font-weight: bold;
+}
+.no-comments p {
+    padding: 30px;
+}
+.no-comments:hover .comment-panel { 
+    background: #262626;
+}
+.no-comments .comment-panel {
+    padding: 0px!important;
+}
