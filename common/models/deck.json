@@ -139,9 +139,9 @@
   },
   "acls": [
     {
-    "principalType": "ROLE",
-    "principalId": "$everyone",
-    "permission": "DENY"
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
     },
     {
       "principalType": "ROLE",
@@ -165,7 +165,6 @@
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "accessType": "WRITE",
       "property": "create"
     }
   ],
