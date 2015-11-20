@@ -51,7 +51,6 @@
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "accessType": "WRITE",
       "property": "create"
     }
   ],

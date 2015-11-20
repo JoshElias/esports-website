@@ -7480,8 +7480,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     }])
-    .controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckMatchup', 'isUserAdmin', 'isUserContentProvider',
-        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckMatchup, isUserAdmin, isUserContentProvider) {
+    .controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'isUserAdmin', 'isUserContentProvider',
+        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, isUserAdmin, isUserContentProvider) {
             // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
 
@@ -8023,13 +8023,15 @@ angular.module('app.controllers', ['ngCookies'])
                         // Create cards for deck
 //                        console.log('deckCard deckId: ', deckId);
                         async.each(deck.cards, function(deckCard, deckCardCB) {
-                            // add deckId
-                            deckCard.deckId = deckId;
-//                            console.log('deckCard: ', deckCard);
                             
-                            Deck.cards.create({
-                                id: deckId
-                            }, deckCard)
+                            console.log('deckCard: ', deckCard);
+                            var newDeckCard = {
+                                cardId: deckCard.id,
+                                deckId: deckCard.deckId,
+                                cardQuantity: deckCard.cardQuantity
+                            };
+                            
+                            DeckCard.create(deckCard)
                             .$promise
                             .then(function (cardCreated) {
 //                                console.log('card created: ', cardCreated);
@@ -8053,11 +8055,13 @@ angular.module('app.controllers', ['ngCookies'])
                     function (deckId, deckSlug, seriesCallback) {
 //                        console.log('mulligan deckId: ', deckId);
                         async.each(deck.mulligans, function(mulligan, mulliganCB) {
-                            // add deckId
-                            mulligan.deckId = deckId;
-                            Deck.mulligans.create({
-                                id: deckId
-                            }, mulligan)
+                            var newMulligan = {
+                                className: mulligan.className,
+                                instructionsWithCoin: mulligan.instructionsWithCoin,
+                                instructionsWithoutCoin: mulligan.instructionsWithoutCoin,
+                                deckId: deckId
+                            };
+                            Mulligan.create(newMulligan)
                             .$promise
                             .then(function (mulliganCreated) {
 //                                console.log('mulligan created: ', mulliganCreated);
@@ -8132,11 +8136,14 @@ angular.module('app.controllers', ['ngCookies'])
                         console.log('deckSlug: ', deckSlug);
                         async.each(deck.matchups, function(matchup, matchupCB) {
 //                            console.log('matchup: ', matchup);
-                            matchup.forDeckId = deckId;
+                            var newMatchup = {
+                                deckName: matchup.deckName,
+                                className: matchup.className,
+                                forChance: matchup.forChance,
+                                forDeckId: deckId,
+                            };
                             
-                            Deck.matchups.create({
-                                id: deckId
-                            }, matchup)
+                            DeckMatchup.create(newMatchup)
                             .$promise
                             .then(function (matchupCreated) {
 //                                console.log('matchup created: ', matchupCreated);
