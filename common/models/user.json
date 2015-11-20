@@ -46,6 +46,9 @@
     },
     "twitchID": {
       "type": "string"
+    },
+    "social": {
+      "type": "object"
     }
   },
   "validations": [],

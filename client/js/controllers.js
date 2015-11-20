@@ -53,8 +53,8 @@ angular.module('app.controllers', ['ngCookies'])
             }, true);
 
         }])
-    .controller('RootCtrl', ['$scope', '$cookies', 'LoginModalService', 'LoopBackAuth', 'User', 'currentUser',
-        function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser) {
+    .controller('RootCtrl', ['$scope', '$cookies', 'LoginModalService', 'LoopBackAuth', 'User', 'currentUser', 'LoginService',
+        function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService) {
 
         $scope.$watch(function() { return LoopBackAuth.currentUserData; }, function (newUserData) {
           $scope.currentUser = newUserData;
@@ -67,9 +67,13 @@ angular.module('app.controllers', ['ngCookies'])
         }
 
         $scope.logout = function() {
-            User.logout(function() {
-            }, function(err) {
-                console.log("error logging out:", err);
+            LoginService.logout(function (err) {
+                if (err) {
+                    console.log("ERROR LOGGING OUT:", err);
+                    return;
+                }
+                
+                console.log("logged out successful");
             });
         }
     }])
@@ -448,9 +452,15 @@ angular.module('app.controllers', ['ngCookies'])
 //        };
         }
     ])
-    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', 'AlertService', 'user', 'User', 'LoopBackAuth',
-        function ($scope, $state, $cookies, AlertService, user, User, LoopBackAuth) {
+    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', 'AlertService', 'user', 'User', 'LoopBackAuth', 'EventService',
+        function ($scope, $state, $cookies, AlertService, user, User, LoopBackAuth, EventService) {
             console.log(user);
+            
+            
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                console.log("event listener response:", data);
+            });
+            
             
             $scope.user = user;
             $scope.plan = 'tempostorm_semi';
@@ -477,7 +487,7 @@ angular.module('app.controllers', ['ngCookies'])
 //            }
             
             $scope.testString = function (str) {
-                var pattern = /^[a-zA-Z0-9\._-]*$/,
+                var pattern = /^[\w\._-]*$/,
                     word = $scope.user.social[str];
                 
                 return pattern.test(word);
@@ -575,20 +585,14 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             }
-            
-            console.log(LoopBackAuth);
-            
-            function editEmail(cb) {
-                
-            }
 
             $scope.updateProfile = function () {
-                console.log(user);
+                console.log("kk");
                 async.series([
                     function (seriesCb) {
-                        if ($scope.email !== user.email) {
+                        if ($scope.email !== $scope.user.email) {
                             User.changeEmail({
-                                uid: user.id,
+                                uid: $scope.user.id,
                                 token: LoopBackAuth.accessTokenId,
                                 email: user.email
                             })
@@ -604,29 +608,17 @@ angular.module('app.controllers', ['ngCookies'])
                             return seriesCb();
                         }
                     }, function (seriesCb) {
-//                        User.update({
-//                            where: {
-//                                id: user.id
-//                            }
-//                        }, user);
+                        User.update({
+                            where: {
+                                id: $scope.user.id
+                            }
+                        }, $scope.user)
+                        .$promise
+                        .then(function (data) {
+                            return seriesCb();
+                        });
                     }
                 ])
-                
-//                if ($scope.email !== user.email) {
-//                    
-//                }
-//                User.updateProfile($scope.profile).success(function (data) {
-//                    if (!data.success) {
-//                        console.log(data.error);
-//                    } else {
-//                        var msg = 'Your profile has been updated successfully.';
-//                        if ($scope.profile.changeEmail) {
-//                            msg += ' Email address changes must be verified by email before they will take effect.';
-//                        }
-//                        AlertService.setSuccess({ show: true, msg: msg });
-//                        $state.go($state.current, { username: $scope.profile.username }, {reload: true});
-//                    }
-//                });
             };
         }
     ])

@@ -72,6 +72,53 @@ angular.module('app.services', [])
         }
     }
 })
+.factory('LoginService', ['$state', 'User', 'EventService', function ($state, User, EventService) {
+    return {
+        login: function (email, password, remember, cb) {
+            var options = { rememberMe: remember }
+            var where = { email: email, password: password }
+            var callback = function (err, data) {
+                return (cb != undefined) ? cb(err, data) : null;
+            }
+            
+            User.login(options, where)
+            .$promise
+            .then(function (data) {
+                console.log("fire event");
+                EventService.emit("EVENT_LOGIN", data);
+                return callback(null, data);
+            })
+            .catch(function (err) {
+                return callback(err);
+            });
+        },
+        logout: function (cb) {
+            var callback = function (err) {
+                return (cb != undefined) ? cb(err) : null;
+            }
+            
+            User.logout()
+            .$promise
+            .then(function () {
+                console.log("fire event");
+                EventService.emit("EVENT_LOGOUT");
+                return callback();
+            })
+            .catch(function(err) {
+                console.log("error logging out:", err);
+                return callback(err);
+            });
+        },
+        thirdPartyLogin: function (provider) {
+            var redirectObj = {
+                name: $state.current.name,
+                params: $state.params
+            }
+            $cookies.put("redirectStateString", JSON.stringify(redirectObj));
+            window.location.replace("/login/"+provider);
+        }
+    }
+}])
 .factory('SubscriptionService', ['$http', function ($http) {
     var isSubscribed = false,
         tsPlan = false,
@@ -2903,7 +2950,7 @@ angular.module('app.services', [])
              listeners[eventName] = [];
          }
 
-         listeners.push(listener);
+         listeners[eventName].push(listener);
      }
 
      function unregisterListener(eventName, listener) {
