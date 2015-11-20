@@ -1953,7 +1953,7 @@ angular.module('app.services', [])
             description: data.description || '',
             content: data.content || [],
             heroes: data.heroes || [],
-            createdDate: d,
+            createdDate: new Date().toISOString(),
             maps: data.maps || [],
             synergy: data.synergy || [],
             against: data.against || {
@@ -1968,22 +1968,14 @@ angular.module('app.services', [])
             isFeatured: data.featured || false,
             isPublic: (data.isPublic) ? data.isPublic.toString() : 'true',
             votes: data.votes || [],
-            votesCount: data.votesCount || 0,
+            voteScore: data.votesCount || 0,
             viewCount: data.viewcount || 0,
             against: data.against || {
                 weak: [],
                 strong: []
             },
             authorId: data.authorId || User.getCurrentId(),
-            talentTiers: data.talentTiers || {
-                1: null,
-                4: null,
-                7: null,
-                10: null,
-                13: null,
-                16: null,
-                20: null
-            }
+            talentTiers: data.talentTiers || {}
         };
 
         // constrain maps to 1 if map guide
@@ -2113,7 +2105,7 @@ angular.module('app.services', [])
             var talents = [];
             for (var i = 0; i < hero.talents.length; i++) {
                 var talentId = hero.talents[i].id;
-                if (hero.talentTiers[talentId] === tier) {
+                if (hero.talentTiers[talentId] == tier) {
                     talents.push(hero.talents[i]);
                 }
             }
@@ -2289,14 +2281,6 @@ angular.module('app.services', [])
         };
 
         return gb;
-    }
-
-    guideBuilder.saveGuide = function (guide) {
-        return $http.post('/api/guide/add', guide);
-    }
-
-    guideBuilder.updateGuide = function (guide) {
-        return $http.post('/api/guide/update', guide);
     }
 
     return guideBuilder;
@@ -2491,7 +2475,7 @@ angular.module('app.services', [])
             
         },
         getGuides: function (filters, isFeatured, limit, finalCallback) {
-            var order = "votesCount DESC",
+            var order = "voteScore DESC",
                 heroWhere = {}, 
                 guideWhere = {
                     guideType: "hero"
@@ -2517,7 +2501,7 @@ angular.module('app.services', [])
             
             if (isFeatured !== null) {
                 guideWhere.isFeatured = isFeatured;
-                order = "createdDate ASC";
+                order = "createdDate DESC";
             }
             
             
@@ -2551,7 +2535,7 @@ angular.module('app.services', [])
                         selectedGuideIds.push(_.map(hero.guides, function (guide) { return guide.id }));
                     })
                     selectedGuideIds = _.flatten(selectedGuideIds);
-                    return seriesCallback(undefined, selectedGuideIds)
+                    return seriesCallback(undefined, selectedGuideIds);
                 }, function (selectedGuideIds, seriesCallback) {
                     guideWhere.id = { inq: selectedGuideIds };
                     
@@ -2564,7 +2548,7 @@ angular.module('app.services', [])
                                 "name", 
                                 "authorId", 
                                 "slug", 
-                                "votesCount", 
+                                "voteScore", 
                                 "guideType", 
                                 "premium", 
                                 "id", 
@@ -2592,7 +2576,8 @@ angular.module('app.services', [])
             ])
         },
         getHeroGuides: function (filters, isFeatured, limit, finalCallback) {
-            var selectedHeroes = filters.heroes;
+            var selectedHeroes = filters.heroes,
+                order = "voteScore DESC";
 
             if (_.isEmpty(selectedHeroes)) {
                 return;
@@ -2604,6 +2589,7 @@ angular.module('app.services', [])
             
             if (isFeatured !== null) {
                 where.isFeatured = isFeatured
+                order = "createdDate DESC";
             }
 
             async.waterfall([
@@ -2658,7 +2644,7 @@ angular.module('app.services', [])
                                 "name", 
                                 "authorId", 
                                 "slug", 
-                                "votesCount", 
+                                "voteScore", 
                                 "guideType", 
                                 "premium", 
                                 "id", 
@@ -2732,7 +2718,7 @@ angular.module('app.services', [])
                         Guide.find({
                             filter: {
                                 limit: limit,
-                                sort: "createdDate ASC",
+                                order: "createdDate DESC",
                                 where: {
                                     id: { inq: guideIds }
                                 },
@@ -2740,7 +2726,7 @@ angular.module('app.services', [])
                                     "id",
                                     "name",
                                     "createdDate",
-                                    "votesCount",
+                                    "voteScore",
                                     "slug",
                                     "guideType",
                                     "authorId",
@@ -2844,7 +2830,7 @@ angular.module('app.services', [])
                     Guide.find({
                         filter: {
                             limit: limit,
-                            order: "createdDate ASC",
+                            order: "createdDate DESC",
                             where: {
                                 id: { inq: selectedGuideIds }
                             },
@@ -2852,7 +2838,7 @@ angular.module('app.services', [])
                                 "name", 
                                 "authorId", 
                                 "slug", 
-                                "votesCount", 
+                                "voteScore", 
                                 "guideType", 
                                 "premium", 
                                 "id", 
