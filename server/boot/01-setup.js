@@ -53,3 +53,9 @@ module.exports = function(server) {
       })
   }));
 }
+
+var Model = Model.extend('Model');
+// Override the base User's verify method
+Model.on('attached', function (obj) {
+    Model.isProtectedProperty = function(){};
+});

@@ -6485,8 +6485,13 @@ angular.module('app.controllers', ['ngCookies'])
                 ], 
                 function(err, results) {
                     if (err) {
+                        $scope.errors = [];
                         console.log('series err: ', err);
-                        $scope.errors = err.data.error.message;
+                        angular.forEach(err.data.error.details.messages, function(errArray) {
+                            for(var i = 0; i < errArray.length; i++) {
+                                $scope.errors.push(errArray[i]);
+                            }
+                        });
                         $scope.showError = true;
                         $window.scrollTo(0,0);
                         $scope.deckSubmitting = false;
@@ -7485,7 +7490,7 @@ angular.module('app.controllers', ['ngCookies'])
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
 
             $scope.className = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
-            
+            console.log('isUserEveryone: ', isUserAdmin);
             $scope.isUserAdmin = isUserAdmin;
             $scope.isUserContentProvider = isUserContentProvider;
             
@@ -7910,7 +7915,7 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.deckSubmitting = true;
                 
                 if(!deck.validDeck()) {
-                    $scope.errors = 'Deck must have exactly 30 cards.';
+                    $scope.errors = ['Deck must have exactly 30 cards'];
                     $scope.showError = true;
                     $window.scrollTo(0, 0);
                     $scope.deckSubmitting = false;
@@ -8000,7 +8005,6 @@ angular.module('app.controllers', ['ngCookies'])
             };
             
             function saveDeck(deck) {
-//                deck.slug = Util.slugify(deck.name);
                 console.log('saving deck: ', deck);
                 async.waterfall([
                     function (seriesCallback) {
@@ -8039,6 +8043,7 @@ angular.module('app.controllers', ['ngCookies'])
                             })
                             .catch(function (err) {
                                 if (err) {
+                                    console.log('card create err: ', err);
                                     deckCardCB(err);
                                 }
                             });
@@ -8158,8 +8163,17 @@ angular.module('app.controllers', ['ngCookies'])
                 ], 
                 function(err, results) {
                     if (err) {
+                        $scope.errors = [];
                         console.log('series err: ', err);
-                        $scope.errors = err.data.error.message;
+//                        if (err.data.error.details.messages) {
+//                            angular.forEach(err.data.error.details.messages, function(errArray) {
+//                                for (var i = 0; i < errArray.length; i++) {
+//                                    $scope.errors.push(errArray[i]);
+//                                }
+//                            });
+//                        } else if (err.data.error.message) {
+//                            $scope.errors.push(err.data.error.message);
+//                        }
                         $scope.showError = true;
                         $window.scrollTo(0,0);
                         $scope.deckSubmitting = false;

@@ -2829,34 +2829,42 @@ var app = angular.module('app', [
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
                             isUserAdmin: ['User', function(User) {
-                                return User.isRole({
-                                    roleName: '$admin'
-                                })
-                                .$promise
-                                .then(function (isAdmin) {
-//                                    console.log('isAdmin: ', isAdmin.isRole);
-                                    return isAdmin.isRole;
-                                })
-                                .catch(function (err) {
-                                    if (err) {
-                                        console.log('resolve err: ', err);
-                                    }
-                                });
+                                if (User.isAuthenticated() === false) {
+                                    return false;
+                                } else {
+                                    return User.isRole({
+                                        roleName: '$admin'
+                                    })
+                                    .$promise
+                                    .then(function (isAdmin) {
+    //                                    console.log('isAdmin: ', isAdmin.isRole);
+                                        return isAdmin.isRole;
+                                    })
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('resolve err: ', err);
+                                        }
+                                    });
+                                }
                             }],
                             isUserContentProvider: ['User', function(User) {
-                                return User.isRole({
-                                    roleName: '$contentProvider'
-                                })
-                                .$promise
-                                .then(function (isContentProvider) {
-//                                    console.log('isContentProvider: ', isContentProvider.isRole);
-                                    return isContentProvider.isRole;
-                                })
-                                .catch(function (err) {
-                                    if (err) {
-                                        console.log('resolve err: ', err);
-                                    }
-                                });
+                                if (User.isAuthenticated() === false) {
+                                    return false;
+                                } else {
+                                    return User.isRole({
+                                        roleName: '$contentProvider'
+                                    })
+                                    .$promise
+                                    .then(function (isContentProvider) {
+    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
+                                        return isContentProvider.isRole;
+                                    })
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('resolve err: ', err);
+                                        }
+                                    });
+                                }
                             }],
                             resolveParams: [function() {
                                 return {

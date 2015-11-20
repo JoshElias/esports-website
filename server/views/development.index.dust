@@ -87,11 +87,13 @@
 
     -->
     <!-- stripe -->
-    <!--
+    
     <script src="https://js.stripe.com/v2/"></script>
+<!--
     <script>
         Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
     </script>
-    -->
+-->
+    
 </body>
 </html>

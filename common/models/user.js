@@ -1,4 +1,3 @@
-
 module.exports = function(User) {
     var _ = require("underscore");
     var async = require("async");

@@ -173,9 +173,15 @@
                             <strong>Unable to save deck</strong>
                         </div>
                         <div class="panel-body">
-                            <span>{{errors}}</span>
+                            <ul>
+                                <li ng-repeat="error in errors">
+                                    <span ng-if="error === 'Slug already exists'">Deck name already exists</span>
+                                    <span ng-if="!(error === 'Slug already exists')">{{error}}</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
+                    
                     <div class="db-section-title clearfix">
                         <div class="row">
                             <div class="col-md-2">
@@ -541,7 +547,12 @@
                             <strong>Unable to save deck</strong>
                         </div>
                         <div class="panel-body">
-                            <span>{{errors}}</span>
+                            <ul>
+                                <li ng-repeat="error in errors">
+                                    <span ng-if="error === 'Slug already exists'">Deck name already exists</span>
+                                    <span ng-if="!(error === 'Slug already exists')">{{error}}</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     
@@ -650,8 +661,7 @@
                                     <button type="submit" class="btn btn-blue" 
                                             ng-click="updateDeck(deck)" ng-disabled="dbForm.$invalid || deckSubmitting">
                                         <span ng-if="!deckSubmitting">Save Deck</span>
-                                        <span ng-if="deckSubmitting">Submitting</span>
-                                        <span ng-if="deckSubmitting">
+                                        <span ng-if="deckSubmitting">Submitting 
                                             <i class="fa fa-spinner fa-pulse"></i>
                                         </span>
                                     </button>
