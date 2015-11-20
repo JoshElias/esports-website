@@ -107,8 +107,8 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('loginForm', ['$window', '$cookies', '$state', '$location', 'LoginModalService', 'User', 'LoopBackAuth',
-    function ($window, $cookies, $state, $location, LoginModalService, User, LoopBackAuth) {
+.directive('loginForm', ['$window', '$cookies', '$state', '$location', 'LoginModalService', 'User', 'LoopBackAuth', 'LoginService',
+    function ($window, $cookies, $state, $location, LoginModalService, User, LoopBackAuth, LoginService) {
         return {
             templateUrl: tpl + 'views/frontend/directives/login/login.form.html',
             scope: true,
@@ -134,41 +134,33 @@ angular.module('app.directives', ['ui.load'])
                 $scope.login = function login(email, password) {
                     $scope.setLoggingIn(1);
                     if ($scope.loginInfo.email !== "undefined" && typeof $scope.loginInfo.password !== "undefined") {
-
-                        User.login({ rememberMe:$scope.remember }, { email:$scope.loginInfo.email, password:$scope.loginInfo.password },
-                            function(accessToken) {
+                        
+                        LoginService.login(email, password, $scope.remember, function(err, data) {
+                            if (err) { 
+                                console.log("ERROR LOGGING IN:", err);
+                                $scope.showError = true;
+                                $scope.setLoggingIn(0);
+                            } else {
                                 LoginModalService.hideModal();
                                 $scope.setLoggingIn(2);
                                 if ($scope.callback) {
                                     $scope.callback(LoopBackAuth);
                                 }
-                            },
-                            function(err) {
-                                $scope.showError = true;
-                                $scope.setLoggingIn(0);
                             }
-                        );
+                        });
+                        
                     } else {
                         // TODO: Display modal for missing username and/or password
                     }
                 };
 
                 $scope.twitchLogin = function() {
-                  thirdPartyLogin('twitch');
+                  LoginService.thirdPartyLogin('twitch');
                 };
 
                 $scope.bnetLogin = function() {
-                  thirdPartyLogin("bnet");
+                  LoginService.thirdPartyLogin("bnet");
                 };
-
-                function thirdPartyLogin(provider) {
-                    var redirectObj = {
-                        name: $state.current.name,
-                        params: $state.params
-                    }
-                    $cookies.put("redirectStateString", JSON.stringify(redirectObj));
-                    window.location.replace("/login/"+provider);
-                }
             }]
         }
     }
