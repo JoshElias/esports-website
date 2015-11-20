@@ -162,15 +162,22 @@
 
 
                     <div class="col-md-pull-3 col-md-9" ng-hide="step !== 1">
+                        
                         <div class="panel panel-danger error-modal animated" ng-show="showError">
                             <div class="panel-heading">
                                 <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
                                 <strong>Unable to save deck</strong>
                             </div>
                             <div class="panel-body">
-                                <span>{{errors}}</span>
+                                <ul>
+                                    <li ng-repeat="error in errors track by $index">
+                                        <span ng-if="error === 'Slug already exists'">Deck name already exists</span>
+                                        <span ng-if="!(error === 'Slug already exists')">{{error}}</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
+                        
                         <div class="db-section-title clearfix">
                             <div class="row">
                                 <div class="col-md-2">
@@ -516,15 +523,22 @@
                     <!-- / step 4 -->
                     <!-- step 5 -->
                     <div class="db-section" ng-hide="step !== 5">
+                        
                         <div class="panel panel-danger error-modal animated" ng-show="showError">
                             <div class="panel-heading">
                                 <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-                                <strong>Unable to add deck</strong>
+                                <strong>Unable to save deck</strong>
                             </div>
                             <div class="panel-body">
-                                <span>{{error.msg}}</span>
+                                <ul>
+                                    <li ng-repeat="error in errors track by $index">
+                                        <span ng-if="error === 'Slug already exists'">Deck name already exists</span>
+                                        <span ng-if="!(error === 'Slug already exists')">{{error}}</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
+                        
                         <div class="db-section-title">
                             <h1>SAVE YOUR DECK</h1>
                         </div>
@@ -599,7 +613,8 @@
                                                 <b class="caret"></b>
                                             </button>
                                             <ul class="list-group dropdown-menu dropdown-dark">
-                                                <li class="list-group-item" ng-class="{active: deck.isFeatured === type.value}" ng-repeat="type in featuredTypes">
+                                                <li class="list-group-item" ng-class="{active: deck.isFeatured === type.value}" 
+                                                    ng-repeat="type in featuredTypes">
                                                     <a href="#" ng-click="deck.isFeatured = type.value">{{type.text}}</a>
                                                 </li>
                                             </ul>
@@ -624,8 +639,13 @@
                                 <div class="form-group m-b-none">
                                     <div class="col-sm-10 col-sm-offset-2">
                                         <button type="submit" class="btn btn-blue" 
-                                                ng-disabled="dbForm.$invalid" 
-                                                ng-click="saveDeck(deck)">Save Deck</button>
+                                                ng-disabled="dbForm.$invalid || deckSubmitting" 
+                                                ng-click="saveDeck(deck)">
+                                            <span ng-if="!deckSubmitting">Save Deck</span>
+                                            <span ng-if="deckSubmitting">Submitting 
+                                                <i class="fa fa-spinner fa-pulse"></i>
+                                            </span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

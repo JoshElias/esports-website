@@ -70,6 +70,12 @@
       "principalId": "$owner",
       "permission": "ALLOW",
       "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "create"
     }
   ],
   "methods": {}

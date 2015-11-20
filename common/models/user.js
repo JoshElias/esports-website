@@ -1,4 +1,3 @@
-
 module.exports = function(User) {
     var _ = require("underscore");
     var async = require("async");
@@ -25,7 +24,7 @@ module.exports = function(User) {
 
 
     User.observe("access", function(ctx, next) {
-        removePrivateFields(ctx, next);
+//        removePrivateFields(ctx, next);
         next();
     });
 

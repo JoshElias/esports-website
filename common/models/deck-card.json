@@ -36,7 +36,7 @@
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "DENY"
+      "permission": "ALLOW"
     },
     {
       "principalType": "ROLE",
@@ -55,6 +55,12 @@
       "principalId": "$owner",
       "permission": "ALLOW",
       "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "create"
     }
   ],
   "methods": {}

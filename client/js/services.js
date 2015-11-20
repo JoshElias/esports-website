@@ -1278,7 +1278,7 @@ angular.module('app.services', [])
     
     return ow;
 })
-.factory('DeckBuilder', ['$sce', '$http', '$q', function ($sce, $http, $q, Util) {
+.factory('DeckBuilder', ['$sce', '$http', '$q', '$timeout', 'CardWithoutCoin', 'CardWithCoin', 'User', 'Hearthstone', function ($sce, $http, $q, $timeout, CardWithoutCoin, CardWithCoin, User, Hearthstone) {
 
     var deckBuilder = {};
 
@@ -1292,16 +1292,22 @@ angular.module('app.services', [])
             id: data.id || null,
             name: data.name || '',
             dust: data.dust || 0,
+            youtubeId: data.youtubeId || '',
             description: data.description || '',
             deckType: data.deckType || 1,
             chapters: data.chapters || [],
             arena: data.arena || false,
             type: data.type || 1,
-//            basic: data.basic || false,
-            matches: data.matches || [],
+            slug: data.slug || '',
+            authorId: data.authorId || User.getCurrentId(),
+            deckType: data.deckType || 'None',
+            gameModeType: data.gameModeType || 'constructed',
+            basic: data.basic || false,
+            matchups: data.matchups || [],
             cards: data.cards || [],
             heroName: data.heroName || '',
             playerClass: playerClass,
+            createdDate: data.createdDate || new Date().toISOString(),
             premium: data.premium || {
                 isPremium: false,
                 expiryDate: d
@@ -1309,6 +1315,13 @@ angular.module('app.services', [])
             slug: data.slug || '',
             isFeatured: data.isFeatured || false,
             isPublic: data.isPublic || true,
+            votes: data.votes || [
+                {
+                    userID: User.getCurrentId(),
+                    direction: 1
+                }
+            ],
+            voteScore: data.voteScore || 1,
             mulligans: data.mulligans || [
                 {
                     className: 'Druid',
@@ -1434,13 +1447,13 @@ angular.module('app.services', [])
             console.log('card: ', card);
             console.log('with coin: ', withCoin);
             
-            var coinMulligan = (withCoin) ? mulligan.cardsWithCoin : mulligan.cardsWithoutCoin,
+            var cardMulligans = (withCoin) ? mulligan.cardsWithCoin : mulligan.cardsWithoutCoin,
                 exists = false,
                 index = -1;
             
             // check if card already exists
-            for (var i = 0; i < coinMulligan.length; i++) {
-                if (coinMulligan[i].id === card.id) {
+            for(var i = 0; i < cardMulligans.length; i++) {
+                if (cardMulligans[i].id === card.id) {
                     exists = true;
                     index = i;
                     break;
@@ -1448,17 +1461,76 @@ angular.module('app.services', [])
             }
 
             if (exists) {
-                coinMulligan.splice(index, 1);
+                cardMulligans.splice(index, 1);
                 console.log('spliced coinMulligan: ', coinMulligan);
                 return coinMulligan;
             } else {
-                if (coinMulligan.length < 6) {
-                    coinMulligan.push(card);
-                    console.log('added to muligan: ', coinMulligan);
-                    return coinMulligan;
-                }
+                // card doesn't exist in deck.mulligans
+                if (cardMulligans.length < 6) {
+                    cardMulligans.push(card);
+//                    console.log('added to mulligan: ', cardMulligans);
             }
         }
+            
+        db.calcImgPosition = function(card) {
+            var pos = 0;
+            var pxRatio = 28;
+            if (card.cardQuantity > 1) {
+                pos += 1;
+            }
+            if (card.card.rarity === 'Legendary') {
+                pos += 1;
+            }
+            return pxRatio * pos;
+        };
+        
+        db.toggleGameMode = function(gameMode) {
+            var cardQtyMoreThan2 = false;
+            if (gameMode === 'constructed' || gameMode === 'brawl') {
+                for(var i = 0; i < db.cards.length; i++) {
+                    if (db.cards[i].cardQuantity > 2) {
+                        cardQtyMoreThan2 = true;
+                        break;
+                    }
+                }
+                if (cardQtyMoreThan2) {
+                    // Alert user that all cards with more than 2 will be reduced to 2
+                    var box = bootbox.dialog({
+                        title: 'Are you sure you want to change this deck from <strong>' + db.gameModeType + '</strong> to <strong>' + gameMode + '</strong>?',
+                        message: 'All cards with more than 2 will be reduced to 2.',
+                        buttons: {
+                            delete: {
+                                label: 'Continue',
+                                className: 'btn-danger',
+                                callback: function () {
+                                    $timeout(function() {
+                                        for(var i = 0; i < db.cards.length; i++) {
+                                            if (db.cards[i].cardQuantity > 2) {
+                                                db.cards[i].cardQuantity = 2;
+                                            }
+                                        }
+                                        db.gameModeType = gameMode;
+                                    });
+                                }
+                            },
+                            cancel: {
+                                label: 'Cancel',
+                                className: 'btn-default pull-left',
+                                callback: function () {
+                                    box.modal('hide');
+                                }
+                            }
+                        },
+                        closeButton: false
+                    });
+                    box.modal('show');
+                } else {
+                    db.gameModeType = gameMode;
+                }
+            } else {
+                db.gameModeType = gameMode;
+            }
+        };
 
         db.getMulligan = function (klass) {
             var mulligans = db.mulligans;
@@ -1476,13 +1548,14 @@ angular.module('app.services', [])
         }
 
         db.isAddable = function (card) {
+            if (db.gameModeType === 'arena') { return true; }
             var exists = false,
                 index = -1,
                 isLegendary = (card.rarity === 'Legendary') ? true : false;
 
             // check if card already exists
             for (var i = 0; i < db.cards.length; i++) {
-                if (db.cards[i].cardId === card.id) {
+                if (db.cards[i].card.id === card.id) {
                     exists = true;
                     index = i;
                     break;
@@ -1490,7 +1563,7 @@ angular.module('app.services', [])
             }
 
             if (exists) {
-                return (!isLegendary && db.cards[index].cardQuantity === 1) || db.arena;
+                return (!isLegendary && db.cards[index].cardQuantity === 1);
             } else {
                 return true;
             }
@@ -1521,39 +1594,30 @@ angular.module('app.services', [])
 
             // add card
             if (exists) {
-                // increase qty by one
-                if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
-                    db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
+                 // check gameModeType
+                if(db.gameModeType === 'arena') {
+                    db.cards[index].cardQuantity += 1;
+                    return true;
+                } else {
+                    // mode is constructed or brawl mode
+                    if (!isLegendary && db.cards[index].cardQuantity === 1) {
+                        db.cards[index].cardQuantity += 1;
+                        return true;
+                    }
+                    // increase qty by one
+                    if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
+                        db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
+                    }
                 }
             } else {
-                // add new card
-                db.cards.push({
+                var newCard = {
                     deckId: db.id,
                     cardId: card.id,
                     cardQuantity: 1,
-                    card: {
-                        active: card.active,
-                        artist: card.artist,
-                        attack: card.attack,
-                        cardType: card.cardType,
-                        cost: card.cost,
-                        deckable: card.deckable,
-                        deckIds: db.id,
-                        durability: card.durability,
-                        dust: card.dust,
-                        expansion: card.expansion,
-                        flavor: card.flavor,
-                        health: card.health,
-                        id: card.id,
-                        mechanics: card.mechanics,
-                        name: card.name,
-                        photoNames: card.photoNames,
-                        playerClass: card.playerClass,
-                        race: card.race,
-                        rarity: card.rarity,
-                        text: card.text
-                    }
-                });
+                    card: card
+                };
+                // add new card
+                db.cards.push(newCard);
                 // sort deck
                 db.sortDeck();
             }
@@ -1597,19 +1661,89 @@ angular.module('app.services', [])
         };
 
         db.removeCardFromDeck = function (card) {
-            console.log('card to rem: ', card);
+            var cardRemovedFromDeck = false,
+                index = -1;
+            
             for (var i = 0; i < db.cards.length; i++) {
-                if (card.cardId == db.cards[i].cardId) {
+                if (card.card.id === db.cards[i].card.id) {
                     if (db.cards[i].cardQuantity > 1) {
                         db.cards[i].cardQuantity = db.cards[i].cardQuantity - 1;
                         return;
                     } else {
+                        index = db.cards.indexOf(card);
+                        console.log('index: ', index);
+                        if (index !== -1) {
+                            cardRemovedFromDeck = true;
+                        }
+                    }
+                }
+            }
+            
+            if(cardRemovedFromDeck) {
+                var cardMulliganExists = false,
+                    cancel = false;
+                
+                console.log('card was removed');
+                // search all card with coin mulligans
+                for(var i = 0; i < db.mulligans.length; i++) {
+                    for(var j = 0; j < db.mulligans[i].cardsWithCoin.length; j++) {
+                        if (db.mulligans[i].cardsWithCoin[j].id === card.card.id) {
+                            cardMulliganExists = true;
+                            break;
+                        }
+                    }
+                    for(var j = 0; j < db.mulligans[i].cardsWithoutCoin.length; j++) {
+                        if (db.mulligans[i].cardsWithoutCoin[j].id === card.card.id) {
+                            cardMulliganExists = true;
+                            break;
+                        }
                         var index = db.cards.indexOf(card);
                         db.cards.splice(index, 1);
                         return;
                     }
                 }
             }
+            
+            if (cardMulliganExists) {
+                    var box = bootbox.dialog({
+                        title: 'Are you sure you want to remove <strong>' + card.card.name + '</strong>?',
+                        message: 'Current mulligans for ' + card.card.name + ' will be lost as well.',
+                        buttons: {
+                            delete: {
+                                label: 'Continue',
+                                className: 'btn-danger',
+                                callback: function () {
+                                    $timeout(function() {
+                                        db.cards.splice(index, 1);
+                                    });
+                                    for(var i = 0; i < db.mulligans.length; i++) {
+                                        for(var j = 0; j < db.mulligans[i].cardsWithCoin.length; j++) {
+                                            if (db.mulligans[i].cardsWithCoin[j].id === card.card.id) {
+                                                db.mulligans[i].cardsWithCoin.splice(j, 1);
+                                            }
+                                        }
+                                        for(var j = 0; j < db.mulligans[i].cardsWithoutCoin.length; j++) {
+                                            if (db.mulligans[i].cardsWithoutCoin[j].id === card.card.id) {
+                                                db.mulligans[i].cardsWithoutCoin.splice(j, 1);
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            cancel: {
+                                label: 'Cancel',
+                                className: 'btn-default pull-left',
+                                callback: function () {
+                                    box.modal('hide');
+                                }
+                            }
+                        },
+                        closeButton: false
+                    });
+                    box.modal('show');
+                } else {
+                    db.cards.splice(index, 1);
+                }
         };
 
         db.removeCard = function (card) {
@@ -1682,9 +1816,11 @@ angular.module('app.services', [])
         db.validDeck = function () {
             // 30 cards in deck
             if (db.getSize() !== 30) {
-                return false;
+                 return false;
+            } else if (db.getSize() === 30) {
+                return true;
             }
-
+            
             // make sure not more than 2 of same cards in non-arena deck
             if (!db.arena) {
                 for (var i = 0; i < db.cards.length; i++) {
@@ -1733,15 +1869,16 @@ angular.module('app.services', [])
             var m = {
                 deckName: '',
                 className: '',
+                forChance: 0,
                 match: 0
             };
 
             m.className = klass;
-            db.matches.push(m);
+            db.matchups.push(m);
         }
 
         db.removeMatch = function (index) {
-            db.matches.splice(index,1);
+            db.matchups.splice(index,1);
         }
 
         return db;
@@ -1797,6 +1934,7 @@ angular.module('app.services', [])
     }
 
     return deckBuilder;
+    }
 }])
 .factory('GuideBuilder', ['$sce', '$http', '$q', 'User', function ($sce, $http, $q, User) {
 
