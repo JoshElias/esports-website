@@ -436,29 +436,30 @@
     .hots-guide.long .hots-guide-hero-name { text-shadow: 0px 0px 10px rgba(255,255,255,.6); }
     .hots-guide.long:hover { background-color: rgba(255,255,255,.2); }
 
-    //*************************************
-    // 5... hots modal
-    //*************************************
-
-
-    .hots-modal { position: relative; padding: 2px; background: #90d7ed; /* Old browsers */
-        background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); /* FF3.6+ */
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); /* Chrome,Safari4+ */
-        background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Chrome10+,Safari5.1+ */
-        background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Opera 11.10+ */
-        background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* IE10+ */
-        background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); /* W3C */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); /* IE6-9 */
-        /*box-shadow: 0px 0px 10px #d3eefa;*/
-        -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite;
-    }
-
-    .hots-modal-inner { padding: 40px; width: 500px; background: #141316 url('../img/hots/modal/modalbg.jpg') no-repeat right top; }
-    .hots-modal-inner.heroes-modal { min-height: 270px; }
-    .hots-modal-top-glow { position: absolute; top: -84px; left: 0px; width: 324px; height: 84px; background: url('../img/hots/modal/top-glow.png') no-repeat; z-index: 1001; }
-    .hots-modal-bot-glow { position: absolute; bottom: -84px; left: 0px; width: 324px; height: 84px; background: url('../img/hots/modal/bottom-glow.png') no-repeat; z-index: 1001; }
-
-    .hots-modal h1 { position: relative; padding: 0; color: #4992cf; font-size: 22px; font-family: 'Open Sans Bold'; text-transform: uppercase; text-shadow: 1px 1px 1px #000; z-index: 1003; }
-    .hots-modal p { position: relative; padding: 0; /*color: #bcbbbb;*/ color: #F2F2F2; font-size: 12px; text-shadow: 1px 1px 5px #000; z-index: 1003; }
     
+} // hots-styles wrapper ends
+
+//*************************************
+// 5... hots modal
+//*************************************
+
+
+.hots-modal { position: relative; padding: 2px; background: #90d7ed; /* Old browsers */
+    background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); /* IE6-9 */
+    /*box-shadow: 0px 0px 10px #d3eefa;*/
+    -webkit-animation-name: glow; -webkit-animation-duration: 2s; -webkit-animation-iteration-count: infinite; -moz-animation-name: glow; -moz-animation-duration: 2s; -moz-animation-iteration-count: infinite;
 }
+
+.hots-modal-inner { padding: 40px; width: 500px; background: #141316 url('../img/hots/modal/modalbg.jpg') no-repeat right top; }
+.hots-modal-inner.heroes-modal { min-height: 270px; }
+.hots-modal-top-glow { position: absolute; top: -84px; left: 0px; width: 324px; height: 84px; background: url('../img/hots/modal/top-glow.png') no-repeat; z-index: 1001; }
+.hots-modal-bot-glow { position: absolute; bottom: -84px; left: 0px; width: 324px; height: 84px; background: url('../img/hots/modal/bottom-glow.png') no-repeat; z-index: 1001; }
+
+.hots-modal h1 { position: relative; padding: 0; color: #4992cf; font-size: 22px; font-family: 'Open Sans Bold'; text-transform: uppercase; text-shadow: 1px 1px 1px #000; z-index: 1003; }
+.hots-modal p { position: relative; padding: 0; /*color: #bcbbbb;*/ color: #F2F2F2; font-size: 12px; text-shadow: 1px 1px 5px #000; z-index: 1003; }

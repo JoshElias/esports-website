@@ -13,17 +13,17 @@
 //      5.1.. Heroes talents
 //      5.2.. General Talent icon Styles
 //  6... HOTS hero filter images
-//  7... HOTS modal - hereos
-//      7.1.. HOTS modal - talents
-//  8... HOTS top guide - heroes
-//  9... HOTS hero-back 
 
+//  7... HOTS top guide - heroes
+//  8... HOTS hero-back 
+//  9... HOTS modal - hereos
+//      9.1.. HOTS modal - talents
 
 
 //*************************************
 
 
-.hots-styles { //hots styles wrapper
+
 
     //*************************************
     // 1... hots heroes Mixin library
@@ -1459,43 +1459,45 @@
 
 
 
-    //*************************************
-    // 7... HOTS modal - hereos
-    //*************************************
-
-    /* hots modal - heroes */
-    .hots-modal .hots-modal-hero { width: 300px; }
-    .hots-modal .hots-modal-hero p.title { color: #d3eefa; letter-spacing: 2px; text-transform: uppercase; }
-    .hots-modal .hots-modal-hero p.description { margin-bottom: 68px; }
-
-    .hots-modal .hero { position: absolute; top: -65px; right: -160px; width: 557px; height: 364px; z-index: 1002; }
-
-    .hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
-    .hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
-    .hots-modal .universe.diablo { background: url('../img/hots/modal/universe/diablo.png') no-repeat; }
-    .hots-modal .universe.starcraft { background: url('../img/hots/modal/universe/sc.png') no-repeat; }
-    .hots-modal .universe.warcraft { background: url('../img/hots/modal/universe/wow.png') no-repeat; }
+  
 
     //*************************************
-    // 7.1.. HOTS modal - talents
-    //*************************************
-
-    /* hots modal - talents */
-    .hots-modal .hots-talent-icon { position: absolute; top: 20px; left: -51px; }
-    .hots-modal .talent-text { margin-left: 51px; }
-
-    //*************************************
-    // 8... HOTS top guide - heroes
+    // 7... HOTS top guide - heroes
     //*************************************
 
     .hots-top-guide .hero { position: absolute; top: -65px; right: -160px; width: 557px; height: 364px; z-index: 1; }
 
     //*************************************
-    // 9... HOTS hero-back 
+    // 8... HOTS hero-back 
     //*************************************
 
 
     .hero-back { transition: background .25s ease-in-out; }
     .hero-back.default { background: rgba(0,0,0,0) center center no-repeat; }
 
-}
+
+
+//*************************************
+// 9... HOTS modal - hereos
+//*************************************
+
+/* hots modal - heroes */
+.hots-modal .hots-modal-hero { width: 300px; }
+.hots-modal .hots-modal-hero p.title { color: #d3eefa; letter-spacing: 2px; text-transform: uppercase; }
+.hots-modal .hots-modal-hero p.description { margin-bottom: 68px; }
+
+.hots-modal .hero { position: absolute; top: -65px; right: -160px; width: 557px; height: 364px; z-index: 1002; }
+
+.hots-modal .universe { position: absolute; left: 42px; bottom: 42px; width: 44px; height: 48px; z-index: 1003; }
+.hots-modal .universe.blizzard { background: url('../img/hots/modal/universe/64kb.png') no-repeat; }
+.hots-modal .universe.diablo { background: url('../img/hots/modal/universe/diablo.png') no-repeat; }
+.hots-modal .universe.starcraft { background: url('../img/hots/modal/universe/sc.png') no-repeat; }
+.hots-modal .universe.warcraft { background: url('../img/hots/modal/universe/wow.png') no-repeat; }
+
+//*************************************
+// 9.1.. HOTS modal - talents
+//*************************************
+
+/* hots modal - talents */
+.hots-modal .hots-talent-icon { position: absolute; top: 20px; left: -51px; }
+.hots-modal .talent-text { margin-left: 51px; }
