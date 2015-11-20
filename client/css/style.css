@@ -3226,7 +3226,7 @@ _::-moz-svg-foreign-content, :root .flex-col { display: block; }
 .btn-vote-up,
 .vote-count.single i { margin-top: 1px; font-size: 28px; }
 
-/* comments */
+/* comments added to comments.scss */
 .comments { }
 
 .comment { min-height: 100px; opacity: .9; }
