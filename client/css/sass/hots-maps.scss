@@ -19,35 +19,36 @@
 // Enter the class name for the map and make sure all files share the same naming convention.
 
 @mixin hots-map-images ($map) {
-
-    .hots-guide.large.#{$map} { background: url('../img/hots/maps/guides/#{$map}.jpg') no-repeat center top; background-size: cover; }
-    .hots-guide.small.#{$map} { background: url('../img/hots/maps/guides/#{$map}-tab.jpg') no-repeat center top; background-size: cover; }
-    .hots-guide.long.#{$map} { background-image: url('../img/hots/maps/guides/long/#{$map}.png'); background-repeat: no-repeat; background-position: right top; }
-    .guide-map.#{$map} { background: url('../img/hots/maps/#{$map}_small.png') no-repeat center center; }
-    .filters-back.#{$map} { background: #121111 url('../img/hots/maps/bgs/#{$map}.jpg') center top no-repeat; }
-    .hots-modal .map.#{$map} { background: url('../img/hots/maps/modal/#{$map}.jpg') no-repeat center center; }
-    .map-selection .map .icon-wrap .icon a.icon-#{$map} { background: url('../img/hots/maps/#{$map}.png') no-repeat center center; }
     
+    .hots-styles { //hots styles wrapper 
+        .hots-guide.large.#{$map} { background: url('../img/hots/maps/guides/#{$map}.jpg') no-repeat center top; background-size: cover; }
+        .hots-guide.small.#{$map} { background: url('../img/hots/maps/guides/#{$map}-tab.jpg') no-repeat center top; background-size: cover; }
+        .hots-guide.long.#{$map} { background-image: url('../img/hots/maps/guides/long/#{$map}.png'); background-repeat: no-repeat; background-position: right top; }
+        .guide-map.#{$map} { background: url('../img/hots/maps/#{$map}_small.png') no-repeat center center; }
+        .filters-back.#{$map} { background: #121111 url('../img/hots/maps/bgs/#{$map}.jpg') center top no-repeat; }
+        .map-selection .map .icon-wrap .icon a.icon-#{$map} { background: url('../img/hots/maps/#{$map}.png') no-repeat center center; }
+    } //hots styles wrapper ends
+    .hots-modal .map.#{$map} { background: url('../img/hots/maps/modal/#{$map}.jpg') no-repeat center center; }
 }
 
-.hots-styles { //hots styles wrapper
+
     
-    //*************************************
-    // 2... hots maps
-    //*************************************
+//*************************************
+// 2... hots maps
+//*************************************
 
-    @include hots-map-images (blackhearts-bay);
-    @include hots-map-images (cursed-hollow);
-    @include hots-map-images (dragon-shrine);
-    @include hots-map-images (garden-of-terror);
-    @include hots-map-images (haunted-mines);
-    @include hots-map-images (sky-temple);
-    @include hots-map-images (tomb-of-the-spider-queen);
-    @include hots-map-images (battlefield-of-eternity);
-    @include hots-map-images (infernal-shrine);
-    @include hots-map-images (towers-of-doom);
+@include hots-map-images (blackhearts-bay);
+@include hots-map-images (cursed-hollow);
+@include hots-map-images (dragon-shrine);
+@include hots-map-images (garden-of-terror);
+@include hots-map-images (haunted-mines);
+@include hots-map-images (sky-temple);
+@include hots-map-images (tomb-of-the-spider-queen);
+@include hots-map-images (battlefield-of-eternity);
+@include hots-map-images (infernal-shrine);
+@include hots-map-images (towers-of-doom);
 
-
+.hots-styles { //hots styles wrapper
 
     /* maps */
     .map-selection { margin: 70px auto 20px auto; }
@@ -69,14 +70,16 @@
 
     .map-selection .map .icon-wrap .icon:hover { opacity: .8; }
     .map-selection .map .icon-wrap .icon.active { opacity: 1; }
-
-    //*************************************
-    // 3... hots modal - maps
-    //*************************************
-
-    .hots-modal .map-container { float: left; width: 195px; height: 195px; padding: 4px; background: #90d7ed; background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); }
-    .hots-modal .map { width: 187px; height: 187px; border: 1px solid #10131c; }
-
-
-    .hots-modal .map-text { float: right; width: 185px; }
+    
 }
+
+
+//*************************************
+// 3... hots modal - maps
+//*************************************
+
+.hots-modal .map-container { float: left; width: 195px; height: 195px; padding: 4px; background: #90d7ed; background: -moz-linear-gradient(top,  #90d7ed 41%, #2479ba 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(41%,#90d7ed), color-stop(100%,#2479ba)); background: -webkit-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -o-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: -ms-linear-gradient(top,  #90d7ed 41%,#2479ba 100%); background: linear-gradient(to bottom,  #90d7ed 41%,#2479ba 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90d7ed', endColorstr='#2479ba',GradientType=0 ); }
+.hots-modal .map { width: 187px; height: 187px; border: 1px solid #10131c; }
+
+
+.hots-modal .map-text { float: right; width: 185px; }
