@@ -868,6 +868,14 @@
 
 .profile-edit-wrapper .connect-wrapper .connect .connect-body {
     height: 100%;
+    position: relative;
+}
+
+.profile-edit-wrapper .connect-wrapper .connect .connect-body span {
+    color: white;
+    position: absolute;
+    top: 20px;
+    left: 120px;
 }
 
 .profile-edit-wrapper .connect-wrapper .connect .connect-body .link {
@@ -883,6 +891,7 @@
     color: white;
 }
 
+.profile-edit-wrapper .update-card-btn,
 .profile-edit-wrapper .update-profile-btn {
     margin-top: 20px;
     background: #2268AD;
@@ -890,10 +899,33 @@
     border-radius: none;
     padding: 10px 20px;
 }
+.profile-edit-wrapper .update-card-btn:disabled,
+.profile-edit-wrapper .update-profile-btn:disabled {
+    opacity: .3
+}
 
 /*PROFILE PREMIUM*/
+.profile-edit-wrapper .update-card-btn {
+    margin-top: 0px;
+    float: left;
+}
+.profile-edit-wrapper .cancel-subscription {
+    background: #ad2222;
+    margin-top: 0px;
+    float: left;
+}
+.profile-edit-wrapper .update-card-btn-wrapper {
+    margin-top: 20px;
+}
+
 .profile-edit-wrapper .premium-wrapper {
     margin: 20px 0px 0px 0px;
+}
+
+.profile-edit-wrapper .premium-wrapper i {
+    color: white;
+    font-size: 24px;
+    float: left;
 }
 
 .profile-edit-wrapper .premium-btns {

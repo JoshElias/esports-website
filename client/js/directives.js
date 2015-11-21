@@ -381,6 +381,53 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
+.directive('creditForm', function () {
+    return {
+        templateUrl: tpl + 'views/frontend/directives/credit.form.html',
+        scope: {
+            plan: '='
+        },
+        controller: function ($scope) {
+                $scope.loading = false;
+
+                $scope.updateCard = function (code, result) {
+
+                $scope.loading = true;
+
+                async.series([
+                    function (sCb) {
+                        if (result.error) {
+                            console.log(result);
+                        } else {
+                            User.setSubscriptionCard({}, { cctoken: result.id })
+                            .$promise
+                            .then(function (data) {
+                                console.log(data);
+
+    //                                $scope.user.subscription.last4 = data.subscription.last4;
+    //                                $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
+    //                                $scope.number = '';
+    //                                $scope.cvc = '';
+    //                                $scope.expiry = '';
+
+                                return sCb(null);
+                            })
+                            .catch(function (err) {
+                                sCb(err);
+                            });
+                        }
+                    }
+                ], function (err) {
+                    if (err) { console.log("ERROR:", err); }
+
+                    console.log("FUCK THIS SHIT", $scope.isLoading());
+
+                    $scope.loading = false;
+                });
+            }
+        }
+    }
+})
 .directive('datePicker', function (){
     return {
         replace: true,

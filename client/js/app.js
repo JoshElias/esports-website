@@ -2369,7 +2369,6 @@ var app = angular.module('app', [
                 resolve: {
                     userProfile: ['$stateParams', 'User', function ($stateParams, User) {
                       var username = $stateParams.username;
-                        console.log("what");
                       return User.find({
                         filter: {
                             where: {
@@ -2567,15 +2566,8 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/profile.edit.html',
                         controller: 'ProfileEditCtrl',
                         resolve: {
-                            user: ['$stateParams', 'User', function ($stateParams, User) {
-                                return User.findOne({
-                                    filter: {
-                                        where: {
-                                            username: $stateParams.username
-                                        }
-                                    }
-                                })
-                                .$promise;
+                            user: ['userProfile', function (userProfile) {
+                                return userProfile;
                             }],
                             isLinked: ['User', function (User) {
                                 var obj = {};

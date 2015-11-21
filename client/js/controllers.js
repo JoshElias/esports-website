@@ -452,18 +452,16 @@ angular.module('app.controllers', ['ngCookies'])
 //        };
         }
     ])
-    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService',
-        function ($scope, $state, $cookies, AlertService, user, User, isLinked, LoopBackAuth, EventService) {
-            
-            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log("event listener response:", data);
-            });
+    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', '$timeout', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService',
+        function ($scope, $state, $cookies, $timeout, AlertService, user, User, isLinked, LoopBackAuth, EventService) {
             
             $scope.user = user;
-            $scope.plan = 'tempostorm_semi';
-            $scope.loading = false;
+            $scope.plan = user.subscription.plan || 'tempostorm_quarterly';
             $scope.email = user.email;
             $scope.isLinked = isLinked;
+            $scope.cardPlaceholder = "xxxx xxxx xxxx xxxx"
+            
+            $scope.loading = false;
             
 //            if ($scope.profile.subscription.isSubscribed) {
 //                $scope.plan = dataProfileEdit.user.subscription.plan || 'tempostorm_semi';
@@ -483,6 +481,8 @@ angular.module('app.controllers', ['ngCookies'])
 //                }
 //                $scope.plan = plan;
 //            }
+            
+            
             
             $scope.testString = function (str) {
                 var pattern = /^[\w\._-]*$/,
@@ -519,45 +519,94 @@ angular.module('app.controllers', ['ngCookies'])
 //                AlertService.reset();
 //            }
             
-            function setLoading(b) {
-                console.log(b);
-                $scope.loading = b;
+            $scope.isLoading = function () {
+//                console.log($scope.loading);
+                return $scope.loading;
             }
             
-            $scope.subscribe = function (code, result) {
-                setLoading(true);
-                User.setSubscriptionPlan({}, { plan: $scope.plan, cctoken: result.id })
-                .$promise
-                .then(function (data) {
-                    $scope.number = '';
-                    $scope.cvc = '';
-                    $scope.expiry = '';
-                    $scope.error =  '';
-//                    $scope.setSuccess('We have successfully processed your payment. Thank you for subscribing with TempoStorm.com!');
-                    setLoading(false);
-                })
-                .catch(function (err) {
-                    console.log(err);
-                    setLoading(false);
-                });
-            };
+//            $scope.subscribe = function (code, result) {
+//                $scope.loading = true;
+//                console.log("setloading to true");
+//                
+//                User.setSubscriptionPlan({}, { plan: $scope.plan, cctoken: result.id })
+//                .$promise
+//                .then(function (data) {
+//                    $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
+//                    $scope.number = '';
+//                    $scope.cvc = '';
+//                    $scope.expiry = '';
+//                    $scope.error =  '';
+////                    $scope.setSuccess('We have successfully processed your payment. Thank you for subscribing with TempoStorm.com!');
+//                    $scope.loading = false;
+//                })
+//                .catch(function (err) {
+//                    console.log(err);
+//                    $scope.loading = false;
+//                });
+//            };
 
             $scope.updateCard = function (code, result) {
-                if (result.error) {
-                    console.log(result);
-                } else {
-                    User.setSubscriptionPlan({}, result.id).success(function (data) {
-                        if (!data.success) {
-                            console.log('error');
+                $scope.loading = true;
+
+                async.series([
+                    function (sCb) {
+                        if (result.error) {
+                            console.log(result);
                         } else {
-                            $scope.profile.subscription.last4 = data.subscription.last4;
-                            $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
-                            $scope.number = '';
-                            $scope.cvc = '';
-                            $scope.expiry = '';
+                            User.setSubscriptionCard({}, { cctoken: result.id })
+                            .$promise
+                            .then(function (data) {
+                                console.log(data);
+                                
+//                                $scope.user.subscription.last4 = data.subscription.last4;
+//                                $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
+//                                $scope.number = '';
+//                                $scope.cvc = '';
+//                                $scope.expiry = '';
+                                
+                                return sCb(null);
+                            })
+                            .catch(function (err) {
+                                sCb(err);
+                            });
                         }
-                    });
-                }
+                    }
+                ], function (err) {
+                    if (err) { console.log("ERROR:", err); }
+                    
+                    console.log("FUCK THIS SHIT", $scope.isLoading());
+                    
+                    $scope.loading = false;
+                });
+                
+//                console.log($scope.loading);
+//                $timeout(function () {
+//                    $scope.loading = false;
+//                    console.log($scope.loading);
+//                }, 10000);
+                
+                
+//                if (result.error) {
+//                    console.log(result);
+//                } else {
+//                    User.setSubscriptionCard({}, { cctoken: result.id })
+//                    .$promise
+//                    .then(function (data) {
+//                        if (!data.success) {
+//                            console.log('error');
+//                        } else {
+//                            $scope.user.subscription.last4 = data.subscription.last4;
+//                            $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
+//                            $scope.number = '';
+//                            $scope.cvc = '';
+//                            $scope.expiry = '';
+//                        }
+//                        
+//                        $timeout(function () {
+//                            setLoading(false);
+//                        })
+//                    });
+//                }
             }
 
             $scope.updatePlan = function () {
@@ -571,14 +620,10 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.cancel = function () {
-                SubscriptionService.cancel()
-                .success(function (data) {
-                    if (data.success) {
-                        SubscriptionService.setSubscribed(false);
-                        SubscriptionService.setExpiry(data.subscription.expiryDate);
-                        $scope.profile.subscription.isSubscribed = false;
-                        $scope.profile.subscription.expiryDate = data.subscription.expiryDate;
-                    }
+                User.cancelSubscription()
+                .$promise
+                .then(function () {
+                    $scope.user.subscription.isSubscribed = false;
                 });
             }
 

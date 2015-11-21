@@ -2,7 +2,6 @@
 <h3>Obtain early access to all the best Tempo Storm articles.</h3>
 
 <div class="premium-wrapper row">
-    
     <div class="premium-btns">
         <button ng-class="{ 'active' : plan == 'tempostorm_monthly' }" ng-click="plan = 'tempostorm_monthly'" class="prem-btn monthly col-sm-4">
             <h3>MONTHLY</h3>
@@ -11,14 +10,14 @@
                 <h3>per month</h3>
             </div>
         </button>
-        <button ng-class="{ 'active' : plan == 'tempostorm_semi' }" ng-click="plan = 'tempostorm_semi'" class="prem-btn tri-monthly col-sm-4">
+        <button ng-class="{ 'active' : plan == 'tempostorm_quarterly' }" ng-click="plan = 'tempostorm_quarterly'" class="prem-btn tri-monthly col-sm-4">
             <h3>THREE MONTHS</h3>
             <div class="price-wrap">
                 <h2>USD $20.97</h2>
                 <h3>$6.99 per month</h3>
             </div>
         </button>
-        <button ng-class="{ 'active' : plan == 'tempostorm_quarterly' }" ng-click="plan = 'tempostorm_quarterly'" class="prem-btn six-month col-sm-4">
+        <button ng-class="{ 'active' : plan == 'tempostorm_semi' }" ng-click="plan = 'tempostorm_semi'" class="prem-btn six-month col-sm-4">
             <h3>SIX MONTHS</h3>
             <div class="price-wrap">
                 <h2>USD $35.94</h2>
@@ -27,13 +26,37 @@
         </button>
     </div>
     
-    <form stripe-form="subscribe" name="form" role="form" class="form-horizontal">
+<!--    <credit-form></credit-form>-->
+    
+    <form ng-if="!user.subscription.isSubscribed" stripe-form="subscribe" role="form" class="form-horizontal">
         <div class="premium-form">
-            <input type="text" id="card" name="card" ng-model="number" placeholder="xxxx xxxx xxxx xxxx" payments-format="card" payments-validate="card" required>
+            <input type="text" id="card" name="card" ng-model="number" placeholder="{{cardPlaceholder}}" payments-format="card" payments-validate="card" required>
             <input type="text" id="expiry" name="expiry" ng-model="expiry" placeholder="MM / YYYY" payments-format="expiry" payments-validate="expiry" required>
             <input type="text" id="cvc" name="cvc" class="cvc" ng-model="cvc" placeholder="1234" payments-validate="cvc" required>
         </div>
         
-        <button spinner-button="loading" type="submit" class="btn btn-blue btn-lg" ng-class="{ 'disabled' : loading }" ng-disabled="form.$invalid || loading == true">Get Premium</button>
+        <button spinner-button="loading" type="submit" class="update-card-btn" ng-disabled="form.$invalid || loading == true"><h2>Get Premium</h2></button>
+    </form>
+    
+    <form ng-if="user.subscription.isSubscribed" stripe-form="updateCard" name="shit" role="form" class="form-horizontal">
+        <div class="premium-form">
+            <input type="text" id="card" name="card" ng-model="number" placeholder="{{cardPlaceholder}}" payments-format="card" payments-validate="card" required>
+            <input type="text" id="expiry" name="expiry" ng-model="expiry" placeholder="MM / YYYY" payments-format="expiry" payments-validate="expiry" required>
+            <input type="text" id="cvc" name="cvc" class="cvc" ng-model="cvc" placeholder="1234" payments-validate="cvc" required>
+        </div>
+        
+        <div class="update-card-btn-wrapper clearfix">
+            <button type="submit" class="update-card-btn" ng-class="{ 'disabled' : loading == true }" ng-disabled="loading == true">
+                <h2>Update Card</h2>
+            </button>
+<!--
+            <button type="submit" class="update-card-btn cancel-subscription" ng-click="">
+                <h2>Cancel Subscription</h2>
+            </button>
+-->
+            <!--<div ng-if="isLoading()" class="please-wait clearfix">
+                <i class="fa fa-spinner fa-pulse"></i>
+            </div>-->
+        </div>
     </form>
 </div>

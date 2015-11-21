@@ -517,21 +517,13 @@ module.exports = function(User) {
         
         if(typeof provider === "undefined")
             return cb(undefined, false);
-
+        
         var UserIdentity = User.app.models.userIdentity;
-
         var ctx = loopback.getCurrentContext();
         var accessToken = ctx.get("accessToken");
         var userId = accessToken.userId.toString();
-        
-        console.log("provider:", provider);
-        console.log("userId:", userId);
 
         UserIdentity.findOne({where:{userId:userId, provider:provider}}, function(err, identity) {
-            
-            console.log("Identity:", identity);
-            console.log("err:", err);
-            
             if(err) return cb(err);
             return cb(undefined, !!identity)
         });
