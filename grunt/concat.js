@@ -1,7 +1,7 @@
 module.exports = {
     js: {
         options: {
-            separator: ';',
+            separator: '',
             stripBanners: true,
         },
         files: {
@@ -47,6 +47,9 @@ module.exports = {
                 'client/js/filters.js',
                 'client/js/animations.js',                
             ],
+            'client/dist/js/modules.js': [
+                'modules/**/client/js/**/*.js',
+            ]
         }
     },
     css: {
