@@ -452,20 +452,18 @@ angular.module('app.controllers', ['ngCookies'])
 //        };
         }
     ])
-    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', 'AlertService', 'user', 'User', 'LoopBackAuth', 'EventService',
-        function ($scope, $state, $cookies, AlertService, user, User, LoopBackAuth, EventService) {
-            console.log(user);
-            
+    .controller('ProfileEditCtrl', ['$scope', '$state', '$cookies', 'AlertService', 'user', 'User', 'isLinked', 'LoopBackAuth', 'EventService',
+        function ($scope, $state, $cookies, AlertService, user, User, isLinked, LoopBackAuth, EventService) {
             
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 console.log("event listener response:", data);
             });
             
-            
             $scope.user = user;
             $scope.plan = 'tempostorm_semi';
             $scope.loading = false;
             $scope.email = user.email;
+            $scope.isLinked = isLinked;
             
 //            if ($scope.profile.subscription.isSubscribed) {
 //                $scope.plan = dataProfileEdit.user.subscription.plan || 'tempostorm_semi';
@@ -493,8 +491,8 @@ angular.module('app.controllers', ['ngCookies'])
                 return pattern.test(word);
             }
             
-            $scope.linkTwitch = function () {
-                var ip = location.host;
+            function getServerIp () {
+                return location.host;
             }
             
             $scope.twitchLink = function () {
@@ -502,7 +500,7 @@ angular.module('app.controllers', ['ngCookies'])
                 };
 
             $scope.bnetLink = function () {
-              thirdPartyLogin("bnet");
+                thirdPartyLogin("bnet");
             };
 
             function thirdPartyLogin(provider) {
@@ -510,10 +508,9 @@ angular.module('app.controllers', ['ngCookies'])
                     name: $state.current.name,
                     params: $state.params
                 }
-                var ip = location.host;
                 
                 $cookies.put("redirectStateString", JSON.stringify(redirectObj));
-                window.location.replace(ip + "/link/" + provider);
+                window.location.replace(getServerIp() + "/link/" + provider);
             }
 //
 //            // grab alerts
@@ -532,7 +529,6 @@ angular.module('app.controllers', ['ngCookies'])
                 User.setSubscriptionPlan({}, { plan: $scope.plan, cctoken: result.id })
                 .$promise
                 .then(function (data) {
-                    console.log("you win!", data);
                     $scope.number = '';
                     $scope.cvc = '';
                     $scope.expiry = '';
@@ -587,7 +583,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.updateProfile = function () {
-                console.log("kk");
+                console.log(LoopBackAuth);
                 async.series([
                     function (seriesCb) {
                         if ($scope.email !== $scope.user.email) {

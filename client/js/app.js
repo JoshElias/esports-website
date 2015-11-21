@@ -470,196 +470,6 @@ var app = angular.module('app', [
                     }
                 }
             })
-            .state('app.snapshot', {
-                abstract: 'true',
-                url: 'hearthstone/meta-snapshot',
-                views: {
-                    content: {
-                        templateUrl: tpl + 'views/frontend/snapshots.html'
-                    }
-                }
-            })
-            .state('app.snapshot.redirect', {
-                url: '',
-                resolve: {
-//                    data: ['SnapshotService', '$q', function (SnapshotService, $q) {
-//                        return SnapshotService.getLatest().then(function (result) {
-//                            console.log(result);
-//                            if (result.success === true) {
-//                                return result;
-//                            } else {
-//                                return $q.reject('unable to find snapshot');
-//                            }
-//                        });
-//                    }],
-                    data: ['Snapshot', function (Snapshot) {
-                        return Snapshot.findOne({
-                            filter: {
-                                order: "createdDate DESC"
-                            }
-                        }).$promise;
-                    }],
-//                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
-//                        $state.go('app.snapshot.snapshot', { slug: data.snapshot[0].slug.url });
-//                        return $q.reject();
-//                    }]
-                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
-                        $state.go('app.snapshot.snapshot', { slug: data.slug.url });
-                        return $q.reject();
-                    }]
-                }
-            })
-            .state('app.snapshot.snapshot', {
-                url: '/:slug',
-                views: {
-                    snapshots: {
-                        templateUrl: tpl + 'views/frontend/snapshots.snapshot.html',
-                        controller: 'SnapshotCtrl',
-                        resolve: {
-//                            data: ['$stateParams', '$q', 'SnapshotService', function ($stateParams, $q, SnapshotService) {
-//                                var slug = $stateParams.slug;
-//                                return SnapshotService.getSnapshot(slug).then(function (result) {
-//                                    if(result.success === true) {
-//                                        return result.snapshot;
-//                                    } else {
-//                                        return $q.reject('Unable to find snapshot');
-//                                    }
-//                                });
-//                            }]
-                            dataSnapshot: ['$stateParams', 'Snapshot', function ($stateParams, Snapshot) {
-                                var slug = $stateParams.slug;
-                                console.log(slug);
-                                return Snapshot.findOne({
-                                    filter: {
-                                        where: {
-                                            'slug.url': slug
-                                        },
-                                        fields: {
-                                            id: true,
-                                            authorId: true,
-                                            deckId: true,
-                                            active: true,
-                                            snapNum: true,
-                                            votes: true,
-                                            voteScore: true,
-                                            title: true,
-                                            content: true,
-                                            slug: true,
-                                            photoNames: true,
-                                            createdDate: true
-                                        },
-                                        include: [
-                                            {
-                                                relation: 'comments',
-                                                scope: {
-                                                    include: [
-                                                        {
-                                                            relation: 'author',
-                                                            scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    username: true
-                                                                }
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                relation: 'deckMatchups',
-                                                scope: {
-                                                    include: [
-                                                        {
-                                                            relation: 'forDeck',
-                                                            scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    playerClass: true
-                                                                }
-                                                            }
-                                                        },
-                                                        {
-                                                            relation: 'againstDeck',
-                                                            scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    playerClass: true
-                                                                }
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                relation: 'deckTiers',
-                                                scope: {
-                                                    include: [
-                                                        {
-                                                            relation: 'deck',
-                                                            scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    playerClass: true,
-                                                                    name: true,
-                                                                    slug: true,
-                                                                }
-                                                            }
-                                                        },
-                                                        {
-                                                            relation: 'deckTech',
-                                                            scope: {
-                                                                include: [
-                                                                    {
-                                                                        relation: 'cardTech',
-                                                                        scope: {
-                                                                            include: [
-                                                                                {
-                                                                                    relation: 'card'
-                                                                                }
-                                                                            ]
-                                                                        }
-                                                                    }
-                                                                ]
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                relation: 'authors',
-                                                fields: {
-                                                  description: true,
-                                                  expertClasses: true,
-                                                  id: true,
-                                                  userId: true
-                                                },
-                                                scope: {
-                                                    include: [
-                                                        {
-                                                            relation: 'user',
-                                                            scope: {
-                                                                fields: {
-                                                                    id: true,
-                                                                    social: true,
-                                                                    username: true
-                                                                }
-                                                            }
-                                                        }
-                                                    ],
-                                                }
-                                            }
-                                        ]
-                                    }
-                                }).$promise
-                                .then(function (data) {
-                                    console.log(data);
-                                    return data;
-                                });
-                            }]
-                        }
-                    }
-                }
-            })
             .state('app.hs', {
                 abstract: true,
                 url: 'hearthstone',
@@ -1274,6 +1084,185 @@ var app = angular.module('app', [
                     }
                 },
                 seo: { title: 'Deck Edit', description: 'Editing tool for hearthstone decks.', keywords: '' }
+            })
+            .state('app.hs.snapshot', {
+                abstract: 'true',
+                url: '/meta-snapshot',
+                views: {
+                    hs: {
+                        templateUrl: tpl + 'views/frontend/hs.snapshots.html'
+                    }
+                }
+            })
+            .state('app.hs.snapshot.redirect', {
+                url: '',
+                resolve: {
+//                    data: ['SnapshotService', '$q', function (SnapshotService, $q) {
+//                        return SnapshotService.getLatest().then(function (result) {
+//                            console.log(result);
+//                            if (result.success === true) {
+//                                return result;
+//                            } else {
+//                                return $q.reject('unable to find snapshot');
+//                            }
+//                        });
+//                    }],
+                    data: ['Snapshot', function (Snapshot) {
+                        return Snapshot.findOne({
+                            filter: {
+                                order: "createdDate DESC"
+                            }
+                        }).$promise;
+                    }],
+//                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
+//                        $state.go('app.snapshot.snapshot', { slug: data.snapshot[0].slug.url });
+//                        return $q.reject();
+//                    }]
+                    redirect: ['$q', '$state', 'data', function ($q, $state, data) {
+                        $state.go('app.hs.snapshot.snapshot', { slug: data.slug.url });
+                        return $q.reject();
+                    }]
+                }
+            })
+            .state('app.hs.snapshot.snapshot', {
+                url: '/:slug',
+                views: {
+                    snapshots: {
+                        templateUrl: tpl + 'views/frontend/hs.snapshots.snapshot.html',
+                        controller: 'SnapshotCtrl',
+                        resolve: {
+                            dataSnapshot: ['$stateParams', 'Snapshot', function ($stateParams, Snapshot) {
+                                var slug = $stateParams.slug;
+                                return Snapshot.findOne({
+                                    filter: {
+                                        where: {
+                                            'slug.url': slug
+                                        },
+                                        fields: {
+                                            id: true,
+                                            authorId: true,
+                                            deckId: true,
+                                            active: true,
+                                            snapNum: true,
+                                            votes: true,
+                                            voteScore: true,
+                                            title: true,
+                                            content: true,
+                                            slug: true,
+                                            photoNames: true,
+                                            createdDate: true
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'comments',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'author',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    username: true
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'deckMatchups',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'forDeck',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    playerClass: true
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: 'againstDeck',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    playerClass: true
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'deckTiers',
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'deck',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    playerClass: true,
+                                                                    name: true,
+                                                                    slug: true,
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            relation: 'deckTech',
+                                                            scope: {
+                                                                include: [
+                                                                    {
+                                                                        relation: 'cardTech',
+                                                                        scope: {
+                                                                            include: [
+                                                                                {
+                                                                                    relation: 'card'
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                relation: 'authors',
+                                                fields: {
+                                                  description: true,
+                                                  expertClasses: true,
+                                                  id: true,
+                                                  userId: true
+                                                },
+                                                scope: {
+                                                    include: [
+                                                        {
+                                                            relation: 'user',
+                                                            scope: {
+                                                                fields: {
+                                                                    id: true,
+                                                                    social: true,
+                                                                    username: true
+                                                                }
+                                                            }
+                                                        }
+                                                    ],
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }).$promise
+                                .then(function (data) {
+                                    console.log(data);
+                                    return data;
+                                });
+                            }]
+                        }
+                    }
+                }
             })
             .state('app.hots', {
                 abstract: true,
@@ -2586,6 +2575,36 @@ var app = angular.module('app', [
                                     }
                                 })
                                 .$promise;
+                            }],
+                            isLinked: ['User', function (User) {
+                                var obj = {};
+                                
+                                async.series([
+                                    function (seriesCb) {
+                                        User.isLinked({
+                                            provider: 'twitch'
+                                        })
+                                        .$promise
+                                        .then(function (data) {
+                                            obj.twitch = data.isLinked;
+                                        });
+                                        
+                                        return seriesCb();
+                                    },
+                                    function (seriesCb) {
+                                        User.isLinked({
+                                            provider: 'bnet'
+                                        })
+                                        .$promise
+                                        .then(function (data) {
+                                            obj.bnet = data.isLinked;
+                                        });
+                                        
+                                        return seriesCb();
+                                    }
+                                ]);
+                                
+                                return obj;
                             }]
                         }
                     }

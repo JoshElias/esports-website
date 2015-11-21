@@ -2636,7 +2636,7 @@ angular.module('app.services', [])
                     Guide.find({
                         filter: {
                             limit: limit,
-                            sort: "createdDate ASC",
+                            order: "createdDate ASC",
                             where: {
                                 id: { inq: guideIds }
                             },
