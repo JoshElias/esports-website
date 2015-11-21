@@ -1,0 +1,57 @@
+'use strict';
+
+var redbull = angular.module('app.redbull', [
+    'app',
+    'redbull.controllers',
+    'redbull.services',
+    'redbull.filters',
+    'redbull.directives',
+    'redbull.animations',
+])
+.run([
+    function() {
+    }
+])
+.config(['$stateProvider', '$controllerProvider', '$compileProvider', '$filterProvider', '$provide', 
+    function($stateProvider, $controllerProvider, $compileProvider, $filterProvider, $provide) {
+
+        redbull.controller = $controllerProvider.register;
+        redbull.directive  = $compileProvider.directive;
+        redbull.filter     = $filterProvider.register;
+        redbull.factory    = $provide.factory;
+        redbull.service    = $provide.service;
+        redbull.constant   = $provide.constant;
+        redbull.value      = $provide.value;
+
+        // cdn templates
+        console.log(tpl);
+        var moduleTpl = (tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/';
+        
+        $stateProvider
+        .state('app.redbull', {
+            abstract: true,
+            url: 'redbull',
+            views: {
+                content: {
+                    templateUrl: moduleTpl + 'index.html',
+                    controller: 'home'
+                }
+            }
+        })
+        .state('app.redbull.home', {
+            url: '',
+            views: {
+                redbull: {
+                    templateUrl: moduleTpl + 'home.html',
+                    controller: 'test'
+                }
+            }
+        });
+    }
+]);
+
+angular.module('redbull.controllers', []);
+angular.module('redbull.services', []);
+angular.module('redbull.directives', []);
+angular.module('redbull.filters', []);
+angular.module('redbull.animations', []);
