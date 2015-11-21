@@ -1091,9 +1091,184 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.deck-builder.edit.html',
                         controller: 'DeckEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'DeckService', function ($stateParams, DeckService) {
-                                var slug = $stateParams.slug;
-                                return DeckService.deckEdit(slug);
+                            isUserAdmin: ['User', function(User) {
+                                if (User.isAuthenticated() === false) {
+                                    return false;
+                                } else {
+                                    return User.isRole({
+                                        roleName: '$admin'
+                                    })
+                                    .$promise
+                                    .then(function (isAdmin) {
+    //                                    console.log('isAdmin: ', isAdmin.isRole);
+                                        return isAdmin.isRole;
+                                    })
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('resolve err: ', err);
+                                        }
+                                    });
+                                }
+                            }],
+                            isUserContentProvider: ['User', function(User) {
+                                if (User.isAuthenticated() === false) {
+                                    return false;
+                                } else {
+                                    return User.isRole({
+                                        roleName: '$contentProvider'
+                                    })
+                                    .$promise
+                                    .then(function (isContentProvider) {
+    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
+                                        return isContentProvider.isRole;
+                                    })
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('resolve err: ', err);
+                                        }
+                                    });
+                                }
+                            }],
+                            
+                            deckNoMulligans: ['$stateParams', 'Deck', function ($stateParams, Deck) {
+                                var stateSlug = $stateParams.slug;
+                                return Deck.findOne({
+                                    filter: {
+                                        where: {
+                                            slug: stateSlug
+                                        },
+                                        fields: {
+                                            id: true,
+                                            createdDate: true,
+                                            name: true,
+                                            description: true,
+                                            playerClass: true,
+                                            premium: true,
+                                            slug: true,
+                                            dust: true,
+                                            heroName: true,
+                                            authorId: true,
+                                            deckType: true,
+                                            viewCount: true,
+                                            isPublic: true,
+                                            votes: true,
+                                            voteScore: true,
+                                            chapters: true,
+                                            youtubeId: true,
+                                            gameModeType: true,
+                                            isActive: true
+                                        },
+                                        include: [
+                                            {
+                                                relation: "cards",
+                                                scope: {
+                                                    include: ['card']
+                                                }
+                                            },
+                                            {
+                                                relation: "comments",
+                                                scope: {
+                                                    incldue: ['author']
+                                                }
+                                            },
+                                            {
+                                                relation: 'author'
+                                            },
+                                            {
+                                                relation: 'matchups'
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise
+                                .then(function (deck) {
+//                                    console.log('deck: ', deck);
+                                    return deck;
+                                });
+
+                            }],
+                            
+                            deck: ['Mulligan', 'deckNoMulligans', function(Mulligan, deckNoMulligans) {
+                                var deckID = deckNoMulligans.id;
+//                                console.log('deckid: ', deck.id);
+                                
+                                return Mulligan.find({
+                                    filter: {
+                                        where: {
+                                            deckId: deckID
+                                        },
+                                        include: [
+                                            {
+                                                relation: 'cardsWithCoin'
+                                            },
+                                            {
+                                                relation: 'cardsWithoutCoin'
+                                            }
+                                        ]
+                                    }
+                                })
+                                .$promise
+                                .then(function (mulligans) {
+//                                    console.log('mullies: ', mulligans);
+                                    deckNoMulligans.mulligans = mulligans;
+//                                    console.log('deck in resolve: ', deck);
+                                    return deckNoMulligans;
+                                })
+                                .catch(function (err) {
+                                    if (err) console.log('err: ', err);
+                                });
+                            }],
+                                
+                            classCardsList: ['$stateParams', 'deckNoMulligans', 'Card', function($stateParams, deckNoMulligans, Card) {
+                                var perpage = 15,
+                                    playerClass = deckNoMulligans.playerClass;
+
+                                return Card.find({
+                                    filter: {
+                                        where: {
+                                            playerClass: playerClass,
+                                            deckable: true
+                                        },
+                                        order: ['cost ASC', 'cardType ASC', 'name ASC'],
+                                        limit: perpage
+                                    }
+                                }).$promise;
+                            }],
+
+                            classCardsCount: ['$stateParams', 'deckNoMulligans', 'Card', function ($stateParams, deckNoMulligans, Card) {
+                                var deckID = $stateParams.deckID;
+                                return Card.count({
+                                    where: {
+                                        playerClass: deckNoMulligans.playerClass
+                                    }
+                                }).$promise;
+                            }],
+
+                            neutralCardsCount: ['Card', function (Card) {
+                                return Card.count({
+                                    where: {
+                                        playerClass: 'Neutral'
+                                    }
+                                }).$promise;
+                            }],
+
+                            neutralCardsList: ['Card', function (Card) {
+                                return Card.find({
+                                    filter: {
+                                        where: {
+                                            playerClass: 'Neutral',
+                                            deckable: true
+                                        },
+                                        order: ["cost ASC", "cardType ASC", "name ASC"],
+                                        limit: 15
+                                    }
+                                }).$promise;
+                            }],
+
+                            toStep: ['$stateParams', function ($stateParams) {
+                                if($stateParams.goTo) {
+                                    return $stateParams.goTo;
+                                }
                             }]
                         }
                     }

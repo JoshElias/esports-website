@@ -1462,8 +1462,7 @@ angular.module('app.services', [])
 
             if (exists) {
                 cardMulligans.splice(index, 1);
-                console.log('spliced coinMulligan: ', coinMulligan);
-                return coinMulligan;
+                console.log('spliced coinMulligan: ', cardMulligans);
             } else {
                 // card doesn't exist in deck.mulligans
                 if (cardMulligans.length < 6) {
@@ -1662,6 +1661,7 @@ angular.module('app.services', [])
         };
 
         db.removeCardFromDeck = function (card) {
+            console.log('card rem: ', card);
             var cardRemovedFromDeck = false,
                 index = -1;
             
