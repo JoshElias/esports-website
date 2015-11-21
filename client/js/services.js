@@ -1299,7 +1299,7 @@ angular.module('app.services', [])
             arena: data.arena || false,
             type: data.type || 1,
             slug: data.slug || '',
-            authorId: data.authorId || User.getCurrentId(),
+//            authorId: data.authorId || User.getCurrentId(), // this and votes get created when deck is made
             deckType: data.deckType || 'None',
             gameModeType: data.gameModeType || 'constructed',
             basic: data.basic || false,
@@ -1315,12 +1315,6 @@ angular.module('app.services', [])
             slug: data.slug || '',
             isFeatured: data.isFeatured || false,
             isPublic: data.isPublic || true,
-            votes: data.votes || [
-                {
-                    userID: User.getCurrentId(),
-                    direction: 1
-                }
-            ],
             voteScore: data.voteScore || 1,
             mulligans: data.mulligans || [
                 {

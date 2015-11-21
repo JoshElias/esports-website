@@ -6486,6 +6486,7 @@ angular.module('app.controllers', ['ngCookies'])
                             
                             async.each(deck.matchups, function(matchup, matchupCB) {
                                 matchup.forDeckId = deck.id;
+                                console.log('matchup to upsert: ', matchup);
                                 
                                 DeckMatchup.upsert(matchup)
                                 .$promise
@@ -7571,7 +7572,7 @@ angular.module('app.controllers', ['ngCookies'])
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
 
-            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.playerClass === $scope.className) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className);
+            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck.id === null && $scope.app.settings.deck.playerClass === $scope.className) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className);
 
             $scope.$watch('deck', function() {
                 $scope.app.settings.deck = {
@@ -9107,12 +9108,18 @@ angular.module('app.controllers', ['ngCookies'])
                         })
                         .$promise
                         .then(function (deleted) {
-                            console.log('deleted: ', deleted);
+                            console.log('deleted deck matchup: ', deleted);
                             
                             async.each(deck.matchups, function(matchup, matchupCB) {
-                                matchup.forDeckId = deck.id;
-                                
-                                DeckMatchup.upsert(matchup)
+                                var newMatchup = {
+                                    deckName: matchup.deckName,
+                                    className: matchup.className,
+                                    forChance: matchup.forChance,
+                                    forDeckId: deck.id,
+                                    deckId: deck.id
+                                };
+                                console.log('newMatchup: ', newMatchup);
+                                DeckMatchup.create(newMatchup)
                                 .$promise
                                 .then(function (newMatchup) {
                                     console.log('newMatchup: ', newMatchup);
