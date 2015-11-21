@@ -80,118 +80,122 @@
 // 3.1.. MULLIGANS Styles
 //*************************************
 
-.db-mulligans h2 { color: #FFF; font-size: 22px; font-weight: bold; text-shadow: 0px 0px 20px rgba(255,255,255,.4); margin: 0px; }
-.db-mulligans h3 { color: rgba(255,255,255,.6); margin: 0px; font-size: 14px; }
+.hs-styles {  //hearthstone styles wrapper
 
-.db-mulligans .class { 
-    position: relative; 
-    width: 11.11%; 
-    height: 440px; 
-    float: left; 
-    border: 1px solid rgba(0,0,0,1); 
-    outline: 1px solid rgba(255,255,255,.2); 
-    outline-offset: -2px; 
-    -moz-transition: .25s;
-    -ms-transition: .25s;
-    -o-transition: .25s;
-    -webkit-transition: .25s;
-    transition: .25s;
-        
-}
-.db-mulligans .class button { width: 100%; height: 100%; outline: none; border: none; background: none; }
-.db-mulligans .class.active { outline: 1px solid rgba(255,255,255,1); }
-.db-mulligans .class span { position: absolute; width: 100%; bottom: 0; left: 0; text-align: center; font-size: 16px; font-weight: bold; color: white; }
-.db-mulligans .class-select { width: 100%; }
+    .db-mulligans h2 { color: #FFF; font-size: 22px; font-weight: bold; text-shadow: 0px 0px 20px rgba(255,255,255,.4); margin: 0px; }
+    .db-mulligans h3 { color: rgba(255,255,255,.6); margin: 0px; font-size: 14px; }
 
+    .db-mulligans .class { 
+        position: relative; 
+        width: 11.11%; 
+        height: 440px; 
+        float: left; 
+        border: 1px solid rgba(0,0,0,1); 
+        outline: 1px solid rgba(255,255,255,.2); 
+        outline-offset: -2px; 
+        -moz-transition: .25s;
+        -ms-transition: .25s;
+        -o-transition: .25s;
+        -webkit-transition: .25s;
+        transition: .25s;
 
-.db-mulligans .class.no-select { opacity: .4; }
-
-.db-mulligans .description-header { 
-    width: 100%;
-    height: 115px;
-    position: relative;
-    
-    background: rgba(36,104,172,1); 
-    background: -moz-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
-    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(36,104,172,1)), color-stop(15%, rgba(36,104,172,1)), color-stop(100%, rgba(0,139,198,1)));
-    background: -webkit-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
-    background: -o-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
-    background: -ms-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
-    background: linear-gradient(to right, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2468ac', endColorstr='#008bc6', GradientType=1 );
-}
-.db-mulligans .big-coin { height: 60px; overflow: hidden; position: absolute; top: 27.5px; left: 27.5px; border-radius: 50%; border: 3px solid white; }
-.db-mulligans .description-header i { color: red; position: absolute; font-size: 100px; top: 5px; left: 22px; opacity: .7; }
-.db-mulligans .header-text { position: absolute; top: 27.5px; left: 100px; }
-
-.db-mulligans .db-mulligan-content { background: rgba(0,0,0,.5) }
-.db-mulligans .db-mulligan-content .left { color: #FFF; padding: 0; min-height: 400px; }
-.db-mulligans .db-mulligan-content .right { color: #FFF; padding: 0; }
+    }
+    .db-mulligans .class button { width: 100%; height: 100%; outline: none; border: none; background: none; }
+    .db-mulligans .class.active { outline: 1px solid rgba(255,255,255,1); }
+    .db-mulligans .class span { position: absolute; width: 100%; bottom: 0; left: 0; text-align: center; font-size: 16px; font-weight: bold; color: white; }
+    .db-mulligans .class-select { width: 100%; }
 
 
-.db-mulligans .mulliganCardWrapper { position: relative; width: 80%; margin: auto 14%; }
-.db-mulligans .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-bottom: 1px; }
-.db-mulligans .mana-cost { background: #2766AD; height: 28px; width: 28px; float: left; text-align: center; text-indent: 0px; color: white; }
+    .db-mulligans .class.no-select { opacity: .4; }
 
-.db-mulligans .db-mulligan-instructions,
-.db-mulligans .db-mulligan-instructions:focus {
-    outline: none;
-    box-shadow: none;
-    -webkit-box-shadow: none;
-    border: none;
-    resize: none!important;
-    width: 100%;
-    height:173px;
-    background: rgba(0,0,0,0);
-    border-bottom: 1px solid rgba(255,255,255,.2);
-    border-right: 1px solid rgba(255,255,255,.2);
-    padding:30px;
-}
-.db-mulligans .db-mulligan-content .mulliganCards { width: 150px; height: 200px; position: absolute; display: block; }
-.db-mulligans .db-mulligan-content .mulliganCards img { width: 100%; height: 100%; float: left; }
-.db-mulligans .db-mulligan-content .list-card .legendary { margin-right: 8px; }
-.db-mulligans .db-mulligan-content .list-card button { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
-.db-mulligans .db-mulligan-content .list-card button:hover { background: rgba(255,255,255,.2); }
-.db-mulligans .list-card button.active { background: rgba(255,255,255,.2) }
+    .db-mulligans .description-header { 
+        width: 100%;
+        height: 115px;
+        position: relative;
 
+        background: rgba(36,104,172,1); 
+        background: -moz-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+        background: -webkit-gradient(left top, right top, color-stop(0%, rgba(36,104,172,1)), color-stop(15%, rgba(36,104,172,1)), color-stop(100%, rgba(0,139,198,1)));
+        background: -webkit-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+        background: -o-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+        background: -ms-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+        background: linear-gradient(to right, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2468ac', endColorstr='#008bc6', GradientType=1 );
+    }
+    .db-mulligans .big-coin { height: 60px; overflow: hidden; position: absolute; top: 27.5px; left: 27.5px; border-radius: 50%; border: 3px solid white; }
+    .db-mulligans .description-header i { color: red; position: absolute; font-size: 100px; top: 5px; left: 22px; opacity: .7; }
+    .db-mulligans .header-text { position: absolute; top: 27.5px; left: 100px; }
 
-//*************************************
-// 2... HS decks styles 
-//*************************************
+    .db-mulligans .db-mulligan-content { background: rgba(0,0,0,.5) }
+    .db-mulligans .db-mulligan-content .left { color: #FFF; padding: 0; min-height: 400px; }
+    .db-mulligans .db-mulligan-content .right { color: #FFF; padding: 0; }
 
 
-.hs-decks { margin: 0; padding: 0; }
-.hs-decks li { list-style: none; margin-bottom: 10px; }
-.hs-deck { position: relative; top: 0px; left: 0px; display: block; height: 99px; padding: 10px 15px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }
+    .db-mulligans .mulliganCardWrapper { position: relative; width: 80%; margin: auto 14%; }
+    .db-mulligans .list-card { background: rgba(0,0,0,.7); height: 28px; line-height: 2; font-weight: bold; text-indent: 10px; color: #B4AFA9; margin-bottom: 1px; }
+    .db-mulligans .mana-cost { background: #2766AD; height: 28px; width: 28px; float: left; text-align: center; text-indent: 0px; color: white; }
 
-@media (min-width: 768px) {
-.hs-deck.small:hover,
-.hs-deck.large:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
-}
-    
-.hs-deck.large { height: 220px; }
+    .db-mulligans .db-mulligan-instructions,
+    .db-mulligans .db-mulligan-instructions:focus {
+        outline: none;
+        box-shadow: none;
+        -webkit-box-shadow: none;
+        border: none;
+        resize: none!important;
+        width: 100%;
+        height:173px;
+        background: rgba(0,0,0,0);
+        border-bottom: 1px solid rgba(255,255,255,.2);
+        border-right: 1px solid rgba(255,255,255,.2);
+        padding:30px;
+    }
+    .db-mulligans .db-mulligan-content .mulliganCards { width: 150px; height: 200px; position: absolute; display: block; }
+    .db-mulligans .db-mulligan-content .mulliganCards img { width: 100%; height: 100%; float: left; }
+    .db-mulligans .db-mulligan-content .list-card .legendary { margin-right: 8px; }
+    .db-mulligans .db-mulligan-content .list-card button { width: 100%; height: 100%; background: rgba(0,0,0,0); outline: none; border: none; padding: 0; float: left; text-align: left; text-indent: 10px; }
+    .db-mulligans .db-mulligan-content .list-card button:hover { background: rgba(255,255,255,.2); }
+    .db-mulligans .list-card button.active { background: rgba(255,255,255,.2) }
 
-.hs-deck .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 4; }
-.hs-deck .hs-deck-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
-.hs-deck .bt-shadow { position: absolute; right: 0px; bottom: 0px; left: 0px; height: 60px; background: url('../img/hs/bt-shadow.png') repeat-x; z-index: 2; }
-.hs-deck .hs-deck-owner { position: absolute; right: 15px; bottom: 55px; z-index: 6; }
-.hs-deck.small .hs-deck-details,
-.hs-deck.large .hs-deck-details { position: absolute; bottom: 0px; left: 0px; padding: 0 20px 0; max-width: 100%; z-index: 3; }
-.hs-deck h1 { padding-right: 30px; font-family: 'Open Sans Bold'; font-size: 10px; color: #f7ef22; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
-.hs-deck h3 { padding-right: 30px; font-size: 12px; color: #ccc; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
 
-.hs-deck .hs-deck-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
-.hs-deck.small .hs-deck-votes,
-.hs-deck.large .hs-deck-votes { position: absolute; bottom: 15px; right: 20px; width: 30px; height: 30px; line-height: 26px; border-radius: 50%; border: 2px solid #FFF; background: rgba(0,0,0,.7); color: #FFF; font-size: 12px; text-align: center; opacity: .7; z-index: 3; }
+    //*************************************
+    // 2... HS decks styles 
+    //*************************************
 
-.hs-list-ts-decks { margin-right: -20px; }
-.hs-list-ts-decks .hs-decks li .hs-deck { margin-right: 20px; }
 
-.hs-deck.long h1 { margin: 12px 0 18px 0; font-size: 14px; }
-.hs-deck.long .hs-deck-dust,
-.hs-deck.long .hs-deck-votes,
-.hs-deck.long .hs-deck-hero-name { margin-bottom: 0; font-family: 'Open Sans Bold'; font-size: 14px; color: #FFF; line-height: 79px; }
-.hs-deck.long .hs-deck-hero-name { text-shadow: 0px 0px 10px rgba(255,255,255,.6); }
-@media (min-width: 768px) {
-.hs-deck.long:hover { background-color: rgba(255,255,255,.2); }
+    .hs-decks { margin: 0; padding: 0; }
+    .hs-decks li { list-style: none; margin-bottom: 10px; }
+    .hs-deck { position: relative; top: 0px; left: 0px; display: block; height: 99px; padding: 10px 15px; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }
+
+    @media (min-width: 768px) {
+    .hs-deck.small:hover,
+    .hs-deck.large:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
+    }
+
+    .hs-deck.large { height: 220px; }
+
+    .hs-deck .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 4; }
+    .hs-deck .hs-deck-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
+    .hs-deck .bt-shadow { position: absolute; right: 0px; bottom: 0px; left: 0px; height: 60px; background: url('../img/hs/bt-shadow.png') repeat-x; z-index: 2; }
+    .hs-deck .hs-deck-owner { position: absolute; right: 15px; bottom: 55px; z-index: 6; }
+    .hs-deck.small .hs-deck-details,
+    .hs-deck.large .hs-deck-details { position: absolute; bottom: 0px; left: 0px; padding: 0 20px 0; max-width: 100%; z-index: 3; }
+    .hs-deck h1 { padding-right: 30px; font-family: 'Open Sans Bold'; font-size: 10px; color: #f7ef22; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
+    .hs-deck h3 { padding-right: 30px; font-size: 12px; color: #ccc; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
+
+    .hs-deck .hs-deck-premium { position: absolute; top: 0px; right: 0px; width: 76px; height: 51px; background: url('../img/premium.png') no-repeat; z-index: 2; }
+    .hs-deck.small .hs-deck-votes,
+    .hs-deck.large .hs-deck-votes { position: absolute; bottom: 15px; right: 20px; width: 30px; height: 30px; line-height: 26px; border-radius: 50%; border: 2px solid #FFF; background: rgba(0,0,0,.7); color: #FFF; font-size: 12px; text-align: center; opacity: .7; z-index: 3; }
+
+    .hs-list-ts-decks { margin-right: -20px; }
+    .hs-list-ts-decks .hs-decks li .hs-deck { margin-right: 20px; }
+
+    .hs-deck.long h1 { margin: 12px 0 18px 0; font-size: 14px; }
+    .hs-deck.long .hs-deck-dust,
+    .hs-deck.long .hs-deck-votes,
+    .hs-deck.long .hs-deck-hero-name { margin-bottom: 0; font-family: 'Open Sans Bold'; font-size: 14px; color: #FFF; line-height: 79px; }
+    .hs-deck.long .hs-deck-hero-name { text-shadow: 0px 0px 10px rgba(255,255,255,.6); }
+    @media (min-width: 768px) {
+    .hs-deck.long:hover { background-color: rgba(255,255,255,.2); }
+    }
+
 }

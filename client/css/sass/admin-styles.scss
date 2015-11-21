@@ -1,0 +1,125 @@
+@import 'ts-colors.scss';
+
+// Description: styles related to the admin section
+
+//*************************************
+
+// 1... admin team
+// 2... admin meta snapshot
+// 4... admin banner
+// 5... admin poll
+
+//*************************************
+
+
+//*************************************
+// 1... admin team
+//*************************************
+
+
+.upload-drop-team {
+    height: 188px !important;
+    width: 188px !important;
+}
+
+
+.photo-input .upload-drop { border-radius: 4px; border: 1px dashed #ccc; text-align: center; color: #666; }
+.photo-input .upload-drop.active { border: 1px dashed #66afe9; color: #357ebd; background: #e6f7ff; }
+
+.social-addon-group {
+    width: 100%;
+}
+
+.social-addon {
+    width: 10%;
+    text-align: right;
+}
+
+//*************************************
+// 2... admin meta snapshot
+//*************************************
+
+.button-block {}
+.button-block button {
+    padding: 0;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+.snap-num {
+    width:50px;
+}
+
+.cardBtn {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 2px 8px;
+}
+
+.cardBtn.green {
+    background: #5CB85C;
+    border: none;
+    outline: none;
+    padding: 2px 8px;
+    color: white;
+}
+
+.cardBtn.danger {
+    background: #D9534F;
+    border: none;
+    outline: none;
+    padding: 2px 8px;
+    color: white;
+
+}
+
+.cardAddList {
+    padding: 5px;
+    padding-right: 0px;
+}
+
+.cardAddList img {
+    margin-top: -5px;
+    height:40px;
+}
+
+.cardToss {
+    background-color: #f2dede;
+}
+
+.cardKeep {
+    background-color: #dff0d8;
+}
+
+textarea[name=intro],
+textarea[name=explanation],
+textarea[name=weeklyNotes],
+textarea[name=thoughts] {
+    resize: vertical;
+}
+
+.tierHeading {
+    line-height: 1.75
+}
+
+
+//*************************************
+// 4... admin banner
+//*************************************
+
+textarea[name=description] {
+    resize: none;
+}
+label p {
+    font-weight: 500;
+    font-size: 13px;
+}
+
+//*************************************
+// 5... admin poll
+//*************************************
+
+.poll-item-edit { width:auto; }
+.edit-button-fix .badge {padding: 5px 15px }
