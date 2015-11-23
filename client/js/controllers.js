@@ -6485,10 +6485,14 @@ angular.module('app.controllers', ['ngCookies'])
                             console.log('deleted: ', deleted);
                             
                             async.each(deck.matchups, function(matchup, matchupCB) {
-                                matchup.forDeckId = deck.id;
-                                console.log('matchup to upsert: ', matchup);
-                                
-                                DeckMatchup.upsert(matchup)
+                                var newMatchup = {
+                                    deckName: matchup.deckName,
+                                    className: matchup.className,
+                                    forChance: matchup.forChance,
+                                    forDeckId: deck.id,
+                                    deckId: deck.id
+                                };
+                                DeckMatchup.create(newMatchup)
                                 .$promise
                                 .then(function (newMatchup) {
                                     console.log('newMatchup: ', newMatchup);
