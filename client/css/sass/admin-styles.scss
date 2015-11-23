@@ -8,6 +8,7 @@
 // 2... admin meta snapshot
 // 4... admin banner
 // 5... admin poll
+// 6... Drag and Drop
 
 //*************************************
 
@@ -123,3 +124,120 @@ label p {
 
 .poll-item-edit { width:auto; }
 .edit-button-fix .badge {padding: 5px 15px }
+
+//*************************************
+// 6... General Admin
+//*************************************
+
+.admin-article-related-bg {
+    background-color: #F5F5F5;
+}
+
+.admin-side-nav {
+    position: fixed;
+    top: 50px;
+    bottom: 0;
+    left: 0;
+    width: 200px;
+    z-index: 1000;
+    background: #1c2b36;
+    border-right: 1px solid rgba(0,0,0,.15);
+}
+
+.admin-side-nav > ul.nav > li > a {
+    color: #7ca1ae;
+}
+
+.admin-side-nav ul.nav li a:hover {
+    color: #FFF;
+    background: #16232d;
+}
+
+.admin-side-nav > ul.nav > li.active > a {
+    color: #FFF;
+    background: #131e26;
+}
+
+.admin-side-nav ul.nav li.active a:hover {
+    color: #FFF;
+    background: #131e26;
+}
+
+.nav li.active .fa-angle-right {
+    display: none;
+}
+
+.nav li .fa-angle-down {
+    display: none;
+    margin-right: 5px;
+}
+
+.nav li.active .fa-angle-down {
+    display: inline;
+}
+
+.nav-sub {
+    background: #000;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    margin-left: -20px;
+    -webkit-transition: all .2s ease-in-out 0s;
+    transition: all .2s ease-in-out 0s;
+}
+
+.active .nav-sub {
+    opacity: 1;
+    margin-left: 0;
+    height: auto !important;
+    overflow: auto;
+}
+
+.nav-sub li a {
+    text-indent: 24px;
+    color: #7ca1ae;
+}
+
+.nav-sub li.active a {
+    color: #FFF;
+}
+
+.nav-sub li a:hover {
+    background: #000;
+}
+
+.admin-content {
+    height: 100%;
+    min-height: 100%;
+    margin-left: 200px;
+}
+
+.admin-content-title {
+    font-size: 24px;
+    font-weight: 300;
+    color: #555;
+    background-color: #f6f8f8;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-dark {  }
+
+//*************************************
+// 6... Drag and Drop
+//*************************************
+
+/* dnd lists */
+ul[dnd-list] > li {
+	position: relative;
+}
+
+ul[dnd-list] .dndDraggingSource {
+    display: none;
+}
+
+ul[dnd-list] .dndPlaceholder {
+    list-style: none;
+    display: block;
+    background-color: #ddd;
+    min-height: 52px;
+}

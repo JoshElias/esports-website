@@ -35,6 +35,9 @@
 // 15...voting (for commenting see comments.scss)
 // 16... range
 // 17... Inputs, Dropdowns, Note editor
+// 18... Glows
+// 19... login/signup
+// 20... photo upload
 
 
 // ...tempostorm tv & video of the day
@@ -1345,6 +1348,303 @@ input[type=range]:focus::-ms-fill-upper {
 .note-editor .note-editable { border: 1px solid #000; background: url('../img/black-60.png'); color: #FFF; }
 .note-editor .note-statusbar .note-resizebar { border-color: #000; background-color: #444; }
 .note-editor .note-statusbar .note-resizebar .note-icon-bar { border-top: 1px solid #FFF; }
+
+//*************************************
+// 18... Glows
+//*************************************
+
+
+@-webkit-keyframes glow-premium {
+  from { -webkit-box-shadow: 0 0 12px rgba(240,197,92,.5); -moz-box-shadow: 0 0 12px rgba(240,197,92,.5); box-shadow: 0 0 12px rgba(240,197,92,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(240,197,92,1); -moz-box-shadow: 0 0 18px rgba(240,197,92,1); box-shadow: 0 0 18px rgba(240,197,92,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(240,197,92,.5); -moz-box-shadow: 0 0 12px rgba(240,197,92,.5); box-shadow: 0 0 12px rgba(240,197,92,.5); }
+}
+
+@-moz-keyframes glow-premium {
+  from { -webkit-box-shadow: 0 0 12px rgba(240,197,92,.5); -moz-box-shadow: 0 0 12px rgba(240,197,92,.5); box-shadow: 0 0 12px rgba(240,197,92,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(240,197,92,1); -moz-box-shadow: 0 0 18px rgba(240,197,92,1); box-shadow: 0 0 18px rgba(240,197,92,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(240,197,92,.5); -moz-box-shadow: 0 0 12px rgba(240,197,92,.5); box-shadow: 0 0 12px rgba(240,197,92,.5); }
+}
+
+@keyframes glow-premium {
+  from { -webkit-box-shadow: 0 0 12px rgba(240,197,92,.5); -moz-box-shadow: 0 0 12px rgba(240,197,92,.5); box-shadow: 0 0 12px rgba(240,197,92,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(240,197,92,1); -moz-box-shadow: 0 0 18px rgba(240,197,92,1); box-shadow: 0 0 18px rgba(240,197,92,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(240,197,92,.5); -moz-box-shadow: 0 0 12px rgba(240,197,92,.5); box-shadow: 0 0 12px rgba(240,197,92,.5); }
+}
+
+@-webkit-keyframes glow {
+  from { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(73,223,253,1); -moz-box-shadow: 0 0 18px rgba(73,223,253,1); box-shadow: 0 0 18px rgba(73,223,253,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
+}
+
+@-moz-keyframes glow {
+  from { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(73,223,253,1); -moz-box-shadow: 0 0 18px rgba(73,223,253,1); box-shadow: 0 0 18px rgba(73,223,253,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
+}
+
+@keyframes glow {
+  from { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(73,223,253,1); -moz-box-shadow: 0 0 18px rgba(73,223,253,1); box-shadow: 0 0 18px rgba(73,223,253,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(73,223,253,.5); -moz-box-shadow: 0 0 12px rgba(73,223,253,.5); box-shadow: 0 0 12px rgba(73,223,253,.5); }
+}
+
+@-webkit-keyframes glow-purple {
+  from { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(107,63,152,1); -moz-box-shadow: 0 0 18px rgba(107,63,152,1); box-shadow: 0 0 18px rgba(107,63,152,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
+}
+
+@-moz-keyframes glow-purple {
+  from { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(107,63,152,1); -moz-box-shadow: 0 0 18px rgba(107,63,152,1); box-shadow: 0 0 18px rgba(107,63,152,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
+}
+
+@keyframes glow-purple {
+  from { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
+  50% { -webkit-box-shadow: 0 0 18px rgba(107,63,152,1); -moz-box-shadow: 0 0 18px rgba(107,63,152,1); box-shadow: 0 0 18px rgba(107,63,152,1); }
+  to { -webkit-box-shadow: 0 0 12px rgba(107,63,152,.5); -moz-box-shadow: 0 0 12px rgba(107,63,152,.5); box-shadow: 0 0 12px rgba(107,63,152,.5); }
+}
+/* end glows */
+
+//*************************************
+// 19... login/signup
+//*************************************
+
+
+
+/* login / signup */
+.login-form,
+.signup-form { margin: 0 auto; max-width: 620px; }
+
+.page .login-form,
+.page .signup-form,
+.page .forgot-form,
+.page .verify-form { margin: 0 auto; max-width: 320px; height:450px; }
+
+.page .user-form { color: white; padding: 65px 0px; background: rgba(0,0,0,.6) }
+.page .user-form .form-group { 
+    position: relative;
+    border: 1px solid #fbfbfb;
+        margin-bottom: 10px;
+}
+.page .user-form .login-email { width:85%; background: none; }
+.page .user-form .form-group input { color: white; margin-bottom: 0px;}
+.page .user-form .form-group .form-control { border: none; }
+.page .user-form .form-group .form-control:focus { border: none; box-shadow: none; }
+.page .user-form .form-group .login-charm {   
+    position:absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 18px; 
+    color: white;
+}
+.page .user-form .or { text-align: center; line-height: 3; font-weight: bold; }
+.page .user-form .remember-me .fa-square-o {
+    margin-top: 7px;
+    font-size: 1.5em;
+}
+.page .user-form .remember-me .fa-check {
+    font-size: .8em;
+}
+.page .user-form .remember-me .remember-me-i:hover,
+.page .user-form .remember-me .remember-me-i:focus,
+.page .user-form .remember-me .remember-me-i {
+    color: white;
+    text-decoration: none;
+}
+.page .user-form .remember-me .forgot-password {
+    line-height: 2.5;
+    margin: 0;
+}
+
+.page .user-form .sign-up {
+    width: 100%;
+}
+
+
+/*
+.btn-twitch { position: relative; padding: 12px 12px; font-size: 20px; color: #FFF !important; background: #6441a5; }
+.btn-twitch:hover,
+.btn-twitch:active { color: #FFF; }
+.btn-twitch i { position: absolute; left: 15px; top: 13px; font-size: 30px; }
+*/
+
+.login-form .btn-twitch { position: relative; padding: 14px; padding-left: 75px; font-size: 20px; color: #FFF !important; background: #6441a5; border-radius: 0; text-align: left; font-size: 16px; height: 55px; }
+.login-form .btn-twitch:hover,
+.login-form .btn-twitch:active { color: #FFF; }
+.login-form .btn-twitch i { position: absolute; left: 15px; top: 13px; font-size: 30px; }
+
+.login-form .btn-bnet { position: relative; padding: 14px; padding-left: 75px; font-size: 20px; color: #FFF !important; background: #22324B; border-radius: 0; text-align: left; font-size: 16px; height: 55px; }
+.login-form .btn-bnet:hover,
+.login-form .btn-bnet:active { color: #FFF; }
+.login-form .btn-bnet .bnet-logo { position: absolute; left: 15px; top: 13px; font-size: 30px; width: 30px; height: 30px; background-image: url(../img/BattleNet.png); background-size: 100% 100%; }
+
+.login-modal {}
+.login-modal .modal-dialog {
+    width: 350px;
+/*    height:500px;*/
+}
+.login-modal .modal-content {
+    height:100%;
+    border-radius: 0;
+    background-color: rgba(31,31,31,.9);
+}
+.login-modal .modal-content .modal-header {
+    border: 0;
+    padding: 25px;
+}
+.login-modal .modal-content .modal-header .bootbox-close-button {
+    font-size: 22px;
+    line-height: 1.25;
+    opacity: 1;
+}
+.login-modal .modal-content .modal-header .modal-title {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+.login-modal .or { text-align: center; line-height: 3; font-weight: bold; }
+.login-modal .modal-content .modal-body {
+    padding: 25px;
+}
+.login-modal .modal-content .modal-body .form-group {
+    margin-bottom: 10px;
+    position: relative;
+    border: 1px solid #FBFBFB;
+}
+.login-modal .modal-content .modal-body .form-group input {
+    color: white
+}
+.login-modal .modal-content .modal-body .form-group .form-control {
+    border: none;
+}
+.login-modal .modal-content .modal-body .form-group .form-control:focus {
+    border: none;
+    box-shadow: none;
+}
+.login-modal .modal-content .modal-body .login-email {
+    width: 85%;
+    background: none;
+}
+.login-modal .modal-content .modal-body .login-password {
+    background: none !important;
+}
+.login-modal .modal-content .modal-body .login-charm {
+    position:absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 18px;
+}
+.login-modal .modal-content .modal-body .login-charm.lock {
+    right: 17px;
+}
+.login-modal .modal-content .modal-body .remember-me .fa-square-o {
+    margin-top: 7px;
+    font-size: 1.5em;
+}
+.login-modal .modal-content .modal-body .remember-me .fa-check {
+    font-size: .8em;
+}
+.login-modal .modal-content .modal-body .remember-me .remember-me-i:hover,
+.login-modal .modal-content .modal-body .remember-me .remember-me-i:focus,
+.login-modal .modal-content .modal-body .remember-me .remember-me-i {
+    color: white;
+    text-decoration: none;
+}
+.login-modal .modal-content .modal-body .remember-me .forgot-password {
+    line-height: 2.5;
+    margin: 0;
+}
+
+.login-modal .sign-up {
+    width: 100%;
+}
+
+
+//*************************************
+// 20...photo upload
+//*************************************
+
+.photo-input .upload-thumbnail {
+  display: inline-block;
+  margin-bottom: 5px;
+  overflow: hidden;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.photo-input .upload-drop { border-radius: 4px; border: 1px dashed #ccc; text-align: center; color: #666; }
+.photo-input .upload-drop.active { border: 1px dashed #66afe9; color: #357ebd; background: #e6f7ff; }
+
+.upload-thumbnail.upload-thumbnail-article {
+    width: 240px;
+    height: 60px;
+}
+.upload-thumbnail.upload-thumbnail-article .upload-drop {
+    width: 240px;
+    height: 60px;
+    line-height: 60px;
+}
+.upload-thumbnail.upload-thumbnail-article img {
+    width: 240px;
+    height: 60px;
+}
+.upload-thumbnail.upload-thumbnail-team {
+    width: 188px;
+    height: 188px;
+}
+.upload-thumbnail.upload-thumbnail-team .upload-drop {
+    width: 188px;
+    height: 188px;
+    line-height: 60px;
+}
+.upload-thumbnail.upload-thumbnail-team img {
+    width: 188px;
+    height: 188px;
+}
+.upload-thumbnail.upload-thumbnail-poll {
+    width: 140px;
+    height: 140px;
+}
+.upload-thumbnail.upload-thumbnail-poll img {
+    width: 140px;
+    height: 140px;
+}
+.upload-thumbnail.upload-thumbnail-poll .upload-drop {
+    width: 140px;
+    height: 140px;
+    line-height: 60px;
+}
+.upload-thumbnail.upload-thumbnail-card {
+    width: 142px;
+    height: 197px;
+}
+.upload-thumbnail.upload-thumbnail-card .upload-drop {
+    width: 142px;
+    height: 197px;
+    line-height: 197px;
+}
+.upload-thumbnail.upload-thumbnail-card img {
+    width: 142px;
+    height: 197px;
+}
+.upload-thumbnail.upload-thumbnail-deck {
+    width: 110px;
+    height: 26px;
+}
+.upload-thumbnail.upload-thumbnail-deck .upload-drop {
+    width: 110px;
+    height: 26px;
+    line-height: 26px;
+}
+.upload-thumbnail.upload-thumbnail-deck img {
+    width: 110px;
+    height: 26px;
+}
+
 
 
 
