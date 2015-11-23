@@ -1,5 +1,6 @@
 {
   "name": "cardWithCoin",
+  "plural": "cardsWithCoin",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
