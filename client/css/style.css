@@ -1203,46 +1203,7 @@
 .note-editor .note-statusbar .note-resizebar { border-color: #000; background-color: #444; }
 .note-editor .note-statusbar .note-resizebar .note-icon-bar { border-top: 1px solid #FFF; }
 
-/* votes */
-.vote-count { margin-right: 10px; border: 2px solid #FFF; background: rgba(0,0,0,.4); border-radius: 50%; text-align: center; color: #FFF; font-family: 'Open Sans Bold'; }
 
-.vote-count-btns button {
-    padding: 0px;
-    background: none;
-}
-
-.vote-count-btns button i {
-    font-size: 28px;
-}
-
-.vote-count span { margin-left: -5px; }
-.vote-count i { line-height: 56px; font-size: 28px; }
-.vote-count span em { font-style: normal; }
-.vote-count.vote-small { width: 45px; height: 45px; line-height: 41px; font-size: 14px; }
-.vote-count.vote-large { width: 60px; height: 60px; line-height: 56px; font-size: 20px; }
-.vote-count.vote-large span { margin: auto; }
-
-.vote-count-btns.vote-small { font-size: 14px; }
-.vote-count-btns.vote-large { font-size: 24px; }
-
-.btn-vote-up,
-.btn-vote-down { display: block; color: rgba(255,255,255,.8) !important; outline: none; border: none; }
-
-.btn-vote-up.vote-small { margin-top: 5px; }
-.btn-vote-down.vote-small { margin-top: -5px; }
-
-.btn-vote-up:hover,
-.btn-vote-down:hover { color: #FFF !important; }
-
-.btn-vote-up.active,
-.btn-vote-down.active { color: #083f7d !important; outline: none; border: none; }
-
-.btn-vote-up:focus,
-.btn-vote-down:focus { outline: none; border: none; }
-
-.btn-vote-up { cursor: pointer; text-align: center; }
-.btn-vote-up,
-.vote-count.single i { margin-top: 1px; font-size: 28px; }
 
 /* comments added to comments.scss */
 
