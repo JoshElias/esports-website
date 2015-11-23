@@ -1294,10 +1294,7 @@ angular.module('app.services', [])
             dust: data.dust || 0,
             youtubeId: data.youtubeId || '',
             description: data.description || '',
-            deckType: data.deckType || 1,
             chapters: data.chapters || [],
-            arena: data.arena || false,
-            type: data.type || 1,
             slug: data.slug || '',
 //            authorId: data.authorId || User.getCurrentId(), // this and votes get created when deck is made
             deckType: data.deckType || 'None',
