@@ -32,8 +32,8 @@
 // 11... premium
 // 12... page flipper
 // 13... flex styles & fixes
-// 14...date picker
-// 15...voting (for commenting see comments.scss)
+// 14... date picker
+// 15... voting (for commenting see comments.scss)
 // 16... input range
 // 17... Inputs, Dropdowns, Note editor
 // 18... Glows
@@ -159,6 +159,11 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 .games-btn-hs .games-btn-back { background: url('../img/hs/hsheadbg.jpg') no-repeat left center; background-size: cover; }
 .games-btn-hots .games-btn-back { background: url('../img/hots/hotsheadbg.jpg') no-repeat center center; background-size: cover; }
 .games-btn-overwatch .games-btn-back { background: url('../img/overwatch/top-header-big.jpg') no-repeat left center; background-size: cover; }
+.games-btn-ts-store .games-btn-back {
+    background: url(../img/ts-store-bg.jpg) left center no-repeat;
+    background-size: cover;
+}
+
 
 .games-btn-logo { position: relative; display: inline-block; max-width: 80%; vertical-align: middle; -moz-transition: all .5s; -webkit-transition: all .5s; transition: all .5s; -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); z-index: 2; }
 
