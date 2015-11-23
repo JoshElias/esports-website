@@ -610,7 +610,9 @@
                                                 <b class="caret"></b>
                                             </button>
                                             <ul class="list-group dropdown-menu dropdown-dark">
-                                                <li class="list-group-item" ng-class="{active: deck.premium.isPremium === type.value}" ng-repeat="type in premiumTypes">
+                                                <li class="list-group-item" 
+                                                    ng-class="{active: deck.premium.isPremium === type.value}" 
+                                                    ng-repeat="type in premiumTypes">
                                                     <a href="#" ng-click="deck.premium.isPremium = type.value">{{type.text}}</a>
                                                 </li>
                                             </ul>
@@ -620,7 +622,11 @@
                                 <div class="form-group" ng-show="deck.premium.isPremium">
                                     <label for="expiryDate" class="col-sm-2 control-label">Expiry Date</label>
                                     <div class="col-sm-10">
-                                        <div date-picker data-id="expiryDate" data-name="expiryDate" data-class="input-dark" ng-model="deck.premium.expiryDate" ng-disabled="!deck.premium.isPremium"></div>
+                                        <div date-picker data-id="expiryDate" data-name="expiryDate" 
+                                             data-class="input-dark" 
+                                             ng-model="deck.premium.expiryDate" 
+                                             ng-disabled="!deck.premium.isPremium">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -634,7 +640,9 @@
                                                 <b class="caret"></b>
                                             </button>
                                             <ul class="list-group dropdown-menu dropdown-dark">
-                                                <li class="list-group-item" ng-class="{active: deck.isFeatured === type.value}" ng-repeat="type in featuredTypes">
+                                                <li class="list-group-item" 
+                                                    ng-class="{active: deck.isFeatured === type.value}" 
+                                                    ng-repeat="type in featuredTypes">
                                                     <a href="#" ng-click="deck.isFeatured = type.value">{{type.text}}</a>
                                                 </li>
                                             </ul>

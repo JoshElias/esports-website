@@ -7980,7 +7980,7 @@ angular.module('app.controllers', ['ngCookies'])
             ];
 
             $scope.isFeatured = function () {
-                var featured = $scope.deck.featured;
+                var featured = $scope.deck.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
                     if ($scope.featuredTypes[i].value === featured) {
                         return $scope.featuredTypes[i].text;
