@@ -23,10 +23,18 @@ module.exports = function(User) {
     });
 
 
+    User.afterRemote("**", function(ctx, modelInstance, next) {
+        next();
+    });
+
     User.observe("access", function(ctx, next) {
         //removePrivateFields(ctx, next);
         next();
     });
+
+    function testRemove(ctx, remoteMethodOutput, next) {
+        console.log("remote Method Output:", remoteMethodOutput);
+    }
 
 
     // Handle user registeration
@@ -530,7 +538,6 @@ module.exports = function(User) {
     };
 
     User.getCurrent = function (finalCb) {
-        console.log("wtff")
         var err = new Error('no user found');
         err.statusCode = 400;
         err.code = 'USER_NOT_FOUND';
