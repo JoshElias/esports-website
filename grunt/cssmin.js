@@ -7,7 +7,6 @@ module.exports = {
             'client/dist/css/vendor.min.css': [
                 'client/vendor/bootstrap/dist/bootstrap.min.css',
                 'client/vendor/bootstrap/dist/bootstrap-theme.min.css',
-                'client/vendor/jquery-ui/themes/base/jquery-ui.min.css',
                 'client/css/vendor/megamenu/MegaNavbar.min.css',
                 'client/css/vendor/megamenu/simple-line-icons.css',
                 'client/vendor/font-awesome/css/font-awesome.min.css',

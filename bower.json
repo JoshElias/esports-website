@@ -22,7 +22,7 @@
     "angular-ui-router": "~0.2.15",
     "angular-resource": "~1.4.3",
     "bootstrap": "~3.3.5",
-    "jquery-ui": "~1.11.4",
+    "jquery-ui": "~1.11.1",
     "angular-ui": "~0.4.0",
     "angular-ui-select": "~0.12.1",
     "font-awesome": "~4.4.0",
