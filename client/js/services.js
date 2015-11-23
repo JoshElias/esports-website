@@ -1571,10 +1571,6 @@ angular.module('app.services', [])
                 isLegendary = (card.rarity === 'Legendary') ? true : false,
                 totalCards = db.getSize();
             
-            if(totalCards >= 30) {
-                return;
-            }
-            
             console.log('adding card: ', card);
 
             // check if card already exists
