@@ -3115,5 +3115,4 @@ angular.module('app.services', [])
     return factory;
   }
 ]);
-
 ;
