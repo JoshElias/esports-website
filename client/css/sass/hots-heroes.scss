@@ -2,7 +2,9 @@
 @import 'ts-colors.scss';
 
 // Description: hots heroes scss file specifically for adding heroes using mixins
-// used to enter heroes and their talents into mixins to auto gen css
+// used to enter heroes and their talents into mixins to auto gen css.
+
+// Modals need to remain outside of the hots specific style wrapper
 
 //*************************************
 
@@ -13,14 +15,17 @@
 //      5.1.. Heroes talents
 //      5.2.. General Talent icon Styles
 //  6... HOTS hero filter images
-//  7... HOTS modal - hereos
-//      7.1.. HOTS modal - talents
-//  8... HOTS top guide - heroes
-//  9... HOTS hero-back 
 
+//  7... HOTS top guide - heroes
+//  8... HOTS hero-back 
+//  9... HOTS modal - hereos
+//      9.1.. HOTS modal - talents
 
 
 //*************************************
+
+
+
 
 //*************************************
 // 1... hots heroes Mixin library
@@ -30,35 +35,40 @@
 //HOTS Character images Mixin
 
 @mixin hots-hero ($hero) {  /* Starting new Hots Hero */
-.icon-#{$hero} { background: url(../img/hots/heroes/#{$hero}-hex.png) no-repeat center center; }
-.hero-list li a.#{$hero} { background: url(../img/hots/heroes/28x/#{$hero}28.png) no-repeat center right; }
-.talents-title.#{$hero} { background: url(../img/hots/heroes/60x/#{$hero}60.png) no-repeat; }
-.hots-modal .hero.#{$hero} { background: url(../img/hots/modal/heroes/#{$hero}.png) no-repeat center right; }
-.hero-back.#{$hero} { background: url(../img/hots/heroes/bgs/#{$hero}.png) center center no-repeat; }
-    // guide images
-.hots-guide.large.#{$hero} { background: url('../img/hots/heroes/guide-images/1/#{$hero}.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.small.#{$hero} { background: url('../img/hots/heroes/guide-images/side/1/#{$hero}.jpg') no-repeat center top; background-size: cover; }
-.hots-guide.long.#{$hero} { background-image: url('../img/hots/heroes/guide-images/long/#{$hero}.png'); background-repeat: no-repeat; background-position: right top; }
-.hots-top-guide .hero.#{$hero} { background: url('../img/hots/modal/heroes/#{$hero}.png') no-repeat center right; }
-.guide-hero-image.#{$hero} { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/#{$hero}60.png') no-repeat right top; }
-.tc-hero.#{$hero} { background: url('../img/hots/modal/heroes/#{$hero}.png') no-repeat right 120px; }    
+    
+    .hots-styles { //hots styles wrapper
+        .icon-#{$hero} { background: url(../img/hots/heroes/#{$hero}-hex.png) no-repeat center center; }
+        .hero-list li a.#{$hero} { background: url(../img/hots/heroes/28x/#{$hero}28.png) no-repeat center right; }
+        .talents-title.#{$hero} { background: url(../img/hots/heroes/60x/#{$hero}60.png) no-repeat; }
+        .hero-back.#{$hero} { background: url(../img/hots/heroes/bgs/#{$hero}.png) center center no-repeat; }
+            // guide images
+        .hots-guide.large.#{$hero} { background: url('../img/hots/heroes/guide-images/1/#{$hero}.jpg') no-repeat center top; background-size: cover; }
+        .hots-guide.small.#{$hero} { background: url('../img/hots/heroes/guide-images/side/1/#{$hero}.jpg') no-repeat center top; background-size: cover; }
+        .hots-guide.long.#{$hero} { background-image: url('../img/hots/heroes/guide-images/long/#{$hero}.png'); background-repeat: no-repeat; background-position: right top; }
+        .hots-top-guide .hero.#{$hero} { background: url('../img/hots/modal/heroes/#{$hero}.png') no-repeat center right; }
+        .guide-hero-image.#{$hero} { background: rgba(0,0,0,.8) url('../img/hots/heroes/60x/#{$hero}60.png') no-repeat right top; }
+        .tc-hero.#{$hero} { background: url('../img/hots/modal/heroes/#{$hero}.png') no-repeat right 120px; }
+    }
+    
+    .hots-modal .hero.#{$hero} { background: url(../img/hots/modal/heroes/#{$hero}.png) no-repeat center right; }
+    
 }
 
 //HOTS Character Talent Mixin
 
 @mixin hots-hero-talents ($hero, $talents) {
-    
+
     $smallInc: -30;
     $largeInc: -102;
-    
+
     .talents-icon {
-        
+
         &.#{$hero} { 
-            
+
             background: url('../img/hots/talents/#{$hero}.png') no-repeat;
-    
+
             @each $talent in $talents {
-                
+
                 $small: $smallInc*map-get($talent, pos);
                 $large: $largeInc*map-get($talent, pos);
 
@@ -66,9 +76,9 @@
 
                     &.#{$talentName} { background-position: 0px #{$small}px; }
                     &.large.#{$talentName} { background-position: -30px #{$large}px; }
-                    
+
                 }
-                
+
             }
 
         }
@@ -79,33 +89,33 @@
 //HOTS hero image filter sprit sheet Mixin
 
 @mixin hots-hero-filters-image ($hero, $column, $row, $smallPos) {
-    
+
     $largeInc: -77;
     $smallInc: -45;
     $baseInc: -2;
-    
-    
+
+
     .hero-filters li button {
-        
+
         &.#{$hero} { 
-            
+
             $theCol: $baseInc+($largeInc*($column - 1));
             $theRow: $baseInc+($largeInc*($row - 1));
             $smallimg: $baseInc+($smallInc*($smallPos - 1));
-            
+
             width: 75px; 
             height: 75px;
             background-position: #{$theCol}px #{$theRow}px; 
-            
+
             @media (max-width: 767px) {
-            
+
                 width: 43px;
                 height: 43px;
                 background-position: #{$smallimg}px -2px;
-                
-            
+
+
             }
-            
+
         }
     }
 }
@@ -211,26 +221,30 @@
 
 /* talents icons */
 
-.talents-icon { 
-    display: block; 
-    width: 30px; 
-    height: 30px; 
-    overflow: hidden; 
-    white-space: nowrap; 
-    text-indent: -99999px; 
-    opacity: .5; 
-    transition: opacity .1s linear; 
+.hots-styles { //hots styles wrapper
 
-    &.tier-selected { opacity: .3; }
-    &:hover { opacity: .9; }
-    &.active { opacity: 1; }
-    &.large { width: 102px; height: 102px; }
+    .talents-icon { 
+        display: block; 
+        width: 30px; 
+        height: 30px; 
+        overflow: hidden; 
+        white-space: nowrap; 
+        text-indent: -99999px; 
+        opacity: .5; 
+        transition: opacity .1s linear; 
 
-}
+        &.tier-selected { opacity: .3; }
+        &:hover { opacity: .9; }
+        &.active { opacity: 1; }
+        &.large { width: 102px; height: 102px; }
 
-/* talents - titles */
-.talents-title { 
-    background-position: right top !important; 
+    }
+
+    /* talents - titles */
+    .talents-title { 
+        background-position: right top !important; 
+    }
+    
 }
 
 
@@ -333,6 +347,9 @@ This is the template for hots-hero-talents.
 //*************************************
 
 //abathur Talents
+
+
+
 
 @include hots-hero-talents ( abathur, (
     ( class: (pressurized-glands, soma-transferance, envenomed-spikes), pos: 0 ), // 0
@@ -472,16 +489,16 @@ This is the template for hots-hero-talents.
 // talents: cho
 
 @include hots-hero-talents ( cho, (
-    ( class: (surging-dash, seared-flesh, power-surge, surge-of-stamina), pos: 0 ), // 0
-    ( class: (blazing-bulwark, fire-eater, twilight-veil), pos: 1 ), // -30
+    ( class: (surging-dash, power-surge, surge-of-stamina), pos: 0 ), // 0
+    ( class: (blazing-bulwark, fire-eater, seared-flesh, twilight-veil), pos: 1 ), // -30
     ( class: (fuel-for-the-flame), pos: 2 ), // -60
     ( class: (runed-gauntlet, runic-feedback), pos: 3 ), // -90
     ( class: (rollback), pos: 4 ), // -120
-    ( class: (frenzied-fists), pos: 5 ), // -150
+    ( class: (frenzied-fists, crippling-blow), pos: 5 ), // -150
     ( class: (hammer-of-twilight, cthuns-gift), pos: 6 ), // -180
     ( class: (upheaval, favor-of-the-old-gods, favor-of-the-old-gods), pos: 7 ), // -210
     ( class: (molten-block), pos: 8 ), // -240
-    ( class: (i-am-hurrying), pos: 9 ) // -270
+    ( class: (i-am-hurrying, the-will-of-gall), pos: 9 ) // -270
 ) );
 
 //talents: diablo
@@ -500,7 +517,7 @@ This is the template for hots-hero-talents.
     ( class: (imposing-presence), pos: 10 ), // -300
     ( class: (lord-of-terror), pos: 11 ), // -330
     ( class: (bolt-of-the-storm), pos: 12 ) // -360
-  
+
 ) );
 
 //talents: ETC
@@ -710,7 +727,7 @@ This is the template for hots-hero-talents.
     ( class: (storm-shield), pos: 14 ), // -420
     ( class: (epiphany), pos: 15 ) // -450    
 ) );
-    
+
     .talents-icon.kharazim.pick-your-trait { -webkit-animation: kharazim-traits 6s infinite; animation: kharazim-traits 6s infinite; }
         @-webkit-keyframes kharazim-traits {
           0% { background-position: 0px 0px; }
@@ -772,7 +789,7 @@ This is the template for hots-hero-talents.
     ( class: (imposing-presence), pos: 11 ), // -330
     ( class: (hardened-shield), pos: 12 ), // -360
     ( class: (spectral-leech), pos: 13 ) // -390
-   
+
 ) );
 
 //talents: lili
@@ -1319,6 +1336,7 @@ This is the template for hots-hero-talents.
     ( class: (rewind), pos: 22 ) // -660
 ) );
 
+
 //*************************************
 // 5.2.. General Talent icon Styles
 //*************************************
@@ -1456,8 +1474,26 @@ This is the template for hots-hero-talents.
 
 
 
+
+
 //*************************************
-// 7... HOTS modal - hereos
+// 7... HOTS top guide - heroes
+//*************************************
+
+.hots-top-guide .hero { position: absolute; top: -65px; right: -160px; width: 557px; height: 364px; z-index: 1; }
+
+//*************************************
+// 8... HOTS hero-back 
+//*************************************
+
+
+.hero-back { transition: background .25s ease-in-out; }
+.hero-back.default { background: rgba(0,0,0,0) center center no-repeat; }
+
+
+
+//*************************************
+// 9... HOTS modal - hereos
 //*************************************
 
 /* hots modal - heroes */
@@ -1474,23 +1510,9 @@ This is the template for hots-hero-talents.
 .hots-modal .universe.warcraft { background: url('../img/hots/modal/universe/wow.png') no-repeat; }
 
 //*************************************
-// 7.1.. HOTS modal - talents
+// 9.1.. HOTS modal - talents
 //*************************************
 
 /* hots modal - talents */
 .hots-modal .hots-talent-icon { position: absolute; top: 20px; left: -51px; }
 .hots-modal .talent-text { margin-left: 51px; }
-
-//*************************************
-// 8... HOTS top guide - heroes
-//*************************************
-
-.hots-top-guide .hero { position: absolute; top: -65px; right: -160px; width: 557px; height: 364px; z-index: 1; }
-
-//*************************************
-// 9... HOTS hero-back 
-//*************************************
-
-
-.hero-back { transition: background .25s ease-in-out; }
-.hero-back.default { background: rgba(0,0,0,0) center center no-repeat; }

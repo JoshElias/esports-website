@@ -1,5 +1,6 @@
 {
   "name": "cardWithoutCoin",
+  "plural": "cardsWithoutCoin",
   "base": "PersistedModel",
   "strict": true,
   "idInjection": true,
@@ -51,7 +52,6 @@
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "accessType": "WRITE",
       "property": "create"
     }
   ],

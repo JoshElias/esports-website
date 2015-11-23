@@ -139,9 +139,9 @@
   },
   "acls": [
     {
-    "principalType": "ROLE",
-    "principalId": "$everyone",
-    "permission": "DENY"
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
     },
     {
       "principalType": "ROLE",
@@ -152,21 +152,42 @@
     {
       "principalType": "ROLE",
       "principalId": "$admin",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
       "principalType": "ROLE",
       "principalId": "$owner",
-      "permission": "ALLOW",
-      "accessType": "WRITE"
+      "permission": "ALLOW"
     },
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "accessType": "WRITE",
       "property": "create"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "upsert"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__delete__cards"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__create__deckCards"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__delete__matchups"
     }
   ],
   "methods": {}

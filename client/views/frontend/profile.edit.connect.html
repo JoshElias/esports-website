@@ -9,7 +9,8 @@
         </div>
         <div class="connect-body">
             Link your twitter account.
-            <button ng-click="twitchLink()" ng-class="{ 'twitchBack' : true }" class="link"><i class="fa fa-chain-broken"></i></button>
+            <button ng-if="isLinked.twitch" ng-click="twitchLink()" class="link twitchBack"><i class="fa fa-chain"></i></button>
+            <button ng-if="!isLinked.twitch" ng-click="twitchLink()" class="link"><i class="fa fa-chain-broken"></i></button>
         </div>
     </div>
     
@@ -19,7 +20,9 @@
         </div>
         <div class="connect-body">
             Link your Battlenet account
-            <button ng-click="bnetLink()" class="link"><i class="fa fa-chain-broken"></i></button>
+            
+            <button ng-if="isLinked.bnet" ng-click="bnetLink()" class="link bnetBack"><i class="fa fa-chain"></i></button>
+            <button ng-if="!isLinked.bnet" ng-click="bnetLink()" class="link"><i class="fa fa-chain-broken"></i></button>
         </div>
     </div>
 </div>

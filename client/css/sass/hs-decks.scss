@@ -80,6 +80,8 @@
 // 3.1.. MULLIGANS Styles
 //*************************************
 
+
+
 .db-mulligans h2 { color: #FFF; font-size: 22px; font-weight: bold; text-shadow: 0px 0px 20px rgba(255,255,255,.4); margin: 0px; }
 .db-mulligans h3 { color: rgba(255,255,255,.6); margin: 0px; font-size: 14px; }
 
@@ -96,7 +98,7 @@
     -o-transition: .25s;
     -webkit-transition: .25s;
     transition: .25s;
-        
+
 }
 .db-mulligans .class button { width: 100%; height: 100%; outline: none; border: none; background: none; }
 .db-mulligans .class.active { outline: 1px solid rgba(255,255,255,1); }
@@ -110,7 +112,7 @@
     width: 100%;
     height: 115px;
     position: relative;
-    
+
     background: rgba(36,104,172,1); 
     background: -moz-linear-gradient(left, rgba(36,104,172,1) 0%, rgba(36,104,172,1) 15%, rgba(0,139,198,1) 100%);
     background: -webkit-gradient(left top, right top, color-stop(0%, rgba(36,104,172,1)), color-stop(15%, rgba(36,104,172,1)), color-stop(100%, rgba(0,139,198,1)));
@@ -168,7 +170,7 @@
 .hs-deck.small:hover,
 .hs-deck.large:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
 }
-    
+
 .hs-deck.large { height: 220px; }
 
 .hs-deck .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 4; }
@@ -195,3 +197,4 @@
 @media (min-width: 768px) {
 .hs-deck.long:hover { background-color: rgba(255,255,255,.2); }
 }
+

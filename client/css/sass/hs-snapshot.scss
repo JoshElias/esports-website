@@ -13,6 +13,7 @@
 
 //*************************************
 
+
 //*************************************
 // 1... General hearthstone Styles
 //*************************************
@@ -338,19 +339,19 @@
 
 
 .meta-author {
-    
+
     background: -webkit-linear-gradient(left, #1F2650 , #20365F); /* For Safari 5.1 to 6.0 */
     background: -o-linear-gradient(right, #1F2650, #20365F); /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(right, #1F2650, #20365F); /* For Firefox 3.6 to 15 */
     background: linear-gradient(to right, #1F2650 , #20365F); /* Standard syntax */
-    
+
     border-left: 1px solid rgba(255,255,255,.2);
     border-right: 1px solid rgba(255,255,255,.2);
     border-top: 1px solid rgba(255,255,255,.2);
     border-bottom: 1px solid rgba(255,255,255,.2);
-    
 
-    
+
+
     margin-bottom: 1px;
 }
 
@@ -600,3 +601,4 @@
 }
 .tier-deck-Warrior .deck-portrait-Warrior { background: url(../img/meta-snapshot/hero-portrait/Warrior.png) no-repeat top center; }
 .deck-portrait-Warrior-sm { background: url(../img/meta-snapshot/hero-portrait/warrior-sm.png) no-repeat top right; }
+

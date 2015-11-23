@@ -1299,7 +1299,7 @@ angular.module('app.services', [])
             arena: data.arena || false,
             type: data.type || 1,
             slug: data.slug || '',
-            authorId: data.authorId || User.getCurrentId(),
+//            authorId: data.authorId || User.getCurrentId(), // this and votes get created when deck is made
             deckType: data.deckType || 'None',
             gameModeType: data.gameModeType || 'constructed',
             basic: data.basic || false,
@@ -1315,12 +1315,6 @@ angular.module('app.services', [])
             slug: data.slug || '',
             isFeatured: data.isFeatured || false,
             isPublic: data.isPublic || true,
-            votes: data.votes || [
-                {
-                    userID: User.getCurrentId(),
-                    direction: 1
-                }
-            ],
             voteScore: data.voteScore || 1,
             mulligans: data.mulligans || [
                 {
@@ -1397,19 +1391,19 @@ angular.module('app.services', [])
 
         db.isStrong = function (strong) {
             return strong.isStrong;
-        }
+        };
 
         db.isWeak = function (weak) {
             return weak.isWeak;
-        }
+        };
 
         db.toggleStrong = function (strong) {
             strong.isStrong = !strong.isStrong;
-        }
+        };
 
         db.toggleWeak = function (weak) {
             weak.isWeak = !weak.isWeak;
-        }
+        };
 
         db.getStrong = function (klass) {
             var strong = db.against.strong;
@@ -1419,7 +1413,7 @@ angular.module('app.services', [])
                 }
             }
             return false;
-        }
+        };
 
         db.getWeak = function (klass) {
             var weak = db.against.weak;
@@ -1429,7 +1423,7 @@ angular.module('app.services', [])
                 }
             }
             return false;
-        }
+        };
 
         db.inMulligan = function (mulligan, withCoin, card) {
             var c = (withCoin) ? mulligan.withCoin.cards : mulligan.withoutCoin.cards;
@@ -1440,7 +1434,7 @@ angular.module('app.services', [])
                 }
             }
             return false;
-        }
+        };
 
         db.toggleMulligan = function (mulligan, withCoin, card) {
             console.log('mulligan: ', mulligan);
@@ -1462,15 +1456,15 @@ angular.module('app.services', [])
 
             if (exists) {
                 cardMulligans.splice(index, 1);
-                console.log('spliced coinMulligan: ', coinMulligan);
-                return coinMulligan;
+                console.log('spliced coinMulligan: ', cardMulligans);
             } else {
                 // card doesn't exist in deck.mulligans
                 if (cardMulligans.length < 6) {
                     cardMulligans.push(card);
 //                    console.log('added to mulligan: ', cardMulligans);
+                }
             }
-        }
+        };
             
         db.calcImgPosition = function(card) {
             var pos = 0;
@@ -1541,11 +1535,11 @@ angular.module('app.services', [])
                 }
             }
             return false;
-        }
+        };
 
         db.getContent = function () {
             return $sce.trustAsHtml(db.content);
-        }
+        };
 
         db.isAddable = function (card) {
             if (db.gameModeType === 'arena') { return true; }
@@ -1567,7 +1561,7 @@ angular.module('app.services', [])
             } else {
                 return true;
             }
-        }
+        };
 
         // add card
         db.addCard = function (card) {
@@ -1661,6 +1655,7 @@ angular.module('app.services', [])
         };
 
         db.removeCardFromDeck = function (card) {
+            console.log('card rem: ', card);
             var cardRemovedFromDeck = false,
                 index = -1;
             
@@ -1882,7 +1877,7 @@ angular.module('app.services', [])
         }
 
         return db;
-    }
+    };
 
     deckBuilder.loadCards = function (page, perpage, search, mechanics, mana, playerClass) {
         var d = $q.defer();
@@ -1910,7 +1905,7 @@ angular.module('app.services', [])
             featured: deck.featured,
             public: deck.public
         });
-    }
+    };
 
     deckBuilder.updateDeck = function (deck) {
         return $http.post('/api/deck/update', {
@@ -1931,10 +1926,9 @@ angular.module('app.services', [])
             featured: deck.featured,
             public: deck.public
         });
-    }
+    };
 
     return deckBuilder;
-    }
 }])
 .factory('GuideBuilder', ['$sce', '$http', '$q', 'User', function ($sce, $http, $q, User) {
 
@@ -2636,7 +2630,7 @@ angular.module('app.services', [])
                     Guide.find({
                         filter: {
                             limit: limit,
-                            sort: "createdDate ASC",
+                            order: "createdDate ASC",
                             where: {
                                 id: { inq: guideIds }
                             },
