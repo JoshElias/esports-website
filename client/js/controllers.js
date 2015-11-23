@@ -6485,10 +6485,14 @@ angular.module('app.controllers', ['ngCookies'])
                             console.log('deleted: ', deleted);
                             
                             async.each(deck.matchups, function(matchup, matchupCB) {
-                                matchup.forDeckId = deck.id;
-                                console.log('matchup to upsert: ', matchup);
-                                
-                                DeckMatchup.upsert(matchup)
+                                var newMatchup = {
+                                    deckName: matchup.deckName,
+                                    className: matchup.className,
+                                    forChance: matchup.forChance,
+                                    forDeckId: deck.id,
+                                    deckId: deck.id
+                                };
+                                DeckMatchup.create(newMatchup)
                                 .$promise
                                 .then(function (newMatchup) {
                                     console.log('newMatchup: ', newMatchup);
@@ -7976,7 +7980,7 @@ angular.module('app.controllers', ['ngCookies'])
             ];
 
             $scope.isFeatured = function () {
-                var featured = $scope.deck.featured;
+                var featured = $scope.deck.isFeatured;
                 for (var i = 0; i < $scope.featuredTypes.length; i++) {
                     if ($scope.featuredTypes[i].value === featured) {
                         return $scope.featuredTypes[i].text;
