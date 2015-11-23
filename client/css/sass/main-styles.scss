@@ -34,6 +34,7 @@
 // 14...date picker
 // 15...voting (for commenting see comments.scss)
 // 16... range
+// 17... Inputs, Dropdowns, Note editor
 
 
 // ...tempostorm tv & video of the day
@@ -1311,6 +1312,41 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
   background: #367ebd;
 }
+
+//*************************************
+// 17... Inputs, Dropdowns, Note editor
+//*************************************
+
+
+.input-dark { border: 1px solid #000; background: url('../img/black-60.png'); color: #FFF; outline: none; }
+.input-dark:hover { border: 1px solid #444; background: url('../img/black-60.png'); color: #FFF; }
+.input-dark:focus { border: 1px solid #2766ad; background: url('../img/black-60.png'); color: #FFF; }
+
+.input-dark:read-only { border: 1px solid #000; background: url('../img/black-60.png'); color: #FFF; outline: none; box-shadow: none; }
+
+.input-dark-block { width: 100%; text-align: left; }
+.input-dark-block b { float: right; margin: 9px 0 0 0; }
+
+.dropdown-menu.is-dark { padding: 0; background: transparent; }
+.dropdown-dark { margin: 0; padding: 0; border: none; background: rgba(0,0,0,.8); color: #FFF; }
+.dropdown-dark > li { margin: 0; padding: 0; background: transparent; border-color: #000; }
+.dropdown-dark > li > a { white-space: nowrap; padding: 3px 20px; line-height: 1.42857143; }
+.dropdown-dark > li > a, .dropdown-menu.dropdown-dark > li > a:focus { display: block; color: #FFF; background: transparent; text-decoration: none; }
+
+.dropdown-dark > li:hover { background: #000; }
+.dropdown-dark > li > a:hover, .dropdown-menu > li > a:focus { background: transparent; color: #FFF; }
+.dropdown-dark > li.active { background: #2766ad; }
+
+.btn-default { border: 1px solid #000; background: url('../img/black-60.png'); color: #FFF; outline: none; }
+.btn-default:hover { border: 1px solid #444; background: url('../img/black-60.png'); color: #FFF; }
+.btn-default:focus { border: 1px solid #2766ad; background: url('../img/black-60.png'); color: #FFF; }
+.btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open > .dropdown-toggle.btn-default { border: 1px solid #000; background: #2766ad; color: #FFF; }
+
+.note-editor .note-editable { border: 1px solid #000; background: url('../img/black-60.png'); color: #FFF; }
+.note-editor .note-statusbar .note-resizebar { border-color: #000; background-color: #444; }
+.note-editor .note-statusbar .note-resizebar .note-icon-bar { border-top: 1px solid #FFF; }
+
+
 
 
 //*************************************
