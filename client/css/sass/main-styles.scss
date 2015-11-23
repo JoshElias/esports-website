@@ -16,7 +16,8 @@
 //  2.9.. Line Heights
 //  2.10.. Margins
 //  2.11.. Buttons
-//  2.12.. other general styles
+//  2.12.. modal 
+//  2.13.. other general styles
 // 3... scrollbars & Navbar
 //  3.1.. main Navbar
 //  3.2.. sub Navbar
@@ -33,15 +34,16 @@
 // 13... flex styles & fixes
 // 14...date picker
 // 15...voting (for commenting see comments.scss)
-// 16... range
+// 16... input range
 // 17... Inputs, Dropdowns, Note editor
 // 18... Glows
 // 19... login/signup
 // 20... photo upload
+// 21... rotating
+// 22... Contact, Terms & privacy
+// 23... overcast
 
 
-// ...tempostorm tv & video of the day
-// ...Contact
 
 //*************************************
 
@@ -465,7 +467,19 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
 }
 
 
-// 2.12.. other general styles
+// 2.12.. modal 
+
+.modal-content { background-color: rgba(30, 30, 30, .9); border: 1px solid rgba(255,255,255,.2); }
+.modal-header { border-bottom: 1px solid rgba(255,255,255,.2); }
+.modal-footer { border-top: 1px solid rgba(255,255,255,.2); }
+.modal-body { color: #FFF; }
+.modal-title { color: #FFF; }
+.modal-header .close,
+.modal-header .close:hover,
+.modal-header .close:focus { color: #FFF; }
+
+
+// 2.13.. other general styles
 
 /* vertical center*/
 
@@ -1223,7 +1237,7 @@ _::-moz-svg-foreign-content, :root .flex-col { display: block; }
 
 
 //*************************************
-// 16... range
+// 16... input range
 //*************************************
 
 
@@ -1646,46 +1660,103 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 
-
-
-
 //*************************************
-// ...tempostorm tv & video of the day
+// 21...rotating
 //*************************************
 
-
-/* video of the day and temp tv styles */
-
-.ts-content { margin-right: -10px; padding-top: 80px; }
-.ts-content > .row { margin: 0 auto; max-width: 1448px; }
-.ts-content h1.title { font-family: 'Open Sans Bold'; font-size: 26px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; }
-.ts-content h3.sub-title { font-size: 14px; color: #d3eefa; }
-
-
-
-/* tempostorm tv */
-.tempostorm-tv { margin: 0; padding: 0; }
-.tempostorm-tv li { margin: 0 0 10px 0; list-style: none; position: relative; }
-.tempostorm-tv .tempostorm-tv-stream { position: relative; top: 0px; left: 0px; display: block; border: 1px solid #000; background: rgba(19,18,19,.7); box-shadow: 2px 2px 3px rgba(0,0,0,.75); transition: top .25s ease-in-out, box-shadow .25s ease-in-out, background .25s ease-in-out; }
-.tempostorm-tv .tempostorm-tv-stream:hover { top: -10px; box-shadow: 2px 12px 10px rgba(0,0,0,.75); }
-
-.tempostorm-tv .tempostorm-tv-stream .inner { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; border: 1px solid rgba(255,255,255,.2); z-index: 4; }
-.tempostorm-tv .tempostorm-tv-wrapper img { width: 200px; height: 112px; }
-.tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content { margin-left: 200px; padding: 10px 15px; height: 112px; position: relative; }
-.tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content h1 { margin-bottom: 5px; font-size: 16px; color: #f7ef22; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
-.tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content h3 { font-size: 10px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content .streamer { position: absolute; bottom: 10px; left: 0px; font-size: 16px; color: #67a0d6; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); max-width: 100%; padding: 0px 120px 0px 15px; }
-.tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content .viewers { position: absolute; bottom: 10px; right: 15px; font-size: 16px; color: #DDD; letter-spacing: 2px; text-transform: uppercase; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 1px 1px 1px rgba(0,0,0,.7); }
-
-@media (max-width: 767px) {
-    .tempostorm-tv .tempostorm-tv-stream .tempostorm-tv-content { margin-left: 0px; }
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.rotating {
+  -webkit-animation: rotating 2s linear infinite;
+  -moz-animation: rotating 2s linear infinite;
+  -ms-animation: rotating 2s linear infinite;
+  -o-animation: rotating 2s linear infinite;
+  animation: rotating 2s linear infinite;
 }
 
 
 //*************************************
-// ...Contact
+// 22...Contact, Terms & privacy
 //*************************************
 
 .contact-wrapper { background: url(../img/black-60.png); background-size: 100%; padding: 20px; border-radius: 4px; border: 1px solid #000; }
 .contact-wrapper p { color: #FFF; margin: 0; }
 .contact-banner { background: #2766ad; min-height: 54px; border-bottom: #083f7d; }
+
+
+/* terms / privacy */
+.terms,
+.privacy { margin: 70px auto; }
+.terms h1,
+.terms h2,
+.privacy h1,
+.privacy h2{ color: #2766ad; font-family: 'Open Sans Bold'; }
+
+.terms,
+.privacy { color: #FFF; }
+
+
+//*************************************
+// 23...Contact, Terms & privacy
+//*************************************
+
+/* overcast */
+.overcast { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/clouds-40.png'); background-position: center 0px; -webkit-animation:clouds 15s linear infinite; -moz-animation: clouds 15s linear infinite; animation: clouds 15s linear infinite; z-index: 2; }
+.overcast a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; z-index: 3; }
+        
+@keyframes clouds {
+    0% {
+        background-position: center 0;
+    }
+    100% {
+        background-position: center -585px;
+    }
+}
+
+@-webkit-keyframes clouds {
+    0% {
+        background-position: center 0;
+    }
+    100% {
+        background-position: center -585px;
+    }
+}
+
+@-moz-keyframes clouds {
+    0% {
+        background-position: center 0;
+    }
+    100% {
+        background-position: center -585px;
+    }
+}

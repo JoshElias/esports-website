@@ -1,61 +1,4 @@
 
-
-/* main styles above all moved to main-styles.scss */
-
-
-
-
-
-
-/* start decks */
-
-/* ------------------------------------- */
-/* HS Deck styles and Deck background images moved to HS-Decks
-/* ------------------------------------- */
-
-/* end decks */
-
-
-
-
-
-/* ------------------------------------- */
-/* Meta snapshot styles moved to meta=snapshot
-/* ------------------------------------- */
-
-/* ------------------------------------- */
-/* article css moved to articles.scss
-/* ------------------------------------- */
-
-
-
-
-/* premium */
-
-
-/* wrappers */
-
-
-/* headers */
-
-
-/* line heights */
-
-
-/* margins */
-
-
-/* padding */
-
-
-
-
-
-
-
-/* admin */
-
-
 /* profile */
 /*
 .profile-page .profile-fixed {
@@ -72,46 +15,6 @@
 */
 
 
-
-@-webkit-keyframes rotating /* Safari and Chrome */ {
-  from {
-    -ms-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  to {
-    -ms-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-@keyframes rotating {
-  from {
-    -ms-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  to {
-    -ms-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-.rotating {
-  -webkit-animation: rotating 2s linear infinite;
-  -moz-animation: rotating 2s linear infinite;
-  -ms-animation: rotating 2s linear infinite;
-  -o-animation: rotating 2s linear infinite;
-  animation: rotating 2s linear infinite;
-}
 
 
 
@@ -767,71 +670,8 @@
 
 
 
-/* admin */
-.admin-list-heading span { line-height: 34px; }
-
-.admin-list-item span { line-height: 34px; }
-.admin-list-item:nth-child(odd) { background: #FDFDFD; }
-.list-group-item.admin-list-item:hover { background: #e6f7ff; }
-
-.nav > li > a:hover, .nav > li > a:focus { background: inherit; }
-
-/* cards */
-.card-list-item span { position: relative; line-height: 34px; }
-.card-list-item:nth-child(even) { background: #FDFDFD; }
-.card-list-item:hover { background: #e6f7ff; }
-
-.card-list-item .rarity { margin-top: 12px; margin-right: 10px; }
-
-/* rarity circles */
-.rarity { width: 10px; height: 10px; border-radius: 50%; border: 1px solid #666; }
-.rarity.basic { background: #FFF; }
-.rarity.common { background: #d3ddd5; }
-.rarity.rare { background: #359cff; }
-.rarity.epic { background: #e649fc; }
-.rarity.legendary { background: #ffb629; }
-
-/* class circles */
-.class { width: 30px; height: 30px; background: #000 url('../img/class-icons.png') no-repeat; }
 
 
-
-
-
-
-/*------------------------------------------*/
-/* Deck builder moved to deck-builder.scss */
-/*------------------------------------------*/
-
-
-
-
-
-
-
-/* comments added to comments.scss */
-
-
-/*-----------------------------------*/
-/* Forum styles moved to forum.scss */
-/*-----------------------------------*/
-
-
-/* ads */
-.g2a-square { margin: 20px auto; max-width: 100%; height: auto; }
-.g2a-square a { margin: 0 auto; display: block; max-width: 300px; }
-.g2a-square img { max-width: 100%; height: auto; }
-
-/* terms / privacy */
-.terms,
-.privacy { margin: 70px auto; }
-.terms h1,
-.terms h2,
-.privacy h1,
-.privacy h2{ color: #2766ad; font-family: 'Open Sans Bold'; }
-
-.terms,
-.privacy { color: #FFF; }
 
 /* overcast */
 .overcast { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; background: url('../img/clouds-40.png'); background-position: center 0px; -webkit-animation:clouds 15s linear infinite; -moz-animation: clouds 15s linear infinite; animation: clouds 15s linear infinite; z-index: 2; }
@@ -864,61 +704,11 @@
     }
 }
 
-/* progress */
-#ngProgress {
-    margin: 0;
-    padding: 0;
-    z-index: 99998;
-    background-color: #2766ad;
-    color: #000;
-    /*box-shadow: 0 0 10px 0;  Inherits the font color */
-    height: 2px;
-    opacity: 0;
-
-    /* Add CSS3 styles for transition smoothing */
-    -webkit-transition: all 0.5s ease-in-out;
-    -moz-transition: all 0.5s ease-in-out;
-    -o-transition: all 0.5s ease-in-out;
-    transition: all 0.5s ease-in-out;
-}
-
-/* progress container */
-#ngProgress-container {
-    position: fixed;
-    margin: 0;
-    padding: 0;
-    top: 0px;
-    left: 0;
-    right: 0;
-    z-index: 99999;
-}
-
-/* modal */
-.modal-content { background-color: rgba(30, 30, 30, .9); border: 1px solid rgba(255,255,255,.2); }
-.modal-header { border-bottom: 1px solid rgba(255,255,255,.2); }
-.modal-footer { border-top: 1px solid rgba(255,255,255,.2); }
-.modal-body { color: #FFF; }
-.modal-title { color: #FFF; }
-.modal-header .close,
-.modal-header .close:hover,
-.modal-header .close:focus { color: #FFF; }
 
 
-/* summernote modals */
-.note-image-url,
-.note-link-text,
-.note-link-url,
-.note-video-url { border: 1px solid #000; background: url('../img/black-60.png'); color: #FFF; outline: none; }
 
-.note-image-url:hover,
-.note-link-text:hover,
-.note-link-url:hover,
-.note-video-url:hover { border: 1px solid #444; background: url('../img/black-60.png'); color: #FFF; }
 
-.note-image-url:focus,
-.note-link-text:focus,
-.note-link-url:focus,
-.note-video-url:focus { border: 1px solid #2766ad; background: url('../img/black-60.png'); color: #FFF; }
+
 
 /* subscription */
 .badge-grey { padding: 5px 10px; background: #F2F2F2; color: #222; }
@@ -940,62 +730,6 @@
     opacity: 1; 
 }
 
-/* sponsor page */
-.sponsor-page { padding-top: 50px; padding-bottom: 50px; }
-.sponsor-page p { color: #FFF; }
-.sponsor-logo-twitch { margin: 0 auto; width: 275px; height: 80px; background: url('../img/twitch.png') no-repeat; }
-.sponsor-logo-g2a { margin: 0 auto; width: 275px; height: 80px; background: url('../img/g2a.png') no-repeat; }
-.sponsor-logo-namecheap { margin: 0 auto; width: 275px; height: 80px; background: url('../img/namecheap.png') no-repeat; }
-.sponsor-logo-func { margin: 0 auto; width: 275px; height: 80px; background: url('../img/func.png') no-repeat; }
-/*.sponsor-page a { margin: 0 auto; display: block; width: 20px; color: #FFF; opacity: .6; font-size: 20px; }*/
-.btn-sponsor { width: 36px; height: 36px; border-radius: 50%; display: block; border: 1px solid white; margin: 10px 0px; }
-.btn-sponsor div { width: 30px; height: 30px; text-align: center; }
-.btn-sponsor div i { font-size: 24px; line-height: 1.25; color: black; }
-.sponsor-page a:hover { opacity: 1; }
 
 
 
-
-
-
-/* ------------------------------------- */
-/* talents - titles moved to hots-heroes */
-/* ------------------------------------- */
-
-/* ------------------------------------- */
-/* talents icons - moved to hots-heroes.scss*/
-/* ------------------------------------- */
-
-/* ------------------------------------- */
-/* hots-modal - moved to hots-home */
-/* ------------------------------------- */
-
-
-/* ------------------------- */
-/* hots modal - heroes - moved to hots-heroes */
-/* ------------------------- */
-
-/* ------------------------- */
-/* hots modal - maps - moved to hots-maps */
-/* ------------------------- */
-
-/* ------------------------- */
-/* hots home - maps - moved to hots-home */
-/* ------------------------- */
-
-/* -------------------------------- */
-/* .hero-back.hero moved to hots-heroes.scss
-/* -------------------------------- */
-
-
-/*-----------------------------------------*/
-/* guides styles moved to hots-guides */
-/*-----------------------------------------*/
-
-/*-----------------------------------------*/
-/* talent calculator styles moved to tc-styles */
-/*-----------------------------------------*/
-
-/*-----------------------------------------*/
-/* talent calculator range styles moved to tc-styles */
-/*-----------------------------------------*/
