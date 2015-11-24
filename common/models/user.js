@@ -519,24 +519,24 @@ module.exports = function(User) {
         return cb.promise;
     };
 
-    User.getCurrent = function(ctx, finalCb) {
+    User.getCurrent = function( finalCb) {
+
         var err = new Error('no user found');
         err.statusCode = 400;
         err.code = 'USER_NOT_FOUND';
 
-        if (!ctx || !ctx.req) return finalCb(err);
-        if (ctx.req.currentUser) return finalCb(undefined, ctx.req.currentUser);
+        var ctx = loopback.getCurrentContext();
+        if (!ctx || !ctx.active) return finalCb(err);
+        var res = ctx.active.http.res;
+        var req = ctx.active.http.req;
 
-        var userId;
-        if(ctx.req.accessToken) {
-            userId = ctx.req.accessToken.userId
-        } else if(ctx.result.toJSON().userId) {
-            userId = ctx.result.toJSON().userId;
-        } else {
+        if (req.currentUser)
+            return finalCb(undefined, req.currentUser);
+
+        if(!req.accessToken || req.accessToken.userId !== "string")
             return finalCb(err);
-        }
 
-        ctx.req.app.models.user.findById(userId, function (err, user) {
+        User.app.models.user.findById(req.accessToken.userId, function (err, user) {
             if (err || !user) return finalCb(err);
 
             var userData = user.toJSON();
