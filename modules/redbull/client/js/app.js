@@ -33,8 +33,7 @@ var redbull = angular.module('app.redbull', [
             url: 'redbull',
             views: {
                 content: {
-                    templateUrl: moduleTpl + 'index.html',
-                    controller: 'home'
+                    templateUrl: moduleTpl + 'index.html'
                 }
             }
         })
@@ -43,10 +42,30 @@ var redbull = angular.module('app.redbull', [
             views: {
                 redbull: {
                     templateUrl: moduleTpl + 'home.html',
-                    controller: 'test'
+                    controller: 'HomeCtrl'
                 }
             }
-        });
+        })
+        .state('app.redbull.draft', {
+            abstract: true,
+            url: '/draft',
+            views: {
+                redbull: {
+                    templateUrl: moduleTpl + 'draft.html',
+                    controller: 'DraftCtrl'
+                }
+            }
+        })
+        .state('app.redbull.draft.packs', {
+            url: '',
+            views: {
+                draft: {
+                    templateUrl: moduleTpl + 'draft.packs.html',
+                    controller: 'DraftPacksCtrl'
+                }
+            }
+        })
+        ;
     }
 ]);
 
