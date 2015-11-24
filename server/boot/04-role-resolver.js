@@ -20,6 +20,9 @@ module.exports = function(server) {
         });
 
         function isSubscribed(user) {
+            if(!user || !user.subscription)
+                return false;
+
             var now = new Date();
             return (user.subscription.isSubscribed
                 && (user.subscription.expiryDate > now));
