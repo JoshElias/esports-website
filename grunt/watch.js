@@ -5,7 +5,7 @@ module.exports = {
     },
     js: {
         files: ['client/js/**/*.js'],
-        tasks: ['clean:js', 'newer:concat', 'newer:uglify', 'hash']
+        tasks: ['clean:js', 'newer:concat:js', 'newer:concat:css', 'newer:uglify', 'hash']
     },
     css: {
         files: ['client/css/**/*.css'],
@@ -22,5 +22,9 @@ module.exports = {
     html: {
         files: ['client/views/**/*.html'],
         tasks: ['newer:htmlmin:dist']
+    },
+    modules: {
+        files: ['modules/**/client/js/**/*.js', 'modules/**/client/html/**/*.html'],
+        tasks: ['newer:concat:modules', 'newer:htmlmin:modules']
     }
 };
