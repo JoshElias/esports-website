@@ -1,0 +1,18 @@
+
+/* sponsor page */
+.sponsor-page { padding-top: 50px; padding-bottom: 50px; }
+.sponsor-page p { color: #FFF; }
+.sponsor-logo-twitch { margin: 0 auto; width: 275px; height: 80px; background: url('../img/twitch.png') no-repeat; }
+.sponsor-logo-g2a { margin: 0 auto; width: 275px; height: 80px; background: url('../img/g2a.png') no-repeat; }
+.sponsor-logo-namecheap { margin: 0 auto; width: 275px; height: 80px; background: url('../img/namecheap.png') no-repeat; }
+.sponsor-logo-func { margin: 0 auto; width: 275px; height: 80px; background: url('../img/func.png') no-repeat; }
+/*.sponsor-page a { margin: 0 auto; display: block; width: 20px; color: #FFF; opacity: .6; font-size: 20px; }*/
+.btn-sponsor { width: 36px; height: 36px; border-radius: 50%; display: block; border: 1px solid white; margin: 10px 0px; }
+.btn-sponsor div { width: 30px; height: 30px; text-align: center; }
+.btn-sponsor div i { font-size: 24px; line-height: 1.25; color: black; }
+.sponsor-page a:hover { opacity: 1; }
+
+/* ads */
+.g2a-square { margin: 20px auto; max-width: 100%; height: auto; }
+.g2a-square a { margin: 0 auto; display: block; max-width: 300px; }
+.g2a-square img { max-width: 100%; height: auto; }

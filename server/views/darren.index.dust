@@ -19,7 +19,7 @@
 
     <link rel="stylesheet" href="./vendor/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="./vendor/bootstrap/dist/css/bootstrap-theme.min.css" type="text/css" />
-    <link rel="stylesheet" href="./vendor/jquery-ui/themes/base/jquery-ui.min.css" type="text/css" />
+    <link rel="stylesheet" href="./css/vendor/jquery/jquery-ui.min.css" type="text/css" />
     <link rel="stylesheet" href="./css/vendor/megamenu/MegaNavbar.min.css" type="text/css" />
     <link rel="stylesheet" href="./css/vendor/megamenu/simple-line-icons.css" type="text/css" />
     <link rel="stylesheet" href="./vendor/font-awesome/css/font-awesome.min.css" type="text/css" />

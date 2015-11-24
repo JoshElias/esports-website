@@ -18,5 +18,19 @@ module.exports = {
                 dest: 'client/dist/views/',
             },
         ]
+    },
+    modules: {
+        options: {
+            removeComments: true,
+            collapseWhitespace: true
+        },
+        files: [
+            {
+                expand: true,
+                cwd: 'modules',
+                src: '**/client/views/**/*.html',
+                dest: 'client/dist/views/',
+            }
+        ]
     }
 };
