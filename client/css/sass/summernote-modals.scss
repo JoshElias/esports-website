@@ -1,0 +1,15 @@
+/* summernote modals */
+.note-image-url,
+.note-link-text,
+.note-link-url,
+.note-video-url { border: 1px solid #000; background: url('../img/black-60.png'); color: #FFF; outline: none; }
+
+.note-image-url:hover,
+.note-link-text:hover,
+.note-link-url:hover,
+.note-video-url:hover { border: 1px solid #444; background: url('../img/black-60.png'); color: #FFF; }
+
+.note-image-url:focus,
+.note-link-text:focus,
+.note-link-url:focus,
+.note-video-url:focus { border: 1px solid #2766ad; background: url('../img/black-60.png'); color: #FFF; }

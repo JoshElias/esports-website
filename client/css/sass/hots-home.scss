@@ -12,31 +12,32 @@
 
 //*************************************
 
-.hots-styles { //hots styles wrapper
 
     //*************************************
     // 1... hots - home 
     //*************************************
 
-    .hots-dark { background: #121111; }
+.hots-dark { background: #121111; }
 
-    .filters-back { transition: background .6s ease-in-out; }
-    .filters-back.default { background: #121111 url('../img/hots/maps/bgs/base.jpg') center top no-repeat; }
+.filters-back { transition: background .6s ease-in-out; }
+.filters-back.default { background: #121111 url('../img/hots/maps/bgs/base.jpg') center top no-repeat; }
 
-    //specific map backgrounds moved to hots maps
+//specific map backgrounds moved to hots maps
 
-    .hots-home-title { background: #2766ad url('../img/hots/top-banner.jpg') center center no-repeat; background-size: cover; }
-    .hots-home-logo { margin: 60px auto; }
+.hots-home-title { background: #2766ad url('../img/hots/top-banner.jpg') center center no-repeat; background-size: cover; }
+.hots-home-logo { margin: 60px auto; }
 
-    .btn-hots { padding: 0px; width: 200px; font-family: 'Open Sans Bold'; color: rgba(255,255,255,.8); letter-spacing: 2px; background: #2766ad; border-radius: 0px; }
-    .btn-hots .inner { width: 198px; padding: 15px 0px; border: 1px solid rgba(255,255,255,.2); }
-    .btn-hots:hover { color: rgba(255,255,255,1); box-shadow: 0px 0px 20px rgba(255,255,255,.5); }
+.btn-hots { padding: 0px; width: 200px; font-family: 'Open Sans Bold'; color: rgba(255,255,255,.8); letter-spacing: 2px; background: #2766ad; border-radius: 0px; }
+.btn-hots .inner { width: 198px; padding: 15px 0px; border: 1px solid rgba(255,255,255,.2); }
+.btn-hots:hover { color: rgba(255,255,255,1); box-shadow: 0px 0px 20px rgba(255,255,255,.5); }
 
-    @media (max-width: 767px) {
-        .btn-hots { margin-right: none !important; width: 100%; }
-        .btn-hots .inner { width: 100%; }
-    }
+@media (max-width: 767px) {
+    .btn-hots { margin-right: none !important; width: 100%; }
+    .btn-hots .inner { width: 100%; }
+}
 
+
+.hots-styles { //hots styles wrapper
 
     //*************************************
     // 2... hots - home filters 
