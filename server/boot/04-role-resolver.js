@@ -15,7 +15,7 @@ module.exports = function(server) {
         }
 
         User.getCurrent(function(err, currentUser) {
-           if(err) return cb(err);;
+           if(err) return cb(err);
            return cb(undefined, isSubscribed(currentUser));
         });
 
