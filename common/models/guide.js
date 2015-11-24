@@ -42,8 +42,8 @@ module.exports = function(Guide) {
         "chapters", "oldCards", "oldComments", "oldMulligans"];
 
     function removePrivateFields(ctx, modelInstance, finalCb) {
-        var Role = Deck.app.models.Role;
-        var RoleMapping = Deck.app.models.RoleMapping;
+        var Role = Guide.app.models.Role;
+        var RoleMapping = Guide.app.models.RoleMapping;
 
         // sets the private fields to false
         function removeFields() {
