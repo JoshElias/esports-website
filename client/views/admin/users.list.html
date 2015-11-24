@@ -6,13 +6,14 @@
 </div>
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
-        <div class="pull-right">
-            <span class="m-r-sm">Showing: <strong>{{pagination.from()}}</strong> to <strong>{{pagination.to()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
-            <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+        <div class="pull-right" ng-if="users">
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ userPagination.total === 0 ? userPagination.total : ((userPagination.page - 1) * userPagination.perpage) + 1 }}</strong> 
+                to <strong>{{  userPagination.page * userPagination.perpage > userPagination.total ? userPagination.total : userPagination.page * userPagination.perpage }}</strong> 
+                of <strong>{{ userPagination.total }}</strong>
             </span>
+            <div pagination="userPagination" theme="default" class="default"></div>
         </div>
         <div class="pull-left">
             <form>
@@ -30,7 +31,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="pull-right btn-toolbar">
-                        <a href="./admin/users/edit/{{user._id}}" class="btn btn-default">Edit</a>
+                        <a href="./admin/users/edit/{{user.id}}" class="btn btn-default">Edit</a>
                         <button class="btn btn-danger" ng-click="deleteUser(user)">Delete</button>
                     </div>
                 </div>
@@ -44,13 +45,14 @@
         </div>
     </div>
     <div class="panel-footer clearfix">
-        <div class="pull-right">
-            <span class="m-r-sm">Showing: <strong>{{pagination.from()}}</strong> to <strong>{{pagination.to()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
-            <span class="btn-group">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == 1" ng-click="pagination.setPage(pagination.page() - 1)"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page() == pagination.totalPages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page() + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+        <div class="pull-right" ng-if="users">
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ userPagination.total === 0 ? userPagination.total : ((userPagination.page - 1) * userPagination.perpage) + 1 }}</strong> 
+                to <strong>{{  userPagination.page * userPagination.perpage > userPagination.total ? userPagination.total : userPagination.page * userPagination.perpage }}</strong> 
+                of <strong>{{ userPagination.total }}</strong>
             </span>
+            <div pagination="userPagination" theme="default" class="default"></div>
         </div>
         <div class="pull-left">
             <form>
