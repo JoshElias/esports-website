@@ -1296,7 +1296,6 @@ angular.module('app.services', [])
             description: data.description || '',
             chapters: data.chapters || [],
             slug: data.slug || '',
-//            authorId: data.authorId || User.getCurrentId(), // this and votes get created when deck is made
             deckType: data.deckType || 'None',
             gameModeType: data.gameModeType || 'constructed',
             basic: data.basic || false,
@@ -1594,6 +1593,7 @@ angular.module('app.services', [])
                     // increase qty by one
                     if (!isLegendary && (db.cards[index].cardQuantity === 1 || db.arena)) {
                         db.cards[index].cardQuantity = db.cards[index].cardQuantity + 1;
+                        return true;
                     }
                 }
             } else {
@@ -1650,7 +1650,9 @@ angular.module('app.services', [])
         db.removeCardFromDeck = function (card) {
             console.log('card rem: ', card);
             var cardRemovedFromDeck = false,
-                index = -1;
+                index = -1,
+                cardMulliganExists = false,
+                cancel = false;
             
             for (var i = 0; i < db.cards.length; i++) {
                 if (card.card.id === db.cards[i].card.id) {
@@ -1668,9 +1670,6 @@ angular.module('app.services', [])
             }
             
             if(cardRemovedFromDeck) {
-                var cardMulliganExists = false,
-                    cancel = false;
-                
                 console.log('card was removed');
                 // search all card with coin mulligans
                 for(var i = 0; i < db.mulligans.length; i++) {
@@ -1685,9 +1684,6 @@ angular.module('app.services', [])
                             cardMulliganExists = true;
                             break;
                         }
-                        var index = db.cards.indexOf(card);
-                        db.cards.splice(index, 1);
-                        return;
                     }
                 }
             }
@@ -1731,6 +1727,7 @@ angular.module('app.services', [])
                     box.modal('show');
                 } else {
                     db.cards.splice(index, 1);
+                    return;
                 }
         };
 
@@ -1796,29 +1793,20 @@ angular.module('app.services', [])
         db.getDust = function () {
             var dust = 0;
             for (var i = 0; i < db.cards.length; i++) {
-                dust += db.cards[i].cardQuantity * db.cards[i].dust;
+                dust += db.cards[i].cardQuantity * db.cards[i].card.dust;
             }
             return dust;
         };
 
         db.validDeck = function () {
+            // attch dust value to deck
+            db.dust = db.getDust();
             // 30 cards in deck
             if (db.getSize() !== 30) {
                  return false;
             } else if (db.getSize() === 30) {
                 return true;
             }
-            
-            // make sure not more than 2 of same cards in non-arena deck
-            if (!db.arena) {
-                for (var i = 0; i < db.cards.length; i++) {
-                    if (db.cards[i].cardQuantity > 2) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
         };
 
         db.moveChapterUp = function (chapter) {
