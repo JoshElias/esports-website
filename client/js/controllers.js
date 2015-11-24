@@ -6985,88 +6985,86 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminUserListCtrl', ['$scope', 'bootbox', 'Pagination', 'AlertService', 'AdminUserService', 'users',
-        function ($scope, bootbox, Pagination, AlertService, AdminUserService, users) {
+    .controller('AdminUserListCtrl', ['$scope', '$timeout', '$q', 'User', 'bootbox', 'AjaxPagination', 'AlertService', 'AdminUserService', 'paginationParams', 'usersCount', 'users',
+        function ($scope, $timeout, $q, User, bootbox, AjaxPagination, AlertService, AdminUserService, paginationParams, usersCount, users) {
             // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
+//            if (AlertService.hasAlert()) {
+//                $scope.success = AlertService.getSuccess();
+//                AlertService.reset();
+//            }
 
             // load users
-            $scope.users = data.users;
-            $scope.page = data.page;
-            $scope.perpage = data.perpage;
-            $scope.total = data.total;
-            $scope.search = data.search;
+            $scope.users = users;
+            $scope.page = paginationParams.page;
+            $scope.perpage = paginationParams.perpage;
+            $scope.total = usersCount.count;
+            $scope.search = '';
+            
+            $scope.searchUsers = function() {
+                updateUsers(1, $scope.perpage, $scope.search, false);
+            };
 
-            $scope.getUsers = function () {
-                AdminUserService.getUsers($scope.page, $scope.perpage, $scope.search).then(function (data) {
-                    $scope.users = data.users;
-                    $scope.page = data.page;
-                    $scope.total = data.total;
+            // pagination
+            function updateUsers (page, perpage, search, callback) {
+                $scope.fetching = true;
+
+                var options = {},
+                    countOptions = {};
+
+                options.filter = {
+                    fields: paginationParams.options.filter.fields,
+                    order: "createdDate DESC",
+                    skip: ((page*perpage)-perpage),
+                    limit: paginationParams.perpage
+                };
+
+                if ($scope.search.length > 0) {
+                    options.filter.where = {
+                        or: [
+                            { email: { regexp: search } },
+                            { username: { regexp: search } },
+                            { twitchID: { regexp: search } }
+                        ]
+                    }
+                    countOptions.where = {
+                        or: [
+                            { email: { regexp: search } },
+                            { username: { regexp: search } },
+                            { twitchID: { regexp: search } }
+                        ]
+                    }
+                }
+
+                User.count(countOptions, function (count) {
+                    User.find(options, function (users) {
+                        $scope.userPagination.total = count.count;
+                        $scope.userPagination.page = page;
+                        $scope.userPagination.perpage = perpage;
+
+                        $timeout(function () {
+                            console.log('pagination users: ', users);
+                            $scope.users = users;
+                            $scope.fetching = false;
+                            if (callback) {
+                                return callback(count.count);
+                            }
+                        });
+                    });
                 });
             }
 
-            $scope.searchUsers = function () {
-                $scope.page = 1;
-                $scope.getUsers();
-            }
+            // page flipping
+            $scope.userPagination = AjaxPagination.new($scope.perpage, $scope.total,
+                function (page, perpage) {
+                    var d = $q.defer();
 
-            // pagination
-            $scope.pagination = {
-                page: function () {
-                    return $scope.page;
-                },
-                perpage: function () {
-                    return $scope.perpage;
-                },
-                results: function () {
-                    return $scope.total;
-                },
-                setPage: function (page) {
-                    $scope.page = page;
-                    $scope.getUsers();
-                },
-                pagesArray: function () {
-                    var pages = [],
-                        start = 1,
-                        end = this.totalPages();
-
-                    if (this.totalPages() > 5) {
-                        if (this.page() < 3) {
-                            start = 1;
-                            end = start + 4;
-                        } else if (this.page() > this.totalPages() - 2) {
-                            end = this.totalPages();
-                            start = end - 4;
-                        } else {
-                            start = this.page() - 2;
-                            end = this.page() + 2;
-                        }
-
-                    }
-
-                    for (var i = start; i <= end; i++) {
-                        pages.push(i);
-                    }
-
-                    return pages;
-                },
-                isPage: function (page) {
-                    return (page === this.page());
-                },
-                totalPages: function (page) {
-                    return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
-                },
-                from: function () {
-                    return (this.page() * this.perpage()) - this.perpage() + 1;
-                },
-                to: function () {
-                    return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
+                    updateUsers(page, perpage, $scope.search, function (data) {
+                        d.resolve(data);
+                    });
+                    return d.promise;
                 }
-            };
-
+            );
+            
             // delete user
             $scope.deleteUser = function (user) {
                 var box = bootbox.dialog({
@@ -7077,17 +7075,23 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminUserService.deleteUser(user._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.users.indexOf(user);
-                                        if (index !== -1) {
-                                            $scope.users.splice(index, 1);
-                                        }
+                                console.log('user to del: ', user);
+                                User.destroyById({
+                                    id: user.id
+                                })
+                                .$promise
+                                .then(function (userDeleted) {
+                                    var indexToDel = $scope.users.indexOf(user);
+                                    if (indexToDel !== -1) {
+                                        $scope.users.splice(indexToDel, 1);
                                         $scope.success = {
                                             show: true,
-                                            msg: user.username + ' deleted successfully.'
+                                            msg: 'User: ' + user.username + ' deleted successfully.'
                                         };
                                     }
+                                })
+                                .catch(function (err) {
+                                    console.log('User.destroyById err: ', err);
                                 });
                             }
                         },
@@ -7104,8 +7108,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminUserAddCtrl', ['$scope', '$state', '$window', 'AdminUserService', 'AlertService',
-        function ($scope, $state, $window, AdminUserService, AlertService) {
+    .controller('AdminUserAddCtrl', ['$scope', '$state', '$window', 'User',
+        function ($scope, $state, $window, User) {
             // default user
             var d = new Date();
             d.setMonth(d.getMonth()+1);
@@ -7114,8 +7118,11 @@ angular.module('app.controllers', ['ngCookies'])
                 email : '',
                 username: '',
                 password: '',
+                firstName: '',
+                lastName: '',
                 cpassword: '',
                 about: '',
+                providerDescription: '',
                 social: {
                     twitter: '',
                     facebook: '',
@@ -7130,7 +7137,7 @@ angular.module('app.controllers', ['ngCookies'])
                 isProvider: false,
                 providerDescription: '',
                 isAdmin: false,
-                active: true
+                isActive: true
             };
 
             // load user
@@ -7150,25 +7157,47 @@ angular.module('app.controllers', ['ngCookies'])
 
             // add user
             $scope.addUser = function () {
-                AdminUserService.addUser($scope.user).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.user.username + ' has been added successfully.' });
+                $scope.fetching = true;
+                console.log('addUser: ', $scope.user);
+                if ($scope.user.password === $scope.user.cpassword) {
+                    User.create($scope.user)
+                    .$promise
+                    .then(function (userCreated) {
+                        console.log('userCreated: ', userCreated);
+                        $scope.fetching = false;
                         $state.go('app.admin.users.list');
-                    }
-                });
+                    })
+                    .catch(function (err) {
+                        console.log('User.create err: ', err);
+                        if (err.data && err.data.error.details && err.data.error.details.messages) {
+                            $scope.errors = [];
+                            $scope.showError = true;
+                            $window.scrollTo(0,0);
+                            angular.forEach(err.data.error.details.messages, function (errMessage) {
+                                for(var i = 0; i < errMessage.length; i++) {
+                                    $scope.errors.push(errMessage[i]);
+                                }
+                            });
+                        }
+                        $scope.fetching = false;
+                        return;
+                    });
+                } else {
+                    // password fields do not match
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                    $scope.errors = ['Please confirm your password.'];
+                    $scope.fetching = false;
+                    return;
+                }
             };
         }
     ])
-    .controller('AdminUserEditCtrl', ['$scope', '$state', '$window', 'AdminUserService', 'AlertService', 'data',
-        function ($scope, $state, $window, AdminUserService, AlertService, data) {
-            if (!data || !data.success) { return $state.go('app.admin.users.list'); }
+    .controller('AdminUserEditCtrl', ['$scope', 'User', '$state', '$window', 'AdminUserService', 'AlertService', 'user',
+        function ($scope, User, $state, $window, AdminUserService, AlertService, user) {
 
             // load user
-            $scope.user = data.user;
+            $scope.user = user;
 
             // select options
             $scope.userSubscription =
@@ -7184,16 +7213,75 @@ angular.module('app.controllers', ['ngCookies'])
 
             // edit user
             $scope.editUser = function () {
-                AdminUserService.editUser($scope.user).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
+                $scope.fetching = true;
+                if ($scope.user.changePassword) {
+                    if ($scope.user.password === $scope.user.newPassword) {
+                        User.resetPassword($scope.user)
+                        .$promise
+                        .then(function (passChanged) {
+                            console.log('passChanged: ', passChanged);
+                            User.updateAll({
+                                where: {
+                                    id: $scope.user.id
+                                }
+                            }, $scope.user)
+                            .$promise
+                            .then(function (userUpdated) {
+                                console.log('userUpdated: ', userUpdated);
+                                $state.go('app.admin.users.list');
+                                $scope.fetching = false;
+                                return;
+                            })
+                            .catch(function (err) {
+                                console.log('User.upsert err: ', err);
+                                $scope.fetching = false;
+                                return;
+                            });
+                        })
+                        .catch(function (err) {
+                            console.log('User.changePassword err: ', err);
+                            $scope.fetching = false;
+                            return;
+                        });
+                    } else {
+                        // passwords don't match
                         $scope.showError = true;
                         $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.user.username + ' has been updated successfully.' });
-                        $state.go('app.admin.users.list');
+                        $scope.errors = ['New password and Confirm password fields do not match.'];
+                        $scope.fetching = false;
+                        return;
                     }
-                });
+                } else {
+                    // just update Model without password
+                    User.updateAll({
+                        where: {
+                            id: user.id
+                        }
+                    }, $scope.user)
+                    .$promise
+                    .then(function (userUpdated) {
+                        console.log('userUpdated: ', userUpdated);
+                        $scope.fetching = false;
+                        $state.go('app.admin.users.list');
+                        return;
+                    })
+                    .catch(function (err) {
+                        console.log('User.upsert err: ', err);
+                        $scope.fetching = false;
+                        return;
+                    });
+                }
+                
+//                AdminUserService.editUser($scope.user).success(function (data) {
+//                    if (!data.success) {
+//                        $scope.errors = data.errors;
+//                        $scope.showError = true;
+//                        $window.scrollTo(0,0);
+//                    } else {
+//                        AlertService.setSuccess({ show: true, msg: $scope.user.username + ' has been updated successfully.' });
+//                        $state.go('app.admin.users.list');
+//                    }
+//                });
             };
         }
     ])
@@ -10523,8 +10611,8 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'isUserAdmin', 'isUserContentProvider', 'isUserPremium', 'EventService',
-        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, isUserAdmin, isUserContentProvider, isUserPremium, EventService) {
+    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'isUserAdmin', 'isUserContentProvider', 'isUserPremium', 'EventService', 'User',
+        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, isUserAdmin, isUserContentProvider, isUserPremium, EventService, User) {
             
             $scope.isUser = {
                 admin: isUserAdmin,
