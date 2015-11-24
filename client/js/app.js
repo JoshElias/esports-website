@@ -679,7 +679,61 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.decks.deck.html',
                         controller: 'DeckCtrl',
                         resolve: {
-                            deck: ['$stateParams', 'Deck', function ($stateParams, Deck) {
+                            isUserAdmin: ['User', function(User) {
+                                if (User.isAuthenticated() === false) {
+                                    return false;
+                                } else {
+                                    return User.isRole({
+                                        roleName: '$admin'
+                                    })
+                                    .$promise
+                                    .then(function (isAdmin) {
+    //                                    console.log('isAdmin: ', isAdmin.isRole);
+                                        return isAdmin.isRole;
+                                    })
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('resolve err: ', err);
+                                        }
+                                    });
+                                }
+                            }],
+                            isUserContentProvider: ['User', function(User) {
+                                if (User.isAuthenticated() === false) {
+                                    return false;
+                                } else {
+                                    return User.isRole({
+                                        roleName: '$contentProvider'
+                                    })
+                                    .$promise
+                                    .then(function (isContentProvider) {
+    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
+                                        return isContentProvider.isRole;
+                                    })
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('resolve err: ', err);
+                                        }
+                                    });
+                                }
+                            }],
+                            isUserPremium: ['User', function(User) {
+                                if (User.isAuthenticated() === false) {
+                                    return false;
+                                } else {
+                                    return User.isRole({
+                                        roleName: '$premium'
+                                    })
+                                    .$promise
+                                    .then(function (isUserPremium) {
+                                        return isUserPremium.isRole;
+                                    })
+                                    .catch(function (err) {
+                                        console.log('resolve err: ', err);
+                                    });
+                                }
+                            }],
+                            deck: ['$stateParams', '$state', 'Deck', function ($stateParams, $state, Deck) {
                                 var stateSlug = $stateParams.slug;
                                 return Deck.findOne({
                                     filter: {
@@ -733,6 +787,10 @@ var app = angular.module('app', [
                                 .then(function (deck) {
 //                                    console.log('deck: ', deck);
                                     return deck;
+                                })
+                                .catch(function (err) {
+                                    console.log('Deck.findOne err: ', err);
+                                    $state.transitionTo('app.404');
                                 });
 
                             }],
@@ -766,6 +824,11 @@ var app = angular.module('app', [
                                 .catch(function (err) {
                                     if (err) console.log('err: ', err);
                                 });
+                            }],
+                            
+                            resolveCheck: ['deckWithMulligans', 'deck', function(deckWithMulligans, deck) {
+                                console.log('deck resolve: ', deckWithMulligans);
+                                console.log('deck resolve2: ', deck);
                             }]
                         }
                     }
@@ -2936,7 +2999,12 @@ var app = angular.module('app', [
                                         limit: paginationParams.perpage,
                                         skip: (page*perpage) - perpage,
                                         order: "createdDate DESC",
-                                        fields: paginationParams.options.filter.fields
+                                        fields: paginationParams.options.filter.fields,
+                                        include: [
+                                            {
+                                                relation: 'mulligans'
+                                            }
+                                        ]
                                     }
                                 })
                                 .$promise;
@@ -3693,22 +3761,42 @@ var app = angular.module('app', [
                                 return {
                                     page: 1,
                                     perpage: 50,
-                                    search: '',
                                     options: {
                                         filter: {
-                                            limit: 50
+                                            fields: {
+                                                id: true,
+                                                email: true,
+                                                twitchID: true,
+                                                username: true
+                                            },
+                                            limit: 50,
+                                            order: 'createdDate DESC'
                                         }
                                     }
                                 };
                             }],
-//                            data: ['AdminUserService', function (AdminUserService) {
-//                                var page = 1,
-//                                    perpage = 50,
-//                                    search = '';
-//                                return AdminUserService.getUsers(page, perpage, search);
-//                            }]
-                            users: ['User', 'paginationParams', function(User, paginationParams) {
-                                return User.find(paginationParams.options).$promise;
+                            usersCount: ['User', function (User) {
+                                return User.count({})
+                                .$promise
+                                .then(function (usersCount) {
+                                    console.log('usersCount: ', usersCount);
+                                    return usersCount;
+                                })
+                                .catch(function (err) {
+                                    console.log('Users.count err: ',err);
+                                });
+                            }],
+                            users: ['User', 'paginationParams', function (User, paginationParams) {
+                                return User.find(
+                                    paginationParams.options
+                                ).$promise
+                                .then(function (allUsers) {
+                                    console.log('allUsers: ', allUsers);
+                                    return allUsers;
+                                })
+                                .catch(function (err) {
+                                    console.log('Snapshot.find err: ', err);
+                                });
                             }]
                         }
                     }
@@ -3734,9 +3822,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/users.edit.html',
                         controller: 'AdminUserEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminUserService', function ($stateParams, AdminUserService) {
+                            user: ['$stateParams', 'User', function ($stateParams, User) {
                                 var userID = $stateParams.userID;
-                                return AdminUserService.getUser(userID);
+                                return User.findById({
+                                    id: userID
+                                })
+                                .$promise
+                                .then(function (userFound) {
+                                    console.log('userFound: ', userFound);
+                                    return userFound;
+                                })
+                                .catch(function (err) {
+                                    console.log('User.findById err: ', err);
+                                });
                             }]
                         }
                     }

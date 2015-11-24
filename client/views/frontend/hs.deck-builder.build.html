@@ -145,7 +145,7 @@
                         </div>
                     </div>
                         <div class="db-deck-dust db-deck-footer db-deck-{{className.toLowerCase()}} {{getActiveDeckName().toLowerCase()}}">
-                            {{getDust(deck.cards)}}
+                            {{deck.getDust()}}
                             <div class="dust-bottle-sm"></div>
                         </div>
                     </div>
@@ -506,7 +506,7 @@
                                             <span class="pull-right match-number">{{match.forChance}} %</span>
                                         </div>
                                         <div class="col-md-1 close-wrapper">
-                                            <button class="close-button" ng-click="removeMatch($index, destroyMatchups)">
+                                            <button class="close-button" ng-click="removeMatch($index)">
                                                 <i class="fa fa-close"></i>
                                             </button>
                                         </div>
@@ -631,12 +631,12 @@
                                     <div class="col-sm-10 col-sm-offset-2">
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="public" ng-model="deck.isPublic" value="true"> Make this deck public
+                                                <input type="radio" name="public" ng-model="deck.isPublic" ng-value="true"> Make this deck public
                                             </label>
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="public" ng-model="deck.isPublic" value="false"> Make this deck private
+                                                <input type="radio" name="public" ng-model="deck.isPublic" ng-value="false"> Make this deck private
                                             </label>
                                         </div>
                                     </div>

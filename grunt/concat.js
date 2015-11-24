@@ -52,6 +52,17 @@ module.exports = {
             ]
         }
     },
+    modules: {
+        options: {
+            separator: '',
+            stripBanners: true,
+        },
+        files: {
+            'client/dist/js/modules.js': [
+                'modules/**/client/js/**/*.js',
+            ]
+        }
+    },
     css: {
         options: {
             separator: '',
