@@ -19,8 +19,8 @@ module.exports = function(Article) {
         "oldRelatedArticles"];
 
     function removePrivateFields(ctx, modelInstance, finalCb) {
-        var Role = Deck.app.models.Role;
-        var RoleMapping = Deck.app.models.RoleMapping;
+        var Role = Article.app.models.Role;
+        var RoleMapping = Article.app.models.RoleMapping;
 
         // sets the private fields to false
         function removeFields() {
