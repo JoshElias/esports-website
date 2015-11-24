@@ -16,16 +16,14 @@ module.exports = function(User) {
 
 
     User.afterRemote("login", function (ctx, remoteMethodOutput, next) {
-        var weirdOutput = JSON.parse(JSON.stringify(remoteMethodOutput));
-        ctx.req.logIn(weirdOutput.user, function (err) {
+        ctx.req.logIn(ctx.result.toJSON().user, function (err) {
             next(err);
         });
     });
 
 
-    User.observe("access", function(ctx, next) {
-        //removePrivateFields(ctx, next);
-        next();
+    User.afterRemote("**", function(ctx, modelInstance, next) {
+        removePrivateFields(ctx, modelInstance, next);
     });
 
 
@@ -115,53 +113,42 @@ module.exports = function(User) {
     var privateFields = ["subscription", "isProvider", "isAdmin", "lastLoginDate",
         "resetPasswordCode", "newEmail", "newEmailCode"];
 
-    function removePrivateFields(ctx, finalCb) {
+    function removePrivateFields(ctx, modelInstance, finalCb) {
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
 
         // sets the private fields to false
         function removeFields() {
-            try {
-                if(!ctx.query.fields)
-                    ctx.query.fields = {};
-
-                for (var i = 0; i < privateFields.length; i++) {
-                    var privateField = privateFields[i];
-                    ctx.query.fields[privateField] = false;
+            if (ctx.result) {
+                var answer;
+                if (Array.isArray(modelInstance)) {
+                    answer = ctx.result;
+                    ctx.result.forEach(function (result) {
+                        privateFields.forEach(function(privateField) {
+                            if(answer[privateField])
+                                answer[privateField] = undefined;
+                        });
+                    });
+                } else {
+                    answer = ctx.result;
+                    privateFields.forEach(function(privateField) {
+                        if(answer[privateField]) {
+                            answer[privateField] = undefined;
+                        }
+                    });
                 }
-                return finalCb();
-            } catch(err) {
-                return finalCb(err);
+                ctx.result = answer;
             }
+            finalCb();
         }
 
-        var loopbackContext = loopback.getCurrentContext();
-        if(!loopbackContext) return removeFields();
-
-        var accessToken = loopbackContext.get("accessToken");
-        if(!accessToken || !accessToken.userId)
+        if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        async.series([
-            function(seriesCb) {
-                Role.isInRole("$owner", {principalType: RoleMapping.USER, principalId: accessToken.userId}, function (err, isRole) {
-                    if (err) return seriesCb(err);
-                    if (isRole) return seriesCb("ok");
-                    else return seriesCb();
-                });
-            },
-            function(seriesCb) {
-                Role.isInRole("$admin", {principalType: RoleMapping.USER, principalId: accessToken.userId}, function (err, isRole) {
-                    if (err) return seriesCb(err);
-                    if (isRole) return seriesCb("ok");
-                    else return seriesCb();
-                });
-            }
-        ],
-        function(err) {
-            if(err === "ok") return finalCb();
-            else if(err) return finalCb(err);
-            else return removeFields();
+        Role.isInRoles(ctx.req.accessToken.userId.toString(), ["$owner", "$admin"], function(err, isInRoles) {
+            if(err) return finalCb();
+            if(!isInRoles) return removeFields();
+            else return finalCb();
         });
     };
 
@@ -531,35 +518,30 @@ module.exports = function(User) {
         return cb.promise;
     };
 
-    User.getCurrent = function (finalCb) {
-        console.log("wtff")
+    User.getCurrent = function(ctx, finalCb) {
         var err = new Error('no user found');
         err.statusCode = 400;
         err.code = 'USER_NOT_FOUND';
 
-        var ctx = loopback.getCurrentContext();
-        if (!ctx || !ctx.active) return finalCb(err);
+        if (!ctx || !ctx.req) return finalCb(err);
+        if (ctx.req.currentUser) return finalCb(undefined, ctx.req.currentUser);
 
-        var res = ctx.active.http.res;
-        var req = ctx.active.http.req;
+        var userId;
+        if(ctx.req.accessToken) {
+            userId = ctx.req.accessToken.userId
+        } else if(ctx.result.toJSON().userId) {
+            userId = ctx.result.toJSON().userId;
+        } else {
+            return finalCb(err);
+        }
 
-        if (req.currentUser) return finalCb(undefined, req.currentUser);
-
-        var accessToken = ctx.get("accessToken");
-        if (!accessToken) return finalCb(err);
-        req.app.models.user.findById(accessToken.userId, function (err, user) {
+        ctx.req.app.models.user.findById(userId, function (err, user) {
             if (err || !user) return finalCb(err);
-            var Role = User.app.models.Role;
-            var RoleMapping = User.app.models.RoleMapping;
-            /*
-            Role.getRoles({principalType: RoleMapping.USER, principalId: accessToken.userId}, function(err, roles) {
-                console.log("bitches:", err)
-                if(err) return finalCb(err);
-*/
-                //console.log("roles:", roles);
-                req.currentUser = user;
-                finalCb(undefined, user);
-            //});
+
+            var userData = user.toJSON();
+            ctx.req.currentUser = userData;
+            ctx.set("currentUser", userData);
+            finalCb(undefined, userData);
         });
     };
 

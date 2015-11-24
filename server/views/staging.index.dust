@@ -19,7 +19,7 @@
 
     <link rel="stylesheet" href="./vendor/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="./vendor/bootstrap/dist/css/bootstrap-theme.min.css" type="text/css" />
-    <link rel="stylesheet" href="./vendor/jquery-ui/themes/base/jquery-ui.min.css" type="text/css" />
+    <link rel="stylesheet" href="./css/vendor/jquery/jquery-ui.min.css" type="text/css" />
     <link rel="stylesheet" href="./css/vendor/megamenu/MegaNavbar.min.css" type="text/css" />
     <link rel="stylesheet" href="./css/vendor/megamenu/simple-line-icons.css" type="text/css" />
     <link rel="stylesheet" href="./vendor/font-awesome/css/font-awesome.min.css" type="text/css" />
@@ -73,6 +73,9 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="./vendor/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
 
+    <!-- stripe -->
+    <script src="https://js.stripe.com/v2/"></script>
+
     <!-- app -->
     <script src="./dist/js/services/lb-services.js"></script>
     <script src="./js/app.js"></script>
@@ -81,16 +84,8 @@
     <script src="./js/directives.js"></script>
     <script src="./js/filters.js"></script>
     <script src="./js/animations.js"></script>
+    <script src="./dist/js/modules.js"></script>
     <!--
-
-
-    -->
-    <!-- stripe -->
-    
-    <script src="https://js.stripe.com/v2/"></script>
-    <script>
-        Stripe.setPublishableKey('pk_test_zLldf4ECehJ7sJzqbkAx9VbV');
-    </script>
     
 </body>
 </html>

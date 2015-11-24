@@ -18,6 +18,10 @@ module.exports = function(Guide) {
     });
 
 
+    Guide.afterRemote("**", function(ctx, modelInstance, next) {
+        removePrivateFields(ctx, modelInstance, next);
+    });
+
     function talentTiersSuck(ctx) {
         var data = ctx.instance || ctx.data;
 
@@ -30,4 +34,61 @@ module.exports = function(Guide) {
             });
         }
     }
+
+
+
+    // Filter out sensitive user information depending on ACL
+    var privateFields = ["allowComments", "description", "playerClass",
+        "chapters", "oldCards", "oldComments", "oldMulligans"];
+
+    function removePrivateFields(ctx, modelInstance, finalCb) {
+        var Role = Deck.app.models.Role;
+        var RoleMapping = Deck.app.models.RoleMapping;
+
+        // sets the private fields to false
+        function removeFields() {
+            if (ctx.result) {
+                var answer;
+                if (Array.isArray(modelInstance)) {
+                    answer = ctx.result;
+                    ctx.result.forEach(function (result) {
+                        if(!isPremium(result))
+                            return;
+
+                        privateFields.forEach(function(privateField) {
+                            if(answer[privateField]) {
+                                answer[privateField] = undefined;
+                            }
+                        });
+                    });
+                } else if(!isPremium(ctx.result)) {
+                    answer = ctx.result;
+                    privateFields.forEach(function (privateField) {
+                        if (answer[privateField]) {
+                            answer[privateField] = undefined;
+                        }
+                    });
+                }
+                ctx.result = answer;
+            }
+            finalCb();
+        }
+
+        function isPremium(guide) {
+            if(!guide || !guide.premium || !guide.premium.isPremium || !guide.premium.expiryDate)
+                return false;
+
+            var now = new Date();
+            return now < deck.premium.expiryDate;
+        }
+
+        if(!ctx || !ctx.req || !ctx.req.accessToken)
+            return removeFields();
+
+        Role.isInRoles(ctx.req.accessToken.userId, ["$owner", "$admin", "$premium"], function(err, isInRoles) {
+            if(err) return finalCb();
+            if(!isInRoles) return removeFields();
+            else return finalCb();
+        });
+    };
 };

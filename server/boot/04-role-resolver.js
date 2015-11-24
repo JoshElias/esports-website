@@ -4,32 +4,44 @@ module.exports = function(server) {
     var User = server.models.user;
     var loopback = require("loopback");
     var utils = require("../../lib/utils");
+    var async = require("async");
 
 
-    Role.registerResolver('$premium', function(role, context, cb) {
+    Role.registerResolver('$premium', function(role, ctx, cb) {
         function reject() {
             process.nextTick(function() {
                 cb(null, false);
             });
         }
 
-
-        var ctx = loopback.getCurrentContext();
-        if(!ctx || !ctx.active) return reject();
-
-        var res = ctx.active.http.res;
-        var req = ctx.active.http.req;
-
         User.getCurrent(function(err, currentUser) {
-           if(err) return cb(err);
-
+           if(err) return cb(err);;
            return cb(undefined, isSubscribed(currentUser));
         });
 
         function isSubscribed(user) {
+            if(!user || !user.subscription)
+                return false;
+
             var now = new Date();
             return (user.subscription.isSubscribed
-            && (user.subscription.expiryDate > now));
+                && (user.subscription.expiryDate > now));
         }
     });
+
+
+    Role.isInRoles = function(uid, roleNames, finalCb) {
+        async.eachSeries(roleNames, function (roleName, eachCb) {
+            Role.isInRole(roleName, {
+                principalType: RoleMapping.USER,
+                principalId: uid
+            }, function (err, isRole) {
+                if (err) return eachCb(err);
+                if (isRole) return eachCb("ok");
+                else return eachCb();
+            });
+        }, function (err) {
+            return finalCb(err, (err !== "ok"));
+        });
+    }
 };

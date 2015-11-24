@@ -1079,13 +1079,13 @@ angular.module('app.directives', ['ui.load'])
                 }
             };
 
-//            $scope.getDust = function () {
-//                var dust = 0;
-//                for (var i = 0; i < $scope.deck.cards.length; i++) {
-//                    dust += $scope.deck.cards[i].cardQuantity * $scope.deck.cards[i].dust;
-//                }
-//                return dust;
-//            };
+            $scope.getDust = function () {
+                var dust = 0;
+                for (var i = 0; i < $scope.deck.cards.length; i++) {
+                    dust += $scope.deck.cards[i].cardQuantity * $scope.deck.cards[i].card.dust;
+                }
+                return dust;
+            };
         }],
         templateUrl: tpl + 'views/frontend/directives/db.deck.html'
     }

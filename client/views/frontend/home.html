@@ -1,25 +1,32 @@
 <!-- game buttons -->
 <div class="container-fluid padding-none">
     <div class="row no-pad games-btns">
-        <div class="col-xs-12 col-sm-4">
+        <div class="col-xs-12 col-sm-3">
             <a ui-sref="app.hs.home" class="games-btn games-btn-hs">
                 <span class="middle-helper"></span>
                 <div class="games-btn-back"></div>
                 <img ng-src="{{app.cdn}}img/hs/hs-logo.png" class="games-btn-logo img-responsive">
             </a>
         </div>
-        <div class="col-xs-12 col-sm-4">
+        <div class="col-xs-12 col-sm-3">
             <a ui-sref="app.hots.home" class="games-btn games-btn-hots">
                 <span class="middle-helper"></span>
                 <div class="games-btn-back"></div>
                 <img ng-src="{{app.cdn}}img/hots/hots-logo.png" class="games-btn-logo img-responsive">
             </a>
         </div>
-        <div class="col-xs-12 col-sm-4">
+        <div class="col-xs-12 col-sm-3">
             <a ui-sref="app.overwatch.home" class="games-btn games-btn-overwatch">
                 <span class="middle-helper"></span>
                 <div class="games-btn-back"></div>
                 <img ng-src="{{app.cdn}}img/overwatch/overwatch-logo-isolation-small.png" class="games-btn-logo img-responsive">
+            </a>
+        </div>
+        <div class="col-xs-12 col-sm-3">
+            <a href="http://store.tempostorm.com" target="_blank" class="games-btn games-btn-ts-store">
+                <span class="middle-helper"></span>
+                <div class="games-btn-back"></div>
+                <img ng-src="{{app.cdn}}img/ts-store.png" class="games-btn-logo img-responsive" src="https://cdn-tempostorm.netdna-ssl.com/img/ts-store.png">
             </a>
         </div>
     </div>
@@ -35,7 +42,7 @@
         </div>
         <div class="sub-nav-links">
             <ul>
-                <li><a ui-sref="app.hs.snapshot.redirect">META SNAPSHOT</a></li><li><a ui-sref="app.hs.deckBuilder.class">DECK BUILDER</a></li><li><a ui-sref="app.hots.talentCalculator.redirect">TALENT CALCULATOR</a></li><li><a ui-sref="app.hots.guideBuilder.step1">GUIDE BUILDER</a></li>
+                <li><a ui-sref="app.snapshot.redirect">META SNAPSHOT</a></li><li><a ui-sref="app.hs.deckBuilder.class">DECK BUILDER</a></li><li><a ui-sref="app.hots.talentCalculator.redirect">TALENT CALCULATOR</a></li><li><a ui-sref="app.hots.guideBuilder.step1">GUIDE BUILDER</a></li><li><a target="_blank" ng-href="http://store.tempostorm.com" href="http://store.tempostorm.com">STORE</a></li>
             </ul>
         </div>
     </div>
