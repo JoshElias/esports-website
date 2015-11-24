@@ -33,15 +33,15 @@ module.exports = function(Article) {
                             return;
 
                         privateFields.forEach(function(privateField) {
-                            if(answer[privateField]) {
+                            if(typeof answer[privateField] !== "undefined") {
                                 answer[privateField] = undefined;
                             }
                         });
                     });
-                } else if(!isPremium(ctx.result)) {
+                } else if(isPremium(ctx.result)) {
                     answer = ctx.result;
                     privateFields.forEach(function (privateField) {
-                        if (answer[privateField]) {
+                        if (typeof answer[privateField] !== "undefined") {
                             answer[privateField] = undefined;
                         }
                     });

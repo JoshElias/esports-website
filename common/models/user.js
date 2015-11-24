@@ -145,7 +145,7 @@ module.exports = function(User) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        Role.isInRoles(ctx.req.accessToken.userId.toString(), ["$owner", "$admin"], function(err, isInRoles) {
+        Role.isInRoles(ctx.req.accessToken.id.toString(), ["$owner", "$admin"], function(err, isInRoles) {
             if(err) return finalCb();
             if(!isInRoles) return removeFields();
             else return finalCb();
@@ -492,7 +492,7 @@ module.exports = function(User) {
 
 
         var accessToken = ctx.get("accessToken");
-        var userId = accessToken.userId;
+        var userId = accessToken.id;
 
         Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, cb);
 
@@ -509,7 +509,7 @@ module.exports = function(User) {
 
         var ctx = loopback.getCurrentContext();
         var accessToken = ctx.get("accessToken");
-        var userId = accessToken.userId.toString();
+        var userId = accessToken.id.toString();
 
         UserIdentity.findOne({where:{userId:userId, provider:provider}}, function(err, identity) {
             if(err) return cb(err);
@@ -527,16 +527,17 @@ module.exports = function(User) {
 
         var ctx = loopback.getCurrentContext();
         if (!ctx || !ctx.active) return finalCb(err);
+
         var res = ctx.active.http.res;
         var req = ctx.active.http.req;
 
         if (req.currentUser)
             return finalCb(undefined, req.currentUser);
 
-        if(!req.accessToken || req.accessToken.userId !== "string")
+        if(!req.accessToken || req.accessToken.id !== "string")
             return finalCb(err);
 
-        User.app.models.user.findById(req.accessToken.userId, function (err, user) {
+        User.app.models.user.findById(req.accessToken.id, function (err, user) {
             if (err || !user) return finalCb(err);
 
             var userData = user.toJSON();
