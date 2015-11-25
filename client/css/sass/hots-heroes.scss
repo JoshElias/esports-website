@@ -32,9 +32,11 @@
 //*************************************
 
 
-//HOTS Character images Mixin
+//HOTS Character images Mixin: This mixin is used to generaate all teh css for the images related to a new hero in hots. 
 
-@mixin hots-hero ($hero) {  /* Starting new Hots Hero */
+
+
+@mixin hots-hero ($hero) {  // Starting new Hots Hero 
     
     .hots-styles { //hots styles wrapper
         .icon-#{$hero} { background: url(../img/hots/heroes/#{$hero}-hex.png) no-repeat center center; }
@@ -54,7 +56,7 @@
     
 }
 
-//HOTS Character Talent Mixin
+//HOTS Character Talent Mixin: This is used for all positioning on the sprite sheet for a heros talents
 
 @mixin hots-hero-talents ($hero, $talents) {
 
@@ -86,7 +88,8 @@
 }
 
 
-//HOTS hero image filter sprit sheet Mixin
+//HOTS hero image filter sprit sheet Mixin: Used to assign position to a heros image on the sprite sheet for all hots heroes in the filters.
+// ---- This is currently not in use ----
 
 @mixin hots-hero-filters-image ($hero, $column, $row, $smallPos) {
 
