@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="./css/vendor/animations/animation.css" type="text/css" />
     <link rel="stylesheet" href="./css/vendor/animate.css" type="text/css" />
     <link rel="stylesheet" href="./dist/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="./dist/css/modules.css" type="text/css" />
     
 </head>
 <body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
@@ -47,6 +48,7 @@
     <script src="./js/vendor/angular-file-upload-shim.min.js"></script>
     <script src="./vendor/underscore/underscore-min.js"></script>
     <script src="./vendor/async/dist/async.min.js"></script>
+    <script src="./vendor/jrumble/jquery.jrumble.min.js"></script>
 
     <!-- angular -->
     <script src="./vendor/angular/angular.js"></script>

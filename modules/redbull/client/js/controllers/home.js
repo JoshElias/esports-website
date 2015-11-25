@@ -1,13 +1,17 @@
 angular.module('redbull.controllers')
 .controller('HomeCtrl', ['$scope', '$state', 'User', 'LoginModalService', function ($scope, $state, User, LoginModalService){
     
+    function goToDrafts () {
+        return $state.transitionTo('app.redbull.draft.packs');
+    }
+    
     $scope.playerLogin = function () {
         if(!User.isAuthenticated()) {
             LoginModalService.showModal('login', function () {
-                return $state.transitionTo('redbull.draft.packs');
+                return goToDrafts();
             });
         } else {
-            return $state.transitionTo('redbull.draft.packs');
+            return goToDrafts();
         }
     };
     

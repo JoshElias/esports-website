@@ -1,4 +1,40 @@
 angular.module('redbull.controllers')
-.controller('DraftPacksCtrl', ['$scope', function ($scope){
+.controller('DraftPacksCtrl', ['$scope', 'Preloader', function ($scope, Preloader){
+    $scope.isLoading = true;
+    $scope.isSuccessful = false;
+    $scope.percentLoaded = 0;
+
+    $scope.fileLocations = [
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/back_button_hover.jpg' ),
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/bg.jpg' ),
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/bg_frame.png' ),
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/bg_glow.jpg' ),
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/donation.png' ),
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/done.png' ),
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/pack.png' ),
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/friend_button_hover.jpg' ),
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/friend_list.png' ),
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/mancer_tooltip.png' ),
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/shop_button_hover.jpg' ),
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/stats_button_hover.jpg' ),
+        ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/stats_panel.png' ),
+    ];
     
+    Preloader.preloadFiles( $scope.fileLocations ).then(
+        function handleResolve( imageLocations ) {
+            $scope.isLoading = false;
+            $scope.isSuccessful = true;
+            console.info( "Preload Successful" );
+        },
+        function handleReject( fileLocation ) {
+            $scope.isLoading = false;
+            $scope.isSuccessful = false;
+            console.error( "File Failed", fileLocation );
+            console.info( "Preload Failure" );
+        },
+        function handleNotify( event ) {
+            $scope.percentLoaded = event.percent;
+            console.info( "Percent loaded:", event.percent );
+        }
+    );
 }]);

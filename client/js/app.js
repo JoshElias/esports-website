@@ -26,8 +26,8 @@ var app = angular.module('app', [
     'app.redbull',
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth',
-        function ($rootScope, $state, $stateParams, $window, $http, $q, $location, MetaService, $cookies, $localStorage, LoginModalService, LoopBackAuth) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'User',
+        function ($rootScope, $state, $stateParams, $window, $http, $q, $location, MetaService, $cookies, $localStorage, LoginModalService, LoopBackAuth, User) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
@@ -35,20 +35,20 @@ var app = angular.module('app', [
 
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
-
+                console.log(toState);
                 //ngProgress.start();
                 if (toState.redirectTo) {
                     event.preventDefault();
                     $state.go(toState.redirectTo, toParams);
                 }
-//                if (toState.access && toState.access.noauth && $window.sessionStorage.token && AuthenticationService.isLogged()) {
-//                    event.preventDefault();
-//                    $state.transitionTo('app.home');
-//                }
-//                if (toState.access && toState.access.auth && !$window.sessionStorage.token && !AuthenticationService.isLogged()) {
-//                    event.preventDefault();
-//                    $state.transitionTo('app.login');
-//                }
+                if (toState.access && toState.access.noauth && User.isAuthenticated()) {
+                    event.preventDefault();
+                    $state.transitionTo('app.home');
+                }
+                if (toState.access && toState.access.auth && !User.isAuthenticated()) {
+                    event.preventDefault();
+                    $state.transitionTo('app.login', { redirect: $location.url() });
+                }
 //                if (toState.access && toState.access.admin && !AuthenticationService.isAdmin()) {
 //                    //event.preventDefault();
 //                    //$state.transitionTo('app.home');
@@ -2375,7 +2375,7 @@ var app = angular.module('app', [
                 seo: { title: 'Privacy Policy', description: 'TempoStorm Privacy Policy', keywords: '' }
             })
             .state('app.login', {
-                url: 'login',
+                url: 'login?redirect',
                 views: {
                     content: {
                         templateUrl: tpl + 'views/frontend/login.html',

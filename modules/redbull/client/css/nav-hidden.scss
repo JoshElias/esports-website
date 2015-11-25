@@ -1,0 +1,11 @@
+body.draft {
+    .navbar-tempo {
+        ul.nav:not(.navbar-right) {
+            display: none;
+        }
+    }
+    
+    footer {
+        display: none;
+    }
+}

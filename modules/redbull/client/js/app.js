@@ -24,7 +24,6 @@ var redbull = angular.module('app.redbull', [
         redbull.value      = $provide.value;
 
         // cdn templates
-        console.log(tpl);
         var moduleTpl = (tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/';
         
         $stateProvider
@@ -59,11 +58,12 @@ var redbull = angular.module('app.redbull', [
         .state('app.redbull.draft.packs', {
             url: '',
             views: {
-                draft: {
+                'redbull-draft': {
                     templateUrl: moduleTpl + 'draft.packs.html',
                     controller: 'DraftPacksCtrl'
                 }
-            }
+            },
+            access: { auth: true }
         })
         ;
     }

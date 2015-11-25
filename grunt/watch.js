@@ -24,7 +24,7 @@ module.exports = {
         tasks: ['newer:htmlmin:dist']
     },
     modules: {
-        files: ['modules/**/client/js/**/*.js', 'modules/**/client/html/**/*.html'],
-        tasks: ['newer:concat:modules', 'newer:htmlmin:modules']
+        files: ['modules/**/client/js/**/*.js', 'modules/**/client/views/**/*.html', 'modules/**/client/css/**/*.scss', 'modules/**/client/img/**/*.{png,jpg,gif}'],
+        tasks: ['newer:htmlmin:modules', 'compass:modules', 'newer:concat:modules', 'newer:imagemin:modules']
     }
 };
