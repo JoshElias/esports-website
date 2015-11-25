@@ -6,40 +6,54 @@
 </div>
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
-        <div class="pull-right">
-            <span class="hidden-xs hidden-sm hidden-md">Showing: <strong>{{pagination.showStart()}}</strong> to <strong>{{pagination.showEnd()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
-            <span class="btn-group m-l-sm">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue hidden-xs hidden-sm hidden-md" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == pagination.pages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+        <div class="pull-right" ng-if="cards">
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ cardPagination.total === 0 ? cardPagination.total : ((cardPagination.page - 1) * cardPagination.perpage) + 1 }}</strong> 
+                to <strong>{{  cardPagination.page * cardPagination.perpage > cardPagination.total ? cardPagination.total : cardPagination.page * cardPagination.perpage }}</strong> 
+                of <strong>{{ cardPagination.total }}</strong>
             </span>
+            <div pagination="cardPagination" theme="default" class="default"></div>
         </div>
+        <span class="pull-left m-r-sm">
+            <form class="form-inline">
+                <div class="form-group">
+                    <div class="input-group">
+                       <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                    <div class="input-group-addon">
+                        <button type="submit" class="btn btn-sm btn-blue" ng-click="searchCards()">
+                            <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                            <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            </form>
+        </span>
         <div class="pull-left">
             <form>
-                <span class="pull-left m-r-sm">
-                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="pagination.setPage(1)">
+                <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
+                    <select id="filterExpansion" name="filterExpansion" ng-options="expansion.value as expansion.name for expansion in expansions" ng-model="filterExpansion" class="form-control input-sm" ng-change="searchCards()"></select>
                 </span>
                 <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
-                    <select id="filterExpansion" name="filterExpansion" ng-options="expansion.value as expansion.name for expansion in expansions" ng-model="filterExpansion" class="form-control input-sm" ng-change="pagination.setPage(1)"></select>
+                    <select id="filterClass" name="filterClass" ng-options="class.value as class.name for class in classes" ng-model="filterClass" class="form-control input-sm" ng-change="searchCards()"></select>
                 </span>
                 <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
-                    <select id="filterClass" name="filterClass" ng-options="class.value as class.name for class in classes" ng-model="filterClass" class="form-control input-sm" ng-change="pagination.setPage(1)"></select>
-                </span>
-                <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
-                    <select id="filterType" name="filterType" ng-options="type.value as type.name for type in types" ng-model="filterType" class="form-control input-sm" ng-change="pagination.setPage(1)"></select>
+                    <select id="filterType" name="filterType" ng-options="type.value as type.name for type in types" ng-model="filterType" class="form-control input-sm" ng-change="searchCards()"></select>
                 </span>
                 <span class="pull-left hidden-xs hidden-sm hidden-md">
-                    <select id="filterRarity" name="filterRarity" ng-options="rarity.value as rarity.name for rarity in rarities" ng-model="filterRarity" class="form-control input-sm" ng-change="pagination.setPage(1)"></select>
+                    <select id="filterRarity" name="filterRarity" ng-options="rarity.value as rarity.name for rarity in rarities" ng-model="filterRarity" class="form-control input-sm" ng-change="searchCards()"></select>
                 </span>
             </form>
         </div>
     </div>
     <div class="list-group">
-        <div class="list-group-item card-list-item clearfix" ng-repeat="card in filtered = (cards | filterAll:search | filter:{ expansion: filterExpansion, playerClass: filterClass, cardType: filterType, rarity: filterRarity }) | orderBy:'name' | startFrom:pagination.pageStart() | limitTo:pagination.perpage">
+<!--        <div class="list-group-item card-list-item clearfix" ng-repeat="card in filtered = (cards | filterAll:search | filter:{ expansion: filterExpansion, playerClass: filterClass, cardType: filterType, rarity: filterRarity }) | orderBy:'name' | startFrom:pagination.pageStart() | limitTo:pagination.perpage">-->
+            <div class="list-group-item card-list-item clearfix" ng-repeat="card in cards">
             <div class="rarity {{card.rarity | lowercase}} pull-left"></div>
             <span>{{card.name}}</span>
             <div class="pull-right btn-toolbar">
-                <a ui-sref="app.admin.hearthstone.cards.edit({ cardID: card._id })" class="btn btn-default">Edit</a>
+                <a ui-sref="app.admin.hearthstone.cards.edit({ cardID: card.id })" class="btn btn-default">Edit</a>
                 <button class="btn btn-danger" ng-click="deleteCard(card)">Delete</button>
             </div>
         </div>
@@ -51,27 +65,43 @@
         </div>
     </div>
     <div class="panel-footer clearfix">
-        <div class="pull-right">
-            <span class="hidden-xs hidden-sm hidden-md">Showing: <strong>{{pagination.showStart()}}</strong> to <strong>{{pagination.showEnd()}}</strong> of <strong>{{pagination.results()}}</strong>.</span>
-            <span class="btn-group m-l-sm">
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == 1" ng-click="pagination.setPage(pagination.page - 1)"><i class="fa fa-arrow-circle-left"></i></button>
-                <button class="btn btn-sm btn-blue hidden-xs hidden-sm hidden-md" ng-repeat="i in pagination.pagesArray()" ng-click="pagination.setPage(i)" ng-class="{active:pagination.isPage(i)}">{{i}}</button>
-                <button class="btn btn-sm btn-blue" ng-disabled="pagination.page == pagination.pages() || pagination.results() == 0" ng-click="pagination.setPage(pagination.page + 1)"><i class="fa fa-arrow-circle-right"></i></button>
+        <div class="pull-right" ng-if="cards">
+            <span class="m-r-sm">
+                Showing: 
+                <strong>{{ cardPagination.total === 0 ? cardPagination.total : ((cardPagination.page - 1) * cardPagination.perpage) + 1 }}</strong> 
+                to <strong>{{  cardPagination.page * cardPagination.perpage > cardPagination.total ? cardPagination.total : cardPagination.page * cardPagination.perpage }}</strong> 
+                of <strong>{{ cardPagination.total }}</strong>
             </span>
+            <div pagination="cardPagination" theme="default" class="default"></div>
         </div>
+        <span class="pull-left m-r-sm">
+            <form class="form-inline">
+                <div class="form-group">
+                    <div class="input-group">
+                       <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                    <div class="input-group-addon">
+                        <button type="submit" class="btn btn-sm btn-blue" ng-click="searchCards()">
+                            <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                            <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            </form>
+        </span>
         <div class="pull-left">
             <form>
-                <span class="pull-left m-r-sm">
-                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="pagination.setPage(1)">
+                <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
+                    <select id="filterExpansion" name="filterExpansion" ng-options="expansion.value as expansion.name for expansion in expansions" ng-model="filterExpansion" class="form-control input-sm" ng-change="searchCards()"></select>
                 </span>
                 <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
-                    <select id="filterClass" name="filterClass" ng-options="class.value as class.name for class in classes" ng-model="filterClass" class="form-control input-sm" ng-change="pagination.setPage(1)"></select>
+                    <select id="filterClass" name="filterClass" ng-options="class.value as class.name for class in classes" ng-model="filterClass" class="form-control input-sm" ng-change="searchCards()"></select>
                 </span>
                 <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
-                    <select id="filterType" name="filterType" ng-options="type.value as type.name for type in types" ng-model="filterType" class="form-control input-sm" ng-change="pagination.setPage(1)"></select>
+                    <select id="filterType" name="filterType" ng-options="type.value as type.name for type in types" ng-model="filterType" class="form-control input-sm" ng-change="searchCards()"></select>
                 </span>
                 <span class="pull-left hidden-xs hidden-sm hidden-md">
-                    <select id="filterRarity" name="filterRarity" ng-options="rarity.value as rarity.name for rarity in rarities" ng-model="filterRarity" class="form-control input-sm" ng-change="pagination.setPage(1)"></select>
+                    <select id="filterRarity" name="filterRarity" ng-options="rarity.value as rarity.name for rarity in rarities" ng-model="filterRarity" class="form-control input-sm" ng-change="searchCards()"></select>
                 </span>
             </form>
         </div>

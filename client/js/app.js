@@ -3290,10 +3290,8 @@ var app = angular.module('app', [
                                             fields: {
                                                 id: true,
                                                 name: true,
-                                                rarity: true,
-                                                playerClass: true,
-                                                cardType: true,
-                                                expansion: true
+                                                rarity: true
+                                                
                                             },
                                             limit: 50,
                                             order: 'name ASC'
@@ -3354,9 +3352,18 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/cards.edit.html',
                         controller: 'AdminCardEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminCardService', function ($stateParams, AdminCardService) {
+                            card: ['$stateParams', 'Card', function($stateParams, Card) {
                                 var cardID = $stateParams.cardID;
-                                return AdminCardService.getCard(cardID);
+                                Card.findById({
+                                    id: cardID
+                                })
+                                .$promise
+                                .then(function (cardFound) {
+                                    return cardFound;
+                                })
+                                .catch(function (err) {
+                                    console.log('Card.findById err: ', err);
+                                });
                             }]
                         }
                     }

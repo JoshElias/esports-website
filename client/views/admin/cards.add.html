@@ -126,19 +126,19 @@
         <div class="form-group">
             <label for="cardPhoto" class="col-sm-2 control-label">Card Image</label>
             <div class="col-sm-10">
-                <input type="hidden" id="cardPhotoMedium" name="cardPhotoMedium" value="" ng-model="card.photos.medium">
-                <input type="hidden" id="cardPhotoLarge" name="cardPhotoLarge" value="" ng-model="card.photos.large">
+                <input type="hidden" id="cardPhotoMedium" name="cardPhotoMedium" value="" ng-model="card.photoNames.medium">
+                <input type="hidden" id="cardPhotoLarge" name="cardPhotoLarge" value="" ng-model="card.photoNames.large">
                 <div class="photo-input">
                     <div class="upload-thumbnail upload-thumbnail-card">
-                        <div class="upload-drop" ng-show="card.photos.large === ''" ng-file-drop="cardUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
-                        <img src="{{cardImg}}" alt="" ng-show="card.photos.large !== ''">
+                        <div class="upload-drop" ng-show="card.photoNames.large === ''" ng-file-drop="cardUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
+                        <img src="{{cardImg}}" alt="" ng-show="card.photoNames.large !== ''">
                     </div>
                     <div class="btn-toolbar">
                         <button class="btn btn-default" ng-file-select="cardUpload($files)" onclick="this.value=null" accept="image/*">
-                            <span ng-show="card.photos.large === ''">Select image</span>
-                            <span ng-show="card.photos.large !== ''">Change image</span>
+                            <span ng-show="card.photoNames.large === ''">Select image</span>
+                            <span ng-show="card.photoNames.large !== ''">Change image</span>
                         </button>
-                        <a href="#" class="btn btn-danger" ng-click="card.photos.large = ''; card.photos.medium = ''" ng-show="card.photos.large !== ''">Remove image</a>
+                        <a href="#" class="btn btn-danger" ng-click="card.photoNames.large = ''; card.photoNames.medium = ''" ng-show="card.photoNames.large !== ''">Remove image</a>
                     </div>
                 </div>
             </div>
@@ -165,7 +165,7 @@
         <div class="form-group">
             <label for="active" class="col-sm-2 control-label">Active</label>
             <div class="col-sm-10">
-                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in cardActive" ng-model="card.active" required></select>
+                <select id="active" name="active" class="form-control" ng-options="active.value as active.name for active in cardActive" ng-model="card.isActive" required></select>
             </div>
         </div>
     </div>
