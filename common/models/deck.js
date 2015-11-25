@@ -4,6 +4,7 @@ module.exports = function(Deck) {
 
   Deck.observe("before save", function(ctx, next) {
       utils.validateYoutubeId(ctx, next);
+      utils.generateSlug(ctx);
       //protectPrivateFields(ctx, next);
   });
 
@@ -14,7 +15,6 @@ module.exports = function(Deck) {
   var foreignKeys = ["authorId"];
   Deck.observe("persist", function(ctx, next) {
     utils.convertObjectIds(foreignKeys, ctx);
-    utils.generateSlug(ctx);
     next();
   });
 
