@@ -145,7 +145,7 @@ module.exports = function(User) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        Role.isInRoles(ctx.req.accessToken.userId.toString(), ["$owner", "$admin"], function(err, isInRoles) {
+        Role.isInRoles(ctx.req.accessToken.id.toString(), ["$owner", "$admin"], function(err, isInRoles) {
             if(err) return finalCb();
             if(!isInRoles) return removeFields();
             else return finalCb();
@@ -305,7 +305,7 @@ module.exports = function(User) {
             err.statusCode = 400;
             err.code = 'USER_NOT_FOUND';
 
-            User.findById(data.uid, function (userErr, user) {
+            User.findOne({where:{id:data.uid, email:data.email}}, function (userErr, user) {
                 if (userErr) {
                     cb(err);
                 } else if (user) {
@@ -432,55 +432,114 @@ module.exports = function(User) {
     };
 
 
-    User.assignRole = function (userId, roleName, cb) {
+    User.assignRoles = function (userId, roleNames, cb) {
         cb = cb || utils.createPromiseCallback();
 
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
 
-        async.waterfall([
-            // check if user is already that role
-            function (seriesCb) {
-                Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function (err, isRole) {
-                    if (err) return seriesCb(err);
+        function assignRole(roleName, assignCb) {
+            async.waterfall([
+                // check if user is already that role
+                function (seriesCb) {
+                    Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function (err, isRole) {
+                        if (err) return seriesCb(err);
 
-                    if (isRole) return seriesCb("ok");
-                    else return seriesCb(undefined)
-                });
-            },
-            // Get the new role
-            function (seriesCb) {
-                Role.findOne({where: {name: roleName}}, function (err, role) {
-                    if (err) return seriesCb(err);
+                        if (isRole) return seriesCb("ok");
+                        else return seriesCb(undefined)
+                    });
+                },
+                // Get the new role
+                function (seriesCb) {
+                    Role.findOne({where: {name: roleName}}, function (err, role) {
+                        if (err) return seriesCb(err);
 
-                    if (!role) {
-                        var roleErr = new Error('no role found');
-                        roleErr.statusCode = 400;
-                        roleErr.code = 'ROLE_NOT_FOUND';
-                        return seriesCb(roleErr);
-                    }
+                        if (!role) {
+                            var roleErr = new Error('no role found');
+                            roleErr.statusCode = 400;
+                            roleErr.code = 'ROLE_NOT_FOUND';
+                            return seriesCb(roleErr);
+                        }
 
-                    return seriesCb(undefined, role);
-                });
-            },
-            // Assign the user to that role
-            function (role, seriesCb) {
-                role.principals.create({
-                    principalType: RoleMapping.USER,
-                    principalId: userId
-                }, function (err, newPrincipal) {
-                    seriesCb(err);
-                });
-            }], function (err) {
-            if (err && err !== "ok") return cb(err);
-            return cb();
-        });
+                        return seriesCb(undefined, role);
+                    });
+                },
+                // Assign the user to that role
+                function (role, seriesCb) {
+                    role.principals.create({
+                        principalType: RoleMapping.USER,
+                        principalId: userId
+                    }, function (err, newPrincipal) {
+                        seriesCb(err);
+                    });
+                }],
+            function (err) {
+                if (err && err !== "ok") return assignCb(err);
+                return assignCb();
+            });
+        }
+
+        async.eachSeries(roleNames, assignRole, cb);
 
         return cb.promise;
     };
 
 
-    User.isRole = function (roleName, cb) {
+    User.revokeRoles = function (userId, roleNames, cb) {
+        cb = cb || utils.createPromiseCallback();
+
+        var Role = User.app.models.Role;
+        var RoleMapping = User.app.models.RoleMapping;
+
+        function revokeRole(roleName, assignCb) {
+            async.waterfall([
+                    // check if user is already that role
+                    function (seriesCb) {
+                        Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function (err, isRole) {
+                            if (err) return seriesCb(err);
+
+                            if (!isRole) return seriesCb("ok");
+                            else return seriesCb(undefined)
+                        });
+                    },
+                    // Get the new role
+                    function (seriesCb) {
+                        Role.findOne({where: {name: roleName}}, function (err, role) {
+                            if (err) return seriesCb(err);
+
+                            if (!role) {
+                                var roleErr = new Error('no role found');
+                                roleErr.statusCode = 400;
+                                roleErr.code = 'ROLE_NOT_FOUND';
+                                return seriesCb(roleErr);
+                            }
+
+                            return seriesCb(undefined, role);
+                        });
+                    },
+                    // Remove the user to that role
+                    function (role, seriesCb) {
+                        RoleMapping.destroyAll({
+                            principalType: RoleMapping.USER,
+                            principalId: userId.toString(),
+                            roleId: role.id
+                        }, function (err) {
+                            seriesCb(err);
+                        });
+                    }],
+                function (err) {
+                    if (err && err !== "ok") return assignCb(err);
+                    return assignCb();
+                });
+        }
+
+        async.eachSeries(roleNames, revokeRole, cb);
+
+        return cb.promise;
+    };
+
+
+    User.isInRoles = function (roleNames, cb) {
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
 
@@ -490,11 +549,13 @@ module.exports = function(User) {
         var res = ctx.active.http.res;
         var req = ctx.active.http.req;
 
-
         var accessToken = ctx.get("accessToken");
-        var userId = accessToken.userId;
+        var userId = accessToken.id;
 
-        Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, cb);
+        var results = {};
+        async.eachSeries(roleNames, function(roleName, eachCb) {
+            Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, eachCb);
+        }, cb);
 
         return cb.promise;
     };
@@ -504,12 +565,11 @@ module.exports = function(User) {
         
         if(typeof provider === "undefined")
             return cb(undefined, false);
-
+        
         var UserIdentity = User.app.models.userIdentity;
-
         var ctx = loopback.getCurrentContext();
         var accessToken = ctx.get("accessToken");
-        var userId = accessToken.userId.toString();
+        var userId = accessToken.id.toString();
 
         UserIdentity.findOne({where:{userId:userId, provider:provider}}, function(err, identity) {
             if(err) return cb(err);
@@ -527,16 +587,17 @@ module.exports = function(User) {
 
         var ctx = loopback.getCurrentContext();
         if (!ctx || !ctx.active) return finalCb(err);
+
         var res = ctx.active.http.res;
         var req = ctx.active.http.req;
 
         if (req.currentUser)
             return finalCb(undefined, req.currentUser);
 
-        if(!req.accessToken || req.accessToken.userId !== "string")
+        if(!req.accessToken || req.accessToken.id !== "string")
             return finalCb(err);
 
-        User.app.models.user.findById(req.accessToken.userId, function (err, user) {
+        User.app.models.user.findById(req.accessToken.id, function (err, user) {
             if (err || !user) return finalCb(err);
 
             var userData = user.toJSON();
@@ -581,13 +642,13 @@ module.exports = function(User) {
 
 
     User.remoteMethod(
-        'isRole',
+        'isInRoles',
         {
             description: "Checks if a user is of role",
             accepts: [
-                {arg: 'roleName', type: 'string', http: {source: 'query'}}
+                {arg: 'roleNames', type: 'array', http: {source: 'query'}}
             ],
-            returns: {arg: 'isRole', type: 'boolean'},
+            returns: {arg: 'isInRoles', type: 'object'},
             http: {verb: 'get'},
             isStatic: true
         }
@@ -674,12 +735,25 @@ module.exports = function(User) {
     );
 
     User.remoteMethod(
-        'assignRole',
+        'assignRoles',
         {
             description: "Assigns a role to a user",
             accepts: [
                 {arg: 'userId', type: 'string', http: {source: 'form'}},
-                {arg: 'roleName', type: 'string', http: {source: 'form'}}
+                {arg: 'roleNames', type: 'array', http: {source: 'form'}}
+            ],
+            http: {verb: 'post'},
+            isStatic: true
+        }
+    );
+
+    User.remoteMethod(
+        'revokeRoles',
+        {
+            description: "Revokes roles of the user",
+            accepts: [
+                {arg: 'userId', type: 'string', http: {source: 'form'}},
+                {arg: 'roleNames', type: 'array', http: {source: 'form'}}
             ],
             http: {verb: 'post'},
             isStatic: true

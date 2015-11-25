@@ -12,8 +12,13 @@ var MongoStore = require("connect-mongo")(session);
 
 module.exports = function(server) {
 
-  var staticDir = path.join(__dirname, "..", "..", "client");
+
   server.use(serveStatic("client"));
+
+  // Only serve modules if we're not in production
+  if(process.env.NODE_ENV !== "production") {
+      server.use('/modules', serveStatic("modules"));
+  }
 
   server.engine("dust", consolidate.dust);
   server.set("template_engine", "dust");
