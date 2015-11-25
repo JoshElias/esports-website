@@ -1424,14 +1424,14 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminCardListCtrl', ['$scope', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'Pagination', 'cards',
-        function ($scope, bootbox, Util, Hearthstone, AdminCardService, AlertService, Pagination, cards) {
+    .controller('AdminCardListCtrl', ['$scope', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'Pagination', 'cards', 'cardsCount', 'paginationParams',
+        function ($scope, bootbox, Util, Hearthstone, AdminCardService, AlertService, Pagination, cards, cardsCount, paginationParams) {
 
             // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
+//            if (AlertService.hasAlert()) {
+//                $scope.success = AlertService.getSuccess();
+//                AlertService.reset();
+//            }
 
             // load cards
             $scope.cards = cards;
@@ -7216,15 +7216,11 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.fetching = true;
                 if ($scope.user.changePassword) {
                     if ($scope.user.password === $scope.user.newPassword) {
-                        User.resetPassword($scope.user)
+                        User.changePassword($scope.user)
                         .$promise
                         .then(function (passChanged) {
                             console.log('passChanged: ', passChanged);
-                            User.updateAll({
-                                where: {
-                                    id: $scope.user.id
-                                }
-                            }, $scope.user)
+                            User.upsert($scope.user)
                             .$promise
                             .then(function (userUpdated) {
                                 console.log('userUpdated: ', userUpdated);

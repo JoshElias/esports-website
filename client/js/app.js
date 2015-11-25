@@ -3289,20 +3289,53 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/cards.list.html',
                         controller: 'AdminCardListCtrl',
                         resolve: {
-                            cards: ['Card', function (Card) {
+                            paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    options: {
+                                        filter: {
+                                            fields: {
+                                                id: true,
+                                                name: true,
+                                                rarity: true,
+                                                playerClass: true,
+                                                cardType: true,
+                                                expansion: true
+                                            },
+                                            limit: 50,
+                                            order: 'name ASC'
+                                        }
+                                    }
+                                };
+                            }],
+                            cardsCount: ['Card', function(Card) {
+                                return Card.count({})
+                                .$promise
+                                .then(function (cardCount) {
+                                    console.log('cardCount: ', cardCount);
+                                    return cardCount;
+                                })
+                                .catch(function (err) {
+                                    console.log('cardCount err: ', err);
+                                });
+                            }],
+                            cards: ['Card', 'paginationParams', function (Card, paginationParams) {
                                 return Card.find({
                                     filter: {
-                                        limit: 50,
-                                        page: 1,
-                                        order: "name ASC",
-                                        fields: [
-                                            "name",
-                                            "rarity",
-                                            "playerClass",
-                                            "cardType",
-                                            "expansion"
-                                        ]
+                                        limit: paginationParams.perpage,
+                                        page: paginationParams.page,
+                                        order: paginationParams.options.filter.order,
+                                        fields: paginationParams.options.filter.fields
                                     }
+                                })
+                                .$promise
+                                .then(function (cards) {
+                                    console.log('cards: ', cards);
+                                    return cards;
+                                })
+                                .catch(function (err) {
+                                    console.log('Card.find err: ', err);
                                 });
                             }]
                         }
@@ -3825,7 +3858,15 @@ var app = angular.module('app', [
                             user: ['$stateParams', 'User', function ($stateParams, User) {
                                 var userID = $stateParams.userID;
                                 return User.findById({
-                                    id: userID
+                                    id: userID,
+                                    filter: {
+                                        fields: {
+                                            id: true,
+                                            isActive: true,
+                                            isAdmin: true,
+                                            isProvider: true
+                                        }
+                                    }
                                 })
                                 .$promise
                                 .then(function (userFound) {
@@ -3834,8 +3875,38 @@ var app = angular.module('app', [
                                 })
                                 .catch(function (err) {
                                     console.log('User.findById err: ', err);
+                                    return false;
+                                });
+                            }],
+                            isAdmin: ['$stateParams', 'User', function($stateParams, User) {
+                                return User.isRole({
+                                    roleName: '$admin'
+                                })
+                                .$promise
+                                .then(function (isAdmin) {
+                                    console.log('isAdmin: ', isAdmin);
+                                    return isAdmin.isRole;
+                                })
+                                .catch(function (err) {
+                                    console.log('User.isRole err: ', err);
+                                    return false;
+                                });
+                            }],
+                            isContentProvider: ['$stateParams', 'User', function($stateParams, User) {
+                                return User.isRole({
+                                    roleName: '$contentProvider'
+                                })
+                                .$promise
+                                .then(function (isContentProvider) {
+                                    console.log('isContentProvider ', isContentProvider);
+                                    return isContentProvider.isRole;
+                                })
+                                .catch(function (err) {
+                                    console.log('User.isRole err: ', err);
+                                    return false;
                                 });
                             }]
+                            
                         }
                     }
                 },
