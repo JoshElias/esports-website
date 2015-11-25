@@ -493,44 +493,44 @@ module.exports = function(User) {
 
         function revokeRole(roleName, assignCb) {
             async.waterfall([
-                    // check if user is already that role
-                    function (seriesCb) {
-                        Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function (err, isRole) {
-                            if (err) return seriesCb(err);
+                // check if user is already that role
+                function (seriesCb) {
+                    Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function (err, isRole) {
+                        if (err) return seriesCb(err);
 
-                            if (!isRole) return seriesCb("ok");
-                            else return seriesCb(undefined)
-                        });
-                    },
-                    // Get the new role
-                    function (seriesCb) {
-                        Role.findOne({where: {name: roleName}}, function (err, role) {
-                            if (err) return seriesCb(err);
+                        if (!isRole) return seriesCb("ok");
+                        else return seriesCb(undefined)
+                    });
+                },
+                // Get the new role
+                function (seriesCb) {
+                    Role.findOne({where: {name: roleName}}, function (err, role) {
+                        if (err) return seriesCb(err);
 
-                            if (!role) {
-                                var roleErr = new Error('no role found');
-                                roleErr.statusCode = 400;
-                                roleErr.code = 'ROLE_NOT_FOUND';
-                                return seriesCb(roleErr);
-                            }
+                        if (!role) {
+                            var roleErr = new Error('no role found');
+                            roleErr.statusCode = 400;
+                            roleErr.code = 'ROLE_NOT_FOUND';
+                            return seriesCb(roleErr);
+                        }
 
-                            return seriesCb(undefined, role);
-                        });
-                    },
-                    // Remove the user to that role
-                    function (role, seriesCb) {
-                        RoleMapping.destroyAll({
-                            principalType: RoleMapping.USER,
-                            principalId: userId.toString(),
-                            roleId: role.id
-                        }, function (err) {
-                            seriesCb(err);
-                        });
-                    }],
-                function (err) {
-                    if (err && err !== "ok") return assignCb(err);
-                    return assignCb();
-                });
+                        return seriesCb(undefined, role);
+                    });
+                },
+                // Remove the user to that role
+                function (role, seriesCb) {
+                    RoleMapping.destroyAll({
+                        principalType: RoleMapping.USER,
+                        principalId: userId.toString(),
+                        roleId: role.id
+                    }, function (err) {
+                        seriesCb(err);
+                    });
+                }],
+            function (err) {
+                if (err && err !== "ok") return assignCb(err);
+                return assignCb();
+            });
         }
 
         async.eachSeries(roleNames, revokeRole, cb);
