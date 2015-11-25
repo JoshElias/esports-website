@@ -16,6 +16,7 @@ module.exports = {
                 'client/js/vendor/wtooltip.js',
                 'client/vendor/underscore/underscore-min.js',
                 'client/vendor/async/dist/async.min.js',
+                'client/vendor/jrumble/jquery.jrumble.min.js',
             ],
             'client/dist/js/angular.js': [
                 'client/vendor/angular/angular.js',
@@ -52,17 +53,6 @@ module.exports = {
             ]
         }
     },
-    modules: {
-        options: {
-            separator: '',
-            stripBanners: true,
-        },
-        files: {
-            'client/dist/js/modules.js': [
-                'modules/**/client/js/**/*.js',
-            ]
-        }
-    },
     css: {
         options: {
             separator: '',
@@ -72,10 +62,27 @@ module.exports = {
             'client/dist/css/sass.css': [
                 'client/dist/css/sass/*.css'
             ],
+            'client/dist/css/modules.css': [
+                'client/dist/css/sass/modules/*.css'
+            ],
             'client/dist/css/style.css': [
                 'client/css/style.css',
                 'client/dist/css/sass/*.css',
             ],            
+        }
+    },
+    modules: {
+        options: {
+            separator: '',
+            stripBanners: true,
+        },
+        files: {
+            'client/dist/js/modules.js': [
+                'modules/**/client/js/**/*.js',
+            ],
+            'client/dist/css/modules.css': [
+                'client/dist/css/sass/modules/*.css'
+            ],
         }
     }
 };

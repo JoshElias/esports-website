@@ -565,9 +565,8 @@ module.exports = function(User) {
         
         if(typeof provider === "undefined")
             return cb(undefined, false);
-
+        
         var UserIdentity = User.app.models.userIdentity;
-
         var ctx = loopback.getCurrentContext();
         var accessToken = ctx.get("accessToken");
         var userId = accessToken.id.toString();

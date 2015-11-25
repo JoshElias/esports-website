@@ -1,0 +1,126 @@
+<!-- Preloader -->
+<div id="preloader" ng-if="loading">
+    <div id="status">&nbsp;</div>
+</div>
+
+<!-- Outer frame and wrapper/background -->
+<div id="frame"></div>
+<div id="wrapper">
+
+    <video id="pack_burst" preload="auto">
+        <source src="video/pack_burst.webm" type="video/webm" />
+        <source src="video/pack_burst.mp4" type="video/mp4" />
+    </video>
+
+    <!-- Layered glow and blur backgrounds -->
+    <div id="bg_glow"></div>
+    <div id="bg"></div>
+    <div id="bg_blur"></div>
+
+    <!-- Pack stuff -->
+    <div id="pack_wrap">
+        <div id="pack"></div>
+    </div>
+    <div id="pack_hole"></div>
+
+    <!-- Friend menu -->
+    <div id="friend_button"></div>
+    <div id="friend_list">
+        <div id="mancer"></div>
+    </div>
+    <div id="mancer_tooltip"></div>
+
+    <!-- Shop/donation menu -->
+    <div id="shop_button"></div>
+
+    <!-- Volume control -->
+    <section>
+        <span class="tooltip"></span>
+        <div id="volume">
+            <div id="slider"></div>
+        </div>
+        <span class="speaker"></span>
+    </section>
+
+    <!-- Back button and gold hover tooltip -->
+    <a ui-sref="app.redbull.home"><div id="back_button"></div></a>
+    <div id="gold"></div>
+    <div id="gold_tooltip"></div>
+
+    <!-- Card statistics -->
+    <div id="stats_button"></div>
+    <div id="stats_tooltip"></div>
+    <div id="stats_panel">
+        <div id="damn_lies"></div>
+    </div>
+
+    <!-- Card particles -->
+    <canvas id="particles"></canvas>
+
+    <!-- Cards -->
+    <div id="card_1" class="container">
+      <div class="card">
+        <div class="card_glow"></div>
+        <div class="card_front">
+          <img class="card_face" src="http://wow.zamimg.com/images/hearthstone/cards/enus/original/CRED_08.png" alt="Card Front" />
+        </div>
+        <div class="card_back">
+          <img src="img/card_back.png" alt="Card Back" />
+        </div>
+      </div>
+    </div>
+
+    <div id="card_2" class="container">
+      <div class="card">
+        <div class="card_glow"></div>
+        <div class="card_front">
+          <img class="card_face" src="http://wow.zamimg.com/images/hearthstone/cards/enus/original/CRED_17.png" alt="Card Front" />
+        </div>
+        <div class="card_back">
+          <img src="img/card_back.png" alt="Card Back" />
+        </div>
+      </div>
+    </div>
+
+    <div id="card_3" class="container">
+      <div class="card">
+        <div class="card_glow"></div>
+        <div class="card_front">
+          <img class="card_face" src="http://wow.zamimg.com/images/hearthstone/cards/enus/original/CRED_14.png" alt="Card Front" />
+        </div>
+        <div class="card_back">
+          <img src="img/card_back.png" alt="Card Back" />
+        </div>
+      </div>
+    </div>
+
+    <div id="card_4" class="container">
+      <div class="card">
+        <div class="card_glow"></div>
+        <div class="card_front">
+          <img class="card_face" src="http://wow.zamimg.com/images/hearthstone/cards/enus/original/CRED_02.png" alt="Card Front" />
+        </div>
+        <div class="card_back">
+          <img src="img/card_back.png" alt="Card Back" />
+        </div>
+      </div>
+    </div>
+
+    <div id="card_5" class="container">
+      <div class="card">
+        <div class="card_glow"></div>
+        <div class="card_front">
+          <img class="card_face" src="http://wow.zamimg.com/images/hearthstone/cards/enus/original/CRED_13.png" alt="Card Front" />
+        </div>
+        <div class="card_back">
+          <img src="img/card_back.png" alt="Card Back" />
+        </div>
+      </div>
+    </div>
+    <!-- End cards -->
+
+    <!-- Done button -->
+    <div id="done"></div>
+
+<!-- End #wrapper -->
+</div>
