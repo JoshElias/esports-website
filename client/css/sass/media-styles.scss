@@ -121,9 +121,12 @@
     
     .games-btn {height: 110px; }
     .games-btn:hover .games-btn-back { -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); opacity: 1; }
-    .games-btn:hover .games-btn-logo { -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); }
+    .games-btn:hover .games-btn-logo { -moz-transform: scale(.9,.9); -webkit-transform: scale(.9,.9); transform: scale(.9,.9); }
     
-    .games-btn-logo {width: 200px;}
+    .games-btn-logo {
+        width: 200px;
+    
+    }
     
     /* filters */
     .filter-bar { display: none; }

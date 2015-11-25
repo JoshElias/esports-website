@@ -42,6 +42,7 @@
 // 21... rotating
 // 22... Contact, Terms & privacy
 // 23... overcast
+// 24...Description Panel Overrides 
 
 
 
@@ -141,6 +142,16 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 
 .row-dark { background: rgba(0,0,0,.6); border: 1px solid #000; }
 
+.pin-stripe { 
+    border:1px solid rgba(255,255,255,.4);
+    outline: 1px solid rgba(0,0,0,1);
+    outline-offset: -2px;
+}
+.drop-shadow {
+    box-shadow: 2px 2px 2px 2px rgba(0,0,0,.4);
+}
+
+
 // 2.1.. colors
 
 .ts-blue { color: #2766ad; }
@@ -165,7 +176,9 @@ body.hots { background: #221b36 url('../img/hots/hots-bg.jpg') no-repeat center 
 }
 
 
-.games-btn-logo { position: relative; display: inline-block; max-width: 80%; vertical-align: middle; -moz-transition: all .5s; -webkit-transition: all .5s; transition: all .5s; -moz-transform: scale(1,1); -webkit-transform: scale(1,1); transform: scale(1,1); z-index: 2; }
+.games-btn-logo { position: relative; display: inline-block; max-width: 80%; vertical-align: middle; -moz-transition: all .5s; -webkit-transition: all .5s; transition: all .5s; -moz-transform: scale(.9,.9); -webkit-transform: scale(.9,.9); transform: scale(.9,.9); z-index: 2; }
+
+
 
 .games-btn:hover .games-btn-back { -moz-transform: scale(1.1,1.1); -webkit-transform: scale(1.1,1.1); transform: scale(1.1,1.1); opacity: .5; }
 .games-btn:hover .games-btn-logo { -moz-transform: scale(1.3,1.3); -webkit-transform: scale(1.3,1.3); transform: scale(1.3,1.3); }
@@ -614,6 +627,8 @@ h1, h2, h3, h4, h5 { margin-top: 0; }
     background-color: #555555;
     border-top: 1px solid #555555;
 }
+
+
 
 
 //*************************************
@@ -1765,3 +1780,52 @@ input[type=range]:focus::-ms-fill-upper {
         background-position: center -585px;
     }
 }
+
+
+
+//*************************************
+// 24...Summernote Panel Overrides 
+//*************************************
+
+// Summernote and panel overrides
+
+.db-section {
+    .note-editor .note-editing-area .note-editable {
+        background-color: transparent;
+        color: $white;
+    }
+    
+    .note-editor {
+        border: 0px solid;
+    }
+    
+    .panel {
+        background-color: transparent;
+    }
+    
+    .panel-default {
+        border: 0px solid;
+    }
+    
+    .panel-default > .panel-heading {
+        background-color: transparent;
+        background-image: -webkit-none; 
+        background-image: -o-none;
+        background-image: -webkit-gradient(none); 
+        background-image: none; 
+        border-color: transparent;
+    }
+}
+
+.db-builder { position: relative; margin: 20px 0; }
+
+.db-section { outline: 1px solid rgba(255,255,255,.3); outline-offset: 0px; background: rgba(0,0,0,.3); position: relative; }
+.db-section-title { padding: 0 85px; min-height: 60px; line-height: 60px; background: none; font-size: 14px; }
+.db-section-title h1 { margin: 0 20px 0 0; padding: 0; height: 50px; line-height: 60px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 12px; }
+
+.db-section-chapter-title { padding: 0 45px; min-height: 60px; line-height: 60px; background: rgba(0,0,0,.5); position: relative; }
+.db-section-chapter-title i { position: absolute; color: rgba(255,255,255,.4); right: 20px; top: 15px; cursor: pointer; font-size: 24px; }
+.db-section-chapter-title h1 { margin: 0 20px 0 0; padding: 0; height: 50px; line-height: 60px; color: #FFF; font-family: 'Open Sans Bold'; font-size: 18px; }
+.db-section-chapter-title input { height: 45px; background: none; width: 50%; outline: none; border: none; }
+
+.db-section label { color: #FFF; }

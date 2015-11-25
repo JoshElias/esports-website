@@ -25,14 +25,6 @@
 .snapshot-votes { position: absolute; right: 20px; top: 20px; }
 .snapshot-votes .snapVoteWrap { position: relative; }
 
-.pin-stripe { 
-    border:1px solid rgba(255,255,255,.4);
-    outline: 1px solid rgba(0,0,0,1);
-    outline-offset: -2px;
-}
-.drop-shadow {
-    box-shadow: 2px 2px 2px 2px rgba(0,0,0,.4);
-}
 
 .bg-override {
     background-image: url(../img/backgrounds/meta-bg.jpg);
