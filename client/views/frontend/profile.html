@@ -29,7 +29,7 @@
                                        <small class="m-t-xs">{{user.firstName}}&nbsp;{{user.lastName}}</small>
                                     </h1>
 
-                                    <div ng-if="app.user.isLogged() && app.user.getUserID() == user._id" class="row">
+                                    <div ng-if="getIsLogged()" class="row">
                                         <div class="show-more col-xs-6 col-xs-push-3">
                                             <a href="./user/{{user.username}}/edit" class="show-more-btn">EDIT PROFILE</a>
                                         </div>

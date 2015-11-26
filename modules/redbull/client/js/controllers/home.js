@@ -1,5 +1,5 @@
 angular.module('redbull.controllers')
-.controller('HomeCtrl', ['$scope', '$state', 'User', 'LoginModalService', function ($scope, $state, User, LoginModalService){
+.controller('RedbullHomeCtrl', ['$scope', '$state', 'User', 'LoginModalService', function ($scope, $state, User, LoginModalService){
     
     function goToDrafts () {
         return $state.transitionTo('app.redbull.draft.packs');

@@ -86,12 +86,13 @@ angular.module('app.directives', ['ui.load'])
             }
 
             $scope.setState = function (s) {
+                console.log(s);
                 switch(s) {
                     case 'login':  $scope.state = "login" ; $scope.title = "User Login"; break;
                     case 'signup': $scope.state = "signup"; $scope.title = "User Signup"; break;
                     case 'forgot': $scope.state = "forgot"; $scope.title = "Forgot Password"; break;
                     case 'verify': $scope.state = "verify"; $scope.title = "Verify Email"; break;
-                    default:       $scope.state = "login" ; $scope.title = "UserLogin"; break;
+                    default:       $scope.state = "login" ; $scope.title = "User Login"; break;
                 }
             }
             $scope.setState($scope.state);
@@ -187,7 +188,8 @@ angular.module('app.directives', ['ui.load'])
                         console.log("signup succeeded");
                           $scope.verify.email = email;
                           if ($scope.setState) {
-                              $scope.state = "verify";
+                              console.log("fuck");
+                              $scope.setState("verify");
                           } else {
                               $state.go('app.verify');
                           }
@@ -202,57 +204,46 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('forgotPasswordForm', ['LoginModalService', 'User', function (LoginModalService, User) {
+.directive('forgotPasswordForm', ['LoginModalService', 'User', 'AlertService', function (LoginModalService, User, AlertService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/forgot.password.form.html',
         scope: true,
         link: function ($scope, el, attr) {
 
             $scope.forgotPassword = function () {
-                User.resetPassword({email: $scope.forgot.email})
+                User.resetPassword({ email: $scope.forgot.email })
                 .$promise
                 .then(function (data) {
-                  $scope.showSuccess = true;
+                  AlertService.setSuccess({ show: true, msg: AlertService.messages.forgotPassword.success });
                   $scope.forgot.email = '';
                 })
                 .catch(function(err) {
-                  $scope.errors = err;
+                  AlertService.setError({ show: true, msg: AlertService.messages.forgotPassword.error + err.status + ": " + err.data.error.message });
                   $scope.showError = true;
                 });
             };
         }
     }
 }])
-.directive('verifyForm', ['LoginModalService', function (LoginModalService) {
+.directive('verifyForm', ['LoginModalService', 'AlertService', function (LoginModalService, AlertService) {
     return {
         templateUrl: tpl + 'views/frontend/directives/login/verify.form.html',
         scope: true,
         link: function ($scope, el, attr) {
 
+            console.log('FUCK');
+            
             //TODO: VerifyForm: Do Verify
 
-            $scope.verifyEmail = function (email, code) {
-                 UserService.verifyEmail(email, code).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                    } else {
-                        AuthenticationService.setLogged(true);
-                        AuthenticationService.setAdmin(data.isAdmin);
-                        AuthenticationService.setProvider(data.isProvider);
-
-                        SubscriptionService.setSubscribed(data.subscription.isSubscribed);
-                        SubscriptionService.setTsPlan(data.subscription.plan);
-                        SubscriptionService.setExpiry(data.subscription.expiry);
-
-                        $window.sessionStorage.userID = data.userID;
-                        $window.sessionStorage.username = data.username;
-                        $window.sessionStorage.email = data.email;
-                        $window.sessionStorage.token = data.token;
-                        $scope.closeModal();
-                    }
-                });
-            };
+//            $scope.verifyEmail = function (email, code) {
+//                User.confirm({
+//                    uid
+//                })
+//                .$promise
+//                .then(function (data) {
+//                    
+//                });
+//            };
         }
     }
 }])
@@ -378,6 +369,82 @@ angular.module('app.directives', ['ui.load'])
 
             $scope.addAreaFocus = false;
 
+        }
+    }
+}])
+.directive('alertBox', ['AlertService', function (AlertService) {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: function (element, attrs) {
+            var theme = attrs.theme || 'default';
+            return tpl + 'views/frontend/directives/alertBox/' + theme + '.html';
+        },
+        controller: ['$scope', function ($scope) {
+            var as = AlertService;
+            
+            $scope.isHiding = function () {
+                return as.isHiding();
+            }
+            
+            $scope.getMsg = function () {
+                var s = function () {
+                    if (!_.isEmpty(as.getSuccess())) {
+                        return as.getSuccess().msg;
+                    } else if (!_.isEmpty(as.getError())) {
+                        return as.getError().msg;
+                    }
+                };
+                
+                return s();
+            }
+            
+            $scope.isSuccess = function () {
+                if (!_.isEmpty(as.getSuccess())) {
+                    return true;
+                } else if (!_.isEmpty(as.getError())) {
+                    return false;
+                } else {
+                    return null;
+                }
+            }
+            
+        }],
+        link: function ($scope, el, attrs) {
+            var as = AlertService;
+            $scope.theme = attrs.theme || 'default';
+            
+            
+//            function setTrans (t, s) {
+//                t.css('transition', s + "s");
+//                t.css('-moz-transition', s + "s");
+//                t.css('-webkit-transition', s + "s");
+//            }
+            
+            //TODO: animate this?
+            
+            $scope.$watch(
+                function () {
+                    return as.hasAlert();
+                }, function () {
+                    var tar = angular.element('#mw');
+                    var h = tar[0].children[0].offsetHeight;
+                    
+//                    if (attrs.animspeed) {
+//                        setTrans(tar, attrs.animspeed);
+//                    } else {
+//                        setTrans(tar, 0);
+//                    }
+                    
+                    if (!as.hasAlert()) {
+                        tar.css('height', 0);
+                        return
+                    }
+                    
+                    tar.css('height', h);
+//                    tar.addClass('open');
+                }
+            );
         }
     }
 }])
@@ -622,7 +689,6 @@ angular.module('app.directives', ['ui.load'])
             updateVotes();
             
             $scope.vote = function (obj, direction) {
-            console.log($scope.votable, User.isAuthenticated());    
                 if (!User.isAuthenticated()) {
                     LoginModalService.showModal('login', function () {
                         $scope.vote(obj, direction);

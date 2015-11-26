@@ -1,9 +1,10 @@
 angular.module('redbull.controllers')
-.controller('DraftPacksCtrl', ['$scope', 'Preloader', function ($scope, Preloader){
+.controller('DraftPacksCtrl', ['$scope', 'Preloader', 'DraftPacks', 'cards', function ($scope, Preloader, DraftPacks, cards){
+    // preload files
     $scope.isLoading = true;
     $scope.isSuccessful = false;
     $scope.percentLoaded = 0;
-
+    
     $scope.fileLocations = [
         ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/back_button_hover.jpg' ),
         ( $scope.app.cdn + 'dist/img/modules/redbull/client/img/bg.jpg' ),
@@ -24,17 +25,17 @@ angular.module('redbull.controllers')
         function handleResolve( imageLocations ) {
             $scope.isLoading = false;
             $scope.isSuccessful = true;
-            console.info( "Preload Successful" );
         },
         function handleReject( fileLocation ) {
             $scope.isLoading = false;
             $scope.isSuccessful = false;
             console.error( "File Failed", fileLocation );
-            console.info( "Preload Failure" );
         },
         function handleNotify( event ) {
             $scope.percentLoaded = event.percent;
-            console.info( "Percent loaded:", event.percent );
         }
     );
+    
+    // get packs
+    $scope.packs = DraftPacks.getPacks(cards, {});
 }]);
