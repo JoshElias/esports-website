@@ -23,6 +23,9 @@
     "about": {
       "type": "string"
     },
+    "providerDescription": {
+      "type": "string"
+    },
     "subscription": {
       "type": "object"
     },

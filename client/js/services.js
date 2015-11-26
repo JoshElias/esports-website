@@ -552,7 +552,6 @@ angular.module('app.services', [])
 .factory('AlertService', function () {
     var success = {},
         error = {},
-        hide = false,
         alert = false;
     
     return {
@@ -562,15 +561,16 @@ angular.module('app.services', [])
         setSuccess: function (value) {
             this.reset();
             success = value;
-            alert = true;
+            alert = value.show || true;
         },
         getError: function () {
             return error;
         },
         setError: function (value) {
+            console.log("alertservice:", value);
             this.reset();
             error = value;
-            alert = true;
+            alert = value.show || true;
         },
         reset: function () {
             success = {};
@@ -579,20 +579,6 @@ angular.module('app.services', [])
         },
         hasAlert: function () {
             return alert;
-        }, 
-        messages: {
-            login: {
-                success: "We have successfully logged you in.",
-                error: "There was an error logging you in."
-            },
-            forgotPassword: {
-                success: "We have successfully sent an email to reset your password.",
-                error: "There was an error resetting your password."
-            },
-            forgotPassword: {
-                success: "We have successfully sent an email to reset your password.",
-                error: "There was an error resetting your password."
-            },
         }
     }
 })
