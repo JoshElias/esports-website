@@ -1,9 +1,11 @@
+<!--
 <div class="panel panel-success animated m-t-md" ng-show="success.show">
     <div class="panel-heading">
         <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
         <strong>{{success.msg}}</strong>
     </div>
 </div>
+-->
 
 <div class="profile-col-header"></div>
 
@@ -15,6 +17,8 @@
         <button ng-class="{active: $state.includes('app.profile.edit.connect')}" ui-sref="app.profile.edit.connect"><h2>CONNECT</h2></button>
         <button ng-class="{active: $state.includes('app.profile.edit.premium')}" ui-sref="app.profile.edit.premium"><h2>PREMIUM</h2></button>
     </div>
+    
+    <alert-box></alert-box>
     
     <div class="edit-profile-view" ui-view="editProfile"></div>
 

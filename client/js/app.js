@@ -26,8 +26,8 @@ var app = angular.module('app', [
     'app.redbull',
 ])
 .run(
-    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'User',
-        function ($rootScope, $state, $stateParams, $window, $http, $q, $location, MetaService, $cookies, $localStorage, LoginModalService, LoopBackAuth, User) {
+    ['$rootScope', '$state', '$stateParams', '$window', '$http', '$q', '$location', 'MetaService', '$cookies', "$localStorage", "LoginModalService", 'LoopBackAuth', 'AlertService', 'User',
+        function ($rootScope, $state, $stateParams, $window, $http, $q, $location, MetaService, $cookies, $localStorage, LoginModalService, LoopBackAuth, AlertService, User) {
             $rootScope.$state = $state;
             $rootScope.$stateParams = $stateParams;
             $rootScope.metaservice = MetaService;
@@ -73,6 +73,8 @@ var app = angular.module('app', [
                 if (!toState.og) {
                     $rootScope.metaservice.setOg('https://tempoStorm.com' + toState.url);
                 }
+                
+                AlertService.reset();
             });
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams) {
                 console.log("Event:", event);
@@ -2633,31 +2635,21 @@ var app = angular.module('app', [
                             }],
                             isLinked: ['User', function (User) {
                                 var obj = {};
+                                var providers = ['twitch','bnet'];
                                 
-                                async.series([
-                                    function (seriesCb) {
-                                        User.isLinked({
-                                            provider: 'twitch'
-                                        })
-                                        .$promise
-                                        .then(function (data) {
-                                            obj.twitch = data.isLinked;
-                                        });
-                                        
-                                        return seriesCb();
-                                    },
-                                    function (seriesCb) {
-                                        User.isLinked({
-                                            provider: 'bnet'
-                                        })
-                                        .$promise
-                                        .then(function (data) {
-                                            obj.bnet = data.isLinked;
-                                        });
-                                        
-                                        return seriesCb();
-                                    }
-                                ]);
+                                User.isLinked({
+                                    providers: providers
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    obj = data.linked;
+                                })
+                                .catch(function (err) {
+                                    console.log(err);
+                                })
+                                .finally(function () {
+                                    return cb();
+                                });
                                 
                                 return obj;
                             }]
@@ -2672,7 +2664,8 @@ var app = angular.module('app', [
                     editProfile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.basic.html'
                     }
-                }
+                },
+                access: { auth: true },
             })
             .state('app.profile.edit.connect', {
                 url: '/connect',
@@ -2680,7 +2673,8 @@ var app = angular.module('app', [
                     editProfile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.connect.html'
                     }
-                }
+                },
+                access: { auth: true },
             })
             .state('app.profile.edit.social', {
                 url: '/social',
@@ -2688,7 +2682,8 @@ var app = angular.module('app', [
                     editProfile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.social.html'
                     }
-                }
+                },
+                access: { auth: true },
             })
             .state('app.profile.edit.premium', {
                 url: '/premium',
@@ -2696,7 +2691,8 @@ var app = angular.module('app', [
                     editProfile: {
                         templateUrl: tpl + 'views/frontend/profile.edit.premium.html'
                     }
-                }
+                },
+                access: { auth: true },
             })
             .state('app.profile.changeEmail', {
                 url: '/email-change-confirm?code',

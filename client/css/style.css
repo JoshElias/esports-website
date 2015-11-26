@@ -17,6 +17,24 @@
 
 
 
+.alert-box {
+    height: 0px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.alert-box .alert-wrapper.default {
+    font-weight: bold;
+    color: white;
+    background: black;
+    padding: 20px;
+}
+.alert-box .default.success {
+    border: 2px solid green;
+}
+.alert-box .default.error {
+    border: 2px solid red;
+}
 
 /*
 .profile-page .activity-list .articleComment .activity-right,
@@ -102,6 +120,5 @@
 .activity .panel { margin: 0 0 0 30px; border-radius: 0px; border: 1px solid #ddd; }
 .activity .panel-heading { color: #555; background-color: #FFF; }
 */
-
 
 
