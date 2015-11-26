@@ -72,7 +72,7 @@ angular.module('app.services', [])
         }
     }
 })
-.factory('LoginService', ['$state', 'User', 'EventService', function ($state, User, EventService) {
+.factory('LoginService', ['$state', 'User', 'EventService', 'LoopBackAuth', function ($state, User, EventService, LoopBackAuth) {
     return {
         login: function (email, password, remember, cb) {
             var options = { rememberMe: remember }
@@ -84,7 +84,6 @@ angular.module('app.services', [])
             User.login(options, where)
             .$promise
             .then(function (data) {
-                console.log("fire event");
                 EventService.emit("EVENT_LOGIN", data);
                 return callback(null, data);
             })
@@ -100,14 +99,26 @@ angular.module('app.services', [])
             User.logout()
             .$promise
             .then(function () {
-                console.log("fire event");
                 EventService.emit("EVENT_LOGOUT");
-                return callback();
+                
+                var state = $state.current;
+                var access = state.access;
+                if (access !== undefined && (access.auth || access.admin)) {
+                    $state.go('app.login');
+                }
+                
             })
             .catch(function(err) {
                 console.log("error logging out:", err);
-                return callback(err);
+            })
+            .finally(function () {
+                LoopBackAuth.clearUser();
+                LoopBackAuth.clearStorage();
+                
+                return callback();
             });
+            
+            
         },
         thirdPartyLogin: function (provider) {
             var redirectObj = {
@@ -541,12 +552,15 @@ angular.module('app.services', [])
 .factory('AlertService', function () {
     var success = {},
         error = {},
+        hide = false,
         alert = false;
+    
     return {
         getSuccess: function () {
             return success;
         },
         setSuccess: function (value) {
+            this.reset();
             success = value;
             alert = true;
         },
@@ -554,6 +568,7 @@ angular.module('app.services', [])
             return error;
         },
         setError: function (value) {
+            this.reset();
             error = value;
             alert = true;
         },
@@ -564,6 +579,20 @@ angular.module('app.services', [])
         },
         hasAlert: function () {
             return alert;
+        }, 
+        messages: {
+            login: {
+                success: "We have successfully logged you in.",
+                error: "There was an error logging you in."
+            },
+            forgotPassword: {
+                success: "We have successfully sent an email to reset your password.",
+                error: "There was an error resetting your password."
+            },
+            forgotPassword: {
+                success: "We have successfully sent an email to reset your password.",
+                error: "There was an error resetting your password."
+            },
         }
     }
 })
@@ -1230,9 +1259,9 @@ angular.module('app.services', [])
         Hunter: ['Rexxar', 'Alleria'],
         Druid: ['Malfurion']
     };
-    hs.mechanics = ['Battlecry', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Divine Shield', 'Enrage', 'Freeze', 'Inspire', 'Jousting', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];
+    hs.mechanics = ['Battlecry', 'Charge', 'Choose One', 'Combo', 'Deathrattle', 'Discover', 'Divine Shield', 'Enrage', 'Freeze', 'Inspire', 'Jousting', 'Overload', 'Secret', 'Silence', 'Spell Damage', 'Stealth', 'Summon', 'Taunt', 'Windfury'];
     hs.deckTypes = ['None', 'Aggro', 'Control', 'Midrange', 'Combo', 'Theory Craft'];
-    hs.expansions = ['Basic', 'Naxxramas', 'Goblins Vs. Gnomes', 'Blackrock Mountain', 'The Grand Tournament'];
+    hs.expansions = ['Basic', 'Naxxramas', 'Goblins Vs. Gnomes', 'Blackrock Mountain', 'The Grand Tournament', 'League of Explorers'];
 
     return hs;
 })

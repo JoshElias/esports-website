@@ -176,7 +176,7 @@ angular.module('app.controllers', ['ngCookies'])
                 total: articlesTotal.count,
                 data: articles
             };
-
+            
             // articles
             $scope.getArticleDesc = function (desc, limit) {
                 var words = desc.split(' ');
@@ -420,25 +420,28 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('ProfileCtrl', ['$scope', 'profile', 'postCount', 'deckCount', 'guideCount', 'MetaService', 'HOTSGuideService', 'LoopBackAuth',
-        function ($scope, profile, postCount, deckCount, guideCount, MetaService, HOTSGuideService, LoopBackAuth) {
+    .controller('ProfileCtrl', ['$scope', 'profile', 'postCount', 'deckCount', 'guideCount', 'MetaService', 'HOTSGuideService', 'LoopBackAuth', 'User',
+        function ($scope, profile, postCount, deckCount, guideCount, MetaService, HOTSGuideService, LoopBackAuth, User) {
             $scope.user = profile;
 
             $scope.postCount = postCount.count;
             $scope.deckCount = deckCount.count;
             $scope.guideCount = guideCount.count;
 
-
-
             function isMyProfile() {
-                if(LoopBackAuth.currentUserId == $scope.user.username) {
-                    return 'My Profile';
+                if(LoopBackAuth.currentUserId == $scope.user.id && User.isAuthenticated()) {
+                    return true;
                 } else {
-                    return '@' + $scope.user.username + ' - Profile';
+                    return false;
                 }
             }
+            
+            $scope.getIsLogged = function () {
+                return isMyProfile();
+            }
+            
             $scope.metaservice = MetaService;
-            $scope.metaservice.set(isMyProfile());
+            $scope.metaservice.set(($scope.getIsLogged()) ? 'My Profile' : '@' + $scope.user.username + ' - Profile');
 
 
 
@@ -459,30 +462,11 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.plan = user.subscription.plan || 'tempostorm_quarterly';
             $scope.email = user.email;
             $scope.isLinked = isLinked;
-            $scope.cardPlaceholder = "xxxx xxxx xxxx xxxx"
             
-            $scope.loading = false;
-            
-//            if ($scope.profile.subscription.isSubscribed) {
-//                $scope.plan = dataProfileEdit.user.subscription.plan || 'tempostorm_semi';
-//            } else {
-//                var plan;
-//                switch ($stateParams.plan) {
-//                    case 'monthly':
-//                        plan = 'tempostorm_monthly';
-//                        break;
-//                    case 'quarterly':
-//                        plan = 'tempostorm_quarterly';
-//                        break;
-//                    case 'semi':
-//                    default:
-//                        plan = 'tempostorm_semi';
-//                        break;
-//                }
-//                $scope.plan = plan;
-//            }
-            
-            
+            $scope.subform = {
+                isBusy: false,
+                cardPlaceholder: "xxxx xxxx xxxx xxxx"
+            };
             
             $scope.testString = function (str) {
                 var pattern = /^[\w\._-]*$/,
@@ -496,8 +480,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.twitchLink = function () {
-                  thirdPartyLogin('twitch');
-                };
+                thirdPartyLogin('twitch');
+            };
 
             $scope.bnetLink = function () {
                 thirdPartyLogin("bnet");
@@ -519,111 +503,90 @@ angular.module('app.controllers', ['ngCookies'])
 //                AlertService.reset();
 //            }
             
-            $scope.isLoading = function () {
-//                console.log($scope.loading);
-                return $scope.loading;
+            $scope.resetPassword = function () {
+                User.resetPassword({
+                    email: LoopBackAuth.currentUserData.email
+                })
+                .$promise
+                .then(function () {
+                    AlertService.setSuccess({ show: true, msg: 'You will recieve an email shortly with a verification link to reset your password.' });
+                })
+                .catch(function (err) {
+                    AlertService.setError({ show: true, msg: 'There was an error resetting your password. ' + err.status + ": " + err.data.error.message });
+                });
             }
             
-//            $scope.subscribe = function (code, result) {
-//                $scope.loading = true;
-//                console.log("setloading to true");
-//                
+            $scope.isLoading = function () {
+                return $scope.subform.isBusy;
+            }
+            
+            $scope.setLoading = function (b) {
+                console.log("setLoading:", b);
+                $scope.subform.isBusy = b;
+            }
+            
+            $scope.subscribe = function (code, result) {
+                $scope.setLoading(true);
+                
+                User.setSubscriptionPlan({}, { plan: $scope.plan, cctoken: result.id })
+                .$promise
+                .then(function (data) {
+                    
+                    $scope.number = undefined;
+                    $scope.cvc = undefined;
+                    $scope.expiry = undefined;
+                    $scope.error =  '';
+                    
+                    AlertService.setSuccess({ show: true, msg: 'We have successfully processed your payment. Thank you for subscribing with Tempostorm!' });
+//                    $scope.success.show = true;
+                    
+                    $scope.user.subscription.isSubscribed = true;
+                    $scope.setLoading(false);
+                })
+                .catch(function (err) {
+                    console.log("ERROR:", err);
+                    AlertService.setError({ show: true, msg: 'There has been an error processing your payment. ' + err.status + ": " + err.data.error.message });
+                    $scope.setLoading(false);
+                });
+            };
+
+            $scope.updateCard = function (code, result) {
+                User.setSubscriptionCard({}, { cctoken: result.id })
+                .$promise
+                .then(function (data) {
+                    $scope.setLoading(false);
+                    
+                    $scope.number = undefined;
+                    $scope.cvc = undefined;
+                    $scope.expiry = undefined;
+                })
+                .catch(function (err) {
+                    console.log("ERROR:", err);
+                    $scope.setLoading(false);
+                });
+            }
+
+//            $scope.updatePlan = function () {
 //                User.setSubscriptionPlan({}, { plan: $scope.plan, cctoken: result.id })
 //                .$promise
 //                .then(function (data) {
-//                    $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
-//                    $scope.number = '';
-//                    $scope.cvc = '';
-//                    $scope.expiry = '';
-//                    $scope.error =  '';
-////                    $scope.setSuccess('We have successfully processed your payment. Thank you for subscribing with TempoStorm.com!');
-//                    $scope.loading = false;
-//                })
-//                .catch(function (err) {
-//                    console.log(err);
-//                    $scope.loading = false;
+//                    console.log(data);
+////                    $scope.profile.subscription.plan = data.plan;
+////                    $scope.plan = data.plan;
 //                });
-//            };
+//            }
 
-            $scope.updateCard = function (code, result) {
-                $scope.loading = true;
-
-                async.series([
-                    function (sCb) {
-                        if (result.error) {
-                            console.log(result);
-                        } else {
-                            User.setSubscriptionCard({}, { cctoken: result.id })
-                            .$promise
-                            .then(function (data) {
-                                console.log(data);
-                                
-//                                $scope.user.subscription.last4 = data.subscription.last4;
-//                                $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
-//                                $scope.number = '';
-//                                $scope.cvc = '';
-//                                $scope.expiry = '';
-                                
-                                return sCb(null);
-                            })
-                            .catch(function (err) {
-                                sCb(err);
-                            });
-                        }
-                    }
-                ], function (err) {
-                    if (err) { console.log("ERROR:", err); }
-                    
-                    console.log("FUCK THIS SHIT", $scope.isLoading());
-                    
-                    $scope.loading = false;
-                });
-                
-//                console.log($scope.loading);
-//                $timeout(function () {
-//                    $scope.loading = false;
-//                    console.log($scope.loading);
-//                }, 10000);
-                
-                
-//                if (result.error) {
-//                    console.log(result);
-//                } else {
-//                    User.setSubscriptionCard({}, { cctoken: result.id })
-//                    .$promise
-//                    .then(function (data) {
-//                        if (!data.success) {
-//                            console.log('error');
-//                        } else {
-//                            $scope.user.subscription.last4 = data.subscription.last4;
-//                            $scope.cardPlaceholder = 'xxxx xxxx xxxx ' + data.subscription.last4;
-//                            $scope.number = '';
-//                            $scope.cvc = '';
-//                            $scope.expiry = '';
-//                        }
-//                        
-//                        $timeout(function () {
-//                            setLoading(false);
-//                        })
-//                    });
-//                }
-            }
-
-            $scope.updatePlan = function () {
-                SubscriptionService.setPlan($scope.plan).success(function (data) {
-                    if (data.success) {
-                        SubscriptionService.setTsPlan(data.plan);
-                        $scope.profile.subscription.plan = data.plan;
-                        $scope.plan = data.plan;
-                    }
-                });
-            }
-
-            $scope.cancel = function () {
+            $scope.cancelSubscription = function () {
+                $scope.setLoading(true);
                 User.cancelSubscription()
                 .$promise
                 .then(function () {
+                    $scope.setLoading(false);
                     $scope.user.subscription.isSubscribed = false;
+                    AlertService.setSuccess({ show: true, msg: 'You have successfully unsubscribed from Tempostorm.' });
+                })
+                .catch(function (err) {
+                    AlertService.setError({ show: true, msg: 'There has been an error processing your payment. ' + err.status + ": " + err.data.error.message })
                 });
             }
 
@@ -639,7 +602,6 @@ angular.module('app.controllers', ['ngCookies'])
                             })
                             .$promise
                             .then(function (data) {
-                                console.log("Successfully changed email");
                                 return seriesCb();
                             })
                             .catch(function (err) {
@@ -657,9 +619,19 @@ angular.module('app.controllers', ['ngCookies'])
                         .$promise
                         .then(function (data) {
                             return seriesCb();
+                        })
+                        .catch(function () {
+                            return seriesCb(err);
                         });
                     }
-                ])
+                ], function (err) {
+                    if (err) {
+                        AlertService.setError({ show: true, msg: 'There has been an error updating your profile. ' + err.status + ": " + err.data.error.message });
+                        return false;
+                    }
+                    
+                    AlertService.setSuccess({ show: true, msg: 'Your profile has been successfully updated.' });
+                })
             };
         }
     ])

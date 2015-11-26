@@ -3,26 +3,25 @@
 
 
 <div class="row basic-wrapper">
-    <div class="notification clearfix" ng-class="{ 'hidden' : user.email === email }">
-        <div class="pull-left">!</div> <p>Make sure to check your inbox for a confirmation email after you save your new changes.</p>
-    </div>
     <div class="col-sm-3">
         <div class="row no-wrap">
             <img gravatar-src="user.email" class="img-responsive img-circle gravatar">
         
-            <a class="gravatar-button col-sm-10 padding-none"><h2>ADD IMAGE</h2></a>
+            <a class="gravatar-button col-sm-10 padding-none" href="http://www.gravatar.com" target="_blank"><h2>ADD IMAGE</h2></a>
             <a class="gravatar-button col-sm-2 padding-none"><h2><i class="fa fa-link"></i></h2></a>
         </div>
     </div>
     <div class="col-sm-9">
-        
+        <div class="notification clearfix" ng-class="{ 'hidden' : user.email === email }">
+            <div class="pull-left">!</div> <p>An email will be sent to the new address. Please confirm your new email before changes take effect.</p>
+        </div>
         <div class="form-group basic-form">
             <div class="row">
                 <span class="col-sm-6"><input ng-model="email" type="email" class="form-control" placeholder="Email"><div class="email-charm">@</div></span>
                 <span class="col-sm-6"><input ng-model="user.firstName" type="firstname" class="form-control" placeholder="First Name"></span>
             </div>
             <div class="row">
-                <span class="col-sm-6"><button class="reset-password"><h2>RESET PASSWORD</h2></button></span>
+                <span class="col-sm-6"><button ng-click="resetPassword()" class="reset-password"><h2>RESET PASSWORD</h2></button></span>
                 <span class="col-sm-6"><input ng-model="user.lastName" type="lastname" class="form-control" placeholder="Last Name"></span>
             </div>
             <div class="row">

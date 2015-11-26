@@ -41,7 +41,7 @@ var redbull = angular.module('app.redbull', [
             views: {
                 redbull: {
                     templateUrl: moduleTpl + 'home.html',
-                    controller: 'HomeCtrl'
+                    controller: 'RedbullHomeCtrl'
                 }
             }
         })
@@ -60,7 +60,19 @@ var redbull = angular.module('app.redbull', [
             views: {
                 'redbull-draft': {
                     templateUrl: moduleTpl + 'draft.packs.html',
-                    controller: 'DraftPacksCtrl'
+                    controller: 'DraftPacksCtrl',
+                    resolve: {
+                        cards: ['Card', function (Card) {
+                            return Card.find({
+                                filter: {
+                                    where: {
+                                        deckable: true,
+                                        isActive: true
+                                    }
+                                }
+                            }).$promise;
+                        }]
+                    }
                 }
             },
             access: { auth: true }

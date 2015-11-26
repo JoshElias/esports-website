@@ -1456,7 +1456,7 @@ input[type=range]:focus::-ms-fill-upper {
 .page .login-form,
 .page .signup-form,
 .page .forgot-form,
-.page .verify-form { margin: 0 auto; max-width: 320px; height:450px; }
+.page .verify-form { text-align: center; margin: 0 auto; max-width: 320px; height:450px; }
 
 .page .user-form { color: white; padding: 65px 0px; background: rgba(0,0,0,.6) }
 .page .user-form .form-group { 
