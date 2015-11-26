@@ -35,7 +35,6 @@ var app = angular.module('app', [
 
             // handle state changes
             $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
-                console.log(toState);
                 //ngProgress.start();
                 if (toState.redirectTo) {
                     event.preventDefault();
