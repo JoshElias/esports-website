@@ -581,7 +581,7 @@ module.exports = function(User) {
 
         var ctx = loopback.getCurrentContext();
         var accessToken = ctx.get("accessToken");
-        var userId = accessToken.id;
+        var userId = accessToken.userId;
 
         var isInRoles = {};
         async.eachSeries(roleNames, function(roleName, eachCb) {
@@ -602,7 +602,7 @@ module.exports = function(User) {
         var UserIdentity = User.app.models.userIdentity;
         var ctx = loopback.getCurrentContext();
         var accessToken = ctx.get("accessToken");
-        var userId = accessToken.id.toString();
+        var userId = accessToken.userId.toString();
 
         var isLinked = {};
         async.mapSeries(providers, function(provider, seriesCb) {
