@@ -583,9 +583,15 @@ module.exports = function(User) {
         var accessToken = ctx.get("accessToken");
         var userId = accessToken.id;
 
+        var isInRoles = {};
         async.eachSeries(roleNames, function(roleName, eachCb) {
-            Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, eachCb);
-        }, cb);
+            Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function(err, isRole) {
+                isInRoles[roleName] = isRole;
+                eachCb(err)
+            });
+        }, function(err) {
+            cb(err, isInRoles);
+        });
 
         return cb.promise;
     };
@@ -593,19 +599,20 @@ module.exports = function(User) {
     User.isLinked = function (providers, cb) {
         cb = cb || utils.createPromiseCallback();
         
-        if(typeof provider === "undefined")
-            return cb(undefined, false);
-        
         var UserIdentity = User.app.models.userIdentity;
         var ctx = loopback.getCurrentContext();
         var accessToken = ctx.get("accessToken");
         var userId = accessToken.id.toString();
 
+        var isLinked = {};
         async.mapSeries(providers, function(provider, seriesCb) {
             UserIdentity.findOne({where:{userId:userId, provider:provider}}, function(err, identity) {
-                return seriesCb(err, !!identity)
+                isLinked[provider] = !!identity;
+                return seriesCb(err)
             });
-        }, cb);
+        }, function(err) {
+            cb(err, isLinked);
+        });
 
         return cb.promise;
     };
@@ -693,9 +700,7 @@ module.exports = function(User) {
         'isLinked',
         {
             description: "Checks if a user has a 3rd party link",
-            accepts: [
-                {arg: 'providers', type: 'array', required:true, http: {source: 'query'}}
-            ],
+            accepts: {arg: 'providers', type: 'array', required:true, http: {source: 'query'}},
             returns: {arg: 'isLinked', type: 'object'},
             http: {verb: 'get'},
             isStatic: true
