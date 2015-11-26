@@ -574,22 +574,41 @@ module.exports = function(User) {
 
 
     User.isInRoles = function (roleNames, cb) {
+        cb = cb || utils.createPromiseCallback();
+
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
-
-        cb = cb || utils.createPromiseCallback();
 
         var ctx = loopback.getCurrentContext();
         var accessToken = ctx.get("accessToken");
         var userId = accessToken.userId;
-
         var isInRoles = {};
+
+        // Check for the roles we already have
+        if(ctx.active) {
+            if(typeof ctx.active.http.req.roles !== "object")
+                ctx.active.http.req.roles = {};
+
+            var currentRoles = ctx.active.http.req.roles;
+            for(var key in currentRoles) {
+                isInRoles[key] = currentRoles[key];
+            }
+        }
+
         async.eachSeries(roleNames, function(roleName, eachCb) {
+            if(typeof isInRoles[roleName] !== "undefined")
+                return eachCb();
+
             Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function(err, isRole) {
                 isInRoles[roleName] = isRole;
                 eachCb(err)
             });
         }, function(err) {
+            if(err) return cb(err);
+
+            if(ctx.active) {
+                ctx.active.http.req.roles = isInRoles;
+            }
             cb(err, isInRoles);
         });
 
