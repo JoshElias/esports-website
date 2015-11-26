@@ -215,9 +215,9 @@ module.exports = function(User) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        Role.isInRoles(ctx.req.accessToken.id.toString(), ["$owner", "$admin"], function(err, isInRoles) {
+        User.isInRoles(ctx.req.accessToken.id.toString(), ["$owner", "$admin"], function(err, isInRoles) {
             if(err) return finalCb();
-            if(!isInRoles) return removeFields();
+            if(!isInRoles.all) return removeFields();
             else return finalCb();
         });
     };
@@ -641,7 +641,7 @@ module.exports = function(User) {
         return cb.promise;
     };
 
-    User.getCurrent = function( finalCb) {
+    User.getCurrent = function(finalCb) {
 
         var err = new Error('no user found');
         err.statusCode = 400;
