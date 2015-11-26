@@ -14,6 +14,15 @@ module.exports = function(User) {
     var DEFAULT_MAX_TTL = 31556926; // 1 year in seconds
 
 
+    var noUserErr = new Error('unable to find user');
+    noUserErr.statusCode = 400;
+    noUserErr.code = 'USER_NOT_FOUND';
+
+    var invalidTokenErr = new Error('Invalid token');
+    invalidTokenErr.statusCode = 400;
+    invalidTokenErr.code = 'INVALID_TOKEN';
+
+
 
     User.afterRemote("login", function (ctx, remoteMethodOutput, next) {
         ctx.req.logIn(ctx.result.toJSON().user, function (err) {
@@ -88,7 +97,68 @@ module.exports = function(User) {
                 }],
             finalCallback);
         }
+
+
+        /**
+         * Confirm the user's identity.
+         *
+         * @param {Any} userId
+         * @param {String} token The validation token
+         * @param {String} redirect URL to redirect the user to once confirmed
+         * @callback {Function} callback
+         * @param {Error} err
+         */
+        User.confirm = function (uid, token, redirect, fn) {
+            fn = fn || utils.createPromiseCallback();
+
+            User.findOne({where:{id:uid, verificationToken:token}}, function (err, user) {
+                if (err) return fn(err);
+                else if(!user) return fn(noUserErr);
+
+                user.verificationToken = undefined;
+                user.emailVerified = true;
+                user.save(function (err) {
+                    if (err) {
+                        return fn(err);
+                    }
+
+                    var ctx = loopback.getCurrentContext();
+                    if (!ctx || !ctx.active) {
+                        return fn(noUserErr);
+                    }
+
+                    var res = ctx.active.http.res;
+                    var req = ctx.active.http.req;
+                    user.createAccessToken("1209600", function (err, token) {
+                        if (err) return fn(err);
+
+                        token.__data.user = user;
+                        req.logIn(user, function (err) {
+                            if (err) return next(err);
+
+                            res.cookie('access_token', token.id.toString(), {
+                                signed: req.signedCookies ? true : false,
+                                // maxAge is in ms
+                                maxAge: token.ttl
+                            });
+                            res.cookie('userId', user.id.toString(), {
+                                signed: req.signedCookies ? true : false,
+                                maxAge: token.ttl
+                            });
+
+                            fn(err, token);
+                        });
+                    });
+                });
+            });
+
+            return fn.promise;
+        };
+
     });
+
+
+
     /*!
      * Hash the plain password
      */
@@ -154,72 +224,7 @@ module.exports = function(User) {
 
 
 
-    /**
-     * Confirm the user's identity.
-     *
-     * @param {Any} userId
-     * @param {String} token The validation token
-     * @param {String} redirect URL to redirect the user to once confirmed
-     * @callback {Function} callback
-     * @param {Error} err
-     */
-    User.confirm = function (uid, token, redirect, fn) {
-        fn = fn || utils.createPromiseCallback();
-        User.findById(uid, function (err, user) {
-            if (err) {
-                fn(err);
-            } else {
-                if (user && user.verificationToken === token) {
-                    user.verificationToken = undefined;
-                    user.emailVerified = true;
-                    user.save(function (err) {
-                        if (err) {
-                            fn(err);
-                        } else {
-                            var ctx = loopback.getCurrentContext();
-                            if (ctx.active) {
-                                var res = ctx.active.http.res;
-                                var req = ctx.active.http.req;
-                                user.createAccessToken("1209600", function (err, token) {
-                                    if (err) return fn(err);
-                                    token.__data.user = user;
-                                    req.logIn(user, function (err) {
-                                        if (err) return next(err);
 
-                                        res.cookie('access_token', token.id.toString(), {
-                                            signed: req.signedCookies ? true : false,
-                                            // maxAge is in ms
-                                            maxAge: token.ttl
-                                        });
-                                        res.cookie('userId', user.id.toString(), {
-                                            signed: req.signedCookies ? true : false,
-                                            maxAge: token.ttl
-                                        });
-
-                                        fn(err, token);
-                                    });
-                                });
-                            } else {
-                                fn(err, user);
-                            }
-                        }
-                    });
-                } else {
-                    if (user) {
-                        err = new Error('Invalid token: ' + token);
-                        err.statusCode = 400;
-                        err.code = 'INVALID_TOKEN';
-                    } else {
-                        err = new Error('User not found: ' + uid);
-                        err.statusCode = 404;
-                        err.code = 'USER_NOT_FOUND';
-                    }
-                    fn(err);
-                }
-            }
-        });
-        return fn.promise;
-    };
 
     //send password reset link when requested
     User.on('resetPasswordRequest', function (info) {
@@ -256,10 +261,10 @@ module.exports = function(User) {
     });
 
 
-    User.changePassword = function (data, cb) {
+    User.changePassword = function (email, password, token, cb) {
         cb = cb || utils.createPromiseCallback();
 
-        User.findOne({where: {email: data.email}}, function (err, user) {
+        User.findOne({where: {email: email}}, function (err, user) {
             if (err) {
                 cb(err);
             } else if (user) {
@@ -269,10 +274,10 @@ module.exports = function(User) {
                 err.code = 'UNABLE_TO_CHANGE_PASSWORD';
 
                 // check if the user has the access token
-                user.accessTokens.findById(data.token, function (tokenErr, accessToken) {
+                user.accessTokens.findById(token, function (tokenErr, accessToken) {
                     if (tokenErr) return cb(err);
 
-                    var newPassword = User.hashPassword(data.password);
+                    var newPassword = User.hashPassword(password);
                     user.updateAttribute("password", newPassword, function (err, instance) {
                         if (err) {
                             var err = new Error('unable to save new password');
@@ -296,83 +301,112 @@ module.exports = function(User) {
     };
 
 
-    User.resetEmail = function (data, cb) {
+    User.resetEmail = function (email, cb) {
         cb = cb || utils.createPromiseCallback();
         var ttl = User.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
-        if (typeof data.email === 'string') {
-            var err = new Error('unable to find user');
-            err.statusCode = 400;
-            err.code = 'USER_NOT_FOUND';
+        User.getCurrent(function(err, user) {
+            if(err) return cb(err);
+            else if(!user) return cb(noUserErr);
 
-            User.findOne({where:{id:data.uid, email:data.email}}, function (userErr, user) {
-                if (userErr) {
-                    cb(err);
-                } else if (user) {
-                    user.accessTokens.create({ttl: ttl}, function (tokenErr, accessToken) {
-                        if (tokenErr) {
-                            var err = new Error('unable to create access token for user');
-                            err.statusCode = 400;
-                            err.code = 'UNABLE_TO_GENERATE_TOKEN';
-                            return cb(err);
-                        }
-
-                        var mailOptions = {
-                            from: {name: "Tempostorm", email: "admin@tempostorm.com"},
-                            to: {name: user.username, email: data.email, type: "to"},
-                            template: {
-                                name: "test-email-change-confirmed"
-                            },
-                            subject: "Email Updated",
-                            //text: "text message",
-                            //html: "<b>message</b>"
-                            vars: [{
-                                "rcpt": data.email,
-                                "vars": [{
-                                    'name': 'UID',
-                                    'content': user.id.toString()
-                                }, {
-                                    'name': 'TOKEN',
-                                    'content': accessToken.id.toString()
-                                }, {
-                                    'name': 'EMAIL',
-                                    'content': data.email
-                                }]
-                            }],
-                            tags: ["signup"]
-                        };
-
-                        var Email = User.app.models.Email;
-                        Email.send(mailOptions, function (err, email) {
-                            if (err) {
-                                var err = new Error('unable to send verification email');
-                                err.statusCode = 400;
-                                err.code = 'UNABLE_TO_SEND_EMAIL';
-                                return cb(err);
-                            }
-                            return cb();
-                        });
-
-                    });
-                } else {
-                    var err = new Error('email is required');
+            user.accessTokens.create({ttl: ttl}, function (tokenErr, accessToken) {
+                if (tokenErr) {
+                    var err = new Error('unable to create access token for user');
                     err.statusCode = 400;
-                    err.code = 'EMAIL_REQUIRED';
-                    cb(err);
+                    err.code = 'UNABLE_TO_GENERATE_TOKEN';
+                    return cb(err);
                 }
+
+                var mailOptions = {
+                    from: {name: "Tempostorm", email: "admin@tempostorm.com"},
+                    to: {name: user.username, email: email, type: "to"},
+                    template: {
+                        name: "test-email-change-confirmed"
+                    },
+                    subject: "Email Updated",
+                    //text: "text message",
+                    //html: "<b>message</b>"
+                    vars: [{
+                        "rcpt": data.email,
+                        "vars": [{
+                            'name': 'UID',
+                            'content': user.id.toString()
+                        }, {
+                            'name': 'TOKEN',
+                            'content': accessToken.id.toString()
+                        }, {
+                            'name': 'EMAIL',
+                            'content': email
+                        }]
+                    }],
+                    tags: ["signup"]
+                };
+
+                var Email = User.app.models.Email;
+                Email.send(mailOptions, function (err, email) {
+                    if (err) {
+                        var err = new Error('unable to send verification email');
+                        err.statusCode = 400;
+                        err.code = 'UNABLE_TO_SEND_EMAIL';
+                        return cb(err);
+                    }
+                    return cb();
+                });
+
             });
-        } else {
-            var err = new Error('email is required');
-            err.statusCode = 400;
-            err.code = 'EMAIL_REQUIRED';
-            cb(err);
-        }
+
+        });
+
         return cb.promise;
-    }
+    };
 
 
     User.changeEmail = function (uid, token, email, cb) {
         cb = cb || utils.createPromiseCallback();
+
+        var AccessToken = User.app.models.AccessToken;
+
+        var emailErr = new Error('unable to change email');
+        emailErr.statusCode = 400;
+        emailErr.code = 'UNABLE_TO_CHANGE_EMAIL';
+
+        AccessToken.findOne({where:{id:token, userId:uid}, include:"user"}, function(err, accessToken) {
+            if(err || !accessToken || !accessToken.user) return cb(invalidTokenErr);
+
+            accessToken.user.updateAttribute("email", email, function (err, emailInstance) {
+                if (err) return cb(err);
+
+
+                var ctx = loopback.getCurrentContext();
+                if (!ctx || !ctx.active) {
+                    return cb(emailErr);
+                }
+
+                var res = ctx.active.http.res;
+                var req = ctx.active.http.req;
+                user.createAccessToken("1209600", function (err, loginToken) {
+                    if (err) return cb(invalidTokenErr);
+                    loginToken.__data.user = user;
+                    req.logIn(user, function (err) {
+                        if (err) return next(err);
+
+                        res.cookie('access_token', loginToken.id.toString(), {
+                            signed: req.signedCookies ? true : false,
+                            // maxAge is in ms
+                            maxAge: loginToken.ttl
+                        });
+                        res.cookie('userId', user.id.toString(), {
+                            signed: req.signedCookies ? true : false,
+                            maxAge: loginToken.ttl
+                        });
+
+                        res.redirect("https://52.26.75.137");
+                    });
+
+                    return cb();
+                });
+            });
+        });
 
         User.findById(uid, function (err, user) {
             if (err) {
@@ -493,44 +527,44 @@ module.exports = function(User) {
 
         function revokeRole(roleName, assignCb) {
             async.waterfall([
-                    // check if user is already that role
-                    function (seriesCb) {
-                        Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function (err, isRole) {
-                            if (err) return seriesCb(err);
+                // check if user is already that role
+                function (seriesCb) {
+                    Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function (err, isRole) {
+                        if (err) return seriesCb(err);
 
-                            if (!isRole) return seriesCb("ok");
-                            else return seriesCb(undefined)
-                        });
-                    },
-                    // Get the new role
-                    function (seriesCb) {
-                        Role.findOne({where: {name: roleName}}, function (err, role) {
-                            if (err) return seriesCb(err);
+                        if (!isRole) return seriesCb("ok");
+                        else return seriesCb(undefined)
+                    });
+                },
+                // Get the new role
+                function (seriesCb) {
+                    Role.findOne({where: {name: roleName}}, function (err, role) {
+                        if (err) return seriesCb(err);
 
-                            if (!role) {
-                                var roleErr = new Error('no role found');
-                                roleErr.statusCode = 400;
-                                roleErr.code = 'ROLE_NOT_FOUND';
-                                return seriesCb(roleErr);
-                            }
+                        if (!role) {
+                            var roleErr = new Error('no role found');
+                            roleErr.statusCode = 400;
+                            roleErr.code = 'ROLE_NOT_FOUND';
+                            return seriesCb(roleErr);
+                        }
 
-                            return seriesCb(undefined, role);
-                        });
-                    },
-                    // Remove the user to that role
-                    function (role, seriesCb) {
-                        RoleMapping.destroyAll({
-                            principalType: RoleMapping.USER,
-                            principalId: userId.toString(),
-                            roleId: role.id
-                        }, function (err) {
-                            seriesCb(err);
-                        });
-                    }],
-                function (err) {
-                    if (err && err !== "ok") return assignCb(err);
-                    return assignCb();
-                });
+                        return seriesCb(undefined, role);
+                    });
+                },
+                // Remove the user to that role
+                function (role, seriesCb) {
+                    RoleMapping.destroyAll({
+                        principalType: RoleMapping.USER,
+                        principalId: userId.toString(),
+                        roleId: role.id
+                    }, function (err) {
+                        seriesCb(err);
+                    });
+                }],
+            function (err) {
+                if (err && err !== "ok") return assignCb(err);
+                return assignCb();
+            });
         }
 
         async.eachSeries(roleNames, revokeRole, cb);
@@ -546,34 +580,38 @@ module.exports = function(User) {
         cb = cb || utils.createPromiseCallback();
 
         var ctx = loopback.getCurrentContext();
-        var res = ctx.active.http.res;
-        var req = ctx.active.http.req;
-
         var accessToken = ctx.get("accessToken");
-        var userId = accessToken.id;
+        var userId = accessToken.userId;
 
-        var results = {};
+        var isInRoles = {};
         async.eachSeries(roleNames, function(roleName, eachCb) {
-            Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, eachCb);
-        }, cb);
+            Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function(err, isRole) {
+                isInRoles[roleName] = isRole;
+                eachCb(err)
+            });
+        }, function(err) {
+            cb(err, isInRoles);
+        });
 
         return cb.promise;
     };
 
-    User.isLinked = function (provider, cb) {
+    User.isLinked = function (providers, cb) {
         cb = cb || utils.createPromiseCallback();
-        
-        if(typeof provider === "undefined")
-            return cb(undefined, false);
         
         var UserIdentity = User.app.models.userIdentity;
         var ctx = loopback.getCurrentContext();
         var accessToken = ctx.get("accessToken");
-        var userId = accessToken.id.toString();
+        var userId = accessToken.userId.toString();
 
-        UserIdentity.findOne({where:{userId:userId, provider:provider}}, function(err, identity) {
-            if(err) return cb(err);
-            return cb(undefined, !!identity)
+        var isLinked = {};
+        async.mapSeries(providers, function(provider, seriesCb) {
+            UserIdentity.findOne({where:{userId:userId, provider:provider}}, function(err, identity) {
+                isLinked[provider] = !!identity;
+                return seriesCb(err)
+            });
+        }, function(err) {
+            cb(err, isLinked);
         });
 
         return cb.promise;
@@ -598,12 +636,13 @@ module.exports = function(User) {
             return finalCb(err);
 
         User.app.models.user.findById(req.accessToken.id, function (err, user) {
-            if (err || !user) return finalCb(err);
+            if (err) return finalCb(err);
+            else if(user) {
+                ctx.req.currentUser = user;
+                ctx.set("currentUser", user);
+            }
 
-            var userData = user.toJSON();
-            ctx.req.currentUser = userData;
-            ctx.set("currentUser", userData);
-            finalCb(undefined, userData);
+            finalCb(undefined, user);
         });
     };
 
@@ -611,10 +650,11 @@ module.exports = function(User) {
     User.setSubscriptionPlan = function (plan, cctoken, cb) {
         cb = cb || utils.createPromiseCallback();
 
-        User.getCurrent(function (err, currentUser) {
-            if (err) cb(err);
+        User.getCurrent(function (err, user) {
+            if (err) return cb(err);
+            else if(!user) return cb(noUserErr);
 
-            subscription.setPlan(currentUser, plan, cctoken, cb);
+            subscription.setPlan(user, plan, cctoken, cb);
         });
     };
 
@@ -622,20 +662,22 @@ module.exports = function(User) {
     User.setSubscriptionCard = function (cctoken, cb) {
         cb = cb || utils.createPromiseCallback();
 
-        User.getCurrent(function (err, currentUser) {
-            if (err) cb(err);
+        User.getCurrent(function (err, user) {
+            if (err) return cb(err);
+            else if(!user) return cb(noUserErr);
 
-            subscription.setCard(currentUser, cctoken, cb);
+            subscription.setCard(user, cctoken, cb);
         });
     };
 
     User.cancelSubscription = function (cb) {
         cb = cb || utils.createPromiseCallback();
 
-        User.getCurrent(function (err, currentUser) {
-            if (err) cb(err);
+        User.getCurrent(function (err, user) {
+            if (err) return cb(err);
+            else if(!user) return cb(noUserErr);
 
-            subscription.cancel(currentUser, cb);
+            subscription.cancel(user, cb);
         });
     };
 
@@ -646,7 +688,7 @@ module.exports = function(User) {
         {
             description: "Checks if a user is of role",
             accepts: [
-                {arg: 'roleNames', type: 'array', http: {source: 'query'}}
+                {arg: 'roleNames', type: 'array', required:true, http: {source: 'query'}}
             ],
             returns: {arg: 'isInRoles', type: 'object'},
             http: {verb: 'get'},
@@ -658,10 +700,8 @@ module.exports = function(User) {
         'isLinked',
         {
             description: "Checks if a user has a 3rd party link",
-            accepts: [
-                {arg: 'provider', type: 'string', http: {source: 'query'}}
-            ],
-            returns: {arg: 'isLinked', type: 'boolean'},
+            accepts: {arg: 'providers', type: 'array', required:true, http: {source: 'query'}},
+            returns: {arg: 'isLinked', type: 'object'},
             http: {verb: 'get'},
             isStatic: true
         }
@@ -672,7 +712,11 @@ module.exports = function(User) {
         'changePassword',
         {
             description: "Changes user's password",
-            accepts: {arg: 'data', type: 'object', http: {source: 'body'}},
+            accepts: [
+                {arg: 'email', type: 'string', required:true, http: {source: 'form'}},
+                {arg: 'password', type: 'string', required:true, http: {source: 'form'}},
+                {arg: 'token', type: 'string', required:true, http: {source: 'form'}}
+            ],
             http: {verb: 'post'},
             isStatic: true
         }
@@ -682,7 +726,7 @@ module.exports = function(User) {
         'resetEmail',
         {
             description: "Resets a user's email",
-            accepts: {arg: 'data', type: 'object', http: {source: 'body'}},
+            accepts: {arg: 'email', type: 'string', required:true, http: {source: 'form'}},
             http: {verb: 'post'},
             isStatic: true
         }
@@ -693,9 +737,9 @@ module.exports = function(User) {
         {
             description: "Changes user's email",
             accepts: [
-                {arg: 'uid', type: 'string', http: {source: 'query'}},
-                {arg: 'token', type: 'string', http: {source: 'query'}},
-                {arg: 'email', type: 'string', http: {source: 'query'}},
+                {arg: 'uid', type: 'string', required:true, http: {source: 'query'}},
+                {arg: 'token', type: 'string', required:true, http: {source: 'query'}},
+                {arg: 'email', type: 'string', required:true, http: {source: 'query'}},
             ],
             http: {verb: 'get'},
             isStatic: true
@@ -707,8 +751,8 @@ module.exports = function(User) {
         {
             description: "derp",
             accepts: [
-                {arg: 'plan', type: 'string', http: {source: 'form'}},
-                {arg: 'cctoken', type: 'string', http: {source: 'form'}}
+                {arg: 'plan', type: 'string', required:true, http: {source: 'form'}},
+                {arg: 'cctoken', type: 'string', required:true, http: {source: 'form'}}
             ],
             http: {verb: 'post'},
             isStatic: true
@@ -719,7 +763,7 @@ module.exports = function(User) {
         'setSubscriptionCard',
         {
             description: "derp",
-            accepts: {arg: 'cctoken', type: 'string', http: {source: 'form'}},
+            accepts: {arg: 'cctoken', type: 'string', required:true, http: {source: 'form'}},
             http: {verb: 'post'},
             isStatic: true
         }
@@ -739,8 +783,8 @@ module.exports = function(User) {
         {
             description: "Assigns a role to a user",
             accepts: [
-                {arg: 'userId', type: 'string', http: {source: 'form'}},
-                {arg: 'roleNames', type: 'array', http: {source: 'form'}}
+                {arg: 'userId', type: 'string', required:true, http: {source: 'form'}},
+                {arg: 'roleNames', type: 'array', required:true, http: {source: 'form'}}
             ],
             http: {verb: 'post'},
             isStatic: true
@@ -752,8 +796,8 @@ module.exports = function(User) {
         {
             description: "Revokes roles of the user",
             accepts: [
-                {arg: 'userId', type: 'string', http: {source: 'form'}},
-                {arg: 'roleNames', type: 'array', http: {source: 'form'}}
+                {arg: 'userId', type: 'string', required:true, http: {source: 'form'}},
+                {arg: 'roleNames', type: 'array', required:true, http: {source: 'form'}}
             ],
             http: {verb: 'post'},
             isStatic: true

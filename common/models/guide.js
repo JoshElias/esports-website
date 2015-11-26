@@ -79,7 +79,7 @@ module.exports = function(Guide) {
                 return false;
 
             var now = new Date();
-            return now < deck.premium.expiryDate;
+            return now < guide.premium.expiryDate;
         }
 
         if(!ctx || !ctx.req || !ctx.req.accessToken)
