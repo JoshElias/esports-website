@@ -41,7 +41,7 @@ var redbull = angular.module('app.redbull', [
             views: {
                 redbull: {
                     templateUrl: moduleTpl + 'home.html',
-                    controller: 'HomeCtrl'
+                    controller: 'RedbullHomeCtrl'
                 }
             }
         })
