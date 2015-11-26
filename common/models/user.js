@@ -582,7 +582,9 @@ module.exports = function(User) {
         var ctx = loopback.getCurrentContext();
         var accessToken = ctx.get("accessToken");
         var userId = accessToken.userId;
+
         var isInRoles = {};
+        isInRoles.all = true;
 
         // Check for the roles we already have
         if(ctx.active) {
@@ -600,6 +602,9 @@ module.exports = function(User) {
                 return eachCb();
 
             Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function(err, isRole) {
+                if(isInRoles.all && !isRole) {
+                    isInRoles.all = false;
+                }
                 isInRoles[roleName] = isRole;
                 eachCb(err)
             });
