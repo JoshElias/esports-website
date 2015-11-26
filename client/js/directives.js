@@ -409,6 +409,10 @@ angular.module('app.directives', ['ui.load'])
                 }
             }
             
+            $scope.getErrors = function () {
+                return as.getError().errorList;
+            }
+            
         }],
         link: function ($scope, el, attrs) {
             var as = AlertService;

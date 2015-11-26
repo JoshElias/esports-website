@@ -7311,8 +7311,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminUserEditCtrl', ['$scope', 'User', '$state', '$window', 'AdminUserService', 'AlertService', 'user',
-        function ($scope, User, $state, $window, AdminUserService, AlertService, user) {
+    .controller('AdminUserEditCtrl', ['$scope', 'User', '$state', '$window', 'AdminUserService', 'AlertService', 'user', 'userRoles',
+        function ($scope, User, $state, $window, AdminUserService, AlertService, user, userRoles) {
 
             // load user
             $scope.user = user;
@@ -7332,59 +7332,21 @@ angular.module('app.controllers', ['ngCookies'])
             // edit user
             $scope.editUser = function () {
                 $scope.fetching = true;
-                if ($scope.user.changePassword) {
-                    if ($scope.user.password === $scope.user.newPassword) {
-                        User.changePassword($scope.user)
-                        .$promise
-                        .then(function (passChanged) {
-                            console.log('passChanged: ', passChanged);
-                            User.upsert($scope.user)
-                            .$promise
-                            .then(function (userUpdated) {
-                                console.log('userUpdated: ', userUpdated);
-                                $state.go('app.admin.users.list');
-                                $scope.fetching = false;
-                                return;
-                            })
-                            .catch(function (err) {
-                                console.log('User.upsert err: ', err);
-                                $scope.fetching = false;
-                                return;
-                            });
-                        })
-                        .catch(function (err) {
-                            console.log('User.changePassword err: ', err);
-                            $scope.fetching = false;
-                            return;
-                        });
-                    } else {
-                        // passwords don't match
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                        $scope.errors = ['New password and Confirm password fields do not match.'];
-                        $scope.fetching = false;
-                        return;
-                    }
-                } else {
-                    // just update Model without password
-                    User.updateAll({
-                        where: {
-                            id: user.id
-                        }
-                    }, $scope.user)
-                    .$promise
-                    .then(function (userUpdated) {
-                        console.log('userUpdated: ', userUpdated);
-                        $scope.fetching = false;
-                        $state.go('app.admin.users.list');
-                        return;
-                    })
-                    .catch(function (err) {
-                        console.log('User.upsert err: ', err);
-                        $scope.fetching = false;
-                        return;
-                    });
-                }
+                User.prototype$updateAttributes({
+                    id: user.id
+                }, $scope.user)
+                .$promise
+                .then(function (userUpdated) {
+                    console.log('userUpdated: ', userUpdated);
+                    AlertService.setSuccess({ show: true, msg: 'test' });
+                    User.assignRoles({})
+                    $scope.fetching = false;
+                })
+                .catch(function (err) {
+                    console.log('user.updateAttributes err: ', err);
+                    AlertService.setError({ show: true, msg: 'test', errorList: ['test1', 'test2'] });
+                    $scope.fetching = false;
+                });
                 
 //                AdminUserService.editUser($scope.user).success(function (data) {
 //                    if (!data.success) {
@@ -7750,6 +7712,14 @@ angular.module('app.controllers', ['ngCookies'])
 
                 return out;
             }
+            
+            .$promise
+            .then(function () {
+            
+            })
+            .catch(function (err) {
+                console.log('err: ', err);
+            });
 
             $scope.photoUpload = function ($files) {
                 if (!$files.length) return false;

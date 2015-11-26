@@ -1,0 +1,11 @@
+<div class="panel panel-danger error-modal animated" ng-show="show">
+    <div class="panel-heading">
+        <button type="button" class="close" aria-hidden="true" ng-click="show = false">&times;</button>
+        <strong>{{getMsg()}}</strong>
+    </div>
+    <div class="panel-body">
+        <ul class="error text-danger">
+            <li ng-repeat="error in getErrors()">{{error}}</li>
+        </ul>
+    </div>
+</div>

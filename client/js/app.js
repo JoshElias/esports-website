@@ -3854,12 +3854,12 @@ var app = angular.module('app', [
                                 return User.findById({
                                     id: userID,
                                     filter: {
-                                        fields: {
-                                            id: true,
-                                            isActive: true,
-                                            isAdmin: true,
-                                            isProvider: true
-                                        }
+//                                        fields: {
+//                                            id: true,
+//                                            isActive: true,
+//                                            isAdmin: true,
+//                                            isProvider: true
+//                                        }
                                     }
                                 })
                                 .$promise
@@ -3872,32 +3872,17 @@ var app = angular.module('app', [
                                     return false;
                                 });
                             }],
-                            isAdmin: ['$stateParams', 'User', function($stateParams, User) {
-                                return User.isRole({
-                                    roleName: '$admin'
+                            userRoles: ['User', function(User) {
+                                return User.isInRoles({
+                                    roleNames: ['$admin', '$premium', '$contentProvider']
                                 })
                                 .$promise
-                                .then(function (isAdmin) {
-                                    console.log('isAdmin: ', isAdmin);
-                                    return isAdmin.isRole;
+                                .then(function (userRoles) {
+                                    console.log('userRoles: ', userRoles);
+                                    return userRoles;
                                 })
                                 .catch(function (err) {
-                                    console.log('User.isRole err: ', err);
-                                    return false;
-                                });
-                            }],
-                            isContentProvider: ['$stateParams', 'User', function($stateParams, User) {
-                                return User.isRole({
-                                    roleName: '$contentProvider'
-                                })
-                                .$promise
-                                .then(function (isContentProvider) {
-                                    console.log('isContentProvider ', isContentProvider);
-                                    return isContentProvider.isRole;
-                                })
-                                .catch(function (err) {
-                                    console.log('User.isRole err: ', err);
-                                    return false;
+                                    console.log('User.isInRoles err: ', err);
                                 });
                             }]
                             

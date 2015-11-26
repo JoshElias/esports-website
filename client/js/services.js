@@ -579,20 +579,6 @@ angular.module('app.services', [])
         },
         hasAlert: function () {
             return alert;
-        }, 
-        messages: {
-            login: {
-                success: "We have successfully logged you in.",
-                error: "There was an error logging you in."
-            },
-            forgotPassword: {
-                success: "We have successfully sent an email to reset your password.",
-                error: "There was an error resetting your password."
-            },
-            forgotPassword: {
-                success: "We have successfully sent an email to reset your password.",
-                error: "There was an error resetting your password."
-            },
         }
     }
 })
