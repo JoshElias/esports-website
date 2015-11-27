@@ -3871,7 +3871,7 @@ var app = angular.module('app', [
                             }],
                             userRoles: ['User', function(User) {
                                 return User.isInRoles({
-                                    roleNames: ['$admin', '$premium', '$contentProvider']
+                                    roleNames: ['$admin', '$premium', '$contentProvider', '$active']
                                 })
                                 .$promise
                                 .then(function (userRoles) {

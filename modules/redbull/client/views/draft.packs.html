@@ -1,6 +1,6 @@
-<div class="draft" redbull-draft packs="packs" is-loading="isLoading">
+<div class="draft container-fluid" redbull-draft packs="packs" is-loading="isLoading" current-pack="currentPack">
     <!-- preloader -->
-    <div class="preloader" ng-if="loading"></div>
+    <div class="preloader" ng-if="isLoading"><i class="fa fa-refresh fa-spin"></i></div>
     <!-- / preloader -->
 
     <!-- hs frame -->
@@ -11,14 +11,16 @@
     <div class="draft-wrapper">
 
         <!-- pack burst -->
-        <video class="pack-burst" preload="auto">
-            <source ng-src="video/pack_burst.webm" type="video/webm" />
-            <source ng-src="video/pack_burst.mp4" type="video/mp4" />
+        <video id="pack-burst" preload="auto">
+            <source ng-src="./modules/redbull/client/video/pack_burst.webm" type="video/webm" />
+            <source ng-src="./modules/redbull/client/video/pack_burst.mp4" type="video/mp4" />
         </video>
         <!-- / pack burst -->
 
         <!-- bg -->
         <div class="bg"></div>
+        <div class="bg-glow"></div>
+        <div class="bg-blur"></div>
         <!-- / bg -->
 
         <!-- packs -->
@@ -34,13 +36,16 @@
 
         <!-- cards -->
         <div class="cards">
-          <div class="card" ng-repeat="card in currentPack">
-            <div class="card-glow"></div>
-            <div class="card-front">
-              <img ng-src="{{app.cdn}}cards/{{card.photos.medium}}" />
+            <div class="card" ng-repeat="card in packs[currentPack]">
+                <span style="display:none;">{{card}}</span>
+                <div class="card-glow"></div>
+                <div class="card-front">
+                    <img ng-src="{{app.cdn}}cards/{{card.photoNames.medium}}" />
+                </div>
+                <div class="card-back">
+                    <img ng-src="./img/modules/redbull/client/img/card_back.png" />
+                </div>
             </div>
-            <div class="card-back"></div>
-          </div>
         </div>
         <!-- / cards -->
 
