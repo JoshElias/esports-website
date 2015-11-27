@@ -74,7 +74,7 @@ module.exports = function(Deck) {
 
         User.isInRoles(["$owner", "$admin", "$premium", "$contentProvider"], function(err, isInRoles) {
             if(err) return finalCb();
-            if(!isInRoles.all) return removeFields();
+            if(isInRoles.none) return removeFields();
             else return finalCb();
         });
     };
@@ -101,12 +101,13 @@ module.exports = function(Deck) {
     function protectPrivateFields(ctx, finalCb) {
         var Role = Deck.app.models.Role;
         var RoleMapping = Deck.app.models.RoleMapping;
+        var User = Deck.app.models.user;
 
         // sets the private fields to false
         function removeFields() {
             var data = ctx.data || ctx.instance;
             var answer = data;
-            console.log("removing fields for deck context:", ctx);
+
             protectedFields.forEach(function (privateField) {
                 if (typeof answer[privateField] !== "undefined") {
                     answer[privateField] = undefined;
@@ -119,9 +120,9 @@ module.exports = function(Deck) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        Role.isInRoles(ctx.req.accessToken.userId, ["$owner", "$admin", "$contentProvider"], function(err, isInRoles) {
+        User.isInRoles(["$owner", "$admin", "$contentProvider"], function(err, isInRoles) {
             if(err) return finalCb();
-            if(!isInRoles) return removeFields();
+            if(isInRoles.none) return removeFields();
             else return finalCb();
         });
     };

@@ -25,6 +25,7 @@ module.exports = function(Article) {
         
         // sets the private fields to false
         function removeFields() {
+            console.log("removing fields");
             if (ctx.result) {
                 var answer;
                 if (Array.isArray(modelInstance)) {
@@ -65,7 +66,7 @@ module.exports = function(Article) {
 
         User.isInRoles(["$owner", "$admin", "$premium", "$contentProvider"], function(err, isInRoles) {
             if(err) return finalCb();
-            if(!isInRoles.all) return removeFields();
+            if(isInRoles.none) return removeFields();
             else return finalCb();
         });
     };
