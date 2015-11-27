@@ -552,7 +552,6 @@ angular.module('app.services', [])
 .factory('AlertService', function () {
     var success = {},
         error = {},
-        hide = false,
         alert = false;
     
     return {
@@ -562,15 +561,16 @@ angular.module('app.services', [])
         setSuccess: function (value) {
             this.reset();
             success = value;
-            alert = true;
+            alert = value.show || true;
         },
         getError: function () {
             return error;
         },
         setError: function (value) {
+            console.log("alertservice:", value);
             this.reset();
             error = value;
-            alert = true;
+            alert = value.show || true;
         },
         reset: function () {
             success = {};

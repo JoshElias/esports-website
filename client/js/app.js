@@ -415,7 +415,7 @@ var app = angular.module('app', [
                             article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var slug = $stateParams.slug;
 
-                                return Article.findOne({
+                                return Article.find({
                                     filter: {
                                         where: {
                                             "slug.url": slug
@@ -466,7 +466,12 @@ var app = angular.module('app', [
                                             }
                                         ]
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    console.log(data);
+                                    return data[0];
+                                });
                             }]
                         }
                     }
@@ -3852,15 +3857,7 @@ var app = angular.module('app', [
                             user: ['$stateParams', 'User', function ($stateParams, User) {
                                 var userID = $stateParams.userID;
                                 return User.findById({
-                                    id: userID,
-                                    filter: {
-//                                        fields: {
-//                                            id: true,
-//                                            isActive: true,
-//                                            isAdmin: true,
-//                                            isProvider: true
-//                                        }
-                                    }
+                                    id: userID
                                 })
                                 .$promise
                                 .then(function (userFound) {

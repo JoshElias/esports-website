@@ -1,18 +1,4 @@
-<!--
-<div class="panel panel-danger error-modal animated" ng-show="showError">
-    <div class="panel-heading">
-        <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-        <strong>Unable to update user</strong>
-    </div>
-    <div class="panel-body">
-        <ul class="error text-danger">
-            <li ng-repeat="error in errors">{{error}}</li>
-        </ul>
-    </div>
-</div>
--->
-
-<!--<alert-box theme="error"></alert-box>-->
+<alert-box theme="admin"></alert-box>
 
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
@@ -148,7 +134,7 @@
     </div>
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || fetching" ng-click="editUser()">
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || fetching" ng-click="editUser(user)">
                 <span ng-if="!fetching">Update User</span>
                 <span ng-if="fetching">
                     Updating <i class="fa fa-spinner fa-pulse"></i>

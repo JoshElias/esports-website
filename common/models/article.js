@@ -21,7 +21,8 @@ module.exports = function(Article) {
     function removePrivateFields(ctx, modelInstance, finalCb) {
         var Role = Article.app.models.Role;
         var RoleMapping = Article.app.models.RoleMapping;
-
+        var User = Article.app.models.user;
+        
         // sets the private fields to false
         function removeFields() {
             if (ctx.result) {
