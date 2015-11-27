@@ -1230,8 +1230,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.posts = dataPosts.activity;
         }
     ])
-    .controller('AdminCardAddCtrl', ['$scope', '$window', '$stateParams', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService',
-        function ($scope, $window, $stateParams, $compile, bootbox, Util, Hearthstone, AdminCardService) {
+    .controller('AdminCardAddCtrl', ['$scope', '$window', '$stateParams', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'ImgurService',
+        function ($scope, $window, $stateParams, $compile, bootbox, Util, Hearthstone, AdminCardService, ImgurService) {
             var defaultCard = {
                 name: '',
                 cost: '',
@@ -1257,7 +1257,8 @@ angular.module('app.controllers', ['ngCookies'])
                 expansion: Hearthstone.expansions[0]
             };
 
-            $scope.cardImg = $scope.deckImg = $scope.app.cdn + 'img/blank.png';
+//            $scope.cardImg = $scope.deckImg = $scope.app.cdn + 'img/blank.png';
+            $scope.cardImg = $scope.deckImg = 'https://cdn-tempostorm.netdna-ssl.com/img/blank.png';
 
             // load card
             $scope.card = angular.copy(defaultCard);
@@ -1348,10 +1349,10 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminCardEditCtrl', ['$location', '$scope', '$window', '$state', '$upload', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'card',
-        function ($location, $scope, $window, $state, $upload, $compile, bootbox, Util, Hearthstone, AdminCardService, AlertService, card) {
+    .controller('AdminCardEditCtrl', ['$location', '$scope', '$window', '$state', 'Image', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'card', 'ImgurService',
+        function ($location, $scope, $window, $state, Image, $compile, bootbox, Util, Hearthstone, AdminCardService, AlertService, card, ImgurService) {
             // no card, go back to list
-            if (!data || !data.success) { return $location.path('/admin/cards'); }
+//            if (!data || !data.success) { return $location.path('/admin/cards'); }
 
             // load card
             $scope.card = card;
@@ -1369,8 +1370,11 @@ angular.module('app.controllers', ['ngCookies'])
                 { name: 'No', value: false }
             ];
 
-            $scope.cardImg = ($scope.card.photos.large.length) ? $scope.app.cdn + 'cards/' + $scope.card.photos.large : $scope.app.cdn + 'img/blank.png';
-            $scope.deckImg = ($scope.card.photos.small.length) ? $scope.app.cdn + 'cards/' + $scope.card.photos.small : $scope.app.cdn + 'img/blank.png';
+//            $scope.cardImg = ($scope.card.photoNames.large.length) ? $scope.app.cdn + 'cards/' + $scope.card.photoNames.large : $scope.app.cdn + 'img/blank.png';
+//            $scope.deckImg = ($scope.card.photoNames.small.length) ? $scope.app.cdn + 'cards/' + $scope.card.photoNames.small : $scope.app.cdn + 'img/blank.png';
+            
+            $scope.cardImg = ($scope.card.photoNames.large.length) ? 'https://cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.large : $scope.app.cdn + 'https://cdn-tempostorm.netdna-ssl.com/img/blank.png';
+            $scope.deckImg = ($scope.card.photoNames.small.length) ? 'https://cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.small : $scope.app.cdn + 'https://cdn-tempostorm.netdna-ssl.com/img/blank.png';
 
             // card upload
             $scope.cardUpload = function ($files) {
@@ -1426,20 +1430,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // edit card
-            $scope.editCard = function editCard() {
+            $scope.editCard = function editCard(card) {
                 $scope.showError = false;
                 $scope.showSuccess = false;
 
-                AdminCardService.editCard($scope.card).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.card.name + ' has been updated successfully.' });
-                        $state.go('app.admin.hearthstone.cards.list');
-                    }
-                });
+//                AdminCardService.editCard($scope.card).success(function (data) {
+//                    if (!data.success) {
+//                        $scope.errors = data.errors;
+//                        $scope.showError = true;
+//                        $window.scrollTo(0,0);
+//                    } else {
+//                        AlertService.setSuccess({ show: true, msg: $scope.card.name + ' has been updated successfully.' });
+//                        $state.go('app.admin.hearthstone.cards.list');
+//                    }
+//                });
             }
         }
     ])
@@ -6274,43 +6278,29 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'isUserAdmin', 'isUserContentProvider', 'EventService',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, isUserAdmin, isUserContentProvider, EventService) {
+    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'EventService', 'userRoles',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, EventService, userRoles) {
             console.log('init deck: ',deck);
             
-            $scope.isUserAdmin = isUserAdmin;
-            $scope.isUserContentProvider = isUserContentProvider;
+            $scope.isUserAdmin = userRoles.isInRoles.$admin;
+            $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 console.log("event listener response:", data);
                 // Check if user is admin
-                User.isRole({
-                    roleName: '$admin'
+                User.isInRoles({
+                    roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
-                .then(function (isAdmin) {
-                    console.log('isAdmin: ', isAdmin.isRole);
-                     $scope.isUserAdmin = isAdmin.isRole;
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
                 })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
-                });
-                // Check if user is content provider
-                User.isRole({
-                    roleName: '$contentProvider'
-                })
-                .$promise
-                .then(function (isContentProvider) {
-                    console.log('isContentProvider: ', isContentProvider.isRole);
-                     $scope.isUserContentProvider = isContentProvider.isRole;
-                })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
                 });
             });
             
@@ -6319,10 +6309,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.isUserAdmin = false;
                 $scope.isUserContentProvider = false;
             });
-            
-            $scope.testing = function() {
-                console.log('hi');
-            };
 
             $scope.cards = {
                 neutral: neutralCardsList,
@@ -7319,13 +7305,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             // load user
             $scope.user = user;
-            // load user roles
-            $scope.user.isAdmin = userRoles.isInRoles.$admin;
-            $scope.user.isActive = userRoles.isInRoles.$active;
-            $scope.user.isProvider = userRoles.isInRoles.$contentProvider;
-            $scope.user.subscription = {
-                isSubscribed: userRoles.isInRoles.$premium
-            };
+//            $scope.user.subscription = {
+//                isSubscribed: userRoles.isInRoles.$premium
+//            };
 
             // select options
             $scope.userSubscription =
@@ -7343,26 +7325,60 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.editUser = function (user) {
                 console.log('user:', user);
                 $scope.fetching = true;
-                User.upsert({
+                User.prototype$updateAttributes({
                     id: user.id
                 }, $scope.user)
                 .$promise
                 .then(function (userUpdated) {
                     console.log('userUpdated: ', userUpdated);
-                    AlertService.setSuccess({ show: true, msg: 'test' });
+                    var validRoles = [],
+                        revokeRoles = [];
+                    
+                    var isAdmin = user.isAdmin ? validRoles.push('$admin') : revokeRoles.push('$admin'),
+                        isActive = user.isActive ? validRoles.push('$active') : revokeRoles.push('$active'),
+                        isProvider = user.isProvider ? validRoles.push('$contentProvider') : revokeRoles.push('$contentProvider');
+                    
+                    console.log('validRoles:', validRoles);
+                    console.log('revokeRoles:', revokeRoles);
                     
                     User.assignRoles({
                         userId: user.id,
-                        roleNames: []
+                        roleNames: validRoles
                     })
                     .$promise
                     .then(function (userRoles) {
                         console.log('userRoles: ', userRoles);
+                        AlertService.setSuccess({ show: true, msg: 'User updated successfully.' });
+                        $window.scrollTo(0,0);
                         $scope.fetching = false;
                     })
                     .catch(function (err) {
                         console.log('err: ', err);
+                        $scope.errors = [];
+                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                                for (var i = 0; i < errArray.length; i++) {
+                                    $scope.errors.push(key + errArray[i]);
+                                }
+                            });
+                        } else if (err.data.error && err.data.error.message) {
+                            $scope.errors.push(err.data.error.message);
+                        }
+                        AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
+                        $window.scrollTo(0,0);
                         $scope.fetching = false;
+                    });
+                    
+                    User.revokeRoles({
+                        userId : user.id,
+                        roleNames: revokeRoles
+                    })
+                    .$promise
+                    .then(function (rolesRevoked) {
+                        console.log('rolesRevoked: ', rolesRevoked);
+                    })
+                    .catch(function (err) {
+                        console.log('err: ', err);
                     });
                     
                 })
@@ -7377,6 +7393,7 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                     }
                     AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
+                    $window.scrollTo(0,0);
                     $scope.fetching = false;
                 });
                 
