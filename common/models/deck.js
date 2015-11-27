@@ -2,16 +2,13 @@ module.exports = function(Deck) {
   var utils = require("../../lib/utils");
 
 
-  Deck.observe("before save", function(ctx, next) {
-      utils.validateYoutubeId(ctx, next);
+  Deck.observe("before save", utils.validateYoutubeId, function(ctx, next) {
+      //utils.validateYoutubeId(ctx, next);
       utils.generateSlug(ctx);
       //protectPrivateFields(ctx, next);
   });
 
-  Deck.afterRemote("**", function(ctx, modelInstance, next) {
-      removePrivateDocs(ctx, modelInstance, next);
-      removePrivateFields(ctx, modelInstance, next);
-  });
+  Deck.afterRemote("**", removePrivateDocs, removePrivateFields);
 
   var foreignKeys = ["authorId"];
   Deck.observe("persist", function(ctx, next) {
@@ -21,7 +18,6 @@ module.exports = function(Deck) {
 
 
     function removePrivateDocs(ctx, modelInstance, finalCb) {
-
         var User = Deck.app.models.user;
 
         // sets the private fields to false
@@ -40,7 +36,7 @@ module.exports = function(Deck) {
                 }
                 ctx.result = answer;
             }
-            finalCb();
+            return finalCb();
         }
 
         if(!ctx || !ctx.req || !ctx.req.accessToken)
