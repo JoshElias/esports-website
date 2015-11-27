@@ -1,6 +1,6 @@
 <div class="{{theme}} panel error-modal animated" ng-if="show()" ng-class="{'panel-danger': !isSuccess(), 'panel-success': isSuccess()}">
     <div class="panel-heading">
-        <button type="button" class="close" aria-hidden="true" ng-click="show = false">&times;</button>
+        <button type="button" class="close" aria-hidden="true" ng-click="reset()">&times;</button>
         <strong>{{getMessage('msg')}}</strong>
     </div>
     <div class="panel-body" ng-if="!isSuccess()">

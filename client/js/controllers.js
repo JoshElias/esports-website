@@ -7319,6 +7319,13 @@ angular.module('app.controllers', ['ngCookies'])
 
             // load user
             $scope.user = user;
+            // load user roles
+            $scope.user.isAdmin = userRoles.isInRoles.$admin;
+            $scope.user.isActive = userRoles.isInRoles.$active;
+            $scope.user.isProvider = userRoles.isInRoles.$contentProvider;
+            $scope.user.subscription = {
+                isSubscribed: userRoles.isInRoles.$premium
+            };
 
             // select options
             $scope.userSubscription =
@@ -7336,7 +7343,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.editUser = function (user) {
                 console.log('user:', user);
                 $scope.fetching = true;
-                User.prototype$updateAttributes({
+                User.upsert({
                     id: user.id
                 }, $scope.user)
                 .$promise
@@ -7351,16 +7358,25 @@ angular.module('app.controllers', ['ngCookies'])
                     .$promise
                     .then(function (userRoles) {
                         console.log('userRoles: ', userRoles);
+                        $scope.fetching = false;
                     })
                     .catch(function (err) {
                         console.log('err: ', err);
+                        $scope.fetching = false;
                     });
                     
-                    $scope.fetching = false;
                 })
                 .catch(function (err) {
                     console.log('user.updateAttributes err: ', err);
-                    AlertService.setError({ show: true, msg: 'test', errorList: ['test1', 'test2'] });
+                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                        $scope.errors = [];
+                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                            for (var i = 0; i < errArray.length; i++) {
+                                $scope.errors.push(key + errArray[i]);
+                            }
+                        });
+                    }
+                    AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
                     $scope.fetching = false;
                 });
                 

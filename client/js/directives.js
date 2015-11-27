@@ -386,6 +386,10 @@ angular.module('app.directives', ['ui.load'])
                 return (as.hasAlert()) ? true : false;
             }
             
+            $scope.reset = function() {
+                return as.reset();
+            }
+            
             $scope.getMessage = function (key) {
                 var s = as.getSuccess();
                 var e = as.getError();
