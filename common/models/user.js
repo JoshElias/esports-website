@@ -29,7 +29,7 @@ module.exports = function(User) {
             next(err);
         });
     });
-
+    
 
     User.afterRemote("**", function(ctx, modelInstance, next) {
         removePrivateFields(ctx, modelInstance, next);
@@ -215,9 +215,9 @@ module.exports = function(User) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        Role.isInRoles(ctx.req.accessToken.id.toString(), ["$owner", "$admin"], function(err, isInRoles) {
+        User.isInRoles(["$owner", "$admin"], function(err, isInRoles) {
             if(err) return finalCb();
-            if(!isInRoles) return removeFields();
+            if(!isInRoles.all) return removeFields();
             else return finalCb();
         });
     };
@@ -582,7 +582,9 @@ module.exports = function(User) {
         var ctx = loopback.getCurrentContext();
         var accessToken = ctx.get("accessToken");
         var userId = accessToken.userId;
+
         var isInRoles = {};
+        isInRoles.all = true;
 
         // Check for the roles we already have
         if(ctx.active) {
@@ -600,6 +602,9 @@ module.exports = function(User) {
                 return eachCb();
 
             Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function(err, isRole) {
+                if(isInRoles.all && !isRole) {
+                    isInRoles.all = false;
+                }
                 isInRoles[roleName] = isRole;
                 eachCb(err)
             });
@@ -636,28 +641,28 @@ module.exports = function(User) {
         return cb.promise;
     };
 
-    User.getCurrent = function( finalCb) {
+    User.getCurrent = function(finalCb) {
 
         var err = new Error('no user found');
         err.statusCode = 400;
         err.code = 'USER_NOT_FOUND';
-
+        
         var ctx = loopback.getCurrentContext();
         if (!ctx || !ctx.active) return finalCb(err);
-
         var res = ctx.active.http.res;
         var req = ctx.active.http.req;
 
         if (req.currentUser)
             return finalCb(undefined, req.currentUser);
-
-        if(!req.accessToken || req.accessToken.id !== "string")
+        
+        if(!req.accessToken || typeof req.accessToken.userId !== "object")
             return finalCb(err);
 
-        User.app.models.user.findById(req.accessToken.id, function (err, user) {
+        
+        User.app.models.user.findById(req.accessToken.userId, function (err, user) {
             if (err) return finalCb(err);
             else if(user) {
-                ctx.req.currentUser = user;
+                req.currentUser = user;
                 ctx.set("currentUser", user);
             }
 

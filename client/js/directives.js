@@ -375,7 +375,6 @@ angular.module('app.directives', ['ui.load'])
 .directive('alertBox', ['AlertService', function (AlertService) {
     return {
         restrict: 'E',
-        replace: true,
         templateUrl: function (element, attrs) {
             var theme = attrs.theme || 'default';
             return tpl + 'views/frontend/directives/alertBox/' + theme + '.html';
@@ -383,20 +382,23 @@ angular.module('app.directives', ['ui.load'])
         controller: ['$scope', function ($scope) {
             var as = AlertService;
             
-            $scope.isHiding = function () {
-                return as.isHiding();
+            $scope.show = function () {
+                return (as.hasAlert()) ? true : false;
             }
             
-            $scope.getMsg = function () {
-                var s = function () {
-                    if (!_.isEmpty(as.getSuccess())) {
-                        return as.getSuccess().msg;
-                    } else if (!_.isEmpty(as.getError())) {
-                        return as.getError().msg;
-                    }
-                };
+            $scope.reset = function() {
+                return as.reset();
+            }
+            
+            $scope.getMessage = function (key) {
+                var s = as.getSuccess();
+                var e = as.getError();
                 
-                return s();
+                if (!_.isEmpty(s)) {
+                    return s[key];
+                } else if (!_.isEmpty(e)) {
+                    return e[key];
+                }
             }
             
             $scope.isSuccess = function () {
@@ -408,43 +410,9 @@ angular.module('app.directives', ['ui.load'])
                     return null;
                 }
             }
-            
         }],
         link: function ($scope, el, attrs) {
-            var as = AlertService;
             $scope.theme = attrs.theme || 'default';
-            
-            
-//            function setTrans (t, s) {
-//                t.css('transition', s + "s");
-//                t.css('-moz-transition', s + "s");
-//                t.css('-webkit-transition', s + "s");
-//            }
-            
-            //TODO: animate this?
-            
-            $scope.$watch(
-                function () {
-                    return as.hasAlert();
-                }, function () {
-                    var tar = angular.element('#mw');
-                    var h = tar[0].children[0].offsetHeight;
-                    
-//                    if (attrs.animspeed) {
-//                        setTrans(tar, attrs.animspeed);
-//                    } else {
-//                        setTrans(tar, 0);
-//                    }
-                    
-                    if (!as.hasAlert()) {
-                        tar.css('height', 0);
-                        return
-                    }
-                    
-                    tar.css('height', h);
-//                    tar.addClass('open');
-                }
-            );
         }
     }
 }])

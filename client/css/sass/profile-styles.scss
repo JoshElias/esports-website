@@ -163,7 +163,7 @@
 //*************************************
 
 .edit-profile-view {
-    padding: 50px 0px 0px 0px;
+    padding: 25px 0px 0px 0px;
 }
 
 .profile-edit-wrapper {
@@ -482,6 +482,11 @@
     color: white;
 }
 
+
+//*************************************
+// 5... profile premium
+//*************************************
+
 .profile-edit-wrapper .update-card-btn,
 .profile-edit-wrapper .update-profile-btn {
     margin-top: 20px;
@@ -489,16 +494,15 @@
     border: none;
     border-radius: none;
     padding: 10px 20px;
+    color: white; 
+    font-size: 12px; 
+    letter-spacing: 3px;
+    font-weight: bold;
 }
 .profile-edit-wrapper .update-card-btn:disabled,
 .profile-edit-wrapper .update-profile-btn:disabled {
     opacity: .3
 }
-
-
-//*************************************
-// 5... profile premium
-//*************************************
 
 .profile-edit-wrapper .update-card-btn {
     margin-top: 0px;

@@ -17,24 +17,21 @@
 
 
 
-.alert-box {
-    height: 0px;
+alert-box .default {
     margin-top: 20px;
     overflow: hidden;
-}
-
-.alert-box .alert-wrapper.default {
     font-weight: bold;
     color: white;
     background: black;
     padding: 20px;
 }
-.alert-box .default.success {
+alert-box .default.success {
     border: 2px solid green;
 }
-.alert-box .default.error {
+alert-box .default.error {
     border: 2px solid red;
 }
+
 
 /*
 .profile-page .activity-list .articleComment .activity-right,

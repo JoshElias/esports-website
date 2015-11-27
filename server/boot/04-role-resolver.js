@@ -28,20 +28,4 @@ module.exports = function(server) {
                 && (user.subscription.expiryDate > now));
         }
     });
-
-
-    Role.isInRoles = function(uid, roleNames, finalCb) {
-        async.eachSeries(roleNames, function (roleName, eachCb) {
-            Role.isInRole(roleName, {
-                principalType: RoleMapping.USER,
-                principalId: uid
-            }, function (err, isRole) {
-                if (err) return eachCb(err);
-                if (isRole) return eachCb("ok");
-                else return eachCb();
-            });
-        }, function (err) {
-            return finalCb(err, (err !== "ok"));
-        });
-    }
 };

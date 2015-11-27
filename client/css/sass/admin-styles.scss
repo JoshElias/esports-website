@@ -25,7 +25,6 @@
     width: 188px !important;
 }
 
-
 .photo-input .upload-drop { border-radius: 4px; border: 1px dashed #ccc; text-align: center; color: #666; }
 .photo-input .upload-drop.active { border: 1px dashed #66afe9; color: #357ebd; background: #e6f7ff; }
 
@@ -75,7 +74,6 @@
     outline: none;
     padding: 2px 8px;
     color: white;
-
 }
 
 .cardAddList {
@@ -224,7 +222,6 @@ label p {
 
 .admin-dark {  }
 
-
 .admin-list-heading span { line-height: 34px; }
 
 .admin-list-item span { line-height: 34px; }
@@ -287,9 +284,10 @@ ul[dnd-list] .dndPlaceholder {
 
 
 //*************************************
-// 8... Card Circles
+// 8... Admin Cards
 //*************************************
 
+.form-inline > .form-group > .input-group > .input-group-addon { padding: 0px; border: 0px; }
 
 /* cards */
 .card-list-item span { position: relative; line-height: 34px; }

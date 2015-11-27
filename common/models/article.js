@@ -21,7 +21,8 @@ module.exports = function(Article) {
     function removePrivateFields(ctx, modelInstance, finalCb) {
         var Role = Article.app.models.Role;
         var RoleMapping = Article.app.models.RoleMapping;
-
+        var User = Article.app.models.user;
+        
         // sets the private fields to false
         function removeFields() {
             if (ctx.result) {
@@ -62,9 +63,9 @@ module.exports = function(Article) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        Role.isInRoles(ctx.req.accessToken.userId, ["$owner", "$admin", "$premium", "$contentProvider"], function(err, isInRoles) {
+        User.isInRoles(["$owner", "$admin", "$premium", "$contentProvider"], function(err, isInRoles) {
             if(err) return finalCb();
-            if(!isInRoles) return removeFields();
+            if(!isInRoles.all) return removeFields();
             else return finalCb();
         });
     };
