@@ -375,7 +375,6 @@ angular.module('app.directives', ['ui.load'])
 .directive('alertBox', ['AlertService', function (AlertService) {
     return {
         restrict: 'E',
-        replace: true,
         templateUrl: function (element, attrs) {
             var theme = attrs.theme || 'default';
             return tpl + 'views/frontend/directives/alertBox/' + theme + '.html';

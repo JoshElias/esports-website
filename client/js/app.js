@@ -3290,10 +3290,8 @@ var app = angular.module('app', [
                                             fields: {
                                                 id: true,
                                                 name: true,
-                                                rarity: true,
-                                                playerClass: true,
-                                                cardType: true,
-                                                expansion: true
+                                                rarity: true
+                                                
                                             },
                                             limit: 50,
                                             order: 'name ASC'
@@ -3354,9 +3352,18 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/cards.edit.html',
                         controller: 'AdminCardEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminCardService', function ($stateParams, AdminCardService) {
+                            card: ['$stateParams', 'Card', function($stateParams, Card) {
                                 var cardID = $stateParams.cardID;
-                                return AdminCardService.getCard(cardID);
+                                Card.findById({
+                                    id: cardID
+                                })
+                                .$promise
+                                .then(function (cardFound) {
+                                    return cardFound;
+                                })
+                                .catch(function (err) {
+                                    console.log('Card.findById err: ', err);
+                                });
                             }]
                         }
                     }
@@ -3850,15 +3857,7 @@ var app = angular.module('app', [
                             user: ['$stateParams', 'User', function ($stateParams, User) {
                                 var userID = $stateParams.userID;
                                 return User.findById({
-                                    id: userID,
-                                    filter: {
-                                        fields: {
-                                            id: true,
-                                            isActive: true,
-                                            isAdmin: true,
-                                            isProvider: true
-                                        }
-                                    }
+                                    id: userID
                                 })
                                 .$promise
                                 .then(function (userFound) {
@@ -3870,32 +3869,17 @@ var app = angular.module('app', [
                                     return false;
                                 });
                             }],
-                            isAdmin: ['$stateParams', 'User', function($stateParams, User) {
-                                return User.isRole({
-                                    roleName: '$admin'
+                            userRoles: ['User', function(User) {
+                                return User.isInRoles({
+                                    roleNames: ['$admin', '$premium', '$contentProvider']
                                 })
                                 .$promise
-                                .then(function (isAdmin) {
-                                    console.log('isAdmin: ', isAdmin);
-                                    return isAdmin.isRole;
+                                .then(function (userRoles) {
+                                    console.log('userRoles: ', userRoles);
+                                    return userRoles;
                                 })
                                 .catch(function (err) {
-                                    console.log('User.isRole err: ', err);
-                                    return false;
-                                });
-                            }],
-                            isContentProvider: ['$stateParams', 'User', function($stateParams, User) {
-                                return User.isRole({
-                                    roleName: '$contentProvider'
-                                })
-                                .$promise
-                                .then(function (isContentProvider) {
-                                    console.log('isContentProvider ', isContentProvider);
-                                    return isContentProvider.isRole;
-                                })
-                                .catch(function (err) {
-                                    console.log('User.isRole err: ', err);
-                                    return false;
+                                    console.log('User.isInRoles err: ', err);
                                 });
                             }]
                             
