@@ -5,16 +5,24 @@ angular.module('redbull.directives')
             restrict: 'A',
             scope: {
                 packs: '=',
-                isLoading: '='
+                isLoading: '=',
+                currentPack: '='
             },
             link: function (scope, el, attrs) {
                 var volume = .5,
                     startShake = null,
                     shakeLoop = null,
                     shakeInterval = 3000,
-                    packDropped = false,
-                    // TODO: REMEMBER PACK NUMBER IF THEY START OVER
-                    currentPack = 0;
+                    packDropped = false;
+
+                function nextPack () {
+                    scope.currentPack++;
+                }
+                
+                // watch current pack
+                scope.$watch('currentPack', function (newValue) {
+                    scope.currentPack = newValue;
+                });
                 
                 // watch loading
                 scope.$watch('isLoading', function (newValue) {
@@ -195,9 +203,10 @@ angular.module('redbull.directives')
                             'transform': 'perspective(0) rotateY(0)'
                         });
 
-                        /*$('.pack-burst').css('z-index', '5');
+                        $('#pack-burst').css('z-index', '5');
+                        var burst = $('#pack-burst')[0];
                         burst.volume = volume / 2;
-                        burst.play();*/
+                        burst.play();
 
                         // fade out pack
                         $('.pack').fadeOut(0, function() {
@@ -209,11 +218,13 @@ angular.module('redbull.directives')
                             });
 
                             // blur bg
-                            //$('#bg_blur').fadeIn(0);
-                            //$('.container').fadeIn(0, function() {
-                            $('.card').fadeIn(0);
-                            //});
-                            //$('#pack_burst').delay(3250).fadeOut(1000);
+                            $('.bg-blur').fadeIn(0);
+                            
+                            // set cards and show
+                            $('.cards').delay(3250).fadeIn(0);
+                            
+                            // hide pack burst video
+                            $('#pack-burst').delay(3250).fadeOut(1000);
                         });
 
                         // move back to bottom

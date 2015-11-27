@@ -28,16 +28,18 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: #000;
+        background: #121111;
         z-index: 99;
         
-        .loading {
+        i {
             margin: -25px 0 0 -25px;
             position: absolute;
             left: 50%;
             top: 50%;
             width: 50px;
             height: 50px;
+            font-size: 50px;
+            color: #FFF;
         }
     }
 
@@ -69,19 +71,33 @@
             cursor: url("../img/modules/redbull/client/img/click.png"), auto;
         }
         
-        .pack-burst {
+        #pack-burst {
             position: absolute;
         }
 
-        .bg {
-          margin-left: -683px;
-          margin-top: -384px;
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          width: 1366px;
-          height: 768px;
-          background: url("../img/modules/redbull/client/img/bg.jpg") no-repeat center center;
+        .bg,
+        .bg-glow,
+        .bg-blur {
+            margin-left: -683px;
+            margin-top: -384px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 1366px;
+            height: 768px;
+            background: url("../img/modules/redbull/client/img/bg.jpg") no-repeat center center;
+            z-index: 2;
+        }
+        
+        .bg-glow {
+            background: url("../img/modules/redbull/client/img/bg_glow.jpg") no-repeat center center;
+            z-index: 1;
+        }
+
+        .bg-blur {
+            background: url("../img/modules/redbull/client/img/blur.jpg") no-repeat center center;
+            display: none;
+            z-index: 3;
         }
     
         .pack-wrapper {
@@ -110,33 +126,41 @@
         }
 
         .cards {
-            margin: 0 auto;
-            position: relative;
+            margin-left: -683px;
+            margin-top: -384px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 1366px;
+            height: 768px;
             perspective: 1000px;
-            z-index: 5;
+            z-index: 6;
+            display: none;
 
             .card {
                 position: absolute;
                 left: 50%;
                 top: 50%;
+                width: 188px;
+                height: 285px;
 
-                &:nth-child(0) {
+                &:nth-child(1) {
                     margin-left: 8px;
                     margin-top: -332px;
                 }
-                &:nth-child(1) {
+                &:nth-child(2) {
                     margin-left: -194px;
                     margin-top: -261px;
                 }
-                &:nth-child(2) {
+                &:nth-child(3) {
                     margin-left: 223px;
                     margin-top: -254px;
                 }
-                &:nth-child(3) {
+                &:nth-child(4) {
                     margin-left: -108px;
                     margin-top: 18px;
                 }
-                &:nth-child(4) {
+                &:nth-child(5) {
                     margin-left: 127px;
                     margin-top: 26px;
                 }
@@ -147,11 +171,6 @@
                     top: 43px;
                     width: 145px;
                     height: 215px;
-                }
-
-                .card-face {
-                    width: 188px;
-                    height: 285px;
                 }
 
                 .card-back {
