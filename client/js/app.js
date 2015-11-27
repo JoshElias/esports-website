@@ -4045,7 +4045,7 @@ var app = angular.module('app', [
                                 return Poll.findOne({ 
                                     filter: {
                                         where: { 
-                                            id: pollID;
+                                            id: pollID
                                         }
                                     }
                                 
