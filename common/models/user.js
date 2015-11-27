@@ -31,7 +31,8 @@ module.exports = function(User) {
     });
 
     User.observe("before save", function(ctx, next) {
-        //protectFields(ctx, next);
+//        protectFields(ctx, next);
+        next();
     });
 
     User.afterRemote("**", function(ctx, modelInstance, next) {
@@ -195,20 +196,26 @@ module.exports = function(User) {
             if (ctx.result) {
                 var answer;
                 if (Array.isArray(modelInstance)) {
-                    answer = ctx.result;
+                    answer = []
                     ctx.result.forEach(function (result) {
-                        privateFields.forEach(function(privateField) {
-                            if(answer[privateField])
-                                answer[privateField] = undefined;
-                        });
+                        var replacement = {};
+                        for(var key in result) {
+                            if(privateFields.indexOf(key) === -1) {
+                                replacement[key] = result[key];
+                            }
+                        }
+                        answer.push(replacement);
                     });
                 } else {
-                    answer = ctx.result;
-                    privateFields.forEach(function(privateField) {
-                        if(answer[privateField]) {
-                            answer[privateField] = undefined;
+                    console.log('cleaning user');
+                    answer = {};
+                    for(var key in ctx.result) {
+                        if(privateFields.indexOf(key) === -1) {
+                            answer[key] = ctx.result[key];
+                        } else {
+                            console.log('removing else: ', key);
                         }
-                    });
+                    }
                 }
                 ctx.result = answer;
             }
@@ -219,8 +226,9 @@ module.exports = function(User) {
             return removeFields();
 
         User.isInRoles(["$owner", "$admin"], function(err, isInRoles) {
+            console.log('isInRoles: ', isInRoles, err);
             if(err) return finalCb();
-            if(!isInRoles.all) return removeFields();
+            else if (isInRoles.none) return removeFields();
             else return finalCb();
         });
     };
@@ -640,7 +648,7 @@ module.exports = function(User) {
             Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function(err, isRole) {
                 if(!isRole && isInRoles.all) {
                     isInRoles.all = false;
-                } else if(!isRole && isInRoles.none) {
+                } else if(isRole && isInRoles.none) {
                     isInRoles.none = false;
                 }
 
