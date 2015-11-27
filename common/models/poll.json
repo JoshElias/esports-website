@@ -23,6 +23,9 @@
     "voteLimit": {
       "type": "number"
     },
+    "createdDate": {
+        "type": "date"
+    },
     "items": {
       "type": [
         "object"

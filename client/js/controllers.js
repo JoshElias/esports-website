@@ -7393,8 +7393,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminPollListCtrl', ['$scope', '$compile', 'bootbox', 'Pagination', 'AlertService', 'AdminPollService', 'data',
-        function ($scope, $compile, bootbox, Pagination, AlertService, AdminPollService, data) {
+    .controller('AdminPollListCtrl', ['$scope', '$compile', 'bootbox', 'AlertService', 'polls',
+        function ($scope, $compile, bootbox, AlertService, polls) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -7402,116 +7402,61 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // load polls
-            $scope.polls = data.polls;
-            $scope.page = data.page;
-            $scope.perpage = data.perpage;
-            $scope.total = data.total;
-            $scope.search = data.search;
+            $scope.polls = polls;
+//            $scope.page = data.page;
+//            $scope.perpage = data.perpage;
+//            $scope.total = data.total;
+//            $scope.search = data.search;
 
 
-            $scope.getPolls = function () {
-                AdminPollService.getPolls($scope.page, $scope.perpage, $scope.search).then(function (data) {
-                    $scope.polls = data.polls;
-                    $scope.page = data.page;
-                    $scope.total = data.total;
-                });
-            }
+//            $scope.getPolls = function () {
+//                AdminPollService.getPolls($scope.page, $scope.perpage, $scope.search).then(function (data) {
+//                    $scope.polls = data.polls;
+//                    $scope.page = data.page;
+//                    $scope.total = data.total;
+//                });
+//            }
 
-            $scope.searchPolls = function () {
-                $scope.page = 1;
-                $scope.getPolls();
-            }
-
-            // pagination
-            $scope.pagination = {
-                page: function () {
-                    return $scope.page;
-                },
-                perpage: function () {
-                    return $scope.perpage;
-                },
-                results: function () {
-                    return $scope.total;
-                },
-                setPage: function (page) {
-                    $scope.page = page;
-                    $scope.getPolls();
-                },
-                pagesArray: function () {
-                    var pages = [],
-                        start = 1,
-                        end = this.totalPages();
-
-                    if (this.totalPages() > 5) {
-                        if (this.page() < 3) {
-                            start = 1;
-                            end = start + 4;
-                        } else if (this.page() > this.totalPages() - 2) {
-                            end = this.totalPages();
-                            start = end - 4;
-                        } else {
-                            start = this.page() - 2;
-                            end = this.page() + 2;
-                        }
-
-                    }
-
-                    for (var i = start; i <= end; i++) {
-                        pages.push(i);
-                    }
-
-                    return pages;
-                },
-                isPage: function (page) {
-                    return (page === this.page());
-                },
-                totalPages: function (page) {
-                    return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
-                },
-                from: function () {
-                    return (this.page() * this.perpage()) - this.perpage() + 1;
-                },
-                to: function () {
-                    return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
-                }
-            };
-
+//            $scope.searchPolls = function () {
+//                $scope.page = 1;
+//                $scope.getPolls();
+//            }
 
             // delete poll
-            $scope.deletePoll = function (poll) {
-                var box = bootbox.dialog({
-                    title: 'Delete poll: ' + poll.title + '?',
-                    message: 'Are you sure you want to delete the poll <strong>' + poll.title + '</strong>?',
-                    buttons: {
-                        delete: {
-                            label: 'Delete',
-                            className: 'btn-danger',
-                            callback: function () {
-                                AdminPollService.deletePoll(poll._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.polls.indexOf(poll);
-                                        if (index !== -1) {
-                                            $scope.polls.splice(index, 1);
-                                        }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: poll.title + ' deleted successfully.'
-                                        };
-                                    }
-                                });
-                            }
-                        },
-                        cancel: {
-                            label: 'Cancel',
-                            className: 'btn-default pull-left',
-                            callback: function () {
-                                box.modal('hide');
-                            }
-                        }
-                    }
-                });
-                box.modal('show');
-            };
+//            $scope.deletePoll = function (poll) {
+//                var box = bootbox.dialog({
+//                    title: 'Delete poll: ' + poll.title + '?',
+//                    message: 'Are you sure you want to delete the poll <strong>' + poll.title + '</strong>?',
+//                    buttons: {
+//                        delete: {
+//                            label: 'Delete',
+//                            className: 'btn-danger',
+//                            callback: function () {
+//                                AdminPollService.deletePoll(poll._id).then(function (data) {
+//                                    if (data.success) {
+//                                        var index = $scope.polls.indexOf(poll);
+//                                        if (index !== -1) {
+//                                            $scope.polls.splice(index, 1);
+//                                        }
+//                                        $scope.success = {
+//                                            show: true,
+//                                            msg: poll.title + ' deleted successfully.'
+//                                        };
+//                                    }
+//                                });
+//                            }
+//                        },
+//                        cancel: {
+//                            label: 'Cancel',
+//                            className: 'btn-default pull-left',
+//                            callback: function () {
+//                                box.modal('hide');
+//                            }
+//                        }
+//                    }
+//                });
+//                box.modal('show');
+//            };
         }
     ])
     .controller('AdminPollAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'AdminPollService', 'AlertService',
