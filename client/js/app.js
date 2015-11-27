@@ -415,7 +415,7 @@ var app = angular.module('app', [
                             article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var slug = $stateParams.slug;
 
-                                return Article.findOne({
+                                return Article.find({
                                     filter: {
                                         where: {
                                             "slug.url": slug
@@ -466,7 +466,12 @@ var app = angular.module('app', [
                                             }
                                         ]
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    console.log(data);
+                                    return data[0];
+                                });
                             }]
                         }
                     }

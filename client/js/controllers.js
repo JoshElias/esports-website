@@ -544,8 +544,10 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.setLoading(false);
                 })
                 .catch(function (err) {
+                    
                     console.log("ERROR:", err);
                     AlertService.setError({ show: true, msg: 'There has been an error processing your payment. ' + err.status + ": " + err.data.error.message });
+                    console.log(AlertService);
                     $scope.setLoading(false);
                 });
             };
@@ -555,12 +557,13 @@ angular.module('app.controllers', ['ngCookies'])
                 .$promise
                 .then(function (data) {
                     $scope.setLoading(false);
-                    
+                    AlertService.setSuccess({ show: true, msg: 'We have successfully updated your card information.' });
                     $scope.number = undefined;
                     $scope.cvc = undefined;
                     $scope.expiry = undefined;
                 })
                 .catch(function (err) {
+                    AlertService.setError({ show: true, msg: 'There has been an error updating your card. ' + err.status + ": " + err.data.error.message });
                     console.log("ERROR:", err);
                     $scope.setLoading(false);
                 });
@@ -586,7 +589,7 @@ angular.module('app.controllers', ['ngCookies'])
                     AlertService.setSuccess({ show: true, msg: 'You have successfully unsubscribed from Tempostorm.' });
                 })
                 .catch(function (err) {
-                    AlertService.setError({ show: true, msg: 'There has been an error processing your payment. ' + err.status + ": " + err.data.error.message })
+                    AlertService.setError({ show: true, msg: 'There was a problem processing your request. ' + err.status + ": " + err.data.error.message })
                 });
             }
 
@@ -10307,12 +10310,9 @@ angular.module('app.controllers', ['ngCookies'])
     .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService', 'LoopBackAuth',
         function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService, LoopBackAuth) {
 
-            console.log(LoopBackAuth);
-
             $scope.ArticleService = Article;
             $scope.article = article;
             $scope.authorEmail = article.author.email;
-            $scope.hasVoted = checkVotes();
 //        $scope.ArticleService = ArticleService;
 //        $scope.$watch('app.user.isLogged()', function() {
 //            for (var i = 0; i < $scope.article.votes.length; i++) {
@@ -10379,77 +10379,77 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             //vote
-            var box,
-                callback;
+//            var box,
+//                callback;
+//
+//            function checkVotes () {
+//                for (var i = 0; i < $scope.article.votes.length; i++) {
+//                    if (typeof($scope.article.votes[i]) === 'object') {
+//                        if ($scope.article.votes[i].userID == LoopBackAuth.currentUserId) {
+//                            $scope.hasVoted = true;
+//                            break;
+//                        }
+//                    } else {
+//                        if ($scope.article.votes[i] == LoopBackAuth.currentUserId) {
+//                            $scope.hasVoted = true;
+//                            break;
+//                        }
+//                    }
+//                }
+//                return $scope.hasVoted
+//            }
 
-            function checkVotes () {
-                for (var i = 0; i < $scope.article.votes.length; i++) {
-                    if (typeof($scope.article.votes[i]) === 'object') {
-                        if ($scope.article.votes[i].userID == LoopBackAuth.currentUserId) {
-                            $scope.hasVoted = true;
-                            break;
-                        }
-                    } else {
-                        if ($scope.article.votes[i] == LoopBackAuth.currentUserId) {
-                            $scope.hasVoted = true;
-                            break;
-                        }
-                    }
-                }
-                return $scope.hasVoted
-            }
-
-            $scope.voteArticle = function (article) {
-                vote(article);
-            };
-
-            function vote(article) {
-                if (!LoopBackAuth.currentUserId) {
-                    LoginModalService.showModal('login', function() {
-                        vote(article);
-                    });
-                } else {
-                    if (!$scope.hasVoted) {
-                        $scope.processingVote = true;
-                        Article.findOne({
-                            filter: {
-                                where: {
-                                    id: $scope.article.id
-                                },
-                                fields: ["votes", "votesCount"]
-                            }
-                        })
-                        .$promise
-                        .then(function (article) {
-                            async.waterfall([
-                                function(seriesCallback) {
-                                    article.votes.push({
-                                        userID: LoopBackAuth.currentUserId,
-                                        direction: 1
-                                    });
-                                    article.votesCount += 1;
-                                    return seriesCallback(undefined, article)
-                                },
-                                function(article, seriesCallback) {
-                                    Article.update({
-                                        where: {
-                                            id: $scope.article.id
-                                        }
-                                    }, {
-                                        votes: article.votes,
-                                        votesCount: article.votesCount
-                                    }, function (data) {
-                                        $scope.article.votes = data.votes;
-                                        $scope.article.votesCount = data.votesCount;
-                                        checkVotes();
-                                        $scope.processingVote = false;
-                                    });
-                                }
-                            ]);
-                        });
-                    }
-                }
-            };
+//            $scope.voteArticle = function (article) {
+//                vote(article);
+//            };
+//
+//            function vote(article) {
+//                if (!LoopBackAuth.currentUserId) {
+//                    LoginModalService.showModal('login', function() {
+//                        vote(article);
+//                    });
+//                } else {
+//                    if (!$scope.hasVoted) {
+//                        $scope.processingVote = true;
+//                        Article.findOne({
+//                            filter: {
+//                                where: {
+//                                    id: $scope.article.id
+//                                },
+//                                fields: ["votes", "votesCount"]
+//                            }
+//                        })
+//                        .$promise
+//                        .then(function (article) {
+//                            async.waterfall([
+//                                function(seriesCallback) {
+//                                    article.votes.push({
+//                                        userID: LoopBackAuth.currentUserId,
+//                                        direction: 1
+//                                    });
+//                                    article.votesCount += 1;
+//                                    return seriesCallback(undefined, article)
+//                                },
+//                                function(article, seriesCallback) {
+//                                    Article.update({
+//                                        where: {
+//                                            id: $scope.article.id
+//                                        }
+//                                    }, {
+//                                        votes: article.votes,
+//                                        votesCount: article.votesCount
+//                                    }, function (data) {
+//                                        $scope.article.votes = data.votes;
+//                                        $scope.article.votesCount = data.votesCount;
+//                                        checkVotes();
+//                                        $scope.processingVote = false;
+//                                    });
+//                                }
+//                            ]);
+//                        });
+//                    }
+//                }
+//            };
 
             // get premium
             $scope.getPremium = function (plan) {

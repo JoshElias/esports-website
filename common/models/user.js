@@ -215,7 +215,7 @@ module.exports = function(User) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        User.isInRoles(ctx.req.accessToken.id.toString(), ["$owner", "$admin"], function(err, isInRoles) {
+        User.isInRoles(["$owner", "$admin"], function(err, isInRoles) {
             if(err) return finalCb();
             if(!isInRoles.all) return removeFields();
             else return finalCb();
