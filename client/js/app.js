@@ -3083,41 +3083,20 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.edit.html',
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
-                            isUserAdmin: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
                                     return false;
                                 } else {
-                                    return User.isRole({
-                                        roleName: '$admin'
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider']
                                     })
                                     .$promise
-                                    .then(function (isAdmin) {
-    //                                    console.log('isAdmin: ', isAdmin.isRole);
-                                        return isAdmin.isRole;
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
                                     })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
-                                    });
-                                }
-                            }],
-                            isUserContentProvider: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
-                                    return false;
-                                } else {
-                                    return User.isRole({
-                                        roleName: '$contentProvider'
-                                    })
-                                    .$promise
-                                    .then(function (isContentProvider) {
-    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
-                                        return isContentProvider.isRole;
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
                                     });
                                 }
                             }],
@@ -3197,8 +3176,7 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (data) {
                                     data.mulligans = mulligans;
-//                                    console.log('mulligans resolve: ', mulligans);
-//                                    data.isUserContentProvider = isUserContentProvider;
+                                    console.log('mulligans resolve: ', mulligans);
                                     return data;
                                 })
                                 .catch(function(err) {
@@ -3354,11 +3332,12 @@ var app = angular.module('app', [
                         resolve: {
                             card: ['$stateParams', 'Card', function($stateParams, Card) {
                                 var cardID = $stateParams.cardID;
-                                Card.findById({
+                                return Card.findById({
                                     id: cardID
                                 })
                                 .$promise
                                 .then(function (cardFound) {
+                                    console.log('cardFound:', cardFound);
                                     return cardFound;
                                 })
                                 .catch(function (err) {
@@ -3854,7 +3833,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/users.edit.html',
                         controller: 'AdminUserEditCtrl',
                         resolve: {
-                            user: ['$stateParams', 'User', function ($stateParams, User) {
+                            user: ['$stateParams', 'User', 'userRoles', function ($stateParams, User, userRoles) {
                                 var userID = $stateParams.userID;
                                 return User.findById({
                                     id: userID
@@ -3862,6 +3841,10 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (userFound) {
                                     console.log('userFound: ', userFound);
+                                    // attach user roles
+                                    userFound.isAdmin = userRoles.isInRoles.$admin;
+                                    userFound.isActive = userRoles.isInRoles.$active;
+                                    userFound.isProvider = userRoles.isInRoles.$contentProvider;
                                     return userFound;
                                 })
                                 .catch(function (err) {
@@ -3869,9 +3852,10 @@ var app = angular.module('app', [
                                     return false;
                                 });
                             }],
+                            
                             userRoles: ['User', function(User) {
                                 return User.isInRoles({
-                                    roleNames: ['$admin', '$premium', '$contentProvider', '$active']
+                                    roleNames: ['$admin', '$contentProvider', '$active']
                                 })
                                 .$promise
                                 .then(function (userRoles) {

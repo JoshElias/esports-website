@@ -21,12 +21,12 @@
         Add a Card
     </div>
     <div class="panel-body">
-        <div class="form-group">
+        <!--<div class="form-group">
             <label for="id" class="col-sm-2 control-label">Heartstone ID</label>
             <div class="col-sm-10">
                 <input type="text" id="id" name="id" value="" class="form-control" ng-model="card.id">
             </div>
-        </div>
+        </div>-->
         <div class="form-group">
             <label for="name" class="col-sm-2 control-label">Card Name</label>
             <div class="col-sm-10">
@@ -146,18 +146,18 @@
         <div class="form-group" ng-show="card.deckable">
             <label for="thumbPhoto" class="col-sm-2 control-label">Deck Image</label>
             <div class="col-sm-10">
-                <input type="hidden" id="cardPhotoSmall" name="cardPhotoSmall" value="" ng-model="card.photos.small">
+                <input type="hidden" id="cardPhotoSmall" name="cardPhotoSmall" value="" ng-model="card.photoNames.small">
                 <div class="photo-input">
                     <div class="upload-thumbnail upload-thumbnail-deck">
-                        <div class="upload-drop" ng-show="card.photos.small === ''" ng-file-drop="deckUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
-                        <img src="{{deckImg}}" alt="" ng-show="card.photos.small !== ''">
+                        <div class="upload-drop" ng-show="card.photoNames.small === ''" ng-file-drop="deckUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
+                        <img src="{{deckImg}}" alt="" ng-show="card.photoNames.small !== ''">
                     </div>
                     <div class="btn-toolbar">
                         <button class="btn btn-default" ng-file-select="deckUpload($files)" onclick="this.value=null" accept="image/*">
-                            <span ng-show="card.photos.small === ''">Select image</span>
-                            <span ng-show="card.photos.small !== ''">Change image</span>
+                            <span ng-show="card.photoNames.small === ''">Select image</span>
+                            <span ng-show="card.photoNames.small !== ''">Change image</span>
                         </button>
-                        <a href="#" class="btn btn-danger" ng-click="card.photos.small = ''" ng-show="card.photos.small !== ''">Remove image</a>
+                        <a href="#" class="btn btn-danger" ng-click="card.photoNames.small = ''" ng-show="card.photoNames.small !== ''">Remove image</a>
                     </div>
                 </div>
             </div>
