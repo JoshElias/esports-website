@@ -29,7 +29,7 @@ module.exports = function(User) {
             next(err);
         });
     });
-
+    
 
     User.afterRemote("**", function(ctx, modelInstance, next) {
         removePrivateFields(ctx, modelInstance, next);
