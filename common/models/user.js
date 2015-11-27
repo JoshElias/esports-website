@@ -646,23 +646,23 @@ module.exports = function(User) {
         var err = new Error('no user found');
         err.statusCode = 400;
         err.code = 'USER_NOT_FOUND';
-
+        
         var ctx = loopback.getCurrentContext();
         if (!ctx || !ctx.active) return finalCb(err);
-
         var res = ctx.active.http.res;
         var req = ctx.active.http.req;
 
         if (req.currentUser)
             return finalCb(undefined, req.currentUser);
-
-        if(!req.accessToken || req.accessToken.id !== "string")
+        
+        if(!req.accessToken || typeof req.accessToken.userId !== "object")
             return finalCb(err);
 
-        User.app.models.user.findById(req.accessToken.id, function (err, user) {
+        
+        User.app.models.user.findById(req.accessToken.userId, function (err, user) {
             if (err) return finalCb(err);
             else if(user) {
-                ctx.req.currentUser = user;
+                req.currentUser = user;
                 ctx.set("currentUser", user);
             }
 

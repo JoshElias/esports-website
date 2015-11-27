@@ -17,7 +17,7 @@
 
 
 
-.alert-wrapper.default {
+alert-box .default {
     margin-top: 20px;
     overflow: hidden;
     font-weight: bold;
@@ -25,10 +25,10 @@
     background: black;
     padding: 20px;
 }
-.alert-wrapper.default.success {
+alert-box .default.success {
     border: 2px solid green;
 }
-.alert-wrapper.default.error {
+alert-box .default.error {
     border: 2px solid red;
 }
 
