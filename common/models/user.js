@@ -29,7 +29,10 @@ module.exports = function(User) {
             next(err);
         });
     });
-    
+
+    User.observe("before save", function(ctx, next) {
+        //protectFields(ctx, next);
+    });
 
     User.afterRemote("**", function(ctx, modelInstance, next) {
         removePrivateFields(ctx, modelInstance, next);
@@ -219,6 +222,38 @@ module.exports = function(User) {
             if(err) return finalCb();
             if(!isInRoles.all) return removeFields();
             else return finalCb();
+        });
+    };
+
+    // Filter out sensitive user information depending on ACL
+    var protectedFields = ["password", "email"];
+
+    function protectFields(ctx, finalCb) {
+        var Role = User.app.models.Role;
+        var RoleMapping = User.app.models.RoleMapping;
+
+        // sets the private fields to false
+        function removeFields() {
+            var data = ctx.data || ctx.instance;
+            protectedFields.forEach(function(protectedField) {
+
+            });
+            console.log("data:", data);
+            finalCb();
+        }
+
+        if(!ctx || !ctx.req || !ctx.req.accessToken)
+            return removeFields();
+
+        if(ctx.isNewInstance) {
+            return finalCb();
+        }
+
+        User.isInRoles(["$admin"], function(err, isInRoles) {
+            if(err) return finalCb();
+            else return removeFields();
+            //if(!isInRoles.all) return removeFields();
+            //else return finalCb();
         });
     };
 
@@ -585,6 +620,7 @@ module.exports = function(User) {
 
         var isInRoles = {};
         isInRoles.all = true;
+        isInRoles.none = true;
 
         // Check for the roles we already have
         if(ctx.active) {
@@ -602,9 +638,12 @@ module.exports = function(User) {
                 return eachCb();
 
             Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function(err, isRole) {
-                if(isInRoles.all && !isRole) {
+                if(!isRole && isInRoles.all) {
                     isInRoles.all = false;
+                } else if(!isRole && isInRoles.none) {
+                    isInRoles.none = false;
                 }
+
                 isInRoles[roleName] = isRole;
                 eachCb(err)
             });

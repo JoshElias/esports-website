@@ -9,6 +9,7 @@ module.exports = function(Deck) {
   });
 
   Deck.afterRemote("**", function(ctx, modelInstance, next) {
+      removePrivateDocs(ctx, modelInstance, next);
       removePrivateFields(ctx, modelInstance, next);
   });
 
@@ -17,6 +18,40 @@ module.exports = function(Deck) {
     utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
+
+
+    function removePrivateDocs(ctx, modelInstance, finalCb) {
+
+        var User = Deck.app.models.user;
+
+        // sets the private fields to false
+        function removeFields() {
+            if (ctx.result) {
+                var answer;
+                if (Array.isArray(modelInstance)) {
+                    answer = []
+                    ctx.result.forEach(function (result) {
+                        if(!isPrivate(result)) {
+                            answer.push(result);
+                        }
+                    });
+                } else if(!isPrivate(ctx.result)) {
+                    answer = ctx.result
+                }
+                ctx.result = answer;
+            }
+            finalCb();
+        }
+
+        if(!ctx || !ctx.req || !ctx.req.accessToken)
+            return removeFields();
+
+        User.isInRoles(["$owner", "$admin"], function(err, isInRoles) {
+            if(err) return finalCb();
+            if(isInRoles.none) return removeFields();
+            else return finalCb();
+        });
+    };
 
 
 
@@ -34,36 +69,28 @@ module.exports = function(Deck) {
             if (ctx.result) {
                 var answer;
                 if (Array.isArray(modelInstance)) {
-                    answer = ctx.result;
-                    ctx.result.forEach(function (result, index) {
-                        if(isPrivate(result)) {
-                            answer[index] = undefined;
-                            return;
-                        }
-
+                    answer = []
+                    ctx.result.forEach(function (result) {
                         if(!isPremium(result)) {
                             return;
                         }
 
-                        privateFields.forEach(function(privateField) {
-                            if(typeof answer[privateField] !== "undefined") {
-                                answer[privateField] = undefined;
+                        var replacement = {};
+                        for(var key in result) {
+                            if(privateFields.indexOf(key) === -1) {
+                                replacement[key] = result[key];
                             }
-                        });
-                    });
-                } else if(isPrivate(ctx.result)) {
-                    answer = undefined;
-                } else if(isPremium(ctx.result)) {
-                    answer = ctx.result;
-                    privateFields.forEach(function (privateField) {
-                        if (typeof answer[privateField] !== "undefined") {
-                            answer[privateField] = undefined;
                         }
+                        answer.push(replacement);
                     });
-                } else {
-                    answer = ctx.result;
+                } else if(isPremium(ctx.result)) {
+                    answer = {};
+                    for(var key in ctx.result) {
+                        if(privateFields.indexOf(key) === -1) {
+                            answer[key] = ctx.result[key];
+                        }
+                    }
                 }
-
                 ctx.result = answer;
             }
             finalCb();
@@ -74,10 +101,11 @@ module.exports = function(Deck) {
 
         User.isInRoles(["$owner", "$admin", "$premium", "$contentProvider"], function(err, isInRoles) {
             if(err) return finalCb();
-            if(!isInRoles.all) return removeFields();
+            if(isInRoles.none) return removeFields();
             else return finalCb();
         });
     };
+
 
     function isPremium(deck) {
         if(!deck || !deck.premium || !deck.premium.isPremium || !deck.premium.expiryDate)
@@ -101,12 +129,13 @@ module.exports = function(Deck) {
     function protectPrivateFields(ctx, finalCb) {
         var Role = Deck.app.models.Role;
         var RoleMapping = Deck.app.models.RoleMapping;
+        var User = Deck.app.models.user;
 
         // sets the private fields to false
         function removeFields() {
             var data = ctx.data || ctx.instance;
             var answer = data;
-            console.log("removing fields for deck context:", ctx);
+
             protectedFields.forEach(function (privateField) {
                 if (typeof answer[privateField] !== "undefined") {
                     answer[privateField] = undefined;
@@ -119,9 +148,9 @@ module.exports = function(Deck) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        Role.isInRoles(ctx.req.accessToken.userId, ["$owner", "$admin", "$contentProvider"], function(err, isInRoles) {
+        User.isInRoles(["$owner", "$admin", "$contentProvider"], function(err, isInRoles) {
             if(err) return finalCb();
-            if(!isInRoles) return removeFields();
+            if(isInRoles.none) return removeFields();
             else return finalCb();
         });
     };

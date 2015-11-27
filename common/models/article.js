@@ -15,8 +15,7 @@ module.exports = function(Article) {
 
 
     // Filter out sensitive user information depending on ACL
-    var privateFields = ["content", "oldComments", "photoNames",
-        "oldRelatedArticles"];
+    var privateFields = ["content", "oldComments", "oldRelatedArticles"];
 
     function removePrivateFields(ctx, modelInstance, finalCb) {
         var Role = Article.app.models.Role;
@@ -28,24 +27,26 @@ module.exports = function(Article) {
             if (ctx.result) {
                 var answer;
                 if (Array.isArray(modelInstance)) {
-                    answer = ctx.result;
+                    answer = [];
                     ctx.result.forEach(function (result) {
                         if(!isPremium(result))
                             return;
 
-                        privateFields.forEach(function(privateField) {
-                            if(typeof answer[privateField] !== "undefined") {
-                                answer[privateField] = undefined;
+                        var replacement = {};
+                        for(var key in result) {
+                            if(privateFields.indexOf(key) === -1) {
+                                replacement[key] = result[key];
                             }
-                        });
+                        }
+                        answer.push(replacement);
                     });
                 } else if(isPremium(ctx.result)) {
-                    answer = ctx.result;
-                    privateFields.forEach(function (privateField) {
-                        if (typeof answer[privateField] !== "undefined") {
-                            answer[privateField] = undefined;
+                    answer = {};
+                    for(var key in ctx.result) {
+                        if(privateFields.indexOf(key) === -1) {
+                            answer[key] = ctx.result[key];
                         }
-                    });
+                    }
                 }
                 ctx.result = answer;
             }
@@ -64,8 +65,9 @@ module.exports = function(Article) {
             return removeFields();
 
         User.isInRoles(["$owner", "$admin", "$premium", "$contentProvider"], function(err, isInRoles) {
+            console.log("isInRoles:", err, isInRoles);
             if(err) return finalCb();
-            if(!isInRoles.all) return removeFields();
+            if(isInRoles.none) return removeFields();
             else return finalCb();
         });
     };
