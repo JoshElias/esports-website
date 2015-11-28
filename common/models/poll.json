@@ -23,6 +23,12 @@
     "voteLimit": {
       "type": "number"
     },
+    "view": {
+        "type": "string"
+    },
+    "createdDate": {
+        "type": "date"
+    },
     "items": {
       "type": [
         "object"

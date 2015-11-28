@@ -51,24 +51,26 @@ module.exports = function(Guide) {
             if (ctx.result) {
                 var answer;
                 if (Array.isArray(modelInstance)) {
-                    answer = ctx.result;
+                    answer = [];
                     ctx.result.forEach(function (result) {
                         if(!isPremium(result))
                             return;
 
-                        privateFields.forEach(function(privateField) {
-                            if(typeof answer[privateField] !== "undefined") {
-                                answer[privateField] = undefined;
+                        var replacement = {};
+                        for(var key in result) {
+                            if(privateFields.indexOf(key) === -1) {
+                                replacement[key] = result[key];
                             }
-                        });
+                        }
+                        answer.push(replacement);
                     });
                 } else if(isPremium(ctx.result)) {
-                    answer = ctx.result;
-                    privateFields.forEach(function (privateField) {
-                        if (typeof answer[privateField] !== "undefined") {
-                            answer[privateField] = undefined;
+                    answer = {};
+                    for(var key in ctx.result) {
+                        if(privateFields.indexOf(key) === -1) {
+                            answer[key] = ctx.result[key];
                         }
-                    });
+                    }
                 }
                 ctx.result = answer;
             }

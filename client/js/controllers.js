@@ -1230,8 +1230,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.posts = dataPosts.activity;
         }
     ])
-    .controller('AdminCardAddCtrl', ['$scope', '$window', '$stateParams', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService',
-        function ($scope, $window, $stateParams, $compile, bootbox, Util, Hearthstone, AdminCardService) {
+    .controller('AdminCardAddCtrl', ['$scope', '$window', '$stateParams', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'ImgurService',
+        function ($scope, $window, $stateParams, $compile, bootbox, Util, Hearthstone, AdminCardService, ImgurService) {
             var defaultCard = {
                 name: '',
                 cost: '',
@@ -1257,7 +1257,8 @@ angular.module('app.controllers', ['ngCookies'])
                 expansion: Hearthstone.expansions[0]
             };
 
-            $scope.cardImg = $scope.deckImg = $scope.app.cdn + 'img/blank.png';
+//            $scope.cardImg = $scope.deckImg = $scope.app.cdn + 'img/blank.png';
+            $scope.cardImg = $scope.deckImg = 'https://cdn-tempostorm.netdna-ssl.com/img/blank.png';
 
             // load card
             $scope.card = angular.copy(defaultCard);
@@ -1348,10 +1349,10 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminCardEditCtrl', ['$location', '$scope', '$window', '$state', '$upload', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'card',
-        function ($location, $scope, $window, $state, $upload, $compile, bootbox, Util, Hearthstone, AdminCardService, AlertService, card) {
+    .controller('AdminCardEditCtrl', ['$location', '$scope', '$window', '$state', 'Image', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'card', 'ImgurService',
+        function ($location, $scope, $window, $state, Image, $compile, bootbox, Util, Hearthstone, AdminCardService, AlertService, card, ImgurService) {
             // no card, go back to list
-            if (!data || !data.success) { return $location.path('/admin/cards'); }
+//            if (!data || !data.success) { return $location.path('/admin/cards'); }
 
             // load card
             $scope.card = card;
@@ -1369,8 +1370,11 @@ angular.module('app.controllers', ['ngCookies'])
                 { name: 'No', value: false }
             ];
 
-            $scope.cardImg = ($scope.card.photos.large.length) ? $scope.app.cdn + 'cards/' + $scope.card.photos.large : $scope.app.cdn + 'img/blank.png';
-            $scope.deckImg = ($scope.card.photos.small.length) ? $scope.app.cdn + 'cards/' + $scope.card.photos.small : $scope.app.cdn + 'img/blank.png';
+//            $scope.cardImg = ($scope.card.photoNames.large.length) ? $scope.app.cdn + 'cards/' + $scope.card.photoNames.large : $scope.app.cdn + 'img/blank.png';
+//            $scope.deckImg = ($scope.card.photoNames.small.length) ? $scope.app.cdn + 'cards/' + $scope.card.photoNames.small : $scope.app.cdn + 'img/blank.png';
+            
+            $scope.cardImg = ($scope.card.photoNames.large.length) ? 'https://cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.large : $scope.app.cdn + 'https://cdn-tempostorm.netdna-ssl.com/img/blank.png';
+            $scope.deckImg = ($scope.card.photoNames.small.length) ? 'https://cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.small : $scope.app.cdn + 'https://cdn-tempostorm.netdna-ssl.com/img/blank.png';
 
             // card upload
             $scope.cardUpload = function ($files) {
@@ -1426,20 +1430,20 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // edit card
-            $scope.editCard = function editCard() {
+            $scope.editCard = function editCard(card) {
                 $scope.showError = false;
                 $scope.showSuccess = false;
 
-                AdminCardService.editCard($scope.card).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.card.name + ' has been updated successfully.' });
-                        $state.go('app.admin.hearthstone.cards.list');
-                    }
-                });
+//                AdminCardService.editCard($scope.card).success(function (data) {
+//                    if (!data.success) {
+//                        $scope.errors = data.errors;
+//                        $scope.showError = true;
+//                        $window.scrollTo(0,0);
+//                    } else {
+//                        AlertService.setSuccess({ show: true, msg: $scope.card.name + ' has been updated successfully.' });
+//                        $state.go('app.admin.hearthstone.cards.list');
+//                    }
+//                });
             }
         }
     ])
@@ -5505,43 +5509,28 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     }])
-    .controller('AdminDeckAddCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'isUserAdmin', 'isUserContentProvider', 'EventService',
-        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, isUserAdmin, isUserContentProvider, EventService) {
+    .controller('AdminDeckAddCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService',
+        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService) {
             // redirect back to class pick if no data
 //            if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
-            $scope.isUserAdmin = isUserAdmin;
-            $scope.isUserContentProvider = isUserContentProvider;
+            $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log("event listener response:", data);
-                // Check if user is admin
-                User.isRole({
-                    roleName: '$admin'
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
-                .then(function (isAdmin) {
-                    console.log('isAdmin: ', isAdmin.isRole);
-                     $scope.isUserAdmin = isAdmin.isRole;
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
                 })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
-                });
-                // Check if user is content provider
-                User.isRole({
-                    roleName: '$contentProvider'
-                })
-                .$promise
-                .then(function (isContentProvider) {
-                    console.log('isContentProvider: ', isContentProvider.isRole);
-                     $scope.isUserContentProvider = isContentProvider.isRole;
-                })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
                 });
             });
             
@@ -6274,43 +6263,28 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'isUserAdmin', 'isUserContentProvider', 'EventService',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, isUserAdmin, isUserContentProvider, EventService) {
+    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'EventService', 'userRoles',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, EventService, userRoles) {
             console.log('init deck: ',deck);
             
-            $scope.isUserAdmin = isUserAdmin;
-            $scope.isUserContentProvider = isUserContentProvider;
+            $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log("event listener response:", data);
-                // Check if user is admin
-                User.isRole({
-                    roleName: '$admin'
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
-                .then(function (isAdmin) {
-                    console.log('isAdmin: ', isAdmin.isRole);
-                     $scope.isUserAdmin = isAdmin.isRole;
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
                 })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
-                });
-                // Check if user is content provider
-                User.isRole({
-                    roleName: '$contentProvider'
-                })
-                .$promise
-                .then(function (isContentProvider) {
-                    console.log('isContentProvider: ', isContentProvider.isRole);
-                     $scope.isUserContentProvider = isContentProvider.isRole;
-                })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
                 });
             });
             
@@ -6319,10 +6293,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.isUserAdmin = false;
                 $scope.isUserContentProvider = false;
             });
-            
-            $scope.testing = function() {
-                console.log('hi');
-            };
 
             $scope.cards = {
                 neutral: neutralCardsList,
@@ -7319,13 +7289,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             // load user
             $scope.user = user;
-            // load user roles
-            $scope.user.isAdmin = userRoles.isInRoles.$admin;
-            $scope.user.isActive = userRoles.isInRoles.$active;
-            $scope.user.isProvider = userRoles.isInRoles.$contentProvider;
-            $scope.user.subscription = {
-                isSubscribed: userRoles.isInRoles.$premium
-            };
+//            $scope.user.subscription = {
+//                isSubscribed: userRoles.isInRoles.$premium
+//            };
 
             // select options
             $scope.userSubscription =
@@ -7343,26 +7309,63 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.editUser = function (user) {
                 console.log('user:', user);
                 $scope.fetching = true;
-                User.upsert({
+                
+                User.prototype$updateAttributes({
                     id: user.id
                 }, $scope.user)
                 .$promise
                 .then(function (userUpdated) {
                     console.log('userUpdated: ', userUpdated);
-                    AlertService.setSuccess({ show: true, msg: 'test' });
+                    var validRoles = [],
+                        revokeRoles = [];
+                    
+                    var isAdmin = user.isAdmin ? validRoles.push('$admin') : revokeRoles.push('$admin'),
+                        isActive = user.isActive ? validRoles.push('$active') : revokeRoles.push('$active'),
+                        isProvider = user.isProvider ? validRoles.push('$contentProvider') : revokeRoles.push('$contentProvider');
+                    
+                    console.log('validRoles:', validRoles);
+                    console.log('revokeRoles:', revokeRoles);
+                    
+                    $scope.fetching = false;
                     
                     User.assignRoles({
                         userId: user.id,
-                        roleNames: []
+                        roleNames: validRoles
                     })
                     .$promise
                     .then(function (userRoles) {
                         console.log('userRoles: ', userRoles);
+                        AlertService.setSuccess({ show: true, msg: 'User updated successfully.' });
+                        $window.scrollTo(0,0);
                         $scope.fetching = false;
                     })
                     .catch(function (err) {
                         console.log('err: ', err);
+                        $scope.errors = [];
+                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                                for (var i = 0; i < errArray.length; i++) {
+                                    $scope.errors.push(key + errArray[i]);
+                                }
+                            });
+                        } else if (err.data.error && err.data.error.message) {
+                            $scope.errors.push(err.data.error.message);
+                        }
+                        AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
+                        $window.scrollTo(0,0);
                         $scope.fetching = false;
+                    });
+                    
+                    User.revokeRoles({
+                        userId : user.id,
+                        roleNames: revokeRoles
+                    })
+                    .$promise
+                    .then(function (rolesRevoked) {
+                        console.log('rolesRevoked: ', rolesRevoked);
+                    })
+                    .catch(function (err) {
+                        console.log('err: ', err);
                     });
                     
                 })
@@ -7377,6 +7380,7 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                     }
                     AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
+                    $window.scrollTo(0,0);
                     $scope.fetching = false;
                 });
                 
@@ -7393,8 +7397,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminPollListCtrl', ['$scope', '$compile', 'bootbox', 'Pagination', 'AlertService', 'AdminPollService', 'data',
-        function ($scope, $compile, bootbox, Pagination, AlertService, AdminPollService, data) {
+    .controller('AdminPollListCtrl', ['$scope', '$compile', 'bootbox', 'AlertService', 'polls', 'Poll',
+        function ($scope, $compile, bootbox, AlertService, polls, Poll) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -7402,82 +7406,27 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // load polls
-            $scope.polls = data.polls;
-            $scope.page = data.page;
-            $scope.perpage = data.perpage;
-            $scope.total = data.total;
-            $scope.search = data.search;
+            $scope.polls = polls;
+//            $scope.page = data.page;
+//            $scope.perpage = data.perpage;
+//            $scope.total = data.total;
+//            $scope.search = data.search;
 
 
-            $scope.getPolls = function () {
-                AdminPollService.getPolls($scope.page, $scope.perpage, $scope.search).then(function (data) {
-                    $scope.polls = data.polls;
-                    $scope.page = data.page;
-                    $scope.total = data.total;
-                });
-            }
+//            $scope.getPolls = function () {
+//                AdminPollService.getPolls($scope.page, $scope.perpage, $scope.search).then(function (data) {
+//                    $scope.polls = data.polls;
+//                    $scope.page = data.page;
+//                    $scope.total = data.total;
+//                });
+//            }
 
-            $scope.searchPolls = function () {
-                $scope.page = 1;
-                $scope.getPolls();
-            }
+//            $scope.searchPolls = function () {
+//                $scope.page = 1;
+//                $scope.getPolls();
+//            }
 
-            // pagination
-            $scope.pagination = {
-                page: function () {
-                    return $scope.page;
-                },
-                perpage: function () {
-                    return $scope.perpage;
-                },
-                results: function () {
-                    return $scope.total;
-                },
-                setPage: function (page) {
-                    $scope.page = page;
-                    $scope.getPolls();
-                },
-                pagesArray: function () {
-                    var pages = [],
-                        start = 1,
-                        end = this.totalPages();
-
-                    if (this.totalPages() > 5) {
-                        if (this.page() < 3) {
-                            start = 1;
-                            end = start + 4;
-                        } else if (this.page() > this.totalPages() - 2) {
-                            end = this.totalPages();
-                            start = end - 4;
-                        } else {
-                            start = this.page() - 2;
-                            end = this.page() + 2;
-                        }
-
-                    }
-
-                    for (var i = start; i <= end; i++) {
-                        pages.push(i);
-                    }
-
-                    return pages;
-                },
-                isPage: function (page) {
-                    return (page === this.page());
-                },
-                totalPages: function (page) {
-                    return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
-                },
-                from: function () {
-                    return (this.page() * this.perpage()) - this.perpage() + 1;
-                },
-                to: function () {
-                    return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
-                }
-            };
-
-
-            // delete poll
+//             delete poll
             $scope.deletePoll = function (poll) {
                 var box = bootbox.dialog({
                     title: 'Delete poll: ' + poll.title + '?',
@@ -7487,17 +7436,15 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminPollService.deletePoll(poll._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.polls.indexOf(poll);
-                                        if (index !== -1) {
-                                            $scope.polls.splice(index, 1);
-                                        }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: poll.title + ' deleted successfully.'
-                                        };
+                                Poll.destroyById({id:poll.id}).$promise.then(function (data) {
+                                    var index = $scope.polls.indexOf(poll);
+                                    if (index !== -1) {
+                                        $scope.polls.splice(index, 1);
                                     }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: poll.title + ' deleted successfully.'
+                                    };
                                 });
                             }
                         },
@@ -7514,8 +7461,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminPollAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'AdminPollService', 'AlertService',
-        function ($scope, $state, $window, $upload, $compile, AdminPollService, AlertService) {
+    .controller('AdminPollAddCtrl', ['$scope', '$state', '$window', '$compile', 'AlertService', 'Poll',
+        function ($scope, $state, $window, $compile, AlertService, Poll) {
             var box,
                 defaultPoll = {
                     title : '',
@@ -7585,32 +7532,32 @@ angular.module('app.controllers', ['ngCookies'])
                 return out;
             }
 
-            $scope.photoUpload = function ($files) {
-                if (!$files.length) return false;
-                var uploadBox = bootbox.dialog({
-                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-                    closeButton: false,
-                    animate: false
-                });
-                $scope.uploading = 0;
-                uploadBox.modal('show');
-                for (var i = 0; i < $files.length; i++) {
-                    var file = $files[i];
-                    $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/polls',
-                        method: 'POST',
-                        file: file
-                    }).progress(function(evt) {
-                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function(data, status, headers, config) {
-                        $scope.currentItem.photos = {
-                            large: data.large,
-                            thumb: data.thumb
-                        };
-                        uploadBox.modal('hide');
-                    });
-                }
-            };
+//            $scope.photoUpload = function ($files) {
+//                if (!$files.length) return false;
+//                var uploadBox = bootbox.dialog({
+//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+//                    closeButton: false,
+//                    animate: false
+//                });
+//                $scope.uploading = 0;
+//                uploadBox.modal('show');
+//                for (var i = 0; i < $files.length; i++) {
+//                    var file = $files[i];
+//                    $scope.upload = $upload.upload({
+//                        url: '/api/admin/upload/polls',
+//                        method: 'POST',
+//                        file: file
+//                    }).progress(function(evt) {
+//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+//                    }).success(function(data, status, headers, config) {
+//                        $scope.currentItem.photos = {
+//                            large: data.large,
+//                            thumb: data.thumb
+//                        };
+//                        uploadBox.modal('hide');
+//                    });
+//                }
+//            };
 
             $scope.itemEditWnd = function (item) {
                 $scope.currentItem = item;
@@ -7661,25 +7608,27 @@ angular.module('app.controllers', ['ngCookies'])
 
             // add Poll
             $scope.addPoll = function () {
-                AdminPollService.addPoll($scope.poll).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been added successfully.' });
+                $scope.poll.createdDate = new Date().toISOString();
+                Poll.create({}, $scope.poll).$promise.then(function (data) {
+                   
+                        AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been added successfully.' })
                         $state.go('app.admin.polls.list');
-                    }
+                })
+                .catch(function(err){
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                    AlertService.setError({ show: true, msg: 'There was an error adding your poll ' + err.status + ": " + err.data.error.message})
                 });
             };
         }
     ])
-    .controller('AdminPollEditCtrl', ['$scope', '$state', '$window', '$compile', '$upload', 'AdminPollService', 'AlertService', 'data',
-        function ($scope, $state, $window, $compile, $upload, AdminPollService, AlertService, data) {
+    .controller('AdminPollEditCtrl', ['$scope', '$state', '$window', '$compile', 'AlertService', 'poll', 'Poll',
+        function ($scope, $state, $window, $compile, AlertService, poll, Poll) {
             var box,
                 defaultPoll = {
                     title : '',
-                    subTitle: '',
+                    subtitle: '',
                     description: '',
                     type: '',
                     active: false,
@@ -7713,8 +7662,10 @@ angular.module('app.controllers', ['ngCookies'])
                 ]
             };
 
+            console.log(poll);
+            
             // load Poll
-            $scope.poll = data.poll;
+            $scope.poll = poll;
             $scope.item = angular.copy(defaultItem);
             $scope.currentItem = angular.copy(defaultItem);
             $scope.imgPath = 'polls/';
@@ -7737,7 +7688,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.voteLimit = function() {
                 var out = [];
-
+  
                 for (var i = 0; i < $scope.poll.items.length; i++) {
                     out.push(i + 1);
                 }
@@ -7745,32 +7696,32 @@ angular.module('app.controllers', ['ngCookies'])
                 return out;
             }
 
-            $scope.photoUpload = function ($files) {
-                if (!$files.length) return false;
-                var uploadBox = bootbox.dialog({
-                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-                    closeButton: false,
-                    animate: false
-                });
-                $scope.uploading = 0;
-                uploadBox.modal('show');
-                for (var i = 0; i < $files.length; i++) {
-                    var file = $files[i];
-                    $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/polls',
-                        method: 'POST',
-                        file: file
-                    }).progress(function(evt) {
-                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function(data, status, headers, config) {
-                        $scope.currentItem.photos = {
-                            large: data.large,
-                            thumb: data.thumb
-                        };
-                        uploadBox.modal('hide');
-                    });
-                }
-            };
+//            $scope.photoUpload = function ($files) {
+//                if (!$files.length) return false;
+//                var uploadBox = bootbox.dialog({
+//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+//                    closeButton: false,
+//                    animate: false
+//                });
+//                $scope.uploading = 0;
+//                uploadBox.modal('show');
+//                for (var i = 0; i < $files.length; i++) {
+//                    var file = $files[i];
+//                    $scope.upload = $upload.upload({
+//                        url: '/api/admin/upload/polls',
+//                        method: 'POST',
+//                        file: file
+//                    }).progress(function(evt) {
+//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+//                    }).success(function(data, status, headers, config) {
+//                        $scope.currentItem.photos = {
+//                            large: data.large,
+//                            thumb: data.thumb
+//                        };
+//                        uploadBox.modal('hide');
+//                    });
+//                }
+//            };
 
             $scope.itemEditWnd = function (item) {
                 $scope.currentItem = item;
@@ -7823,15 +7774,17 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.editPoll = function () {
                 $scope.showError = false;
 
-                AdminPollService.editPoll($scope.poll).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been updated successfully.' });
-                        $state.go('app.admin.polls.list');
-                    }
+                Poll.update( {
+                    where: {id:$scope.poll.id}
+                }, $scope.poll).$promise.then(function (data) {
+                    AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been updated successfully.' })
+                    $state.go('app.admin.polls.list');
+                })
+                .catch(function(err){
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                    AlertService.setError({ show: true, msg: 'There was an error editing your poll ' + err.status + ": " + err.data.error.message})
                 });
             };
         }
@@ -8161,44 +8114,29 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     }])
-    .controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'isUserAdmin', 'isUserContentProvider', 'EventService',
-        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, isUserAdmin, isUserContentProvider, EventService) {
+    .controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService',
+        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService) {
             // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
             
-            $scope.isUserAdmin = isUserAdmin;
-            $scope.isUserContentProvider = isUserContentProvider;
+            $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log("event listener response:", data);
-                // Check if user is admin
-                User.isRole({
-                    roleName: '$admin'
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
-                .then(function (isAdmin) {
-                    console.log('isAdmin: ', isAdmin.isRole);
-                     $scope.isUserAdmin = isAdmin.isRole;
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
                 })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
-                });
-                // Check if user is content provider
-                User.isRole({
-                    roleName: '$contentProvider'
-                })
-                .$promise
-                .then(function (isContentProvider) {
-                    console.log('isContentProvider: ', isContentProvider.isRole);
-                     $scope.isUserContentProvider = isContentProvider.isRole;
-                })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
                 });
             });
             
@@ -8209,9 +8147,6 @@ angular.module('app.controllers', ['ngCookies'])
             });
 
             $scope.className = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
-            console.log('isUserEveryone: ', isUserAdmin);
-            $scope.isUserAdmin = isUserAdmin;
-            $scope.isUserContentProvider = isUserContentProvider;
             
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
@@ -8975,43 +8910,28 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'isUserAdmin', 'isUserContentProvider', 'EventService',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, isUserAdmin, isUserContentProvider, EventService) {
+    .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService) {
             console.log('init deck: ',deck);
             
-            $scope.isUserAdmin = isUserAdmin;
-            $scope.isUserContentProvider = isUserContentProvider;
+            $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log("event listener response:", data);
-                // Check if user is admin
-                User.isRole({
-                    roleName: '$admin'
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
-                .then(function (isAdmin) {
-                    console.log('isAdmin: ', isAdmin.isRole);
-                     $scope.isUserAdmin = isAdmin.isRole;
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
                 })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
-                });
-                // Check if user is content provider
-                User.isRole({
-                    roleName: '$contentProvider'
-                })
-                .$promise
-                .then(function (isContentProvider) {
-                    console.log('isContentProvider: ', isContentProvider.isRole);
-                     $scope.isUserContentProvider = isContentProvider.isRole;
-                })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
                 });
             });
             
@@ -10716,58 +10636,36 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'isUserAdmin', 'isUserContentProvider', 'isUserPremium', 'EventService', 'User',
-        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, isUserAdmin, isUserContentProvider, isUserPremium, EventService, User) {
+    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'userRoles', 'EventService', 'User',
+        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, userRoles, EventService, User) {
             
             $scope.isUser = {
-                admin: isUserAdmin,
-                contentProvider: isUserContentProvider,
-                premium: isUserPremium
+                admin: userRoles ? userRoles.isInRoles.$admin : false,
+                contentProvider: userRoles ? userRoles.isInRoles.$contentProvider : false,
+                premium: userRoles ? userRoles.isInRoles.$premium : false
             };
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log("event listener response:", data);
-                // Check if user is admin
-                User.isRole({
-                    roleName: '$admin'
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    roleNames: ['$admin', '$contentProvider', '$premium']
                 })
                 .$promise
-                .then(function (isAdmin) {
-//                    console.log('isAdmin: ', isAdmin.isRole);
-                     $scope.isUser.admin = isAdmin.isRole;
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUser.admin = userRoles.isInRoles.$admin;
+                    $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
+                    $scope.isUser.premium = userRoles.isInRoles.$premium;
+                    return userRoles;
                 })
-                .catch(function (err) {
-                    console.log('resolve err: ', err);
-                });
-                // Check if user is content provider
-                User.isRole({
-                    roleName: '$contentProvider'
-                })
-                .$promise
-                .then(function (isContentProvider) {
-//                    console.log('isContentProvider: ', isContentProvider.isRole);
-                     $scope.isUser.contentProvider = isContentProvider.isRole;
-                })
-                .catch(function (err) {
-                    console.log('resolve err: ', err);
-                });
-                // Check if user is premium
-                User.isRole({
-                    roleName: '$premium'
-                })
-                .$promise
-                .then(function (isPremium) {
-//                    console.log('isContentProvider: ', isPremium.isRole);
-                     $scope.isUser.premium = isPremium.isRole;
-                })
-                .catch(function (err) {
-                    console.log('resolve err: ', err);
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
                 });
             });
             
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
-//                console.log("event listener response:", data);
+                console.log("event listener response:", data);
                 $scope.isUser.admin = false;
                 $scope.isUser.contentProvider = false;
                 $scope.isUser.premium = false;
