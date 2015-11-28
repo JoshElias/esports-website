@@ -685,57 +685,20 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.decks.deck.html',
                         controller: 'DeckCtrl',
                         resolve: {
-                            isUserAdmin: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
                                     return false;
                                 } else {
-                                    return User.isRole({
-                                        roleName: '$admin'
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider', '$premium']
                                     })
                                     .$promise
-                                    .then(function (isAdmin) {
-    //                                    console.log('isAdmin: ', isAdmin.isRole);
-                                        return isAdmin.isRole;
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
                                     })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
-                                    });
-                                }
-                            }],
-                            isUserContentProvider: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
-                                    return false;
-                                } else {
-                                    return User.isRole({
-                                        roleName: '$contentProvider'
-                                    })
-                                    .$promise
-                                    .then(function (isContentProvider) {
-    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
-                                        return isContentProvider.isRole;
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
-                                    });
-                                }
-                            }],
-                            isUserPremium: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
-                                    return false;
-                                } else {
-                                    return User.isRole({
-                                        roleName: '$premium'
-                                    })
-                                    .$promise
-                                    .then(function (isUserPremium) {
-                                        return isUserPremium.isRole;
-                                    })
-                                    .catch(function (err) {
-                                        console.log('resolve err: ', err);
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
                                     });
                                 }
                             }],
@@ -866,41 +829,20 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.deck-builder.build.html',
                         controller: 'DeckBuilderCtrl',
                         resolve: {
-                            isUserAdmin: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
                                     return false;
                                 } else {
-                                    return User.isRole({
-                                        roleName: '$admin'
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider']
                                     })
                                     .$promise
-                                    .then(function (isAdmin) {
-    //                                    console.log('isAdmin: ', isAdmin.isRole);
-                                        return isAdmin.isRole;
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
                                     })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
-                                    });
-                                }
-                            }],
-                            isUserContentProvider: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
-                                    return false;
-                                } else {
-                                    return User.isRole({
-                                        roleName: '$contentProvider'
-                                    })
-                                    .$promise
-                                    .then(function (isContentProvider) {
-    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
-                                        return isContentProvider.isRole;
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
                                     });
                                 }
                             }],
@@ -971,41 +913,20 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.deck-builder.edit.html',
                         controller: 'DeckEditCtrl',
                         resolve: {
-                            isUserAdmin: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
                                     return false;
                                 } else {
-                                    return User.isRole({
-                                        roleName: '$admin'
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider']
                                     })
                                     .$promise
-                                    .then(function (isAdmin) {
-    //                                    console.log('isAdmin: ', isAdmin.isRole);
-                                        return isAdmin.isRole;
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
                                     })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
-                                    });
-                                }
-                            }],
-                            isUserContentProvider: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
-                                    return false;
-                                } else {
-                                    return User.isRole({
-                                        roleName: '$contentProvider'
-                                    })
-                                    .$promise
-                                    .then(function (isContentProvider) {
-    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
-                                        return isContentProvider.isRole;
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
                                     });
                                 }
                             }],
@@ -3025,7 +2946,23 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.add.build.html',
                         controller: 'AdminDeckAddCtrl',
                         resolve: {
-                            
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
+                            }],
                             classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
                                     var playerClass = $stateParams.playerClass;
 
@@ -3854,17 +3791,21 @@ var app = angular.module('app', [
                             }],
                             
                             userRoles: ['User', function(User) {
-                                return User.isInRoles({
-                                    roleNames: ['$admin', '$contentProvider', '$active']
-                                })
-                                .$promise
-                                .then(function (userRoles) {
-                                    console.log('userRoles: ', userRoles);
-                                    return userRoles;
-                                })
-                                .catch(function (err) {
-                                    console.log('User.isInRoles err: ', err);
-                                });
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider', '$active']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (err) {
+                                        console.log('User.isInRoles err: ', err);
+                                    });
+                                }
                             }]
                             
                         }

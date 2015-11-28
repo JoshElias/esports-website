@@ -5509,43 +5509,28 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     }])
-    .controller('AdminDeckAddCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'isUserAdmin', 'isUserContentProvider', 'EventService',
-        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, isUserAdmin, isUserContentProvider, EventService) {
+    .controller('AdminDeckAddCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService',
+        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService) {
             // redirect back to class pick if no data
 //            if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
-            $scope.isUserAdmin = isUserAdmin;
-            $scope.isUserContentProvider = isUserContentProvider;
+            $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log("event listener response:", data);
-                // Check if user is admin
-                User.isRole({
-                    roleName: '$admin'
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
-                .then(function (isAdmin) {
-                    console.log('isAdmin: ', isAdmin.isRole);
-                     $scope.isUserAdmin = isAdmin.isRole;
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
                 })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
-                });
-                // Check if user is content provider
-                User.isRole({
-                    roleName: '$contentProvider'
-                })
-                .$promise
-                .then(function (isContentProvider) {
-                    console.log('isContentProvider: ', isContentProvider.isRole);
-                     $scope.isUserContentProvider = isContentProvider.isRole;
-                })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
                 });
             });
             
@@ -6282,13 +6267,12 @@ angular.module('app.controllers', ['ngCookies'])
         function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, EventService, userRoles) {
             console.log('init deck: ',deck);
             
-            $scope.isUserAdmin = userRoles.isInRoles.$admin;
-            $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+            $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log("event listener response:", data);
-                // Check if user is admin
+                // Check if user is admin or contentProvider
                 User.isInRoles({
                     roleNames: ['$admin', '$contentProvider']
                 })
@@ -7325,6 +7309,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.editUser = function (user) {
                 console.log('user:', user);
                 $scope.fetching = true;
+                
                 User.prototype$updateAttributes({
                     id: user.id
                 }, $scope.user)
@@ -7340,6 +7325,8 @@ angular.module('app.controllers', ['ngCookies'])
                     
                     console.log('validRoles:', validRoles);
                     console.log('revokeRoles:', revokeRoles);
+                    
+                    $scope.fetching = false;
                     
                     User.assignRoles({
                         userId: user.id,
@@ -8127,44 +8114,29 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     }])
-    .controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'isUserAdmin', 'isUserContentProvider', 'EventService',
-        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, isUserAdmin, isUserContentProvider, EventService) {
+    .controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService',
+        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService) {
             // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
             
-            $scope.isUserAdmin = isUserAdmin;
-            $scope.isUserContentProvider = isUserContentProvider;
+            $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log("event listener response:", data);
-                // Check if user is admin
-                User.isRole({
-                    roleName: '$admin'
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
-                .then(function (isAdmin) {
-                    console.log('isAdmin: ', isAdmin.isRole);
-                     $scope.isUserAdmin = isAdmin.isRole;
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
                 })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
-                });
-                // Check if user is content provider
-                User.isRole({
-                    roleName: '$contentProvider'
-                })
-                .$promise
-                .then(function (isContentProvider) {
-                    console.log('isContentProvider: ', isContentProvider.isRole);
-                     $scope.isUserContentProvider = isContentProvider.isRole;
-                })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
                 });
             });
             
@@ -8175,9 +8147,6 @@ angular.module('app.controllers', ['ngCookies'])
             });
 
             $scope.className = $stateParams.playerClass.slice(0,1).toUpperCase() + $stateParams.playerClass.substr(1);
-            console.log('isUserEveryone: ', isUserAdmin);
-            $scope.isUserAdmin = isUserAdmin;
-            $scope.isUserContentProvider = isUserContentProvider;
             
             // deck
             $scope.deckTypes = Hearthstone.deckTypes;
@@ -8941,43 +8910,28 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'isUserAdmin', 'isUserContentProvider', 'EventService',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, isUserAdmin, isUserContentProvider, EventService) {
+    .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService) {
             console.log('init deck: ',deck);
             
-            $scope.isUserAdmin = isUserAdmin;
-            $scope.isUserContentProvider = isUserContentProvider;
+            $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
+            $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log("event listener response:", data);
-                // Check if user is admin
-                User.isRole({
-                    roleName: '$admin'
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
-                .then(function (isAdmin) {
-                    console.log('isAdmin: ', isAdmin.isRole);
-                     $scope.isUserAdmin = isAdmin.isRole;
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUserAdmin = userRoles.isInRoles.$admin;
+                    $scope.isUserContentProvider = userRoles.isInRoles.$contentProvider;
+                    return userRoles;
                 })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
-                });
-                // Check if user is content provider
-                User.isRole({
-                    roleName: '$contentProvider'
-                })
-                .$promise
-                .then(function (isContentProvider) {
-                    console.log('isContentProvider: ', isContentProvider.isRole);
-                     $scope.isUserContentProvider = isContentProvider.isRole;
-                })
-                .catch(function (err) {
-                    if (err) {
-                        console.log('resolve err: ', err);
-                    }
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
                 });
             });
             
@@ -10682,58 +10636,36 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'isUserAdmin', 'isUserContentProvider', 'isUserPremium', 'EventService', 'User',
-        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, isUserAdmin, isUserContentProvider, isUserPremium, EventService, User) {
+    .controller('DeckCtrl', ['$scope', '$state', '$sce', '$compile', '$window', 'bootbox', 'Hearthstone', 'VoteService', 'Deck', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'deckWithMulligans', 'userRoles', 'EventService', 'User',
+        function ($scope, $state, $sce, $compile, $window, bootbox, Hearthstone, VoteService, Deck, MetaService, LoginModalService, LoopBackAuth, deckWithMulligans, userRoles, EventService, User) {
             
             $scope.isUser = {
-                admin: isUserAdmin,
-                contentProvider: isUserContentProvider,
-                premium: isUserPremium
+                admin: userRoles ? userRoles.isInRoles.$admin : false,
+                contentProvider: userRoles ? userRoles.isInRoles.$contentProvider : false,
+                premium: userRoles ? userRoles.isInRoles.$premium : false
             };
             
             // Listen for login/logout events and update role accordingly
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
-                console.log("event listener response:", data);
-                // Check if user is admin
-                User.isRole({
-                    roleName: '$admin'
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    roleNames: ['$admin', '$contentProvider', '$premium']
                 })
                 .$promise
-                .then(function (isAdmin) {
-//                    console.log('isAdmin: ', isAdmin.isRole);
-                     $scope.isUser.admin = isAdmin.isRole;
+                .then(function (userRoles) {
+//                    console.log('userRoles: ', userRoles);
+                    $scope.isUser.admin = userRoles.isInRoles.$admin;
+                    $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
+                    $scope.isUser.premium = userRoles.isInRoles.$premium;
+                    return userRoles;
                 })
-                .catch(function (err) {
-                    console.log('resolve err: ', err);
-                });
-                // Check if user is content provider
-                User.isRole({
-                    roleName: '$contentProvider'
-                })
-                .$promise
-                .then(function (isContentProvider) {
-//                    console.log('isContentProvider: ', isContentProvider.isRole);
-                     $scope.isUser.contentProvider = isContentProvider.isRole;
-                })
-                .catch(function (err) {
-                    console.log('resolve err: ', err);
-                });
-                // Check if user is premium
-                User.isRole({
-                    roleName: '$premium'
-                })
-                .$promise
-                .then(function (isPremium) {
-//                    console.log('isContentProvider: ', isPremium.isRole);
-                     $scope.isUser.premium = isPremium.isRole;
-                })
-                .catch(function (err) {
-                    console.log('resolve err: ', err);
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
                 });
             });
             
             EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
-//                console.log("event listener response:", data);
+                console.log("event listener response:", data);
                 $scope.isUser.admin = false;
                 $scope.isUser.contentProvider = false;
                 $scope.isUser.premium = false;
