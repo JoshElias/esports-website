@@ -519,7 +519,9 @@ module.exports = function(User) {
             async.waterfall([
                 // check if user is already that role
                 function (seriesCb) {
-                    Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function (err, isRole) {
+                    console.log('checking if role: ', roleName);
+                    User.isInRoles([roleName], {principalType: RoleMapping.USER, principalId: userId}, function (err, isRole) {
+                        console.log('is role: ', err, isRole);
                         if (err) return seriesCb(err);
 
                         if (isRole) return seriesCb("ok");
@@ -529,6 +531,7 @@ module.exports = function(User) {
                 // Get the new role
                 function (seriesCb) {
                     Role.findOne({where: {name: roleName}}, function (err, role) {
+                        console.log('finding role: ', role);
                         if (err) return seriesCb(err);
 
                         if (!role) {
@@ -543,6 +546,7 @@ module.exports = function(User) {
                 },
                 // Assign the user to that role
                 function (role, seriesCb) {
+                    console.log('role create: ', role);
                     role.principals.create({
                         principalType: RoleMapping.USER,
                         principalId: userId
@@ -551,6 +555,7 @@ module.exports = function(User) {
                     });
                 }],
             function (err) {
+                console.log('done err: ', err);
                 if (err && err !== "ok") return assignCb(err);
                 return assignCb();
             });

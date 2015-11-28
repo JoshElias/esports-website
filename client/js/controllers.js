@@ -7199,8 +7199,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminUserAddCtrl', ['$scope', '$state', '$window', 'User',
-        function ($scope, $state, $window, User) {
+    .controller('AdminUserAddCtrl', ['$scope', '$state', '$window', 'User', 'AlertService',
+        function ($scope, $state, $window, User, AlertService) {
             // default user
             var d = new Date();
             d.setMonth(d.getMonth()+1);
@@ -7247,51 +7247,82 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.dateOptions = {};
 
             // add user
-            $scope.addUser = function () {
+            $scope.addUser = function (user) {
+//                console.log('user:', user);
+                if ($scope.user.newPassword !== $scope.user.password) {
+                    AlertService.setError({ show: true, msg: 'Unable to update user', errorList: ['Please confirm your password'] });
+                    $window.scrollTo(0, 0);
+                    return false;
+                }
                 $scope.fetching = true;
-                console.log('addUser: ', $scope.user);
-                if ($scope.user.password === $scope.user.cpassword) {
-                    User.create($scope.user)
-                    .$promise
-                    .then(function (userCreated) {
+                
+                var validRoles = [];
+
+                var isAdmin = user.isAdmin ? validRoles.push('$admin') : null,
+                    isActive = user.isActive ? validRoles.push('$active') : null,
+                    isProvider = user.isProvider ? validRoles.push('$contentProvider') : null;
+                    
+//                    console.log('validRoles:', validRoles);
+                
+                async.waterfall([
+                    function(seriesCallback) {
+                        User.create(user)
+                        .$promise
+                        .then(function (userCreated) {
+                            console.log('userCreated: ', userCreated);
+                            seriesCallback(null, userCreated);
+                        })
+                        .catch(function (err) {
+                            console.log('err: ', err);
+                            seriesCallback(err);
+                        });
+                    },
+                    function(userCreated, seriesCallback) {
                         console.log('userCreated: ', userCreated);
-                        $scope.fetching = false;
-                        $state.go('app.admin.users.list');
-                    })
-                    .catch(function (err) {
-                        console.log('User.create err: ', err);
-                        if (err.data && err.data.error.details && err.data.error.details.messages) {
+                        console.log('validRoles: ', validRoles);
+                        User.assignRoles({
+                            userId: userCreated.id,
+                            roleNames: validRoles
+                        })
+                        .$promise
+                        .then(function (userRoles) {
+                            console.log('userRoles: ', userRoles);
+                            seriesCallback(null);
+                        })
+                        .catch(function (err) {
+                            console.log('err: ', err);
+                            seriesCallback(err);
+                        });
+                    }
+                ], function(err, results) {
+                    if (err) {
+                        console.log('series err: ', err);
+                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
                             $scope.errors = [];
-                            $scope.showError = true;
-                            $window.scrollTo(0,0);
-                            angular.forEach(err.data.error.details.messages, function (errMessage) {
-                                for(var i = 0; i < errMessage.length; i++) {
-                                    $scope.errors.push(errMessage[i]);
+                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                                for (var i = 0; i < errArray.length; i++) {
+                                    $scope.errors.push(errArray[i]);
                                 }
                             });
+                            AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
+                            $window.scrollTo(0,0);
+                            $scope.fetching = false;
                         }
+                    } else {
+                        console.log('series results: ', results);
+                        AlertService.setSuccess({ show: true, msg: 'User updated successfully' });
+                        $window.scrollTo(0, 0);
                         $scope.fetching = false;
-                        return;
-                    });
-                } else {
-                    // password fields do not match
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
-                    $scope.errors = ['Please confirm your password.'];
-                    $scope.fetching = false;
-                    return;
-                }
+                    }
+                });
             };
         }
     ])
-    .controller('AdminUserEditCtrl', ['$scope', 'User', '$state', '$window', 'AdminUserService', 'AlertService', 'user', 'userRoles',
-        function ($scope, User, $state, $window, AdminUserService, AlertService, user, userRoles) {
+    .controller('AdminUserEditCtrl', ['$scope', 'User', '$state', '$window', 'AdminUserService', 'AlertService', 'user',
+        function ($scope, User, $state, $window, AdminUserService, AlertService, user) {
 
             // load user
             $scope.user = user;
-//            $scope.user.subscription = {
-//                isSubscribed: userRoles.isInRoles.$premium
-//            };
 
             // select options
             $scope.userSubscription =
@@ -7308,92 +7339,92 @@ angular.module('app.controllers', ['ngCookies'])
             // edit user
             $scope.editUser = function (user) {
                 console.log('user:', user);
+                if ($scope.user.changePassword 
+                    && ($scope.user.newPassword !== $scope.user.password)) {
+                    AlertService.setError({ show: true, msg: 'Unable to update user', errorList: ['Please confirm your password'] });
+                    $window.scrollTo(0, 0);
+                    return false;
+                }
                 $scope.fetching = true;
                 
-                User.prototype$updateAttributes({
-                    id: user.id
-                }, $scope.user)
-                .$promise
-                .then(function (userUpdated) {
-                    console.log('userUpdated: ', userUpdated);
-                    var validRoles = [],
-                        revokeRoles = [];
+                var validRoles = [],
+                    revokeRoles = [];
+
+                var isAdmin = user.isAdmin ? validRoles.push('$admin') : revokeRoles.push('$admin'),
+                    isActive = user.isActive ? validRoles.push('$active') : revokeRoles.push('$active'),
+                    isProvider = user.isProvider ? validRoles.push('$contentProvider') : revokeRoles.push('$contentProvider');
                     
-                    var isAdmin = user.isAdmin ? validRoles.push('$admin') : revokeRoles.push('$admin'),
-                        isActive = user.isActive ? validRoles.push('$active') : revokeRoles.push('$active'),
-                        isProvider = user.isProvider ? validRoles.push('$contentProvider') : revokeRoles.push('$contentProvider');
-                    
-                    console.log('validRoles:', validRoles);
-                    console.log('revokeRoles:', revokeRoles);
-                    
-                    $scope.fetching = false;
-                    
-                    User.assignRoles({
-                        userId: user.id,
-                        roleNames: validRoles
-                    })
-                    .$promise
-                    .then(function (userRoles) {
-                        console.log('userRoles: ', userRoles);
-                        AlertService.setSuccess({ show: true, msg: 'User updated successfully.' });
-                        $window.scrollTo(0,0);
-                        $scope.fetching = false;
-                    })
-                    .catch(function (err) {
-                        console.log('err: ', err);
-                        $scope.errors = [];
-                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                                for (var i = 0; i < errArray.length; i++) {
-                                    $scope.errors.push(key + errArray[i]);
-                                }
-                            });
-                        } else if (err.data.error && err.data.error.message) {
-                            $scope.errors.push(err.data.error.message);
-                        }
-                        AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
-                        $window.scrollTo(0,0);
-                        $scope.fetching = false;
-                    });
-                    
-                    User.revokeRoles({
-                        userId : user.id,
-                        roleNames: revokeRoles
-                    })
-                    .$promise
-                    .then(function (rolesRevoked) {
-                        console.log('rolesRevoked: ', rolesRevoked);
-                    })
-                    .catch(function (err) {
-                        console.log('err: ', err);
-                    });
-                    
-                })
-                .catch(function (err) {
-                    console.log('user.updateAttributes err: ', err);
-                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                        $scope.errors = [];
-                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                            for (var i = 0; i < errArray.length; i++) {
-                                $scope.errors.push(key + errArray[i]);
-                            }
+//                    console.log('validRoles:', validRoles);
+//                    console.log('revokeRoles:', revokeRoles);
+                
+                async.series([
+                    function(seriesCallback) {
+                        User.prototype$updateAttributes({
+                            id: user.id
+                        }, user)
+                        .$promise
+                        .then(function (userUpdated) {
+                            console.log('userUpdated: ', userUpdated);
+                            seriesCallback(null, 'User Model Updated');
+                        })
+                        .catch(function (err) {
+                            console.log('err: ', err);
+                            seriesCallback(err);
+                        });
+                    },
+                    function(seriesCallback) {
+                        console.log('validRoles:', validRoles);
+                        User.assignRoles({
+                            userId: user.id,
+                            roleNames: validRoles
+                        })
+                        .$promise
+                        .then(function (rolesCreated) {
+                            console.log('rolesCreated: ', rolesCreated);
+                            seriesCallback(null, 'Roles Assigned');
+                        })
+                        .catch(function (err) {
+                            console.log('err: ', err);
+                            seriesCallback(err);
+                        });
+                    },
+                    function(seriesCallback) {
+                        console.log('revokeRoles: ', revokeRoles);
+                        User.revokeRoles({
+                            userId : user.id,
+                            roleNames: revokeRoles
+                        })
+                        .$promise
+                        .then(function (rolesRevoked) {
+                            console.log('rolesRevoked: ', rolesRevoked);
+                            seriesCallback(null, 'Roles Revoked');
+                        })
+                        .catch(function (err) {
+                            console.log('err: ', err);
+                            seriesCallback(err);
                         });
                     }
-                    AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
-                    $window.scrollTo(0,0);
-                    $scope.fetching = false;
+                ], function(err, results) {
+                    if (err) {
+//                        console.log('series err: ', err);
+                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                            $scope.errors = [];
+                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                                for (var i = 0; i < errArray.length; i++) {
+                                    $scope.errors.push(errArray[i]);
+                                }
+                            });
+                            AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
+                            $window.scrollTo(0,0);
+                            $scope.fetching = false;
+                        }
+                    } else {
+                        console.log('series results: ', results);
+                        AlertService.setSuccess({ show: true, msg: 'User updated successfully' });
+                        $window.scrollTo(0, 0);
+                        $scope.fetching = false;
+                    }
                 });
-                
-//                AdminUserService.editUser($scope.user).success(function (data) {
-//                    if (!data.success) {
-//                        $scope.errors = data.errors;
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                    } else {
-//                        AlertService.setSuccess({ show: true, msg: $scope.user.username + ' has been updated successfully.' });
-//                        $state.go('app.admin.users.list');
-//                    }
-//                });
             };
         }
     ])
