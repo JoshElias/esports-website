@@ -629,7 +629,6 @@ angular.module('app.directives', ['ui.load'])
                 var vote = function () {
                     if ($attrs.theme === 'multi') {
                         return _.filter(votable.votes, function (vote) {
-                            console.log(vote);
                             if (LoopBackAuth.currentUserId === vote.userID) {
                                 direction = vote.direction;
                                 return true;
@@ -665,7 +664,6 @@ angular.module('app.directives', ['ui.load'])
                     bootbox.alert("You can't vote for your own content.");
                     return false;
                 } else {
-                    console.log(obj,direction);
                     vote(obj, direction);
                 }
                 
@@ -703,26 +701,18 @@ angular.module('app.directives', ['ui.load'])
 
                             return waterfallCb(null, data);
                         }, function (newVoteData, waterfallCb) {
-                            var voteObject = function () {
-                                if ($attrs.theme === 'multi') {
-                                    return {
-                                        votes: newVoteData.votes,
-                                        voteScore: voteCount(newVoteData.votes)
-                                    }
-                                } else {
-                                    return {
-                                        votes: newVoteData.votes
-                                    }
-                                }
+                            if ($attrs.theme === 'multi') {
+                                $scope.votable.votes = newVoteData.votes,
+                                $scope.votable.voteScore = voteCount(newVoteData.votes)
+                            } else {
+                                $scope.votable.votes = newVoteData.votes
                             }
                             
-                            console.log(voteObject());
-                            
-                            $scope.service.update({
+                            $scope.service.upsert({
                                 where: {
                                     id: obj.id
                                 }
-                            }, voteObject())
+                            }, $scope.votable)
                             .$promise
                             .then(function (upData) {
                                 $scope.votable.votes = upData.votes;

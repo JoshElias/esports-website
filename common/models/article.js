@@ -29,9 +29,11 @@ module.exports = function(Article) {
                 if (Array.isArray(modelInstance)) {
                     answer = [];
                     ctx.result.forEach(function (result) {
-                        if(!isPremium(result))
+                        if(!isPremium(result)) {
+                            answer.push(result);
                             return;
-
+                        }
+                        
                         var replacement = {};
                         for(var key in result) {
                             if(privateFields.indexOf(key) === -1) {

@@ -68,6 +68,7 @@ module.exports = function(Deck) {
                     answer = []
                     ctx.result.forEach(function (result) {
                         if(!isPremium(result)) {
+                            answer.push(result);
                             return;
                         }
 

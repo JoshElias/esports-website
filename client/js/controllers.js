@@ -480,22 +480,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             $scope.twitchLink = function () {
-                thirdPartyLogin('twitch');
+                LoginService.thirdPartyLogin('twitch');
             };
 
             $scope.bnetLink = function () {
-                thirdPartyLogin("bnet");
+                LoginService.thirdPartyLogin('bnet')
             };
 
-            function thirdPartyLogin(provider) {
-                var redirectObj = {
-                    name: $state.current.name,
-                    params: $state.params
-                }
-                
-                $cookies.put("redirectStateString", JSON.stringify(redirectObj));
-                window.location.replace(getServerIp() + "/link/" + provider);
-            }
 //
 //            // grab alerts
 //            if (AlertService.hasAlert()) {
@@ -4860,7 +4851,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.wowMembers = wowTeam;
             $scope.fgcMembers = fgcTeam;
             $scope.fifaMembers = fifaTeam;
-
 
             if ($location.hash()) {
                 $timeout(function () {

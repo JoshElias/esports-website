@@ -415,7 +415,7 @@ var app = angular.module('app', [
                             article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var slug = $stateParams.slug;
 
-                                return Article.find({
+                                return Article.findOne({
                                     filter: {
                                         where: {
                                             "slug.url": slug
@@ -470,7 +470,7 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (data) {
                                     console.log(data);
-                                    return data[0];
+                                    return data;
                                 });
                             }]
                         }
@@ -1276,7 +1276,7 @@ var app = angular.module('app', [
                               var filters = 'all',
                                   offset = 0,
                                   perpage = 6;
-
+                                
                               return Article.find({
                                 filter: {
                                   limit: 6,
@@ -1287,7 +1287,15 @@ var app = angular.module('app', [
                                     content: false
                                   }
                                 }
-                              }).$promise;
+                              })
+                              .$promise
+                              .then(function (data) {
+                                  console.log(1, data);
+                                  return data;
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
                             }],
 
                             dataGuidesCommunity: ['Guide', function (Guide) {
@@ -1331,7 +1339,15 @@ var app = angular.module('app', [
                                         }
                                     ]
                                 }
-                              }).$promise;
+                              })
+                              .$promise
+                              .then(function (data) {
+                                  console.log(2, data);
+                                  return data;
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
                             }],
 
                             communityTalentDict: ['dataGuidesCommunity', function (dataGuidesCommunity) {
@@ -1382,7 +1398,15 @@ var app = angular.module('app', [
                                         }
                                     ]
                                 }
-                              }).$promise;
+                              })
+                              .$promise
+                              .then(function (data) {
+                                  console.log(3, data);
+                                  return data;
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
                             }],
 
                             featuredTalentDict: ['dataGuidesFeatured', function (dataGuidesFeatured) {
@@ -1403,11 +1427,27 @@ var app = angular.module('app', [
                                   filter: {
                                       order: "name ASC"
                                   }
-                              }).$promise;
+                              })
+                              .$promise
+                              .then(function (data) {
+                                  console.log(4, data);
+                                  return data;
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
                             }],
 
                             dataMaps: ['Map', function (Map) {
-                              return Map.find({}).$promise;
+                              return Map.find({})
+                              .$promise
+                              .then(function (data) {
+                                  console.log(5, data);
+                                  return data;
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
                             }]
                         }
                     }
@@ -2174,6 +2214,31 @@ var app = angular.module('app', [
                         controller: 'TeamCtrl',
                         templateUrl: tpl + 'views/frontend/teams.html',
                         resolve: {
+                            teams: ['TeamMember', function (TeamMember) {
+                                TeamMember.find({})
+                                .$promise
+                                .then(function (t) {
+                                    async.each(t, function (tm, eachCb) {
+                                        if (typeof tm.isActive === 'string') {
+                                            console.log('IT\'S A STRING FAGOT');
+                                            tm.isActive = true;
+                                            
+                                            TeamMember.update({ 
+                                                where: {
+                                                    id: tm.id
+                                                }
+                                            }, tm)
+                                            .$promise
+                                            .then(function (data) {
+                                                console.log(data);
+                                                return eachCb();
+                                            })
+                                        } else {
+                                            return eachCb();
+                                        }
+                                    });
+                                });
+                            }],
                             hsTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
                                     filter: {
@@ -2183,7 +2248,12 @@ var app = angular.module('app', [
                                         },
                                         order: 'orderNum ASC'
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
                             }],
                             hotsTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
@@ -2194,7 +2264,12 @@ var app = angular.module('app', [
                                         },
                                         order: 'orderNum ASC'
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
                             }],
                             wowTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
@@ -2205,7 +2280,12 @@ var app = angular.module('app', [
                                         },
                                         order: 'orderNum ASC'
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
                             }],
                             fifaTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
@@ -2216,7 +2296,12 @@ var app = angular.module('app', [
                                         },
                                         order: 'orderNum ASC'
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
                             }],
                             fgcTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
@@ -2227,7 +2312,12 @@ var app = angular.module('app', [
                                         },
                                         order: 'orderNum ASC'
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
                             }]
                         }
                     }
@@ -2560,24 +2650,18 @@ var app = angular.module('app', [
                                 return userProfile;
                             }],
                             isLinked: ['User', function (User) {
-                                var obj = {};
                                 var providers = ['twitch','bnet'];
                                 
-                                User.isLinked({
+                                return User.isLinked({
                                     providers: providers
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    obj = data.linked;
+                                    return data.isLinked;
                                 })
                                 .catch(function (err) {
                                     console.log(err);
-                                })
-                                .finally(function () {
-                                    return cb();
                                 });
-                                
-                                return obj;
                             }]
                         }
                     }
