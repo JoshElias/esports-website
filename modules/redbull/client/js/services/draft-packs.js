@@ -1,6 +1,6 @@
 angular.module('redbull.services')
-.factory('DraftPacks', ['Hearthstone',
-    function (Hearthstone) {
+.factory('DraftPacks', ['Hearthstone', 'Util',
+    function (Hearthstone, Util) {
         function DraftPacks (cards, tournament) {
             this.cards = cards;
             //this.tournament = tournament;
@@ -8,7 +8,7 @@ angular.module('redbull.services')
                 packs: [
                     {
                         expansion: 'Basic',
-                        packs: 10,
+                        packs: 1,
                         chances: {
                             basic: 30,
                             common: 44,
@@ -19,7 +19,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Naxxramas',
-                        packs: 10,
+                        packs: 1,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -30,7 +30,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Goblins Vs. Gnomes',
-                        packs: 10,
+                        packs: 0,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -41,7 +41,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Blackrock Mountain',
-                        packs: 10,
+                        packs: 1,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -52,7 +52,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'The Grand Tournament',
-                        packs: 10,
+                        packs: 0,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -63,7 +63,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'League of Explorers',
-                        packs: 10,
+                        packs: 1,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -259,7 +259,11 @@ angular.module('redbull.services')
                     pack.push(card);
                 }
                 
-                return pack;
+                return {
+                    expansion: expansion,
+                    cards: pack,
+                    expansionClass: Util.slugify(expansion)
+                };
             },
             generatePacksWithCards: function () {
                 var packs = [];

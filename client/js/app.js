@@ -3887,12 +3887,60 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/polls.list.html',
                         controller: 'AdminPollListCtrl',
                         resolve: {
-                            data: ['AdminPollService', function (AdminPollService) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '';
-                                return AdminPollService.getPolls(page, perpage, search);
+//                            paginationParams: [function() {
+//                                return {
+//                                    page: 1,
+//                                    perpage: 50,
+//                                    options: {
+//                                        filter: {
+//                                            fields: {
+//                                                id: true,
+//                                                title: true
+//                                            },
+//                                            limit: 50,
+//                                            order: 'createdDate DESC'
+//                                        }
+//                                    }
+//                                };
+//                            }],
+//                            pollCount: ['Polls', function (Polls) {
+//                                return Poll.count({})
+//                                .$promise
+//                                .then(function (pollCount) {
+//                                    console.log('pollCount: ', pollCount);
+//                                    return pollCount;
+//                                })
+//                                .catch(function (err) {
+//                                    console.log('Poll.count err: ',err);
+//                                });
+//                            }],
+                            polls: ['Poll', function (Poll) {
+                                return Poll.find({ 
+                                    filter: {
+                                        fields: {
+                                            id: true,
+                                            title: true
+                                        },
+                                        limit: 50,
+                                        order: 'createdDate DESC'
+                                    }
+                                }).$promise
+                                .then(function (allPolls) {
+                                    console.log('allPolls: ', allPolls);
+                                    return allPolls;
+                                })
+                                .catch(function (err) {
+                                    console.log('Snapshot.find err: ', err);
+                                });
                             }]
+//                            data: ['AdminPollService', function (AdminPollService) {
+//                                var page = 1,
+//                                    perpage = 50,
+//                                    search = '';
+//                                return AdminPollService.getPolls(page, perpage, search);
+//                            }]
+                            
+                            
                         }
                     }
                 },
@@ -3917,10 +3965,23 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/polls.edit.html',
                         controller: 'AdminPollEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminPollService', function($stateParams, AdminPollService){
+                            poll: ['$stateParams', 'Poll', function($stateParams, Poll){
                                 var pollID = $stateParams.pollID;
-                                return AdminPollService.getPoll(pollID);
+                                return Poll.findOne({ 
+                                    filter: {
+                                        where: { 
+                                            id: pollID
+                                        }
+                                    }
+                                
+                                }) 
+                                .$promise
+                                .then(function (data) {
+                                    return data;
+                                
+                                })
                             }]
+                            
                         }
                     }
                 },

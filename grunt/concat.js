@@ -30,7 +30,7 @@ module.exports = {
                 'client/vendor/angular-ui-validate/dist/validate.js',
                 'client/js/vendor/angular-bootbox.js',
                 'client/vendor/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js',
-                'client/vendor/angular-file-upload/dist/angular-file-upload.js',
+                'client/vendor/angular-file-upload/dist/angular-file-upload.min.js',
                 'client/vendor/angular-gravatar/build/angular-gravatar.js',
                 'client/vendor/angular-moment/angular-moment.js',
                 'client/vendor/angular-payments/lib/angular-payments.js',
