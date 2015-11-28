@@ -4033,8 +4033,14 @@ var app = angular.module('app', [
                                         }
                                     }
                                 
-                                });
+                                }) 
+                                .$promise
+                                .then(function (data) {
+                                    return data;
+                                
+                                })
                             }]
+                            
                         }
                     }
                 },

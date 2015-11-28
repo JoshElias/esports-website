@@ -7410,8 +7410,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminPollListCtrl', ['$scope', '$compile', 'bootbox', 'AlertService', 'polls',
-        function ($scope, $compile, bootbox, AlertService, polls) {
+    .controller('AdminPollListCtrl', ['$scope', '$compile', 'bootbox', 'AlertService', 'polls', 'Poll',
+        function ($scope, $compile, bootbox, AlertService, polls, Poll) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -7439,45 +7439,43 @@ angular.module('app.controllers', ['ngCookies'])
 //                $scope.getPolls();
 //            }
 
-            // delete poll
-//            $scope.deletePoll = function (poll) {
-//                var box = bootbox.dialog({
-//                    title: 'Delete poll: ' + poll.title + '?',
-//                    message: 'Are you sure you want to delete the poll <strong>' + poll.title + '</strong>?',
-//                    buttons: {
-//                        delete: {
-//                            label: 'Delete',
-//                            className: 'btn-danger',
-//                            callback: function () {
-//                                AdminPollService.deletePoll(poll._id).then(function (data) {
-//                                    if (data.success) {
-//                                        var index = $scope.polls.indexOf(poll);
-//                                        if (index !== -1) {
-//                                            $scope.polls.splice(index, 1);
-//                                        }
-//                                        $scope.success = {
-//                                            show: true,
-//                                            msg: poll.title + ' deleted successfully.'
-//                                        };
-//                                    }
-//                                });
-//                            }
-//                        },
-//                        cancel: {
-//                            label: 'Cancel',
-//                            className: 'btn-default pull-left',
-//                            callback: function () {
-//                                box.modal('hide');
-//                            }
-//                        }
-//                    }
-//                });
-//                box.modal('show');
-//            };
+//             delete poll
+            $scope.deletePoll = function (poll) {
+                var box = bootbox.dialog({
+                    title: 'Delete poll: ' + poll.title + '?',
+                    message: 'Are you sure you want to delete the poll <strong>' + poll.title + '</strong>?',
+                    buttons: {
+                        delete: {
+                            label: 'Delete',
+                            className: 'btn-danger',
+                            callback: function () {
+                                Poll.destroyById({id:poll.id}).$promise.then(function (data) {
+                                    var index = $scope.polls.indexOf(poll);
+                                    if (index !== -1) {
+                                        $scope.polls.splice(index, 1);
+                                    }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: poll.title + ' deleted successfully.'
+                                    };
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default pull-left',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    }
+                });
+                box.modal('show');
+            };
         }
     ])
-    .controller('AdminPollAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'AdminPollService', 'AlertService',
-        function ($scope, $state, $window, $upload, $compile, AdminPollService, AlertService) {
+    .controller('AdminPollAddCtrl', ['$scope', '$state', '$window', '$compile', 'AlertService', 'Poll',
+        function ($scope, $state, $window, $compile, AlertService, Poll) {
             var box,
                 defaultPoll = {
                     title : '',
@@ -7547,32 +7545,32 @@ angular.module('app.controllers', ['ngCookies'])
                 return out;
             }
 
-            $scope.photoUpload = function ($files) {
-                if (!$files.length) return false;
-                var uploadBox = bootbox.dialog({
-                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-                    closeButton: false,
-                    animate: false
-                });
-                $scope.uploading = 0;
-                uploadBox.modal('show');
-                for (var i = 0; i < $files.length; i++) {
-                    var file = $files[i];
-                    $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/polls',
-                        method: 'POST',
-                        file: file
-                    }).progress(function(evt) {
-                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function(data, status, headers, config) {
-                        $scope.currentItem.photos = {
-                            large: data.large,
-                            thumb: data.thumb
-                        };
-                        uploadBox.modal('hide');
-                    });
-                }
-            };
+//            $scope.photoUpload = function ($files) {
+//                if (!$files.length) return false;
+//                var uploadBox = bootbox.dialog({
+//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+//                    closeButton: false,
+//                    animate: false
+//                });
+//                $scope.uploading = 0;
+//                uploadBox.modal('show');
+//                for (var i = 0; i < $files.length; i++) {
+//                    var file = $files[i];
+//                    $scope.upload = $upload.upload({
+//                        url: '/api/admin/upload/polls',
+//                        method: 'POST',
+//                        file: file
+//                    }).progress(function(evt) {
+//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+//                    }).success(function(data, status, headers, config) {
+//                        $scope.currentItem.photos = {
+//                            large: data.large,
+//                            thumb: data.thumb
+//                        };
+//                        uploadBox.modal('hide');
+//                    });
+//                }
+//            };
 
             $scope.itemEditWnd = function (item) {
                 $scope.currentItem = item;
@@ -7623,25 +7621,27 @@ angular.module('app.controllers', ['ngCookies'])
 
             // add Poll
             $scope.addPoll = function () {
-                AdminPollService.addPoll($scope.poll).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been added successfully.' });
+                $scope.poll.createdDate = new Date().toISOString();
+                Poll.create({}, $scope.poll).$promise.then(function (data) {
+                   
+                        AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been added successfully.' })
                         $state.go('app.admin.polls.list');
-                    }
+                })
+                .catch(function(err){
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                    AlertService.setError({ show: true, msg: 'There was an error adding your poll ' + err.status + ": " + err.data.error.message})
                 });
             };
         }
     ])
-    .controller('AdminPollEditCtrl', ['$scope', '$state', '$window', '$compile', '$upload', 'AdminPollService', 'AlertService', 'data',
-        function ($scope, $state, $window, $compile, $upload, AdminPollService, AlertService, data) {
+    .controller('AdminPollEditCtrl', ['$scope', '$state', '$window', '$compile', 'AlertService', 'poll', 'Poll',
+        function ($scope, $state, $window, $compile, AlertService, poll, Poll) {
             var box,
                 defaultPoll = {
                     title : '',
-                    subTitle: '',
+                    subtitle: '',
                     description: '',
                     type: '',
                     active: false,
@@ -7675,8 +7675,10 @@ angular.module('app.controllers', ['ngCookies'])
                 ]
             };
 
+            console.log(poll);
+            
             // load Poll
-            $scope.poll = data.poll;
+            $scope.poll = poll;
             $scope.item = angular.copy(defaultItem);
             $scope.currentItem = angular.copy(defaultItem);
             $scope.imgPath = 'polls/';
@@ -7699,7 +7701,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.voteLimit = function() {
                 var out = [];
-
+  
                 for (var i = 0; i < $scope.poll.items.length; i++) {
                     out.push(i + 1);
                 }
@@ -7707,32 +7709,32 @@ angular.module('app.controllers', ['ngCookies'])
                 return out;
             }
 
-            $scope.photoUpload = function ($files) {
-                if (!$files.length) return false;
-                var uploadBox = bootbox.dialog({
-                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-                    closeButton: false,
-                    animate: false
-                });
-                $scope.uploading = 0;
-                uploadBox.modal('show');
-                for (var i = 0; i < $files.length; i++) {
-                    var file = $files[i];
-                    $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/polls',
-                        method: 'POST',
-                        file: file
-                    }).progress(function(evt) {
-                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function(data, status, headers, config) {
-                        $scope.currentItem.photos = {
-                            large: data.large,
-                            thumb: data.thumb
-                        };
-                        uploadBox.modal('hide');
-                    });
-                }
-            };
+//            $scope.photoUpload = function ($files) {
+//                if (!$files.length) return false;
+//                var uploadBox = bootbox.dialog({
+//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+//                    closeButton: false,
+//                    animate: false
+//                });
+//                $scope.uploading = 0;
+//                uploadBox.modal('show');
+//                for (var i = 0; i < $files.length; i++) {
+//                    var file = $files[i];
+//                    $scope.upload = $upload.upload({
+//                        url: '/api/admin/upload/polls',
+//                        method: 'POST',
+//                        file: file
+//                    }).progress(function(evt) {
+//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+//                    }).success(function(data, status, headers, config) {
+//                        $scope.currentItem.photos = {
+//                            large: data.large,
+//                            thumb: data.thumb
+//                        };
+//                        uploadBox.modal('hide');
+//                    });
+//                }
+//            };
 
             $scope.itemEditWnd = function (item) {
                 $scope.currentItem = item;
@@ -7785,15 +7787,17 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.editPoll = function () {
                 $scope.showError = false;
 
-                AdminPollService.editPoll($scope.poll).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been updated successfully.' });
-                        $state.go('app.admin.polls.list');
-                    }
+                Poll.update( {
+                    where: {id:$scope.poll.id}
+                }, $scope.poll).$promise.then(function (data) {
+                    AlertService.setSuccess({ show: true, msg: $scope.poll.title + ' has been updated successfully.' })
+                    $state.go('app.admin.polls.list');
+                })
+                .catch(function(err){
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                    AlertService.setError({ show: true, msg: 'There was an error editing your poll ' + err.status + ": " + err.data.error.message})
                 });
             };
         }
