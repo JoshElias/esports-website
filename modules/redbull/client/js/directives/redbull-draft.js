@@ -6,17 +6,27 @@ angular.module('redbull.directives')
             scope: {
                 packs: '=',
                 isLoading: '=',
-                currentPack: '='
+                currentPack: '=',
+                currentCards: '='
             },
             link: function (scope, el, attrs) {
                 var volume = .5,
                     startShake = null,
                     shakeLoop = null,
                     shakeInterval = 3000,
-                    packDropped = false;
+                    packDropped = false,
+                    done = false,
+                    burst = $('#pack-burst')[0],
+                    cardsFlipped = 0;
 
                 function nextPack () {
                     scope.currentPack++;
+                    scope.$apply();
+                }
+                
+                function nextCards () {
+                    scope.currentCards++;
+                    scope.$apply();
                 }
                 
                 // watch current pack
@@ -89,8 +99,8 @@ angular.module('redbull.directives')
                             // move pack to top
                             $('.pack-wrapper').css('z-index', '6');
 
-                            // fade out non-glowing background
-                            $('.bg').stop(true).fadeOut(1000);
+                            // fade in glowing background
+                            $('.bg-glow').stop(true).fadeIn(1000);
                         }
                     },
                     stop: function() {
@@ -112,8 +122,8 @@ angular.module('redbull.directives')
                             pack_release.volume = volume;
                             pack_release.play();*/
 
-                            // fade in non-glowing background
-                            $('.bg').stop(true).fadeIn(500);
+                            // fade out glowing background
+                            $('.bg-glow').stop(true).fadeOut(500);
                             
                             // start shaking pack again
                             $interval.cancel(shakeLoop);
@@ -168,17 +178,35 @@ angular.module('redbull.directives')
                 
                 // enable spacebar
                 $(window).keydown(function(e) {
+                    var card,
+                        btn;
+                    
                     // don't allow spacebar when we're not ready
                     if (!scope.isLoading && !packDropped) {
                         if ((e.keyCode || e.which) == 32) {
                             // disable pack dragging
                             $(".pack").draggable("disable");
 
-                            // fade out non-glowing background
-                            $('.bg').stop(true).fadeOut(1000);
+                            // fade in glowing background
+                            $('.bg-glow').stop(true).fadeIn(1000);
 
                             // drop pack
                             packDrop();
+                        }
+                    } else if (!scope.isLoading && packDropped) {
+                        if ((e.keyCode || e.which) == 32) {
+                            // flip next cards
+                            if (cardsFlipped < 5) {
+                                card = $('.card').not('.flipped-left').not('.flipped-right').eq(0);
+                                if (card.is(':visible')) {
+                                    card.mousedown();
+                                }
+                            } else {
+                                btn = $('.btn-done');
+                                if (btn.is(':visible')) {
+                                    btn.mousedown();
+                                }
+                            }
                         }
                     }
                 });
@@ -204,7 +232,6 @@ angular.module('redbull.directives')
                         });
 
                         $('#pack-burst').css('z-index', '5');
-                        var burst = $('#pack-burst')[0];
                         burst.volume = volume / 2;
                         burst.play();
 
@@ -229,195 +256,109 @@ angular.module('redbull.directives')
 
                         // move back to bottom
                         $('.pack-wrapper').css('z-index', '2');
+                        
+                        // update card interactions
+                        cardInteraction();
                     }
                 };
 
-                
-                function drawCards(quality, cards) {
-                    /*
-                    // 
+
+                function cardInteraction() {
+                    cardsFlipped = 0;
+
                     $('.card').each(function(i) {
-                        $('div.card_front img', this).attr('src', cards[i]);
+                        this.turned = false;
+                        this.clicked = false;
+
+                        // TODO: CHECK RARITY OF CARD
+                        
+                        $(this).unbind('mouseenter').mouseenter(function() {
+                            if (!this.turned) {
+                                // TODO: PLAY CARD MOUSEOVER SOUND
+                            }
+                        })
+                        .unbind('mouseleave').mouseleave(function() {
+                            if (!this.turned) {
+                                // TODO: PLAY CARD MOUSELEAVE SOUND
+                            }
+                        })
+                        .unbind('mousedown').mousedown(function(e) {
+                            this.turned = true, this.clicked;
+                            
+                            if (this.turned && !this.clicked) {
+                                this.clicked = true;
+                                cardsFlipped++;
+
+                                if (cardsFlipped > 4) {
+                                    $timeout(function() {
+                                        // TODO: PLAY DONE REVEAL SOUND
+                                        $timeout(function() {
+                                            $('.btn-done').stop(true).fadeIn(750);
+                                            // TODO: PLAY
+                                        }, 500);
+                                    }, 500);
+                                }
+
+                                // TODO: PLAY CARD RARITY SOUND
+                                $timeout(function() {
+                                    // TODO: PLAY
+                                }, 200);
+
+                                // TODO: PLAY ANNOUNCER RARITY SOUND
+
+                                var cardX = e.pageX - $(this).offset().left;
+                                if (cardX < 116) {
+                                    $(this).addClass('flipped-left');
+                                } else {
+                                    $(this).addClass('flipped-right');
+                                }
+                            }
+                        });
+
                     });
 
-                    //Now for the fun stuff...
-                    cardInteraction(quality);
-                    */
-                };
+                }
+                
+                $('.btn-done').mousedown(function() {
+                    if (!done) {
+                        done = true;
 
-/*
-function cardInteraction(quality) {
+                        // TODO: PLAY DONE FADE SOUND
 
-	//This variable will count the number of cards that have been clicked/shown each pack
-	var cards_shown = 0;
+                        $('.btn-done').stop(true, true).fadeOut(1000);
 
-	//For each card...
-	$('.card').each(function(i) {
+                        $('.cards').fadeOut(1000, function() {
+                            $('.card').removeClass('flipped-left flipped-right');
+                            if (scope.currentCards + 1 < scope.packs.length) {
+                                nextCards();
+                            }
+                        });
 
-		//Start by clearing this card's flags
-		this.turned = false, this.clicked = false;
+                        $('.bg-glow').hide(function() {
+                            burst.pause();
+                            burst.currentTime = 0;
+                            $('#pack-burst').css('z-index', '0').show();
+                            $('.bg-blur').fadeOut(1000);
+                            
+                            if (scope.currentPack + 1 < scope.packs.length) {
+                                nextPack();
+                                $('.pack').draggable("enable").fadeIn(1000, function() {
+                                    packDropped = false;
+                                    
+                                    $interval.cancel(shakeLoop);
+                                    shakeLoop = $interval(shakePack, shakeInterval);
+                                });
+                            } else {
+                                console.log('goto build');
+                                //$state.go(app.redbull.draft.build);
+                            }
+                        });
+                    }
 
-		//Get this particular card's rarity
-		var card_rarity;
-		if (quality[i].indexOf('common') != -1)
-			card_rarity = 'common';
-		if (quality[i].indexOf('rare') != -1)
-			card_rarity = 'rare';
-		if (quality[i].indexOf('epic') != -1)
-			card_rarity = 'epic';
-		if (quality[i].indexOf('legendary') != -1)
-			card_rarity = 'legendary';
-
-		//When a card is hovered over...
-		$(this).unbind('mouseenter').mouseenter(function() {
-
-				//And it hasn't been turned over yet...
-				if (!this.turned) {
-
-					//Play the card mouseover sound
-					this.card_hover = new Audio();
-					this.card_hover.src = allAudio['card_hover'];
-					this.card_hover.volume = volume;
-					this.card_hover.play();
-
-					//Then determine its rarity and set the background glow to the appropriate color
-					var card_color;
-					if (card_rarity == 'rare')
-						card_color = '#0066ff';
-					if (card_rarity == 'epic')
-						card_color = '#cc33ff';
-					if (card_rarity == 'legendary')
-						card_color = '#ff8000';
-
-					//Make it pretty, bitches (slightly enlarge the card and give it a hover glow)
-					$(this).css({
-						'transform': 'scale(1.15) rotate(0.0001deg)',
-						'-webkit-transform': 'scale(1.15) rotate(0.0001deg)',
-						'transition': 'transform 300ms',
-						'-webkit-transition': '-webkit-transform 300ms'
-					});
-					$('.card_glow', this).css({
-						'box-shadow': '0 0 75px ' + card_color,
-						'transition': 'box-shadow 1000ms',
-						'-webkit-transition': 'box-shadow 1000ms'
-					});
-
-				}
-
-		})
-
-		//When the user stops hovering over a card...
-		.unbind('mouseleave').mouseleave(function() {
-			if (!this.turned) {
-
-				//Return it to its original size, and turn off the glow
-				$(this).css({
-					'transform': 'scale(1)',
-					'-webkit-transform': 'scale(1)',
-					'transition': 'transform 500ms',
-					'-webkit-transition': '-webkit-transform 500ms'
-				});
-				$('.card_glow', this).css({
-					'box-shadow': 'none',
-					'transition': 'box-shadow 600ms',
-					'-webkit-transition': 'box-shadow 600ms'
-				});
-
-				//Play a sound which denotes the user stopped hovering
-				this.card_unhover = new Audio();
-				this.card_unhover.src = allAudio['card_unhover'];
-				this.card_unhover.volume = volume / 6;
-				this.card_unhover.play();
-
-			}
-		})
-
-		//When a card is clicked...
-		.unbind('mousedown').mousedown(function(e) {
-
-			//Set some flags for the element to prevent subsequent clicks and sound plays
-			this.turned = true, this.clicked;
-			if (this.turned && !this.clicked) {
-
-				//Flag that the element has been clicked, and increment cards_shown
-				this.clicked = true, cards_shown++;
-
-				//Send the card's quality to be tallied for the stats panel
-				tallyStats(quality[i]);
-
-				//If all five cards have been revealed...
-				if (cards_shown > 4) {
-					//Then after a brief delay, show the 'Done' button and play its reveal sound
-					setTimeout(function() {
-						var done_reveal = new Audio();
-						done_reveal.src = allAudio['done_reveal'];
-						done_reveal.volume = volume;
-						setTimeout(function() {
-							$('#done').stop(true).fadeIn(750);
-							done_reveal.play();
-						}, 500);
-					}, 500);
-				}
-
-				//Play the appropriate card turn effect for the card's rarity
-				var turn_rarity = new Audio();
-				turn_rarity.src = allAudio['card_turn_over_'+card_rarity]
-				turn_rarity.volume = volume / 8; //These are so damn loud
-				setTimeout(function() {
-					turn_rarity.play();
-				}, 200);
-
-				//Play the appropriate announcer quote for the card's rarity
-				var announcer = new Audio();
-				if (quality[i] != 'common') {
-					announcer.src = allAudio['announcer_'+quality[i]];
-					announcer.volume = volume / 4; //These are loud too
-					announcer.play();
-				}
-
-				//Determine which side of the card the user clicked on
-				var cardX = e.pageX - $(this).offset().left;
-				if (cardX < 116) {
-					//Have it turn from the left
-					var backDir = '-180deg',
-						frontDir = '0deg';
-				} else {
-					//Have it turn from the right
-					var backDir	= '180deg',
-						frontDir = '360deg';
-				}
-
-				//Turn the card around
-				$('div.card_back', this).css({
-					'transform': 'perspective(1000px) rotateY('+backDir+')',
-					'-webkit-transform': 'perspective(1000px) rotateY('+backDir+')',
-					//'-webkit-filter': 'drop-shadow(0 0 3px white)',
-					'transition': 'transform 800ms ease-in-out 300ms',
-					'-webkit-transition': '-webkit-transform 800ms ease-in-out 300ms'
-					//'-webkit-transition': '-webkit-filter 1667ms 333ms'
-				});
-				$('div.card_front', this).css({
-					'transform': 'perspective(1000px) rotateY('+frontDir+')',
-					'-webkit-transform': 'perspective(1000px) rotateY('+frontDir+')',
-					//'-webkit-filter': 'drop-shadow(0 0 0 white)',
-					'transition': 'transform 800ms ease-in-out 300ms',
-					'-webkit-transition': '-webkit-transform 800ms ease-in-out 300ms'
-					//'-webkit-transition': '-webkit-filter 333ms 1667ms'
-				});
-				$('.card_glow', this).css({
-					'box-shadow': 'none',
-					'transition': 'box-shadow 600ms',
-					'-webkit-transition': 'box-shadow 600ms'
-				});
-
-			}
-
-		});
-
-	});
-
-};
-*/
+                    $timeout(function() {
+                        done = false;
+                    }, 1000);
+                });
             }
         };
     }

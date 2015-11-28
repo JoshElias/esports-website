@@ -1,4 +1,4 @@
-<div class="draft container-fluid" redbull-draft packs="packs" is-loading="isLoading" current-pack="currentPack">
+<div class="draft container-fluid" redbull-draft packs="packs" is-loading="isLoading" current-pack="currentPack" current-cards="currentCards">
     <!-- preloader -->
     <div class="preloader" ng-if="isLoading"><i class="fa fa-refresh fa-spin"></i></div>
     <!-- / preloader -->
@@ -25,7 +25,8 @@
 
         <!-- packs -->
         <div class="pack-wrapper">
-            <div class="pack"></div>
+            <div class="pack-next {{packs[currentPack + 1].expansionClass}}" ng-if="(currentPack + 1) < packs.length"></div>
+            <div class="pack {{packs[currentPack].expansionClass}}"></div>
         </div>
         <div class="pack-drop"></div>
         <!-- / packs -->
@@ -36,14 +37,14 @@
 
         <!-- cards -->
         <div class="cards">
-            <div class="card" ng-repeat="card in packs[currentPack]">
+            <div class="card" ng-repeat="card in packs[currentCards].cards track by $index">
                 <span style="display:none;">{{card}}</span>
-                <div class="card-glow"></div>
+                <div class="card-glow {{card.rarity.toLowerCase()}}"></div>
                 <div class="card-front">
-                    <img ng-src="{{app.cdn}}cards/{{card.photoNames.medium}}" />
+                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" />
                 </div>
                 <div class="card-back">
-                    <img ng-src="./img/modules/redbull/client/img/card_back.png" />
+                    <img ng-src="./modules/redbull/client/img/card_back.png" />
                 </div>
             </div>
         </div>
