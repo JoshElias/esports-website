@@ -17,6 +17,8 @@ angular.module('redbull.services')
                 RESOLVED: 3,
                 REJECTED: 4
             };
+            
+
             // I keep track of the current state of the preloader.
             this.state = this.states.PENDING;
             // When loading the files, a promise will be returned to indicate

@@ -9,7 +9,7 @@ module.exports = {
                 'client/vendor/jquery/dist/jquery.js',
                 'client/vendor/jquery-ui/jquery-ui.js',
                 'client/vendor/bootstrap/dist/js/bootstrap.js',
-                'client/vendor/moment/min/moment.js',
+                'client/vendor/moment/min/moment.min.js',
                 'client/vendor/summernote/dist/summernote.js',
                 'client/vendor/bootbox/bootbox.js',
                 'client/js/vendor/angular-file-upload-shim.min.js',

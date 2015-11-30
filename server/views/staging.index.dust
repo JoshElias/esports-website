@@ -37,6 +37,9 @@
     <!-- lbServices -->
     <script src="dist/js/services/lb-services.js"></script>
 
+    <!-- modules -->
+    <script src="dist/js/modules.min.js"></script>
+
     <!-- app -->
     <script src="{cdnUrl}js/{assets.app_min_js}"></script>
 
