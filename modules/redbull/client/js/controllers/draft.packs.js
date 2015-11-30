@@ -37,6 +37,6 @@ angular.module('redbull.controllers')
     );
     
     // get packs
-    $scope.currentPack = 0;
+    $scope.currentPack = $scope.currentCards = 0;
     $scope.packs = DraftPacks.getPacks(cards, {});
 }]);

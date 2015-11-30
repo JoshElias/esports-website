@@ -90,8 +90,13 @@
         }
         
         .bg-glow {
+            display: none;
+            margin-left: -253px;
+            margin-top: -384px;
+            width: 741px;
+            height: 684px;
             background: url("../img/modules/redbull/client/img/bg_glow.jpg") no-repeat center center;
-            z-index: 1;
+            z-index: 3;
         }
 
         .bg-blur {
@@ -105,14 +110,32 @@
             width: 100%;
             height: 100%;
             z-index: 2;
-
-            .pack {
+            
+            .pack,
+            .pack-next {
                 position: relative;
                 left: 200px;
                 top: 247px;
                 width: 155px;
                 height: 212px;
                 background: url("../img/modules/redbull/client/img/pack.png") no-repeat;
+                z-index: 3;
+                
+                &.league-of-explorers {
+                    background: url("../img/modules/redbull/client/img/pack-loe.png") no-repeat;
+                }
+                
+                &.blackrock-mountain {
+                    background: url("../img/modules/redbull/client/img/pack-brm.png") no-repeat;
+                }
+                
+                &.naxxramas {
+                    background: url("../img/modules/redbull/client/img/pack-naxx.png") no-repeat;
+                }
+            }
+            
+            .pack-next {
+                position: absolute;
                 z-index: 2;
             }
         }
@@ -143,6 +166,8 @@
                 top: 50%;
                 width: 188px;
                 height: 285px;
+                transition: transform 300ms;
+                -webkit-transition: -webkit-transform 300ms;
 
                 &:nth-child(1) {
                     margin-left: 8px;
@@ -164,20 +189,43 @@
                     margin-left: 127px;
                     margin-top: 26px;
                 }
-
+                
                 .card-glow {
                     position: absolute;
                     left: 27px;
                     top: 43px;
                     width: 145px;
                     height: 215px;
+                    transition: box-shadow 1000ms;
+                    -webkit-transition: box-shadow 1000ms;
                 }
+                
+                &:not(.flipped-left):not(.flipped-right):hover {
+                    transform: scale(1.15) rotate(0.0001deg);
+                    -webkit-transform: scale(1.15) rotate(0.0001deg);
+                    
+                    .card-glow {
+                        &.rare {
+                            box-shadow: 0 0 75px #0066ff;
+                        }
 
+                        &.epic {
+                            box-shadow: 0 0 75px #cc33ff;
+                        }
+
+                        &.legendary {
+                            box-shadow: 0 0 75px #ff8000;
+                        }
+                    }
+                }
+                
                 .card-back {
                     backface-visibility: hidden;
                     -webkit-backface-visibility: hidden;
                     transform: perspective(1000px) rotateY(0deg);
                     -webkit-transform: perspective(1000px) rotateY(0deg);
+                    transition: transform 800ms ease-in-out 300ms;
+                    -webkit-transition: -webkit-transform 800ms ease-in-out 300ms;
                 }
 
                 .card-front {
@@ -190,6 +238,45 @@
                     -webkit-backface-visibility: hidden;
                     transform: perspective(1000px) rotateY(180deg);
                     -webkit-transform: perspective(1000px) rotateY(180deg);
+                    transition: transform 800ms ease-in-out 300ms;
+                    -webkit-transition: -webkit-transform 800ms ease-in-out 300ms;
+                    
+                    img {
+                        margin-top: 23px;
+                        width: 180px;
+                        height: 264px;
+                    }
+                }
+                
+                &.flipped-left,
+                &.flipped-right {
+                    .card-glow {
+                        box-shadow: none;
+                    }
+                }
+                
+                &.flipped-left {
+                    .card-back {
+                        transform: perspective(1000px) rotateY(-180deg);
+                        -webkit-transform: perspective(1000px) rotateY(-180deg);
+                    }
+                    
+                    .card-front {
+                        transform: perspective(1000px) rotateY(0deg);
+                        -webkit-transform: perspective(1000px) rotateY(0deg);
+                    }
+                }
+                
+                &.flipped-right {
+                    .card-back {
+                        transform: perspective(1000px) rotateY(180deg);
+                        -webkit-transform: perspective(1000px) rotateY(180deg);
+                    }
+                    
+                    .card-front {
+                        transform: perspective(1000px) rotateY(360deg);
+                        -webkit-transform: perspective(1000px) rotateY(360deg);
+                    }
                 }
             }
         }
@@ -203,7 +290,7 @@
             display: none;
             width: 175px;
             height: 104px;
-            z-index: 5;
+            z-index: 7;
             background: url("../img/modules/redbull/client/img/done.png") no-repeat;
         }
 

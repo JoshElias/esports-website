@@ -72,7 +72,7 @@ angular.module('app.services', [])
         }
     }
 })
-.factory('LoginService', ['$state', 'User', 'EventService', 'LoopBackAuth', function ($state, User, EventService, LoopBackAuth) {
+.factory('LoginService', ['$state', '$cookies', 'User', 'EventService', 'LoopBackAuth', function ($state, $cookies, User, EventService, LoopBackAuth) {
     return {
         login: function (email, password, remember, cb) {
             var options = { rememberMe: remember }

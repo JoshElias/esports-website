@@ -49,12 +49,15 @@ module.exports = function(Guide) {
         // sets the private fields to false
         function removeFields() {
             if (ctx.result) {
+                console.log("Before:", ctx.result);
                 var answer;
                 if (Array.isArray(modelInstance)) {
                     answer = [];
                     ctx.result.forEach(function (result) {
-                        if(!isPremium(result))
+                        if(!isPremium(result)) {
+                            answer.push(result);
                             return;
+                        }
 
                         var replacement = {};
                         for(var key in result) {

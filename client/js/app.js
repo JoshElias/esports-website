@@ -415,7 +415,7 @@ var app = angular.module('app', [
                             article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var slug = $stateParams.slug;
 
-                                return Article.find({
+                                return Article.findOne({
                                     filter: {
                                         where: {
                                             "slug.url": slug
@@ -470,7 +470,7 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (data) {
                                     console.log(data);
-                                    return data[0];
+                                    return data;
                                 });
                             }]
                         }
@@ -685,57 +685,20 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.decks.deck.html',
                         controller: 'DeckCtrl',
                         resolve: {
-                            isUserAdmin: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
                                     return false;
                                 } else {
-                                    return User.isRole({
-                                        roleName: '$admin'
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider', '$premium']
                                     })
                                     .$promise
-                                    .then(function (isAdmin) {
-    //                                    console.log('isAdmin: ', isAdmin.isRole);
-                                        return isAdmin.isRole;
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
                                     })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
-                                    });
-                                }
-                            }],
-                            isUserContentProvider: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
-                                    return false;
-                                } else {
-                                    return User.isRole({
-                                        roleName: '$contentProvider'
-                                    })
-                                    .$promise
-                                    .then(function (isContentProvider) {
-    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
-                                        return isContentProvider.isRole;
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
-                                    });
-                                }
-                            }],
-                            isUserPremium: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
-                                    return false;
-                                } else {
-                                    return User.isRole({
-                                        roleName: '$premium'
-                                    })
-                                    .$promise
-                                    .then(function (isUserPremium) {
-                                        return isUserPremium.isRole;
-                                    })
-                                    .catch(function (err) {
-                                        console.log('resolve err: ', err);
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
                                     });
                                 }
                             }],
@@ -866,41 +829,20 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.deck-builder.build.html',
                         controller: 'DeckBuilderCtrl',
                         resolve: {
-                            isUserAdmin: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
                                     return false;
                                 } else {
-                                    return User.isRole({
-                                        roleName: '$admin'
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider']
                                     })
                                     .$promise
-                                    .then(function (isAdmin) {
-    //                                    console.log('isAdmin: ', isAdmin.isRole);
-                                        return isAdmin.isRole;
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
                                     })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
-                                    });
-                                }
-                            }],
-                            isUserContentProvider: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
-                                    return false;
-                                } else {
-                                    return User.isRole({
-                                        roleName: '$contentProvider'
-                                    })
-                                    .$promise
-                                    .then(function (isContentProvider) {
-    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
-                                        return isContentProvider.isRole;
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
                                     });
                                 }
                             }],
@@ -971,41 +913,20 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hs.deck-builder.edit.html',
                         controller: 'DeckEditCtrl',
                         resolve: {
-                            isUserAdmin: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
                                     return false;
                                 } else {
-                                    return User.isRole({
-                                        roleName: '$admin'
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider']
                                     })
                                     .$promise
-                                    .then(function (isAdmin) {
-    //                                    console.log('isAdmin: ', isAdmin.isRole);
-                                        return isAdmin.isRole;
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
                                     })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
-                                    });
-                                }
-                            }],
-                            isUserContentProvider: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
-                                    return false;
-                                } else {
-                                    return User.isRole({
-                                        roleName: '$contentProvider'
-                                    })
-                                    .$promise
-                                    .then(function (isContentProvider) {
-    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
-                                        return isContentProvider.isRole;
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
                                     });
                                 }
                             }],
@@ -1355,7 +1276,7 @@ var app = angular.module('app', [
                               var filters = 'all',
                                   offset = 0,
                                   perpage = 6;
-
+                                
                               return Article.find({
                                 filter: {
                                   limit: 6,
@@ -1366,7 +1287,15 @@ var app = angular.module('app', [
                                     content: false
                                   }
                                 }
-                              }).$promise;
+                              })
+                              .$promise
+                              .then(function (data) {
+                                  console.log(1, data);
+                                  return data;
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
                             }],
 
                             dataGuidesCommunity: ['Guide', function (Guide) {
@@ -1410,7 +1339,15 @@ var app = angular.module('app', [
                                         }
                                     ]
                                 }
-                              }).$promise;
+                              })
+                              .$promise
+                              .then(function (data) {
+                                  console.log(2, data);
+                                  return data;
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
                             }],
 
                             communityTalentDict: ['dataGuidesCommunity', function (dataGuidesCommunity) {
@@ -1461,7 +1398,15 @@ var app = angular.module('app', [
                                         }
                                     ]
                                 }
-                              }).$promise;
+                              })
+                              .$promise
+                              .then(function (data) {
+                                  console.log(3, data);
+                                  return data;
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
                             }],
 
                             featuredTalentDict: ['dataGuidesFeatured', function (dataGuidesFeatured) {
@@ -1482,11 +1427,27 @@ var app = angular.module('app', [
                                   filter: {
                                       order: "name ASC"
                                   }
-                              }).$promise;
+                              })
+                              .$promise
+                              .then(function (data) {
+                                  console.log(4, data);
+                                  return data;
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
                             }],
 
                             dataMaps: ['Map', function (Map) {
-                              return Map.find({}).$promise;
+                              return Map.find({})
+                              .$promise
+                              .then(function (data) {
+                                  console.log(5, data);
+                                  return data;
+                              })
+                              .catch(function (err) {
+                                  console.log(err);
+                              });
                             }]
                         }
                     }
@@ -2253,6 +2214,31 @@ var app = angular.module('app', [
                         controller: 'TeamCtrl',
                         templateUrl: tpl + 'views/frontend/teams.html',
                         resolve: {
+                            teams: ['TeamMember', function (TeamMember) {
+                                TeamMember.find({})
+                                .$promise
+                                .then(function (t) {
+                                    async.each(t, function (tm, eachCb) {
+                                        if (typeof tm.isActive === 'string') {
+                                            console.log('IT\'S A STRING FAGOT');
+                                            tm.isActive = true;
+                                            
+                                            TeamMember.update({ 
+                                                where: {
+                                                    id: tm.id
+                                                }
+                                            }, tm)
+                                            .$promise
+                                            .then(function (data) {
+                                                console.log(data);
+                                                return eachCb();
+                                            })
+                                        } else {
+                                            return eachCb();
+                                        }
+                                    });
+                                });
+                            }],
                             hsTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
                                     filter: {
@@ -2262,7 +2248,12 @@ var app = angular.module('app', [
                                         },
                                         order: 'orderNum ASC'
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
                             }],
                             hotsTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
@@ -2273,7 +2264,12 @@ var app = angular.module('app', [
                                         },
                                         order: 'orderNum ASC'
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
                             }],
                             wowTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
@@ -2284,7 +2280,12 @@ var app = angular.module('app', [
                                         },
                                         order: 'orderNum ASC'
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
                             }],
                             fifaTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
@@ -2295,7 +2296,12 @@ var app = angular.module('app', [
                                         },
                                         order: 'orderNum ASC'
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
                             }],
                             fgcTeam: ['TeamMember', function (TeamMember) {
                                 return TeamMember.find({
@@ -2306,7 +2312,12 @@ var app = angular.module('app', [
                                         },
                                         order: 'orderNum ASC'
                                     }
-                                }).$promise;
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
                             }]
                         }
                     }
@@ -2639,24 +2650,18 @@ var app = angular.module('app', [
                                 return userProfile;
                             }],
                             isLinked: ['User', function (User) {
-                                var obj = {};
                                 var providers = ['twitch','bnet'];
                                 
-                                User.isLinked({
+                                return User.isLinked({
                                     providers: providers
                                 })
                                 .$promise
                                 .then(function (data) {
-                                    obj = data.linked;
+                                    return data.isLinked;
                                 })
                                 .catch(function (err) {
                                     console.log(err);
-                                })
-                                .finally(function () {
-                                    return cb();
                                 });
-                                
-                                return obj;
                             }]
                         }
                     }
@@ -3025,7 +3030,23 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.add.build.html',
                         controller: 'AdminDeckAddCtrl',
                         resolve: {
-                            
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
+                            }],
                             classCardsList: ['$stateParams', 'deck', 'Card', function($stateParams, deck, Card) {
                                     var playerClass = $stateParams.playerClass;
 
@@ -3083,41 +3104,20 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/decks.edit.html',
                         controller: 'AdminDeckEditCtrl',
                         resolve: {
-                            isUserAdmin: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
                                     return false;
                                 } else {
-                                    return User.isRole({
-                                        roleName: '$admin'
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider']
                                     })
                                     .$promise
-                                    .then(function (isAdmin) {
-    //                                    console.log('isAdmin: ', isAdmin.isRole);
-                                        return isAdmin.isRole;
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
                                     })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
-                                    });
-                                }
-                            }],
-                            isUserContentProvider: ['User', function(User) {
-                                if (User.isAuthenticated() === false) {
-                                    return false;
-                                } else {
-                                    return User.isRole({
-                                        roleName: '$contentProvider'
-                                    })
-                                    .$promise
-                                    .then(function (isContentProvider) {
-    //                                    console.log('isContentProvider: ', isContentProvider.isRole);
-                                        return isContentProvider.isRole;
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('resolve err: ', err);
-                                        }
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
                                     });
                                 }
                             }],
@@ -3197,8 +3197,7 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (data) {
                                     data.mulligans = mulligans;
-//                                    console.log('mulligans resolve: ', mulligans);
-//                                    data.isUserContentProvider = isUserContentProvider;
+                                    console.log('mulligans resolve: ', mulligans);
                                     return data;
                                 })
                                 .catch(function(err) {
@@ -3354,11 +3353,12 @@ var app = angular.module('app', [
                         resolve: {
                             card: ['$stateParams', 'Card', function($stateParams, Card) {
                                 var cardID = $stateParams.cardID;
-                                Card.findById({
+                                return Card.findById({
                                     id: cardID
                                 })
                                 .$promise
                                 .then(function (cardFound) {
+                                    console.log('cardFound:', cardFound);
                                     return cardFound;
                                 })
                                 .catch(function (err) {
@@ -3854,7 +3854,7 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/users.edit.html',
                         controller: 'AdminUserEditCtrl',
                         resolve: {
-                            user: ['$stateParams', 'User', function ($stateParams, User) {
+                            user: ['$stateParams', 'User', 'userRoles', function ($stateParams, User, userRoles) {
                                 var userID = $stateParams.userID;
                                 return User.findById({
                                     id: userID
@@ -3862,6 +3862,10 @@ var app = angular.module('app', [
                                 .$promise
                                 .then(function (userFound) {
                                     console.log('userFound: ', userFound);
+                                    // attach user roles
+                                    userFound.isAdmin = userRoles.isInRoles.$admin;
+                                    userFound.isActive = userRoles.isInRoles.$active;
+                                    userFound.isProvider = userRoles.isInRoles.$contentProvider;
                                     return userFound;
                                 })
                                 .catch(function (err) {
@@ -3869,18 +3873,23 @@ var app = angular.module('app', [
                                     return false;
                                 });
                             }],
+                            
                             userRoles: ['User', function(User) {
-                                return User.isInRoles({
-                                    roleNames: ['$admin', '$premium', '$contentProvider', '$active']
-                                })
-                                .$promise
-                                .then(function (userRoles) {
-                                    console.log('userRoles: ', userRoles);
-                                    return userRoles;
-                                })
-                                .catch(function (err) {
-                                    console.log('User.isInRoles err: ', err);
-                                });
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider', '$active']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (err) {
+                                        console.log('User.isInRoles err: ', err);
+                                    });
+                                }
                             }]
                             
                         }
@@ -3962,12 +3971,60 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/polls.list.html',
                         controller: 'AdminPollListCtrl',
                         resolve: {
-                            data: ['AdminPollService', function (AdminPollService) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '';
-                                return AdminPollService.getPolls(page, perpage, search);
+//                            paginationParams: [function() {
+//                                return {
+//                                    page: 1,
+//                                    perpage: 50,
+//                                    options: {
+//                                        filter: {
+//                                            fields: {
+//                                                id: true,
+//                                                title: true
+//                                            },
+//                                            limit: 50,
+//                                            order: 'createdDate DESC'
+//                                        }
+//                                    }
+//                                };
+//                            }],
+//                            pollCount: ['Polls', function (Polls) {
+//                                return Poll.count({})
+//                                .$promise
+//                                .then(function (pollCount) {
+//                                    console.log('pollCount: ', pollCount);
+//                                    return pollCount;
+//                                })
+//                                .catch(function (err) {
+//                                    console.log('Poll.count err: ',err);
+//                                });
+//                            }],
+                            polls: ['Poll', function (Poll) {
+                                return Poll.find({ 
+                                    filter: {
+                                        fields: {
+                                            id: true,
+                                            title: true
+                                        },
+                                        limit: 50,
+                                        order: 'createdDate DESC'
+                                    }
+                                }).$promise
+                                .then(function (allPolls) {
+                                    console.log('allPolls: ', allPolls);
+                                    return allPolls;
+                                })
+                                .catch(function (err) {
+                                    console.log('Snapshot.find err: ', err);
+                                });
                             }]
+//                            data: ['AdminPollService', function (AdminPollService) {
+//                                var page = 1,
+//                                    perpage = 50,
+//                                    search = '';
+//                                return AdminPollService.getPolls(page, perpage, search);
+//                            }]
+                            
+                            
                         }
                     }
                 },
@@ -3992,10 +4049,23 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/polls.edit.html',
                         controller: 'AdminPollEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminPollService', function($stateParams, AdminPollService){
+                            poll: ['$stateParams', 'Poll', function($stateParams, Poll){
                                 var pollID = $stateParams.pollID;
-                                return AdminPollService.getPoll(pollID);
+                                return Poll.findOne({ 
+                                    filter: {
+                                        where: { 
+                                            id: pollID
+                                        }
+                                    }
+                                
+                                }) 
+                                .$promise
+                                .then(function (data) {
+                                    return data;
+                                
+                                })
                             }]
+                            
                         }
                     }
                 },
