@@ -1,11 +1,11 @@
-var configStaging = require('./../server/configs/config.staging');
-var configProduction = require('./../server/configs/config.production');
+var configStaging = require('./../server/configs/datasources.staging').s3;
+var configProduction = require('./../server/configs/datasources.production').s3;
 
 module.exports = {
     staging: {
         options: {
-            accessKeyId: configStaging.AMAZON_KEY,
-            secretAccessKey: configStaging.AMAZON_SECRET,
+            accessKeyId: configStaging.keyId,
+            secretAccessKey: configStaging.key,
             bucket: 'staging-cdn.tempostorm.com',
             region: 'us-west-2',
             access: 'public-read',
