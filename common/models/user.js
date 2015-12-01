@@ -106,7 +106,7 @@ module.exports = function(User) {
         /**
          * Confirm the user's identity.
          *
-         * @param {Any} userId
+         * @param {Any} uid
          * @param {String} token The validation token
          * @param {String} redirect URL to redirect the user to once confirmed
          * @callback {Function} callback
@@ -555,7 +555,10 @@ module.exports = function(User) {
     };
 
 
-    User.assignRoles = function (userId, roleNames, cb) {
+    User.assignRoles = function (uid, roleNames, cb) {
+        console.log('uid: ', uid);
+        console.log('roleNames: ', roleNames);
+        console.log('cb: ', cb);
         cb = cb || utils.createPromiseCallback();
 
         var Role = User.app.models.Role;
@@ -565,10 +568,10 @@ module.exports = function(User) {
             async.waterfall([
                 // check if user is already that role
                 function (seriesCb) {
-                    User.isInRoles([roleName], {principalType: RoleMapping.USER, principalId: userId}, function (err, isRole) {
+                    User.isInRoles(uid, [roleName], function (err, isInRoles) {
                         if (err) return seriesCb(err);
 
-                        if (isRole) return seriesCb("ok");
+                        if (isInRoles[roleName]) return seriesCb("ok");
                         else return seriesCb(undefined)
                     });
                 },
@@ -591,7 +594,7 @@ module.exports = function(User) {
                 function (role, seriesCb) {
                     role.principals.create({
                         principalType: RoleMapping.USER,
-                        principalId: userId
+                        principalId: uid
                     }, function (err, newPrincipal) {
                         seriesCb(err);
                     });
@@ -607,7 +610,7 @@ module.exports = function(User) {
                         roles = {};
                     }
 
-                    var userRoles = roles[userId.toString()];
+                    var userRoles = roles[uid.toString()];
                     if(typeof userRoles !== "object") {
                         userRoles = {};
                     }
@@ -628,7 +631,7 @@ module.exports = function(User) {
     };
 
 
-    User.revokeRoles = function (userId, roleNames, cb) {
+    User.revokeRoles = function (uid, roleNames, cb) {
         cb = cb || utils.createPromiseCallback();
 
         var Role = User.app.models.Role;
@@ -638,10 +641,10 @@ module.exports = function(User) {
             async.waterfall([
                 // check if user is already that role
                 function (seriesCb) {
-                    Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function (err, isRole) {
+                    User.isInRoles(uid, [roleName], function (err, isInRoles) {
                         if (err) return seriesCb(err);
 
-                        if (!isRole) return seriesCb("ok");
+                        if (!isInRoles[roleName]) return seriesCb("ok");
                         else return seriesCb(undefined)
                     });
                 },
@@ -664,7 +667,7 @@ module.exports = function(User) {
                 function (role, seriesCb) {
                     RoleMapping.destroyAll({
                         principalType: RoleMapping.USER,
-                        principalId: userId.toString(),
+                        principalId: uid.toString(),
                         roleId: role.id
                     }, function (err) {
                         seriesCb(err);
@@ -676,7 +679,7 @@ module.exports = function(User) {
                     if(!ctx.active || typeof ctx.active.http.req.roles !== "object")
                         return seriesCb();
 
-                    var currentRoles = ctx.active.http.req.roles[userId.toString()];
+                    var currentRoles = ctx.active.http.req.roles[uid.toString()];
                     if(typeof currentRoles !== "object")
                         return seriesCb();
 
@@ -884,7 +887,7 @@ module.exports = function(User) {
         {
             description: "Assigns a role to a user",
             accepts: [
-                {arg: 'userId', type: 'string', required:true, http: {source: 'form'}},
+                {arg: 'uid', type: 'string', required:true, http: {source: 'form'}},
                 {arg: 'roleNames', type: 'array', required:true, http: {source: 'form'}}
             ],
             http: {verb: 'post'},
@@ -897,7 +900,7 @@ module.exports = function(User) {
         {
             description: "Revokes roles of the user",
             accepts: [
-                {arg: 'userId', type: 'string', required:true, http: {source: 'form'}},
+                {arg: 'uid', type: 'string', required:true, http: {source: 'form'}},
                 {arg: 'roleNames', type: 'array', required:true, http: {source: 'form'}}
             ],
             http: {verb: 'post'},

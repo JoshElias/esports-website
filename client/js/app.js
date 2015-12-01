@@ -690,6 +690,7 @@ var app = angular.module('app', [
                                     return false;
                                 } else {
                                     return User.isInRoles({
+                                        uid: User.getCurrentId(),
                                         roleNames: ['$admin', '$contentProvider', '$premium']
                                     })
                                     .$promise
@@ -834,6 +835,7 @@ var app = angular.module('app', [
                                     return false;
                                 } else {
                                     return User.isInRoles({
+                                        uid: User.getCurrentId(),
                                         roleNames: ['$admin', '$contentProvider']
                                     })
                                     .$promise
@@ -3974,11 +3976,12 @@ var app = angular.module('app', [
                                 });
                             }],
                             
-                            userRoles: ['User', function(User) {
+                            userRoles: ['User', '$stateParams', function(User, $stateParams) {
                                 if (!User.isAuthenticated()) {
                                     return false;
                                 } else {
                                     return User.isInRoles({
+                                        uid: $stateParams.userID,
                                         roleNames: ['$admin', '$contentProvider', '$active']
                                     })
                                     .$promise

@@ -1288,9 +1288,10 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
                     }).success(function(data, status, headers, config) {
                         console.log('data card: ', data);
-                        $scope.card.photos.medium = data.medium;
-                        $scope.card.photos.large = data.large;
-                        $scope.cardImg = $scope.app.cdn + data.path + data.large;
+                        $scope.card.photoNames.medium = data.medium;
+                        $scope.card.photoNames.large = data.large;
+//                        $scope.cardImg = $scope.app.cdn + data.path + data.large;
+                        $scope.cardImg = 
                         box.modal('hide');
                     });
                 }
@@ -7337,7 +7338,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // edit user
             $scope.editUser = function (user) {
-                console.log('user:', user);
+                console.log('user id:', user.id);
                 if ($scope.user.changePassword 
                     && ($scope.user.newPassword !== $scope.user.password)) {
                     AlertService.setError({ show: true, msg: 'Unable to update user', errorList: ['Please confirm your password'] });
@@ -7353,8 +7354,8 @@ angular.module('app.controllers', ['ngCookies'])
                     isActive = user.isActive ? validRoles.push('$active') : revokeRoles.push('$active'),
                     isProvider = user.isProvider ? validRoles.push('$contentProvider') : revokeRoles.push('$contentProvider');
                     
-//                    console.log('validRoles:', validRoles);
-//                    console.log('revokeRoles:', revokeRoles);
+                    console.log('validRoles:', validRoles);
+                    console.log('revokeRoles:', revokeRoles);
                 
                 async.series([
                     function(seriesCallback) {
@@ -7372,9 +7373,8 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                     },
                     function(seriesCallback) {
-                        console.log('validRoles:', validRoles);
                         User.assignRoles({
-                            userId: user.id,
+                            uid: user.id,
                             roleNames: validRoles
                         })
                         .$promise
@@ -7390,7 +7390,7 @@ angular.module('app.controllers', ['ngCookies'])
                     function(seriesCallback) {
                         console.log('revokeRoles: ', revokeRoles);
                         User.revokeRoles({
-                            userId : user.id,
+                            uid : user.id,
                             roleNames: revokeRoles
                         })
                         .$promise
