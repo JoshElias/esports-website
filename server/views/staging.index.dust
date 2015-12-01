@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-ng-app="app" ng-controller="AppCtrl">
 <head>
+    <meta name="google-site-verification" content="2LQpZjJv45yhwG9Fgy2m9ufoMlMov6aIKebfUxGmecI" />
     <meta charset="utf-8" />
     <base href="/" />
     <title ng-bind="metaservice.metaTitle()">TempoStorm</title>
@@ -17,75 +18,42 @@
 
     <meta name="prerender-status-code" content="{{ metaservice.getStatusCode() }}">
 
-    <link rel="stylesheet" href="./vendor/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
-    <link rel="stylesheet" href="./vendor/bootstrap/dist/css/bootstrap-theme.min.css" type="text/css" />
-    <link rel="stylesheet" href="./css/vendor/jquery/jquery-ui.min.css" type="text/css" />
-    <link rel="stylesheet" href="./css/vendor/megamenu/MegaNavbar.min.css" type="text/css" />
-    <link rel="stylesheet" href="./css/vendor/megamenu/simple-line-icons.css" type="text/css" />
-    <link rel="stylesheet" href="./vendor/font-awesome/css/font-awesome.min.css" type="text/css" />
-    <link rel="stylesheet" href="./vendor/summernote/dist/summernote.css" type="text/css" />
-    <link rel="stylesheet" href="./css/vendor/animations/animation.css" type="text/css" />
-    <link rel="stylesheet" href="./css/vendor/animate.css" type="text/css" />
-    <link rel="stylesheet" href="./dist/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="{cdnUrl}css/{assets.vendor_min_css}" type="text/css" />
+    <link rel="stylesheet" href="{cdnUrl}css/{assets.style_min_css}" type="text/css" />
 </head>
 <body ng-class="{ 'admin': $state.includes('app.admin'), 'hots': $state.includes('app.admin.hots') || $state.includes('app.hots') }">
 
     <div class="app" id="app" ui-view="root" bootstrap-width></div>
     <script>
-        var tpl = "./";// '{cdnUrl}';
+        var tpl = '{cdnUrl}';
     </script>
 
-    <!-- d3 -->
-
     <!-- vendor -->
-    <script src="./vendor/jquery/dist/jquery.min.js"></script>
-    <script src="./vendor/jquery-ui/jquery-ui.min.js"></script>
-    <script src="./vendor/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="./vendor/bootbox/bootbox.js"></script>
-    <script src="./js/vendor/wtooltip.js"></script>
-    <script src="./vendor/moment/min/moment.min.js"></script>
-    <script src="./vendor/summernote/dist/summernote.min.js"></script>
-    <script src="./js/vendor/angular-file-upload-shim.min.js"></script>
-    <script src="./vendor/underscore/underscore-min.js"></script>
-    <script src="./vendor/async/dist/async.min.js"></script>
+    <script src="{cdnUrl}js/{assets.vendor_min_js}"></script>
 
     <!-- angular -->
-    <script src="./vendor/angular/angular.js"></script>
-    <script src="./vendor/angular-resource/angular-resource.js"></script>
-    <script src="./vendor/angular-ui-router/release/angular-ui-router.min.js"></script>
-    <script src="./vendor/angular-cookies/angular-cookies.min.js"></script>
-    <script src="./vendor/angular-ui-date/src/date.js"></script>
-    <script src="./vendor/angular-ui-utils/jq.min.js"></script>
-    <script src="./vendor/angular-ui-load/ui-load.js"></script>
-    <script src="./vendor/angular-ui-validate/dist/validate.min.js"></script>
-    <script src="./vendor/angular-animate/angular-animate.min.js"></script>
-    <script src="./vendor/angular-route/angular-route.min.js"></script>
-    <script src="./js/vendor/angular-bootbox.js"></script>
-    <script src="./vendor/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"></script>
-    <script src="./vendor/angular-file-upload/dist/angular-file-upload.min.js"></script>
-    <script src="./js/vendor/angular-md5.min.js"></script>
-    <script src="./vendor/angular-gravatar/build/angular-gravatar.min.js"></script>
-    <script src="./vendor/angular-moment/angular-moment.min.js"></script>
-    <script src="./vendor/angular-payments/lib/angular-payments.min.js"></script>
-    <script src="./vendor/angular-sanitize/angular-sanitize.min.js"></script>
-    <script src="./vendor/angular-summernote/dist/angular-summernote.min.js"></script>
-    <script src="./vendor/ngstorage/ngStorage.min.js"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
-    <script src="./vendor/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
+    <script src="{cdnUrl}js/{assets.angular_min_js}"></script>
+
+    <!-- lbServices -->
+    <script src="dist/js/services/lb-services.js"></script>
+
+    <!-- modules -->
+    <script src="dist/js/modules.min.js"></script>
+
+    <!-- app -->
+    <script src="{cdnUrl}js/{assets.app_min_js}"></script>
 
     <!-- stripe -->
     <script src="https://js.stripe.com/v2/"></script>
 
-    <!-- app -->
-    <script src="./dist/js/services/lb-services.js"></script>
-    <script src="./js/app.js"></script>
-    <script src="./js/controllers.js"></script>
-    <script src="./js/services.js"></script>
-    <script src="./js/directives.js"></script>
-    <script src="./js/filters.js"></script>
-    <script src="./js/animations.js"></script>
-    <script src="./dist/js/modules.js"></script>
-    <!--
-    
+    <!-- google analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-57639561-1', 'auto');
+    </script>
 </body>
 </html>
