@@ -2,7 +2,7 @@ module.exports = {
     fonts: {
         expand: true,
         flatten: true,
-        src: ['client/css/fonts/**/*'],
+        src: ['client/css/fonts/**/*', 'client/vendor/font-awesome/fonts/**/*'],
         dest: 'client/dist/css/fonts',
         filter: 'isFile'
     },

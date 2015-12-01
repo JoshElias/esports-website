@@ -25,6 +25,7 @@ var redbull = angular.module('app.redbull', [
 
         // cdn templates
         var moduleTpl = (tpl !== './') ? tpl + 'views/redbull/client/views/' : 'dist/views/redbull/client/views/';
+
         
         $stateProvider
         .state('app.redbull', {
