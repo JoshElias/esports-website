@@ -66,8 +66,7 @@ module.exports = function(Article) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        User.isInRoles(["$owner", "$admin", "$premium", "$contentProvider"], function(err, isInRoles) {
-            console.log("isInRoles:", err, isInRoles);
+        User.isInRoles(ctx.req.accessToken.userId.toString(), ["$owner", "$admin", "$premium", "$contentProvider"], function(err, isInRoles) {
             if(err) return finalCb();
             if(isInRoles.none) return removeFields();
             else return finalCb();
