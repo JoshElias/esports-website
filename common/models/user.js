@@ -207,13 +207,10 @@ module.exports = function(User) {
                         answer.push(replacement);
                     });
                 } else {
-                    console.log('cleaning user');
                     answer = {};
                     for(var key in ctx.result) {
                         if(privateFields.indexOf(key) === -1) {
                             answer[key] = ctx.result[key];
-                        } else {
-                            console.log('removing else: ', key);
                         }
                     }
                 }
@@ -225,8 +222,7 @@ module.exports = function(User) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        User.isInRoles(["$owner", "$admin"], function(err, isInRoles) {
-            console.log('isInRoles: ', isInRoles, err);
+        User.isInRoles(ctx.req.accessToken.userId.toString(), ["$owner", "$admin"], function(err, isInRoles) {
             if(err) return finalCb();
             else if (isInRoles.none) return removeFields();
             else return finalCb();
@@ -246,26 +242,24 @@ module.exports = function(User) {
             protectedFields.forEach(function(protectedField) {
 
             });
-            console.log("data:", data);
             finalCb();
         }
-
-        if(!ctx || !ctx.req || !ctx.req.accessToken)
-            return removeFields();
 
         if(ctx.isNewInstance) {
             return finalCb();
         }
 
-        User.isInRoles(["$admin"], function(err, isInRoles) {
+        if(!ctx.req || !ctx.req.accessToken) {
+            return removeFields();
+        }
+
+
+        User.isInRoles(ctx.req.accessToken.userId.toString(), ["$admin"], function(err, isInRoles) {
             if(err) return finalCb();
-            else return removeFields();
-            //if(!isInRoles.all) return removeFields();
-            //else return finalCb();
+            else if(isInRoles.none) return removeFields();
+            else return finalCb();
         });
     };
-
-
 
 
 
@@ -509,6 +503,58 @@ module.exports = function(User) {
     };
 
 
+
+    User.isInRoles = function(uid, roleNames, cb) {
+        cb = cb || utils.createPromiseCallback();
+
+        var Role = User.app.models.Role;
+        var RoleMapping = User.app.models.RoleMapping;
+        var ctx = loopback.getCurrentContext();
+
+
+        // Check for the roles we already have
+        var isInRoles = {};
+        if(ctx.active) {
+            if(typeof ctx.active.http.req.roles !== "object") {
+                ctx.active.http.req.roles = {};
+            }
+
+            var currentRoles = ctx.active.http.req.roles[uid];
+            for(var key in currentRoles) {
+                isInRoles[key] = currentRoles[key];
+            }
+        }
+        isInRoles.all = true;
+        isInRoles.none = true;
+
+        async.eachSeries(roleNames, function(roleName, eachCb) {
+
+            if(typeof isInRoles[roleName] !== "undefined")
+                return eachCb();
+
+            Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: uid}, function(err, isRole) {
+                if(!isRole && isInRoles.all) {
+                    isInRoles.all = false;
+                } else if(isRole && isInRoles.none) {
+                    isInRoles.none = false;
+                }
+
+                isInRoles[roleName] = isRole;
+                eachCb(err)
+            });
+        }, function(err) {
+            if(err) return cb(err);
+
+            if(ctx.active) {
+                ctx.active.http.req.roles[uid] = isInRoles;
+            }
+            cb(err, isInRoles);
+        });
+
+        return cb.promise;
+    };
+
+
     User.assignRoles = function (userId, roleNames, cb) {
         cb = cb || utils.createPromiseCallback();
 
@@ -519,9 +565,7 @@ module.exports = function(User) {
             async.waterfall([
                 // check if user is already that role
                 function (seriesCb) {
-                    console.log('checking if role: ', roleName);
                     User.isInRoles([roleName], {principalType: RoleMapping.USER, principalId: userId}, function (err, isRole) {
-                        console.log('is role: ', err, isRole);
                         if (err) return seriesCb(err);
 
                         if (isRole) return seriesCb("ok");
@@ -531,7 +575,6 @@ module.exports = function(User) {
                 // Get the new role
                 function (seriesCb) {
                     Role.findOne({where: {name: roleName}}, function (err, role) {
-                        console.log('finding role: ', role);
                         if (err) return seriesCb(err);
 
                         if (!role) {
@@ -546,13 +589,31 @@ module.exports = function(User) {
                 },
                 // Assign the user to that role
                 function (role, seriesCb) {
-                    console.log('role create: ', role);
                     role.principals.create({
                         principalType: RoleMapping.USER,
                         principalId: userId
                     }, function (err, newPrincipal) {
                         seriesCb(err);
                     });
+                },
+                // Add the role to the req cache
+                function(seriesCb) {
+                    var ctx = loopback.getCurrentContext();
+                    if(!ctx.active)
+                        return seriesCb();
+
+                    var roles = ctx.active.http.req.roles;
+                    if(typeof roles !== "object") {
+                        roles = {};
+                    }
+
+                    var userRoles = roles[userId.toString()];
+                    if(typeof userRoles !== "object") {
+                        userRoles = {};
+                    }
+
+                    userRoles[roleName] = true;
+                    return seriesCb();
                 }],
             function (err) {
                 console.log('done err: ', err);
@@ -608,6 +669,19 @@ module.exports = function(User) {
                     }, function (err) {
                         seriesCb(err);
                     });
+                },
+                // Remove the role from the req cache
+                function(seriesCb) {
+                    var ctx = loopback.getCurrentContext();
+                    if(!ctx.active || typeof ctx.active.http.req.roles !== "object")
+                        return seriesCb();
+
+                    var currentRoles = ctx.active.http.req.roles[userId.toString()];
+                    if(typeof currentRoles !== "object")
+                        return seriesCb();
+
+                    currentRoles[roleName] = false;
+                    return seriesCb();
                 }],
             function (err) {
                 if (err && err !== "ok") return assignCb(err);
@@ -621,56 +695,6 @@ module.exports = function(User) {
     };
 
 
-    User.isInRoles = function (roleNames, cb) {
-        cb = cb || utils.createPromiseCallback();
-
-        var Role = User.app.models.Role;
-        var RoleMapping = User.app.models.RoleMapping;
-
-        var ctx = loopback.getCurrentContext();
-        var accessToken = ctx.get("accessToken");
-        var userId = accessToken.userId;
-
-        var isInRoles = {};
-        isInRoles.all = true;
-        isInRoles.none = true;
-
-        // Check for the roles we already have
-        if(ctx.active) {
-            if(typeof ctx.active.http.req.roles !== "object")
-                ctx.active.http.req.roles = {};
-
-            var currentRoles = ctx.active.http.req.roles;
-            for(var key in currentRoles) {
-                isInRoles[key] = currentRoles[key];
-            }
-        }
-
-        async.eachSeries(roleNames, function(roleName, eachCb) {
-            if(typeof isInRoles[roleName] !== "undefined")
-                return eachCb();
-
-            Role.isInRole(roleName, {principalType: RoleMapping.USER, principalId: userId}, function(err, isRole) {
-                if(!isRole && isInRoles.all) {
-                    isInRoles.all = false;
-                } else if(isRole && isInRoles.none) {
-                    isInRoles.none = false;
-                }
-
-                isInRoles[roleName] = isRole;
-                eachCb(err)
-            });
-        }, function(err) {
-            if(err) return cb(err);
-
-            if(ctx.active) {
-                ctx.active.http.req.roles = isInRoles;
-            }
-            cb(err, isInRoles);
-        });
-
-        return cb.promise;
-    };
 
     User.isLinked = function (providers, cb) {
         cb = cb || utils.createPromiseCallback();
@@ -764,6 +788,7 @@ module.exports = function(User) {
         {
             description: "Checks if a user is of role",
             accepts: [
+                {arg: 'uid', type: 'string', required:true, http: {source: 'query'}},
                 {arg: 'roleNames', type: 'array', required:true, http: {source: 'query'}}
             ],
             returns: {arg: 'isInRoles', type: 'object'},

@@ -42,7 +42,7 @@ module.exports = function(Deck) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        User.isInRoles(["$owner", "$admin"], function(err, isInRoles) {
+        User.isInRoles(ctx.req.accessToken.userId.toString(), ["$owner", "$admin"], function(err, isInRoles) {
             if(err) return finalCb();
             if(isInRoles.none) return removeFields();
             else return finalCb();
@@ -96,7 +96,7 @@ module.exports = function(Deck) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        User.isInRoles(["$owner", "$admin", "$premium", "$contentProvider"], function(err, isInRoles) {
+        User.isInRoles(ctx.req.accessToken.userId.toString(), ["$owner", "$admin", "$premium", "$contentProvider"], function(err, isInRoles) {
             if(err) return finalCb();
             if(isInRoles.none) return removeFields();
             else return finalCb();
@@ -145,7 +145,7 @@ module.exports = function(Deck) {
         if(!ctx || !ctx.req || !ctx.req.accessToken)
             return removeFields();
 
-        User.isInRoles(["$owner", "$admin", "$contentProvider"], function(err, isInRoles) {
+        User.isInRoles(ctx.req.accessToken.userId.toString(), ["$owner", "$admin", "$contentProvider"], function(err, isInRoles) {
             if(err) return finalCb();
             if(isInRoles.none) return removeFields();
             else return finalCb();
