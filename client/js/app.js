@@ -4476,8 +4476,110 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.list.html',
                         controller: 'AdminTeamListCtrl',
                         resolve: {
-                            data: ['AdminTeamService', function (AdminTeamService) {
-                                return AdminTeamService.getMembers();
+                            teams: ['TeamMember', function (TeamMember) {
+                                TeamMember.find({})
+                                .$promise
+                                .then(function (t) {
+                                    async.each(t, function (tm, eachCb) {
+                                        if (typeof tm.isActive === 'string') {
+                                            console.log('IT\'S A STRING');
+                                            tm.isActive = true;
+                                            
+                                            TeamMember.update({ 
+                                                where: {
+                                                    id: tm.id
+                                                }
+                                            }, tm)
+                                            .$promise
+                                            .then(function (data) {
+                                                console.log(data);
+                                                return eachCb();
+                                            })
+                                        } else {
+                                            return eachCb();
+                                        }
+                                    });
+                                });
+                            }],
+                            hsTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'hs',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
+                            }],
+                            hotsTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'hots',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
+                            }],
+                            wowTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'wow',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
+                            }],
+                            fifaTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'fifa',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
+                            }],
+                            fgcTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'fgc',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
                             }]
                         }
                     }
@@ -4499,9 +4601,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.edit.html',
                         controller: 'AdminTeamEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminTeamService', function ($stateParams, AdminTeamService) {
+                            member: ['$stateParams', 'TeamMember', function ($stateParams, TeamMember) {
                                 var memberID = $stateParams.memberID;
-                                return AdminTeamService.getMember(memberID);
+                                    console.log(memberID);
+                                return TeamMember.findById({
+                                    id: memberID,
+                                    filter: {}
+                                })
+                                .$promise
+                                .then(function(teamMember){
+                                    return teamMember;
+                                }).catch(function(err){
+                                    console.log(err);
+                                });
                             }]
                         }
                     }

@@ -4781,15 +4781,15 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminTeamListCtrl', ['$scope', 'data', 'AdminTeamService', 'AlertService',
-        function ($scope, data, AdminTeamService, AlertService) {
+    .controller('AdminTeamListCtrl', ['$scope', 'TeamMember', 'hsTeam', 'hotsTeam', 'wowTeam',  'fifaTeam', 'teams',  'fgcTeam', 'AlertService',
+        function ($scope, TeamMember, hsTeam, hotsTeam, wowTeam, fifaTeam, teams, fgcTeam, AlertService) {
 
-            $scope.members = data.members;
-            $scope.hsMembers = data.hsMembers;
-            $scope.hotsMembers = data.hotsMembers;
-            $scope.csMembers = data.csMembers;
-            $scope.fifaMembers = data.fifaMembers;
-            $scope.fgcMembers = data.fgcMembers;
+                $scope.members = teams;
+                $scope.hsMembers = hsTeam;
+                $scope.hotsMembers = hotsTeam;
+                $scope.wowMembers = wowTeam;
+                $scope.fifaMembers = fifaTeam;
+                $scope.fgcMembers = fgcTeam;
 
 
             // grab alerts
@@ -4798,13 +4798,13 @@ angular.module('app.controllers', ['ngCookies'])
                 AlertService.reset();
             }
 
-            $scope.updateDND = function (list, index) {
-                list.splice(index, 1);
-                for (var i = 0; i < list.length; i++) {
-                    list[i].orderNum = i + 1;
-                }
-                AdminTeamService.updateOrder(list);
-            };
+//            $scope.updateDND = function (list, index) {
+//                list.splice(index, 1);
+//                for (var i = 0; i < list.length; i++) {
+//                    list[i].orderNum = i + 1;
+//                }
+//                AdminTeamService.updateOrder(list);
+//            };
 
             // delete member
             $scope.deleteMember = function deleteMember(member, arr) {
@@ -4816,18 +4816,18 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminTeamService.deleteMember(member._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = arr.indexOf(member);
-                                        if (index !== -1) {
-                                            arr.splice(index, 1);
-                                        }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: member.screenName + ' - ' + member.fullName + ' deleted successfully.'
-                                        };
+                                TeamMember.destroyById({id:member.id}).$promise.then(function (member) {
+                                    var index = $scope.member.indexOf(member);
+                                    if (index !== -1) {
+                                        $scope.member.splice(index, 1);
                                     }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: member.screenName + ' - ' + member.fullName + ' deleted successfully.'
+                                        //$state.go('app.admin.teams.list');
+                                    };
                                 });
+                                
                             }
                         },
                         cancel: {
@@ -4840,7 +4840,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
                 box.modal('show');
-            }
+            };
         }
     ])
     .controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'hsTeam', 'hotsTeam', 'wowTeam', 'fgcTeam', 'fifaTeam',
@@ -4896,9 +4896,11 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminTeamAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'AdminTeamService', 'AlertService',
-        function ($scope, $state, $window, $upload, $compile, AdminTeamService, AlertService) {
-
+    .controller('AdminTeamAddCtrl', ['$scope', '$state', '$window', '$compile', 'TeamMember', 'AlertService',
+        function ($scope, $state, $window, $compile, TeamMember, AlertService) {
+//removed upload
+            
+            console.log('hello2');
             var defaultMember = {
                 game: '',
                 screenName: '',
@@ -4912,107 +4914,112 @@ angular.module('app.controllers', ['ngCookies'])
                     instagram: '',
                     esea: ''
                 },
-                photo: '',
-                active: true
+                photoName: '',
+                isActive: true
             }
 
             $scope.member = angular.copy(defaultMember);
 
             // photo upload
-            $scope.photoUpload = function ($files) {
-                if (!$files.length) return false;
-                var box = bootbox.dialog({
-                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-                    closeButton: false,
-                    animate: false
-                });
-                $scope.uploading = 0;
-                box.modal('show');
-                for (var i = 0; i < $files.length; i++) {
-                    var file = $files[i];
-                    $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/team',
-                        method: 'POST',
-                        file: file
-                    }).progress(function(evt) {
-                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function(data, status, headers, config) {
-                        $scope.member.photo = data.photo;
-                        $scope.cardImg = $scope.app.cdn + data.path + data.photo;
-                        box.modal('hide');
-                    });
-                }
-            };
+//            $scope.photoUpload = function ($files) {
+//                if (!$files.length) return false;
+//                var box = bootbox.dialog({
+//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+//                    closeButton: false,
+//                    animate: false
+//                });
+//                $scope.uploading = 0;
+//                box.modal('show');
+//                for (var i = 0; i < $files.length; i++) {
+//                    var file = $files[i];
+//                    $scope.upload = $upload.upload({
+//                        url: '/api/admin/upload/team',
+//                        method: 'POST',
+//                        file: file
+//                    }).progress(function(evt) {
+//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+//                    }).success(function(data, status, headers, config) {
+//                        $scope.member.photo = data.photo;
+//                        $scope.cardImg = $scope.app.cdn + data.path + data.photo;
+//                        box.modal('hide');
+//                    });
+//                }
+//            };
 
-            $scope.getImage = function () {
-                $scope.imgPath = '/team/';
-                if (!$scope.member) { return '/img/blank.png'; }
-                return ($scope.member.photo && $scope.member.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.member.photo;
-            };
+//            $scope.getImage = function () {
+//                $scope.imgPath = '/team/';
+//                if (!$scope.member) { return '/img/blank.png'; }
+//                return ($scope.member.photo && $scope.member.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.member.photo;
+//            };
 
             // save member
             $scope.saveMember = function () {
-                AdminTeamService.addMember($scope.member).then(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' - ' + $scope.member.fullName + ' has been added successfully.' });
-                        $state.go('app.admin.teams.list');
-                    }
+                console.log('hello');
+               TeamMember.create({}, $scope.member).$promise.then(function (data) {
+                    console.log(data);
+                    AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' has been added successfully.' })
+                       $state.go('app.admin.teams.list');
+                   
+               })
+               .catch(function(err){
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                    AlertService.setError({ show: true, msg: 'There was an error adding this member ' + err.status + ": " + err.data.error.message})
                 });
             };
         }
     ])
-    .controller('AdminTeamEditCtrl', ['$scope', '$state', '$window', '$compile', '$upload', 'data', 'AdminTeamService', 'AlertService',
-        function ($scope, $state, $window, $compile, $upload, data, AdminTeamService, AlertService) {
-
-            $scope.member = data.member;
+    .controller('AdminTeamEditCtrl', ['$scope', '$state', '$window', '$compile', 'member', 'TeamMember', 'AlertService',
+        function ($scope, $state, $window, $compile, member, TeamMember, AlertService) {
+//removed upload
+            $scope.member = member;
 
             // photo upload
-            $scope.photoUpload = function ($files) {
-                if (!$files.length) return false;
-                var box = bootbox.dialog({
-                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-                    closeButton: false,
-                    animate: false
-                });
-                $scope.uploading = 0;
-                box.modal('show');
-                for (var i = 0; i < $files.length; i++) {
-                    var file = $files[i];
-                    $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/team',
-                        method: 'POST',
-                        file: file
-                    }).progress(function(evt) {
-                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function(data, status, headers, config) {
-                        $scope.member.photo = data.photo;
-                        $scope.cardImg = $scope.app.cdn + data.path + data.photo;
-                        box.modal('hide');
-                    });
-                }
-            };
-
-            $scope.getImage = function () {
-                $scope.imgPath = '/team/';
-                if (!$scope.team) { return '/img/blank.png'; }
-                return ($scope.snapshot.photo && $scope.snapshot.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photo;
-            };
+//            $scope.photoUpload = function ($files) {
+//                if (!$files.length) return false;
+//                var box = bootbox.dialog({
+//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+//                    closeButton: false,
+//                    animate: false
+//                });
+//                $scope.uploading = 0;
+//                box.modal('show');
+//                for (var i = 0; i < $files.length; i++) {
+//                    var file = $files[i];
+//                    $scope.upload = $upload.upload({
+//                        url: '/api/admin/upload/team',
+//                        method: 'POST',
+//                        file: file
+//                    }).progress(function(evt) {
+//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+//                    }).success(function(data, status, headers, config) {
+//                        $scope.member.photo = data.photo;
+//                        $scope.cardImg = $scope.app.cdn + data.path + data.photo;
+//                        box.modal('hide');
+//                    });
+//                }
+//            };
+//
+//            $scope.getImage = function () {
+//                $scope.imgPath = '/team/';
+//                if (!$scope.team) { return '/img/blank.png'; }
+//                return ($scope.snapshot.photo && $scope.snapshot.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photo;
+//            };
 
             // save member
-            $scope.saveMember = function () {
-                AdminTeamService.editMember($scope.member).then(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' - ' + $scope.member.fullName + ' has been added successfully.' });
-                        $state.go('app.admin.teams.list');
-                    }
+             $scope.saveMember = function () {
+               TeamMember.update({
+                    where: {id:$scope.member.id}
+               }, $scope.member).$promise.then(function (data) {
+                    AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' has been updated successfully.' })
+                       $state.go('app.admin.teams.list');
+               })
+               .catch(function(err){
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                    AlertService.setError({ show: true, msg: 'There was an error updating this member ' + err.status + ": " + err.data.error.message})
                 });
             };
         }
