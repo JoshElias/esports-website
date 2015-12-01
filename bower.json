@@ -37,7 +37,6 @@
     "angular-ui-utils": "jq-0.2.3",
     "angular-animate": "~1.4.3",
     "angular-drag-and-drop-lists": "~1.2.0",
-    "angular-file-upload": "~2.1.1",
     "angular-gravatar": "~0.4.1",
     "angular-moment": "~0.10.2",
     "angular-payments": "*",

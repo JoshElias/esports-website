@@ -1221,8 +1221,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.posts = dataPosts.activity;
         }
     ])
-    .controller('AdminCardAddCtrl', ['$scope', '$window', '$stateParams', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'ImgurService',
-        function ($scope, $window, $stateParams, $compile, bootbox, Util, Hearthstone, AdminCardService, ImgurService) {
+    .controller('AdminCardAddCtrl', ['$scope', '$window', '$stateParams', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'ImgurService', '$upload', 'Image',
+        function ($scope, $window, $stateParams, $compile, bootbox, Util, Hearthstone, AdminCardService, ImgurService, $upload, Image) {
+            console.log('image: ', Image);
             var defaultCard = {
                 name: '',
                 cost: '',
@@ -1280,12 +1281,13 @@ angular.module('app.controllers', ['ngCookies'])
                 for (var i = 0; i < $files.length; i++) {
                     var file = $files[i];
                     $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/card',
+                        url: '/api/images/uploadCard',
                         method: 'POST',
                         file: file
                     }).progress(function(evt) {
                         $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
                     }).success(function(data, status, headers, config) {
+                        console.log('data card: ', data);
                         $scope.card.photos.medium = data.medium;
                         $scope.card.photos.large = data.large;
                         $scope.cardImg = $scope.app.cdn + data.path + data.large;
@@ -1307,7 +1309,7 @@ angular.module('app.controllers', ['ngCookies'])
                 for (var i = 0; i < $files.length; i++) {
                     var file = $files[i];
                     $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/deck',
+                        url: '/api/image/upload',
                         method: 'POST',
                         file: file
                     }).progress(function(evt) {
@@ -11296,8 +11298,8 @@ angular.module('app.controllers', ['ngCookies'])
             // delete category
             $scope.deleteCategory = function (category) {
                 var box = bootbox.dialog({
-                    title: 'Are you sure you want to delete the category: ' + category.title + '?',
-                    message: 'All threads, posts, and comments will be deleted for ' + category.title + ' as well.',
+                    title: 'Delete category: <strong>' + category.title + '</strong>?',
+                    message: 'All threads, posts, and comments will be deleted for this category as well.',
                     buttons: {
                         delete: {
                             label: 'Delete',
@@ -11322,11 +11324,11 @@ angular.module('app.controllers', ['ngCookies'])
                                                 })
                                                 .$promise
                                                 .then(function (commentsDeleted) {
-                                                    console.log('commentsDeleted: ', commentsDeleted);
+//                                                    console.log('commentsDeleted: ', commentsDeleted);
                                                     postCB();
                                                 })
                                                 .catch(function (err) {
-                                                    console.log('commentsDeleted: ', err);
+//                                                    console.log('commentsDeleted: ', err);
                                                     postCB(err);
                                                 });
 
@@ -11343,14 +11345,13 @@ angular.module('app.controllers', ['ngCookies'])
                                             })
                                             .$promise
                                             .then(function (postsDeleted) {
-                                                console.log('postsDeleted: ', postsDeleted);
+//                                                console.log('postsDeleted: ', postsDeleted);
                                                 threadCB();
                                             })
                                             .catch(function (err) {
-                                                console.log('postsDeleted: ', err);
+//                                                console.log('postsDeleted: ', err);
                                                 threadCB(err);
                                             });
-
 
                                         }, function (err) {
                                             if (err) {
@@ -11366,30 +11367,30 @@ angular.module('app.controllers', ['ngCookies'])
                                         })
                                         .$promise
                                         .then(function (threadsDeleted) {
-                                            console.log('threadsDeleted: ', threadsDeleted);
+//                                            console.log('threadsDeleted: ', threadsDeleted);
 
                                             ForumCategory.destroyById({
                                                 id: category.id
                                             })
                                             .$promise
                                             .then(function (categoryDeleted) {
-                                                console.log('categoryDeleted: ', categoryDeleted);
+//                                                console.log('categoryDeleted: ', categoryDeleted);
                                                 seriesCallback();
                                             })
                                             .catch(function (err) {
-                                                console.log('categoryDeleted: ', err);
+//                                                console.log('categoryDeleted: ', err);
                                                 seriesCallback(err);
                                             });
 
                                         })
                                         .catch(function (err) {
-                                            console.log('threadsDeleted: ', err);
+//                                            console.log('threadsDeleted: ', err);
                                             seriesCallback(err);
                                         });
                                     }
                                 ], function(err) {
                                     if (err) {
-                                        console.log('series err: ', err);
+//                                        console.log('series err: ', err);
                                         if (err.data.error && err.data.error.details && err.data.error.details.messages) {
                                             $scope.errors = [];
                                             angular.forEach(err.data.error.details.messages, function (errArray, key) {
@@ -11397,68 +11398,18 @@ angular.module('app.controllers', ['ngCookies'])
                                                     $scope.errors.push(errArray[i]);
                                                 }
                                             });
-                                            AlertService.setError({ show: true, msg: '', errorList: $scope.errors });
+                                            AlertService.setError({ show: true, msg: 'Unable to delete category', errorList: $scope.errors });
                                             $window.scrollTo(0,0);
                                         }
                                         return false;
                                     }
-                                    // SPLICE THE CATEGORY HERE
+                                    var index = $scope.categories.indexOf(category);
+                                    if (index !== -1) {
+                                        AlertService.setSuccess({ show: true, msg: category.title + ' deleted successfully' });
+                                        $window.scrollTo(0, 0);
+                                        $scope.categories.splice(index, 1);
+                                    }
                                 });
-                                
-                                
-//                                ForumCategory.forumThreads.destroyAll({
-//                                    id: category.id
-//                                })
-//                                .$promise
-//                                .then(function (threadsDeleted) {
-//                                    console.log('threadsDeleted: ', threadsDeleted);
-//                                    
-//                                })
-//                                .catch(function (err) {
-//                                    console.log('threadsDeleted: ', err);
-//                                });
-                                
-//                                ForumThread.forumPosts.destroyAll({
-//                                    id: threadDeleted.id
-//                                })
-//                                .$promise
-//                                .then(function (postsDeleted) {
-//                                    console.log('postsDeleted: ', postsDeleted);
-//                                    
-//                                })
-//                                .catch(function (err) {
-//                                    console.log('postsDeleted: ', err);
-//                                });
-                                
-                                
-                                
-//                                ForumCategory.deleteById({
-//                                    id: category.id
-//                                })
-//                                .$promise
-//                                .then(function (data) {
-////                                    console.log('forumCategory.delById: ', data);
-//                                    
-//                                    AlertService.setSuccess({ show: true, msg: category.title + ' was deleted successfully.' });
-//                                    var index = $scope.categories.indexOf(category);
-//                                    if (index !== -1) {
-//                                        $scope.categories.splice(index, 1);
-//                                    }
-//                                    $window.scrollTo(0, 0);
-//                                })
-//                                .catch(function (err) {
-////                                    console.log('forumCategory.delById: ', err);
-//                                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-//                                        $scope.errors = [];
-//                                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-//                                            for (var i = 0; i < errArray.length; i++) {
-//                                                $scope.errors.push(errArray[i]);
-//                                            }
-//                                        });
-//                                        AlertService.setError({ show: true, msg: 'Unable to delete ' + category.title, errorList: $scope.errors });
-//                                        $window.scrollTo(0,0);
-//                                    }
-//                                });
                             }
                         },
                         cancel: {
@@ -11476,52 +11427,138 @@ angular.module('app.controllers', ['ngCookies'])
             // delete thread
             $scope.deleteThread = function (thread) {
                 var box = bootbox.dialog({
-                    title: 'Delete thread: ' + thread.title + '?',
-                    message: 'Are you sure you want to delete the thread <strong>' + thread.title + '</strong>?',
+                    title: 'Delete thread: <strong>' + thread.title + '</strong>?',
+                    message: 'All posts and comments will be deleted for this thread as well.',
                     buttons: {
                         delete: {
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                $scope.fetching = true;
+                                console.log('thread: ', thread);
                                 
-                                ForumThread.deleteById({
-                                    id: thread.id
-                                })
-                                .$promise
-                                .then(function (threadDeleted) {
-                                    console.log('thread deletion: ', threadDeleted);
-                                    AlertService.setSuccess({ show: true, msg: thread.title + ' deleted successfully.' }); 
-                                    for (var i = 0; i < $scope.categories.length; i++) {
-                                        if (thread.forumCategoryId === $scope.categories[i].id) {
-                                            for (var j = 0; j < $scope.categories[i].forumThreads.length; j++) {
-                                                if (thread.id === $scope.categories[i].forumThreads[j].id) {
-                                                    $scope.categories[i].forumThreads.splice(j, 1);
-                                                    break;
-                                                }
+                                async.series([
+                                    function (seriesCallback) {
+                                        async.each(thread.forumPosts, function (post, postCB) {
+                                    
+                                            // delete all comments for current post
+                                            ForumPost.comments.destroyAll({
+                                                id: post.id
+                                            })
+                                            .$promise
+                                            .then(function (commentsDeleted) {
+//                                                console.log('commentsDeleted: ', commentsDeleted);
+
+                                                // delete the post
+                                                ForumPost.deleteById({
+                                                    id: post.id
+                                                })
+                                                .$promise
+                                                .then(function (postDeleted) {
+//                                                    console.log('postDeleted: ', postDeleted);
+                                                    postCB();
+                                                })
+                                                .catch(function (err) {
+//                                                    console.log('postDeleted: ', err);
+                                                    postCB(err);
+                                                });
+
+                                            })
+                                            .catch(function (err) {
+//                                                console.log('commentsDeleted: ', err);
+                                                postCB(err);
+                                            });
+
+                                        }, function(err) {
+                                            if (err) {
+                                                seriesCallback(err);
                                             }
-                                            break;
+                                            seriesCallback();
+                                        });
+                                    },
+                                    function (seriesCallback) {
+                                        ForumThread.deleteById({
+                                            id: thread.id
+                                        })
+                                        .$promise
+                                        .then(function (threadDeleted) {
+//                                            console.log('threadDeleted: ', threadDeleted);
+                                            seriesCallback();
+                                        })
+                                        .catch(function (err) {
+//                                            console.log('threadDeleted: ', err);
+                                            seriesCallback(err);
+                                        });
+                                    },
+                                ], function(err) {
+                                    if (err) {
+                                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                                            $scope.errors = [];
+                                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                                                for (var i = 0; i < errArray.length; i++) {
+                                                    $scope.errors.push(errArray[i]);
+                                                }
+                                            });
+                                            AlertService.setError({ show: true, msg: 'Unable to delete thread', errorList: $scope.errors });
+                                            $window.scrollTo(0,0);
+                                        }
+                                        return false;
+                                    }
+                                    
+                                    for (var i = 0; i < $scope.categories.length; i++) {
+                                        for (var j = 0; j < $scope.categories[i].forumThreads.length; j++) {
+                                            var index = $scope.categories[i].forumThreads.indexOf(thread);
+                                            if (index !== -1) {
+                                                $scope.categories[i].forumThreads.splice(index, 1);
+                                                break;
+                                            }
                                         }
                                     }
-                                    
+                                    AlertService.setSuccess({ show: true, msg: thread.title + ' deleted successfully' });
                                     $window.scrollTo(0, 0);
-                                    $scope.fetching = false;
-                                })
-                                .catch(function (err) {
-//                                    console.log('thread deletion: ', err);
-                                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                                        $scope.errors = [];
-                                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                                            for (var i = 0; i < errArray.length; i++) {
-                                                $scope.errors.push(errArray[i]);
-                                            }
-                                        });
-                                        AlertService.setError({ show: true, msg: thread.title + ' could not be deleted.', errorList: $scope.errors });
-                                        $window.scrollTo(0,0);
-                                        $scope.fetching = false;
-                                    }
-                                    
                                 });
+                                
+                                
+                                
+                                
+                                
+                                
+//                                ForumThread.deleteById({
+//                                    id: thread.id
+//                                })
+//                                .$promise
+//                                .then(function (threadDeleted) {
+//                                    console.log('thread deletion: ', threadDeleted);
+//                                    AlertService.setSuccess({ show: true, msg: thread.title + ' deleted successfully.' }); 
+//                                    for (var i = 0; i < $scope.categories.length; i++) {
+//                                        if (thread.forumCategoryId === $scope.categories[i].id) {
+//                                            for (var j = 0; j < $scope.categories[i].forumThreads.length; j++) {
+//                                                if (thread.id === $scope.categories[i].forumThreads[j].id) {
+//                                                    $scope.categories[i].forumThreads.splice(j, 1);
+//                                                    break;
+//                                                }
+//                                            }
+//                                            break;
+//                                        }
+//                                    }
+//                                    
+//                                    $window.scrollTo(0, 0);
+//                                    $scope.fetching = false;
+//                                })
+//                                .catch(function (err) {
+////                                    console.log('thread deletion: ', err);
+//                                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+//                                        $scope.errors = [];
+//                                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
+//                                            for (var i = 0; i < errArray.length; i++) {
+//                                                $scope.errors.push(errArray[i]);
+//                                            }
+//                                        });
+//                                        AlertService.setError({ show: true, msg: thread.title + ' could not be deleted.', errorList: $scope.errors });
+//                                        $window.scrollTo(0,0);
+//                                        $scope.fetching = false;
+//                                    }
+//                                    
+//                                });
                             }
                         },
                         cancel: {
