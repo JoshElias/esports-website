@@ -103,17 +103,34 @@ angular.module('redbull.services')
                     this.deferred.resolve( this.fileLocations );
                 }
             },
+            isImage: function ( fileLocation ) {
+                var ext = fileLocation.split('.').pop(),
+                    allowedExts = ['jpeg', 'jpg', 'png', 'gif'];
+                
+                return ( allowedExts.indexOf(ext) !== -1 );
+            },
+            isAudio: function ( fileLocation ) {
+                var ext = fileLocation.split('.').pop(),
+                    allowedExts = ['ogg', 'mp3'];
+                
+                return ( allowedExts.indexOf(ext) !== -1 );
+            },
             // I load the given file location and then wire the load / error
             // events back into the preloader instance.
             // --
             // NOTE: The load/error events trigger a $digest.
             loadFileLocation: function loadFileLocation( fileLocation ) {
                 var preloader = this;
+                // check to make sure file is image or audio
+                if (!preloader.isImage( fileLocation ) && !preloader.isAudio( fileLocation )) {
+                    return preloader.handleFileError( fileLocation );
+                }
                 // When it comes to creating the file object, it is critical that
                 // we bind the event handlers BEFORE we actually set the file
                 // source. Failure to do so will prevent the events from proper
                 // triggering in some browsers.
-                var file = $( new Image() )
+                var newFile = (preloader.isImage( fileLocation )) ? $( new Image() ) : $( new Audio() );
+                var file = newFile
                     .load(
                         function( event ) {
                             // Since the load event is asynchronous, we have to

@@ -4781,15 +4781,15 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminTeamListCtrl', ['$scope', 'data', 'AdminTeamService', 'AlertService',
-        function ($scope, data, AdminTeamService, AlertService) {
+    .controller('AdminTeamListCtrl', ['$scope', 'TeamMember', 'hsTeam', 'hotsTeam', 'wowTeam',  'fifaTeam', 'teams',  'fgcTeam', 'AlertService',
+        function ($scope, TeamMember, hsTeam, hotsTeam, wowTeam, fifaTeam, teams, fgcTeam, AlertService) {
 
-            $scope.members = data.members;
-            $scope.hsMembers = data.hsMembers;
-            $scope.hotsMembers = data.hotsMembers;
-            $scope.csMembers = data.csMembers;
-            $scope.fifaMembers = data.fifaMembers;
-            $scope.fgcMembers = data.fgcMembers;
+                $scope.members = teams;
+                $scope.hsMembers = hsTeam;
+                $scope.hotsMembers = hotsTeam;
+                $scope.wowMembers = wowTeam;
+                $scope.fifaMembers = fifaTeam;
+                $scope.fgcMembers = fgcTeam;
 
 
             // grab alerts
@@ -4798,13 +4798,13 @@ angular.module('app.controllers', ['ngCookies'])
                 AlertService.reset();
             }
 
-            $scope.updateDND = function (list, index) {
-                list.splice(index, 1);
-                for (var i = 0; i < list.length; i++) {
-                    list[i].orderNum = i + 1;
-                }
-                AdminTeamService.updateOrder(list);
-            };
+//            $scope.updateDND = function (list, index) {
+//                list.splice(index, 1);
+//                for (var i = 0; i < list.length; i++) {
+//                    list[i].orderNum = i + 1;
+//                }
+//                AdminTeamService.updateOrder(list);
+//            };
 
             // delete member
             $scope.deleteMember = function deleteMember(member, arr) {
@@ -4816,18 +4816,18 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminTeamService.deleteMember(member._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = arr.indexOf(member);
-                                        if (index !== -1) {
-                                            arr.splice(index, 1);
-                                        }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: member.screenName + ' - ' + member.fullName + ' deleted successfully.'
-                                        };
+                                TeamMember.destroyById({id:member.id}).$promise.then(function (member) {
+                                    var index = $scope.member.indexOf(member);
+                                    if (index !== -1) {
+                                        $scope.member.splice(index, 1);
                                     }
+                                    $scope.success = {
+                                        show: true,
+                                        msg: member.screenName + ' - ' + member.fullName + ' deleted successfully.'
+                                        //$state.go('app.admin.teams.list');
+                                    };
                                 });
+                                
                             }
                         },
                         cancel: {
@@ -4840,7 +4840,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
                 box.modal('show');
-            }
+            };
         }
     ])
     .controller('TeamCtrl', ['$scope', '$compile', '$timeout', '$location', '$anchorScroll', '$sce', 'hsTeam', 'hotsTeam', 'wowTeam', 'fgcTeam', 'fifaTeam',
@@ -4896,9 +4896,11 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminTeamAddCtrl', ['$scope', '$state', '$window', '$upload', '$compile', 'AdminTeamService', 'AlertService',
-        function ($scope, $state, $window, $upload, $compile, AdminTeamService, AlertService) {
-
+    .controller('AdminTeamAddCtrl', ['$scope', '$state', '$window', '$compile', 'TeamMember', 'AlertService',
+        function ($scope, $state, $window, $compile, TeamMember, AlertService) {
+//removed upload
+            
+            console.log('hello2');
             var defaultMember = {
                 game: '',
                 screenName: '',
@@ -4912,107 +4914,112 @@ angular.module('app.controllers', ['ngCookies'])
                     instagram: '',
                     esea: ''
                 },
-                photo: '',
-                active: true
+                photoName: '',
+                isActive: true
             }
 
             $scope.member = angular.copy(defaultMember);
 
             // photo upload
-            $scope.photoUpload = function ($files) {
-                if (!$files.length) return false;
-                var box = bootbox.dialog({
-                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-                    closeButton: false,
-                    animate: false
-                });
-                $scope.uploading = 0;
-                box.modal('show');
-                for (var i = 0; i < $files.length; i++) {
-                    var file = $files[i];
-                    $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/team',
-                        method: 'POST',
-                        file: file
-                    }).progress(function(evt) {
-                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function(data, status, headers, config) {
-                        $scope.member.photo = data.photo;
-                        $scope.cardImg = $scope.app.cdn + data.path + data.photo;
-                        box.modal('hide');
-                    });
-                }
-            };
+//            $scope.photoUpload = function ($files) {
+//                if (!$files.length) return false;
+//                var box = bootbox.dialog({
+//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+//                    closeButton: false,
+//                    animate: false
+//                });
+//                $scope.uploading = 0;
+//                box.modal('show');
+//                for (var i = 0; i < $files.length; i++) {
+//                    var file = $files[i];
+//                    $scope.upload = $upload.upload({
+//                        url: '/api/admin/upload/team',
+//                        method: 'POST',
+//                        file: file
+//                    }).progress(function(evt) {
+//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+//                    }).success(function(data, status, headers, config) {
+//                        $scope.member.photo = data.photo;
+//                        $scope.cardImg = $scope.app.cdn + data.path + data.photo;
+//                        box.modal('hide');
+//                    });
+//                }
+//            };
 
-            $scope.getImage = function () {
-                $scope.imgPath = '/team/';
-                if (!$scope.member) { return '/img/blank.png'; }
-                return ($scope.member.photo && $scope.member.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.member.photo;
-            };
+//            $scope.getImage = function () {
+//                $scope.imgPath = '/team/';
+//                if (!$scope.member) { return '/img/blank.png'; }
+//                return ($scope.member.photo && $scope.member.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.member.photo;
+//            };
 
             // save member
             $scope.saveMember = function () {
-                AdminTeamService.addMember($scope.member).then(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' - ' + $scope.member.fullName + ' has been added successfully.' });
-                        $state.go('app.admin.teams.list');
-                    }
+                console.log('hello');
+               TeamMember.create({}, $scope.member).$promise.then(function (data) {
+                    console.log(data);
+                    AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' has been added successfully.' })
+                       $state.go('app.admin.teams.list');
+                   
+               })
+               .catch(function(err){
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                    AlertService.setError({ show: true, msg: 'There was an error adding this member ' + err.status + ": " + err.data.error.message})
                 });
             };
         }
     ])
-    .controller('AdminTeamEditCtrl', ['$scope', '$state', '$window', '$compile', '$upload', 'data', 'AdminTeamService', 'AlertService',
-        function ($scope, $state, $window, $compile, $upload, data, AdminTeamService, AlertService) {
-
-            $scope.member = data.member;
+    .controller('AdminTeamEditCtrl', ['$scope', '$state', '$window', '$compile', 'member', 'TeamMember', 'AlertService',
+        function ($scope, $state, $window, $compile, member, TeamMember, AlertService) {
+//removed upload
+            $scope.member = member;
 
             // photo upload
-            $scope.photoUpload = function ($files) {
-                if (!$files.length) return false;
-                var box = bootbox.dialog({
-                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-                    closeButton: false,
-                    animate: false
-                });
-                $scope.uploading = 0;
-                box.modal('show');
-                for (var i = 0; i < $files.length; i++) {
-                    var file = $files[i];
-                    $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/team',
-                        method: 'POST',
-                        file: file
-                    }).progress(function(evt) {
-                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function(data, status, headers, config) {
-                        $scope.member.photo = data.photo;
-                        $scope.cardImg = $scope.app.cdn + data.path + data.photo;
-                        box.modal('hide');
-                    });
-                }
-            };
-
-            $scope.getImage = function () {
-                $scope.imgPath = '/team/';
-                if (!$scope.team) { return '/img/blank.png'; }
-                return ($scope.snapshot.photo && $scope.snapshot.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photo;
-            };
+//            $scope.photoUpload = function ($files) {
+//                if (!$files.length) return false;
+//                var box = bootbox.dialog({
+//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+//                    closeButton: false,
+//                    animate: false
+//                });
+//                $scope.uploading = 0;
+//                box.modal('show');
+//                for (var i = 0; i < $files.length; i++) {
+//                    var file = $files[i];
+//                    $scope.upload = $upload.upload({
+//                        url: '/api/admin/upload/team',
+//                        method: 'POST',
+//                        file: file
+//                    }).progress(function(evt) {
+//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+//                    }).success(function(data, status, headers, config) {
+//                        $scope.member.photo = data.photo;
+//                        $scope.cardImg = $scope.app.cdn + data.path + data.photo;
+//                        box.modal('hide');
+//                    });
+//                }
+//            };
+//
+//            $scope.getImage = function () {
+//                $scope.imgPath = '/team/';
+//                if (!$scope.team) { return '/img/blank.png'; }
+//                return ($scope.snapshot.photo && $scope.snapshot.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photo;
+//            };
 
             // save member
-            $scope.saveMember = function () {
-                AdminTeamService.editMember($scope.member).then(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' - ' + $scope.member.fullName + ' has been added successfully.' });
-                        $state.go('app.admin.teams.list');
-                    }
+             $scope.saveMember = function () {
+               TeamMember.update({
+                    where: {id:$scope.member.id}
+               }, $scope.member).$promise.then(function (data) {
+                    AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' has been updated successfully.' })
+                       $state.go('app.admin.teams.list');
+               })
+               .catch(function(err){
+                    $scope.errors = data.errors;
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
+                    AlertService.setError({ show: true, msg: 'There was an error updating this member ' + err.status + ": " + err.data.error.message})
                 });
             };
         }
@@ -7286,7 +7293,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 ], function(err, results) {
                     if (err) {
-                        console.log('series err: ', err);
+//                        console.log('series err: ', err);
                         if (err.data.error && err.data.error.details && err.data.error.details.messages) {
                             $scope.errors = [];
                             angular.forEach(err.data.error.details.messages, function (errArray, key) {
@@ -7299,7 +7306,7 @@ angular.module('app.controllers', ['ngCookies'])
                             $scope.fetching = false;
                         }
                     } else {
-                        console.log('series results: ', results);
+//                        console.log('series results: ', results);
                         AlertService.setSuccess({ show: true, msg: 'User updated successfully' });
                         $window.scrollTo(0, 0);
                         $scope.fetching = false;
@@ -7418,34 +7425,87 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminPollListCtrl', ['$scope', '$compile', 'bootbox', 'AlertService', 'polls', 'Poll',
-        function ($scope, $compile, bootbox, AlertService, polls, Poll) {
+    .controller('AdminPollListCtrl', ['$scope', '$q', '$timeout', '$compile', 'bootbox', 'AlertService', 'polls', 'pollsCount', 'paginationParams', 'Poll', 'AjaxPagination',
+        function ($scope, $q, $timeout, $compile, bootbox, AlertService, polls, pollsCount, paginationParams, Poll, AjaxPagination) {
             // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
+//            if (AlertService.hasAlert()) {
+//                $scope.success = AlertService.getSuccess();
+//                AlertService.reset();
+//            }
 
             // load polls
             $scope.polls = polls;
-//            $scope.page = data.page;
-//            $scope.perpage = data.perpage;
-//            $scope.total = data.total;
-//            $scope.search = data.search;
+            $scope.page = paginationParams.page;
+            $scope.perpage = paginationParams.perpage;
+            $scope.total = pollsCount.count;
+            $scope.search = '';
+            
+            $scope.searchPolls = function() {
+                updatePolls(1, $scope.perpage, $scope.search, false);
+            };
 
+            // pagination
+            function updatePolls (page, perpage, search, callback) {
+                $scope.fetching = true;
 
-//            $scope.getPolls = function () {
-//                AdminPollService.getPolls($scope.page, $scope.perpage, $scope.search).then(function (data) {
-//                    $scope.polls = data.polls;
-//                    $scope.page = data.page;
-//                    $scope.total = data.total;
-//                });
-//            }
+                var options = {},
+                    countOptions = {};
 
-//            $scope.searchPolls = function () {
-//                $scope.page = 1;
-//                $scope.getPolls();
-//            }
+                options.filter = {
+                    fields: paginationParams.options.filter.fields,
+                    order: "createdDate DESC",
+                    skip: ((page*perpage)-perpage),
+                    limit: paginationParams.perpage
+                };
+
+                if ($scope.search.length > 0) {
+                    options.filter.where = {
+                        or: [
+                            { title: { regexp: search } },
+                            { subtitle: { regexp: search } },
+                            { description: { regexp: search } },
+                            { type: { regexp: search } }
+                        ]
+                    }
+                    countOptions.where = {
+                        or: [
+                            { title: { regexp: search } },
+                            { subtitle: { regexp: search } },
+                            { description: { regexp: search } },
+                            { type: { regexp: search } }
+                        ]
+                    }
+                }
+
+                Poll.count(countOptions, function (count) {
+                    Poll.find(options, function (polls) {
+                        $scope.pollPagination.total = count.count;
+                        $scope.pollPagination.page = page;
+                        $scope.pollPagination.perpage = perpage;
+
+                        $timeout(function () {
+                            console.log('pagination polls: ', polls);
+                            $scope.users = polls;
+                            $scope.fetching = false;
+                            if (callback) {
+                                return callback(count.count);
+                            }
+                        });
+                    });
+                });
+            }
+
+            // page flipping
+            $scope.pollPagination = AjaxPagination.new($scope.perpage, $scope.total,
+                function (page, perpage) {
+                    var d = $q.defer();
+
+                    updatePolls(page, perpage, $scope.search, function (data) {
+                        d.resolve(data);
+                    });
+                    return d.promise;
+                }
+            );
 
 //             delete poll
             $scope.deletePoll = function (poll) {
@@ -7466,6 +7526,7 @@ angular.module('app.controllers', ['ngCookies'])
                                         show: true,
                                         msg: poll.title + ' deleted successfully.'
                                     };
+                                    updatePolls($scope.page, $scope.perpage, $scope.search, false);
                                 });
                             }
                         },
@@ -11221,39 +11282,183 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminForumStructureListCtrl', ['$scope', 'bootbox', 'AlertService', 'AdminForumService', 'data',
-        function ($scope, bootbox, AlertService, AdminForumService, data) {
+    .controller('AdminForumStructureListCtrl', ['$scope', '$window', 'bootbox', 'AlertService', 'categories', 'ForumCategory', 'ForumThread', 'ForumPost',
+        function ($scope, $window, bootbox, AlertService, categories, ForumCategory, ForumThread, ForumPost) {
             // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
+//            if (AlertService.hasAlert()) {
+//                $scope.success = AlertService.getSuccess();
+//                AlertService.reset();
+//            }
 
             // load categories
-            $scope.categories = data.categories;
+            $scope.categories = categories;
 
             // delete category
             $scope.deleteCategory = function (category) {
                 var box = bootbox.dialog({
-                    title: 'Delete category: ' + category.title + '?',
-                    message: 'Are you sure you want to delete the category <strong>' + category.title + '</strong>?',
+                    title: 'Are you sure you want to delete the category: ' + category.title + '?',
+                    message: 'All threads, posts, and comments will be deleted for ' + category.title + ' as well.',
                     buttons: {
                         delete: {
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminForumService.deleteCategory(category._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.categories.indexOf(category);
-                                        if (index !== -1) {
-                                            $scope.categories.splice(index, 1);
-                                        }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: category.title + ' deleted successfully.'
-                                        };
+                                
+                                // 1. delete all comments of post
+                                // 2. delete all posts of thread
+                                // 3. delete all threads of category
+                                // 4. delete the category
+                                
+                                async.series([
+                                    function (seriesCallback) {
+                                        // delete all posts from each thread
+                                        async.each(category.forumThreads, function(thread, threadCB) {
+
+                                            // delete all comments from each post
+                                            async.each(thread.forumPosts, function(post, postCB) {
+
+                                                ForumPost.comments.destroyAll({
+                                                    id: post.id
+                                                })
+                                                .$promise
+                                                .then(function (commentsDeleted) {
+                                                    console.log('commentsDeleted: ', commentsDeleted);
+                                                    postCB();
+                                                })
+                                                .catch(function (err) {
+                                                    console.log('commentsDeleted: ', err);
+                                                    postCB(err);
+                                                });
+
+
+                                            }, function (err) {
+                                                if (err) {
+                                                    return seriesCallback(err);
+                                                }
+                                            });
+
+                                            // delete all posts from current thread
+                                            ForumThread.forumPosts.destroyAll({
+                                                id: thread.id
+                                            })
+                                            .$promise
+                                            .then(function (postsDeleted) {
+                                                console.log('postsDeleted: ', postsDeleted);
+                                                threadCB();
+                                            })
+                                            .catch(function (err) {
+                                                console.log('postsDeleted: ', err);
+                                                threadCB(err);
+                                            });
+
+
+                                        }, function (err) {
+                                            if (err) {
+                                                seriesCallback(err);
+                                            }
+                                            seriesCallback();
+                                        });
+                                    },
+                                    function (seriesCallback) {
+                                        // delete all threads from the category
+                                        ForumCategory.forumThreads.destroyAll({
+                                            id: category.id
+                                        })
+                                        .$promise
+                                        .then(function (threadsDeleted) {
+                                            console.log('threadsDeleted: ', threadsDeleted);
+
+                                            ForumCategory.destroyById({
+                                                id: category.id
+                                            })
+                                            .$promise
+                                            .then(function (categoryDeleted) {
+                                                console.log('categoryDeleted: ', categoryDeleted);
+                                                seriesCallback();
+                                            })
+                                            .catch(function (err) {
+                                                console.log('categoryDeleted: ', err);
+                                                seriesCallback(err);
+                                            });
+
+                                        })
+                                        .catch(function (err) {
+                                            console.log('threadsDeleted: ', err);
+                                            seriesCallback(err);
+                                        });
                                     }
+                                ], function(err) {
+                                    if (err) {
+                                        console.log('series err: ', err);
+                                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                                            $scope.errors = [];
+                                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                                                for (var i = 0; i < errArray.length; i++) {
+                                                    $scope.errors.push(errArray[i]);
+                                                }
+                                            });
+                                            AlertService.setError({ show: true, msg: '', errorList: $scope.errors });
+                                            $window.scrollTo(0,0);
+                                        }
+                                        return false;
+                                    }
+                                    // SPLICE THE CATEGORY HERE
                                 });
+                                
+                                
+//                                ForumCategory.forumThreads.destroyAll({
+//                                    id: category.id
+//                                })
+//                                .$promise
+//                                .then(function (threadsDeleted) {
+//                                    console.log('threadsDeleted: ', threadsDeleted);
+//                                    
+//                                })
+//                                .catch(function (err) {
+//                                    console.log('threadsDeleted: ', err);
+//                                });
+                                
+//                                ForumThread.forumPosts.destroyAll({
+//                                    id: threadDeleted.id
+//                                })
+//                                .$promise
+//                                .then(function (postsDeleted) {
+//                                    console.log('postsDeleted: ', postsDeleted);
+//                                    
+//                                })
+//                                .catch(function (err) {
+//                                    console.log('postsDeleted: ', err);
+//                                });
+                                
+                                
+                                
+//                                ForumCategory.deleteById({
+//                                    id: category.id
+//                                })
+//                                .$promise
+//                                .then(function (data) {
+////                                    console.log('forumCategory.delById: ', data);
+//                                    
+//                                    AlertService.setSuccess({ show: true, msg: category.title + ' was deleted successfully.' });
+//                                    var index = $scope.categories.indexOf(category);
+//                                    if (index !== -1) {
+//                                        $scope.categories.splice(index, 1);
+//                                    }
+//                                    $window.scrollTo(0, 0);
+//                                })
+//                                .catch(function (err) {
+////                                    console.log('forumCategory.delById: ', err);
+//                                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+//                                        $scope.errors = [];
+//                                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
+//                                            for (var i = 0; i < errArray.length; i++) {
+//                                                $scope.errors.push(errArray[i]);
+//                                            }
+//                                        });
+//                                        AlertService.setError({ show: true, msg: 'Unable to delete ' + category.title, errorList: $scope.errors });
+//                                        $window.scrollTo(0,0);
+//                                    }
+//                                });
                             }
                         },
                         cancel: {
@@ -11278,17 +11483,44 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminForumService.deleteThread(thread._id, thread.category).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.threads.indexOf(thread);
-                                        if (index !== -1) {
-                                            $scope.threads.splice(index, 1);
+                                $scope.fetching = true;
+                                
+                                ForumThread.deleteById({
+                                    id: thread.id
+                                })
+                                .$promise
+                                .then(function (threadDeleted) {
+                                    console.log('thread deletion: ', threadDeleted);
+                                    AlertService.setSuccess({ show: true, msg: thread.title + ' deleted successfully.' }); 
+                                    for (var i = 0; i < $scope.categories.length; i++) {
+                                        if (thread.forumCategoryId === $scope.categories[i].id) {
+                                            for (var j = 0; j < $scope.categories[i].forumThreads.length; j++) {
+                                                if (thread.id === $scope.categories[i].forumThreads[j].id) {
+                                                    $scope.categories[i].forumThreads.splice(j, 1);
+                                                    break;
+                                                }
+                                            }
+                                            break;
                                         }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: thread.title + ' deleted successfully.'
-                                        };
                                     }
+                                    
+                                    $window.scrollTo(0, 0);
+                                    $scope.fetching = false;
+                                })
+                                .catch(function (err) {
+//                                    console.log('thread deletion: ', err);
+                                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                                        $scope.errors = [];
+                                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                                            for (var i = 0; i < errArray.length; i++) {
+                                                $scope.errors.push(errArray[i]);
+                                            }
+                                        });
+                                        AlertService.setError({ show: true, msg: thread.title + ' could not be deleted.', errorList: $scope.errors });
+                                        $window.scrollTo(0,0);
+                                        $scope.fetching = false;
+                                    }
+                                    
                                 });
                             }
                         },
@@ -11305,12 +11537,12 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminForumCategoryAddCtrl', ['$scope', '$state', '$window', 'AdminForumService', 'AlertService',
-        function ($scope, $state, $window, AdminForumService, AlertService) {
+    .controller('AdminForumCategoryAddCtrl', ['$scope', '$state', '$window', 'AlertService', 'ForumCategory',
+        function ($scope, $state, $window, AlertService, ForumCategory) {
             // default category
             var defaultCategory = {
                 title : '',
-                active: true
+                isActive: true
             };
 
             // load category
@@ -11323,25 +11555,37 @@ angular.module('app.controllers', ['ngCookies'])
             ];
 
             $scope.addCategory = function () {
-                $scope.showError = false;
-
-                AdminForumService.addCategory($scope.category).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
+                $scope.fetching = true;
+                ForumCategory.create($scope.category)
+                .$promise
+                .then(function (newCategory) {
+//                    console.log('newCategory: ', newCategory);
+                    $scope.fetching = false;
+                    $window.scrollTo(0,0);
+                    $state.go('app.admin.forum.structure.list');
+                })
+                .catch(function (err) {
+                    console.log('err: ', err);
+                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                        $scope.errors = [];
+                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                            for (var i = 0; i < errArray.length; i++) {
+                                $scope.errors.push(errArray[i]);
+                            }
+                        });
+                        AlertService.setError({ show: true, msg: 'Unable to create Forum Category', errorList: $scope.errors });
+                        $scope.fetching = false;
                         $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.category.title + ' has been added successfully.' });
-                        $state.go('app.admin.forum.categories.list');
                     }
                 });
             };
         }
     ])
-    .controller('AdminForumCategoryEditCtrl', ['$scope', '$state', '$window', 'AdminForumService', 'AlertService', 'data',
-        function ($scope, $state, $window, AdminForumService, AlertService, data) {
+    .controller('AdminForumCategoryEditCtrl', ['$scope', '$state', '$window', 'AdminForumService', 'AlertService', 'category', 'ForumCategory',
+        function ($scope, $state, $window, AdminForumService, AlertService, category, ForumCategory) {
             // load category
-            $scope.category = data.category;
+            $scope.category = category;
+            console.log('category:', category);
 
             // select options
             $scope.categoryActive = [
@@ -11349,34 +11593,46 @@ angular.module('app.controllers', ['ngCookies'])
                 { name: 'No', value: false }
             ];
 
-            $scope.editCategory = function () {
-                $scope.showError = false;
-
-                AdminForumService.editCategory($scope.category).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
+            $scope.editCategory = function (category) {
+                $scope.fetching = true;
+                
+                ForumCategory.upsert(category)
+                .$promise
+                .then(function (categoryUpdated) {
+//                    console.log('categoryUpdated: ', categoryUpdated);
+                    $window.scrollTo(0, 0);
+                    $state.go('app.admin.forum.structure.list');
+                })
+                .catch(function (err) {
+//                    console.log('categoryUpdated: ', err);
+                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                        $scope.errors = [];
+                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                            for (var i = 0; i < errArray.length; i++) {
+                                $scope.errors.push(errArray[i]);
+                            }
+                        });
+                        AlertService.setError({ show: true, msg: '', errorList: $scope.errors });
                         $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.category.title + ' has been updated successfully.' });
-                        $state.go('app.admin.forum.categories.list');
+                        $scope.fetching = false;
                     }
                 });
             };
         }
     ])
-    .controller('AdminForumThreadAddCtrl', ['$scope', '$state', '$window', 'Util', 'AdminForumService', 'AlertService', 'data',
-        function ($scope, $state, $window, Util, AdminForumService, AlertService, data) {
+    .controller('AdminForumThreadAddCtrl', ['$scope', '$state', '$window', 'Util', 'AlertService', 'categories', 'ForumThread',
+        function ($scope, $state, $window, Util, AlertService, categories, ForumThread) {
+            console.log('categories: ', categories);
             // default thread
             var defaultThread = {
-                category: data.categories[0]._id || '',
+                forumCategoryId: categories[0].id || '',
                 title : '',
                 description: '',
                 slug: {
                     url: '',
                     linked: true
                 },
-                active: true
+                isActive: true
             };
 
             // load thread
@@ -11393,32 +11649,56 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // select options
-            $scope.selectCategories = data.categories;
+            $scope.selectCategories = categories;
             $scope.threadActive = [
                 { name: 'Yes', value: true },
                 { name: 'No', value: false }
             ];
 
-            $scope.addThread = function () {
-                $scope.showError = false;
-
-                AdminForumService.addThread($scope.thread).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
+            $scope.addThread = function (thread) {
+                $scope.fetching = true;
+                ForumThread.create(thread)
+                .$promise
+                .then(function (threadCreated) {
+//                    console.log('thread creation: ', threadCreated);
+                    $window.scrollTo(0,0);
+                    $scope.fetching = false;
+                    $state.go('app.admin.forum.structure.list');
+                })
+                .catch(function (err) {
+//                    console.log('thread creation: ', err);
+                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                        $scope.errors = [];
+                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                            for (var i = 0; i < errArray.length; i++) {
+                                $scope.errors.push(errArray[i]);
+                            }
+                        });
+                        AlertService.setError({ show: true, msg: '', errorList: $scope.errors });
                         $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.thread.title + ' has been added successfully.' });
-                        $state.go('app.admin.forum.categories.list');
+                        $scope.fetching = false;
                     }
+                    
                 });
+                
+//                AdminForumService.addThread($scope.thread).success(function (data) {
+//                    if (!data.success) {
+//                        $scope.errors = data.errors;
+//                        $scope.showError = true;
+//                        $window.scrollTo(0,0);
+//                    } else {
+//                        AlertService.setSuccess({ show: true, msg: $scope.thread.title + ' has been added successfully.' });
+//                        $state.go('app.admin.forum.categories.list');
+//                    }
+//                });
             };
         }
     ])
-    .controller('AdminForumThreadEditCtrl', ['$scope', '$state', '$window', 'Util', 'AdminForumService', 'AlertService', 'dataCategories', 'dataThread',
-        function ($scope, $state, $window, Util, AdminForumService, AlertService, dataCategories, dataThread) {
+    .controller('AdminForumThreadEditCtrl', ['$scope', '$state', '$window', 'Util', 'AdminForumService', 'AlertService', 'thread', 'categories', 'ForumThread',
+        function ($scope, $state, $window, Util, AdminForumService, AlertService, thread, categories, ForumThread) {
             // load thread
-            $scope.thread = dataThread.thread;
+            $scope.thread = thread;
+            console.log('thread: ', thread);
 
             $scope.setSlug = function () {
                 if (!$scope.thread.slug.linked) { return false; }
@@ -11431,25 +11711,51 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             // select options
-            $scope.selectCategories = dataCategories.categories;
+            $scope.selectCategories = categories;
             $scope.threadActive = [
                 { name: 'Yes', value: true },
                 { name: 'No', value: false }
             ];
 
-            $scope.editThread = function () {
-                $scope.showError = false;
-
-                AdminForumService.editThread($scope.thread).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
+            $scope.editThread = function (thread) {
+                $scope.fetching = true;
+                ForumThread.prototype$updateAttributes({
+                    id: $scope.thread.id
+                }, thread)
+                .$promise
+                .then(function (updatedThread) {
+//                    console.log('ForumThread Update: ', updatedThread);
+                    $window.scrollTo(0,0);
+                    $scope.fetching = false;
+                    $state.go('app.admin.forum.structure.list');
+                })
+                .catch(function (err) {
+//                    console.log('ForumThread Update: ', err);
+                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                        $scope.errors = [];
+                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                            for (var i = 0; i < errArray.length; i++) {
+                                $scope.errors.push(errArray[i]);
+                            }
+                        });
+                        AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
                         $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.thread.title + ' has been updated successfully.' });
-                        $state.go('app.admin.forum.categories.list');
+                        $scope.fetching = false;
                     }
                 });
+                
+//                $scope.showError = false;
+
+//                AdminForumService.editThread($scope.thread).success(function (data) {
+//                    if (!data.success) {
+//                        $scope.errors = data.errors;
+//                        $scope.showError = true;
+//                        $window.scrollTo(0,0);
+//                    } else {
+//                        AlertService.setSuccess({ show: true, msg: $scope.thread.title + ' has been updated successfully.' });
+//                        $state.go('app.admin.forum.categories.list');
+//                    }
+//                });
             };
         }
     ])

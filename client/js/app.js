@@ -3688,9 +3688,74 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/forum.structure.list.html',
                         controller: 'AdminForumStructureListCtrl',
                         resolve: {
-                            data: ['AdminForumService', function (AdminForumService) {
-                                return AdminForumService.getCategories();
+                            categories: ['$q', 'ForumCategory', 'ForumThread', function($q, ForumCategory, ForumThread) {
+                                var d = $q.defer();
+                                ForumCategory.find({
+                                    where: {
+                                        isActive: true
+                                    },
+                                    fields: {
+                                        id: true,
+                                        title: true
+                                    }
+                                }).$promise
+                                .then(function (categories) {
+                                    async.forEach(categories, function (category, eachCategoryCallback) {
+                                        ForumCategory.forumThreads({
+                                            id: category.id,
+                                            filter: {
+                                                where: {
+                                                    isActive: true
+                                                },
+                                                fields: {
+                                                    id: true,
+                                                    title: true,
+                                                    description: true,
+                                                    slug: true
+                                                },
+                                                order: 'orderNum ASC'
+                                            }
+                                        }).$promise.then(function (threads) {
+                                            category.forumThreads = threads;
+                                            
+                                            async.forEach(threads, function (thread, eachThreadCallback) {
+                                                ForumThread.forumPosts({
+                                                    id: thread.id,
+                                                    filter: {
+                                                        fields: {
+                                                            id: true,
+                                                            title: true,
+                                                            slug: true,
+                                                            authorId: true
+                                                        },
+                                                        include: {
+                                                            relation: 'author',
+                                                            scope: {
+                                                                fields: {
+                                                                    username: true,
+                                                                    email: true
+                                                                }
+                                                            }
+                                                        },
+                                                        order: 'createdDate DESC',
+                                                        limit: 1
+                                                    }
+                                                }).$promise.then(function (posts) {
+                                                    thread.forumPosts = posts;
+                                                    return eachThreadCallback();
+                                                });
+                                            }, function () {
+                                                return eachCategoryCallback();
+                                            });
+                                        });
+                                    }, function () {
+                                        console.log(categories);
+                                        d.resolve(categories);
+                                    });
+                                });
+                                return d.promise;
                             }]
+                            
                         }
                     }
                 },
@@ -3715,9 +3780,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/forum.categories.edit.html',
                         controller: 'AdminForumCategoryEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminForumService', function ($stateParams, AdminForumService) {
-                                var categoryID = $stateParams.categoryID;
-                                return AdminForumService.getCategory(categoryID);
+                            category: ['ForumCategory', '$stateParams', function(ForumCategory, $stateParams) {
+                                return ForumCategory.findById({
+                                    id: $stateParams.categoryID
+                                })
+                                .$promise
+                                .then(function (category) {
+//                                    console.log('category: ', category);
+                                    return category;
+                                })
+                                .catch(function (err) {
+//                                    console.log('category: ', err);
+                                });
+                                
                             }]
                         }
                     }
@@ -3732,9 +3807,27 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/forum.threads.add.html',
                         controller: 'AdminForumThreadAddCtrl',
                         resolve: {
-                            data: ['AdminForumService', function (AdminForumService) {
-                                return AdminForumService.getCategories();
+                            categories: ['ForumCategory', function(ForumCategory) {
+                                return ForumCategory.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                })
+                                .$promise
+                                .then(function (allCategories) {
+//                                    console.log('allCategories: ', allCategories);
+                                    return allCategories;
+                                })
+                                .catch(function (err) {
+//                                    console.log('allCategories: ', err);
+                                });
+                                
                             }]
+//                            data: ['AdminForumService', function (AdminForumService) {
+//                                return AdminForumService.getCategories();
+//                            }]
                         }
                     }
                 },
@@ -3748,12 +3841,40 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/forum.threads.edit.html',
                         controller: 'AdminForumThreadEditCtrl',
                         resolve: {
-                            dataCategories: ['AdminForumService', function (AdminForumService) {
-                                return AdminForumService.getCategories();
-                            }],
-                            dataThread: ['$stateParams', 'AdminForumService', function ($stateParams, AdminForumService) {
+                            thread: ['ForumThread', 'ForumCategory', '$stateParams', function(ForumThread, ForumCategory, $stateParams) {
                                 var threadID = $stateParams.threadID;
-                                return AdminForumService.getThread(threadID);
+                                
+                                return ForumThread.findById({
+                                    id: threadID,
+                                    filter: {
+                                        
+                                    }
+                                })
+                                .$promise
+                                .then(function (forumThread) {
+                                    return forumThread;
+                                })
+                                .catch(function (err) {
+//                                    console.log('err: ', err);
+                                });
+                            }],
+                            
+                            categories: ['ForumCategory', function(ForumCategory) {
+                                return ForumCategory.find({
+                                    filter: {
+                                        where: {
+                                            isActive: true
+                                        }
+                                    }
+                                })
+                                .$promise
+                                .then(function (allCategories) {
+                                    return allCategories;
+                                })
+                                .catch(function (err) {
+//                                    console.log('ForumCategory.find: ', err);
+                                });
+                                
                             }]
                         }
                     }
@@ -3971,60 +4092,45 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/polls.list.html',
                         controller: 'AdminPollListCtrl',
                         resolve: {
-//                            paginationParams: [function() {
-//                                return {
-//                                    page: 1,
-//                                    perpage: 50,
-//                                    options: {
-//                                        filter: {
-//                                            fields: {
-//                                                id: true,
-//                                                title: true
-//                                            },
-//                                            limit: 50,
-//                                            order: 'createdDate DESC'
-//                                        }
-//                                    }
-//                                };
-//                            }],
-//                            pollCount: ['Polls', function (Polls) {
-//                                return Poll.count({})
-//                                .$promise
-//                                .then(function (pollCount) {
-//                                    console.log('pollCount: ', pollCount);
-//                                    return pollCount;
-//                                })
-//                                .catch(function (err) {
-//                                    console.log('Poll.count err: ',err);
-//                                });
-//                            }],
-                            polls: ['Poll', function (Poll) {
-                                return Poll.find({ 
-                                    filter: {
-                                        fields: {
-                                            id: true,
-                                            title: true
-                                        },
-                                        limit: 50,
-                                        order: 'createdDate DESC'
+                            paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    options: {
+                                        filter: {
+                                            fields: {
+                                                id: true,
+                                                title: true
+                                            },
+                                            limit: 50,
+                                            order: 'createdDate DESC'
+                                        }
                                     }
-                                }).$promise
+                                };
+                            }],
+                            pollsCount: ['Poll', function (Poll) {
+                                return Poll.count({})
+                                .$promise
+                                .then(function (pollCount) {
+                                    console.log('pollCount: ', pollCount);
+                                    return pollCount;
+                                })
+                                .catch(function (err) {
+                                    console.log('Poll.count err: ',err);
+                                });
+                            }],
+                            polls: ['Poll', 'paginationParams', function (Poll, paginationParams) {
+                                return Poll.find(
+                                    paginationParams.options
+                                ).$promise
                                 .then(function (allPolls) {
                                     console.log('allPolls: ', allPolls);
                                     return allPolls;
                                 })
                                 .catch(function (err) {
-                                    console.log('Snapshot.find err: ', err);
+                                    console.log('Poll.find err: ', err);
                                 });
                             }]
-//                            data: ['AdminPollService', function (AdminPollService) {
-//                                var page = 1,
-//                                    perpage = 50,
-//                                    search = '';
-//                                return AdminPollService.getPolls(page, perpage, search);
-//                            }]
-                            
-                            
                         }
                     }
                 },
@@ -4370,8 +4476,110 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.list.html',
                         controller: 'AdminTeamListCtrl',
                         resolve: {
-                            data: ['AdminTeamService', function (AdminTeamService) {
-                                return AdminTeamService.getMembers();
+                            teams: ['TeamMember', function (TeamMember) {
+                                TeamMember.find({})
+                                .$promise
+                                .then(function (t) {
+                                    async.each(t, function (tm, eachCb) {
+                                        if (typeof tm.isActive === 'string') {
+                                            console.log('IT\'S A STRING');
+                                            tm.isActive = true;
+                                            
+                                            TeamMember.update({ 
+                                                where: {
+                                                    id: tm.id
+                                                }
+                                            }, tm)
+                                            .$promise
+                                            .then(function (data) {
+                                                console.log(data);
+                                                return eachCb();
+                                            })
+                                        } else {
+                                            return eachCb();
+                                        }
+                                    });
+                                });
+                            }],
+                            hsTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'hs',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
+                            }],
+                            hotsTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'hots',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
+                            }],
+                            wowTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'wow',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
+                            }],
+                            fifaTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'fifa',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
+                            }],
+                            fgcTeam: ['TeamMember', function (TeamMember) {
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            game: 'fgc',
+                                            isActive: true
+                                        },
+                                        order: 'orderNum ASC'
+                                    }
+                                })
+                                .$promise
+                                .then(function (tm) {
+                                    console.log(tm);
+                                    return tm;
+                                });
                             }]
                         }
                     }
@@ -4393,9 +4601,19 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.edit.html',
                         controller: 'AdminTeamEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminTeamService', function ($stateParams, AdminTeamService) {
+                            member: ['$stateParams', 'TeamMember', function ($stateParams, TeamMember) {
                                 var memberID = $stateParams.memberID;
-                                return AdminTeamService.getMember(memberID);
+                                    console.log(memberID);
+                                return TeamMember.findById({
+                                    id: memberID,
+                                    filter: {}
+                                })
+                                .$promise
+                                .then(function(teamMember){
+                                    return teamMember;
+                                }).catch(function(err){
+                                    console.log(err);
+                                });
                             }]
                         }
                     }

@@ -16,7 +16,7 @@ angular.module('redbull.directives')
                     shakeInterval = 3000,
                     packDropped = false,
                     done = false,
-                    burst = $('#pack-burst')[0],
+                    //burst = $('#pack-burst')[0],
                     cardsFlipped = 0;
 
                 function nextPack () {
@@ -231,9 +231,9 @@ angular.module('redbull.directives')
                             'transform': 'perspective(0) rotateY(0)'
                         });
 
-                        $('#pack-burst').css('z-index', '5');
+                        /*$('#pack-burst').css('z-index', '5');
                         burst.volume = volume / 2;
-                        burst.play();
+                        burst.play();*/
 
                         // fade out pack
                         $('.pack').fadeOut(0, function() {
@@ -243,15 +243,20 @@ angular.module('redbull.directives')
                                 'top': '247px',
                                 'transform': 'perspective(0) rotateY(0)'
                             });
-
+                            
+                            // fade out glow
+                            $('.bg-glow').stop().fadeOut(0);
+                            
                             // blur bg
-                            $('.bg-blur').fadeIn(0);
+                            //$('.bg-blur').fadeIn(0);
+                            el.addClass('blurred');
                             
                             // set cards and show
-                            $('.cards').delay(3250).fadeIn(0);
+                            //$('.cards').delay(3250).fadeIn(0);
+                            $('.cards').fadeIn(0);
                             
                             // hide pack burst video
-                            $('#pack-burst').delay(3250).fadeOut(1000);
+                            //$('#pack-burst').delay(3250).fadeOut(1000);
                         });
 
                         // move back to bottom
@@ -335,16 +340,18 @@ angular.module('redbull.directives')
                         });
 
                         $('.bg-glow').hide(function() {
-                            burst.pause();
-                            burst.currentTime = 0;
-                            $('#pack-burst').css('z-index', '0').show();
-                            $('.bg-blur').fadeOut(1000);
+                            //burst.pause();
+                            //burst.currentTime = 0;
+                            //$('#pack-burst').css('z-index', '0').show();
+                            //$('.bg-blur').fadeOut(1000);
                             
                             if (scope.currentPack + 1 < scope.packs.length) {
                                 nextPack();
-                                $('.pack').draggable("enable").fadeIn(1000, function() {
+                                $('.pack').draggable("enable").fadeIn(0, function() {
                                     packDropped = false;
                                     
+                                    el.removeClass('blurred');
+
                                     $interval.cancel(shakeLoop);
                                     shakeLoop = $interval(shakePack, shakeInterval);
                                 });
@@ -352,6 +359,7 @@ angular.module('redbull.directives')
                                 console.log('goto build');
                                 //$state.go(app.redbull.draft.build);
                             }
+                            
                         });
                     }
 
