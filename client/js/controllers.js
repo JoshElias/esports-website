@@ -4781,15 +4781,18 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminTeamListCtrl', ['$scope', 'TeamMember', 'hsTeam', 'hotsTeam', 'wowTeam',  'fifaTeam', 'teams',  'fgcTeam', 'AlertService',
-        function ($scope, TeamMember, hsTeam, hotsTeam, wowTeam, fifaTeam, teams, fgcTeam, AlertService) {
+    .controller('AdminTeamListCtrl', ['$scope', 'TeamMember', 'teamMembers', 'AlertService',
+        function ($scope, TeamMember, teamMembers, AlertService) {
 
-                $scope.members = teams;
-                $scope.hsMembers = hsTeam;
-                $scope.hotsMembers = hotsTeam;
-                $scope.wowMembers = wowTeam;
-                $scope.fifaMembers = fifaTeam;
-                $scope.fgcMembers = fgcTeam;
+                $scope.teamMembers = teamMembers;
+            
+                console.log(teamMembers);
+                
+//                $scope.hsMembers = hsTeam;
+//                $scope.hotsMembers = hotsTeam;
+//                $scope.wowMembers = wowTeam;
+//                $scope.fifaMembers = fifaTeam;
+//                $scope.fgcMembers = fgcTeam;
 
 
             // grab alerts
@@ -4807,7 +4810,7 @@ angular.module('app.controllers', ['ngCookies'])
 //            };
 
             // delete member
-            $scope.deleteMember = function deleteMember(member, arr) {
+            $scope.deleteMember = function deleteMember(member) {              
                 var box = bootbox.dialog({
                     title: 'Delete member: ' + member.screenName + ' - ' + member.fullName + '?',
                     message: 'Are you sure you want to delete the member <strong>' + member.screenName + ' - ' + member.fullName + '</strong>?',
@@ -4816,11 +4819,13 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                TeamMember.destroyById({id:member.id}).$promise.then(function (member) {
-                                    var index = $scope.member.indexOf(member);
+                                TeamMember.destroyById({id:member.id}).$promise.then(function () {
+                                    var teamMembers = $scope.teamMembers[member.game];                                                      
+                                    var index = teamMembers.indexOf(member);
                                     if (index !== -1) {
-                                        $scope.member.splice(index, 1);
+                                        teamMembers.splice(index, 1);
                                     }
+
                                     $scope.success = {
                                         show: true,
                                         msg: member.screenName + ' - ' + member.fullName + ' deleted successfully.'
