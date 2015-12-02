@@ -785,16 +785,11 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/admin/hots.heroes.ability.edit.html'
     };
 })
-.directive('talentAddForm', function () {
+.directive('talentForm', ['Talent', function (Talent) {
     return {
-        templateUrl: tpl + 'views/admin/hots.heroes.talent.add.html'
+        templateUrl: tpl + 'views/admin/hots.talents.form.html',
     };
-})
-.directive('talentEditForm', function () {
-    return {
-        templateUrl: tpl + 'views/admin/hots.heroes.talent.edit.html'
-    };
-})
+}])
 .directive('charAddForm', function () {
     return {
         templateUrl: tpl + 'views/admin/hots.heroes.char.add.html'

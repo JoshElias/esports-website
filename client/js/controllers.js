@@ -10405,8 +10405,8 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService', 'LoopBackAuth',
-        function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService, LoopBackAuth) {
+    .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'userRoles',
+        function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService, LoopBackAuth, userRoles) {
 
             $scope.ArticleService = Article;
             $scope.article = article;
@@ -10421,6 +10421,12 @@ angular.module('app.controllers', ['ngCookies'])
 //            }
 //        });
 
+            $scope.isUser = {
+                admin: userRoles ? userRoles.isInRoles.$admin : false,
+                contentProvider: userRoles ? userRoles.isInRoles.$contentProvider : false,
+                premium: userRoles ? userRoles.isInRoles.$premium : false
+            };
+            
             $scope.isPremium = function () {
                 if (!$scope.article.premium.isPremium) { return false; }
                 var now = new Date().getTime(),
@@ -11800,8 +11806,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     ])
     /* admin hots */
-    .controller('AdminHeroListCtrl', ['$scope', 'AdminHeroService', 'AlertService', 'Pagination', 'data',
-        function ($scope, AdminHeroService, AlertService, Pagination, data) {
+    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'Pagination', 'heroes',
+        function ($scope, Hero, AlertService, Pagination, heroes) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -11809,14 +11815,29 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // load heroes
-            $scope.heroes = data.heroes;
-            $scope.page = data.page;
-            $scope.perpage = data.perpage;
-            $scope.total = data.total;
-            $scope.search = data.search;
+            $scope.heroes = heroes;
+//            $scope.page = data.page;
+//            $scope.perpage = data.perpage;
+//            $scope.total = data.total;
+//            $scope.search = data.search;
 
             $scope.getHeroes = function () {
-                AdminHeroService.getHeroes($scope.page, $scope.perpage, $scope.search).then(function (data) {
+                var options = {
+                    limit: $scope.perpage,
+                    skip: (page*perpage) - perpage
+                }
+                
+                if (!_.isEmpty($scope.search)) {
+                    options.where = {};
+                    
+                    options.where.or = [
+                        { name: { regexp: $scope.search } }
+                    ]
+                }
+                
+                Hero.find(options)
+                .$promise
+                .then(function (data) {
                     $scope.heroes = data.heroes;
                     $scope.page = data.page;
                     $scope.total = data.total;
@@ -12146,8 +12167,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'AdminHeroService', 'data',
-        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, AdminHeroService, data) {
+    .controller('AdminHeroEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Util', 'HOTS', 'AlertService', 'Hero', 'hero', 'talents',
+        function ($scope, $state, $window, $compile, bootbox, Util, HOTS, AlertService, Hero, hero, talents) {
             // defaults
             var defaultAbility = {
                     name: '',
@@ -12193,8 +12214,9 @@ angular.module('app.controllers', ['ngCookies'])
                 };
 
             // load hero
-            $scope.hero = data.hero;
-
+            $scope.hero = hero;
+            $scope.hero.talents = talents;
+            
             // roles
             $scope.roles = HOTS.roles;
 
@@ -12354,6 +12376,140 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 });
             };
+        }
+    ])
+    .controller('AdminTalentsListCtrl', ['$scope', '$compile', 'Talent', 'AlertService', 'Pagination', 'talents',
+        function ($scope, $compile, Talent, AlertService, Pagination, talents) {
+            // grab alerts
+            if (AlertService.hasAlert()) {
+                $scope.success = AlertService.getSuccess();
+                AlertService.reset();
+            }
+            
+            var box;
+            
+            function getCount (n, cb) {
+                if(n) {return cb(n)}
+                
+                var dat;
+                
+                return Talent.count({})
+                .$promise
+                .then(function(data) { dat = data; })
+                .finally(function () {
+                    console.log('dat', dat);
+                    return cb(dat.count);
+                });
+            }
+            
+            // load talents
+            $scope.talents = talents;
+            $scope.talentTiers = [1,4,7,10,13,16,20];
+            
+//            $scope.page = data.page;
+//            $scope.perpage = data.perpage;
+//            $scope.total = data.total;
+//            $scope.search = data.search;
+            
+            $scope.openTalent = function (title, talent) {
+                $scope.currentTalent = talent || {};
+                
+                box = bootbox.dialog({
+                    title: title,
+                    message: $compile('<talent-form></talent-form>')($scope),
+                    backdrop: true
+                });
+
+                box.modal('show');
+            };
+            
+            $scope.addTalent = function (talent) {
+                var o = talent.orderNum;
+                
+                getCount(o, function(n) {
+                    talent.orderNum = n;
+                    
+                    Talent.upsert({}, talent)
+                    .$promise
+                    .then(function (data) {
+                        console.log(data);
+                        getTalents(1, 50, $scope.search);
+                        box.modal('hide');
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+                });
+            }
+
+            function getTalents (page, perpage, search) {
+                var options = {
+                    filter: {
+                        skip: ($scope.perpage*$scope.page) - $scope.perpage,
+                        limit: $scope.perpage,
+                        order: "name ASC"
+                    }
+                }
+                
+                if(!_.isEmpty($scope.search)) {
+                    options.filter.where = {};
+                    
+                    options.filter.where.or = [
+                        { name: { regexp: $scope.search } }
+                    ]
+                }
+                
+                Talent.find(options)
+                .$promise
+                .then(function (talents) {
+                    $scope.talents = talents;
+                });
+            }
+
+            $scope.searchTalents = function () {
+                $scope.page = 1;
+                getTalents(1, 50, $scope.search);
+            }
+
+            // delete map
+            $scope.deleteTalent = function deleteTalent(talent) {
+                var box = bootbox.dialog({
+                    title: 'Delete map: ' + talent.name + '?',
+                    message: 'Are you sure you want to delete the talent <strong>' + talent.name + '</strong>?',
+                    buttons: {
+                        delete: {
+                            label: 'Delete',
+                            className: 'btn-danger',
+                            callback: function () {
+                                Talent.destroyById({
+                                    id: talent.id
+                                })
+                                .$promise
+                                .then(function () {
+                                    var index = $scope.talents.indexOf(talent);
+                                    if (index !== -1) {
+                                        $scope.talents.splice(index, 1);
+                                    }
+                                    AlertService.setError({
+                                        show: true,
+                                        msg: talent.name + ' deleted successfully.'
+                                    });
+                                });
+                                
+                                getTalents(1, 50, $scope.search);
+                            }
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-default pull-left',
+                            callback: function () {
+                                box.modal('hide');
+                            }
+                        }
+                    }
+                });
+                box.modal('show');
+            }
         }
     ])
     .controller('AdminMapsListCtrl', ['$scope', 'AdminMapService', 'AlertService', 'Pagination', 'data',

@@ -412,6 +412,23 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/articles.article.html',
                         controller: 'ArticleCtrl',
                         resolve: {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        roleNames: ['$admin', '$contentProvider', '$premium']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
+                            }],
                             article: ['$stateParams', 'Article', function ($stateParams, Article) {
                                 var slug = $stateParams.slug;
 
@@ -3404,11 +3421,21 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.heroes.list.html',
                         controller: 'AdminHeroListCtrl',
                         resolve: {
-                            data: ['AdminHeroService', function (AdminHeroService) {
+                            heroes: ['Hero', function (Hero) {
                                 var page = 1,
                                     perpage = 50,
                                     search = '';
-                                return AdminHeroService.getHeroes(page, perpage, search);
+                                
+                                return Hero.find({
+                                    filter: {
+                                        limit: perpage,
+                                        skip: (page*perpage) - perpage
+                                    }
+                                })
+                                .$promise
+                                .then(function(data) {
+                                    return data;
+                                });
                             }]
                         }
                     }
@@ -3434,15 +3461,89 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.heroes.edit.html',
                         controller: 'AdminHeroEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminHeroService', function ($stateParams, AdminHeroService) {
+                            hero: ['$stateParams', 'Hero', function ($stateParams, Hero) {
                                 var heroID = $stateParams.heroID;
-                                return AdminHeroService.getHero(heroID);
+                                return Hero.findOne({
+                                    filter: {
+                                        where: {
+                                            id: heroID
+                                        }
+                                    }
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    console.log(data);
+                                    return data;
+                                });
+                            }],
+                            talents: ['Talent', 'hero', function (Talent, hero) {
+                                var heroTalents = _.map(hero.talentTiers, function (val, key) { 
+                                    return key;
+                                });
+                                
+                                return Talent.find({
+                                    filter: {
+                                        where: {
+                                            id: { inq: heroTalents }
+                                        }
+                                    }
+                                })
+                                .$promise
+                                .then(function (data) {
+                                    var dat = [];
+                                    
+                                    _.each(data, function (val) {
+                                        val.tier = parseInt(hero.talentTiers[val.id]);
+                                        dat.push(val);
+                                    })
+                                    
+                                    return dat;
+                                })
                             }]
                         }
                     }
                 },
                 access: { auth: true, admin: true },
                 seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.hots.talents', {
+                abstract: true,
+                url: '/talents',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/admin/hots.talents.html'
+                    }
+                },
+                access: { auth: true, admin: true },
+                seo: { title: 'Admin', description: '', keywords: '' }
+            })
+            .state('app.admin.hots.talents.list', {
+                url: '',
+                views: {
+                    talents: {
+                        templateUrl: tpl + 'views/admin/hots.talents.list.html',
+                        controller: 'AdminTalentsListCtrl',
+                        resolve: {
+                            talents: ['Talent', function (Talent) {
+                                var page = 1,
+                                    perpage = 50,
+                                    search = '';
+                                
+                                return Talent.find({
+                                    filter: {
+                                        limit: perpage,
+                                        skip: (page*perpage) - perpage,
+                                        order: "name ASC"
+                                    }
+                                })
+                                .$promise
+                                .then(function(data) {
+                                    return data;
+                                });
+                            }]
+                        }
+                    }
+                }
             })
             .state('app.admin.hots.maps', {
                 abstract: true,
