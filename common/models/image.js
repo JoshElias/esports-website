@@ -133,6 +133,7 @@ module.exports = function(Image) {
                         path: path + small,
                         name: small
                     }); // HAhhahahahahHAHAHahahhah
+                    console.log('small:', 'decks/'+small);
                     amazon.upload(path+small, 'decks/'+small, function(err) {
                         return done(err, {
                             success: true,

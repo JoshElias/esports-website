@@ -1221,8 +1221,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.posts = dataPosts.activity;
         }
     ])
-    .controller('AdminCardAddCtrl', ['$scope', '$window', '$stateParams', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'ImgurService', '$upload', 'Image',
-        function ($scope, $window, $stateParams, $compile, bootbox, Util, Hearthstone, AdminCardService, ImgurService, $upload, Image) {
+    .controller('AdminCardAddCtrl', ['$scope', '$window', '$stateParams', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'ImgurService', '$upload', 'Image', 'Card', 'AlertService', '$state',
+        function ($scope, $window, $stateParams, $compile, bootbox, Util, Hearthstone, AdminCardService, ImgurService, $upload, Image, Card, AlertService, $state) {
             console.log('image: ', Image);
             var defaultCard = {
                 name: '',
@@ -1327,26 +1327,40 @@ angular.module('app.controllers', ['ngCookies'])
 
             // add card
             $scope.addCard = function addCard(card) {
-                
-                
-
-//                AdminCardService.addCard($scope.card).success(function (data) {
-//                    if (!data.success) {
-//                        $scope.errors = data.errors;
-//                        $scope.showError = true;
-//                    } else {
-//                        $scope.showError = false;
-//                        $scope.card = angular.copy(defaultCard);
-//                        $scope.form.$setPristine();
-//                        $scope.showSuccess = true;
-//                    }
-//                    $window.scrollTo(0,0);
-//                });
+                console.log('card:', card);
+                $scope.fetching = true;
+                for (var i = 0; i < 20; i++) {
+                    Card.create(card)
+                    .$promise
+                    .then(function (newCard) {
+                        console.log('newCard: ', newCard);
+                        $scope.fetching = false;
+                        $state.transitionTo('app.admin.hearthstone.cards.list');
+                    })
+                    .catch(function (err) {
+                        console.log('newCard: ', err);
+                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                            $scope.errors = [];
+                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                                for (var i = 0; i < errArray.length; i++) {
+                                    $scope.errors.push(errArray[i]);
+                                }
+                            });
+                            AlertService.setError({ 
+                                show: true, 
+                                msg: 'Unable to delete Card',
+                                errorList: $scope.errors 
+                            });
+                            $window.scrollTo(0,0);
+                            $scope.fetching = false;
+                        }
+                    });
+                }
             };
         }
     ])
-    .controller('AdminCardEditCtrl', ['$location', '$scope', '$window', '$state', 'Image', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'card', 'ImgurService',
-        function ($location, $scope, $window, $state, Image, $compile, bootbox, Util, Hearthstone, AdminCardService, AlertService, card, ImgurService) {
+    .controller('AdminCardEditCtrl', ['$location', '$upload', '$scope', '$window', '$state', 'Image', '$compile', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'card', 'ImgurService', 'Card',
+        function ($location, $upload, $scope, $window, $state, Image, $compile, bootbox, Util, Hearthstone, AdminCardService, AlertService, card, ImgurService, Card) {
             // no card, go back to list
 //            if (!data || !data.success) { return $location.path('/admin/cards'); }
 
@@ -1368,9 +1382,10 @@ angular.module('app.controllers', ['ngCookies'])
 
 //            $scope.cardImg = ($scope.card.photoNames.large.length) ? $scope.app.cdn + 'cards/' + $scope.card.photoNames.large : $scope.app.cdn + 'img/blank.png';
 //            $scope.deckImg = ($scope.card.photoNames.small.length) ? $scope.app.cdn + 'cards/' + $scope.card.photoNames.small : $scope.app.cdn + 'img/blank.png';
+//            $scope.cardImg = $scope.deckImg = 'https://cdn-tempostorm.netdna-ssl.com/img/blank.png';
             
-            $scope.cardImg = ($scope.card.photoNames.large.length) ? 'https://cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.large : $scope.app.cdn + 'https://cdn-tempostorm.netdna-ssl.com/img/blank.png';
-            $scope.deckImg = ($scope.card.photoNames.small.length) ? 'https://cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.small : $scope.app.cdn + 'https://cdn-tempostorm.netdna-ssl.com/img/blank.png';
+            $scope.cardImg = ($scope.card.photoNames.large.length || $scope.card.photoNames.medium.length) ? 'https://staging-cdn-tempostorm.netdna-ssl.com/cards/' + $scope.card.photoNames.large : $scope.app.cdn + 'https://staging-cdn-tempostorm.netdna-ssl.com/img/blank.png';
+            $scope.deckImg = ($scope.card.photoNames.small.length) ? 'https://staging-cdn-tempostorm.netdna-ssl.com/decks/' + $scope.card.photoNames.small : $scope.app.cdn + 'https://staging-cdn-tempostorm.netdna-ssl.com/img/blank.png';
 
             // card upload
             $scope.cardUpload = function ($files) {
@@ -1385,15 +1400,17 @@ angular.module('app.controllers', ['ngCookies'])
                 for (var i = 0; i < $files.length; i++) {
                     var file = $files[i];
                     $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/card',
+                        url: '/api/images/uploadCard',
                         method: 'POST',
                         file: file
                     }).progress(function(evt) {
                         $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
                     }).success(function(data, status, headers, config) {
-                        $scope.card.photos.medium = data.medium;
-                        $scope.card.photos.large = data.large;
-                        $scope.cardImg = $scope.app.cdn + data.path + data.large;
+                        console.log('data card: ', data);
+                        $scope.card.photoNames.medium = data.medium;
+                        $scope.card.photoNames.large = data.large;
+//                        $scope.cardImg = $scope.app.cdn + data.path + data.large;
+                        $scope.cardImg = cdn2 + data.path + data.large;
                         box.modal('hide');
                     });
                 }
@@ -1412,14 +1429,16 @@ angular.module('app.controllers', ['ngCookies'])
                 for (var i = 0; i < $files.length; i++) {
                     var file = $files[i];
                     $scope.upload = $upload.upload({
-                        url: '/api/admin/upload/deck',
+                        url: '/api/images/uploadDeck',
                         method: 'POST',
                         file: file
                     }).progress(function(evt) {
                         $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
                     }).success(function(data, status, headers, config) {
-                        $scope.card.photos.small = data.small;
-                        $scope.deckImg = $scope.app.cdn + data.path + data.small;
+                        console.log('deck card: ', data);
+                        $scope.card.photoNames.small = data.small;
+//                        $scope.deckImg = $scope.app.cdn + data.path + data.small;
+                        $scope.deckImg = 'https://staging-cdn-tempostorm.netdna-ssl.com/' + data.path + data.small;
                         box.modal('hide');
                     });
                 }
@@ -1427,22 +1446,39 @@ angular.module('app.controllers', ['ngCookies'])
 
             // edit card
             $scope.editCard = function editCard(card) {
-
-//                AdminCardService.editCard($scope.card).success(function (data) {
-//                    if (!data.success) {
-//                        $scope.errors = data.errors;
-//                        $scope.showError = true;
-//                        $window.scrollTo(0,0);
-//                    } else {
-//                        AlertService.setSuccess({ show: true, msg: $scope.card.name + ' has been updated successfully.' });
-//                        $state.go('app.admin.hearthstone.cards.list');
-//                    }
-//                });
+                console.log('card:', card);
+                $scope.fetching = true;
+                Card.upsert(card)
+                .$promise
+                .then(function (cardUpdated) {
+                    console.log('cardUpdated: ', cardUpdated);
+                    $scope.fetching = false;
+                    $state.transitionTo('app.admin.hearthstone.cards.list');
+                })
+                .catch(function (err) {
+                    console.log('cardUpdated: ', err);
+                    $scope.fetching = false;
+                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                        $scope.errors = [];
+                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                            for (var i = 0; i < errArray.length; i++) {
+                                $scope.errors.push(errArray[i]);
+                            }
+                        });
+                        AlertService.setError({ 
+                            show: true, msg: '', 
+                            errorList: $scope.errors
+                        });
+                        $window.scrollTo(0,0);
+                        $scope.fetching = false;
+                    }
+                    
+                });
             }
         }
     ])
-    .controller('AdminCardListCtrl', ['$scope', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'Pagination', 'cards', 'cardsCount', 'paginationParams', 'AjaxPagination', '$q', '$timeout', 'Card',
-        function ($scope, bootbox, Util, Hearthstone, AdminCardService, AlertService, Pagination, cards, cardsCount, paginationParams, AjaxPagination, $q, $timeout, Card) {
+    .controller('AdminCardListCtrl', ['$scope', '$window', 'bootbox', 'Util', 'Hearthstone', 'AdminCardService', 'AlertService', 'Pagination', 'cards', 'cardsCount', 'paginationParams', 'AjaxPagination', '$q', '$timeout', 'Card',
+        function ($scope, $window, bootbox, Util, Hearthstone, AdminCardService, AlertService, Pagination, cards, cardsCount, paginationParams, AjaxPagination, $q, $timeout, Card) {
 
             // grab alerts
 //            if (AlertService.hasAlert()) {
@@ -1580,18 +1616,44 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                AdminCardService.deleteCard(card._id).then(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.cards.indexOf(card);
-                                        if (index !== -1) {
-                                            $scope.cards.splice(index, 1);
-                                        }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: card.name + ' deleted successfully.'
-                                        };
+                                
+                                Card.deleteById({
+                                    id: card.id
+                                })
+                                .$promise
+                                .then(function (cardDeleted) {
+                                    console.log('cardDeleted: ', cardDeleted);
+                                    AlertService.setSuccess({
+                                        show: true,
+                                        msg: card.name + ' deleted successfully'
+                                    });
+                                    $window.scrollTo(0, 0);
+                                    var index = $scope.cards.indexOf(card);
+                                    console.log('index:', index);
+                                    if (index !== -1) {
+                                        $scope.cardPagination.total -= 1;
+                                        $scope.cards.splice(index, 1);
+                                    }
+                                })
+                                .catch(function (err) {
+                                    console.log('cardDeleted: ', err);
+                                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                                        $scope.errors = [];
+                                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                                            for (var i = 0; i < errArray.length; i++) {
+                                                $scope.errors.push(errArray[i]);
+                                            }
+                                        });
+                                        AlertService.setError({
+                                            show: true, 
+                                            msg: 'Unable to delete ' + card.name, 
+                                            errorList: $scope.errors 
+                                        });
+                                        $window.scrollTo(0,0);
+                                        $scope.fetching = false;
                                     }
                                 });
+                                
                             }
                         },
                         cancel: {
@@ -7099,11 +7161,14 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = '';
             
             $scope.searchUsers = function() {
-                updateUsers(1, $scope.perpage, $scope.search, false);
+                updateUsers(1, $scope.perpage, $scope.search, function(err, data) {
+                    
+                });
             };
 
             // pagination
             function updateUsers (page, perpage, search, callback) {
+                console.log('page:', page);
                 $scope.fetching = true;
 
                 var options = {},
@@ -7132,31 +7197,59 @@ angular.module('app.controllers', ['ngCookies'])
                         ]
                     }
                 }
-
-                User.count(countOptions, function (count) {
-                    User.find(options, function (users) {
-                        $scope.userPagination.total = count.count;
-                        $scope.userPagination.page = page;
-                        $scope.userPagination.perpage = perpage;
-
-                        $timeout(function () {
-//                            console.log('pagination users: ', users);
-                            $scope.users = users;
-                            $scope.fetching = false;
-                            if (callback) {
-                                return callback(count.count);
-                            }
+                
+                async.series([
+                    function (seriesCallback) {
+                        console.log('first series');
+                        User.count(countOptions)
+                        .$promise
+                        .then(function (count) {
+                            console.log('count:', count);
+                            $scope.userPagination.total = count.count;
+                            seriesCallback(null, count);
+                        })
+                        .catch(function (err) {
+                            console.log('err:', err);
+                            seriesCallback(err);
                         });
-                    });
+                    },
+                    function (seriesCallback) {
+                        console.log('second series');
+                        User.find(options)
+                        .$promise
+                        .then(function (users) {
+                            console.log('users:', users);
+                            $scope.userPagination.page = page;
+                            $scope.userPagination.perpage = perpage;
+                            $scope.users = users;
+                            seriesCallback(null);
+                        })
+                        .catch(function (err) {
+                            console.log('err:', err);
+                            seriesCallback(err);
+                        });
+                    }
+                ], function(err, results) {
+                    $scope.fetching = false;
+                    if (err) {
+                        console.log('series err:', err);
+                        if (callback) {
+                            return callback(err);
+                        }
+                        return;
+                    }
+                    if (callback) {
+                        return callback(null, results[0].count);
+                    }
                 });
             }
 
             // page flipping
             $scope.userPagination = AjaxPagination.new($scope.perpage, $scope.total,
                 function (page, perpage) {
+                console.log('userpagination');
                     var d = $q.defer();
-
-                    updateUsers(page, perpage, $scope.search, function (data) {
+                    updateUsers(page, perpage, $scope.search, function (err, data) {
                         d.resolve(data);
                     });
                     return d.promise;
