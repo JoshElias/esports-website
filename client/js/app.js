@@ -3293,7 +3293,8 @@ var app = angular.module('app', [
                                             fields: {
                                                 id: true,
                                                 name: true,
-                                                rarity: true
+                                                rarity: true,
+                                                expansion: true
                                                 
                                             },
                                             limit: 50,
@@ -4456,11 +4457,37 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/teams.list.html',
                         controller: 'AdminTeamListCtrl',
                         resolve: {
-                            teams: ['TeamMember', function (TeamMember) {
-                                TeamMember.find({})
+                            teamMembers: ['TeamMember', function (TeamMember) {
+                                
+                                var gameTypes = ['hs', 'hots', 'fifa', 'wow', 'cs', 'fgc' ]
+                                var gameTypeFilter = _.map(gameTypes, function (gameType) {
+                                    return {game: gameType}
+                                }) 
+                                                               
+                                return TeamMember.find({
+                                    filter: {
+                                        where: {
+                                            or: gameTypeFilter
+                                        } 
+                                    }
+                                })
                                 .$promise
-                                .then(function (t) {
-                                    async.each(t, function (tm, eachCb) {
+                                .then(function (teamMembers) {
+                                    
+                                    var teamMemberObj = {};
+                                    for (var key in teamMembers) {
+                                        var teamMember = teamMembers[key];
+                                        
+                                        if(typeof teamMemberObj[teamMember.game] === "undefined") {
+                                            teamMemberObj[teamMember.game] = [];
+                                        }  
+                                      
+                                        teamMemberObj[teamMember.game].push(teamMember);
+                                    }
+                                    
+                                    return teamMemberObj;
+                                    
+                                  /* async.each(t, function (tm, eachCb) {
                                         if (typeof tm.isActive === 'string') {
                                             console.log('IT\'S A STRING');
                                             tm.isActive = true;
@@ -4478,89 +4505,116 @@ var app = angular.module('app', [
                                         } else {
                                             return eachCb();
                                         }
-                                    });
-                                });
+                                    });*/
+                               })
                             }],
-                            hsTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'hs',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    console.log(tm);
-                                    return tm;
-                                });
-                            }],
-                            hotsTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'hots',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    console.log(tm);
-                                    return tm;
-                                });
-                            }],
-                            wowTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'wow',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    console.log(tm);
-                                    return tm;
-                                });
-                            }],
-                            fifaTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'fifa',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    console.log(tm);
-                                    return tm;
-                                });
-                            }],
-                            fgcTeam: ['TeamMember', function (TeamMember) {
-                                return TeamMember.find({
-                                    filter: {
-                                        where: {
-                                            game: 'fgc',
-                                            isActive: true
-                                        },
-                                        order: 'orderNum ASC'
-                                    }
-                                })
-                                .$promise
-                                .then(function (tm) {
-                                    console.log(tm);
-                                    return tm;
-                                });
-                            }]
+    
+    
+//                            teams: ['TeamMember', function (TeamMember) {
+//                                TeamMember.find({})
+//                                .$promise
+//                                .then(function (t) {
+//                                    async.each(t, function (tm, eachCb) {
+//                                        if (typeof tm.isActive === 'string') {
+//                                            console.log('IT\'S A STRING');
+//                                            tm.isActive = true;
+//                                            
+//                                            TeamMember.update({ 
+//                                                where: {
+//                                                    id: tm.id
+//                                                }
+//                                            }, tm)
+//                                            .$promise
+//                                            .then(function (data) {
+//                                                console.log(data);
+//                                                return eachCb();
+//                                            })
+//                                        } else {
+//                                            return eachCb();
+//                                        }
+//                                    });
+//                                });
+//                            }],
+//                            hsTeam: ['TeamMember', function (TeamMember) {
+//                                return TeamMember.find({
+//                                    filter: {
+//                                        where: {
+//                                            game: 'hs',
+//                                            isActive: true
+//                                        },
+//                                        order: 'orderNum ASC'
+//                                    }
+//                                })
+//                                .$promise
+//                                .then(function (tm) {
+//                                    console.log(tm);
+//                                    return tm;
+//                                });
+//                            }],
+//                            hotsTeam: ['TeamMember', function (TeamMember) {
+//                                return TeamMember.find({
+//                                    filter: {
+//                                        where: {
+//                                            game: 'hots',
+//                                            isActive: true
+//                                        },
+//                                        order: 'orderNum ASC'
+//                                    }
+//                                })
+//                                .$promise
+//                                .then(function (tm) {
+//                                    console.log(tm);
+//                                    return tm;
+//                                });
+//                            }],
+//                            wowTeam: ['TeamMember', function (TeamMember) {
+//                                return TeamMember.find({
+//                                    filter: {
+//                                        where: {
+//                                            game: 'wow',
+//                                            isActive: true
+//                                        },
+//                                        order: 'orderNum ASC'
+//                                    }
+//                                })
+//                                .$promise
+//                                .then(function (tm) {
+//                                    console.log(tm);
+//                                    return tm;
+//                                });
+//                            }],
+//                            fifaTeam: ['TeamMember', function (TeamMember) {
+//                                return TeamMember.find({
+//                                    filter: {
+//                                        where: {
+//                                            game: 'fifa',
+//                                            isActive: true
+//                                        },
+//                                        order: 'orderNum ASC'
+//                                    }
+//                                })
+//                                .$promise
+//                                .then(function (tm) {
+//                                    console.log(tm);
+//                                    return tm;
+//                                });
+//                            }],
+//                            fgcTeam: ['TeamMember', function (TeamMember) {
+//                                return TeamMember.find({
+//                                    filter: {
+//                                        where: {
+//                                            game: 'fgc',
+//                                            isActive: true
+//                                        },
+//                                        order: 'orderNum ASC'
+//                                    }
+//                                })
+//                                .$promise
+//                                .then(function (tm) {
+//                                    console.log(tm);
+//                                    return tm;
+//                                });
+//                            }]
                         }
                     }
                 }

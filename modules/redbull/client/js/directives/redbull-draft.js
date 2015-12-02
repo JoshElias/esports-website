@@ -1,23 +1,23 @@
 angular.module('redbull.directives')
-.directive('redbullDraft', ['$timeout', '$interval',
-    function ($timeout, $interval){
+.directive('redbullDraft', ['$timeout', '$interval', '$rootScope',
+    function ($timeout, $interval, $rootScope){
         return {
             restrict: 'A',
             scope: {
                 packs: '=',
                 isLoading: '=',
                 currentPack: '=',
-                currentCards: '='
+                currentCards: '=',
+                audioFiles: '='
             },
             link: function (scope, el, attrs) {
-                var volume = .5,
-                    startShake = null,
+                var startShake = null,
                     shakeLoop = null,
-                    shakeInterval = 3000,
+                    shakeInterval = 10000,
                     packDropped = false,
                     done = false,
-                    //burst = $('#pack-burst')[0],
-                    cardsFlipped = 0;
+                    cardsFlipped = 0,
+                    audioPath = 'modules/redbull/client/audio/';
 
                 function nextPack () {
                     scope.currentPack++;
@@ -27,6 +27,14 @@ angular.module('redbull.directives')
                 function nextCards () {
                     scope.currentCards++;
                     scope.$apply();
+                }
+                
+                function playAudio ( audioName ) {
+                    var audio = new Audio();
+                    audio.src = $rootScope.app.cdn + audioPath + scope.audioFiles[audioName].file;
+                    audio.load();
+                    audio.volume = scope.audioFiles[audioName].volume;
+                    audio.play();
                 }
                 
                 // watch current pack
@@ -41,20 +49,13 @@ angular.module('redbull.directives')
                 
                 // shake pack
                 function shakePack () {
-                    //shakeSound();
+                    playAudio('pack_shake');
                     $('.pack-wrapper').trigger('startRumble');
                     $timeout(function() {
                         $('.pack-wrapper').trigger('stopRumble');
                     }, 750);
                 }
 
-                function shakeSound () {
-                    var packShake = new Audio();
-                    packShake.src = allAudio['pack_shake'];
-                    packShake.volume = volume;
-                    packShake.play();
-                };
-                
                 $('.pack-wrapper').jrumble();
                 startShake = $timeout(function() {
                     shakePack();
@@ -71,15 +72,7 @@ angular.module('redbull.directives')
                 }).mouseup(function() {
                     $('.draft-wrapper').removeClass('grabbing clicking');
                 });
-                
-                // back button audio
-                $('#back_button').mouseenter(function() {
-                    var menu_button_hover = new Audio();
-                    menu_button_hover.src = allAudio['menu_button_hover'];
-                    menu_button_hover.volume = volume;
-                    menu_button_hover.play();
-                });
-                
+                                
                 $('.pack').draggable({
                     containment: ".draft-wrapper",
                     scroll: false,
@@ -116,11 +109,7 @@ angular.module('redbull.directives')
                             // move pack to bottom
                             $('.pack-wrapper').css('z-index', '2');
 
-                            // play release sound
-                            /*var pack_release = new Audio();
-                            pack_release.src = allAudio['pack_release'];
-                            pack_release.volume = volume;
-                            pack_release.play();*/
+                            playAudio('pack_release');
 
                             // fade out glowing background
                             $('.bg-glow').stop(true).fadeOut(500);
@@ -135,11 +124,7 @@ angular.module('redbull.directives')
 
                 $('.pack').mousedown(function() {
                     if (!packDropped) {
-                        // audio
-                        /*var pack_grab = new Audio();
-                        pack_grab.src = allAudio['pack_grab'];
-                        pack_grab.volume = volume;
-                        pack_grab.play();*/
+                        playAudio('pack_grab');
 
                         // grow pack
                         $(this).css('transform', 'scale(1.05)');
@@ -151,14 +136,10 @@ angular.module('redbull.directives')
                     }
                 }).mouseup(function() {
                     // if the pack's position is its original location, play the pack release sound
-                    /*var spot = $(this).position();
-                    
+                    var spot = $(this).position();
                     if (Math.round(spot.left) == 192 && Math.round(spot.top) == 241) {
-                        var pack_release = new Audio();
-                        pack_release.src = allAudio['pack_release'];
-                        pack_release.volume = volume;
-                        pack_release.play();
-                    }*/
+                        playAudio('pack_release');
+                    }
 
                     // shrink pack
                     $(this).css('transform', 'perspective(0) rotateY(0) scale(1)');
@@ -231,9 +212,7 @@ angular.module('redbull.directives')
                             'transform': 'perspective(0) rotateY(0)'
                         });
 
-                        /*$('#pack-burst').css('z-index', '5');
-                        burst.volume = volume / 2;
-                        burst.play();*/
+                        // TODO: PLAY BURST SOUND
 
                         // fade out pack
                         $('.pack').fadeOut(0, function() {
@@ -248,15 +227,10 @@ angular.module('redbull.directives')
                             $('.bg-glow').stop().fadeOut(0);
                             
                             // blur bg
-                            //$('.bg-blur').fadeIn(0);
                             el.addClass('blurred');
                             
                             // set cards and show
-                            //$('.cards').delay(3250).fadeIn(0);
                             $('.cards').fadeIn(0);
-                            
-                            // hide pack burst video
-                            //$('#pack-burst').delay(3250).fadeOut(1000);
                         });
 
                         // move back to bottom
@@ -272,50 +246,53 @@ angular.module('redbull.directives')
                     cardsFlipped = 0;
 
                     $('.card').each(function(i) {
-                        this.turned = false;
-                        this.clicked = false;
-
-                        // TODO: CHECK RARITY OF CARD
+                        var card = this,
+                            announcerRarities = ['rare', 'epic', 'legendary'];
                         
-                        $(this).unbind('mouseenter').mouseenter(function() {
-                            if (!this.turned) {
-                                // TODO: PLAY CARD MOUSEOVER SOUND
+                        card.turned = false;
+                        card.clicked = false;
+                        card.rarity = $(card).attr('data-rarity').toLowerCase();
+                        
+                        $(card).unbind('mouseenter').mouseenter(function() {
+                            if (!card.turned) {
+                                playAudio('card_hover');
                             }
                         })
                         .unbind('mouseleave').mouseleave(function() {
-                            if (!this.turned) {
-                                // TODO: PLAY CARD MOUSELEAVE SOUND
+                            if (!card.turned) {
+                                playAudio('card_unhover');
                             }
                         })
                         .unbind('mousedown').mousedown(function(e) {
-                            this.turned = true, this.clicked;
+                            card.turned = true;
+                            card.clicked = false;
                             
-                            if (this.turned && !this.clicked) {
-                                this.clicked = true;
+                            if (card.turned && !card.clicked) {
+                                card.clicked = true;
                                 cardsFlipped++;
-
+                                
                                 if (cardsFlipped > 4) {
                                     $timeout(function() {
-                                        // TODO: PLAY DONE REVEAL SOUND
+                                        playAudio('done_reveal');
                                         $timeout(function() {
                                             $('.btn-done').stop(true).fadeIn(750);
-                                            // TODO: PLAY
                                         }, 500);
                                     }, 500);
                                 }
 
-                                // TODO: PLAY CARD RARITY SOUND
                                 $timeout(function() {
-                                    // TODO: PLAY
+                                    playAudio('card_turn_over_' + card.rarity);
                                 }, 200);
+                                
+                                if (announcerRarities.indexOf(card.rarity) !== -1) {
+                                    playAudio('announcer_' + card.rarity);
+                                }
 
-                                // TODO: PLAY ANNOUNCER RARITY SOUND
-
-                                var cardX = e.pageX - $(this).offset().left;
+                                var cardX = e.pageX - $(card).offset().left;
                                 if (cardX < 116) {
-                                    $(this).addClass('flipped-left');
+                                    $(card).addClass('flipped-left');
                                 } else {
-                                    $(this).addClass('flipped-right');
+                                    $(card).addClass('flipped-right');
                                 }
                             }
                         });
@@ -328,7 +305,7 @@ angular.module('redbull.directives')
                     if (!done) {
                         done = true;
 
-                        // TODO: PLAY DONE FADE SOUND
+                        playAudio('done_fade');
 
                         $('.btn-done').stop(true, true).fadeOut(1000);
 

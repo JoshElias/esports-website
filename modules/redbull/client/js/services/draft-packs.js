@@ -7,11 +7,22 @@ angular.module('redbull.services')
             this.tournament = {
                 packs: [
                     {
+                        expansion: 'Soulbound',
+                        packs: 1,
+                        chances: {
+                            basic: 100,
+                            common: 0,
+                            rare: 0,
+                            epic: 0,
+                            legendary: 0
+                        }
+                    },
+                    {
                         expansion: 'Basic',
                         packs: 1,
                         chances: {
-                            basic: 30,
-                            common: 44,
+                            basic: 0,
+                            common: 74,
                             rare: 21,
                             epic: 4,
                             legendary: 1
@@ -30,7 +41,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Goblins Vs. Gnomes',
-                        packs: 0,
+                        packs: 1,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -52,7 +63,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'The Grand Tournament',
-                        packs: 0,
+                        packs: 1,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -157,7 +168,7 @@ angular.module('redbull.services')
                 this.packsWithRolls = packs;
             },
             sortCards: function () {
-                var expansions = Hearthstone.expansions,
+                var expansions = ['Soulbound'].concat(Hearthstone.expansions),
                     sorted = [],
                     defaultExpansion = {
                         basic: [],
@@ -179,7 +190,11 @@ angular.module('redbull.services')
                     rarity    = this.cards[i].rarity.toLowerCase();
                     card      = this.cards[i];
                     
-                    sorted[expansion][rarity].push(card);
+                    if (rarity === 'basic') {
+                        sorted['Soulbound'][rarity].push(card);
+                    } else {
+                        sorted[expansion][rarity].push(card);
+                    }
                 }
                 
                 this.cardsSorted = sorted;
@@ -209,7 +224,7 @@ angular.module('redbull.services')
                     expansionCards = this.cardsSorted[expansion],
                     start = 0,
                     card,
-                    pool,
+                    pool = [],
                     randomCard;
                 
                 if (!chances) { /* TODO: ERROR */ }

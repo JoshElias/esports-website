@@ -31,8 +31,7 @@ module.exports = function(User) {
     });
 
     User.observe("before save", function(ctx, next) {
-//        protectFields(ctx, next);
-        next();
+        protectFields(ctx, next);
     });
 
     User.afterRemote("**", function(ctx, modelInstance, next) {
@@ -239,8 +238,8 @@ module.exports = function(User) {
         // sets the private fields to false
         function removeFields() {
             var data = ctx.data || ctx.instance;
-            protectedFields.forEach(function(protectedField) {
-
+            protectedFields.forEach(function(field) {
+                data[field] = undefined;
             });
             finalCb();
         }
