@@ -690,6 +690,7 @@ var app = angular.module('app', [
                                     return false;
                                 } else {
                                     return User.isInRoles({
+                                        uid: User.getCurrentId(),
                                         roleNames: ['$admin', '$contentProvider', '$premium']
                                     })
                                     .$promise
@@ -834,6 +835,7 @@ var app = angular.module('app', [
                                     return false;
                                 } else {
                                     return User.isInRoles({
+                                        uid: User.getCurrentId(),
                                         roleNames: ['$admin', '$contentProvider']
                                     })
                                     .$promise
@@ -3692,12 +3694,11 @@ var app = angular.module('app', [
                             categories: ['$q', 'ForumCategory', 'ForumThread', function($q, ForumCategory, ForumThread) {
                                 var d = $q.defer();
                                 ForumCategory.find({
-                                    where: {
-                                        isActive: true
-                                    },
-                                    fields: {
-                                        id: true,
-                                        title: true
+                                    filter: {
+                                        fields: {
+                                            id: true,
+                                            title: true
+                                        }
                                     }
                                 }).$promise
                                 .then(function (categories) {
@@ -3705,16 +3706,10 @@ var app = angular.module('app', [
                                         ForumCategory.forumThreads({
                                             id: category.id,
                                             filter: {
-                                                where: {
-                                                    isActive: true
-                                                },
                                                 fields: {
                                                     id: true,
-                                                    title: true,
-                                                    description: true,
-                                                    slug: true
-                                                },
-                                                order: 'orderNum ASC'
+                                                    title: true
+                                                }
                                             }
                                         }).$promise.then(function (threads) {
                                             category.forumThreads = threads;
@@ -3724,22 +3719,8 @@ var app = angular.module('app', [
                                                     id: thread.id,
                                                     filter: {
                                                         fields: {
-                                                            id: true,
-                                                            title: true,
-                                                            slug: true,
-                                                            authorId: true
-                                                        },
-                                                        include: {
-                                                            relation: 'author',
-                                                            scope: {
-                                                                fields: {
-                                                                    username: true,
-                                                                    email: true
-                                                                }
-                                                            }
-                                                        },
-                                                        order: 'createdDate DESC',
-                                                        limit: 1
+                                                            id: true
+                                                        }
                                                     }
                                                 }).$promise.then(function (posts) {
                                                     thread.forumPosts = posts;
@@ -3996,11 +3977,12 @@ var app = angular.module('app', [
                                 });
                             }],
                             
-                            userRoles: ['User', function(User) {
+                            userRoles: ['User', '$stateParams', function(User, $stateParams) {
                                 if (!User.isAuthenticated()) {
                                     return false;
                                 } else {
                                     return User.isInRoles({
+                                        uid: $stateParams.userID,
                                         roleNames: ['$admin', '$contentProvider', '$active']
                                     })
                                     .$promise
