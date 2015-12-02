@@ -63,7 +63,7 @@
     <script src="./vendor/angular-route/angular-route.min.js"></script>
     <script src="./js/vendor/angular-bootbox.js"></script>
     <script src="./vendor/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"></script>
-    <script src="./vendor/angular-file-upload/dist/angular-file-upload.min.js"></script>
+    <script src="./js/vendor/angular-file-upload.min.js"></script>
     <script src="./js/vendor/angular-md5.min.js"></script>
     <script src="./vendor/angular-gravatar/build/angular-gravatar.min.js"></script>
     <script src="./vendor/angular-moment/angular-moment.min.js"></script>
@@ -86,8 +86,6 @@
 
     <!-- stripe -->
     <script src="https://js.stripe.com/v2/"></script>
-
-
     
 </body>
 </html>
