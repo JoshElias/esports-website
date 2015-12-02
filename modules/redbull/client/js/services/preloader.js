@@ -17,7 +17,6 @@ angular.module('redbull.services')
                 RESOLVED: 3,
                 REJECTED: 4
             };
-            
 
             // I keep track of the current state of the preloader.
             this.state = this.states.PENDING;
@@ -103,12 +102,14 @@ angular.module('redbull.services')
                     this.deferred.resolve( this.fileLocations );
                 }
             },
+            // I check if the file being loaded is an image
             isImage: function ( fileLocation ) {
                 var ext = fileLocation.split('.').pop(),
                     allowedExts = ['jpeg', 'jpg', 'png', 'gif'];
                 
                 return ( allowedExts.indexOf(ext) !== -1 );
             },
+            // I check if the file being loaded is an audio clip
             isAudio: function ( fileLocation ) {
                 var ext = fileLocation.split('.').pop(),
                     allowedExts = ['ogg', 'mp3'];
@@ -125,42 +126,49 @@ angular.module('redbull.services')
                 if (!preloader.isImage( fileLocation ) && !preloader.isAudio( fileLocation )) {
                     return preloader.handleFileError( fileLocation );
                 }
+                // function to handle file loading completion
+                function fileLoaded ( event ) {
+                    // Since the load event is asynchronous, we have to
+                    // tell AngularJS that something changed.
+                    $rootScope.$apply(
+                        function() {
+                            preloader.handleFileLoad( event.target.src );
+                            // Clean up object reference to help with the
+                            // garbage collection in the closure.
+                            preloader = file = event = null;
+                        }
+                    );
+                }
+                // function to handle file loading error
+                function fileError ( event ) {
+                    // Since the load event is asynchronous, we have to
+                    // tell AngularJS that something changed.
+                    $rootScope.$apply(
+                        function() {
+                            preloader.handleFileError( event.target.src );
+                            // Clean up object reference to help with the
+                            // garbage collection in the closure.
+                            preloader = file = event = null;
+                        }
+                    );
+                }
                 // When it comes to creating the file object, it is critical that
                 // we bind the event handlers BEFORE we actually set the file
                 // source. Failure to do so will prevent the events from proper
                 // triggering in some browsers.
-                var newFile = (preloader.isImage( fileLocation )) ? $( new Image() ) : $( new Audio() );
-                var file = newFile
-                    .load(
-                        function( event ) {
-                            // Since the load event is asynchronous, we have to
-                            // tell AngularJS that something changed.
-                            $rootScope.$apply(
-                                function() {
-                                    preloader.handleFileLoad( event.target.src );
-                                    // Clean up object reference to help with the
-                                    // garbage collection in the closure.
-                                    preloader = file = event = null;
-                                }
-                            );
-                        }
-                    )
-                    .error(
-                        function( event ) {
-                            // Since the load event is asynchronous, we have to
-                            // tell AngularJS that something changed.
-                            $rootScope.$apply(
-                                function() {
-                                    preloader.handleFileError( event.target.src );
-                                    // Clean up object reference to help with the
-                                    // garbage collection in the closure.
-                                    preloader = file = event = null;
-                                }
-                            );
-                        }
-                    )
-                    .prop( "src", fileLocation )
-                ;
+                if (preloader.isImage( fileLocation )) {
+                    var file = $( new Image() )
+                        .load( fileLoaded )
+                        .error( fileError )
+                        .prop( "src", fileLocation );
+                    ;
+                } else {
+                    var file = $( new Audio() )
+                        .prop( "src", fileLocation );
+                    
+                    file[0].addEventListener('canplaythrough', fileLoaded, false);
+                    file[0].addEventListener('error', fileError, false);
+                }
             }
         };
         // Return the factory instance.

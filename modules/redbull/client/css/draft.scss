@@ -19,6 +19,13 @@
     }
     
     .draft {
+        position: absolute;
+        top: 52px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        background-color: #161213;
+        
         &.blurred {
             .bg,
             .pack-wrapper {
@@ -52,7 +59,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: #121111;
+        background: #161213;
         z-index: 99;
         
         i {
@@ -65,17 +72,6 @@
             font-size: 50px;
             color: #FFF;
         }
-    }
-
-    .hs-frame {
-      margin-left: -765px;
-      margin-top: -444px;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 1530px;
-      height: 888px;
-      background: url("../img/modules/redbull/client/img/bg_frame.png");
     }
 
     .draft-wrapper {
@@ -95,40 +91,33 @@
             cursor: url("../img/modules/redbull/client/img/click.png"), auto;
         }
         
-        #pack-burst {
-            position: absolute;
-        }
-
         .bg,
-        .bg-glow,
-        .bg-blur {
-            margin-left: -683px;
-            margin-top: -384px;
+        .bg-glow {
+            margin-left: -207px; //-253px;
+            margin-top: -342px; //-384px;
+            width: 649px; //width: 741px;
+            height: 600px; //height: 684px;
+//            margin-left: -683px;
+//            margin-top: -384px;
             position: absolute;
             left: 50%;
             top: 50%;
-            width: 1366px;
-            height: 768px;
+//            width: 1366px;
+//            height: 768px;
             background: url("../img/modules/redbull/client/img/bg.jpg") no-repeat center center;
             z-index: 2;
         }
         
         .bg-glow {
             display: none;
-            margin-left: -253px;
-            margin-top: -384px;
-            width: 741px;
-            height: 684px;
-            background: url("../img/modules/redbull/client/img/bg_glow.jpg") no-repeat center center;
+            margin-left: -207px; //-253px;
+            margin-top: -342px; //-384px;
+            width: 649px; //width: 741px;
+            height: 600px; //height: 684px;
+            background: url("../img/modules/redbull/client/img/bg-glow.jpg") no-repeat center center;
             z-index: 3;
         }
 
-        .bg-blur {
-            background: url("../img/modules/redbull/client/img/blur.jpg") no-repeat center center;
-            display: none;
-            z-index: 3;
-        }
-    
         .pack-wrapper {
             position: absolute;
             width: 100%;
@@ -155,6 +144,18 @@
                 
                 &.naxxramas {
                     background: url("../img/modules/redbull/client/img/pack-naxx.png") no-repeat;
+                }
+                
+                &.goblins-vs-gnomes {
+                    background: url("../img/modules/redbull/client/img/pack-gvg.png") no-repeat;
+                }
+                
+                &.the-grand-tournament {
+                    background: url("../img/modules/redbull/client/img/pack-tgt.png") no-repeat;
+                }
+                
+                &.soulbound {
+                    background: url("../img/modules/redbull/client/img/pack-soulbound.png") no-repeat;
                 }
             }
             
