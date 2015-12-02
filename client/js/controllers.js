@@ -1291,7 +1291,7 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.card.photoNames.medium = data.medium;
                         $scope.card.photoNames.large = data.large;
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.large;
-                        $scope.cardImg = 
+                        $scope.cardImg = cdn2 + data.path + data.large;
                         box.modal('hide');
                     });
                 }
@@ -1310,36 +1310,38 @@ angular.module('app.controllers', ['ngCookies'])
                 for (var i = 0; i < $files.length; i++) {
                     var file = $files[i];
                     $scope.upload = $upload.upload({
-                        url: '/api/image/upload',
+                        url: '/api/images/uploadDeck',
                         method: 'POST',
                         file: file
                     }).progress(function(evt) {
                         $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
                     }).success(function(data, status, headers, config) {
-                        $scope.card.photos.small = data.small;
-                        $scope.deckImg = $scope.app.cdn + data.path + data.small;
+                        console.log('deck card: ', data);
+                        $scope.card.photoNames.small = data.small;
+//                        $scope.deckImg = $scope.app.cdn + data.path + data.small;
+                        $scope.deckImg = 'https://staging-cdn-tempostorm.netdna-ssl.com/' + data.path + data.small;
                         box.modal('hide');
                     });
                 }
             };
 
             // add card
-            $scope.addCard = function addCard() {
-                $scope.showError = false;
-                $scope.showSuccess = false;
+            $scope.addCard = function addCard(card) {
+                
+                
 
-                AdminCardService.addCard($scope.card).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                    } else {
-                        $scope.showError = false;
-                        $scope.card = angular.copy(defaultCard);
-                        $scope.form.$setPristine();
-                        $scope.showSuccess = true;
-                    }
-                    $window.scrollTo(0,0);
-                });
+//                AdminCardService.addCard($scope.card).success(function (data) {
+//                    if (!data.success) {
+//                        $scope.errors = data.errors;
+//                        $scope.showError = true;
+//                    } else {
+//                        $scope.showError = false;
+//                        $scope.card = angular.copy(defaultCard);
+//                        $scope.form.$setPristine();
+//                        $scope.showSuccess = true;
+//                    }
+//                    $window.scrollTo(0,0);
+//                });
             };
         }
     ])
@@ -1425,8 +1427,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // edit card
             $scope.editCard = function editCard(card) {
-                $scope.showError = false;
-                $scope.showSuccess = false;
 
 //                AdminCardService.editCard($scope.card).success(function (data) {
 //                    if (!data.success) {
@@ -5520,6 +5520,7 @@ angular.module('app.controllers', ['ngCookies'])
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 // Check if user is admin or contentProvider
                 User.isInRoles({
+                    uid: User.getCurrentId(),
                     roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
@@ -6274,6 +6275,7 @@ angular.module('app.controllers', ['ngCookies'])
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 // Check if user is admin or contentProvider
                 User.isInRoles({
+                    uid: User.getCurrentId(),
                     roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
@@ -7133,7 +7135,7 @@ angular.module('app.controllers', ['ngCookies'])
                         $scope.userPagination.perpage = perpage;
 
                         $timeout(function () {
-                            console.log('pagination users: ', users);
+//                            console.log('pagination users: ', users);
                             $scope.users = users;
                             $scope.fetching = false;
                             if (callback) {
@@ -7166,7 +7168,7 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                console.log('user to del: ', user);
+//                                console.log('user to del: ', user);
                                 User.destroyById({
                                     id: user.id
                                 })
@@ -7175,14 +7177,11 @@ angular.module('app.controllers', ['ngCookies'])
                                     var indexToDel = $scope.users.indexOf(user);
                                     if (indexToDel !== -1) {
                                         $scope.users.splice(indexToDel, 1);
-                                        $scope.success = {
-                                            show: true,
-                                            msg: 'User: ' + user.username + ' deleted successfully.'
-                                        };
+                                        AlertService.setSuccess({ show: true, msg: user.username + ' deleted successfully' });
                                     }
                                 })
                                 .catch(function (err) {
-                                    console.log('User.destroyById err: ', err);
+//                                    console.log('User.destroyById err: ', err);
                                 });
                             }
                         },
@@ -7269,7 +7268,7 @@ angular.module('app.controllers', ['ngCookies'])
                         User.create(user)
                         .$promise
                         .then(function (userCreated) {
-                            console.log('userCreated: ', userCreated);
+//                            console.log('userCreated: ', userCreated);
                             seriesCallback(null, userCreated);
                         })
                         .catch(function (err) {
@@ -7278,19 +7277,18 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                     },
                     function(userCreated, seriesCallback) {
-                        console.log('userCreated: ', userCreated);
-                        console.log('validRoles: ', validRoles);
+//                        console.log('userCreated: ', userCreated);
                         User.assignRoles({
-                            userId: userCreated.id,
+                            uid: userCreated.id,
                             roleNames: validRoles
                         })
                         .$promise
                         .then(function (userRoles) {
-                            console.log('userRoles: ', userRoles);
+//                            console.log('userRoles: ', userRoles);
                             seriesCallback(null);
                         })
                         .catch(function (err) {
-                            console.log('err: ', err);
+//                            console.log('err: ', err);
                             seriesCallback(err);
                         });
                     }
@@ -7310,8 +7308,7 @@ angular.module('app.controllers', ['ngCookies'])
                         }
                     } else {
 //                        console.log('series results: ', results);
-                        AlertService.setSuccess({ show: true, msg: 'User updated successfully' });
-                        $window.scrollTo(0, 0);
+                        $state.go('app.admin.users.list');
                         $scope.fetching = false;
                     }
                 });
@@ -7338,7 +7335,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // edit user
             $scope.editUser = function (user) {
-                console.log('user id:', user.id);
+//                console.log('user id:', user.id);
                 if ($scope.user.changePassword 
                     && ($scope.user.newPassword !== $scope.user.password)) {
                     AlertService.setError({ show: true, msg: 'Unable to update user', errorList: ['Please confirm your password'] });
@@ -7354,8 +7351,8 @@ angular.module('app.controllers', ['ngCookies'])
                     isActive = user.isActive ? validRoles.push('$active') : revokeRoles.push('$active'),
                     isProvider = user.isProvider ? validRoles.push('$contentProvider') : revokeRoles.push('$contentProvider');
                     
-                    console.log('validRoles:', validRoles);
-                    console.log('revokeRoles:', revokeRoles);
+//                    console.log('validRoles:', validRoles);
+//                    console.log('revokeRoles:', revokeRoles);
                 
                 async.series([
                     function(seriesCallback) {
@@ -7364,11 +7361,11 @@ angular.module('app.controllers', ['ngCookies'])
                         }, user)
                         .$promise
                         .then(function (userUpdated) {
-                            console.log('userUpdated: ', userUpdated);
+//                            console.log('userUpdated: ', userUpdated);
                             seriesCallback(null, 'User Model Updated');
                         })
                         .catch(function (err) {
-                            console.log('err: ', err);
+//                            console.log('err: ', err);
                             seriesCallback(err);
                         });
                     },
@@ -7379,27 +7376,27 @@ angular.module('app.controllers', ['ngCookies'])
                         })
                         .$promise
                         .then(function (rolesCreated) {
-                            console.log('rolesCreated: ', rolesCreated);
+//                            console.log('rolesCreated: ', rolesCreated);
                             seriesCallback(null, 'Roles Assigned');
                         })
                         .catch(function (err) {
-                            console.log('err: ', err);
+//                            console.log('err: ', err);
                             seriesCallback(err);
                         });
                     },
                     function(seriesCallback) {
-                        console.log('revokeRoles: ', revokeRoles);
+//                        console.log('revokeRoles: ', revokeRoles);
                         User.revokeRoles({
                             uid : user.id,
                             roleNames: revokeRoles
                         })
                         .$promise
                         .then(function (rolesRevoked) {
-                            console.log('rolesRevoked: ', rolesRevoked);
+//                            console.log('rolesRevoked: ', rolesRevoked);
                             seriesCallback(null, 'Roles Revoked');
                         })
                         .catch(function (err) {
-                            console.log('err: ', err);
+//                            console.log('err: ', err);
                             seriesCallback(err);
                         });
                     }
@@ -7418,9 +7415,7 @@ angular.module('app.controllers', ['ngCookies'])
                             $scope.fetching = false;
                         }
                     } else {
-                        console.log('series results: ', results);
-                        AlertService.setSuccess({ show: true, msg: 'User updated successfully' });
-                        $window.scrollTo(0, 0);
+                        $state.go('app.admin.users.list');
                         $scope.fetching = false;
                     }
                 });
@@ -8210,6 +8205,7 @@ angular.module('app.controllers', ['ngCookies'])
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 // Check if user is admin or contentProvider
                 User.isInRoles({
+                    id: User.getCurrentId(),
                     roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
@@ -9005,6 +9001,7 @@ angular.module('app.controllers', ['ngCookies'])
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 // Check if user is admin or contentProvider
                 User.isInRoles({
+                    uid: User.getCurrentId(),
                     roleNames: ['$admin', '$contentProvider']
                 })
                 .$promise
@@ -10733,6 +10730,7 @@ angular.module('app.controllers', ['ngCookies'])
             EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
                 // Check if user is admin or contentProvider
                 User.isInRoles({
+                    uid: User.getCurrentId(),
                     roleNames: ['$admin', '$contentProvider', '$premium']
                 })
                 .$promise

@@ -556,9 +556,6 @@ module.exports = function(User) {
 
 
     User.assignRoles = function (uid, roleNames, cb) {
-        console.log('uid: ', uid);
-        console.log('roleNames: ', roleNames);
-        console.log('cb: ', cb);
         cb = cb || utils.createPromiseCallback();
 
         var Role = User.app.models.Role;
@@ -619,7 +616,6 @@ module.exports = function(User) {
                     return seriesCb();
                 }],
             function (err) {
-                console.log('done err: ', err);
                 if (err && err !== "ok") return assignCb(err);
                 return assignCb();
             });

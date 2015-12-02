@@ -920,6 +920,7 @@ var app = angular.module('app', [
                                     return false;
                                 } else {
                                     return User.isInRoles({
+                                        uid: User.getCurrentId(),
                                         roleNames: ['$admin', '$contentProvider']
                                     })
                                     .$promise
@@ -3037,6 +3038,7 @@ var app = angular.module('app', [
                                     return false;
                                 } else {
                                     return User.isInRoles({
+                                        uid: User.getCurrentId(),
                                         roleNames: ['$admin', '$contentProvider']
                                     })
                                     .$promise
@@ -3913,11 +3915,11 @@ var app = angular.module('app', [
                                 return User.count({})
                                 .$promise
                                 .then(function (usersCount) {
-                                    console.log('usersCount: ', usersCount);
+//                                    console.log('usersCount: ', usersCount);
                                     return usersCount;
                                 })
                                 .catch(function (err) {
-                                    console.log('Users.count err: ',err);
+//                                    console.log('Users.count err: ',err);
                                 });
                             }],
                             users: ['User', 'paginationParams', function (User, paginationParams) {
@@ -3925,11 +3927,11 @@ var app = angular.module('app', [
                                     paginationParams.options
                                 ).$promise
                                 .then(function (allUsers) {
-                                    console.log('allUsers: ', allUsers);
+//                                    console.log('allUsers: ', allUsers);
                                     return allUsers;
                                 })
                                 .catch(function (err) {
-                                    console.log('Snapshot.find err: ', err);
+//                                    console.log('Snapshot.find err: ', err);
                                 });
                             }]
                         }
@@ -3963,7 +3965,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (userFound) {
-                                    console.log('userFound: ', userFound);
+//                                    console.log('userFound: ', userFound);
                                     // attach user roles
                                     userFound.isAdmin = userRoles.isInRoles.$admin;
                                     userFound.isActive = userRoles.isInRoles.$active;
@@ -3971,28 +3973,24 @@ var app = angular.module('app', [
                                     return userFound;
                                 })
                                 .catch(function (err) {
-                                    console.log('User.findById err: ', err);
+//                                    console.log('User.findById err: ', err);
                                     return false;
                                 });
                             }],
                             
                             userRoles: ['User', '$stateParams', function(User, $stateParams) {
-                                if (!User.isAuthenticated()) {
-                                    return false;
-                                } else {
-                                    return User.isInRoles({
-                                        uid: $stateParams.userID,
-                                        roleNames: ['$admin', '$contentProvider', '$active']
-                                    })
-                                    .$promise
-                                    .then(function (userRoles) {
-                                        console.log('userRoles: ', userRoles);
-                                        return userRoles;
-                                    })
-                                    .catch(function (err) {
-                                        console.log('User.isInRoles err: ', err);
-                                    });
-                                }
+                                return User.isInRoles({
+                                    uid: $stateParams.userID,
+                                    roleNames: ['$admin', '$contentProvider', '$active']
+                                })
+                                .$promise
+                                .then(function (userRoles) {
+//                                        console.log('userRoles: ', userRoles);
+                                    return userRoles;
+                                })
+                                .catch(function (err) {
+//                                        console.log('User.isInRoles err: ', err);
+                                });
                             }]
                             
                         }
