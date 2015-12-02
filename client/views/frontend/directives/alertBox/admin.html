@@ -5,7 +5,7 @@
     </div>
     <div class="panel-body" ng-if="!isSuccess()">
         <ul class="error text-danger">
-            <li ng-repeat="error in getMessage('errorList')">{{error}}</li>
+            <li ng-repeat="error in getMessage('errorList') track by $index">{{error}}</li>
         </ul>
     </div>
 </div>

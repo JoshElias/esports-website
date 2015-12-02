@@ -7168,7 +7168,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // pagination
             function updateUsers (page, perpage, search, callback) {
-                console.log('page:', page);
                 $scope.fetching = true;
 
                 var options = {},
@@ -7200,46 +7199,44 @@ angular.module('app.controllers', ['ngCookies'])
                 
                 async.series([
                     function (seriesCallback) {
-                        console.log('first series');
                         User.count(countOptions)
                         .$promise
                         .then(function (count) {
-                            console.log('count:', count);
+//                            console.log('count:', count);
                             $scope.userPagination.total = count.count;
                             seriesCallback(null, count);
                         })
                         .catch(function (err) {
-                            console.log('err:', err);
+//                            console.log('err:', err);
                             seriesCallback(err);
                         });
                     },
                     function (seriesCallback) {
-                        console.log('second series');
                         User.find(options)
                         .$promise
                         .then(function (users) {
-                            console.log('users:', users);
+//                            console.log('users:', users);
                             $scope.userPagination.page = page;
                             $scope.userPagination.perpage = perpage;
                             $scope.users = users;
                             seriesCallback(null);
                         })
                         .catch(function (err) {
-                            console.log('err:', err);
+//                            console.log('err:', err);
                             seriesCallback(err);
                         });
                     }
                 ], function(err, results) {
                     $scope.fetching = false;
                     if (err) {
-                        console.log('series err:', err);
+//                        console.log('series err:', err);
                         if (callback) {
                             return callback(err);
                         }
-                        return;
-                    }
-                    if (callback) {
-                        return callback(null, results[0].count);
+                    } else {
+                        if (callback) {
+                            return callback(null, results[0].count);
+                        }
                     }
                 });
             }
@@ -7247,9 +7244,9 @@ angular.module('app.controllers', ['ngCookies'])
             // page flipping
             $scope.userPagination = AjaxPagination.new($scope.perpage, $scope.total,
                 function (page, perpage) {
-                console.log('userpagination');
                     var d = $q.defer();
                     updateUsers(page, perpage, $scope.search, function (err, data) {
+                        if (err) return console.log('pagination err:', err);
                         d.resolve(data);
                     });
                     return d.promise;
@@ -7275,11 +7272,30 @@ angular.module('app.controllers', ['ngCookies'])
                                     var indexToDel = $scope.users.indexOf(user);
                                     if (indexToDel !== -1) {
                                         $scope.users.splice(indexToDel, 1);
-                                        AlertService.setSuccess({ show: true, msg: user.username + ' deleted successfully' });
+                                        $scope.userPagination.total -= 1;
+                                        AlertService.setSuccess({ 
+                                            show: true,
+                                            msg: user.username + ' deleted successfully' 
+                                        });
                                     }
                                 })
                                 .catch(function (err) {
 //                                    console.log('User.destroyById err: ', err);
+                                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                                        $scope.errors = [];
+                                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                                            for (var i = 0; i < errArray.length; i++) {
+                                                $scope.errors.push(errArray[i]);
+                                            }
+                                        });
+                                        AlertService.setError({ 
+                                            show: true, msg: 'Unable to delete ' + user.name, 
+                                            errorList: $scope.errors
+                                        });
+                                        $window.scrollTo(0,0);
+                                        $scope.fetching = false;
+                                    }
+                                    
                                 });
                             }
                         },
@@ -7433,7 +7449,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // edit user
             $scope.editUser = function (user) {
-//                console.log('user id:', user.id);
+                console.log('user:', user);
                 if ($scope.user.changePassword 
                     && ($scope.user.newPassword !== $scope.user.password)) {
                     AlertService.setError({ show: true, msg: 'Unable to update user', errorList: ['Please confirm your password'] });
@@ -7500,7 +7516,7 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 ], function(err, results) {
                     if (err) {
-//                        console.log('series err: ', err);
+                        console.log('series err: ', err);
                         if (err.data.error && err.data.error.details && err.data.error.details.messages) {
                             $scope.errors = [];
                             angular.forEach(err.data.error.details.messages, function (errArray, key) {
