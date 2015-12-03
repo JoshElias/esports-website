@@ -785,9 +785,19 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/admin/hots.heroes.ability.edit.html'
     };
 })
-.directive('talentForm', ['Talent', function (Talent) {
+.directive('talentForm', ['Talent', function () {
     return {
         templateUrl: tpl + 'views/admin/hots.talents.form.html',
+    };
+}])
+.directive('talentHeroFormAdd', ['Talent', function () {
+    return {
+        templateUrl: tpl + 'views/admin/hots.heroes.talents.add.form.html',
+    };
+}])
+.directive('talentHeroFormEdit', ['Talent', function () {
+    return {
+        templateUrl: tpl + 'views/admin/hots.heroes.talents.edit.form.html',
     };
 }])
 .directive('charAddForm', function () {

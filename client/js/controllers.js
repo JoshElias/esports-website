@@ -11915,8 +11915,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     ])
     /* admin hots */
-    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'Pagination', 'heroes',
-        function ($scope, Hero, AlertService, Pagination, heroes) {
+    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'AjaxPagination', 'heroes', 'heroesCount',
+        function ($scope, Hero, AlertService, AjaxPagination, heroes, heroesCount) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -11925,11 +11925,43 @@ angular.module('app.controllers', ['ngCookies'])
 
             // load heroes
             $scope.heroes = heroes;
+            $scope.heroesCount = heroesCount;
+            
 //            $scope.page = data.page;
 //            $scope.perpage = data.perpage;
 //            $scope.total = data.total;
 //            $scope.search = data.search;
 
+            function updateHeroes (page, perpage, callback) {
+                Hero.find(getQuery(false, page, perpage))
+                .$promise
+                .then(function (data) {
+                    $scope.heroPagination.total = data.total;
+                    $scope.heroPagination.page = page;
+                    $timeout(function () {
+                        $scope.communityDecks = data; //DO THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF
+
+                        if (callback) {
+                            return callback(data);
+                        }
+                    });
+                }).then(function (err) {
+                    console.log("There's been an error:", err);
+                });;
+            }
+
+            $scope.heroPagination = AjaxPagination.new(12, heroesCount,
+                function (page, perpage) {
+                    var d = $q.defer();
+
+                    updateHeroes(page, perpage, function (data) {
+                        d.resolve(data.total);
+                    });
+
+                    return d.promise;
+                }
+            );
+            
             $scope.getHeroes = function () {
                 var options = {
                     limit: $scope.perpage,
@@ -11957,60 +11989,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.page = 1;
                 $scope.getHeroes();
             }
-
-            // pagination
-            $scope.pagination = {
-                page: function () {
-                    return $scope.page;
-                },
-                perpage: function () {
-                    return $scope.perpage;
-                },
-                results: function () {
-                    return $scope.total;
-                },
-                setPage: function (page) {
-                    $scope.page = page;
-                    $scope.getHeroes();
-                },
-                pagesArray: function () {
-                    var pages = [],
-                        start = 1,
-                        end = this.totalPages();
-
-                    if (this.totalPages() > 5) {
-                        if (this.page() < 3) {
-                            start = 1;
-                            end = start + 4;
-                        } else if (this.page() > this.totalPages() - 2) {
-                            end = this.totalPages();
-                            start = end - 4;
-                        } else {
-                            start = this.page() - 2;
-                            end = this.page() + 2;
-                        }
-
-                    }
-
-                    for (var i = start; i <= end; i++) {
-                        pages.push(i);
-                    }
-
-                    return pages;
-                },
-                isPage: function (page) {
-                    return (page === this.page());
-                },
-                totalPages: function (page) {
-                    return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
-                },
-                from: function () {
-                    return (this.page() * this.perpage()) - this.perpage() + 1;
-                },
-                to: function () {
-                    return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
-                }
-            };
 
             // delete hero
             $scope.deleteHero = function deleteHero(hero) {
@@ -12084,7 +12062,7 @@ angular.module('app.controllers', ['ngCookies'])
                     name: '',
                     tier: HOTS.tiers[0],
                     description: '',
-                    ability: null,
+                    ability: undefined,
                     className: '',
                     orderNum: 1
                 },
@@ -12137,15 +12115,11 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.abilityTypes = HOTS.abilityTypes;
             var box;
             $scope.abilityAddWnd = function () {
+                console.log('sup');
                 $scope.currentAbility = angular.copy(defaultAbility);
-                Util.getObjectID().success(function (data) {
-                    if (data.success) {
-                        $scope.currentAbility._id = data.id;
-                        box = bootbox.dialog({
-                            title: 'Add Ability',
-                            message: $compile('<div ability-add-form></div>')($scope)
-                        });
-                    }
+                box = bootbox.dialog({
+                    title: 'Add Ability',
+                    message: $compile('<div ability-add-form></div>')($scope)
                 });
             };
 
@@ -12182,25 +12156,32 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.talentTiers = HOTS.tiers;
             $scope.talentAddWnd = function () {
                 $scope.currentTalent = angular.copy(defaultTalent);
+//                $scope.talentAbilities = $scope.hero.abilities;
                 $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
                 box = bootbox.dialog({
                     title: 'Add Talent',
-                    message: $compile('<div talent-add-form></div>')($scope)
+                    message: $compile('<talent-hero-form-add></talent-hero-form-add>')($scope)
                 });
             };
 
             $scope.talentEditWnd = function (talent) {
                 $scope.currentTalent = talent;
+//                $scope.talentAbilities = $scope.hero.abilities;
                 $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
                 box = bootbox.dialog({
                     title: 'Edit Talent',
-                    message: $compile('<div talent-edit-form></div>')($scope)
+                    message: $compile('<talent-hero-form-edit></talent-hero-form-edit>')($scope)
                 });
             };
 
             $scope.addTalent = function () {
-                $scope.currentTalent.orderNum = $scope.hero.talents.length + 1;
-                $scope.hero.talents.push($scope.currentTalent);
+                if (_.isUndefined($scope.talents)) {
+                    $scope.talents = [];
+                }
+                
+                $scope.currentTalent.orderNum = $scope.talents.length + 1;
+                $scope.talents.push($scope.currentTalent);
+                
                 box.modal('hide');
                 $scope.currentTalent = false;
             };
@@ -12211,11 +12192,11 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.deleteTalent = function (talent) {
-                var index = $scope.hero.talents.indexOf(talent);
-                $scope.hero.talents.splice(index, 1);
+                var index = $scope.talents.indexOf(talent);
+                $scope.talents.splice(index, 1);
 
-                for (var i = 0; i < $scope.hero.talents.length; i++) {
-                    $scope.hero.talents[i].orderNum = i + 1;
+                for (var i = 0; i < $scope.talents.length; i++) {
+                    $scope.talents[i].orderNum = i + 1;
                 }
             };
 
@@ -12261,18 +12242,40 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.addHero = function () {
-                $scope.showError = false;
-
-                AdminHeroService.addHero($scope.hero).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
+                console.log($scope.hero);
+                
+                
+                _.each($scope.talents, function (talVal) {
+                    var t = _.find($scope.hero.abilities, function (abiVal) { return talVal.ability === abiVal.name });
+                    delete talVal.ability;
+                    
+                    if (_.isUndefined(t)) {
+                        $scope.hero.talents.push(talVal);
                     } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.hero.name + ' has been added successfully.' });
-                        $state.go('app.admin.hots.heroes.list');
+                        if (_.isUndefined(t.talents)) {
+                            t.talents = [];
+                        }
+                        
+                        t.talents.push(talVal);
                     }
-                });
+                })
+                
+                console.log($scope.hero);
+                
+                //TODO: POST THIS BITCH
+                
+//                $scope.showError = false;
+//
+//                AdminHeroService.addHero($scope.hero).success(function (data) {
+//                    if (!data.success) {
+//                        $scope.errors = data.errors;
+//                        $scope.showError = true;
+//                        $window.scrollTo(0,0);
+//                    } else {
+//                        AlertService.setSuccess({ show: true, msg: $scope.hero.name + ' has been added successfully.' });
+//                        $state.go('app.admin.hots.heroes.list');
+//                    }
+//                });
             };
         }
     ])
@@ -12621,8 +12624,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminMapsListCtrl', ['$scope', 'AdminMapService', 'AlertService', 'Pagination', 'data',
-        function ($scope, AdminMapService, AlertService, Pagination, data) {
+    .controller('AdminMapsListCtrl', ['$scope', 'Map', 'AlertService', 'Pagination', 'maps',
+        function ($scope, Map, AlertService, Pagination, maps) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -12630,14 +12633,17 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // load maps
-            $scope.maps = data.maps;
-            $scope.page = data.page;
-            $scope.perpage = data.perpage;
-            $scope.total = data.total;
-            $scope.search = data.search;
+            $scope.maps = maps;
+            
+//            $scope.page = data.page;
+//            $scope.perpage = data.perpage;
+//            $scope.total = data.total;
+//            $scope.search = data.search;
 
             $scope.getMaps = function () {
-                AdminMapService.getMaps($scope.page, $scope.perpage, $scope.search).then(function (data) {
+                Map.find($scope.page, $scope.perpage, $scope.search)
+                .$promise
+                .then(function (data) {
                     $scope.maps = data.maps;
                     $scope.page = data.page;
                     $scope.total = data.total;
@@ -12648,60 +12654,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.page = 1;
                 $scope.getMaps();
             }
-
-            // pagination
-            $scope.pagination = {
-                page: function () {
-                    return $scope.page;
-                },
-                perpage: function () {
-                    return $scope.perpage;
-                },
-                results: function () {
-                    return $scope.total;
-                },
-                setPage: function (page) {
-                    $scope.page = page;
-                    $scope.getMaps();
-                },
-                pagesArray: function () {
-                    var pages = [],
-                        start = 1,
-                        end = this.totalPages();
-
-                    if (this.totalPages() > 5) {
-                        if (this.page() < 3) {
-                            start = 1;
-                            end = start + 4;
-                        } else if (this.page() > this.totalPages() - 2) {
-                            end = this.totalPages();
-                            start = end - 4;
-                        } else {
-                            start = this.page() - 2;
-                            end = this.page() + 2;
-                        }
-
-                    }
-
-                    for (var i = start; i <= end; i++) {
-                        pages.push(i);
-                    }
-
-                    return pages;
-                },
-                isPage: function (page) {
-                    return (page === this.page());
-                },
-                totalPages: function (page) {
-                    return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
-                },
-                from: function () {
-                    return (this.page() * this.perpage()) - this.perpage() + 1;
-                },
-                to: function () {
-                    return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
-                }
-            };
 
             // delete map
             $scope.deleteMap = function deleteMap(map) {
@@ -12740,8 +12692,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminMapAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'AdminMapService',
-        function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, AdminMapService) {
+    .controller('AdminMapAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'Map',
+        function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, Map) {
             // default map
             var defaultMap = {
                 name : '',
@@ -12762,23 +12714,22 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.addMap = function () {
                 $scope.showError = false;
 
-                AdminMapService.addMap($scope.map).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.map.name + ' has been added successfully.' });
-                        $state.go('app.admin.hots.maps.list');
-                    }
+                $window.scrollTo(0,0);
+                Map.create({}, $scope.map)
+                .$promise
+                .then(function (data) {
+                    $state.go('app.admin.hots.maps.list');
+                })
+                .catch(function (err) {
+                    AlertService.setError({show: true, msg: 'There was an error creating a new map.'})
                 });
             };
         }
     ])
-    .controller('AdminMapEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'AdminMapService', 'data',
-        function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, AdminMapService, data) {
+    .controller('AdminMapEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'Map', 'map',
+        function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, Map, map) {
             // load map
-            $scope.map = data.map;
+            $scope.map = map;
 
             // select options
             $scope.mapActive = [
@@ -12789,21 +12740,25 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.editMap = function () {
                 $scope.showError = false;
 
-                AdminMapService.editMap($scope.map).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.map.name + ' has been updated successfully.' });
-                        $state.go('app.admin.hots.maps.list');
+                Map.update({
+                    where: {
+                        id: $scope.map.id
                     }
-                });
+                }, $scope.map)
+                .$promise
+                .then(function (data) {
+                    $window.scrollTo(0,0);
+//                    AlertService.setSuccess({ show: true, msg: $scope.map.name + ' has been updated successfully.' });
+                    $state.go('app.admin.hots.maps.list');
+                })
+                .catch(function (err) {
+                    AlertService.setError({show: true, msg: 'There was an error editing the map.'})
+                })
             };
         }
     ])
-    .controller('AdminHOTSGuideListCtrl', ['$scope', '$state', 'AdminHOTSGuideService', 'AlertService', 'Pagination', 'data',
-        function ($scope, $state, AdminHOTSGuideService, AlertService, Pagination, data) {
+    .controller('AdminHOTSGuideListCtrl', ['$scope', '$state', 'AdminHOTSGuideService', 'AlertService', 'Pagination', 'guides',
+        function ($scope, $state, AdminHOTSGuideService, AlertService, Pagination, guides) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -12811,11 +12766,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // load guides
-            $scope.guides = data.guides;
-            $scope.page = data.page;
-            $scope.perpage = data.perpage;
-            $scope.total = data.total;
-            $scope.search = data.search;
+            $scope.guides = guides;
+            
+//            $scope.page = data.page;
+//            $scope.perpage = data.perpage;
+//            $scope.total = data.total;
+//            $scope.search = data.search;
 
             $scope.getGuides = function () {
                 AdminHOTSGuideService.getGuides($scope.page, $scope.perpage, $scope.search).then(function (data) {
@@ -12830,65 +12786,12 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.getGuides();
             }
 
-            // pagination
-            $scope.pagination = {
-                page: function () {
-                    return $scope.page;
-                },
-                perpage: function () {
-                    return $scope.perpage;
-                },
-                results: function () {
-                    return $scope.total;
-                },
-                setPage: function (page) {
-                    $scope.page = page;
-                    $scope.getGuides();
-                },
-                pagesArray: function () {
-                    var pages = [],
-                        start = 1,
-                        end = this.totalPages();
-
-                    if (this.totalPages() > 5) {
-                        if (this.page() < 3) {
-                            start = 1;
-                            end = start + 4;
-                        } else if (this.page() > this.totalPages() - 2) {
-                            end = this.totalPages();
-                            start = end - 4;
-                        } else {
-                            start = this.page() - 2;
-                            end = this.page() + 2;
-                        }
-                    }
-
-                    for (var i = start; i <= end; i++) {
-                        pages.push(i);
-                    }
-
-                    return pages;
-                },
-                isPage: function (page) {
-                    return (page === this.page());
-                },
-                totalPages: function (page) {
-                    return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
-                },
-                from: function () {
-                    return (this.page() * this.perpage()) - this.perpage() + 1;
-                },
-                to: function () {
-                    return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
-                }
-            };
-
             // edit guide
             $scope.editGuide = function (guide) {
                 if (guide.guideType === 'hero') {
-                    return $state.go('app.admin.hots.guides.edit.hero', { guideID: guide._id });
+                    return $state.go('app.admin.hots.guides.edit.hero', { guideID: guide.id });
                 } else {
-                    return $state.go('app.admin.hots.guides.edit.map', { guideID: guide._id });
+                    return $state.go('app.admin.hots.guides.edit.map', { guideID: guide.id });
                 }
             };
 

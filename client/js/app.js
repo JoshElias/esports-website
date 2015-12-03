@@ -3422,6 +3422,13 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.heroes.list.html',
                         controller: 'AdminHeroListCtrl',
                         resolve: {
+                            heroesCount: ['Hero', function (Hero) {
+                                return Hero.count({})
+                                .$promise
+                                .then(function (data) {
+                                    return data.count;
+                                })
+                            }],
                             heroes: ['Hero', function (Hero) {
                                 var page = 1,
                                     perpage = 50,
@@ -3564,11 +3571,18 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.maps.list.html',
                         controller: 'AdminMapsListCtrl',
                         resolve: {
-                            data: ['AdminMapService', function (AdminMapService) {
+                            maps: ['Map', function (Map) {
                                 var page = 1,
                                     perpage = 50,
                                     search = '';
-                                return AdminMapService.getMaps(page, perpage, search);
+                                
+                                return Map.find({
+                                    filter: {
+                                        limit: perpage,
+                                        skip: (page*perpage) - perpage,
+                                    }
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -3594,9 +3608,17 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.maps.edit.html',
                         controller: 'AdminMapEditCtrl',
                         resolve: {
-                            data: ['$stateParams', 'AdminMapService', function ($stateParams, AdminMapService) {
+                            map: ['$stateParams', 'Map', function ($stateParams, Map) {
                                 var mapID = $stateParams.mapID;
-                                return AdminMapService.getMap(mapID);
+                                
+                                return Map.findOne({
+                                    filter: {
+                                        where: {
+                                            id: mapID
+                                        }
+                                    }
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -3622,11 +3644,18 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.list.html',
                         controller: 'AdminHOTSGuideListCtrl',
                         resolve: {
-                            data: ['AdminHOTSGuideService', function (AdminHOTSGuideService) {
+                            guides: ['Guide', function (Guide) {
                                 var page = 1,
                                     perpage = 50,
                                     search = '';
-                                return AdminHOTSGuideService.getGuides(page, perpage, search);
+                                
+                                return Guide.find({
+                                    filter: {
+                                        limit: perpage,
+                                        skip: (page*perpage) - perpage,
+                                    }
+                                })
+                                .$promise;
                             }]
                         }
                     }
@@ -3662,11 +3691,11 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.add.hero.html',
                         controller: 'AdminHOTSGuideAddHeroCtrl',
                         resolve: {
-                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-                                return AdminHeroService.getAllHeroes();
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({});
                             }],
-                            dataMaps: ['AdminMapService', function (AdminMapService) {
-                                return AdminMapService.getAllMaps();
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({});
                             }]
                         }
                     }
@@ -3681,11 +3710,11 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.add.map.html',
                         controller: 'AdminHOTSGuideAddMapCtrl',
                         resolve: {
-                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-                                return AdminHeroService.getAllHeroes();
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.find({});
                             }],
-                            dataMaps: ['AdminMapService', function (AdminMapService) {
-                                return AdminMapService.getAllMaps();
+                            dataMaps: ['Map', function (Map) {
+                                return Map.find({});
                             }]
                         }
                     }
