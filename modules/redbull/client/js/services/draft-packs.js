@@ -8,7 +8,7 @@ angular.module('redbull.services')
                 packs: [
                     {
                         expansion: 'Soulbound',
-                        packs: 1,
+                        packs: 0,
                         chances: {
                             basic: 100,
                             common: 0,

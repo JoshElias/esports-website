@@ -8,7 +8,8 @@ angular.module('redbull.directives')
                 isLoading: '=',
                 currentPack: '=',
                 currentCards: '=',
-                audioFiles: '='
+                audioFiles: '=',
+                addCardToPool: '='
             },
             link: function (scope, el, attrs) {
                 var startShake = null,
@@ -240,8 +241,16 @@ angular.module('redbull.directives')
                         cardInteraction();
                     }
                 };
-
-
+                
+                function getCardById (cardId, cards) {
+                    for (var i = 0; i < cards.length; i++) {
+                        if (cards[i].id === cardId) {
+                            return cards[i];
+                        }
+                    }
+                    return false;
+                }
+                
                 function cardInteraction() {
                     cardsFlipped = 0;
 
@@ -252,6 +261,7 @@ angular.module('redbull.directives')
                         card.turned = false;
                         card.clicked = false;
                         card.rarity = $(card).attr('data-rarity').toLowerCase();
+                        card.cardId = $(card).attr('data-card-id');
                         
                         $(card).unbind('mouseenter').mouseenter(function() {
                             if (!card.turned) {
@@ -265,11 +275,20 @@ angular.module('redbull.directives')
                         })
                         .unbind('mousedown').mousedown(function(e) {
                             card.turned = true;
-                            card.clicked = false;
                             
                             if (card.turned && !card.clicked) {
                                 card.clicked = true;
                                 cardsFlipped++;
+                                
+                                // add to pool
+                                if (typeof scope.addCardToPool === 'function') {
+                                    var poolCard = getCardById(card.cardId, scope.packs[scope.currentCards].cards);
+                                    if (poolCard) {
+                                        scope.$apply(function () {
+                                            scope.addCardToPool(poolCard);
+                                        });
+                                    }
+                                }
                                 
                                 if (cardsFlipped > 4) {
                                     $timeout(function() {
@@ -280,9 +299,7 @@ angular.module('redbull.directives')
                                     }, 500);
                                 }
 
-                                $timeout(function() {
-                                    playAudio('card_turn_over_' + card.rarity);
-                                }, 200);
+                                playAudio('card_turn_over_' + card.rarity);
                                 
                                 if (announcerRarities.indexOf(card.rarity) !== -1) {
                                     playAudio('announcer_' + card.rarity);
@@ -344,6 +361,12 @@ angular.module('redbull.directives')
                         done = false;
                     }, 1000);
                 });
+                
+                scope.$on('$destroy', function () {
+                    $timeout.cancel(startShake);
+                    $interval.cancel(shakeLoop);
+                });
+
             }
         };
     }
