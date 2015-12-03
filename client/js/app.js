@@ -3130,6 +3130,7 @@ var app = angular.module('app', [
                                     return false;
                                 } else {
                                     return User.isInRoles({
+                                        uid: User.getCurrentId(),
                                         roleNames: ['$admin', '$contentProvider']
                                     })
                                     .$promise
@@ -4003,8 +4004,6 @@ var app = angular.module('app', [
                                         filter: {
                                             fields: {
                                                 id: true,
-                                                email: true,
-                                                twitchID: true,
                                                 username: true
                                             },
                                             limit: 50,

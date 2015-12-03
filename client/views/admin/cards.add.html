@@ -1,20 +1,5 @@
-<div class="panel panel-danger error-modal animated" ng-show="showError">
-    <div class="panel-heading">
-        <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-        <strong>Unable to add card</strong>
-    </div>
-    <div class="panel-body">
-        <ul class="error text-danger">
-            <li ng-repeat="error in errors">{{error}}</li>
-        </ul>
-    </div>
-</div>
-<div class="panel panel-success animated" ng-show="showSuccess">
-    <div class="panel-heading">
-        <button type="button" class="close" aria-hidden="true" ng-click="showSuccess = false">&times;</button>
-        <strong>New card added successfully</strong>
-    </div>
-</div>
+<alert-box theme="admin"></alert-box>
+
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
     <div class="panel-heading">
@@ -171,7 +156,7 @@
     </div>
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="addCard()">Add Card</button>
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="addCard(card)">Add Card</button>
         </div>
     </div>
     </form>
