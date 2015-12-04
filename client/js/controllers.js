@@ -2826,8 +2826,8 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('AdminSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
-        function ($scope, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
+    .controller('AdminSnapshotEditCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech', 'Image',
+        function ($scope, $upload, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech, Image) {
 
             $scope.snapshot = snapshot;
             $scope.search = "";
@@ -2876,36 +2876,45 @@ angular.module('app.controllers', ['ngCookies'])
                     orderNum : 1
                 };
 
-//            // photo upload
-//            $scope.photoUpload = function ($files) {
-//                if (!$files.length) return false;
-//                var box = bootbox.dialog({
-//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-//                    closeButton: false,
-//                    animate: false
-//                });
-//                $scope.uploading = 0;
-//                box.modal('show');
-//                for (var i = 0; i < $files.length; i++) {
-//                    var file = $files[i];
-//                    $scope.upload = $upload.upload({
-//                        url: '/api/admin/upload/snapshot',
-//                        method: 'POST',
-//                        file: file
-//                    }).progress(function(evt) {
-//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-//                    }).success(function(data, status, headers, config) {
-//                        $scope.snapshot.photos = {
-//                            large: data.large,
-//                            medium: data.medium,
-//                            small: data.small,
-//                            square: data.square
-//                        };
+            // photo upload
+            $scope.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var box = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                    closeButton: false,
+                    animate: false
+                });
+                $scope.uploading = 0;
+                box.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    $scope.upload = $upload.upload({
+                        url: '/api/images/uploadSnapshot',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        console.log('data:', data);
+                        $scope.snapshot.photoNames = {
+                            large: data.large,
+                            medium: data.medium,
+                            small: data.small,
+                            square: data.square
+                        };
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-//                        box.modal('hide');
-//                    });
-//                }
-//            }
+                        $scope.snapshotImg = cdn2 + data.path + data.small;
+                        box.modal('hide');
+                    });
+                }
+            }
+
+            $scope.getImage = function () {
+                $scope.imgPath = 'snapshots/';
+                if (!$scope.snapshot) { return '/img/blank.png'; }
+//                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
+                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  cdn2 + '/img/blank.png' : cdn2 + $scope.imgPath + $scope.snapshot.photoNames.small;
+            };
 
             //REMOVE METHODS
             function removeAuthorAJAX(obj, cb) {
@@ -3035,12 +3044,6 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
             //REMOVE METHODS
-
-            $scope.getImage = function () {
-                $scope.imgPath = 'snapshots/';
-                if (!$scope.snapshot) { return '/img/blank.png'; }
-                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
-            };
 
             function populateMatches () {
                 var out = [],
@@ -3761,8 +3764,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
-        function ($scope, $compile, $timeout, $state, $window, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
+    .controller('AdminSnapshotAddCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
+        function ($scope, $upload, $compile, $timeout, $state, $window, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
 
             var deckBootBox = undefined,
                 authorBootBox = undefined,
@@ -3789,6 +3792,10 @@ angular.module('app.controllers', ['ngCookies'])
                     },
                     votes: 0,
                     active : false
+                },
+                defaultTier = {
+                    tier : 1,
+                    decks : []
                 },
                 defaultTierDeck = {
                     name: "",
@@ -3864,36 +3871,47 @@ angular.module('app.controllers', ['ngCookies'])
                 removeMatch(d.deck);
             }
 
-//            // photo upload
-//            $scope.photoUpload = function ($files) {
-//                if (!$files.length) return false;
-//                var box = bootbox.dialog({
-//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-//                    closeButton: false,
-//                    animate: false
-//                });
-//                $scope.uploading = 0;
-//                box.modal('show');
-//                for (var i = 0; i < $files.length; i++) {
-//                    var file = $files[i];
-//                    $scope.upload = $upload.upload({
-//                        url: '/api/admin/upload/snapshot',
-//                        method: 'POST',
-//                        file: file
-//                    }).progress(function(evt) {
-//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-//                    }).success(function(data, status, headers, config) {
-//                        $scope.snapshot.photos = {
-//                            large: data.large,
-//                            medium: data.medium,
-//                            small: data.small,
-//                            square: data.square
-//                        };
-//                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-//                        box.modal('hide');
-//                    });
-//                }
-//            };
+            // photo upload
+            $scope.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var box = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                    closeButton: false,
+                    animate: false
+                });
+                $scope.uploading = 0;
+                box.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    $scope.upload = $upload.upload({
+                        url: '/api/images/uploadSnapshot',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        console.log('data:', data);
+                        $scope.snapshot.photoNames = {
+                            large: data.large,
+                            medium: data.medium,
+                            small: data.small,
+                            square: data.square
+                        };
+//                        $scope.snapshotImg = $scope.app.cdn + data.path + data.small;
+                        $scope.snapshotImg = cdn2 + data.path + data.small;
+                        box.modal('hide');
+                    });
+                }
+            };
+            
+            $scope.getImage = function () {
+                $scope.imgPath = 'snapshots/';
+                if (!$scope.snapshot) { return cdn2 + '/img/blank.png'; }
+                console.log('$scope.snapshot.photoNames.large:', $scope.snapshot.photoNames.large);
+//                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
+                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ? cdn2 + '/img/blank.png' : cdn2 + $scope.imgPath + $scope.snapshot.photoNames.small;
+            };
+            
             function removeAuthorAJAX(obj, cb) {
                 if (!obj.id) { return cb(); }
                 
@@ -4018,12 +4036,6 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 }
             }
-            
-            $scope.getImage = function () {
-                $scope.imgPath = 'snapshots/';
-                if (!$scope.snapshot) { return '/img/blank.png'; }
-                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
-            };
 
             function escapeStr( str ) {
                 return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -4404,6 +4416,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeDeck = function (d, tierDeck) {
+                console.log('tierDeck:', tierDeck);
                 var indexesToRemove = {};
                 async.each($scope.snapshot.tiers, function (tier, eachCb1) {
                     async.each(tier.decks, function (deck, eachCb2) {
@@ -6228,14 +6241,14 @@ angular.module('app.controllers', ['ngCookies'])
                         Deck.create(deck)
                         .$promise
                         .then(function (deckInstance) {
-                            console.log('deck instance: ',deckInstance);
+//                            console.log('deck instance: ',deckInstance);
                             var deckId = deckInstance.id;
                             var deckSlug = deckInstance.slug;
                             seriesCallback(null, deckInstance);
                         })
                         .catch(function (err) {
                             if(err) {
-                                console.log('deck create err: ', err);
+//                                console.log('deck create err: ', err);
                                 seriesCallback(err);
                             }
                         });
@@ -6263,7 +6276,7 @@ angular.module('app.controllers', ['ngCookies'])
                             })
                             .catch(function (err) {
                                 if (err) {
-                                    console.log('card create err: ', err);
+//                                    console.log('card create err: ', err);
                                     deckCardCB(err);
                                 }
                             });
@@ -6283,11 +6296,11 @@ angular.module('app.controllers', ['ngCookies'])
                                 instructionsWithoutCoin: mulligan.instructionsWithoutCoin,
                                 deckId: deckInstance.id
                             };
-                            console.log('newMulligan: ', newMulligan);
+//                            console.log('newMulligan: ', newMulligan);
                             Mulligan.create(newMulligan)
                             .$promise
                             .then(function (mulliganCreated) {
-                                console.log('mulligan created: ', mulliganCreated);
+//                                console.log('mulligan created: ', mulliganCreated);
                                 
                                 async.each(mulligan.cardsWithCoin, function(cardWithCoin, cardWithCoinCB) {
                                     console.log('cardWithCoin: ', cardWithCoin);
@@ -6308,7 +6321,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     })
                                     .catch(function (err) {
                                         if (err) {
-                                            console.log('err: ', err);
+//                                            console.log('err: ', err);
                                             cardWithCoinCB(err);
                                         }
                                     });
@@ -6332,7 +6345,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     })
                                     .catch(function (err) {
                                         if (err) {
-                                            console.log('err: ', err);
+//                                            console.log('err: ', err);
                                             cardWithoutCoinCB(err);
                                         }
                                     });
@@ -6354,9 +6367,9 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                     },
                     function (deckInstance, seriesCallback) {
-                        console.log('matchup deckId: ', deckInstance.id);
-                        console.log('deck.matchups: ', deck.matchups);
-                        console.log('deckSlug: ', deckInstance.slug);
+//                        console.log('matchup deckId: ', deckInstance.id);
+//                        console.log('deck.matchups: ', deck.matchups);
+//                        console.log('deckSlug: ', deckInstance.slug);
                         async.each(deck.matchups, function(matchup, matchupCB) {
                             console.log('matchup: ', matchup);
                             var newMatchup = {
@@ -6391,7 +6404,7 @@ angular.module('app.controllers', ['ngCookies'])
                 function(err, deckInstance) {
                     if (err) {
                         $scope.errors = [];
-                        console.log('series err: ', err);
+//                        console.log('series err: ', err);
                         if (err.data.error && err.data.error.details && err.data.error.details.messages) {
                             angular.forEach(err.data.error.details.messages, function(errArray) {
                                 for (var i = 0; i < errArray.length; i++) {
@@ -6415,8 +6428,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'EventService', 'userRoles',
         function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, EventService, userRoles) {
-            console.log('init deck: ',deck);
-            
+//            console.log('init deck: ',deck);
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
@@ -7864,8 +7876,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminPollEditCtrl', ['$scope', '$state', '$window', '$compile', 'AlertService', 'poll', 'Poll',
-        function ($scope, $state, $window, $compile, AlertService, poll, Poll) {
+    .controller('AdminPollEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'AlertService', 'poll', 'Poll',
+        function ($scope, $upload, $state, $window, $compile, AlertService, poll, Poll) {
             var box,
                 defaultPoll = {
                     title : '',
@@ -7937,32 +7949,33 @@ angular.module('app.controllers', ['ngCookies'])
                 return out;
             }
 
-//            $scope.photoUpload = function ($files) {
-//                if (!$files.length) return false;
-//                var uploadBox = bootbox.dialog({
-//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-//                    closeButton: false,
-//                    animate: false
-//                });
-//                $scope.uploading = 0;
-//                uploadBox.modal('show');
-//                for (var i = 0; i < $files.length; i++) {
-//                    var file = $files[i];
-//                    $scope.upload = $upload.upload({
-//                        url: '/api/admin/upload/polls',
-//                        method: 'POST',
-//                        file: file
-//                    }).progress(function(evt) {
-//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-//                    }).success(function(data, status, headers, config) {
-//                        $scope.currentItem.photos = {
-//                            large: data.large,
-//                            thumb: data.thumb
-//                        };
-//                        uploadBox.modal('hide');
-//                    });
-//                }
-//            };
+            $scope.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var uploadBox = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                    closeButton: false,
+                    animate: false
+                });
+                $scope.uploading = 0;
+                uploadBox.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    $scope.upload = $upload.upload({
+                        url: '/api/images/uploadPoll',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        console.log('data:', data);
+                        $scope.currentItem.photos = {
+                            large: data.large,
+                            thumb: data.thumb
+                        };
+                        uploadBox.modal('hide');
+                    });
+                }
+            };
 
             $scope.itemEditWnd = function (item) {
                 $scope.currentItem = item;
@@ -7972,9 +7985,10 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             };
 
-            $scope.editItem = function () {
+            $scope.editItem = function (currentItem) {
+                console.log('$scope.currentItem:', currentItem);
                 box.modal('hide');
-                $scope.currentItem = false;
+//                $scope.currentItem = false;
             };
 
             $scope.deleteItem = function (item) {
@@ -8009,7 +8023,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.getImage = function () {
                 if (!$scope.currentItem) { return 'img/blank.png'; }
-                return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
+                return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.currentItem.photos.thumb;
             };
 
             $scope.editPoll = function () {
