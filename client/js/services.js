@@ -567,7 +567,7 @@ angular.module('app.services', [])
             return error;
         },
         setError: function (value) {
-            console.log("alertservice:", value);
+//            console.log("alertservice:", value);
             this.reset();
             error = value;
             alert = value.show || true;
