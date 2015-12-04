@@ -53,17 +53,18 @@ angular.module('app.controllers', ['ngCookies'])
             }, true);
 
         }])
-    .controller('RootCtrl', ['$scope', '$cookies', 'LoginModalService', 'LoopBackAuth', 'User', 'currentUser', 'LoginService',
-        function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService) {
-
-        $scope.$watch(function() { return LoopBackAuth.currentUserData; }, function (newUserData) {
-          $scope.currentUser = newUserData;
-        }, true);
-
+    .controller('RootCtrl', ['$scope', '$cookies', 'LoginModalService', 'LoopBackAuth', 'User', 'currentUser', 'LoginService', 'EventService',
+        function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService, EventService) {
+            
+        $scope.currentUser = currentUser;
+            
+        EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+            console.log("FUCK", data);
+            $scope.currentUser = data;
+        });
 
         $scope.loginModal = function (state) {
-            LoginModalService.showModal(state, function (data) {
-            });
+            LoginModalService.showModal(state, function (data) {});
         }
 
         $scope.logout = function() {
@@ -72,7 +73,7 @@ angular.module('app.controllers', ['ngCookies'])
                     console.log("ERROR LOGGING OUT:", err);
                     return;
                 }
-                
+                $scope.currentUser = undefined;
                 console.log("logged out successful");
             });
         }
@@ -221,10 +222,10 @@ angular.module('app.controllers', ['ngCookies'])
                                 limit: num
                             }
                         }).$promise.then(function (data) {
-                                $scope.articles.data = $scope.articles.data.concat(data);
-                                $scope.articles.offset += num;
-                                $scope.articles.loading = false;
-                            });
+                            $scope.articles.data = $scope.articles.data.concat(data);
+                            $scope.articles.offset += num;
+                            $scope.articles.loading = false;
+                        });
                     }
                 }
             };
@@ -12894,19 +12895,19 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', 'AlertService', 'AdminHOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps',
-        function ($scope, $state, AlertService, AdminHOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps) {
+    .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', 'AlertService', 'Guide', 'GuideBuilder', 'HOTS', 'heroes', 'maps',
+        function ($scope, $state, AlertService, Guide, GuideBuilder, HOTS, heroes, maps) {
             // create guide
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
-            $scope.$watch('guide', function(){
+            $scope.$watch('guide', function() {
                 $scope.app.settings.guide = $scope.guide;
             }, true);
 
             // heroes
-            $scope.heroes = dataHeroes.heroes;
+            $scope.heroes = heroes;
 
             // maps
-            $scope.maps = dataMaps.maps;
+            $scope.maps = maps;
 
             // steps
             $scope.step = 2;
@@ -12929,8 +12930,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < heroRows.length; row++) {
                 var heroes = [];
                 for (var i = 0; i < heroRows[row]; i++) {
-                    if (dataHeroes.heroes[index]) {
-                        heroes.push(dataHeroes.heroes[index]);
+                    if ($scope.heroes[index]) {
+                        heroes.push($scope.heroes[index]);
                     } else {
                         heroes.push({});
                     }
@@ -12954,8 +12955,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < mapRows.length; row++) {
                 var maps = [];
                 for (var i = 0; i < mapRows[row]; i++) {
-                    if (dataMaps.maps[index]) {
-                        maps.push(dataMaps.maps[index]);
+                    if ($scope.maps[index]) {
+                        maps.push($scope.maps[index]);
                     }
                     index++;
                 }
@@ -13033,8 +13034,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'HOTS', 'AdminHOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps',
-        function ($scope, $state, AlertService, HOTS, AdminHOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+    .controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'HOTS', 'AdminHOTSGuideService', 'GuideBuilder', 'heroes', 'maps',
+        function ($scope, $state, AlertService, HOTS, AdminHOTSGuideService, GuideBuilder, heroes, maps) {
             // create guide
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
             $scope.$watch('guide', function(){
@@ -13042,10 +13043,10 @@ angular.module('app.controllers', ['ngCookies'])
             }, true);
 
             // heroes
-            $scope.heroes = dataHeroes.heroes;
+            $scope.heroes = heroes;
 
             // maps
-            $scope.maps = dataMaps.maps;
+            $scope.maps = maps;
 
             // steps
             $scope.step = 2;
@@ -13068,8 +13069,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < mapRows.length; row++) {
                 var maps = [];
                 for (var i = 0; i < mapRows[row]; i++) {
-                    if (dataMaps.maps[index]) {
-                        maps.push(dataMaps.maps[index]);
+                    if ($scope.maps[index]) {
+                        maps.push($scope.maps[index]);
                     }
                     index++;
                 }
@@ -15138,19 +15139,25 @@ angular.module('app.controllers', ['ngCookies'])
         function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
 
             var box;
+            var votes = {};
+            
             $scope.pollsMain = dataPollsMain;
             $scope.pollsSide = dataPollsSide;
 
             $scope.toggleItem = function (poll, item) {
-                if (!poll.votes) { poll.votes = []; }
+                if (!votes[poll.id]) { votes[poll.id] = []; }
 
                 if ($scope.hasVoted(poll, item)) {
-                    poll.votes.splice(poll.votes.indexOf(item._id), 1);
+                    votes[poll.id].splice(votes[poll.id].indexOf(item.id), 1);
                 } else {
-                    if (poll.votes.length >= poll.voteLimit) { return false; }
-                    poll.votes.push(item._id);
+                    if (votes[poll.id].length >= poll.voteLimit) { return false; }
+                    votes[poll.id].push(item.id);
                 }
             };
+            
+            $scope.disableButton = function (poll) {
+                return (!votes[poll.id] || votes[poll.id].length !== 0) ? true : false;
+            }
 
             $scope.getContent = function (content) {
                 return $sce.trustAsHtml(content);
@@ -15165,6 +15172,7 @@ angular.module('app.controllers', ['ngCookies'])
                     big = 0,
                     item,
                     cnt;
+                
                 for (var i = 0; i < poll.items.length; i++) {
                     cnt = poll.items[i].votes;
                     if (cnt > big) { big = cnt; }
@@ -15184,8 +15192,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.hasVoted = function (poll, item) {
-                if (!poll.votes) { return false; }
-                return (poll.votes.indexOf(item._id) !== -1);
+                if (!votes[poll.id]) { return false; }
+                return (votes[poll.id].indexOf(item.id) !== -1);
             };
 
 
@@ -15197,7 +15205,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.setDoneVoting = function (poll, votes) {
-                return PollService.setStorage(poll._id, votes);
+                return PollService.setStorage(poll.id, votes);
             };
 
             $scope.getVotes = function (poll) {
@@ -15228,21 +15236,23 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.submitVote = function (poll) {
-                PollService.postVote(poll, poll.votes).success(function (data) {
-                    if(!data.success) {
-                        $data.errors = data.errors;
-                    } else {
-                        var votesString = $scope.getVotes(poll).join(',');
-                        $scope.setDoneVoting(poll, votesString);
-                        for (var i = 0; i != poll.items.length; i++){
-                            for (var j = 0; j != $scope.getVotes(poll).length; j++) {
-                                if (poll.items[i]._id == $scope.getVotes(poll)[j]) {
-                                    poll.items[i].votes++;
-                                }
-                            }
-                        }
-                    }
-                })
+                console.log(votes);
+                
+//                Poll.update(poll, poll.votes).success(function (data) {
+//                    if(!data.success) {
+//                        $data.errors = data.errors;
+//                    } else {
+//                        var votesString = $scope.getVotes(poll).join(',');
+//                        $scope.setDoneVoting(poll, votesString);
+//                        for (var i = 0; i != poll.items.length; i++){
+//                            for (var j = 0; j != $scope.getVotes(poll).length; j++) {
+//                                if (poll.items[i]._id == $scope.getVotes(poll)[j]) {
+//                                    poll.items[i].votes++;
+//                                }
+//                            }
+//                        }
+//                    }
+//                })
             };
         }
     ])

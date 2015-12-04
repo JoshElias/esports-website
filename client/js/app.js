@@ -417,6 +417,7 @@ var app = angular.module('app', [
                                     return false;
                                 } else {
                                     return User.isInRoles({
+                                        uid: User.getCurrentId(),
                                         roleNames: ['$admin', '$contentProvider', '$premium']
                                     })
                                     .$promise
@@ -758,7 +759,7 @@ var app = angular.module('app', [
                                             {
                                                 relation: "comments",
                                                 scope: {
-                                                    incldue: ['author']
+                                                    include: ['author']
                                                 }
                                             },
                                             {
@@ -1704,9 +1705,7 @@ var app = angular.module('app', [
                                             {
                                                 relation: "comments",
                                                 scope: {
-                                                    include: [
-                                                        "author"
-                                                    ]
+                                                    include: ["author"]
                                                 }
                                             }
                                         ]
@@ -2355,8 +2354,9 @@ var app = angular.module('app', [
                             return Poll.find({
                                 filter: {
                                     where: {
-                                        view: 'main'
-                                    }
+                                        viewType: 'main'
+                                    },
+                                    include: ['items']
                                 }
                             }).$promise;
                           }],
@@ -2364,8 +2364,9 @@ var app = angular.module('app', [
                             return Poll.find({
                                 filter: {
                                     where: {
-                                        view: 'side'
-                                    }
+                                        viewType: 'side'
+                                    },
+                                    include: ['items']
                                 }
                             }).$promise;
                           }]
@@ -2549,7 +2550,10 @@ var app = angular.module('app', [
                                                 relation: 'article'
                                             },
                                             {
-                                                relation: 'deck'
+                                                relation: 'deck',
+                                                scope: {
+                                                    fields: ['name','description','slug','id']
+                                                }
                                             },
                                             {
                                                 relation: 'guide'
@@ -2578,7 +2582,6 @@ var app = angular.module('app', [
                         controller: 'ProfileArticlesCtrl',
                         resolve: {
                             articles: ['userProfile', 'Article', function (userProfile, Article) {
-                                console.log(userProfile);
                                 return Article.find({
                                     filter: {
                                         where: {
@@ -2602,6 +2605,7 @@ var app = angular.module('app', [
                             decks: ['User', 'userProfile', 'Deck', 'AuthenticationService', function (User, userProfile, Deck, AuthenticationService) {
                                 return Deck.find({
                                     filter: {
+                                        order: "createdDate DESC",
                                         where: {
                                             authorId: userProfile.id
                                         },
@@ -3691,11 +3695,13 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.add.hero.html',
                         controller: 'AdminHOTSGuideAddHeroCtrl',
                         resolve: {
-                            dataHeroes: ['Hero', function (Hero) {
-                                return Hero.find({});
+                            heroes: ['Hero', function (Hero) {
+                                return Hero.find({})
+                                .$promise;
                             }],
-                            dataMaps: ['Map', function (Map) {
-                                return Map.find({});
+                            maps: ['Map', function (Map) {
+                                return Map.find({})
+                                .$promise;
                             }]
                         }
                     }
@@ -3710,11 +3716,13 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.add.map.html',
                         controller: 'AdminHOTSGuideAddMapCtrl',
                         resolve: {
-                            dataHeroes: ['Hero', function (Hero) {
-                                return Hero.find({});
+                            heroes: ['Hero', function (Hero) {
+                                return Hero.find({})
+                                .$promise;
                             }],
-                            dataMaps: ['Map', function (Map) {
-                                return Map.find({});
+                            maps: ['Map', function (Map) {
+                                return Map.find({})
+                                .$promise;
                             }]
                         }
                     }

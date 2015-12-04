@@ -75,7 +75,10 @@ module.exports = function(Guide) {
                         }
                     }
                 }
-                ctx.result = answer;
+              
+                if (typeof answer !== "undefined") {
+                  ctx.result = answer;
+                }
             }
             finalCb();
         }

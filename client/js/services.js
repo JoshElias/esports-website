@@ -84,7 +84,9 @@ angular.module('app.services', [])
             User.login(options, where)
             .$promise
             .then(function (data) {
-                EventService.emit("EVENT_LOGIN", data);
+                var user = data.__data.user;
+                
+                EventService.emit("EVENT_LOGIN", user);
                 return callback(null, data);
             })
             .catch(function (err) {
