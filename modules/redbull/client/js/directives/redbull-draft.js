@@ -3,6 +3,7 @@ angular.module('redbull.directives')
     function ($timeout, $interval, $rootScope){
         return {
             restrict: 'A',
+            //transclude: true,
             scope: {
                 packs: '=',
                 isLoading: '=',
@@ -18,7 +19,21 @@ angular.module('redbull.directives')
                     packDropped = false,
                     done = false,
                     cardsFlipped = 0,
-                    audioPath = 'modules/redbull/client/audio/';
+                    audioPath = 'modules/redbull/client/audio/',
+                    fastForwardSpeed = 500,
+                    fastForward = false,
+                    lastEvent = false,
+                    EVENT_PACK_DROPPED = 1,
+                    EVENT_CARD1_FLIPPED = 2,
+                    EVENT_CARD2_FLIPPED = 3,
+                    EVENT_CARD3_FLIPPED = 4,
+                    EVENT_CARD4_FLIPPED = 5,
+                    EVENT_CARD5_FLIPPED = 6,
+                    EVENT_DONE_CLICKED = 7,
+                    EVENT_DRAFT_COMPLETE = 8,
+                    EVENT_MAX = 20,
+                    fadeDuration = 1000,
+                    fadeDurationFF = 200;
 
                 function nextPack () {
                     scope.currentPack++;
@@ -35,6 +50,7 @@ angular.module('redbull.directives')
                     audio.src = $rootScope.app.cdn + audioPath + scope.audioFiles[audioName].file;
                     audio.load();
                     audio.volume = scope.audioFiles[audioName].volume;
+                    audio.playbackRate = (!fastForward) ? 1 : 2;
                     audio.play();
                 }
                 
@@ -47,6 +63,33 @@ angular.module('redbull.directives')
                 scope.$watch('isLoading', function (newValue) {
                     scope.isLoading = newValue;
                 });
+                
+                $(window).keydown(function(e) {
+                    console.log(1);
+                    if ((e.keyCode || e.which) == 65) {
+                        console.log(2);
+                        scope.fastForward();
+                    }
+                });
+                
+                function nextEvent() {
+                    console.log(4);
+                    if (lastEvent === EVENT_DRAFT_COMPLETE) {
+                        return false;
+                    }
+                    var e = $.Event('keydown');
+                    e.which = 32;
+                    e.keyCode = 32;
+                    $(window).trigger(e);
+                }
+                
+                scope.fastForward = function () {
+                    console.log(3);
+                    if (fastForward) { return false; }
+                    fastForward = true;
+                    el.addClass('fast-forward');
+                    nextEvent();
+                };
                 
                 // shake pack
                 function shakePack () {
@@ -94,7 +137,7 @@ angular.module('redbull.directives')
                             $('.pack-wrapper').css('z-index', '6');
 
                             // fade in glowing background
-                            $('.bg-glow').stop(true).fadeIn(1000);
+                            $('.bg-glow').stop(true).fadeIn(fadeDuration);
                         }
                     },
                     stop: function() {
@@ -113,7 +156,7 @@ angular.module('redbull.directives')
                             playAudio('pack_release');
 
                             // fade out glowing background
-                            $('.bg-glow').stop(true).fadeOut(500);
+                            $('.bg-glow').stop(true).fadeOut(fadeDuration / 2);
                             
                             // start shaking pack again
                             $interval.cancel(shakeLoop);
@@ -136,11 +179,12 @@ angular.module('redbull.directives')
                         $interval.cancel(shakeLoop);
                     }
                 }).mouseup(function() {
+                    // TODO: doesn't work
                     // if the pack's position is its original location, play the pack release sound
-                    var spot = $(this).position();
-                    if (Math.round(spot.left) == 192 && Math.round(spot.top) == 241) {
-                        playAudio('pack_release');
-                    }
+                    //var spot = $(this).position();
+                    //if (Math.round(spot.left) == 192 && Math.round(spot.top) == 241) {
+                    //    playAudio('pack_release');
+                    //}
 
                     // shrink pack
                     $(this).css('transform', 'perspective(0) rotateY(0) scale(1)');
@@ -170,7 +214,7 @@ angular.module('redbull.directives')
                             $(".pack").draggable("disable");
 
                             // fade in glowing background
-                            $('.bg-glow').stop(true).fadeIn(1000);
+                            $('.bg-glow').stop(true).fadeIn(fadeDuration);
 
                             // drop pack
                             packDrop();
@@ -201,6 +245,7 @@ angular.module('redbull.directives')
                 function packDrop() {
                     if (!packDropped) {
                         packDropped = true;
+                        lastEvent = EVENT_PACK_DROPPED;
 
                         // stop shaking pack
                         $timeout.cancel(startShake);
@@ -230,15 +275,20 @@ angular.module('redbull.directives')
                             // blur bg
                             el.addClass('blurred');
                             
+                            // update card interactions
+                            cardInteraction();
+
                             // set cards and show
-                            $('.cards').fadeIn(0);
+                            $('.cards').fadeIn(0, function () {
+                                if (fastForward) {
+                                    nextEvent();
+                                }
+                            });
                         });
 
                         // move back to bottom
                         $('.pack-wrapper').css('z-index', '2');
                         
-                        // update card interactions
-                        cardInteraction();
                     }
                 };
                 
@@ -280,6 +330,25 @@ angular.module('redbull.directives')
                                 card.clicked = true;
                                 cardsFlipped++;
                                 
+                                // set last event
+                                switch ( cardsFlipped ) {
+                                    case 1:
+                                        lastEvent = EVENT_CARD1_FLIPPED;
+                                        break;
+                                    case 2:
+                                        lastEvent = EVENT_CARD2_FLIPPED;
+                                        break;
+                                    case 3:
+                                        lastEvent = EVENT_CARD3_FLIPPED;
+                                        break;
+                                    case 4:
+                                        lastEvent = EVENT_CARD4_FLIPPED;
+                                        break;
+                                    case 5:
+                                        lastEvent = EVENT_CARD5_FLIPPED;
+                                        break;
+                                }
+                                
                                 // add to pool
                                 if (typeof scope.addCardToPool === 'function') {
                                     var poolCard = getCardById(card.cardId, scope.packs[scope.currentCards].cards);
@@ -290,15 +359,6 @@ angular.module('redbull.directives')
                                     }
                                 }
                                 
-                                if (cardsFlipped > 4) {
-                                    $timeout(function() {
-                                        playAudio('done_reveal');
-                                        $timeout(function() {
-                                            $('.btn-done').stop(true).fadeIn(750);
-                                        }, 500);
-                                    }, 500);
-                                }
-
                                 playAudio('card_turn_over_' + card.rarity);
                                 
                                 if (announcerRarities.indexOf(card.rarity) !== -1) {
@@ -311,6 +371,24 @@ angular.module('redbull.directives')
                                 } else {
                                     $(card).addClass('flipped-right');
                                 }
+                                
+                                if (cardsFlipped > 4) {
+                                    $timeout(function() {
+                                        playAudio('done_reveal');
+                                        $timeout(function() {
+                                            $('.btn-done').stop(true).fadeIn(((!fastForward) ? fadeDuration : fadeDurationFF), function () {
+                                                if (fastForward) {
+                                                    nextEvent();
+                                                }
+                                            });
+                                        }, ((!fastForward) ? fadeDuration / 2 : fadeDurationFF / 2));
+                                    }, ((!fastForward) ? fadeDuration / 2 : fadeDurationFF / 2));
+                                } else {
+                                    if (fastForward) {
+                                        //nextEvent();
+                                        $timeout(nextEvent, fastForwardSpeed);
+                                    }
+                                }
                             }
                         });
 
@@ -321,15 +399,19 @@ angular.module('redbull.directives')
                 $('.btn-done').mousedown(function() {
                     if (!done) {
                         done = true;
-
+                        lastEvent = EVENT_DONE_CLICKED;
+                        
                         playAudio('done_fade');
 
-                        $('.btn-done').stop(true, true).fadeOut(1000);
+                        $('.btn-done').stop(true, true).fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF));
 
-                        $('.cards').fadeOut(1000, function() {
+                        $('.cards').fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF), function() {
                             $('.card').removeClass('flipped-left flipped-right');
                             if (scope.currentCards + 1 < scope.packs.length) {
                                 nextCards();
+                                if (fastForward) {
+                                    nextEvent();
+                                }
                             }
                         });
 
@@ -351,6 +433,7 @@ angular.module('redbull.directives')
                                 });
                             } else {
                                 console.log('goto build');
+                                lastEvent = EVENT_DRAFT_COMPLETE;
                                 //$state.go(app.redbull.draft.build);
                             }
                             
@@ -359,7 +442,7 @@ angular.module('redbull.directives')
 
                     $timeout(function() {
                         done = false;
-                    }, 1000);
+                    }, ((!fastForward) ? fadeDuration : fadeDurationFF));
                 });
                 
                 scope.$on('$destroy', function () {

@@ -19,7 +19,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Basic',
-                        packs: 1,
+                        packs: 8,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -30,7 +30,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Naxxramas',
-                        packs: 1,
+                        packs: 4,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -41,7 +41,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Goblins Vs. Gnomes',
-                        packs: 1,
+                        packs: 8,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -52,18 +52,18 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Blackrock Mountain',
-                        packs: 1,
+                        packs: 4,
                         chances: {
                             basic: 0,
                             common: 74,
-                            rare: 21,
-                            epic: 4,
+                            rare: 25,
+                            epic: 0,
                             legendary: 1
                         }
                     },
                     {
                         expansion: 'The Grand Tournament',
-                        packs: 1,
+                        packs: 8,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -74,7 +74,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'League of Explorers',
-                        packs: 1,
+                        packs: 4,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -230,7 +230,7 @@ angular.module('redbull.services')
                 if (!chances) { /* TODO: ERROR */ }
                 
                 // basic
-                if (chances.basic > 0 && roll > start && roll <= chances.basic) {
+                if (chances.basic > 0 && ((roll > start && roll <= chances.basic) || ( chances.basic === 100 ))) {
                     pool = expansionCards.basic;
                 }
                 start += chances.basic;
@@ -262,6 +262,16 @@ angular.module('redbull.services')
                 // assign random card from pool
                 randomCard = this.getRandomInt(0, pool.length - 1);
                 card = pool[randomCard];
+                
+                if (card === undefined) {
+                    console.log('expansion: ', expansion);
+                    console.log('chances: ', chances);
+                    console.log('expansionCards: ', expansionCards);
+                    console.log('randomCard: ', randomCard);
+                    console.log('pool: ', pool);
+                    console.log('pool[randomCard]: ', pool[randomCard]);
+                    console.log('card: ', card);
+                }
                 
                 return card;
             },
