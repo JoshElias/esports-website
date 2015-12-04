@@ -46,7 +46,8 @@
         <div class="card-pool-title"></div>
         <div class="card-pool-cards">
             <div class="card-pool-card" ng-class="{multi:card.qty > 1 || card.card.rarity == 'Legendary'}" 
-                 ng-repeat="card in sortedPool() track by $index" 
+                 ng-repeat="card in sortedPool() track by card.card.id" 
+                 data-card-id="card.card.id" 
                  data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" 
                  data-tooltip-pos="left" pool-card>
                 <div class="card-pool-card-mana">{{card.card.cost}}</div>
