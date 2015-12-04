@@ -4737,7 +4737,6 @@ var app = angular.module('app', [
                         resolve: {
                             member: ['$stateParams', 'TeamMember', function ($stateParams, TeamMember) {
                                 var memberID = $stateParams.memberID;
-                                    console.log(memberID);
                                 return TeamMember.findById({
                                     id: memberID,
                                     filter: {}
@@ -4833,9 +4832,12 @@ var app = angular.module('app', [
                         resolve: {
                             vod: ['$stateParams', 'Vod', function ($stateParams, Vod) {
                                 var id = $stateParams.id;
-                                return Vod.findById({ id: id }, function(data) {
+                                return Vod.findById({ id: id })
+                                .$promise
+                                .then(function(data) {
                                     return data;
-                                }, function(err) {
+                                })
+                                .catch(function(err) {
                                     if(err) console.log('error: ',err);
                                 });
                             }]

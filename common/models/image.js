@@ -219,7 +219,7 @@ module.exports = function(Image) {
                         medium: medium,
                         small: small,
                         square: square,
-                        path: './photos/articles/'
+                        path: 'articles/'
                     });
                 });
             });
@@ -318,7 +318,7 @@ module.exports = function(Image) {
                             success: true,
                             large: large,
                             thumb: thumb,
-                            path: '/photos/polls'
+                            path: 'polls/'
                         });
                     });
                 });
@@ -396,7 +396,7 @@ module.exports = function(Image) {
                         return done(err, {
                             success: true,
                             large: large,
-                            path: '/photos/banners'
+                            path: 'banners/'
                         });
                     });
                 });
@@ -476,7 +476,7 @@ module.exports = function(Image) {
                         medium: medium,
                         small: small,
                         square: square,
-                        path: './photos/snapshots/'
+                        path: 'snapshots/'
                     });
                 });
             });
@@ -567,7 +567,7 @@ module.exports = function(Image) {
                         return done(err, {
                             success: true,
                             photo: photo,
-                            path: './photos/team/'
+                            path: 'team/'
                         });
                     });
                 });

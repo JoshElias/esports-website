@@ -1,16 +1,7 @@
-<div class="panel panel-danger error-modal animated" ng-show="showError">
-    <div class="panel-heading">
-        <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-        <strong>Unable to edit member</strong>
-    </div>
-    <div class="panel-body">
-        <ul class="error text-danger">
-            <li ng-repeat="error in errors">{{error.msg}}</li>
-        </ul>
-    </div>
-</div>
+<alert-box theme="admin"></alert-box>
+
 <div class="panel panel-default br-none">
-    <form name="form" role="form" class="form-horizontal">
+    <form name="teamMemberForm" id="teamMemberForm" role="form" class="form-horizontal" novalidate>
     <div class="panel-heading">
         Edit Member
     </div>
@@ -102,18 +93,18 @@
         <div class="form-group">
             <label for="memberPhoto" class="col-sm-2 control-label">Member Image</label>
             <div class="col-sm-10">
-                <input type="hidden" id="memberPhoto" name="memberPhoto" value="" ng-model="member.photo">
+                <input type="hidden" id="memberPhoto" name="memberPhoto" value="" ng-model="member.photoName">
                 <div class="photo-input">
                     <div class="upload-thumbnail upload-thumbnail-team">
-                        <div class="upload-drop" ng-show="member.photo === ''" ng-file-drop="photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
-                        <img src="{{getImage()}}" alt="" ng-show="member.photo !== ''">
+                        <div class="upload-drop" ng-show="member.photoName === ''" ng-file-drop="photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
+                        <img src="{{memberImg}}" alt="" ng-show="member.photoName !== ''">
                     </div>
                     <div class="btn-toolbar">
                         <button class="btn btn-default" ng-file-select="photoUpload($files)" onclick="this.value=null" accept="image/*">
-                            <span ng-show="member.photo === ''">Select image</span>
-                            <span ng-show="member.photo !== ''">Change image</span>
+                            <span ng-show="member.photoName === ''">Select image</span>
+                            <span ng-show="member.photoName !== ''">Change image</span>
                         </button>
-                        <a href="#" class="btn btn-danger" ng-click="member.photo = '';" ng-show="member.photo !== ''">Remove image</a>
+                        <a href="#" class="btn btn-danger" ng-click="member.photoName = '';" ng-show="member.photoName !== ''">Remove image</a>
                     </div>
                 </div>
             </div>
@@ -122,12 +113,13 @@
             <label class="col-sm-2 control-label">Active</label>
             <input ng-model="member.isActive" type="checkbox">
         </div>
-                
-        
 
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="member.game == '' || member.description == '' || (member.screenName == '' && member.fullName == '')" ng-click="saveMember()">Edit Member</button>
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="teamMemberForm.$invalid || fetching" ng-click="saveMember()">
+                <span ng-if="!fetching">Edit Member</span>
+                <span ng-if="fetching">Submitting <i class="fa fa-spinner fa-pulse"></i></span>
+            </button>
         </div>
     </div>
     </form>

@@ -1329,33 +1329,31 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.addCard = function addCard(card) {
                 console.log('card:', card);
                 $scope.fetching = true;
-                for (var i = 0; i < 20; i++) {
-                    Card.create(card)
-                    .$promise
-                    .then(function (newCard) {
-                        console.log('newCard: ', newCard);
+                Card.create(card)
+                .$promise
+                .then(function (newCard) {
+                    console.log('newCard: ', newCard);
+                    $scope.fetching = false;
+                    $state.transitionTo('app.admin.hearthstone.cards.list');
+                })
+                .catch(function (err) {
+                    console.log('newCard: ', err);
+                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                        $scope.errors = [];
+                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                            for (var i = 0; i < errArray.length; i++) {
+                                $scope.errors.push(errArray[i]);
+                            }
+                        });
+                        AlertService.setError({ 
+                            show: true, 
+                            msg: 'Unable to delete Card',
+                            errorList: $scope.errors 
+                        });
+                        $window.scrollTo(0,0);
                         $scope.fetching = false;
-                        $state.transitionTo('app.admin.hearthstone.cards.list');
-                    })
-                    .catch(function (err) {
-                        console.log('newCard: ', err);
-                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                            $scope.errors = [];
-                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                                for (var i = 0; i < errArray.length; i++) {
-                                    $scope.errors.push(errArray[i]);
-                                }
-                            });
-                            AlertService.setError({ 
-                                show: true, 
-                                msg: 'Unable to delete Card',
-                                errorList: $scope.errors 
-                            });
-                            $window.scrollTo(0,0);
-                            $scope.fetching = false;
-                        }
-                    });
-                }
+                    }
+                });
             };
         }
     ])
@@ -1495,7 +1493,9 @@ angular.module('app.controllers', ['ngCookies'])
 
 
             $scope.searchCards = function() {
-                updateCards(1, $scope.perpage, $scope.search, $scope.filterExpansion, $scope.filterClass, $scope.filterType, $scope.filterRarity, false);
+                updateCards(1, $scope.perpage, $scope.search, $scope.filterExpansion, $scope.filterClass, $scope.filterType, $scope.filterRarity, function (err, data) {
+                    if (err) return console.log('err: ', err);
+                });
             };
 
             // pagination
@@ -1566,22 +1566,16 @@ angular.module('app.controllers', ['ngCookies'])
                     countOptions.where.and.push({ rarity: filterRarity });
                 }
 
-                Card.count(countOptions, function (count) {
-                    Card.find(options, function (cards) {
-                        $scope.cardPagination.total = count.count;
-                        $scope.cardPagination.page = page;
-                        $scope.cardPagination.perpage = perpage;
-
-                        $timeout(function () {
-                            console.log('cardsFound: ', cards);
-                            console.log('cardCount: ', count.count);
-                            $scope.cards = cards;
-                            $scope.fetching = false;
-                            if (callback) {
-                                return callback(count.count);
-                            }
-                        });
-                    });
+                AjaxPagination.update(Card, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
+                    $scope.cardPagination.page = page;
+                    $scope.cardPagination.perpage = perpage;
+                    $scope.cards = data;
+                    $scope.cardPagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
             }
 
@@ -1589,9 +1583,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.cardPagination = AjaxPagination.new($scope.perpage, $scope.total,
                 function (page, perpage) {
                     var d = $q.defer();
-
-                    updateCards(page, perpage, $scope.search, $scope.filterExpansion, $scope.filterClass, $scope.filterType, $scope.filterRarity, function (data) {
-                        d.resolve(data);
+                    updateCards(page, perpage, $scope.search, $scope.filterExpansion, $scope.filterClass, $scope.filterType, $scope.filterRarity, function (err, count) {
+                        if (err) return console.log('pagination err:', err);
+                        d.resolve(count.count);
                     });
                     return d.promise;
                 }
@@ -2566,21 +2560,17 @@ angular.module('app.controllers', ['ngCookies'])
                         ]
                     }
                 }
-
-                Article.count(countOptions, function (count) {
-                    Article.find(options, function (articles) {
-                        $scope.articlePagination.total = count.count;
-                        $scope.articlePagination.page = page;
-                        $scope.articlePagination.perpage = perpage;
-
-                        $timeout(function () {
-                            $scope.articles = articles;
-                            $scope.fetching = false;
-                            if (callback) {
-                                return callback(count.count);
-                            }
-                        });
-                    });
+                
+                AjaxPagination.update(Article, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
+                    $scope.articlePagination.page = page;
+                    $scope.articlePagination.perpage = perpage;
+                    $scope.articles = data;
+                    $scope.articlePagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
             }
 
@@ -2588,9 +2578,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.articlePagination = AjaxPagination.new($scope.perpage, $scope.total,
                 function (page, perpage) {
                     var d = $q.defer();
-
-                    updateArticles(page, perpage, $scope.search, function (data) {
-                        d.resolve(data);
+                    updateArticles(page, perpage, $scope.search, function (err, count) {
+                        if (err) return console.log('err: ', err);
+                        d.resolve(count.count);
                     });
                     return d.promise;
                 }
@@ -2698,6 +2688,18 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                     });
                 });
+                
+                AjaxPagination.update(Snapshot, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
+                    $scope.snapshotPagination.page = page;
+                    $scope.snapshotPagination.perpage = perpage;
+                    $scope.snapshots = data;
+                    $scope.snapshotPagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
             }
 
             // page flipping
@@ -2705,8 +2707,9 @@ angular.module('app.controllers', ['ngCookies'])
                 function (page, perpage) {
                     var d = $q.defer();
 
-                    updateSnapshots(page, perpage, $scope.search, function (data) {
-                        d.resolve(data);
+                    updateSnapshots(page, perpage, $scope.search, function (err, count) {
+                        if (err) return console.log('err: ', err);
+                        d.resolve(count.count);
                     });
                     return d.promise;
                 }
@@ -4846,8 +4849,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminTeamListCtrl', ['$scope', 'TeamMember', 'teamMembers', 'AlertService',
-        function ($scope, TeamMember, teamMembers, AlertService) {
+    .controller('AdminTeamListCtrl', ['$scope', '$window', 'TeamMember', 'teamMembers', 'AlertService',
+        function ($scope, $window, TeamMember, teamMembers, AlertService) {
 
                 $scope.teamMembers = teamMembers;
             
@@ -4885,19 +4888,17 @@ angular.module('app.controllers', ['ngCookies'])
                             className: 'btn-danger',
                             callback: function () {
                                 TeamMember.destroyById({id:member.id}).$promise.then(function () {
-                                    var teamMembers = $scope.teamMembers[member.game];                                                      
+                                    var teamMembers = $scope.teamMembers[member.game];    
                                     var index = teamMembers.indexOf(member);
                                     if (index !== -1) {
+                                        AlertService.setSuccess({
+                                            show: true,
+                                            msg: member.screenName + ' deleted successfully'
+                                        });
+                                        $window.scrollTo(0, 0);
                                         teamMembers.splice(index, 1);
                                     }
-
-                                    $scope.success = {
-                                        show: true,
-                                        msg: member.screenName + ' - ' + member.fullName + ' deleted successfully.'
-                                        //$state.go('app.admin.teams.list');
-                                    };
                                 });
-                                
                             }
                         },
                         cancel: {
@@ -5040,57 +5041,74 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminTeamEditCtrl', ['$scope', '$state', '$window', '$compile', 'member', 'TeamMember', 'AlertService',
-        function ($scope, $state, $window, $compile, member, TeamMember, AlertService) {
-//removed upload
+    .controller('AdminTeamEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'member', 'TeamMember', 'AlertService', 'Image',
+        function ($scope, $upload, $state, $window, $compile, member, TeamMember, AlertService, Image) {
             $scope.member = member;
+            $scope.memberImg = $scope.member.photoName.length > 0 ? 'https://staging-cdn-tempostorm.netdna-ssl.com/team/' + $scope.member.photoName : 'https://staging-cdn-tempostorm.netdna-ssl.com/img/blank.png';
 
             // photo upload
-//            $scope.photoUpload = function ($files) {
-//                if (!$files.length) return false;
-//                var box = bootbox.dialog({
-//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-//                    closeButton: false,
-//                    animate: false
-//                });
-//                $scope.uploading = 0;
-//                box.modal('show');
-//                for (var i = 0; i < $files.length; i++) {
-//                    var file = $files[i];
-//                    $scope.upload = $upload.upload({
-//                        url: '/api/admin/upload/team',
-//                        method: 'POST',
-//                        file: file
-//                    }).progress(function(evt) {
-//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-//                    }).success(function(data, status, headers, config) {
-//                        $scope.member.photo = data.photo;
-//                        $scope.cardImg = $scope.app.cdn + data.path + data.photo;
-//                        box.modal('hide');
-//                    });
-//                }
-//            };
-//
-//            $scope.getImage = function () {
-//                $scope.imgPath = '/team/';
-//                if (!$scope.team) { return '/img/blank.png'; }
-//                return ($scope.snapshot.photo && $scope.snapshot.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photo;
-//            };
+            $scope.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var box = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                    closeButton: false,
+                    animate: false
+                });
+                $scope.uploading = 0;
+                box.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    $scope.upload = $upload.upload({
+                        url: '/api/images/uploadTeam',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        console.log('data:', data);
+                        $scope.member.photoName = data.photo;
+//                        $scope.memberImg = $scope.app.cdn + data.path + data.photo;
+                        $scope.memberImg = cdn2 + data.path + data.photo;
+                        box.modal('hide');
+                    });
+                }
+            };
+
+            $scope.getImage = function () {
+                $scope.imgPath = '/team/';
+                if (!$scope.team) { return '/img/blank.png'; }
+                return ($scope.snapshot.photo && $scope.snapshot.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photo;
+            };
 
             // save member
              $scope.saveMember = function () {
-               TeamMember.update({
-                    where: {id:$scope.member.id}
-               }, $scope.member).$promise.then(function (data) {
-                    AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' has been updated successfully.' })
-                       $state.go('app.admin.teams.list');
-               })
-               .catch(function(err){
-                    $scope.errors = data.errors;
-                    $scope.showError = true;
-                    $window.scrollTo(0,0);
-                    AlertService.setError({ show: true, msg: 'There was an error updating this member ' + err.status + ": " + err.data.error.message})
-                });
+                 $scope.fetching = true;
+                 TeamMember.upsert($scope.member)
+                 .$promise
+                 .then(function (userUpdated) {
+                     $scope.fetching = false;
+                     $window.scrollTo(0, 0);
+                     $state.go('app.admin.teams.list');
+                 })
+                 .catch(function (err) {
+                     if (err) {
+                         if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+                             $scope.errors = [];
+                             angular.forEach(err.data.error.details.messages, function (errArray, key) {
+                                 for (var i = 0; i < errArray.length; i++) {
+                                     $scope.errors.push(errArray[i]);
+                                 }
+                             });
+                             AlertService.setError({ 
+                                 show: true, 
+                                 msg: 'Unable to update User', 
+                                 errorList: $scope.errors
+                             });
+                             $window.scrollTo(0,0);
+                             $scope.fetching = false;
+                         }
+                     }
+                 });
             };
         }
     ])
@@ -5113,7 +5131,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = '';
 
             $scope.searchVods = function() {
-                updateVods(1, $scope.perpage, $scope.search, false);
+                updateVods(1, $scope.perpage, $scope.search, function(err, data) {
+                    if (err) return console.log('err: ', err);
+                });
             };
 
             // pagination
@@ -5145,20 +5165,16 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
 
-                Vod.count(countOptions, function (count) {
-                    Vod.find(options, function (vods) {
-                        $scope.vodPagination.total = count.count;
-                        $scope.vodPagination.page = page;
-                        $scope.vodPagination.perpage = perpage;
-
-                        $timeout(function () {
-                            $scope.vods = vods;
-                            $scope.fetching = false;
-                            if (callback) {
-                                return callback(count.count);
-                            }
-                        });
-                    });
+                AjaxPagination.update(Vod, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
+                    $scope.vodPagination.page = page;
+                    $scope.vodPagination.perpage = perpage;
+                    $scope.vods = data;
+                    $scope.vodPagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
             }
 
@@ -5166,9 +5182,71 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.vodPagination = AjaxPagination.new($scope.perpage, $scope.total,
                 function (page, perpage) {
                     var d = $q.defer();
+                    updateVods(page, perpage, $scope.search, function (err, count) {
+                        if (err) return console.log('pagination err:', err);
+                        d.resolve(count.count);
+                    });
+                    return d.promise;
+                }
+            );
+            
+            $scope.searchUsers = function() {
+                updateUsers(1, $scope.perpage, $scope.search, function(err, data) {
+                    if (err) return console.log('err: ', err);
+                });
+            };
 
-                    updateVods(page, perpage, $scope.search, function (data) {
-                        d.resolve(data);
+            // pagination
+            function updateUsers (page, perpage, search, callback) {
+                $scope.fetching = true;
+
+                var options = {},
+                    countOptions = {};
+
+                options.filter = {
+                    fields: paginationParams.options.filter.fields,
+                    order: "createdDate DESC",
+                    skip: ((page*perpage)-perpage),
+                    limit: paginationParams.perpage
+                };
+
+                if ($scope.search.length > 0) {
+                    options.filter.where = {
+                        or: [
+                            { email: { regexp: search } },
+                            { username: { regexp: search } },
+                            { twitchID: { regexp: search } }
+                        ]
+                    }
+                    countOptions.where = {
+                        or: [
+                            { email: { regexp: search } },
+                            { username: { regexp: search } },
+                            { twitchID: { regexp: search } }
+                        ]
+                    }
+                }
+                
+                AjaxPagination.update(User, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
+                    $scope.userPagination.page = page;
+                    $scope.userPagination.perpage = perpage;
+                    $scope.users = data;
+                    $scope.userPagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
+                });
+            }
+
+            // page flipping
+            $scope.userPagination = AjaxPagination.new($scope.perpage, $scope.total,
+                function (page, perpage) {
+                    var d = $q.defer();
+                    updateUsers(page, perpage, $scope.search, function (err, count) {
+                        if (err) return console.log('pagination err:', err);
+                        d.resolve(count.count);
                     });
                     return d.promise;
                 }
@@ -5255,24 +5333,28 @@ angular.module('app.controllers', ['ngCookies'])
         function ($scope, $state, $window, vod, AdminVodService, AlertService, Vod) {
             console.log('vod: ',vod);
             $scope.vod = vod;
-            console.log('is playlist: ', $scope.vod.youtubeId == "");
-            $scope.isPlaylist = ($scope.vod.youtubeId == "") ? true : false;
+            console.log('$scope.vod.youtubeId:', $scope.vod.youtubeId);
+            if (vod.youtubeId.length > 0) {
+                $scope.isPlaylist = false;
+            } else {
+                $scope.isPlaylist = true;
+            }
 
             // update VOD
             $scope.updateVod = function (vod) {
+                $scope.fetching = true;
                 Vod.update({
                     where: {
                         id: vod.id
                     }
-                }, vod, function(data) {
-                    if(data.$resolved) {
-                        $scope.success = {
-                            show: true,
-                            msg: vod.subtitle + ' was edited successfully.'
-                        };
-                    }
-                    $window.scrollTo(0,0);
-                }, function(err) {
+                }, vod)
+                .$promise
+                .then(function(data) {
+                    $scope.fetching = false;
+                    $state.go('app.admin.vod.list');
+                })
+                .catch(function(err) {
+                    $scope.fetching = false;
                     if(err) console.log('error: ',err);
                 });
             };
@@ -5295,7 +5377,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             // search on keyup
             $scope.searchDecks = function() {
-                updateDecks(1, $scope.perpage, $scope.search, false);
+                updateDecks(1, $scope.perpage, $scope.search, function(err, data) {
+                    if (err) return console.log('err: ', err);
+                });
             };
 
             // pagination
@@ -5329,32 +5413,30 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
 
-                Deck.count(countOptions, function (count) {
-                    Deck.find(options, function (decks) {
-                        $scope.deckPagination.total = count.count;
-                        $scope.deckPagination.page = page;
-                        $scope.deckPagination.perpage = perpage;
-
-                        $timeout(function() {
-                            $scope.decks = decks;
-                            $scope.fetching = false;
-
-                            if (callback) {
-                                return callback(count.count);
-                            }
-                        });
-                    });
+                AjaxPagination.update(Deck, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
+                    $scope.deckPagination.page = page;
+                    $scope.deckPagination.perpage = perpage;
+                    $scope.decks = data;
+                    $scope.deckPagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
             }
 
             // page flipping
             $scope.deckPagination = AjaxPagination.new($scope.perpage, $scope.total, function(page, perpage) {
                 var d = $q.defer();
-                updateDecks(page, perpage, $scope.search, function (data) {
-                    d.resolve(data);
+                updateDecks(page, perpage, $scope.search, function (err, count) {
+                    if (err) return console.log('err: ', err);
+                    d.resolve(count.count);
                 });
                 return d.promise;
             });
+            
+            
 
             // delete deck
             $scope.deleteDeck = function (deck) {
@@ -7162,7 +7244,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.searchUsers = function() {
                 updateUsers(1, $scope.perpage, $scope.search, function(err, data) {
-                    
+                    if (err) return console.log('err: ', err);
                 });
             };
 
@@ -7197,46 +7279,15 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
                 
-                async.series([
-                    function (seriesCallback) {
-                        User.count(countOptions)
-                        .$promise
-                        .then(function (count) {
-//                            console.log('count:', count);
-                            $scope.userPagination.total = count.count;
-                            seriesCallback(null, count);
-                        })
-                        .catch(function (err) {
-//                            console.log('err:', err);
-                            seriesCallback(err);
-                        });
-                    },
-                    function (seriesCallback) {
-                        User.find(options)
-                        .$promise
-                        .then(function (users) {
-//                            console.log('users:', users);
-                            $scope.userPagination.page = page;
-                            $scope.userPagination.perpage = perpage;
-                            $scope.users = users;
-                            seriesCallback(null);
-                        })
-                        .catch(function (err) {
-//                            console.log('err:', err);
-                            seriesCallback(err);
-                        });
-                    }
-                ], function(err, results) {
+                AjaxPagination.update(User, options, countOptions, function (err, data, count) {
                     $scope.fetching = false;
-                    if (err) {
-//                        console.log('series err:', err);
-                        if (callback) {
-                            return callback(err);
-                        }
-                    } else {
-                        if (callback) {
-                            return callback(null, results[0].count);
-                        }
+                    if (err) return console.log('got err:', err);
+                    $scope.userPagination.page = page;
+                    $scope.userPagination.perpage = perpage;
+                    $scope.users = data;
+                    $scope.userPagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
                     }
                 });
             }
@@ -7245,9 +7296,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.userPagination = AjaxPagination.new($scope.perpage, $scope.total,
                 function (page, perpage) {
                     var d = $q.defer();
-                    updateUsers(page, perpage, $scope.search, function (err, data) {
+                    updateUsers(page, perpage, $scope.search, function (err, count) {
                         if (err) return console.log('pagination err:', err);
-                        d.resolve(data);
+                        d.resolve(count.count);
                     });
                     return d.promise;
                 }
@@ -7552,7 +7603,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.search = '';
             
             $scope.searchPolls = function() {
-                updatePolls(1, $scope.perpage, $scope.search, false);
+                updatePolls(1, $scope.perpage, $scope.search, function (err, data) {
+                    if (err) return console.log('err: ', err);
+                });
             };
 
             // pagination
@@ -7588,21 +7641,16 @@ angular.module('app.controllers', ['ngCookies'])
                     }
                 }
 
-                Poll.count(countOptions, function (count) {
-                    Poll.find(options, function (polls) {
-                        $scope.pollPagination.total = count.count;
-                        $scope.pollPagination.page = page;
-                        $scope.pollPagination.perpage = perpage;
-
-                        $timeout(function () {
-                            console.log('pagination polls: ', polls);
-                            $scope.users = polls;
-                            $scope.fetching = false;
-                            if (callback) {
-                                return callback(count.count);
-                            }
-                        });
-                    });
+                AjaxPagination.update(Poll, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
+                    $scope.pollPagination.page = page;
+                    $scope.pollPagination.perpage = perpage;
+                    $scope.users = data;
+                    $scope.pollPagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
             }
 
@@ -7610,9 +7658,9 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.pollPagination = AjaxPagination.new($scope.perpage, $scope.total,
                 function (page, perpage) {
                     var d = $q.defer();
-
-                    updatePolls(page, perpage, $scope.search, function (data) {
-                        d.resolve(data);
+                    updatePolls(page, perpage, $scope.search, function (err, count) {
+                        if (err) return console.log('pagination err:', err);
+                        d.resolve(count.count);
                     });
                     return d.promise;
                 }
