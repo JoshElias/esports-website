@@ -10577,8 +10577,8 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'userRoles',
-        function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService, LoopBackAuth, userRoles) {
+    .controller('ArticleCtrl', ['$scope', '$parse', '$sce', 'Article', 'article', '$state', '$compile', '$window', 'bootbox', 'VoteService', 'MetaService', 'LoginModalService', 'LoopBackAuth', 'userRoles', 'EventService', 'User',
+        function ($scope, $parse, $sce, Article, article, $state, $compile, $window, bootbox, VoteService, MetaService, LoginModalService, LoopBackAuth, userRoles, EventService, User) {
 
             $scope.ArticleService = Article;
             $scope.article = article;
@@ -10593,6 +10593,30 @@ angular.module('app.controllers', ['ngCookies'])
 //            }
 //        });
 
+            EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+                // Check if user is admin or contentProvider
+                User.isInRoles({
+                    uid: User.getCurrentId(),
+                    roleNames: ['$admin', '$contentProvider', '$premium']
+                })
+                .$promise
+                .then(function (userRoles) {
+                    $scope.isUser.admin = userRoles.isInRoles.$admin;
+                    $scope.isUser.contentProvider = userRoles.isInRoles.$contentProvider;
+                    $scope.isUser.premium = userRoles.isInRoles.$premium;
+                    return userRoles;
+                })
+                .catch(function (roleErr) {
+                    console.log('roleErr: ', roleErr);
+                });
+            });
+            
+            EventService.registerListener(EventService.EVENT_LOGOUT, function (data) {
+                $scope.isUser.admin = false;
+                $scope.isUser.contentProvider = false;
+                $scope.isUser.premium = false;
+            });
+          
             $scope.isUser = {
                 admin: userRoles ? userRoles.isInRoles.$admin : false,
                 contentProvider: userRoles ? userRoles.isInRoles.$contentProvider : false,
@@ -14022,9 +14046,15 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'guideTalents', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User',
-        function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, guideTalents, LoginModalService, MetaService, LoopBackAuth, User) {
+    .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'guideTalents', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User', 'userRoles',
+        function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, guideTalents, LoginModalService, MetaService, LoopBackAuth, User, userRoles) {
 
+            $scope.isUser = {
+                admin: userRoles ? userRoles.isInRoles.$admin : false,
+                contentProvider: userRoles ? userRoles.isInRoles.$contentProvider : false,
+                premium: userRoles ? userRoles.isInRoles.$premium : false
+            };
+          
             $scope.guide = guide;
             $scope.Guide = Guide;
             $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0] : false;

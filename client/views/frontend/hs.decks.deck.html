@@ -112,7 +112,7 @@
                 <!-- / mana curve -->
 
                 <!-- deck -->
-                <div class="deck-deck" db-deck deck="deck" mulligan-hide="mulliganHide"></div>
+                <div ng-if="!isPremium() || isUser.premium || isUser.contentProvider || isUser.admin" class="deck-deck" db-deck deck="deck" mulligan-hide="mulliganHide"></div>
                 <!-- / deck -->
 
             </div>

@@ -86,12 +86,12 @@
                 </div>
                 <!-- / guide description -->
 
-                <div class="guide-subscribe" ng-if="isPremium() && !app.user.isSubscribed() && !app.user.isAdmin() && !app.user.isProvider()">
+                <div class="guide-subscribe" ng-if="isPremium() && !isUser.premium && !isUser.admin && !isUser.contentProvider">
                     <div premium-page></div>
                 </div>
 
                 <!-- guide -->
-                <div ng-if="!isPremium() || app.user.isSubscribed() || app.user.isAdmin() || app.user.isProvider()">
+                <div ng-if="!isPremium() || isUser.premium || isUser.contentProvider || isUser.admin">
 
                     <!-- guide video -->
                     <div class="guide-section" ng-if="guide.video && guide.video.length">

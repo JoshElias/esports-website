@@ -1682,6 +1682,24 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guides.guide.html',
                         controller: 'HOTSGuideCtrl',
                         resolve: {
+                            userRoles: ['User', function(User) {
+                                if (!User.isAuthenticated()) {
+                                    return false;
+                                } else {
+                                    return User.isInRoles({
+                                        uid: User.getCurrentId(),
+                                        roleNames: ['$admin', '$contentProvider', '$premium']
+                                    })
+                                    .$promise
+                                    .then(function (userRoles) {
+                                        console.log('userRoles: ', userRoles);
+                                        return userRoles;
+                                    })
+                                    .catch(function (roleErr) {
+                                        console.log('roleErr: ', roleErr);
+                                    });
+                                }
+                            }],
                             guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
                                 console.log('slug: ', slug);

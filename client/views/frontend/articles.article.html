@@ -35,7 +35,7 @@
                     <div premium-page></div>
                 </div>
                 
-                <div ng-if="isPremium() || isUser.premium || isUser.admin || isUser.contentProvider">
+                <div ng-if="!isPremium() || isUser.premium || isUser.admin || isUser.contentProvider">
                     <!-- article content -->
                     <div class="article-page-content clearfix" ng-bind-html="getContent()" ts-article></div>
                     <!-- / article content -->
