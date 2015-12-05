@@ -55,7 +55,7 @@
                 </div>
 
                 <div ng-repeat="poll in pollsMain | orderBy: '-createdDate'">
-                    <div class="poll" ng-class="{ 'poll-img' : poll.type == 'img'}" ng-if="poll.type == 'img' && !isDoneVoting(poll.id)">
+                    <div class="poll" ng-class="{ 'poll-img' : poll.pollType == 'img'}" ng-if="poll.pollType == 'img' && !isDoneVoting(poll.id)">
                         <div class="poll-title-wrapper">
                             <h1 class="poll-title">{{poll.title}}</h1>
                             <h4 class="poll-subTitle">{{poll.subTitle}}</h4>
@@ -76,11 +76,11 @@
                         </div>
 
                         <div>
-                            <button type="submit" class="btn btn-blue" ng-disabled="!poll.votes.length" ng-click="submitVote(poll)">SUBMIT VOTE</button>
+                            <button type="submit" class="btn btn-blue" ng-disabled="!disableButton(poll)" ng-click="submitVote(poll)">SUBMIT VOTE</button>
                         </div>
                     </div>
 
-                    <div class="poll" ng-class="{ 'poll-txt' : poll.type == 'txt'}" ng-if="poll.type == 'txt' && !isDoneVoting(poll._id)">
+                    <div class="poll" ng-class="{ 'poll-txt' : poll.pollType == 'txt'}" ng-if="poll.pollType == 'txt' && !isDoneVoting(poll._id)">
                         <div class="poll-title-wrapper">
                             <h1 class="poll-title">{{poll.title}}</h1>
                             <h4 class="poll-subTitle">{{poll.subTitle}}</h4>
@@ -100,12 +100,12 @@
                         </div>
 
                         <div>
-                            <button type="submit" class="btn btn-blue" ng-disabled="!poll.votes.length" ng-click="submitVote(poll)">SUBMIT VOTE</button>
+                            <button type="submit" class="btn btn-blue" ng-disabled="!disableButton(poll)" ng-click="submitVote(poll)">SUBMIT VOTE</button>
                         </div>
                     </div>
 
 
-                    <div class="poll" ng-class="{ 'poll-txt' : poll.type == 'txt'}" ng-if="poll.type == 'txt' && isDoneVoting(poll._id)">
+                    <div class="poll" ng-class="{ 'poll-txt' : poll.pollType == 'txt'}" ng-if="poll.pollType == 'txt' && isDoneVoting(poll._id)">
                         <div class="poll-title-wrapper">
                             <h1 class="poll-title">{{poll.title}}</h1>
                             <h4 class="poll-subTitle">{{poll.subTitle}}</h4>
@@ -128,7 +128,7 @@
                         </div>
                     </div>
 
-                    <div class="poll" ng-class="{ 'poll-img' : poll.type == 'img'}" ng-if="poll.type == 'img' && isDoneVoting(poll._id)">
+                    <div class="poll" ng-class="{ 'poll-img' : poll.pollType == 'img'}" ng-if="poll.pollType == 'img' && isDoneVoting(poll._id)">
                         <div class="poll-title-wrapper">
                             <h1 class="poll-title">{{poll.title}}</h1>
                             <h4 class="poll-subTitle">{{poll.subTitle}}</h4>

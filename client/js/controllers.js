@@ -53,17 +53,18 @@ angular.module('app.controllers', ['ngCookies'])
             }, true);
 
         }])
-    .controller('RootCtrl', ['$scope', '$cookies', 'LoginModalService', 'LoopBackAuth', 'User', 'currentUser', 'LoginService',
-        function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService) {
-
-        $scope.$watch(function() { return LoopBackAuth.currentUserData; }, function (newUserData) {
-          $scope.currentUser = newUserData;
-        }, true);
-
+    .controller('RootCtrl', ['$scope', '$cookies', 'LoginModalService', 'LoopBackAuth', 'User', 'currentUser', 'LoginService', 'EventService',
+        function ($scope, $cookies, LoginModalService, LoopBackAuth, User, currentUser, LoginService, EventService) {
+            
+        $scope.currentUser = currentUser;
+            
+        EventService.registerListener(EventService.EVENT_LOGIN, function (data) {
+            console.log("FUCK", data);
+            $scope.currentUser = data;
+        });
 
         $scope.loginModal = function (state) {
-            LoginModalService.showModal(state, function (data) {
-            });
+            LoginModalService.showModal(state, function (data) {});
         }
 
         $scope.logout = function() {
@@ -72,7 +73,7 @@ angular.module('app.controllers', ['ngCookies'])
                     console.log("ERROR LOGGING OUT:", err);
                     return;
                 }
-                
+                $scope.currentUser = undefined;
                 console.log("logged out successful");
             });
         }
@@ -221,10 +222,10 @@ angular.module('app.controllers', ['ngCookies'])
                                 limit: num
                             }
                         }).$promise.then(function (data) {
-                                $scope.articles.data = $scope.articles.data.concat(data);
-                                $scope.articles.offset += num;
-                                $scope.articles.loading = false;
-                            });
+                            $scope.articles.data = $scope.articles.data.concat(data);
+                            $scope.articles.offset += num;
+                            $scope.articles.loading = false;
+                        });
                     }
                 }
             };
@@ -2826,8 +2827,8 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('AdminSnapshotEditCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
-        function ($scope, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
+    .controller('AdminSnapshotEditCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'snapshot', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech', 'Image',
+        function ($scope, $upload, $compile, $timeout, $state, $window, snapshot, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech, Image) {
 
             $scope.snapshot = snapshot;
             $scope.search = "";
@@ -2876,36 +2877,45 @@ angular.module('app.controllers', ['ngCookies'])
                     orderNum : 1
                 };
 
-//            // photo upload
-//            $scope.photoUpload = function ($files) {
-//                if (!$files.length) return false;
-//                var box = bootbox.dialog({
-//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-//                    closeButton: false,
-//                    animate: false
-//                });
-//                $scope.uploading = 0;
-//                box.modal('show');
-//                for (var i = 0; i < $files.length; i++) {
-//                    var file = $files[i];
-//                    $scope.upload = $upload.upload({
-//                        url: '/api/admin/upload/snapshot',
-//                        method: 'POST',
-//                        file: file
-//                    }).progress(function(evt) {
-//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-//                    }).success(function(data, status, headers, config) {
-//                        $scope.snapshot.photos = {
-//                            large: data.large,
-//                            medium: data.medium,
-//                            small: data.small,
-//                            square: data.square
-//                        };
+            // photo upload
+            $scope.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var box = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                    closeButton: false,
+                    animate: false
+                });
+                $scope.uploading = 0;
+                box.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    $scope.upload = $upload.upload({
+                        url: '/api/images/uploadSnapshot',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        console.log('data:', data);
+                        $scope.snapshot.photoNames = {
+                            large: data.large,
+                            medium: data.medium,
+                            small: data.small,
+                            square: data.square
+                        };
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-//                        box.modal('hide');
-//                    });
-//                }
-//            }
+                        $scope.snapshotImg = cdn2 + data.path + data.small;
+                        box.modal('hide');
+                    });
+                }
+            }
+
+            $scope.getImage = function () {
+                $scope.imgPath = 'snapshots/';
+                if (!$scope.snapshot) { return '/img/blank.png'; }
+//                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
+                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  cdn2 + '/img/blank.png' : cdn2 + $scope.imgPath + $scope.snapshot.photoNames.small;
+            };
 
             //REMOVE METHODS
             function removeAuthorAJAX(obj, cb) {
@@ -3035,12 +3045,6 @@ angular.module('app.controllers', ['ngCookies'])
                 }
             }
             //REMOVE METHODS
-
-            $scope.getImage = function () {
-                $scope.imgPath = 'snapshots/';
-                if (!$scope.snapshot) { return '/img/blank.png'; }
-                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
-            };
 
             function populateMatches () {
                 var out = [],
@@ -3761,8 +3765,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminSnapshotAddCtrl', ['$scope', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
-        function ($scope, $compile, $timeout, $state, $window, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
+    .controller('AdminSnapshotAddCtrl', ['$scope', '$upload', '$compile', '$timeout', '$state', '$window', 'AlertService', 'Util', 'bootbox', 'Deck', 'Snapshot', 'User', 'Card', 'SnapshotAuthor', 'DeckMatchup', 'DeckTier', 'DeckTech', 'CardTech',
+        function ($scope, $upload, $compile, $timeout, $state, $window, AlertService, Util, bootbox, Deck, Snapshot, User, Card, SnapshotAuthor, DeckMatchup, DeckTier, DeckTech, CardTech) {
 
             var deckBootBox = undefined,
                 authorBootBox = undefined,
@@ -3789,6 +3793,10 @@ angular.module('app.controllers', ['ngCookies'])
                     },
                     votes: 0,
                     active : false
+                },
+                defaultTier = {
+                    tier : 1,
+                    decks : []
                 },
                 defaultTierDeck = {
                     name: "",
@@ -3864,36 +3872,47 @@ angular.module('app.controllers', ['ngCookies'])
                 removeMatch(d.deck);
             }
 
-//            // photo upload
-//            $scope.photoUpload = function ($files) {
-//                if (!$files.length) return false;
-//                var box = bootbox.dialog({
-//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-//                    closeButton: false,
-//                    animate: false
-//                });
-//                $scope.uploading = 0;
-//                box.modal('show');
-//                for (var i = 0; i < $files.length; i++) {
-//                    var file = $files[i];
-//                    $scope.upload = $upload.upload({
-//                        url: '/api/admin/upload/snapshot',
-//                        method: 'POST',
-//                        file: file
-//                    }).progress(function(evt) {
-//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-//                    }).success(function(data, status, headers, config) {
-//                        $scope.snapshot.photos = {
-//                            large: data.large,
-//                            medium: data.medium,
-//                            small: data.small,
-//                            square: data.square
-//                        };
-//                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-//                        box.modal('hide');
-//                    });
-//                }
-//            };
+            // photo upload
+            $scope.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var box = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                    closeButton: false,
+                    animate: false
+                });
+                $scope.uploading = 0;
+                box.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    $scope.upload = $upload.upload({
+                        url: '/api/images/uploadSnapshot',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        console.log('data:', data);
+                        $scope.snapshot.photoNames = {
+                            large: data.large,
+                            medium: data.medium,
+                            small: data.small,
+                            square: data.square
+                        };
+//                        $scope.snapshotImg = $scope.app.cdn + data.path + data.small;
+                        $scope.snapshotImg = cdn2 + data.path + data.small;
+                        box.modal('hide');
+                    });
+                }
+            };
+            
+            $scope.getImage = function () {
+                $scope.imgPath = 'snapshots/';
+                if (!$scope.snapshot) { return cdn2 + '/img/blank.png'; }
+                console.log('$scope.snapshot.photoNames.large:', $scope.snapshot.photoNames.large);
+//                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
+                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ? cdn2 + '/img/blank.png' : cdn2 + $scope.imgPath + $scope.snapshot.photoNames.small;
+            };
+            
             function removeAuthorAJAX(obj, cb) {
                 if (!obj.id) { return cb(); }
                 
@@ -4018,12 +4037,6 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                 }
             }
-            
-            $scope.getImage = function () {
-                $scope.imgPath = 'snapshots/';
-                if (!$scope.snapshot) { return '/img/blank.png'; }
-                return ($scope.snapshot.photoNames && $scope.snapshot.photoNames.small === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.snapshot.photoNames.small;
-            };
 
             function escapeStr( str ) {
                 return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -4404,6 +4417,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.removeDeck = function (d, tierDeck) {
+                console.log('tierDeck:', tierDeck);
                 var indexesToRemove = {};
                 async.each($scope.snapshot.tiers, function (tier, eachCb1) {
                     async.each(tier.decks, function (deck, eachCb2) {
@@ -6228,14 +6242,14 @@ angular.module('app.controllers', ['ngCookies'])
                         Deck.create(deck)
                         .$promise
                         .then(function (deckInstance) {
-                            console.log('deck instance: ',deckInstance);
+//                            console.log('deck instance: ',deckInstance);
                             var deckId = deckInstance.id;
                             var deckSlug = deckInstance.slug;
                             seriesCallback(null, deckInstance);
                         })
                         .catch(function (err) {
                             if(err) {
-                                console.log('deck create err: ', err);
+//                                console.log('deck create err: ', err);
                                 seriesCallback(err);
                             }
                         });
@@ -6263,7 +6277,7 @@ angular.module('app.controllers', ['ngCookies'])
                             })
                             .catch(function (err) {
                                 if (err) {
-                                    console.log('card create err: ', err);
+//                                    console.log('card create err: ', err);
                                     deckCardCB(err);
                                 }
                             });
@@ -6283,11 +6297,11 @@ angular.module('app.controllers', ['ngCookies'])
                                 instructionsWithoutCoin: mulligan.instructionsWithoutCoin,
                                 deckId: deckInstance.id
                             };
-                            console.log('newMulligan: ', newMulligan);
+//                            console.log('newMulligan: ', newMulligan);
                             Mulligan.create(newMulligan)
                             .$promise
                             .then(function (mulliganCreated) {
-                                console.log('mulligan created: ', mulliganCreated);
+//                                console.log('mulligan created: ', mulliganCreated);
                                 
                                 async.each(mulligan.cardsWithCoin, function(cardWithCoin, cardWithCoinCB) {
                                     console.log('cardWithCoin: ', cardWithCoin);
@@ -6308,7 +6322,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     })
                                     .catch(function (err) {
                                         if (err) {
-                                            console.log('err: ', err);
+//                                            console.log('err: ', err);
                                             cardWithCoinCB(err);
                                         }
                                     });
@@ -6332,7 +6346,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     })
                                     .catch(function (err) {
                                         if (err) {
-                                            console.log('err: ', err);
+//                                            console.log('err: ', err);
                                             cardWithoutCoinCB(err);
                                         }
                                     });
@@ -6354,9 +6368,9 @@ angular.module('app.controllers', ['ngCookies'])
                         });
                     },
                     function (deckInstance, seriesCallback) {
-                        console.log('matchup deckId: ', deckInstance.id);
-                        console.log('deck.matchups: ', deck.matchups);
-                        console.log('deckSlug: ', deckInstance.slug);
+//                        console.log('matchup deckId: ', deckInstance.id);
+//                        console.log('deck.matchups: ', deck.matchups);
+//                        console.log('deckSlug: ', deckInstance.slug);
                         async.each(deck.matchups, function(matchup, matchupCB) {
                             console.log('matchup: ', matchup);
                             var newMatchup = {
@@ -6391,7 +6405,7 @@ angular.module('app.controllers', ['ngCookies'])
                 function(err, deckInstance) {
                     if (err) {
                         $scope.errors = [];
-                        console.log('series err: ', err);
+//                        console.log('series err: ', err);
                         if (err.data.error && err.data.error.details && err.data.error.details.messages) {
                             angular.forEach(err.data.error.details.messages, function(errArray) {
                                 for (var i = 0; i < errArray.length; i++) {
@@ -6415,8 +6429,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'EventService', 'userRoles',
         function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, EventService, userRoles) {
-            console.log('init deck: ',deck);
-            
+//            console.log('init deck: ',deck);
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
@@ -7864,8 +7877,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminPollEditCtrl', ['$scope', '$state', '$window', '$compile', 'AlertService', 'poll', 'Poll',
-        function ($scope, $state, $window, $compile, AlertService, poll, Poll) {
+    .controller('AdminPollEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'AlertService', 'poll', 'Poll',
+        function ($scope, $upload, $state, $window, $compile, AlertService, poll, Poll) {
             var box,
                 defaultPoll = {
                     title : '',
@@ -7937,32 +7950,33 @@ angular.module('app.controllers', ['ngCookies'])
                 return out;
             }
 
-//            $scope.photoUpload = function ($files) {
-//                if (!$files.length) return false;
-//                var uploadBox = bootbox.dialog({
-//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-//                    closeButton: false,
-//                    animate: false
-//                });
-//                $scope.uploading = 0;
-//                uploadBox.modal('show');
-//                for (var i = 0; i < $files.length; i++) {
-//                    var file = $files[i];
-//                    $scope.upload = $upload.upload({
-//                        url: '/api/admin/upload/polls',
-//                        method: 'POST',
-//                        file: file
-//                    }).progress(function(evt) {
-//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-//                    }).success(function(data, status, headers, config) {
-//                        $scope.currentItem.photos = {
-//                            large: data.large,
-//                            thumb: data.thumb
-//                        };
-//                        uploadBox.modal('hide');
-//                    });
-//                }
-//            };
+            $scope.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var uploadBox = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                    closeButton: false,
+                    animate: false
+                });
+                $scope.uploading = 0;
+                uploadBox.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    $scope.upload = $upload.upload({
+                        url: '/api/images/uploadPoll',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        console.log('data:', data);
+                        $scope.currentItem.photos = {
+                            large: data.large,
+                            thumb: data.thumb
+                        };
+                        uploadBox.modal('hide');
+                    });
+                }
+            };
 
             $scope.itemEditWnd = function (item) {
                 $scope.currentItem = item;
@@ -7972,9 +7986,10 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             };
 
-            $scope.editItem = function () {
+            $scope.editItem = function (currentItem) {
+                console.log('$scope.currentItem:', currentItem);
                 box.modal('hide');
-                $scope.currentItem = false;
+//                $scope.currentItem = false;
             };
 
             $scope.deleteItem = function (item) {
@@ -8009,7 +8024,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.getImage = function () {
                 if (!$scope.currentItem) { return 'img/blank.png'; }
-                return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
+                return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.currentItem.photos.thumb;
             };
 
             $scope.editPoll = function () {
@@ -11963,8 +11978,8 @@ angular.module('app.controllers', ['ngCookies'])
         }
     ])
     /* admin hots */
-    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'Pagination', 'heroes',
-        function ($scope, Hero, AlertService, Pagination, heroes) {
+    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'AjaxPagination', 'heroes', 'heroesCount',
+        function ($scope, Hero, AlertService, AjaxPagination, heroes, heroesCount) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -11973,11 +11988,43 @@ angular.module('app.controllers', ['ngCookies'])
 
             // load heroes
             $scope.heroes = heroes;
+            $scope.heroesCount = heroesCount;
+            
 //            $scope.page = data.page;
 //            $scope.perpage = data.perpage;
 //            $scope.total = data.total;
 //            $scope.search = data.search;
 
+            function updateHeroes (page, perpage, callback) {
+                Hero.find(getQuery(false, page, perpage))
+                .$promise
+                .then(function (data) {
+                    $scope.heroPagination.total = data.total;
+                    $scope.heroPagination.page = page;
+                    $timeout(function () {
+                        $scope.communityDecks = data; //DO THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF
+
+                        if (callback) {
+                            return callback(data);
+                        }
+                    });
+                }).then(function (err) {
+                    console.log("There's been an error:", err);
+                });;
+            }
+
+            $scope.heroPagination = AjaxPagination.new(12, heroesCount,
+                function (page, perpage) {
+                    var d = $q.defer();
+
+                    updateHeroes(page, perpage, function (data) {
+                        d.resolve(data.total);
+                    });
+
+                    return d.promise;
+                }
+            );
+            
             $scope.getHeroes = function () {
                 var options = {
                     limit: $scope.perpage,
@@ -12005,60 +12052,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.page = 1;
                 $scope.getHeroes();
             }
-
-            // pagination
-            $scope.pagination = {
-                page: function () {
-                    return $scope.page;
-                },
-                perpage: function () {
-                    return $scope.perpage;
-                },
-                results: function () {
-                    return $scope.total;
-                },
-                setPage: function (page) {
-                    $scope.page = page;
-                    $scope.getHeroes();
-                },
-                pagesArray: function () {
-                    var pages = [],
-                        start = 1,
-                        end = this.totalPages();
-
-                    if (this.totalPages() > 5) {
-                        if (this.page() < 3) {
-                            start = 1;
-                            end = start + 4;
-                        } else if (this.page() > this.totalPages() - 2) {
-                            end = this.totalPages();
-                            start = end - 4;
-                        } else {
-                            start = this.page() - 2;
-                            end = this.page() + 2;
-                        }
-
-                    }
-
-                    for (var i = start; i <= end; i++) {
-                        pages.push(i);
-                    }
-
-                    return pages;
-                },
-                isPage: function (page) {
-                    return (page === this.page());
-                },
-                totalPages: function (page) {
-                    return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
-                },
-                from: function () {
-                    return (this.page() * this.perpage()) - this.perpage() + 1;
-                },
-                to: function () {
-                    return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
-                }
-            };
 
             // delete hero
             $scope.deleteHero = function deleteHero(hero) {
@@ -12132,7 +12125,7 @@ angular.module('app.controllers', ['ngCookies'])
                     name: '',
                     tier: HOTS.tiers[0],
                     description: '',
-                    ability: null,
+                    ability: undefined,
                     className: '',
                     orderNum: 1
                 },
@@ -12185,15 +12178,11 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.abilityTypes = HOTS.abilityTypes;
             var box;
             $scope.abilityAddWnd = function () {
+                console.log('sup');
                 $scope.currentAbility = angular.copy(defaultAbility);
-                Util.getObjectID().success(function (data) {
-                    if (data.success) {
-                        $scope.currentAbility._id = data.id;
-                        box = bootbox.dialog({
-                            title: 'Add Ability',
-                            message: $compile('<div ability-add-form></div>')($scope)
-                        });
-                    }
+                box = bootbox.dialog({
+                    title: 'Add Ability',
+                    message: $compile('<div ability-add-form></div>')($scope)
                 });
             };
 
@@ -12230,25 +12219,32 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.talentTiers = HOTS.tiers;
             $scope.talentAddWnd = function () {
                 $scope.currentTalent = angular.copy(defaultTalent);
+//                $scope.talentAbilities = $scope.hero.abilities;
                 $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
                 box = bootbox.dialog({
                     title: 'Add Talent',
-                    message: $compile('<div talent-add-form></div>')($scope)
+                    message: $compile('<talent-hero-form-add></talent-hero-form-add>')($scope)
                 });
             };
 
             $scope.talentEditWnd = function (talent) {
                 $scope.currentTalent = talent;
+//                $scope.talentAbilities = $scope.hero.abilities;
                 $scope.talentAbilities = [{ _id: undefined, name: 'None' }].concat($scope.hero.abilities);
                 box = bootbox.dialog({
                     title: 'Edit Talent',
-                    message: $compile('<div talent-edit-form></div>')($scope)
+                    message: $compile('<talent-hero-form-edit></talent-hero-form-edit>')($scope)
                 });
             };
 
             $scope.addTalent = function () {
-                $scope.currentTalent.orderNum = $scope.hero.talents.length + 1;
-                $scope.hero.talents.push($scope.currentTalent);
+                if (_.isUndefined($scope.talents)) {
+                    $scope.talents = [];
+                }
+                
+                $scope.currentTalent.orderNum = $scope.talents.length + 1;
+                $scope.talents.push($scope.currentTalent);
+                
                 box.modal('hide');
                 $scope.currentTalent = false;
             };
@@ -12259,11 +12255,11 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.deleteTalent = function (talent) {
-                var index = $scope.hero.talents.indexOf(talent);
-                $scope.hero.talents.splice(index, 1);
+                var index = $scope.talents.indexOf(talent);
+                $scope.talents.splice(index, 1);
 
-                for (var i = 0; i < $scope.hero.talents.length; i++) {
-                    $scope.hero.talents[i].orderNum = i + 1;
+                for (var i = 0; i < $scope.talents.length; i++) {
+                    $scope.talents[i].orderNum = i + 1;
                 }
             };
 
@@ -12309,18 +12305,40 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.addHero = function () {
-                $scope.showError = false;
-
-                AdminHeroService.addHero($scope.hero).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
+                console.log($scope.hero);
+                
+                
+                _.each($scope.talents, function (talVal) {
+                    var t = _.find($scope.hero.abilities, function (abiVal) { return talVal.ability === abiVal.name });
+                    delete talVal.ability;
+                    
+                    if (_.isUndefined(t)) {
+                        $scope.hero.talents.push(talVal);
                     } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.hero.name + ' has been added successfully.' });
-                        $state.go('app.admin.hots.heroes.list');
+                        if (_.isUndefined(t.talents)) {
+                            t.talents = [];
+                        }
+                        
+                        t.talents.push(talVal);
                     }
-                });
+                })
+                
+                console.log($scope.hero);
+                
+                //TODO: POST THIS BITCH
+                
+//                $scope.showError = false;
+//
+//                AdminHeroService.addHero($scope.hero).success(function (data) {
+//                    if (!data.success) {
+//                        $scope.errors = data.errors;
+//                        $scope.showError = true;
+//                        $window.scrollTo(0,0);
+//                    } else {
+//                        AlertService.setSuccess({ show: true, msg: $scope.hero.name + ' has been added successfully.' });
+//                        $state.go('app.admin.hots.heroes.list');
+//                    }
+//                });
             };
         }
     ])
@@ -12669,8 +12687,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminMapsListCtrl', ['$scope', 'AdminMapService', 'AlertService', 'Pagination', 'data',
-        function ($scope, AdminMapService, AlertService, Pagination, data) {
+    .controller('AdminMapsListCtrl', ['$scope', 'Map', 'AlertService', 'Pagination', 'maps',
+        function ($scope, Map, AlertService, Pagination, maps) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -12678,14 +12696,17 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // load maps
-            $scope.maps = data.maps;
-            $scope.page = data.page;
-            $scope.perpage = data.perpage;
-            $scope.total = data.total;
-            $scope.search = data.search;
+            $scope.maps = maps;
+            
+//            $scope.page = data.page;
+//            $scope.perpage = data.perpage;
+//            $scope.total = data.total;
+//            $scope.search = data.search;
 
             $scope.getMaps = function () {
-                AdminMapService.getMaps($scope.page, $scope.perpage, $scope.search).then(function (data) {
+                Map.find($scope.page, $scope.perpage, $scope.search)
+                .$promise
+                .then(function (data) {
                     $scope.maps = data.maps;
                     $scope.page = data.page;
                     $scope.total = data.total;
@@ -12696,60 +12717,6 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.page = 1;
                 $scope.getMaps();
             }
-
-            // pagination
-            $scope.pagination = {
-                page: function () {
-                    return $scope.page;
-                },
-                perpage: function () {
-                    return $scope.perpage;
-                },
-                results: function () {
-                    return $scope.total;
-                },
-                setPage: function (page) {
-                    $scope.page = page;
-                    $scope.getMaps();
-                },
-                pagesArray: function () {
-                    var pages = [],
-                        start = 1,
-                        end = this.totalPages();
-
-                    if (this.totalPages() > 5) {
-                        if (this.page() < 3) {
-                            start = 1;
-                            end = start + 4;
-                        } else if (this.page() > this.totalPages() - 2) {
-                            end = this.totalPages();
-                            start = end - 4;
-                        } else {
-                            start = this.page() - 2;
-                            end = this.page() + 2;
-                        }
-
-                    }
-
-                    for (var i = start; i <= end; i++) {
-                        pages.push(i);
-                    }
-
-                    return pages;
-                },
-                isPage: function (page) {
-                    return (page === this.page());
-                },
-                totalPages: function (page) {
-                    return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
-                },
-                from: function () {
-                    return (this.page() * this.perpage()) - this.perpage() + 1;
-                },
-                to: function () {
-                    return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
-                }
-            };
 
             // delete map
             $scope.deleteMap = function deleteMap(map) {
@@ -12788,8 +12755,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminMapAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'AdminMapService',
-        function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, AdminMapService) {
+    .controller('AdminMapAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'Map',
+        function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, Map) {
             // default map
             var defaultMap = {
                 name : '',
@@ -12810,23 +12777,22 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.addMap = function () {
                 $scope.showError = false;
 
-                AdminMapService.addMap($scope.map).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.map.name + ' has been added successfully.' });
-                        $state.go('app.admin.hots.maps.list');
-                    }
+                $window.scrollTo(0,0);
+                Map.create({}, $scope.map)
+                .$promise
+                .then(function (data) {
+                    $state.go('app.admin.hots.maps.list');
+                })
+                .catch(function (err) {
+                    AlertService.setError({show: true, msg: 'There was an error creating a new map.'})
                 });
             };
         }
     ])
-    .controller('AdminMapEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'AdminMapService', 'data',
-        function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, AdminMapService, data) {
+    .controller('AdminMapEditCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'HOTS', 'AlertService', 'Map', 'map',
+        function ($scope, $state, $window, $compile, bootbox, HOTS, AlertService, Map, map) {
             // load map
-            $scope.map = data.map;
+            $scope.map = map;
 
             // select options
             $scope.mapActive = [
@@ -12837,21 +12803,25 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.editMap = function () {
                 $scope.showError = false;
 
-                AdminMapService.editMap($scope.map).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.map.name + ' has been updated successfully.' });
-                        $state.go('app.admin.hots.maps.list');
+                Map.update({
+                    where: {
+                        id: $scope.map.id
                     }
-                });
+                }, $scope.map)
+                .$promise
+                .then(function (data) {
+                    $window.scrollTo(0,0);
+//                    AlertService.setSuccess({ show: true, msg: $scope.map.name + ' has been updated successfully.' });
+                    $state.go('app.admin.hots.maps.list');
+                })
+                .catch(function (err) {
+                    AlertService.setError({show: true, msg: 'There was an error editing the map.'})
+                })
             };
         }
     ])
-    .controller('AdminHOTSGuideListCtrl', ['$scope', '$state', 'AdminHOTSGuideService', 'AlertService', 'Pagination', 'data',
-        function ($scope, $state, AdminHOTSGuideService, AlertService, Pagination, data) {
+    .controller('AdminHOTSGuideListCtrl', ['$scope', '$state', 'AdminHOTSGuideService', 'AlertService', 'Pagination', 'guides',
+        function ($scope, $state, AdminHOTSGuideService, AlertService, Pagination, guides) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -12859,11 +12829,12 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             // load guides
-            $scope.guides = data.guides;
-            $scope.page = data.page;
-            $scope.perpage = data.perpage;
-            $scope.total = data.total;
-            $scope.search = data.search;
+            $scope.guides = guides;
+            
+//            $scope.page = data.page;
+//            $scope.perpage = data.perpage;
+//            $scope.total = data.total;
+//            $scope.search = data.search;
 
             $scope.getGuides = function () {
                 AdminHOTSGuideService.getGuides($scope.page, $scope.perpage, $scope.search).then(function (data) {
@@ -12878,65 +12849,12 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.getGuides();
             }
 
-            // pagination
-            $scope.pagination = {
-                page: function () {
-                    return $scope.page;
-                },
-                perpage: function () {
-                    return $scope.perpage;
-                },
-                results: function () {
-                    return $scope.total;
-                },
-                setPage: function (page) {
-                    $scope.page = page;
-                    $scope.getGuides();
-                },
-                pagesArray: function () {
-                    var pages = [],
-                        start = 1,
-                        end = this.totalPages();
-
-                    if (this.totalPages() > 5) {
-                        if (this.page() < 3) {
-                            start = 1;
-                            end = start + 4;
-                        } else if (this.page() > this.totalPages() - 2) {
-                            end = this.totalPages();
-                            start = end - 4;
-                        } else {
-                            start = this.page() - 2;
-                            end = this.page() + 2;
-                        }
-                    }
-
-                    for (var i = start; i <= end; i++) {
-                        pages.push(i);
-                    }
-
-                    return pages;
-                },
-                isPage: function (page) {
-                    return (page === this.page());
-                },
-                totalPages: function (page) {
-                    return (this.results() > 0) ? Math.ceil(this.results() / this.perpage()) : 0;
-                },
-                from: function () {
-                    return (this.page() * this.perpage()) - this.perpage() + 1;
-                },
-                to: function () {
-                    return ((this.page() * this.perpage()) > this.results()) ? this.results() : this.page() * this.perpage();
-                }
-            };
-
             // edit guide
             $scope.editGuide = function (guide) {
                 if (guide.guideType === 'hero') {
-                    return $state.go('app.admin.hots.guides.edit.hero', { guideID: guide._id });
+                    return $state.go('app.admin.hots.guides.edit.hero', { guideID: guide.id });
                 } else {
-                    return $state.go('app.admin.hots.guides.edit.map', { guideID: guide._id });
+                    return $state.go('app.admin.hots.guides.edit.map', { guideID: guide.id });
                 }
             };
 
@@ -12977,19 +12895,19 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', 'AlertService', 'AdminHOTSGuideService', 'GuideBuilder', 'HOTS', 'dataHeroes', 'dataMaps',
-        function ($scope, $state, AlertService, AdminHOTSGuideService, GuideBuilder, HOTS, dataHeroes, dataMaps) {
+    .controller('AdminHOTSGuideAddHeroCtrl', ['$scope', '$state', 'AlertService', 'Guide', 'GuideBuilder', 'HOTS', 'heroes', 'maps',
+        function ($scope, $state, AlertService, Guide, GuideBuilder, HOTS, heroes, maps) {
             // create guide
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'hero') ? GuideBuilder.new('hero', $scope.app.settings.guide) : GuideBuilder.new('hero');
-            $scope.$watch('guide', function(){
+            $scope.$watch('guide', function() {
                 $scope.app.settings.guide = $scope.guide;
             }, true);
 
             // heroes
-            $scope.heroes = dataHeroes.heroes;
+            $scope.heroes = heroes;
 
             // maps
-            $scope.maps = dataMaps.maps;
+            $scope.maps = maps;
 
             // steps
             $scope.step = 2;
@@ -13012,8 +12930,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < heroRows.length; row++) {
                 var heroes = [];
                 for (var i = 0; i < heroRows[row]; i++) {
-                    if (dataHeroes.heroes[index]) {
-                        heroes.push(dataHeroes.heroes[index]);
+                    if ($scope.heroes[index]) {
+                        heroes.push($scope.heroes[index]);
                     } else {
                         heroes.push({});
                     }
@@ -13037,8 +12955,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < mapRows.length; row++) {
                 var maps = [];
                 for (var i = 0; i < mapRows[row]; i++) {
-                    if (dataMaps.maps[index]) {
-                        maps.push(dataMaps.maps[index]);
+                    if ($scope.maps[index]) {
+                        maps.push($scope.maps[index]);
                     }
                     index++;
                 }
@@ -13116,8 +13034,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'HOTS', 'AdminHOTSGuideService', 'GuideBuilder', 'dataHeroes', 'dataMaps',
-        function ($scope, $state, AlertService, HOTS, AdminHOTSGuideService, GuideBuilder, dataHeroes, dataMaps) {
+    .controller('AdminHOTSGuideAddMapCtrl', ['$scope', '$state', 'AlertService', 'HOTS', 'AdminHOTSGuideService', 'GuideBuilder', 'heroes', 'maps',
+        function ($scope, $state, AlertService, HOTS, AdminHOTSGuideService, GuideBuilder, heroes, maps) {
             // create guide
             $scope.guide = ($scope.app.settings.guide && $scope.app.settings.guide.guideType === 'map') ? GuideBuilder.new('map', $scope.app.settings.guide) : GuideBuilder.new('map');
             $scope.$watch('guide', function(){
@@ -13125,10 +13043,10 @@ angular.module('app.controllers', ['ngCookies'])
             }, true);
 
             // heroes
-            $scope.heroes = dataHeroes.heroes;
+            $scope.heroes = heroes;
 
             // maps
-            $scope.maps = dataMaps.maps;
+            $scope.maps = maps;
 
             // steps
             $scope.step = 2;
@@ -13151,8 +13069,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < mapRows.length; row++) {
                 var maps = [];
                 for (var i = 0; i < mapRows[row]; i++) {
-                    if (dataMaps.maps[index]) {
-                        maps.push(dataMaps.maps[index]);
+                    if ($scope.maps[index]) {
+                        maps.push($scope.maps[index]);
                     }
                     index++;
                 }
@@ -15221,19 +15139,25 @@ angular.module('app.controllers', ['ngCookies'])
         function ($scope, $sce, $compile, bootbox, PollService, dataPollsMain, dataPollsSide) {
 
             var box;
+            var votes = {};
+            
             $scope.pollsMain = dataPollsMain;
             $scope.pollsSide = dataPollsSide;
 
             $scope.toggleItem = function (poll, item) {
-                if (!poll.votes) { poll.votes = []; }
+                if (!votes[poll.id]) { votes[poll.id] = []; }
 
                 if ($scope.hasVoted(poll, item)) {
-                    poll.votes.splice(poll.votes.indexOf(item._id), 1);
+                    votes[poll.id].splice(votes[poll.id].indexOf(item.id), 1);
                 } else {
-                    if (poll.votes.length >= poll.voteLimit) { return false; }
-                    poll.votes.push(item._id);
+                    if (votes[poll.id].length >= poll.voteLimit) { return false; }
+                    votes[poll.id].push(item.id);
                 }
             };
+            
+            $scope.disableButton = function (poll) {
+                return (!votes[poll.id] || votes[poll.id].length !== 0) ? true : false;
+            }
 
             $scope.getContent = function (content) {
                 return $sce.trustAsHtml(content);
@@ -15248,6 +15172,7 @@ angular.module('app.controllers', ['ngCookies'])
                     big = 0,
                     item,
                     cnt;
+                
                 for (var i = 0; i < poll.items.length; i++) {
                     cnt = poll.items[i].votes;
                     if (cnt > big) { big = cnt; }
@@ -15267,8 +15192,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.hasVoted = function (poll, item) {
-                if (!poll.votes) { return false; }
-                return (poll.votes.indexOf(item._id) !== -1);
+                if (!votes[poll.id]) { return false; }
+                return (votes[poll.id].indexOf(item.id) !== -1);
             };
 
 
@@ -15280,7 +15205,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.setDoneVoting = function (poll, votes) {
-                return PollService.setStorage(poll._id, votes);
+                return PollService.setStorage(poll.id, votes);
             };
 
             $scope.getVotes = function (poll) {
@@ -15311,21 +15236,23 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.submitVote = function (poll) {
-                PollService.postVote(poll, poll.votes).success(function (data) {
-                    if(!data.success) {
-                        $data.errors = data.errors;
-                    } else {
-                        var votesString = $scope.getVotes(poll).join(',');
-                        $scope.setDoneVoting(poll, votesString);
-                        for (var i = 0; i != poll.items.length; i++){
-                            for (var j = 0; j != $scope.getVotes(poll).length; j++) {
-                                if (poll.items[i]._id == $scope.getVotes(poll)[j]) {
-                                    poll.items[i].votes++;
-                                }
-                            }
-                        }
-                    }
-                })
+                console.log(votes);
+                
+//                Poll.update(poll, poll.votes).success(function (data) {
+//                    if(!data.success) {
+//                        $data.errors = data.errors;
+//                    } else {
+//                        var votesString = $scope.getVotes(poll).join(',');
+//                        $scope.setDoneVoting(poll, votesString);
+//                        for (var i = 0; i != poll.items.length; i++){
+//                            for (var j = 0; j != $scope.getVotes(poll).length; j++) {
+//                                if (poll.items[i]._id == $scope.getVotes(poll)[j]) {
+//                                    poll.items[i].votes++;
+//                                }
+//                            }
+//                        }
+//                    }
+//                })
             };
         }
     ])

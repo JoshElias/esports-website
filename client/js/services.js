@@ -84,7 +84,9 @@ angular.module('app.services', [])
             User.login(options, where)
             .$promise
             .then(function (data) {
-                EventService.emit("EVENT_LOGIN", data);
+                var user = data.__data.user;
+                
+                EventService.emit("EVENT_LOGIN", user);
                 return callback(null, data);
             })
             .catch(function (err) {
@@ -567,7 +569,7 @@ angular.module('app.services', [])
             return error;
         },
         setError: function (value) {
-            console.log("alertservice:", value);
+//            console.log("alertservice:", value);
             this.reset();
             error = value;
             alert = value.show || true;
