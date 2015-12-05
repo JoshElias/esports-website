@@ -3,7 +3,7 @@ angular.module('redbull.directives')
     function ($timeout, $interval, $rootScope){
         return {
             restrict: 'A',
-            //transclude: true,
+            templateUrl: tpl + 'dist/views/redbull/client/views/directives/redbull-draft.html',
             scope: {
                 packs: '=',
                 isLoading: '=',
@@ -33,15 +33,22 @@ angular.module('redbull.directives')
                     EVENT_DRAFT_COMPLETE = 8,
                     EVENT_MAX = 20,
                     fadeDuration = 1000,
-                    fadeDurationFF = 200;
-
-                function nextPack () {
-                    scope.currentPack++;
+                    fadeDurationFF = 200,
+                    currentExpansion = null;
+                
+                // init currentCards and currentPack
+                for (var key in scope.packs) {
+                    scope.currentPack[key] = 0;
+                    scope.currentCards[key] = 0;
+                };
+                
+                function nextPack (expansion) {
+                    scope.currentPack[expansion]++;
                     scope.$apply();
                 }
                 
-                function nextCards () {
-                    scope.currentCards++;
+                function nextCards (expansion) {
+                    scope.currentCards[expansion]++;
                     scope.$apply();
                 }
                 
@@ -64,16 +71,15 @@ angular.module('redbull.directives')
                     scope.isLoading = newValue;
                 });
                 
+                // temp start fast forward for debugging
                 $(window).keydown(function(e) {
-                    console.log(1);
                     if ((e.keyCode || e.which) == 65) {
-                        console.log(2);
                         scope.fastForward();
                     }
                 });
                 
+                // go to next event for fast forward
                 function nextEvent() {
-                    console.log(4);
                     if (lastEvent === EVENT_DRAFT_COMPLETE) {
                         return false;
                     }
@@ -83,8 +89,8 @@ angular.module('redbull.directives')
                     $(window).trigger(e);
                 }
                 
+                // start fast forwarding
                 scope.fastForward = function () {
-                    console.log(3);
                     if (fastForward) { return false; }
                     fastForward = true;
                     el.addClass('fast-forward');
@@ -108,97 +114,108 @@ angular.module('redbull.directives')
 
                 // handle cursor icon changes
                 el.mousedown(function(e) {
-                    if ($(e.target).is('.pack')) {
-                        $('.draft-wrapper').addClass('grabbing');
-                    } else {
-                        $('.draft-wrapper').addClass('clicking');
+                    if (!fastForward) {
+                        if ($(e.target).is('.pack')) {
+                            $('.draft-wrapper').addClass('grabbing');
+                        } else {
+                            $('.draft-wrapper').addClass('clicking');
+                        }
                     }
                 }).mouseup(function() {
                     $('.draft-wrapper').removeClass('grabbing clicking');
                 });
-                                
-                $('.pack').draggable({
-                    containment: ".draft-wrapper",
-                    scroll: false,
-                    revert: true,
-                    start: function() {
-                        if (!packDropped) {
+                
+                scope.enablePacks = function () {
+                    $('.pack').each(function (i) {
+                        var pack = this;
 
-                            $('.pack').data('draggable', true)
+                        $(pack).draggable({
+                            containment: ".draft",
+                            scroll: false,
+                            revert: true,
+                            start: function() {
+                                if (!packDropped) {
+
+                                    $(pack).data('draggable', true)
+
+                                    // stop shaking the pack
+                                    $timeout.cancel(startShake);
+                                    $interval.cancel(shakeLoop);
+
+                                    // tilt the pack
+                                    $(this).css('transform', 'scale(1.05) perspective(300px) rotateY(10deg)');
+
+                                    // move pack to top
+                                    $(pack).closest('.pack-wrapper').css('z-index', '6');
+
+                                    // fade in glowing background
+                                    $('.bg-glow').stop(true).fadeIn(fadeDuration);
+                                }
+                            },
+                            stop: function() {
+                                if (!packDropped) {
+
+                                    // untilt the pack
+                                    $(this).css({
+                                        'left': '0px',
+                                        'top': '0px',
+                                        'transform': 'perspective(0) rotateY(0) scale(1)'
+                                    });
+
+                                    // move pack to bottom
+                                    $(pack).closest('.pack-wrapper').css('z-index', '2');
+
+                                    playAudio('pack_release');
+
+                                    // fade out glowing background
+                                    $('.bg-glow').stop(true).fadeOut(fadeDuration / 2);
+
+                                    // start shaking pack again
+                                    $interval.cancel(shakeLoop);
+                                    shakeLoop = $interval(shakePack, shakeInterval);
+
+                                }
+                            }
+                        });
+                    });
+
+                    $('.pack').mousedown(function() {
+                        if (!packDropped) {
+                            var pack = this;
+                            
+                            playAudio('pack_grab');
+
+                            // grow pack
+                            $(pack).css('transform', 'scale(1.05)');
 
                             // stop shaking the pack
+                            $(pack).closest('.pack-wrapper').trigger('stopRumble');
                             $timeout.cancel(startShake);
                             $interval.cancel(shakeLoop);
-
-                            // tilt the pack
-                            $(this).css('transform', 'scale(1.05) perspective(300px) rotateY(10deg)');
-
-                            // move pack to top
-                            $('.pack-wrapper').css('z-index', '6');
-
-                            // fade in glowing background
-                            $('.bg-glow').stop(true).fadeIn(fadeDuration);
                         }
-                    },
-                    stop: function() {
-                        if (!packDropped) {
+                    }).mouseup(function() {
+                        // TODO: doesn't work
+                        // if the pack's position is its original location, play the pack release sound
+                        //var spot = $(this).position();
+                        //if (Math.round(spot.left) == 192 && Math.round(spot.top) == 241) {
+                        //    playAudio('pack_release');
+                        //}
 
-                            // untilt the pack
-                            $(this).css({
-                                'left': '200px',
-                                'top': '247px',
-                                'transform': 'perspective(0) rotateY(0) scale(1)'
-                            });
+                        // shrink pack
+                        $(this).css('transform', 'perspective(0) rotateY(0) scale(1)');
 
-                            // move pack to bottom
-                            $('.pack-wrapper').css('z-index', '2');
-
-                            playAudio('pack_release');
-
-                            // fade out glowing background
-                            $('.bg-glow').stop(true).fadeOut(fadeDuration / 2);
-                            
-                            // start shaking pack again
-                            $interval.cancel(shakeLoop);
-                            shakeLoop = $interval(shakePack, shakeInterval);
-
-                        }
-                    }
-                });
-
-                $('.pack').mousedown(function() {
-                    if (!packDropped) {
-                        playAudio('pack_grab');
-
-                        // grow pack
-                        $(this).css('transform', 'scale(1.05)');
-
-                        // stop shaking the pack
-                        $('.pack-wrapper').trigger('stopRumble');
-                        $timeout.cancel(startShake);
+                        // start shaking pack again
                         $interval.cancel(shakeLoop);
-                    }
-                }).mouseup(function() {
-                    // TODO: doesn't work
-                    // if the pack's position is its original location, play the pack release sound
-                    //var spot = $(this).position();
-                    //if (Math.round(spot.left) == 192 && Math.round(spot.top) == 241) {
-                    //    playAudio('pack_release');
-                    //}
-
-                    // shrink pack
-                    $(this).css('transform', 'perspective(0) rotateY(0) scale(1)');
-
-                    // start shaking pack again
-                    $interval.cancel(shakeLoop);
-                    shakeLoop = $interval(shakePack, shakeInterval);
-                });
+                        shakeLoop = $interval(shakePack, shakeInterval);
+                    });
+                };
 
                 // handle drop zone
                 $('.pack-drop').droppable({
                     tolerance: "touch",
                     drop: function(e, ui) {
-                        packDrop();
+                        var pack = ui.draggable;
+                        packDrop(pack);
                     }
                 });
                 
@@ -242,9 +259,10 @@ angular.module('redbull.directives')
                     return !(e.keyCode == 32);
                 };
                 
-                function packDrop() {
+                function packDrop(pack) {
                     if (!packDropped) {
                         packDropped = true;
+                        currentExpansion = $(pack).attr('data-expansion');
                         lastEvent = EVENT_PACK_DROPPED;
 
                         // stop shaking pack
@@ -252,20 +270,20 @@ angular.module('redbull.directives')
                         $interval.cancel(shakeLoop);
 
                         // move pack to drop zone
-                        $('.pack').css({
-                            'left': '707px',
-                            'top': '260px',
-                            'transform': 'perspective(0) rotateY(0)'
-                        });
+                        //$('.pack').css({
+                        //    'left': '707px',
+                        //    'top': '260px',
+                        //    'transform': 'perspective(0) rotateY(0)'
+                        //});
 
                         // TODO: PLAY BURST SOUND
 
                         // fade out pack
-                        $('.pack').fadeOut(0, function() {
+                        $(pack).fadeOut(0, function() {
                             // return hidden pack
                             $(this).css({
-                                'left': '200px',
-                                'top': '247px',
+                                'left': '0px',
+                                'top': '0px',
                                 'transform': 'perspective(0) rotateY(0)'
                             });
                             
@@ -276,7 +294,7 @@ angular.module('redbull.directives')
                             el.addClass('blurred');
                             
                             // update card interactions
-                            cardInteraction();
+                            //cardInteraction();
 
                             // set cards and show
                             $('.cards').fadeIn(0, function () {
@@ -292,6 +310,12 @@ angular.module('redbull.directives')
                     }
                 };
                 
+                scope.cards = function () {
+                    if (!currentExpansion) { return []; }
+                    var cards = scope.packs[currentExpansion].packs[scope.currentCards[currentExpansion]].cards;
+                    return cards;
+                };
+                
                 function getCardById (cardId, cards) {
                     for (var i = 0; i < cards.length; i++) {
                         if (cards[i].id === cardId) {
@@ -301,17 +325,107 @@ angular.module('redbull.directives')
                     return false;
                 }
                 
+                // card mouse enter
+                scope.cardMouseEnter = function ($event, card) {
+                    if (!card.turned) {
+                        playAudio('card_hover');
+                    }
+                };
+                
+                // card mouse leave
+                scope.cardMouseLeave = function ($event, card) {
+                    if (!card.turned) {
+                        playAudio('card_unhover');
+                    }
+                };
+                
+                // card mouse down
+                scope.cardMouseDown = function ($event, card) {
+                    var cardElement = $event.currentTarget,
+                        cardRarity = card.rarity.toLowerCase(),
+                        announcerRarities = ['rare', 'epic', 'legendary'];
+                    
+                    card.turned = true;
+                    
+                    if (card.turned && !card.clicked) {
+                        card.clicked = true;
+                        cardsFlipped++;
+
+                        // set last event
+                        switch ( cardsFlipped ) {
+                            case 1:
+                                lastEvent = EVENT_CARD1_FLIPPED;
+                                break;
+                            case 2:
+                                lastEvent = EVENT_CARD2_FLIPPED;
+                                break;
+                            case 3:
+                                lastEvent = EVENT_CARD3_FLIPPED;
+                                break;
+                            case 4:
+                                lastEvent = EVENT_CARD4_FLIPPED;
+                                break;
+                            case 5:
+                                lastEvent = EVENT_CARD5_FLIPPED;
+                                break;
+                        }
+
+                        // add to pool
+                        if (typeof scope.addCardToPool === 'function') {
+                            var poolCard = getCardById(card.id, scope.packs[card.expansion].packs[scope.currentCards[card.expansion]].cards);
+                            if (poolCard) {
+                                scope.$apply(function () {
+                                    scope.addCardToPool(poolCard);
+                                });
+                            }
+                        }
+
+                        playAudio('card_turn_over_' + cardRarity);
+
+                        if (announcerRarities.indexOf(cardRarity) !== -1) {
+                            playAudio('announcer_' + cardRarity);
+                        }
+
+                        var cardX = $event.pageX - $(cardElement).offset().left;
+                        if (cardX < 116) {
+                            $(cardElement).addClass('flipped-left');
+                        } else {
+                            $(cardElement).addClass('flipped-right');
+                        }
+
+                        if (cardsFlipped > 4) {
+                            $timeout(function() {
+                                playAudio('done_reveal');
+                                $timeout(function() {
+                                    $('.btn-done').stop(true).fadeIn(((!fastForward) ? fadeDuration : fadeDurationFF), function () {
+                                        if (fastForward) {
+                                            nextEvent();
+                                        }
+                                    });
+                                }, ((!fastForward) ? fadeDuration / 2 : fadeDurationFF / 2));
+                            }, ((!fastForward) ? fadeDuration / 2 : fadeDurationFF / 2));
+                        } else {
+                            if (fastForward) {
+                                $timeout(nextEvent, fastForwardSpeed);
+                            }
+                        }
+                    }
+                };
+                
                 function cardInteraction() {
                     cardsFlipped = 0;
-
+                    console.log('cardInteraction');
                     $('.card').each(function(i) {
                         var card = this,
                             announcerRarities = ['rare', 'epic', 'legendary'];
+                        
+                        console.log(i);
                         
                         card.turned = false;
                         card.clicked = false;
                         card.rarity = $(card).attr('data-rarity').toLowerCase();
                         card.cardId = $(card).attr('data-card-id');
+                        card.expansion = $(card).attr('data-expansion');
                         
                         $(card).unbind('mouseenter').mouseenter(function() {
                             if (!card.turned) {
@@ -325,7 +439,7 @@ angular.module('redbull.directives')
                         })
                         .unbind('mousedown').mousedown(function(e) {
                             card.turned = true;
-                            
+                            console.log('mousedown');
                             if (card.turned && !card.clicked) {
                                 card.clicked = true;
                                 cardsFlipped++;
@@ -351,7 +465,7 @@ angular.module('redbull.directives')
                                 
                                 // add to pool
                                 if (typeof scope.addCardToPool === 'function') {
-                                    var poolCard = getCardById(card.cardId, scope.packs[scope.currentCards].cards);
+                                    var poolCard = getCardById(card.cardId, scope.packs[card.expansion].packs[scope.currentCards[card.expansion]].cards);
                                     if (poolCard) {
                                         scope.$apply(function () {
                                             scope.addCardToPool(poolCard);
@@ -416,13 +530,9 @@ angular.module('redbull.directives')
                         });
 
                         $('.bg-glow').hide(function() {
-                            //burst.pause();
-                            //burst.currentTime = 0;
-                            //$('#pack-burst').css('z-index', '0').show();
-                            //$('.bg-blur').fadeOut(1000);
-                            
-                            if (scope.currentPack + 1 < scope.packs.length) {
-                                nextPack();
+
+                            if (scope.currentPack[currentExpansion] + 1 < scope.packs[currentExpansion].packs.length) {
+                                nextPack(currentExpansion);
                                 $('.pack').draggable("enable").fadeIn(0, function() {
                                     packDropped = false;
                                     
@@ -442,6 +552,7 @@ angular.module('redbull.directives')
 
                     $timeout(function() {
                         done = false;
+                        currentExpansion = null;
                     }, ((!fastForward) ? fadeDuration : fadeDurationFF));
                 });
                 

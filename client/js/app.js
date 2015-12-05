@@ -5,6 +5,7 @@ var app = angular.module('app', [
     'angularFileUpload',
     'summernote',
     'angular-bootbox',
+    'angular-iscroll',
     'angularMoment',
     'angularPayments',
     'youtube-embed',

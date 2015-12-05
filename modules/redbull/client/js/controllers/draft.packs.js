@@ -7,7 +7,7 @@ angular.module('redbull.controllers')
     // card pool
     $scope.cardPool = [];
     // packs
-    $scope.currentPack = $scope.currentCards = 0;
+    $scope.currentPack = $scope.currentCards = {};
     $scope.packs = DraftPacks.getPacks(cards, {});
     
     // file variables

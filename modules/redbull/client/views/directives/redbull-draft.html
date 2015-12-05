@@ -1,0 +1,46 @@
+<!-- preloader -->
+<div class="preloader" ng-if="isLoading"><i class="fa fa-refresh fa-spin"></i></div>
+<!-- / preloader -->
+
+<!-- draft wrapper -->
+<div class="draft-wrapper">
+
+    <!-- bg -->
+    <div class="bg"></div>
+    <div class="bg-glow"></div>
+    <!-- / bg -->
+
+    <!-- packs -->
+    <div class="packs">
+        <div class="pack-wrapper" ng-repeat="expansionPacks in packs track by $index" ng-init="enablePacks()">
+            <div class="pack-next {{expansionPacks.expansionClass}}" ng-if="(currentPack[expansionPacks.expansion] + 1) < expansionPacks.packs.length"></div>
+            <div class="pack {{expansionPacks.expansionClass}}" data-expansion="{{expansionPacks.expansion}}"></div>
+        </div>
+    </div>
+    <div class="pack-drop"></div>
+    <!-- / packs -->
+
+    <!-- cards -->
+    <div class="cards">
+        <div class="card"
+             ng-repeat="card in cards() track by $index"
+             ng-mouseenter="cardMouseEnter($event, card)"
+             ng-mouseleave="cardMouseLeave($event, card)"
+             ng-mousedown="cardMouseDown($event, card)">
+            <div class="card-glow {{card.rarity.toLowerCase()}}"></div>
+            <div class="card-front">
+                <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" />
+            </div>
+            <div class="card-back">
+                <img ng-src="./modules/redbull/client/img/card_back.png" />
+            </div>
+        </div>
+    </div>
+    <!-- / cards -->
+
+    <!-- done button -->
+    <div class="btn-done"></div>
+    <!-- / done button -->
+
+</div>
+<!-- / draft wrapper -->
