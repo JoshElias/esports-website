@@ -214,7 +214,10 @@ module.exports = function(User) {
                         }
                     }
                 }
-                ctx.result = answer;
+              
+                if (typeof answer !== "undefined") {
+                  ctx.result = answer;
+                }
             }
             finalCb();
         }

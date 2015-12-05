@@ -49,8 +49,11 @@ module.exports = function(Article) {
                             answer[key] = ctx.result[key];
                         }
                     }
+                } 
+              
+                if (typeof answer !== "undefined") {
+                  ctx.result = answer;
                 }
-                ctx.result = answer;
             }
             finalCb();
         }

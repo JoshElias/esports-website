@@ -89,6 +89,10 @@ module.exports = {
     "dataSource": "mongodb",
     "public": true
   },
+  "pollItem": {
+    "dataSource": "mongodb",
+    "public": true
+  },
   "map": {
     "dataSource": "mongodb",
     "public": true

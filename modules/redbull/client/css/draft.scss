@@ -1,3 +1,14 @@
+.iscroll-wrapper {
+position: relative;
+width: 100%;
+height: 100%;
+overflow: hidden;
+}
+.iscroll-scroller {
+position: absolute;
+width: 100%;
+min-height: 100%;
+}
 .redbull-draft {
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
@@ -92,8 +103,8 @@
 
             .bg,
             .bg-glow {
-                margin-left: -207px; //-253px;
-                margin-top: -342px; //-384px;
+                margin-left: -324px; //-253px;
+                margin-top: -300px; //-384px;
                 width: 649px; //width: 741px;
                 height: 600px; //height: 684px;
     //            margin-left: -683px;
@@ -109,65 +120,79 @@
 
             .bg-glow {
                 display: none;
-                margin-left: -207px; //-253px;
-                margin-top: -342px; //-384px;
+                margin-left: -324px; //-253px;
+                margin-top: -300px; //-384px;
                 width: 649px; //width: 741px;
                 height: 600px; //height: 684px;
                 background: url("../img/modules/redbull/client/img/bg-glow.jpg") no-repeat center center;
                 z-index: 3;
             }
-
-            .pack-wrapper {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                z-index: 2;
-
-                .pack,
-                .pack-next {
+            
+            .packs {
+                position: fixed;
+                top: 52px;
+                left: 0px;
+                bottom: 0px;
+                width: 300px;
+                background: rgba(0,0,0,.4);
+                border-right: 1px solid #000;
+                z-index: 99;
+                
+                .pack-wrapper {
                     position: relative;
-                    left: 200px;
-                    top: 247px;
+                    margin: 30px auto;
                     width: 155px;
                     height: 212px;
-                    background: url("../img/modules/redbull/client/img/pack.png") no-repeat;
-                    z-index: 3;
+                    
+                    .pack,
+                    .pack-next {
+                        position: relative;
+                        left: 0px;
+                        top: 0px;
+                        width: 155px;
+                        height: 212px;
+                        background: url("../img/modules/redbull/client/img/pack.png") no-repeat;
+                        z-index: 101;
 
-                    &.league-of-explorers {
-                        background: url("../img/modules/redbull/client/img/pack-loe.png") no-repeat;
+                        &.league-of-explorers {
+                            background: url("../img/modules/redbull/client/img/pack-loe.png") no-repeat;
+                        }
+
+                        &.blackrock-mountain {
+                            background: url("../img/modules/redbull/client/img/pack-brm.png") no-repeat;
+                        }
+
+                        &.naxxramas {
+                            background: url("../img/modules/redbull/client/img/pack-naxx.png") no-repeat;
+                        }
+
+                        &.goblins-vs-gnomes {
+                            background: url("../img/modules/redbull/client/img/pack-gvg.png") no-repeat;
+                        }
+
+                        &.the-grand-tournament {
+                            background: url("../img/modules/redbull/client/img/pack-tgt.png") no-repeat;
+                        }
+
+                        &.soulbound {
+                            background: url("../img/modules/redbull/client/img/pack-soulbound.png") no-repeat;
+                        }
                     }
 
-                    &.blackrock-mountain {
-                        background: url("../img/modules/redbull/client/img/pack-brm.png") no-repeat;
-                    }
-
-                    &.naxxramas {
-                        background: url("../img/modules/redbull/client/img/pack-naxx.png") no-repeat;
-                    }
-
-                    &.goblins-vs-gnomes {
-                        background: url("../img/modules/redbull/client/img/pack-gvg.png") no-repeat;
-                    }
-
-                    &.the-grand-tournament {
-                        background: url("../img/modules/redbull/client/img/pack-tgt.png") no-repeat;
-                    }
-
-                    &.soulbound {
-                        background: url("../img/modules/redbull/client/img/pack-soulbound.png") no-repeat;
+                    .pack-next {
+                        position: absolute;
+                        z-index: 100;
                     }
                 }
-
-                .pack-next {
-                    position: absolute;
-                    z-index: 2;
-                }
-            }
+                
+            }/* .packs */
 
             .pack-drop {
                 position: absolute;
-                left: 707px;
-                top: 260px;
+                left: 50%;
+                top: 50%;
+                margin-left: -77px;
+                margin-top: -106px;
                 width: 155px;
                 height: 212px;
             }
@@ -194,23 +219,23 @@
                     -webkit-transition: -webkit-transform 300ms;
 
                     &:nth-child(1) {
-                        margin-left: 8px;
+                        margin-left: -94px;
                         margin-top: -332px;
                     }
                     &:nth-child(2) {
-                        margin-left: -194px;
+                        margin-left: -296px;
                         margin-top: -261px;
                     }
                     &:nth-child(3) {
-                        margin-left: 223px;
+                        margin-left: 121px;
                         margin-top: -254px;
                     }
                     &:nth-child(4) {
-                        margin-left: -108px;
-                        margin-top: 18px;
+                        margin-left: -210px;
+                        margin-top: 26px;
                     }
                     &:nth-child(5) {
-                        margin-left: 127px;
+                        margin-left: 25px;
                         margin-top: 26px;
                     }
 
@@ -306,8 +331,8 @@
             }
 
             .btn-done {
-                margin-left: 22px;
-                margin-top: -55px;
+                margin-left: -83px;
+                margin-top: -50px;
                 position: absolute;
                 left: 50%;
                 top: 50%;
@@ -335,7 +360,7 @@
                 }
             }
 
-        }
+        }/* .draft-wrapper */
         
         &.fast-forward {
             .draft-wrapper {
@@ -365,8 +390,9 @@
             }
 
             .card-pool-cards {
-
+                
                 .card-pool-card {
+                    margin-right: 9px;
                     position: relative;
                     height: 28px;
                     color: #FFF;
@@ -433,7 +459,7 @@
                     .card-pool-card-legendary {
                         font-size: 14px;
                     }/* .card-pool-card-legendary */
-
+                    
                     .card-pool-card-photo {
                         position: absolute;
                         top: 0px;
@@ -449,7 +475,10 @@
                         }/* img */
                     }/* .card-pool-card-photo */
 
-                    .multi {
+                    &.multi {
+                        .card-pool-card-legendary {
+                            right: 30px;
+                        }
                         .card-pool-card-photo {
                             width: 100%;
                             right: 0px;
@@ -463,10 +492,22 @@
                                 position:absolute;
                                 right: 30px;
                             }/* img */
+                            
                         }/* .card-pool-card-photo */
+                        
+                        &.legendary {
+                            .card-pool-card-photo {
+                                img {
+                                    right: 60px;
+                                }
+                            }
+                        }
+                        
                     }/* .multi */
+                    
                 }/* .card-pool-card */
             }/* .card-pool-cards */
         }/* .card-pool */
+        
     }/* .draft */
 }/* .redbull-draft */

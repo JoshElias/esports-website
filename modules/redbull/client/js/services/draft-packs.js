@@ -8,7 +8,7 @@ angular.module('redbull.services')
                 packs: [
                     {
                         expansion: 'Soulbound',
-                        packs: 0,
+                        packs: 10,
                         chances: {
                             basic: 100,
                             common: 0,
@@ -291,11 +291,32 @@ angular.module('redbull.services')
                 };
             },
             generatePacksWithCards: function () {
-                var packs = [];
+                var packs = {},
+                    expansion,
+                    packWithRoll,
+                    packWithExpansion;
                 
-                for (var i = 0; i < this.numberPacks; i++) {
-                    packs.push( this.generatePackFromRolls( this.packsWithExpansions[i], this.packsWithRolls[i] ) );
+                // create expansions
+                for (var i = 0; i < this.tournament.packs.length; i++) {
+                    if (this.tournament.packs[i].packs > 0) {
+                        expansion = this.tournament.packs[i].expansion;
+                        packs[expansion] = {
+                            expansion: expansion,
+                            packs: [],
+                            expansionClass: Util.slugify(expansion)
+                        };
+                    }
                 }
+                
+                // add packs to expansions
+                for (var i = 0; i < this.numberPacks; i++) {
+                    packWithRoll = this.packsWithRolls[i];
+                    packWithExpansion = this.packsWithExpansions[i];
+                    
+                    packs[packWithExpansion].packs.push( this.generatePackFromRolls( packWithExpansion, packWithRoll ) );
+                }
+                
+                console.log(packs);
                 
                 this.packsWithCards = packs;
             }

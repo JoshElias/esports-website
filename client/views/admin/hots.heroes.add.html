@@ -96,12 +96,12 @@
                 </a>
                 <strong class="lh-lg">Talents</strong>
             </div>
-            <ul class="list-group" dnd-list="hero.talents" dnd-allowed-types="['talent']" ng-show="hero.talents.length">
+            <ul class="list-group" dnd-list="talents" dnd-allowed-types="['talent']" ng-show="talents.length">
                 <li class="list-group-item admin-list-item lh-lg clearfix"
-                    ng-repeat="talent in hero.talents"
+                    ng-repeat="talent in talents track by $index"
                     dnd-draggable="talent"
-                    dnd-moved="updateDND(hero.talents, $index)"
-                    dnd-disable-if="hero.talents.length < 2"
+                    dnd-moved="updateDND(talents, $index)"
+                    dnd-disable-if="talents.length < 2"
                     dnd-type="'talent'"
                 >
                     Level {{talent.tier}} - {{talent.name}}
@@ -111,7 +111,7 @@
                     </div>
                 </li>
             </ul>
-            <div class="panel-body" ng-show="!hero.talents.length">
+            <div class="panel-body" ng-show="!talents.length">
                 <p class="m-b-none">There are no talents added for this hero yet.</p>
             </div>
         </div>
@@ -205,7 +205,7 @@
     </div>
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="addHero()">Add Hero</button>
+            <button type="submit" class="btn btn-blue btn-lg" ng-click="addHero()">Add Hero</button>
         </div>
     </div>
     </form>
