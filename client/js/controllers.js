@@ -1664,8 +1664,8 @@ angular.module('app.controllers', ['ngCookies'])
 
         }
     ])
-    .controller('AdminArticleAddCtrl', ['$scope', '$state', '$window', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'heroes', 'LoopBackAuth', 'Guide', 'Article', 'User', 'Hero', 'Deck', 'ArticleArticle',
-        function ($scope, $state, $window, $compile, bootbox, Hearthstone, Util, AlertService, heroes, LoopBackAuth, Guide, Article, User, Hero, Deck, ArticleArticle) {
+    .controller('AdminArticleAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'heroes', 'LoopBackAuth', 'Guide', 'Article', 'User', 'Hero', 'Deck', 'ArticleArticle',
+        function ($scope, $upload, $state, $window, $compile, bootbox, Hearthstone, Util, AlertService, heroes, LoopBackAuth, Guide, Article, User, Hero, Deck, ArticleArticle) {
             // default article
             var d = new Date();
             d.setMonth(d.getMonth()+1);
@@ -2035,42 +2035,44 @@ angular.module('app.controllers', ['ngCookies'])
                 ]
             };
 
-//            // photo upload
-//            $scope.photoUpload = function ($files) {
-//                if (!$files.length) return false;
-//                var box = bootbox.dialog({
-//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-//                    closeButton: false,
-//                    animate: false
-//                });
-//                $scope.uploading = 0;
-//                box.modal('show');
-//                for (var i = 0; i < $files.length; i++) {
-//                    var file = $files[i];
-//                    $scope.upload = $upload.upload({
-//                        url: '/api/admin/upload/article',
-//                        method: 'POST',
-//                        file: file
-//                    }).progress(function(evt) {
-//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-//                    }).success(function(data, status, headers, config) {
-//                        $scope.article.photos = {
-//                            large: data.large,
-//                            medium: data.medium,
-//                            small: data.small,
-//                            square: data.square
-//                        };
+            // photo upload
+            $scope.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var box = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                    closeButton: false,
+                    animate: false
+                });
+                $scope.uploading = 0;
+                box.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    $scope.upload = $upload.upload({
+                        url: '/api/images/uploadArticle',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        $scope.article.photoNames = {
+                            large: data.large,
+                            medium: data.medium,
+                            small: data.small,
+                            square: data.square
+                        };
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-//                        box.modal('hide');
-//                    });
-//                }
-//            };
+                        $scope.cardImg = cdn2 + data.path + data.small;
+                        box.modal('hide');
+                    });
+                }
+            };
 
 
             $scope.getImage = function () {
                 $scope.imgPath = 'articles/';
                 if (!$scope.article.photoNames) { return 'img/blank.png'; }
-                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photoNames.small;
+//                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photoNames.small;
+                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ? cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.article.photoNames.small;
             };
 
 
@@ -2111,8 +2113,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminArticleEditCtrl', ['$scope', '$state', '$window', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'Article', 'Deck', 'Guide', 'article',
-        function ($scope, $state, $window, $compile, $filter, bootbox, Hearthstone, Util, AlertService, Article, Deck, Guide, article) {
+    .controller('AdminArticleEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'Article', 'Deck', 'Guide', 'article',
+        function ($scope, $upload, $state, $window, $compile, $filter, bootbox, Hearthstone, Util, AlertService, Article, Deck, Guide, article) {
             var itemAddBox,
                 deckID;
             
@@ -2139,7 +2141,6 @@ angular.module('app.controllers', ['ngCookies'])
             function escapeStr( str ) {
                 return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
             }
-
 
             //search functions
             $scope.getDecks = function (cb) {
@@ -2444,41 +2445,42 @@ angular.module('app.controllers', ['ngCookies'])
                 ]
             };
 
-//            // photo upload
-//            $scope.photoUpload = function ($files) {
-//                if (!$files.length) return false;
-//                var box = bootbox.dialog({
-//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-//                    closeButton: false,
-//                    animate: false
-//                });
-//                $scope.uploading = 0;
-//                box.modal('show');
-//                for (var i = 0; i < $files.length; i++) {
-//                    var file = $files[i];
-//                    $scope.upload = $upload.upload({
-//                        url: '/api/admin/upload/article',
-//                        method: 'POST',
-//                        file: file
-//                    }).progress(function(evt) {
-//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-//                    }).success(function(data, status, headers, config) {
-//                        $scope.article.photos = {
-//                            large: data.large,
-//                            medium: data.medium,
-//                            small: data.small,
-//                            square: data.square
-//                        };
+            // photo upload
+            $scope.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var box = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                    closeButton: false,
+                    animate: false
+                });
+                $scope.uploading = 0;
+                box.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    $scope.upload = $upload.upload({
+                        url: '/api/images/uploadArticle',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+                        $scope.article.photoNames = {
+                            large: data.large,
+                            medium: data.medium,
+                            small: data.small,
+                            square: data.square
+                        };
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-//                        box.modal('hide');
-//                    });
-//                }
-//            };
+                        $scope.cardImg = cdn2 + data.path + data.small;
+                        box.modal('hide');
+                    });
+                }
+            };
 
             $scope.getImage = function () {
                 $scope.imgPath = 'articles/';
                 if (!$scope.article.photoNames) { return 'img/blank.png'; }
-                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.article.photoNames.small;
+                return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.article.photoNames.small;
             };
 
             $scope.editArticle = function () {

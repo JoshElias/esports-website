@@ -6,7 +6,7 @@
 </div>
 <div class="panel panel-default">
     <div class="panel-heading clearfix">
-        <div class="pull-right">
+        <div class="pull-right" ng-if="decks">
             <span class="m-r-sm">
                 Showing: 
                 <strong>{{ deckPagination.total === 0 ? deckPagination.total : ((deckPagination.page - 1) * deckPagination.perpage) + 1 }}</strong> 
@@ -15,7 +15,7 @@
             </span>
             <div pagination="deckPagination" theme="default" class="default"></div>
         </div>
-        <div class="pull-left">
+        <div class="pull-left mg-r-sm">
             <form class="form-inline" ng-submit="searchDecks()" novalidate>
                 <div class="form-group">
                     <div class="input-group">
