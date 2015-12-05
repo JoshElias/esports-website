@@ -1,20 +1,5 @@
-<div class="panel panel-danger error-modal animated" ng-show="showError">
-    <div class="panel-heading">
-        <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-        <strong>Unable to update card</strong>
-    </div>
-    <div class="panel-body">
-        <ul class="error text-danger">
-            <li ng-repeat="error in errors">{{error}}</li>
-        </ul>
-    </div>
-</div>
-<div class="panel panel-success animated" ng-show="showSuccess">
-    <div class="panel-heading">
-        <button type="button" class="close" aria-hidden="true" ng-click="showSuccess = false">&times;</button>
-        <strong>Card updated successfully</strong>
-    </div>
-</div>
+<alert-box theme="admin"></alert-box>
+
 <div class="panel panel-default br-none">
     <form name="form" role="form" class="form-horizontal">
     <input type="hidden" id="_id" name="_id" value="{{_id}}" ng-model="card._id">
@@ -130,15 +115,15 @@
                 <input type="hidden" id="cardPhotoLarge" name="cardPhotoLarge" value="" ng-model="card.photos.large">
                 <div class="photo-input">
                     <div class="upload-thumbnail upload-thumbnail-card">
-                        <div class="upload-drop" ng-show="card.photos.large === ''" ng-file-drop="cardUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
-                        <img src="{{cardImg}}" alt="" ng-show="card.photos.large !== ''">
+                        <div class="upload-drop" ng-show="card.photoNames.large === ''" ng-file-drop="cardUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
+                        <img src="{{cardImg}}" alt="" ng-show="card.photoNames.large !== ''">
                     </div>
                     <div class="btn-toolbar">
                         <button class="btn btn-default" ng-file-select="cardUpload($files)" onclick="this.value=null" accept="image/*">
-                            <span ng-show="card.photos.large === ''">Select image</span>
-                            <span ng-show="card.photos.large !== ''">Change image</span>
+                            <span ng-show="card.photoNames.large === ''">Select image</span>
+                            <span ng-show="card.photoNames.large !== ''">Change image</span>
                         </button>
-                        <a href="#" class="btn btn-danger" ng-click="card.photos.large = ''; card.photos.medium = ''" ng-show="card.photos.large !== ''">Remove image</a>
+                        <a href="#" class="btn btn-danger" ng-click="card.photoNames.large = ''; card.photoNames.medium = ''" ng-show="card.photoNames.large !== ''">Remove image</a>
                     </div>
                 </div>
             </div>
@@ -146,18 +131,18 @@
         <div class="form-group" ng-show="card.deckable">
             <label for="thumbPhoto" class="col-sm-2 control-label">Deck Image</label>
             <div class="col-sm-10">
-                <input type="hidden" id="cardPhotoSmall" name="cardPhotoSmall" value="" ng-model="card.photos.small">
+                <input type="hidden" id="cardPhotoSmall" name="cardPhotoSmall" value="" ng-model="card.photoNames.small">
                 <div class="photo-input">
                     <div class="upload-thumbnail upload-thumbnail-deck">
-                        <div class="upload-drop" ng-show="card.photos.small === ''" ng-file-drop="deckUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
-                        <img src="{{deckImg}}" alt="" ng-show="card.photos.small !== ''">
+                        <div class="upload-drop" ng-show="card.photoNames.small === ''" ng-file-drop="deckUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
+                        <img src="{{deckImg}}" alt="" ng-show="card.photoNames.small !== ''">
                     </div>
                     <div class="btn-toolbar">
                         <button class="btn btn-default" ng-file-select="deckUpload($files)" onclick="this.value=null" accept="image/*">
-                            <span ng-show="card.photos.small === ''">Select image</span>
-                            <span ng-show="card.photos.small !== ''">Change image</span>
+                            <span ng-show="card.photoNames.small === ''">Select image</span>
+                            <span ng-show="card.photoNames.small !== ''">Change image</span>
                         </button>
-                        <a href="#" class="btn btn-danger" ng-click="card.photos.small = ''" ng-show="card.photos.small !== ''">Remove image</a>
+                        <a href="#" class="btn btn-danger" ng-click="card.photoNames.small = ''" ng-show="card.photoNames.small !== ''">Remove image</a>
                     </div>
                 </div>
             </div>
@@ -171,7 +156,10 @@
     </div>
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="editCard(card)">Update Card</button>
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || fetching" ng-click="editCard(card)">
+                <span ng-if="!fetching">Update Card</span>
+                <span ng-if="fetching">Submitting <i class="fa fa-spinner fa-pulse"></i></span>
+            </button>
         </div>
     </div>
     </form>

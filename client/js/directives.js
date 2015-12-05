@@ -86,7 +86,6 @@ angular.module('app.directives', ['ui.load'])
             }
 
             $scope.setState = function (s) {
-                console.log(s);
                 switch(s) {
                     case 'login':  $scope.state = "login" ; $scope.title = "User Login"; break;
                     case 'signup': $scope.state = "signup"; $scope.title = "User Signup"; break;
@@ -142,6 +141,7 @@ angular.module('app.directives', ['ui.load'])
                                 $scope.showError = true;
                                 $scope.setLoggingIn(0);
                             } else {
+                                console.log('sup');
                                 LoginModalService.hideModal();
                                 $scope.setLoggingIn(2);
                                 if ($scope.callback) {
@@ -247,7 +247,7 @@ angular.module('app.directives', ['ui.load'])
         }
     }
 }])
-.directive('commentSection', ['$rootScope', '$sce', 'VoteService', 'LoginModalService', 'Comment', 'LoopBackAuth', function ($rootScope, $sce, VoteService, LoginModalService, Comment, LoopBackAuth) {
+.directive('commentSection', ['$sce', 'VoteService', 'LoginModalService', 'Comment', 'LoopBackAuth', function ($sce, VoteService, LoginModalService, Comment, LoopBackAuth) {
     return {
         restrict: "E",
         templateUrl: tpl + 'views/frontend/directives/comments/commentSection.html',
@@ -259,8 +259,7 @@ angular.module('app.directives', ['ui.load'])
             //TODO: FIX COMMENTING
             $scope.commentable;
             $scope.service;
-            $scope.app = $rootScope.app;
-
+            
 
             var defaultComment = '';
             $scope.comment = angular.copy(defaultComment);
@@ -269,6 +268,11 @@ angular.module('app.directives', ['ui.load'])
                 return $sce.trustAsHtml(c);
             }
 
+            $scope.getCurrentEmail = function () {
+                var userEmail = (LoopBackAuth.currentUserData) ? LoopBackAuth.currentUserData.email : undefined;
+                return userEmail;
+            }
+            
             $scope.commentPost = function () {
                 if (LoopBackAuth.currentUserData === null) {
                     LoginModalService.showModal('login', function () {
@@ -300,6 +304,13 @@ angular.module('app.directives', ['ui.load'])
                     });
                 }
             };
+            
+            $scope.calculateVotes = function (c) {
+                var voteScore = 0;
+                _.each(c.votes, function (vote) { voteScore = voteScore + vote.direction });
+                
+                return voteScore;
+            }
 
             updateCommentVotes();
             function updateCommentVotes() {
@@ -785,16 +796,21 @@ angular.module('app.directives', ['ui.load'])
         templateUrl: tpl + 'views/admin/hots.heroes.ability.edit.html'
     };
 })
-.directive('talentAddForm', function () {
+.directive('talentForm', ['Talent', function () {
     return {
-        templateUrl: tpl + 'views/admin/hots.heroes.talent.add.html'
+        templateUrl: tpl + 'views/admin/hots.talents.form.html',
     };
-})
-.directive('talentEditForm', function () {
+}])
+.directive('talentHeroFormAdd', ['Talent', function () {
     return {
-        templateUrl: tpl + 'views/admin/hots.heroes.talent.edit.html'
+        templateUrl: tpl + 'views/admin/hots.heroes.talents.add.form.html',
     };
-})
+}])
+.directive('talentHeroFormEdit', ['Talent', function () {
+    return {
+        templateUrl: tpl + 'views/admin/hots.heroes.talents.edit.form.html',
+    };
+}])
 .directive('charAddForm', function () {
     return {
         templateUrl: tpl + 'views/admin/hots.heroes.char.add.html'

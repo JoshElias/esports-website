@@ -17,26 +17,30 @@
     "description": {
       "type": "string"
     },
-    "type": {
+    "pollType": {
       "type": "string"
     },
     "voteLimit": {
       "type": "number"
     },
-    "view": {
+    "viewType": {
         "type": "string"
     },
     "createdDate": {
         "type": "date"
     },
-    "items": {
-      "type": [
-        "object"
-      ]
+    "oldItems": {
+        "type": ["object"]
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "items": {
+      "type": "hasMany",
+      "model": "pollItem",
+      "foreignKey": "pollId"
+    }
+  },
   "acls": [
     {
       "principalType": "ROLE",

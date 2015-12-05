@@ -1,17 +1,7 @@
-<div class="panel panel-success animated" ng-show="error.show">
-    <div class="panel-heading">
-        <button type="button" class="close" aria-hidden="true" ng-click="error.show = false">&times;</button>
-        <strong>{{error.msg}}</strong>
-    </div>
-</div>
-<div class="panel panel-success animated" ng-show="success.show">
-    <div class="panel-heading">
-        <button type="button" class="close" aria-hidden="true" ng-click="success.show = false">&times;</button>
-        <strong>{{success.msg}}</strong>
-    </div>
-</div>
+<alert-box theme="admin"></alert-box>
+
 <div class="panel panel-default br-none">
-    <form name="form" role="form" class="form-horizontal">
+    <form name="form" role="form" class="form-horizontal" novalidate>
     <div class="panel-heading">
         Edit Video of the Day
     </div>
@@ -42,7 +32,7 @@
             </span>
             <span ng-if="isPlaylist">
                 <label for="youtube" class="col-sm-2 control-label">Playlist</label>
-                <div ng-if="isPlaylist" class="col-sm-10">
+                <div class="col-sm-10">
                     <div class="input-group social-addon-group">
                         <span class="input-group-addon social-addon">youtube.com/playlist?list=</span>
                         <input type="text" id="youtube" name="youtube" class="form-control" ng-model="vod.youtubeVars.list" placeholder="PLAYLIST ID" required>
@@ -54,7 +44,7 @@
             <div class="col-sm-2 control-label"></div>
             <div class="col-sm-10 wrapper-none">
                 <span class="btn m-l-none">
-                    <button ng-disabled="vod.youtubeId || vod.youtubeVars.list" ng-click="isPlaylist = !isPlaylist" class="btn btn-default">
+                    <button ng-disabled="vod.youtubeId.length || vod.youtubeVars.list.length" ng-click="isPlaylist = !isPlaylist" class="btn btn-default">
                         <i class="fa fa-refresh"></i> Toggle Video Type
                     </button>
                 </span>
@@ -64,13 +54,17 @@
             <div class="col-sm-2"></div>
             <div class="col-sm-10">
                 <youtube-video ng-if="vod.youtubeId" video-url="vod.youtubeId"></youtube-video>
-                <youtube-video ng-if="vod.youtubeVars.list" player-vars="vod.youtubevars.list"></youtube-video>
+                <youtube-video ng-if="vod.youtubeVars.list" player-vars="vod.youtubeVars.list"
+                               video-url="vod.youtubeVars.list"></youtube-video>
             </div>
         </div>
     </div>
     <div class="panel-footer clearfix">
         <div class="col-sm-10 col-sm-offset-2">
-            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || !vod.displayDate" ng-click="updateVod(vod)">Edit Video of the Day</button>
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid || !vod.displayDate || fetching" ng-click="updateVod(vod)">
+                <span ng-if="!fetching">Edit Video of the Day</span>
+                <span ng-if="fetching">Submitting <i class="fa fa-spinner fa-pulse"></i></span>
+            </button>
         </div>
     </div>
     </form>

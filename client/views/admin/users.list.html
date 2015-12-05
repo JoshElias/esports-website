@@ -12,10 +12,19 @@
             <div pagination="userPagination" theme="default" class="default"></div>
         </div>
         <div class="pull-left">
-            <form>
-                <span class="pull-left m-r-sm">
-                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="searchUsers()">
-                </span>
+            <form class="form-inline" ng-submit="searchUsers()" novalidate>
+                <div class="form-group">
+                    <div class="input-group">
+                       <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                    <div class="input-group-addon">
+                        <button type="submit" class="btn btn-sm btn-blue" 
+                                ng-disabled="fetching">
+                            <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                            <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                        </button>
+                    </div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
@@ -51,10 +60,19 @@
             <div pagination="userPagination" theme="default" class="default"></div>
         </div>
         <div class="pull-left">
-            <form>
-                <span class="pull-left m-r-sm">
-                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search..." ng-keyup="searchUsers()">
-                </span>
+            <form class="form-inline" ng-submit="searchUsers()" novalidate>
+                <div class="form-group">
+                    <div class="input-group">
+                       <input type="text" ng-model="search" class="form-control input-sm" placeholder="Search...">
+                    <div class="input-group-addon">
+                        <button type="submit" class="btn btn-sm btn-blue" 
+                                ng-disabled="fetching">
+                            <span ng-if="!fetching"><i class="fa fa-search"></i></span>
+                            <span ng-if="fetching"><i class="fa fa-spinner fa-pulse"></i></span>
+                        </button>
+                    </div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
