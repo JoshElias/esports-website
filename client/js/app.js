@@ -1518,9 +1518,15 @@ var app = angular.module('app', [
                                       relation: 'author'
                                     },
                                     {
-                                      relation: 'heroes',
+                                      relation: 'guideHeroes',
                                       scope: {
                                         include: ['talents']
+                                      }
+                                    },
+                                    {
+                                      relation: 'guideTalents',
+                                      scope: {
+                                        include: ['talent']
                                       }
                                     },
                                     {
@@ -1536,17 +1542,6 @@ var app = angular.module('app', [
                                         featured: false
                                     }
                                 }).$promise;
-                            }],
-                            communityTalents: ['dataCommunityGuides', function (dataCommunityGuides) {
-                              var talents = {};
-                              for(var i = 0; i < dataCommunityGuides.length; i++) {
-                                for(var j = 0; j < dataCommunityGuides[i].heroes.length; j++) {
-                                  for(var k = 0; k < dataCommunityGuides[i].heroes[j].talents.length; k++) {
-                                    talents[dataCommunityGuides[i].heroes[j].talents[k].id] = dataCommunityGuides[i].heroes[j].talents[k];
-                                  }
-                                }
-                              }
-                              return talents;
                             }],
                             dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                               var guideType = $stateParams.t || 'all',
@@ -1577,9 +1572,15 @@ var app = angular.module('app', [
                                       relation: 'author'
                                     },
                                     {
-                                      relation: 'heroes',
+                                      relation: 'guideHeroes',
                                       scope: {
                                         include: ['talents']
+                                      }
+                                    },
+                                    {
+                                      relation: 'guideTalents',
+                                      scope: {
+                                        include: ['talent']
                                       }
                                     },
                                     {
@@ -1592,17 +1593,6 @@ var app = angular.module('app', [
                               }).catch(function(err) {
                                   console.log("error", err);
                               });
-                            }],
-                            topGuideTalents: ['dataTopGuide', function (dataTopGuide) {
-                            var talents = {};
-                            for(var i = 0; i < dataTopGuide.length; i++) {
-                                for(var j = 0; j < dataTopGuide[i].heroes.length; j++) {
-                                    for(var k = 0; k < dataTopGuide[i].heroes[j].talents.length; k++) {
-                                        talents[dataTopGuide[i].heroes[j].talents[k].id] = dataTopGuide[i].heroes[j].talents[k];
-                                    }
-                                }
-                            }
-                            return talents;
                             }],
                             dataTempostormGuides: ['Guide', function (Guide) {
                               return Guide.find({
@@ -1629,9 +1619,15 @@ var app = angular.module('app', [
                                       relation: 'author'
                                     },
                                     {
-                                      relation: 'heroes',
+                                      relation: 'guideHeroes',
                                       scope: {
                                         include: ['talents']
+                                      }
+                                    },
+                                    {
+                                      relation: 'guideTalents',
+                                      scope: {
+                                        include: ['talent']
                                       }
                                     },
                                     {
@@ -1648,17 +1644,6 @@ var app = angular.module('app', [
                                         featured: true
                                     }
                                 }).$promise;
-                            }],
-                            tempostormTalents: ['dataTempostormGuides', function (dataTempostormGuides) {
-                              var talents = {};
-                              for(var i = 0; i < dataTempostormGuides.length; i++) {
-                                for(var j = 0; j < dataTempostormGuides[i].heroes.length; j++) {
-                                  for(var k = 0; k < dataTempostormGuides[i].heroes[j].talents.length; k++) {
-                                    talents[dataTempostormGuides[i].heroes[j].talents[k].id] = dataTempostormGuides[i].heroes[j].talents[k];
-                                  }
-                                }
-                              }
-                              return talents;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
@@ -1987,6 +1972,24 @@ var app = angular.module('app', [
                     }
                 },
                 seo: { title: 'Talent Calculator', description: 'Talent Calculator for Heroes of the Storm', keywords: '' }
+            })
+            .state('app.hots.snapshot', {
+                abstract: 'true',
+                url: '/meta-snapshot',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/frontend/hots.snapshots.html'
+                    }
+                }
+            })
+            .state('app.hots.snapshot.snapshot', {
+                url: '/test',
+                views: {
+                    hotsSnapshots: {
+                        templateUrl: tpl + 'views/frontend/hots.snapshots.snapshot.html',
+//                        controller: 'SnapshotCtrl',
+                    }
+                }
             })
             .state('app.forum', {
                 abstract: true,
