@@ -1862,15 +1862,15 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.hero.html',
                         controller: 'HOTSGuideBuilderEditHeroCtrl',
                         resolve: {
-                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                            dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                return HOTSGuideService.guideEdit(slug);
+                                return Guide.guideEdit(slug);
                             }],
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.getHeroes();
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+                            dataMaps: ['Guide', function (Guide) {
+                                return Guide.getMaps();
                             }]
                         }
                     }
@@ -1885,15 +1885,21 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.map.html',
                         controller: 'HOTSGuideBuilderEditMapCtrl',
                         resolve: {
-                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                            dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                return HOTSGuideService.guideEdit(slug);
+                                return Guide.find({
+                                    filter: {
+                                        where: {
+                                            slug: slug
+                                        }
+                                    }
+                                });
                             }],
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.getHeroes();
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+                            dataMaps: ['Map', function (Map) {
+                                return Map.getMaps();
                             }]
                         }
                     }
@@ -3766,9 +3772,15 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.edit.step1.html',
                         controller: 'AdminHOTSGuideEditStep1Ctrl',
                         resolve: {
-                            dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
+                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var guideID = $stateParams.guideID;
-                                return AdminHOTSGuideService.getGuide(guideID);
+                                return Guide.find({
+                                    filter: {
+                                        where: {
+                                            id: guideID
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -3783,15 +3795,34 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.edit.hero.html',
                         controller: 'AdminHOTSGuideEditHeroCtrl',
                         resolve: {
-                            dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
+                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var guideID = $stateParams.guideID;
-                                return AdminHOTSGuideService.getGuide(guideID);
+                                
+                                console.log("guide id", guideID);
+                                
+                                return Guide.find({
+                                    filter: {
+                                        where: {
+                                            id: guideID
+                                        },
+                                        include: ['maps', 'guideHeroes']
+                                    }
+                                })
+                                .$promise
+                                .then(function(data){
+                                    data[0].heroes = data[0].guideHeroes;
+                                    
+                                     console.log('heroes', data.heroes);
+                                    console.log('data', data);
+                                    
+                                    return data[0];
+                                })
                             }],
-                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-                                return AdminHeroService.getAllHeroes();
+                            heroes: ['Hero', function (Hero) {
+                                return Hero.find({}).$promise;
                             }],
-                            dataMaps: ['AdminMapService', function (AdminMapService) {
-                                return AdminMapService.getAllMaps();
+                            maps: ['Map', function (Map) {
+                                return Map.find({}).$promise;
                             }]
                         }
                     }
@@ -3806,15 +3837,24 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.edit.map.html',
                         controller: 'AdminHOTSGuideEditMapCtrl',
                         resolve: {
-                            dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
+                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var guideID = $stateParams.guideID;
-                                return AdminHOTSGuideService.getGuide(guideID);
+                                
+                                console.log("guide id", guideID);
+                                
+                                return Guide.find({
+                                    filter: {
+                                        where: {
+                                            id: guideID
+                                        }
+                                    }
+                                }).$promise;
                             }],
-                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-                                return AdminHeroService.getAllHeroes();
+                            heroes: ['Hero', function (Hero) {
+                                return Hero.find({}).$promise;
                             }],
-                            dataMaps: ['AdminMapService', function (AdminMapService) {
-                                return AdminMapService.getAllMaps();
+                            maps: ['Map', function (Map) {
+                                return Map.find({}).$promise;
                             }]
                         }
                     }

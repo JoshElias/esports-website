@@ -12877,6 +12877,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             // edit guide
             $scope.editGuide = function (guide) {
+                console.log(guide);
+                
+                
                 if (guide.guideType === 'hero') {
                     return $state.go('app.admin.hots.guides.edit.hero', { guideID: guide.id });
                 } else {
@@ -13173,21 +13176,21 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminHOTSGuideEditStep1Ctrl', ['$scope', 'dataGuide',
-        function ($scope, dataGuide) {
-            $scope.guide = dataGuide.guide;
+    .controller('AdminHOTSGuideEditStep1Ctrl', ['$scope', 'guide',
+        function ($scope, guide) {
+            $scope.guide = guide;
         }
     ])
-    .controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'AdminHOTSGuideService', 'HOTS', 'dataGuide', 'dataHeroes', 'dataMaps',
-        function ($scope, $state, $window, AlertService, GuideBuilder, AdminHOTSGuideService, HOTS, dataGuide, dataHeroes, dataMaps) {
+    .controller('AdminHOTSGuideEditHeroCtrl', ['$scope', '$state', '$window', 'AlertService', 'GuideBuilder', 'Guide', 'HOTS', 'guide', 'heroes', 'maps',
+        function ($scope, $state, $window, AlertService, GuideBuilder, Guide, HOTS, guide, heroes, maps) {
             // create guide
-            $scope.guide = GuideBuilder.new('hero', dataGuide.guide);
+            $scope.guide = GuideBuilder.new('hero', guide);
 
             // heroes
-            $scope.heroes = dataHeroes.heroes;
+            $scope.heroes = heroes;
 
             // maps
-            $scope.maps = dataMaps.maps;
+            $scope.maps = maps;
 
             // steps
             $scope.step = 2;
@@ -13210,8 +13213,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < heroRows.length; row++) {
                 var heroes = [];
                 for (var i = 0; i < heroRows[row]; i++) {
-                    if (dataHeroes.heroes[index]) {
-                        heroes.push(dataHeroes.heroes[index]);
+                    if ($scope.heroes[index]) {
+                        heroes.push($scope.heroes[index]);
                     } else {
                         heroes.push({});
                     }
@@ -13227,8 +13230,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < mapRows.length; row++) {
                 var maps = [];
                 for (var i = 0; i < mapRows[row]; i++) {
-                    if (dataMaps.maps[index]) {
-                        maps.push(dataMaps.maps[index]);
+                    if ($scope.maps[index]) {
+                        maps.push($scope.maps[index]);
                     }
                     index++;
                 }
@@ -13321,16 +13324,16 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'HOTS', 'GuideBuilder', 'AdminHOTSGuideService', 'dataGuide', 'dataHeroes', 'dataMaps',
-        function ($scope, $state, $window, AlertService, HOTS, GuideBuilder, AdminHOTSGuideService, dataGuide, dataHeroes, dataMaps) {
+    .controller('AdminHOTSGuideEditMapCtrl', ['$scope', '$state', '$window', 'AlertService', 'HOTS', 'GuideBuilder', 'Guide', 'guide', 'heroes', 'maps',
+        function ($scope, $state, $window, AlertService, HOTS, GuideBuilder, Guide, guide, heroes, maps) {
             // create guide
-            $scope.guide = GuideBuilder.new('map', dataGuide.guide);
+            $scope.guide = GuideBuilder.new('map', guide);
 
             // heroes
-            $scope.heroes = dataHeroes.heroes;
+            $scope.heroes = heroes;
 
             // maps
-            $scope.maps = dataMaps.maps;
+            $scope.maps = maps;
 
             // steps
             $scope.step = 2;
@@ -13353,8 +13356,8 @@ angular.module('app.controllers', ['ngCookies'])
             for (var row = 0; row < mapRows.length; row++) {
                 var maps = [];
                 for (var i = 0; i < mapRows[row]; i++) {
-                    if (dataMaps.maps[index]) {
-                        maps.push(dataMaps.maps[index]);
+                    if ($scope.maps[index]) {
+                        maps.push($scope.maps[index]);
                     }
                     index++;
                 }
@@ -13417,15 +13420,20 @@ angular.module('app.controllers', ['ngCookies'])
                     return false;
                 }
 
-                AdminHOTSGuideService.editGuide($scope.guide).success(function (data) {
-                    if (!data.success) {
-                        $scope.errors = data.errors;
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                    } else {
-                        AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been updated successfully.' });
-                        $state.go('app.admin.hots.guides.list');
+                Guide.update({
+                    where: {
+                        id: $scope.guide.id
                     }
+                
+                },$scope.guide).$promise.then(function () {
+
+                    AlertService.setSuccess({ show: true, msg: $scope.guide.name + ' has been updated successfully.' });
+                    $state.go('app.admin.hots.guides.list');
+                    
+                }).catch( function(){
+                    AlertService.setError({ show: true, msg: $scope.guide.name + ' has not been updated. ' + err.status + ": " + err.data.error.message });
+                    $scope.showError = true;
+                    $window.scrollTo(0,0);
                 });
             };
         }
