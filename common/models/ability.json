@@ -1,4 +1,4 @@
-{
+ {
   "name": "ability",
   "plural": "abilities",
   "base": "PersistedModel",

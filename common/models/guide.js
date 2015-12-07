@@ -45,7 +45,7 @@ module.exports = function(Guide) {
         var Role = Guide.app.models.Role;
         var RoleMapping = Guide.app.models.RoleMapping;
         var User = Guide.app.models.user;
-        
+
         // sets the private fields to false
         function removeFields() {
             if (ctx.result) {
@@ -75,7 +75,7 @@ module.exports = function(Guide) {
                         }
                     }
                 }
-              
+
                 if (typeof answer !== "undefined") {
                   ctx.result = answer;
                 }
@@ -100,4 +100,10 @@ module.exports = function(Guide) {
             else return finalCb();
         });
     };
+
+
+  Guide.observe('before delete', function(ctx, next) {
+    var relationsToDestroy = ["comments", "maps", "guideHeroes", "guideTalents"];
+    utils.destroyRelations(ctx, relationsToDestroy, next);
+  });
 };

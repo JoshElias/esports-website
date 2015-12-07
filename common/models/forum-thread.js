@@ -6,6 +6,12 @@ module.exports = function(ForumThread) {
     utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
-    
+
+  ForumThread.observe('before delete', function(ctx, next) {
+
+    var relationsToDestroy = ["forumPosts"];
+    utils.destroyRelations(ctx, relationsToDestroy, next);
+  });
+
   ForumThread.validatesUniquenessOf('slug.url', {message: 'Slug.url already exists'});
 };

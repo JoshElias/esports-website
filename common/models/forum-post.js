@@ -14,11 +14,7 @@ module.exports = function(ForumPost) {
 
     ForumPost.observe('before delete', function(ctx, next) {
 
-      var childrenToDestroy = {
-        comment: {
-          foreignKey: "forumPostId"
-        }
-      };
-      utils.destroyChildren(ctx, childrenToDestroy, next);
+      var relationsToDestroy = ["comments"];
+      utils.destroyRelations(ctx, relationsToDestroy, next);
     });
 };
