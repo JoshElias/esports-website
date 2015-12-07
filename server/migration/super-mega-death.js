@@ -1,5 +1,6 @@
 var async = require("async");
 var server;
+
 module.exports = function(_server) {
     server = _server;
 
