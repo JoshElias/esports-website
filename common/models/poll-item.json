@@ -1,0 +1,37 @@
+{
+  "name": "pollItem",
+  "plural": "pollItems",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "photoNames": {
+      "type": "object"
+    },
+    "votes": {
+      "type": "number"
+    },
+    "orderNum": {
+      "type": "number"
+    },
+    "pollId": {
+        "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "poll": {
+        "type": "belongsTo",
+        "model": "poll",
+        "foreignKey": "pollId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

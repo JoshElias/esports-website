@@ -89,6 +89,10 @@ module.exports = {
     "dataSource": "mongodb",
     "public": true
   },
+  "pollItem": {
+    "dataSource": "mongodb",
+    "public": true
+  },
   "map": {
     "dataSource": "mongodb",
     "public": true
@@ -206,6 +210,22 @@ module.exports = {
      "public": true
   },
     "articleArticle" : {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "guideHero" : {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "guideTalent" : {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "heroTalent" : {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "ability" : {
         "dataSource": "mongodb",
         "public": true
     }

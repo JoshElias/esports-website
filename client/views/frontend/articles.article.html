@@ -23,17 +23,19 @@
             </div>
 
         </div>
-    
+        
+        {{isUser}}
+        
         <div class="row m-r-none m-l-none m-t-md">
             <div class="m-b-md article-left col-lg-8">
-                <div class="article-subscribe" ng-if="isPremium() && !app.user.isSubscribed() && !app.user.isAdmin() && !app.user.isProvider()">
+                <div class="article-subscribe" ng-if="isPremium() && !isUser.premium && !isUser.admin && !isUser.contentProvider">
                     <h1 class="article-title">CONTINUE READING THIS ARTICLE...</h1>
                     <h2>Signup for T/S Premium today!</h2>
                     
                     <div premium-page></div>
                 </div>
                 
-                <div ng-if="!isPremium() || app.user.isSubscribed() || app.user.isAdmin() || app.user.isProvider()">
+                <div ng-if="!isPremium() || isUser.premium || isUser.admin || isUser.contentProvider">
                     <!-- article content -->
                     <div class="article-page-content clearfix" ng-bind-html="getContent()" ts-article></div>
                     <!-- / article content -->

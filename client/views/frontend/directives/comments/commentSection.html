@@ -5,7 +5,7 @@
 <div class="comment-add m-b-sm" ng-class="{ 'active': addAreaFocus }">
     <div class="row">
         <div class="col-xs-1 wrapper-none">
-            <div class="avatar"><img gravatar-src="app.user.getUserEmail()" alt=""></div>
+            <div class="avatar"><img gravatar-src="getCurrentEmail()" alt=""></div>
         </div>
         <div class="col-xs-11 wrapper-none">
             <textarea ng-focus="addAreaFocus = true" ng-blur="addAreaFocus = false" maxlength="1000" rows="6" ng-model="comment" ng-trim="false" placeholder="Write your comment here..." class="comment-input"></textarea>

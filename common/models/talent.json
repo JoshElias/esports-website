@@ -26,13 +26,26 @@
   },
   "validations": [],
   "relations": {
-    "heroes": {
-      "type": "hasAndBelongsToMany",
-      "model": "hero"
+    "abilities": {
+      "type": "hasMany",
+      "model": "ability",
+      "foreignKey": "talentId",
+      "through": "heroTalent",
+      "keyThrough": "abilityId"
     },
     "guides": {
-      "type": "hasAndBelongsToMany",
-      "model": "guide"
+      "type": "hasMany",
+      "model": "guide",
+      "foreignKey": "talentId",
+      "through": "guideTalent",
+      "keyThrough": "guideId"
+    },
+    "heroes": {
+      "type": "hasMany",
+      "model": "hero",
+      "foreignKey": "talentId",
+      "through": "heroTalent",
+      "keyThrough": "heroId"
     }
   },
   "acls": [

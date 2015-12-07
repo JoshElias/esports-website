@@ -7,11 +7,22 @@ angular.module('redbull.services')
             this.tournament = {
                 packs: [
                     {
-                        expansion: 'Basic',
-                        packs: 1,
+                        expansion: 'Soulbound',
+                        packs: 10,
                         chances: {
-                            basic: 30,
-                            common: 44,
+                            basic: 100,
+                            common: 0,
+                            rare: 0,
+                            epic: 0,
+                            legendary: 0
+                        }
+                    },
+                    {
+                        expansion: 'Basic',
+                        packs: 8,
+                        chances: {
+                            basic: 0,
+                            common: 74,
                             rare: 21,
                             epic: 4,
                             legendary: 1
@@ -19,7 +30,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Naxxramas',
-                        packs: 1,
+                        packs: 4,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -30,7 +41,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Goblins Vs. Gnomes',
-                        packs: 0,
+                        packs: 8,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -41,18 +52,18 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Blackrock Mountain',
-                        packs: 1,
+                        packs: 4,
                         chances: {
                             basic: 0,
                             common: 74,
-                            rare: 21,
-                            epic: 4,
+                            rare: 25,
+                            epic: 0,
                             legendary: 1
                         }
                     },
                     {
                         expansion: 'The Grand Tournament',
-                        packs: 0,
+                        packs: 8,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -63,7 +74,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'League of Explorers',
-                        packs: 1,
+                        packs: 4,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -157,7 +168,7 @@ angular.module('redbull.services')
                 this.packsWithRolls = packs;
             },
             sortCards: function () {
-                var expansions = Hearthstone.expansions,
+                var expansions = ['Soulbound'].concat(Hearthstone.expansions),
                     sorted = [],
                     defaultExpansion = {
                         basic: [],
@@ -179,7 +190,11 @@ angular.module('redbull.services')
                     rarity    = this.cards[i].rarity.toLowerCase();
                     card      = this.cards[i];
                     
-                    sorted[expansion][rarity].push(card);
+                    if (rarity === 'basic') {
+                        sorted['Soulbound'][rarity].push(card);
+                    } else {
+                        sorted[expansion][rarity].push(card);
+                    }
                 }
                 
                 this.cardsSorted = sorted;
@@ -209,13 +224,13 @@ angular.module('redbull.services')
                     expansionCards = this.cardsSorted[expansion],
                     start = 0,
                     card,
-                    pool,
+                    pool = [],
                     randomCard;
                 
                 if (!chances) { /* TODO: ERROR */ }
                 
                 // basic
-                if (chances.basic > 0 && roll > start && roll <= chances.basic) {
+                if (chances.basic > 0 && ((roll > start && roll <= chances.basic) || ( chances.basic === 100 ))) {
                     pool = expansionCards.basic;
                 }
                 start += chances.basic;
@@ -248,6 +263,16 @@ angular.module('redbull.services')
                 randomCard = this.getRandomInt(0, pool.length - 1);
                 card = pool[randomCard];
                 
+                if (card === undefined) {
+                    console.log('expansion: ', expansion);
+                    console.log('chances: ', chances);
+                    console.log('expansionCards: ', expansionCards);
+                    console.log('randomCard: ', randomCard);
+                    console.log('pool: ', pool);
+                    console.log('pool[randomCard]: ', pool[randomCard]);
+                    console.log('card: ', card);
+                }
+                
                 return card;
             },
             generatePackFromRolls: function ( expansion, rolls ) {
@@ -266,11 +291,32 @@ angular.module('redbull.services')
                 };
             },
             generatePacksWithCards: function () {
-                var packs = [];
+                var packs = {},
+                    expansion,
+                    packWithRoll,
+                    packWithExpansion;
                 
-                for (var i = 0; i < this.numberPacks; i++) {
-                    packs.push( this.generatePackFromRolls( this.packsWithExpansions[i], this.packsWithRolls[i] ) );
+                // create expansions
+                for (var i = 0; i < this.tournament.packs.length; i++) {
+                    if (this.tournament.packs[i].packs > 0) {
+                        expansion = this.tournament.packs[i].expansion;
+                        packs[expansion] = {
+                            expansion: expansion,
+                            packs: [],
+                            expansionClass: Util.slugify(expansion)
+                        };
+                    }
                 }
+                
+                // add packs to expansions
+                for (var i = 0; i < this.numberPacks; i++) {
+                    packWithRoll = this.packsWithRolls[i];
+                    packWithExpansion = this.packsWithExpansions[i];
+                    
+                    packs[packWithExpansion].packs.push( this.generatePackFromRolls( packWithExpansion, packWithRoll ) );
+                }
+                
+                console.log(packs);
                 
                 this.packsWithCards = packs;
             }

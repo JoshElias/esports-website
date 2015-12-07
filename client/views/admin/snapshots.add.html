@@ -78,20 +78,20 @@
         <div class="form-group">
             <label for="snapshotPhoto" class="col-sm-2 control-label">Snapshot Image</label>
             <div class="col-sm-10">
-                <input type="hidden" id="snapshotPhotoSmall" name="snapshotPhotoSmall" value="" ng-model="snapshot.photos.small">
-                <input type="hidden" id="snapshotPhotoMedium" name="snapshotPhotoMedium" value="" ng-model="snapshot.photos.medium">
-                <input type="hidden" id="snapshotPhotoLarge" name="snapshotPhotoLarge" value="" ng-model="snapshot.photos.large">
+                <input type="hidden" id="snapshotPhotoSmall" name="snapshotPhotoSmall" value="" ng-model="snapshot.photoNames.small">
+                <input type="hidden" id="snapshotPhotoMedium" name="snapshotPhotoMedium" value="" ng-model="snapshot.photoNames.medium">
+                <input type="hidden" id="snapshotPhotoLarge" name="snapshotPhotoLarge" value="" ng-model="snapshot.photoNames.large">
                 <div class="photo-input">
                     <div class="upload-thumbnail upload-thumbnail-article">
-                        <div class="upload-drop" ng-show="snapshot.photos.large === ''" ng-file-drop="photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
-                        <img src="{{getImage()}}" alt="" ng-show="snapshot.photos.large !== ''">
+                        <div class="upload-drop" ng-show="snapshot.photoNames.large === ''" ng-file-drop="photoUpload($files)" ng-file-drag-over-class="active">Drop image here</div>
+                        <img src="{{getImage()}}" alt="" ng-show="snapshot.photoNames.large !== ''">
                     </div>
                     <div class="btn-toolbar">
                         <button class="btn btn-default" ng-file-select="photoUpload($files)" onclick="this.value=null" accept="image/*">
-                            <span ng-show="snapshot.photos.large === ''">Select image</span>
-                            <span ng-show="snapshot.photos.large !== ''">Change image</span>
+                            <span ng-show="snapshot.photoNames.large === ''">Select image</span>
+                            <span ng-show="snapshot.photoNames.large !== ''">Change image</span>
                         </button>
-                        <a href="#" class="btn btn-danger" ng-click="snapshot.photos.large = ''; snapshot.photos.medium = ''; snapshot.photos.small = '';" ng-show="snapshot.photos.large !== ''">Remove image</a>
+                        <a href="#" class="btn btn-danger" ng-click="snapshot.photoNames.large = ''; snapshot.photoNames.medium = ''; snapshot.photoNames.small = '';" ng-show="snapshot.photoNames.large !== ''">Remove image</a>
                     </div>
                 </div>
             </div>

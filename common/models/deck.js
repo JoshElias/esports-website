@@ -59,7 +59,7 @@ module.exports = function(Deck) {
         var Role = Deck.app.models.Role;
         var RoleMapping = Deck.app.models.RoleMapping;
         var User = Deck.app.models.user;
-        
+
         // sets the private fields to false
         function removeFields() {
             if (ctx.result) {
@@ -88,7 +88,10 @@ module.exports = function(Deck) {
                         }
                     }
                 }
-                ctx.result = answer;
+
+                if (typeof answer !== "undefined") {
+                  ctx.result = answer;
+                }
             }
             finalCb();
         }
@@ -151,6 +154,13 @@ module.exports = function(Deck) {
             else return finalCb();
         });
     };
+
+
+  Deck.observe('before delete', function(ctx, next) {
+
+    var relationsToDestroy = ["comments", "cards", "matchups", "mulligans"]
+    utils.destroyRelations(ctx, relationsToDestroy, next);
+  });
 
 
 

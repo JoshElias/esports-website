@@ -84,7 +84,10 @@ angular.module('app.services', [])
             User.login(options, where)
             .$promise
             .then(function (data) {
-                EventService.emit("EVENT_LOGIN", data);
+              console.log(data);
+                var user = data.__data.user;
+                
+                EventService.emit("EVENT_LOGIN", user);
                 return callback(null, data);
             })
             .catch(function (err) {
@@ -567,7 +570,7 @@ angular.module('app.services', [])
             return error;
         },
         setError: function (value) {
-            console.log("alertservice:", value);
+//            console.log("alertservice:", value);
             this.reset();
             error = value;
             alert = value.show || true;
@@ -1088,6 +1091,47 @@ angular.module('app.services', [])
 })
 .factory('AjaxPagination', [function () {
     var pagination = {};
+    
+    pagination.update = function (serviceName, searchFilter, countFilter, callback) {
+        async.series([
+            function (seriesCallback) {
+                serviceName.count(countFilter)
+                .$promise
+                .then(function (count) {
+//                    console.log('count:', count);
+                    seriesCallback(null, count);
+                })
+                .catch(function (err) {
+//                    console.log('err:', err);
+                    seriesCallback(err);
+                });
+            },
+            function (seriesCallback) {
+                serviceName.find(searchFilter)
+                .$promise
+                .then(function (data) {
+//                    console.log('data:', data);
+                    seriesCallback(null, data);
+                })
+                .catch(function (err) {
+//                    console.log('err:', err);
+                    seriesCallback(err);
+                });
+            }
+        ], function(err, results) {
+            if (err) {
+//                console.log('series err:', err);
+                if (callback) {
+                    callback(err);
+                }
+            } else {
+//                console.log('results:', results);
+                if (callback) {
+                    callback(null, results[1], results[0]);
+                }
+            }
+        });
+    };
 
     pagination.new = function (perpage, total, callback) {
         var paginate = {

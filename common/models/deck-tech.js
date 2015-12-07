@@ -7,4 +7,9 @@ module.exports = function(DeckTech) {
     utils.convertObjectIds(foreignKeys, ctx);
     next();
   });
+
+  DeckTech.observe('before delete', function(ctx, next) {
+    var relationsToDestroy = ["cardTech"];
+    utils.destroyRelations(ctx, relationsToDestroy, next);
+  });
 };

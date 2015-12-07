@@ -21,7 +21,7 @@ module.exports = function(Article) {
         var Role = Article.app.models.Role;
         var RoleMapping = Article.app.models.RoleMapping;
         var User = Article.app.models.user;
-        
+
         // sets the private fields to false
         function removeFields() {
             if (ctx.result) {
@@ -33,7 +33,7 @@ module.exports = function(Article) {
                             answer.push(result);
                             return;
                         }
-                        
+
                         var replacement = {};
                         for(var key in result) {
                             if(privateFields.indexOf(key) === -1) {
@@ -50,7 +50,10 @@ module.exports = function(Article) {
                         }
                     }
                 }
-                ctx.result = answer;
+
+                if (typeof answer !== "undefined") {
+                  ctx.result = answer;
+                }
             }
             finalCb();
         }
@@ -72,6 +75,12 @@ module.exports = function(Article) {
             else return finalCb();
         });
     };
+
+
+  Article.observe('before delete', function(ctx, next) {
+    var relationsToDestroy = ["comments", "relatedArticles"];
+    utils.destroyRelations(ctx, relationsToDestroy, next);
+  })
 
 
   Article.validatesUniquenessOf('slug.url', {message: 'Slug url already exists'});

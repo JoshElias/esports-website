@@ -1,13 +1,13 @@
 var async = require("async");
 var server;
+
 module.exports = function(_server) {
     server = _server;
 
-    /*
     async.series([
-        createTalents,
-        associateTalents,
-        createTalentTiers,
+        assignGameTypeMode,
+        createPollItems,
+        createAbilitiesAndTalents,
         createForumModels,
         associateCommentReplies,
         associateRelatedArticles,
@@ -24,187 +24,102 @@ module.exports = function(_server) {
         if(err) console.log("error with super mega death script:", err);
         else console.log("Donnerino");
     });
-    */
 };
 
-function createTalents(finalCb) {
+var oldTalents = {};
+function createAbilitiesAndTalents(finalCb) {
+
     var Hero = server.models.hero;
     var Talent = server.models.talent;
-
-    var talentDict = {};
+    var HeroTalent = server.models.heroTalent;
+    var Ability = server.models.ability;
 
     async.waterfall([
         function(seriesCb) {
             Hero.find({}, seriesCb);
         },
         function(heroes, seriesCb) {
-            try {
-                for (var heroKey in heroes) {
-                    var hero = heroes[heroKey];
-                    for (var talentKey in hero.oldTalents) {
-                        var talent = hero.oldTalents[talentKey];
-                        if (!talent.name)
-                            continue;
 
-                        if (talentDict[talent.name])
-                            continue;
+            async.eachSeries(heroes, function (hero, heroCb) {
 
-                        var talentDoc = {
-                            name: talent.name,
-                            description: talent.description,
-                            className: talent.className,
-                            orderNum: talent.orderNum
-                        };
+                // Create Abilities
+                async.eachSeries(hero.oldAbilities, function (ability, abilityCb) {
 
-                        talentDict[talent.name] = talentDoc;
-                    }
-                }
-                seriesCb();
-            } catch(err) {
-                seriesCb(err);
-            }
-        },
-        function(seriesCb) {
-            var addedTalentCount = 0;
-            async.forEachOfSeries(talentDict, function(talent, talentKey, eachCb) {
-                Talent.create(talent, function(err) {
-                    if(err) console.log("Error entering talent");
-                    console.log("added talent:", addedTalentCount++);
-                    eachCb(err);
-                });
-            }, seriesCb);
-        }
-    ], finalCb);
-};
+                    Ability.create({
+                        heroId: hero.id.toString(),
+                        name: ability.name,
+                        abilityType: ability.abilityType,
+                        description: ability.description,
+                        className: ability.className,
+                        orderNum: ability.orderNum,
+                        healing: ability.healing,
+                        damage: ability.damage,
+                        cooldown: ability.cooldown,
+                        mana: ability.mana
+                    }, function (err, abilityInstance) {
+                        if (err) return abilityCb(err);
 
+                        console.log("created ability:", abilityInstance.id);
+                        async.eachSeries(hero.oldTalents, function (talent, eachCb) {
 
-function associateTalents(finalCb) {
+                            if (!talent.name)
+                                return eachCb();
 
-    var Talent = server.models.talent;
-    var Hero = server.models.hero;
+                            Talent.findOne({
+                                where: {
+                                    name: talent.name,
+                                    className: talent.className,
+                                    orderNum: talent.orderNum
+                                }
+                            }, function (err, talentInstance) {
+                                if (err) eachCb(err);
 
-    async.waterfall([
-        // Get all the users
-        function(seriesCallback) {
-            console.log("Finding users");
-            Hero.find({}, seriesCallback);
-        },
-        // Create user identity for each user
-        function(heros, seriesCallback) {
-            console.log("creating user identies");
-            async.eachSeries(heros, function(hero, callback) {
-                async.eachSeries(hero.oldTalents, function(talent, innerCallback) {
-                    console.log("searching on talent name:",talent.name)
-                    Talent.findOne({where:{name:talent.name}}, function(err, talentInstance) {
-                        if(err) innerCallback(err);
-                        else {
-                            console.log("added talent Instance:", talentInstance.name);
-                            console.log("to hero:", hero.name);
-                            hero.talents.add(talentInstance, function(err) {
-                                if(err) console.log(err);
-                                innerCallback(err);
+                                function createHeroTalent() {
+                                    Talent.create({
+                                        name: talent.name,
+                                        description: talent.description,
+                                        className: talent.className,
+                                        orderNum: talent.orderNum
+                                    }, function (err, talentInstance) {
+                                        if (err) return eachCb(err);
+
+                                        console.log("created talent:", talentInstance.id);
+                                        console.log("entering to oldTalents:", talent._id.toString());
+                                        oldTalents[talent._id.toString()] = talentInstance.id.toString();
+                                        console.log("talentInstanceId:", talentInstance.id.toString());
+
+                                        HeroTalent.create({
+                                            heroId: hero.id.toString(),
+                                            talentId: talentInstance.id.toString(),
+                                            abilityId: abilityInstance.id.toString(),
+                                            tier: talent.tier
+                                        }, function (err) {
+                                            return eachCb(err);
+                                        });
+                                    });
+                                }
+
+                                if (!talentInstance) {
+                                    return createHeroTalent();
+                                }
+
+                                console.log("Already have talent Instance and entering to oldTalents:", talent._id.toString());
+                                oldTalents[talent._id.toString()] = talentInstance.id.toString();
+                                eachCb();
                             });
-                        }
-                    });
-                }, callback);
-            }, seriesCallback);
-        }],
-    finalCb);
-}
-
-
-function createTalentTiers(finalCb) {
-
-    var Talent = server.models.talent;
-    var Hero = server.models.hero;
-    var Guide = server.models.guide;
-
-    async.waterfall([
-
-        // Get all the users
-        function (seriesCallback) {
-            Hero.find({}, seriesCallback);
-        },
-        // Create user identity for each user
-        function (heros, seriesCallback) {
-            console.log("creating user identies");
-            async.eachSeries(heros, function (hero, callback) {
-                var talentTiers = {};
-                async.eachSeries(hero.oldTalents, function (talent, innerCallback) {
-                    Talent.findOne({where: {name: talent.name}}, function (err, talentInstance) {
-                        if (err) innerCallback(err);
-                        else {
-                            talentTiers[talentInstance.id] = talent.tier;
-                            innerCallback();
-                        }
+                        }, abilityCb);
                     });
                 }, function (err) {
-                    hero.updateAttribute("talentTiers", talentTiers, function (err) {
-                        callback(err);
-                    });
-                });
-            }, seriesCallback);
-        },
-        function (seriesCallback) {
-            Guide.find({}, seriesCallback);
-        },
-        // Create user identity for each user
-        function (guides, seriesCallback) {
-            console.log("creating user identies");
-            var talentsTiers = {};
-            async.eachSeries(guides, function (guide, callback) {
-                console.log("resetting talent tiers");
-                talentTiers = {};
-                async.eachSeries(guide.oldHeroes, function (hero, innerCallback) {
-                    console.log("assinging hero:", hero.hero);
-                    talentTiers[hero.hero] = {};
-                    Hero.findById(hero.hero, function (err, heroInstance) {
-                        if (err) innerCallback(err);
-                        else if (!heroInstance) innerCallback("unable to find hero instance");
-                        else {
-                            async.eachSeries(hero.talents, function (talent, superInnerCallback) {
-                                var relevantTalent;
-                                for (var key in heroInstance.oldTalents) {
-                                    var oldTalent = heroInstance.oldTalents[key];
-                                    if (typeof oldTalent === "function") continue;
-                                    //console.log("oldTalent id:", oldTalent._id.toString());
-                                    //console.log("talent id:", talent.toString());
-                                    if (talent.toString() === oldTalent._id.toString()) {
-                                        relevantTalent = oldTalent;
-                                        break;
-                                    }
-                                }
-
-                                if (!relevantTalent) {
-                                    superInnerCallback();
-                                    return;
-                                }
-
-                                Talent.findOne({where: {name: relevantTalent.name}}, function (err, talentInstance) {
-                                    if (err) superInnerCallback(err);
-                                    else if (!talentInstance) superInnerCallback("Unable to find talent instance");
-                                    else {
-                                        console.log("hero id: ", hero.hero);
-                                        console.log("assinging tier:", relevantTalent.tier);
-                                        console.log("talent id: ", talentInstance.id);
-                                        talentTiers[hero.hero][relevantTalent.tier] = talentInstance.id
-                                        superInnerCallback();
-                                    }
-                                });
-                            }, innerCallback);
-                        }
-                    })
-                }, function (err) {
-                    console.log("talent Tiers:", talentTiers);
-                    guide.updateAttribute("talentTiers", talentTiers, function (err) {
-                        callback(err);
-                    });
-                });
-            }, seriesCallback)
+                    heroCb(err);
+                })
+            }, function (err) {
+                seriesCb(err);
+            });
         }],
-    finalCb);
+    function(err) {
+        finalCb(err);
+    });
 };
-
 
 function createForumModels(finalCb) {
 
@@ -230,6 +145,7 @@ function createForumModels(finalCb) {
                             superInnerCallback();
                         } else {
                             forumThread.updateAttribute("forumCategoryId", forumCategory.id.toString(), function (err) {
+                                if(!err) console.log("updated forumCategory:", forumCategory.id);
                                 superInnerCallback(err);
                             });
                         }
@@ -252,6 +168,7 @@ function createForumModels(finalCb) {
                             superInnerCallback();
                         } else {
                             forumPost.updateAttribute("forumThreadId", forumThread.id.toString(), function (err) {
+                                if(!err) console.log("updated forumThread:", forumThread.id);
                                 superInnerCallback(err);
                             });
                         }
@@ -272,8 +189,6 @@ function createForumModels(finalCb) {
                         superInnerCallback();
                         return;
                     }
-
-                    console.log("looking for comment:", comment.toString());
 
                     Comment.findById(comment.toString(), function (err, commentInstance) {
                         if (err) superInnerCallback(err);
@@ -378,11 +293,15 @@ function createDeckCards(finalCb) {
     finalCb);
 };
 
-
+// Requires oldTalents!
 function associateGuideHeroes(finalCb) {
     var Guide = server.models.guide;
     var Hero = server.models.hero;
+    var GuideHero = server.models.guideHero;
+    var GuideTalent = server.models.guideTalent;
 
+    console.log("oldTalents:", Object.keys(oldTalents));
+    console.log("first talent value:", oldTalents[Object.keys(oldTalents)[0]]);
     async.waterfall([
         // Get all the users
         function(seriesCallback) {
@@ -398,11 +317,40 @@ function associateGuideHeroes(finalCb) {
                     Hero.findById(hero.hero, function(err, heroInstance) {
                         if(err) innerCallback(err);
                         else {
+
                             console.log("added hero:", heroInstance.name);
                             console.log("to guide:", guide.name);
-                            heroInstance.guides.add(guide, function(err) {
-                                if(err) console.log(err);
-                                innerCallback(err);
+
+                            GuideHero.create({
+                                guideId: guide.id.toString(),
+                                heroId: heroInstance.id.toString()
+                            }, function(err, guideHeroInstance) {
+                                if(err) return innerCallback(err);
+
+                                async.forEachOfSeries(hero.talents, function(talent, talentKey, talentCb) {
+
+                                    var tier = talentKey.replace("tier", "");
+                                    console.log("tier:", tier);
+
+                                    console.log("looking at talent:", talent.toString());
+                                    console.log("talent:", oldTalents[talent.toString()]);
+                                    var talentInstanceId = oldTalents[talent.toString()];
+                                    if(typeof talentInstanceId === "undefined") {
+                                        return talentCb();
+                                    }
+
+                                    talentInstanceId = talentInstanceId.toString();
+                                    console.log("talentInstanceId?:", talentInstanceId)
+
+                                    GuideTalent.create({
+                                        guideHeroId: guideHeroInstance.id.toString(),
+                                        tier: tier,
+                                        talentId: talentInstanceId,
+                                        guideId: guide.id.toString()
+                                    }, function(err) {
+                                        talentCb(err);
+                                    });
+                                }, innerCallback);
                             });
                         }
                     });
@@ -795,35 +743,36 @@ function createUserRoles(finalCb) {
     var roles = ["$contentProvider", "$admin", "$active"];
     var roleInstances = {};
     async.waterfall([
-        // Create the different roles
-        function(seriesCb) {
-            console.log("create different roles");
-            async.eachSeries(roles, function(role, eachCb) {
-                Role.create({name:role}, function(err, newRole) {
-                    if(err) return eachCb(err);
+            // Create the different roles
+            function (seriesCb) {
+                console.log("create different roles");
+                async.eachSeries(roles, function (role, eachCb) {
+                    Role.create({name: role}, function (err, newRole) {
+                        if (err) return eachCb(err);
 
-                    roleInstances[newRole.name] = newRole;
-                    eachCb();
-                });
-            }, seriesCb);
-        },
-        // Get all the users
-        function(seriesCb) {
-            console.log("getting users:", roleInstances);
-            User.find({}, seriesCb);
-        },
-        // Assign their roles
-        function(users, seriesCb) {
-            console.log("assigning rules");
-            assignRole(users, seriesCb);
-        }
-    ],
-    finalCb);
+                        roleInstances[newRole.name] = newRole;
+                        eachCb();
+                    });
+                }, seriesCb);
+            },
+            // Get all the users
+            function (seriesCb) {
+                console.log("getting users:", roleInstances);
+                User.find({}, seriesCb);
+            },
+            // Assign their roles
+            function (users, seriesCb) {
+                console.log("assigning rules");
+                assignRole(users, seriesCb);
+            }
+        ],
+        finalCb);
+
 
     function assignRole(users, finalCallback) {
         var cuntCounter = 0;
-        async.eachSeries(users, function(user, userCb) {
-            async.eachSeries(roles, function(roleName, roleCb) {
+        async.eachSeries(users, function (user, userCb) {
+            async.eachSeries(roles, function (roleName, roleCb) {
 
                 if ((roleName === "$admin" && user.isAdmin)
                     || (roleName === "$contentProvider" && user.isProvider)
@@ -832,8 +781,8 @@ function createUserRoles(finalCb) {
                     roleInstances[roleName].principals.create({
                         principalType: RoleMapping.USER,
                         principalId: user.id.toString()
-                    }, function(err, newPrincipal) {
-                        if(!err) {
+                    }, function (err, newPrincipal) {
+                        if (!err) {
                             console.log("created principal:", newPrincipal);
                             console.log(cuntCounter++);
                         }
@@ -846,4 +795,77 @@ function createUserRoles(finalCb) {
             }, userCb);
         }, finalCallback)
     }
+}
+
+function createPollItems(finalCb) {
+    var Poll = server.models.poll;
+    var PollItem = server.models.pollItem;
+
+    async.waterfall([
+        function (waterfallCb) {
+            console.log("finding polls");
+            Poll.find({}, waterfallCb);
+        },
+        function (polls, waterfallCb) {
+            async.eachSeries(polls, function (poll, outerEachCb) {
+                console.log("on poll:", poll.id);
+
+                async.each(poll.oldItems, function (item, innerEachCb) {
+                    item.pollId = poll.id.toString();
+
+                    PollItem.create(item, function (err, newPollItem) {
+                        if (err) { console.log(err); }
+                        else { console.log("Successfully created newPollItem: " + newPollItem.id); }
+
+                        return(innerEachCb(err));
+                    })
+                }, outerEachCb)
+            }, waterfallCb)
+        }
+    ], function (err) {
+        finalCb(err);
+    });
+}
+
+function assignGameTypeMode(finalCb) {
+
+    var Deck = server.models.deck;
+
+    async.waterfall([
+        function(seriesCb) {
+            Deck.find({}, seriesCb);
+        },
+        function(decks, seriesCb) {
+            var count = 0;
+            async.eachSeries(decks, function(deck, eachCb) {
+
+                function dealWithIt(deck, cb) {
+
+                    var gameTypeString = "";
+                    if(deck.type == 1) {
+                        gameTypeString = "constructed"
+                    } else if(deck.type == 2) {
+                        gameTypeString = "arena"
+                    } else if(deck.type == 3) {
+                        gameTypeString = "brawl"
+                    }
+
+                    deck.updateAttribute("gameModeType", gameTypeString, function(err) {
+                        if(err && err.statusCode == 422) {
+                            return Deck.destroyById(deck.id.toString(), function(err) {
+                                if(!err) console.log("deleted duplicate deck:", count++);
+                                return cb(err);
+                            });
+                        }
+                        else if(!err) console.log("updated deck gameModeType:", count++);
+                        cb(err);
+                    });
+                }
+                dealWithIt(deck, eachCb);
+            }, seriesCb);
+        }
+    ],
+    function(err) {
+        finalCb(err);
+    });
 }

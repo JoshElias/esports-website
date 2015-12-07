@@ -34,7 +34,8 @@
 
     <div class="app" id="app" ui-view="root" bootstrap-width></div>
     <script>
-        var tpl = '{cdnUrl}';
+        var tpl = '{cdnUrl}',
+            cdn2 = '{cdnUrl2}';
     </script>
 
     <!-- vendor -->
@@ -49,6 +50,7 @@
     <script src="./vendor/underscore/underscore-min.js"></script>
     <script src="./vendor/async/dist/async.min.js"></script>
     <script src="./vendor/jrumble/jquery.jrumble.min.js"></script>
+    <script src="./js/vendor/iscroll.js"></script>
 
     <!-- angular -->
     <script src="./vendor/angular/angular.js"></script>
@@ -73,6 +75,7 @@
     <script src="./vendor/ngstorage/ngStorage.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="./vendor/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
+    <script src="./vendor/angular-iscroll/dist/lib/angular-iscroll.js"></script>
 
     <!-- app -->
     <script src="./dist/js/services/lb-services.js"></script>

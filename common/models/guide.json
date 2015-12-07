@@ -97,9 +97,15 @@
       "type": "hasAndBelongsToMany",
       "model": "map"
     },
-    "heroes": {
-      "type": "hasAndBelongsToMany",
-      "model": "hero"
+    "guideHeroes": {
+      "type": "hasMany",
+      "model": "guideHero",
+      "foreignKey": "guideId"
+    },
+    "guideTalents": {
+      "type": "hasMany",
+      "model": "guideTalent",
+      "foreignKey": "guideId"
     }
   },
   "acls": [

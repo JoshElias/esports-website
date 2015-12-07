@@ -1,59 +1,34 @@
-<div class="draft container-fluid" redbull-draft packs="packs" is-loading="isLoading" current-pack="currentPack" current-cards="currentCards">
-    <!-- preloader -->
-    <div class="preloader" ng-if="isLoading"><i class="fa fa-refresh fa-spin"></i></div>
-    <!-- / preloader -->
+<div class="draft container-fluid"
+     redbull-draft
+     packs="packs"
+     is-loading="isLoading"
+     current-pack="currentPack"
+     current-cards="currentCards"
+     audio-files="audioFiles"
+     add-card-to-pool="addCardToPool">
+</div>
 
-    <!-- hs frame -->
-    <div class="hs-frame"></div>
-    <!-- / hs frame -->
-    
-    <!-- draft wrapper -->
-    <div class="draft-wrapper">
-
-        <!-- pack burst -->
-        <!--<video id="pack-burst" preload="auto">
-            <source ng-src="./modules/redbull/client/video/pack_burst.webm" type="video/webm" />
-            <source ng-src="./modules/redbull/client/video/pack_burst.mp4" type="video/mp4" />
-        </video>-->
-        <!-- / pack burst -->
-
-        <!-- bg -->
-        <div class="bg"></div>
-        <div class="bg-glow"></div>
-        <!--<div class="bg-blur"></div>-->
-        <!-- / bg -->
-
-        <!-- packs -->
-        <div class="pack-wrapper">
-            <div class="pack-next {{packs[currentPack + 1].expansionClass}}" ng-if="(currentPack + 1) < packs.length"></div>
-            <div class="pack {{packs[currentPack].expansionClass}}"></div>
-        </div>
-        <div class="pack-drop"></div>
-        <!-- / packs -->
-
-        <!-- back button -->
-        <a ui-sref="app.redbull.home" class="btn-back"></a>
-        <!-- / back button -->
-
-        <!-- cards -->
-        <div class="cards">
-            <div class="card" ng-repeat="card in packs[currentCards].cards track by $index">
-                <span style="display:none;">{{card}}</span>
-                <div class="card-glow {{card.rarity.toLowerCase()}}"></div>
-                <div class="card-front">
-                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" />
+<!-- card pool -->
+<div class="card-pool">
+    <div class="card-pool-title"></div>
+    <div class="card-pool-cards iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true}">
+        <div class="iscroll-scroller">
+            <div class="card-pool-card" ng-class="{multi:card.qty > 1, legendary: card.card.rarity === 'Legendary'}" 
+                 ng-repeat="card in sortedPool() track by card.card.id" 
+                 data-card-id="card.card.id" 
+                 data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" 
+                 data-tooltip-pos="left" pool-card>
+                <div class="card-pool-card-mana">{{card.card.cost}}</div>
+                <div class="card-pool-card-qty" ng-if="card.qty > 1">{{card.qty}}</div>
+                <div class="card-pool-card-legendary" ng-if="card.card.rarity === 'Legendary'">
+                    <i class="fa fa-star"></i>
                 </div>
-                <div class="card-back">
-                    <img ng-src="./modules/redbull/client/img/card_back.png" />
+                <div class="card-pool-card-photo">
+                    <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" alt="card.card.name">
                 </div>
+                <div class="card-pool-card-name">{{card.card.name}}</div>
             </div>
         </div>
-        <!-- / cards -->
-
-        <!-- done button -->
-        <div class="btn-done"></div>
-        <!-- / done button -->
-
     </div>
-    <!-- / draft wrapper -->
 </div>
+<!-- / card pool -->

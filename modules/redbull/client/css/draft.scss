@@ -1,3 +1,14 @@
+.iscroll-wrapper {
+position: relative;
+width: 100%;
+height: 100%;
+overflow: hidden;
+}
+.iscroll-scroller {
+position: absolute;
+width: 100%;
+min-height: 100%;
+}
 .redbull-draft {
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
@@ -19,6 +30,13 @@
     }
     
     .draft {
+        position: absolute;
+        top: 52px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        background-color: #161213;
+        
         &.blurred {
             .bg,
             .pack-wrapper {
@@ -44,297 +62,452 @@
             -ms-transition: 1s -ms-filter linear;
             -o-transition: 1s -o-filter linear;
         }
-    }
-    
-    .preloader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: #121111;
-        z-index: 99;
         
-        i {
-            margin: -25px 0 0 -25px;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 50px;
-            color: #FFF;
-        }
-    }
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #161213;
+            z-index: 99;
 
-    .hs-frame {
-      margin-left: -765px;
-      margin-top: -444px;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 1530px;
-      height: 888px;
-      background: url("../img/modules/redbull/client/img/bg_frame.png");
-    }
-
-    .draft-wrapper {
-        margin-left: -683px;
-        margin-top: -384px;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 1366px;
-        height: 768px;
-    
-        &.grabbing {
-            cursor: url("../img/modules/redbull/client/img/grab.png"), auto;
-        }
-        
-        &.clicking {
-            cursor: url("../img/modules/redbull/client/img/click.png"), auto;
-        }
-        
-        #pack-burst {
-            position: absolute;
-        }
-
-        .bg,
-        .bg-glow,
-        .bg-blur {
-            margin-left: -683px;
-            margin-top: -384px;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 1366px;
-            height: 768px;
-            background: url("../img/modules/redbull/client/img/bg.jpg") no-repeat center center;
-            z-index: 2;
-        }
-        
-        .bg-glow {
-            display: none;
-            margin-left: -253px;
-            margin-top: -384px;
-            width: 741px;
-            height: 684px;
-            background: url("../img/modules/redbull/client/img/bg_glow.jpg") no-repeat center center;
-            z-index: 3;
-        }
-
-        .bg-blur {
-            background: url("../img/modules/redbull/client/img/blur.jpg") no-repeat center center;
-            display: none;
-            z-index: 3;
-        }
-    
-        .pack-wrapper {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            
-            .pack,
-            .pack-next {
-                position: relative;
-                left: 200px;
-                top: 247px;
-                width: 155px;
-                height: 212px;
-                background: url("../img/modules/redbull/client/img/pack.png") no-repeat;
-                z-index: 3;
-                
-                &.league-of-explorers {
-                    background: url("../img/modules/redbull/client/img/pack-loe.png") no-repeat;
-                }
-                
-                &.blackrock-mountain {
-                    background: url("../img/modules/redbull/client/img/pack-brm.png") no-repeat;
-                }
-                
-                &.naxxramas {
-                    background: url("../img/modules/redbull/client/img/pack-naxx.png") no-repeat;
-                }
-            }
-            
-            .pack-next {
-                position: absolute;
-                z-index: 2;
-            }
-        }
-
-        .pack-drop {
-            position: absolute;
-            left: 707px;
-            top: 260px;
-            width: 155px;
-            height: 212px;
-        }
-
-        .cards {
-            margin-left: -683px;
-            margin-top: -384px;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 1366px;
-            height: 768px;
-            perspective: 1000px;
-            z-index: 6;
-            display: none;
-
-            .card {
+            i {
+                margin: -25px 0 0 -25px;
                 position: absolute;
                 left: 50%;
                 top: 50%;
-                width: 188px;
-                height: 285px;
-                transition: transform 300ms;
-                -webkit-transition: -webkit-transform 300ms;
-
-                &:nth-child(1) {
-                    margin-left: 8px;
-                    margin-top: -332px;
-                }
-                &:nth-child(2) {
-                    margin-left: -194px;
-                    margin-top: -261px;
-                }
-                &:nth-child(3) {
-                    margin-left: 223px;
-                    margin-top: -254px;
-                }
-                &:nth-child(4) {
-                    margin-left: -108px;
-                    margin-top: 18px;
-                }
-                &:nth-child(5) {
-                    margin-left: 127px;
-                    margin-top: 26px;
-                }
-                
-                .card-glow {
-                    position: absolute;
-                    left: 27px;
-                    top: 43px;
-                    width: 145px;
-                    height: 215px;
-                    transition: box-shadow 1000ms;
-                    -webkit-transition: box-shadow 1000ms;
-                }
-                
-                &:not(.flipped-left):not(.flipped-right):hover {
-                    transform: scale(1.15) rotate(0.0001deg);
-                    -webkit-transform: scale(1.15) rotate(0.0001deg);
-                    
-                    .card-glow {
-                        &.rare {
-                            box-shadow: 0 0 75px #0066ff;
-                        }
-
-                        &.epic {
-                            box-shadow: 0 0 75px #cc33ff;
-                        }
-
-                        &.legendary {
-                            box-shadow: 0 0 75px #ff8000;
-                        }
-                    }
-                }
-                
-                .card-back {
-                    backface-visibility: hidden;
-                    -webkit-backface-visibility: hidden;
-                    transform: perspective(1000px) rotateY(0deg);
-                    -webkit-transform: perspective(1000px) rotateY(0deg);
-                    transition: transform 800ms ease-in-out 300ms;
-                    -webkit-transition: -webkit-transform 800ms ease-in-out 300ms;
-                }
-
-                .card-front {
-                    position: absolute;
-                    width: 100%;
-                    height: 100%;
-                    left: 7px;
-                    top: -1px;
-                    backface-visibility: hidden;
-                    -webkit-backface-visibility: hidden;
-                    transform: perspective(1000px) rotateY(180deg);
-                    -webkit-transform: perspective(1000px) rotateY(180deg);
-                    transition: transform 800ms ease-in-out 300ms;
-                    -webkit-transition: -webkit-transform 800ms ease-in-out 300ms;
-                    
-                    img {
-                        margin-top: 23px;
-                        width: 180px;
-                        height: 264px;
-                    }
-                }
-                
-                &.flipped-left,
-                &.flipped-right {
-                    .card-glow {
-                        box-shadow: none;
-                    }
-                }
-                
-                &.flipped-left {
-                    .card-back {
-                        transform: perspective(1000px) rotateY(-180deg);
-                        -webkit-transform: perspective(1000px) rotateY(-180deg);
-                    }
-                    
-                    .card-front {
-                        transform: perspective(1000px) rotateY(0deg);
-                        -webkit-transform: perspective(1000px) rotateY(0deg);
-                    }
-                }
-                
-                &.flipped-right {
-                    .card-back {
-                        transform: perspective(1000px) rotateY(180deg);
-                        -webkit-transform: perspective(1000px) rotateY(180deg);
-                    }
-                    
-                    .card-front {
-                        transform: perspective(1000px) rotateY(360deg);
-                        -webkit-transform: perspective(1000px) rotateY(360deg);
-                    }
-                }
+                width: 50px;
+                height: 50px;
+                font-size: 50px;
+                color: #FFF;
             }
         }
 
-        .btn-done {
-            margin-left: 22px;
-            margin-top: -55px;
+        .draft-wrapper {
+            margin-left: -683px;
+            margin-top: -384px;
             position: absolute;
             left: 50%;
             top: 50%;
-            display: none;
-            width: 175px;
-            height: 104px;
-            z-index: 7;
-            background: url("../img/modules/redbull/client/img/done.png") no-repeat;
-        }
+            width: 1366px;
+            height: 768px;
 
-        .btn-back {
-            position: absolute;
-            right: 200px;
-            bottom: 42px;
-            width: 70px;
-            height: 38px;
-            z-index: 2;
+            &.grabbing {
+                cursor: url("../img/modules/redbull/client/img/grab.png"), auto;
+            }
 
-            &:hover {
-                right: 195px;
-                bottom: 40px;
-                width: 80px;
-                height: 44px;
-                background: url("../img/modules/redbull/client/img/back_button_hover.jpg");
+            &.clicking {
+                cursor: url("../img/modules/redbull/client/img/click.png"), auto;
+            }
+
+            .bg,
+            .bg-glow {
+                margin-left: -324px; //-253px;
+                margin-top: -300px; //-384px;
+                width: 649px; //width: 741px;
+                height: 600px; //height: 684px;
+    //            margin-left: -683px;
+    //            margin-top: -384px;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+    //            width: 1366px;
+    //            height: 768px;
+                background: url("../img/modules/redbull/client/img/bg.jpg") no-repeat center center;
+                z-index: 2;
+            }
+
+            .bg-glow {
+                display: none;
+                margin-left: -324px; //-253px;
+                margin-top: -300px; //-384px;
+                width: 649px; //width: 741px;
+                height: 600px; //height: 684px;
+                background: url("../img/modules/redbull/client/img/bg-glow.jpg") no-repeat center center;
+                z-index: 3;
+            }
+            
+            .packs {
+                position: fixed;
+                top: 52px;
+                left: 0px;
+                bottom: 0px;
+                width: 300px;
+                background: rgba(0,0,0,.4);
+                border-right: 1px solid #000;
+                z-index: 99;
+                
+                .pack-wrapper {
+                    position: relative;
+                    margin: 30px auto;
+                    width: 155px;
+                    height: 212px;
+                    
+                    .pack,
+                    .pack-next {
+                        position: relative;
+                        left: 0px;
+                        top: 0px;
+                        width: 155px;
+                        height: 212px;
+                        background: url("../img/modules/redbull/client/img/pack.png") no-repeat;
+                        z-index: 101;
+
+                        &.league-of-explorers {
+                            background: url("../img/modules/redbull/client/img/pack-loe.png") no-repeat;
+                        }
+
+                        &.blackrock-mountain {
+                            background: url("../img/modules/redbull/client/img/pack-brm.png") no-repeat;
+                        }
+
+                        &.naxxramas {
+                            background: url("../img/modules/redbull/client/img/pack-naxx.png") no-repeat;
+                        }
+
+                        &.goblins-vs-gnomes {
+                            background: url("../img/modules/redbull/client/img/pack-gvg.png") no-repeat;
+                        }
+
+                        &.the-grand-tournament {
+                            background: url("../img/modules/redbull/client/img/pack-tgt.png") no-repeat;
+                        }
+
+                        &.soulbound {
+                            background: url("../img/modules/redbull/client/img/pack-soulbound.png") no-repeat;
+                        }
+                    }
+
+                    .pack-next {
+                        position: absolute;
+                        z-index: 100;
+                    }
+                }
+                
+            }/* .packs */
+
+            .pack-drop {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                margin-left: -77px;
+                margin-top: -106px;
+                width: 155px;
+                height: 212px;
+            }
+
+            .cards {
+                margin-left: -683px;
+                margin-top: -384px;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 1366px;
+                height: 768px;
+                perspective: 1000px;
+                z-index: 6;
+                display: none;
+
+                .card {
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    width: 188px;
+                    height: 285px;
+                    transition: transform 300ms;
+                    -webkit-transition: -webkit-transform 300ms;
+
+                    &:nth-child(1) {
+                        margin-left: -94px;
+                        margin-top: -332px;
+                    }
+                    &:nth-child(2) {
+                        margin-left: -296px;
+                        margin-top: -261px;
+                    }
+                    &:nth-child(3) {
+                        margin-left: 121px;
+                        margin-top: -254px;
+                    }
+                    &:nth-child(4) {
+                        margin-left: -210px;
+                        margin-top: 26px;
+                    }
+                    &:nth-child(5) {
+                        margin-left: 25px;
+                        margin-top: 26px;
+                    }
+
+                    .card-glow {
+                        position: absolute;
+                        left: 27px;
+                        top: 43px;
+                        width: 145px;
+                        height: 215px;
+                        transition: box-shadow 1000ms;
+                        -webkit-transition: box-shadow 1000ms;
+                    }
+
+                    &:not(.flipped-left):not(.flipped-right):hover {
+                        transform: scale(1.15) rotate(0.0001deg);
+                        -webkit-transform: scale(1.15) rotate(0.0001deg);
+
+                        .card-glow {
+                            &.rare {
+                                box-shadow: 0 0 75px #0066ff;
+                            }
+
+                            &.epic {
+                                box-shadow: 0 0 75px #cc33ff;
+                            }
+
+                            &.legendary {
+                                box-shadow: 0 0 75px #ff8000;
+                            }
+                        }
+                    }
+
+                    .card-back {
+                        backface-visibility: hidden;
+                        -webkit-backface-visibility: hidden;
+                        transform: perspective(1000px) rotateY(0deg);
+                        -webkit-transform: perspective(1000px) rotateY(0deg);
+                        transition: transform 800ms ease-in-out 300ms;
+                        -webkit-transition: -webkit-transform 800ms ease-in-out 300ms;
+                    }
+
+                    .card-front {
+                        position: absolute;
+                        width: 100%;
+                        height: 100%;
+                        left: 7px;
+                        top: -1px;
+                        backface-visibility: hidden;
+                        -webkit-backface-visibility: hidden;
+                        transform: perspective(1000px) rotateY(180deg);
+                        -webkit-transform: perspective(1000px) rotateY(180deg);
+                        transition: transform 800ms ease-in-out 300ms;
+                        -webkit-transition: -webkit-transform 800ms ease-in-out 300ms;
+
+                        img {
+                            margin-top: 23px;
+                            width: 180px;
+                            height: 264px;
+                        }
+                    }
+
+                    &.flipped-left,
+                    &.flipped-right {
+                        .card-glow {
+                            box-shadow: none;
+                        }
+                    }
+
+                    &.flipped-left {
+                        .card-back {
+                            transform: perspective(1000px) rotateY(-180deg);
+                            -webkit-transform: perspective(1000px) rotateY(-180deg);
+                        }
+
+                        .card-front {
+                            transform: perspective(1000px) rotateY(0deg);
+                            -webkit-transform: perspective(1000px) rotateY(0deg);
+                        }
+                    }
+
+                    &.flipped-right {
+                        .card-back {
+                            transform: perspective(1000px) rotateY(180deg);
+                            -webkit-transform: perspective(1000px) rotateY(180deg);
+                        }
+
+                        .card-front {
+                            transform: perspective(1000px) rotateY(360deg);
+                            -webkit-transform: perspective(1000px) rotateY(360deg);
+                        }
+                    }
+                }
+            }
+
+            .btn-done {
+                margin-left: -83px;
+                margin-top: -50px;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                display: none;
+                width: 175px;
+                height: 104px;
+                z-index: 7;
+                background: url("../img/modules/redbull/client/img/done.png") no-repeat;
+            }
+
+            .btn-back {
+                position: absolute;
+                right: 200px;
+                bottom: 42px;
+                width: 70px;
+                height: 38px;
+                z-index: 2;
+
+                &:hover {
+                    right: 195px;
+                    bottom: 40px;
+                    width: 80px;
+                    height: 44px;
+                    background: url("../img/modules/redbull/client/img/back_button_hover.jpg");
+                }
+            }
+
+        }/* .draft-wrapper */
+        
+        &.fast-forward {
+            .draft-wrapper {
+                .cards {
+                    .card,
+                    .card .card-back,
+                    .card .card-front {
+                        transition-duration: 100ms !important;
+                        -webkit-transition-duration: 100ms !important;
+                    }
+                }
             }
         }
 
-    }
-    
-}
+        .card-pool {
+            position: fixed;
+            top: 52px;
+            right: 0px;
+            bottom: 0px;
+            width: 300px;
+            background: rgba(0,0,0,.4);
+            border-left: 1px solid #000;
+            z-index: 99;
+
+            .card-pool-title {
+
+            }
+
+            .card-pool-cards {
+                
+                .card-pool-card {
+                    margin-right: 9px;
+                    position: relative;
+                    height: 28px;
+                    color: #FFF;
+                    font-weight: bold;
+                    line-height: 26px;
+                    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+                    text-decoration: none;
+                    cursor: pointer;
+                    border-bottom: 1px solid #000;
+                    -webkit-transition: opacity .3s linear;
+                    transition: opacity .3s linear;
+
+                    &:last-child {
+                        border-bottom: none;
+                    }
+
+                    &:hover {
+                        background: rgba(255,255,255,.2);
+                    }
+
+                    .card-pool-card-name {
+                        position: absolute;
+                        top: 0px;
+                        left: 40px;
+                        height: 26px;
+                        font-size: 14px;
+                        z-index: 2;
+                    }/* .card-pool-card-name */
+
+                    .card-pool-card-mana {
+                        display: block;
+                        position: absolute;
+                        top: 0px;
+                        left: 0px;
+                        width: 30px;
+                        height: 26px;
+                        line-height: 25px;
+                        font-family: hs;
+                        text-align: center;
+                        font-size: 20px;
+                        color: #FFF;
+                        z-index: 2;
+                        background: #2766ad;
+                        border-right: 1px solid #000;
+                    }/* .card-pool-card-mana */
+
+                    .card-pool-card-qty,
+                    .card-pool-card-legendary {
+                        position: absolute;
+                        top: 0px;
+                        right: 0px;
+                        width: 30px;
+                        height: 26px;
+                        font-family: hs;
+                        text-align: center;
+                        font-size: 20px;
+                        color: #cbb800;
+                        z-index: 2;
+                        line-height: 26px;
+                        background: #262626;
+                        border-left: 1px solid #000;
+                    }/* .card-pool-card-qty, .card-pool-card-legendary */
+                    
+                    .card-pool-card-legendary {
+                        font-size: 14px;
+                    }/* .card-pool-card-legendary */
+                    
+                    .card-pool-card-photo {
+                        position: absolute;
+                        top: 0px;
+                        right: 0px;
+                        width: 100%;
+                        height: 26px;
+
+                        img {
+                            position: absolute;
+                            top: 0px; right: 0px;
+                            width: 110px;
+                            height: 26px;
+                        }/* img */
+                    }/* .card-pool-card-photo */
+
+                    &.multi {
+                        .card-pool-card-legendary {
+                            right: 30px;
+                        }
+                        .card-pool-card-photo {
+                            width: 100%;
+                            right: 0px;
+                            border-top-right-radius: 0px;
+                            border-bottom-right-radius: 0px;
+                            border-right: none;
+
+                            img {
+                                border-top-right-radius: 0px;
+                                border-bottom-right-radius: 0px;
+                                position:absolute;
+                                right: 30px;
+                            }/* img */
+                            
+                        }/* .card-pool-card-photo */
+                        
+                        &.legendary {
+                            .card-pool-card-photo {
+                                img {
+                                    right: 60px;
+                                }
+                            }
+                        }
+                        
+                    }/* .multi */
+                    
+                }/* .card-pool-card */
+            }/* .card-pool-cards */
+        }/* .card-pool */
+        
+    }/* .draft */
+}/* .redbull-draft */

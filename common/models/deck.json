@@ -20,6 +20,9 @@
     "gameModeType": {
       "type": "string"
     },
+    "type": {
+      "type": "string"
+    },
     "cardQuantities": {
       "type": "object"
     },

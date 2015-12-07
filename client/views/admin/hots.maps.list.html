@@ -26,7 +26,7 @@
         <div class="list-group-item admin-list-item clearfix" ng-repeat="map in maps">
             <span>{{map.name}}</span>
             <div class="pull-right btn-toolbar">
-                <a ui-sref="app.admin.hots.maps.edit({ mapID: map._id })" class="btn btn-default">Edit</a>
+                <a ui-sref="app.admin.hots.maps.edit({ mapID: map.id })" class="btn btn-default">Edit</a>
                 <button class="btn btn-danger" ng-click="deleteMap(map)">Delete</button>
             </div>
         </div>

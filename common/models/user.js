@@ -31,6 +31,7 @@ module.exports = function(User) {
     });
 
     User.observe("before save", function(ctx, next) {
+        console.log("ctx: ", Object.keys(ctx));
         protectFields(ctx, next);
     });
 
@@ -213,7 +214,10 @@ module.exports = function(User) {
                         }
                     }
                 }
-                ctx.result = answer;
+              
+                if (typeof answer !== "undefined") {
+                  ctx.result = answer;
+                }
             }
             finalCb();
         }
@@ -230,7 +234,7 @@ module.exports = function(User) {
 
     // Filter out sensitive user information depending on ACL
     var protectedFields = ["password", "email"];
-
+    
     function protectFields(ctx, finalCb) {
         var Role = User.app.models.Role;
         var RoleMapping = User.app.models.RoleMapping;
@@ -248,12 +252,11 @@ module.exports = function(User) {
             return finalCb();
         }
 
-        if(!ctx.req || !ctx.req.accessToken) {
+        ctx = loopback.getCurrentContext();
+        if(!ctx || !ctx.active || !ctx.active.accessToken)
             return removeFields();
-        }
 
-
-        User.isInRoles(ctx.req.accessToken.userId.toString(), ["$admin"], function(err, isInRoles) {
+        User.isInRoles(ctx.active.accessToken.userId.toString(), ["$admin"], function(err, isInRoles) {
             if(err) return finalCb();
             else if(isInRoles.none) return removeFields();
             else return finalCb();
@@ -555,9 +558,6 @@ module.exports = function(User) {
 
 
     User.assignRoles = function (uid, roleNames, cb) {
-        console.log('uid: ', uid);
-        console.log('roleNames: ', roleNames);
-        console.log('cb: ', cb);
         cb = cb || utils.createPromiseCallback();
 
         var Role = User.app.models.Role;
@@ -618,7 +618,6 @@ module.exports = function(User) {
                     return seriesCb();
                 }],
             function (err) {
-                console.log('done err: ', err);
                 if (err && err !== "ok") return assignCb(err);
                 return assignCb();
             });

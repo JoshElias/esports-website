@@ -11,7 +11,7 @@
     "isActive": {
       "type": "boolean"
     },
-    "abilities": {
+    "oldAbilities": {
       "type": [
         "object"
       ]
@@ -68,12 +68,21 @@
   "validations": [],
   "relations": {
     "talents": {
-      "type": "hasAndBelongsToMany",
-      "model": "talent"
+      "type": "hasMany",
+      "model": "heroTalent",
+      "foreignId": "heroId"
     },
     "guides": {
-      "type": "hasAndBelongsToMany",
-      "model": "guide"
+      "type": "hasMany",
+      "model": "guide",
+      "through": "guideHero",
+      "foreignKey": "heroId",
+      "keyThrough": "guideId"
+    },
+    "abilities": {
+      "type": "hasMany",
+      "model": "ability",
+      "foreignKey": "heroId"
     }
   },
   "acls": [
