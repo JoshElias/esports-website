@@ -52,7 +52,7 @@
 <!--        <div class="list-group-item card-list-item clearfix" ng-repeat="card in filtered = (cards | filterAll:search | filter:{ expansion: filterExpansion, playerClass: filterClass, cardType: filterType, rarity: filterRarity }) | orderBy:'name' | startFrom:pagination.pageStart() | limitTo:pagination.perpage">-->
             <div class="list-group-item card-list-item clearfix" ng-repeat="card in cards">
             <div class="rarity {{card.rarity | lowercase}} pull-left"></div>
-                <span>{{card.name}}</span>  <span>------- {{card.expansion}}</span>
+                <span>{{card.name}}</span>
             <div class="pull-right btn-toolbar">
                 <a ui-sref="app.admin.hearthstone.cards.edit({ cardID: card.id })" class="btn btn-default">Edit</a>
                 <button class="btn btn-danger" ng-click="deleteCard(card)">Delete</button>

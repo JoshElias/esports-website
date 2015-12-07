@@ -3292,8 +3292,7 @@ var app = angular.module('app', [
                                                 id: true,
                                                 name: true,
                                                 rarity: true,
-                                                expansion: true
-                                                
+                                                                                              
                                             },
                                             limit: 50,
                                             order: 'name ASC'
