@@ -12,9 +12,9 @@
 
     <!-- packs -->
     <div class="packs">
-        <div class="pack-wrapper" ng-repeat="expansionPacks in packs track by $index" ng-init="enablePacks()">
-            <div class="pack-next {{expansionPacks.expansionClass}}" ng-if="(currentPack[expansionPacks.expansion] + 1) < expansionPacks.packs.length"></div>
-            <div class="pack {{expansionPacks.expansionClass}}" data-expansion="{{expansionPacks.expansion}}"></div>
+        <div class="pack-wrapper" ng-repeat="expansion in expansions track by expansion" ng-init="enablePacks()">
+            <div class="pack-next {{packs[expansion].expansionClass}}" ng-if="currentPack[expansion] + 1 < packs[expansion].packs.length"></div>
+            <div class="pack {{packs[expansion].expansionClass}}" data-expansion="{{expansion}}"></div>
         </div>
     </div>
     <div class="pack-drop"></div>
@@ -23,10 +23,12 @@
     <!-- cards -->
     <div class="cards">
         <div class="card"
+             ng-controller="DraftPacksCardCtrl"
              ng-repeat="card in cards() track by $index"
              ng-mouseenter="cardMouseEnter($event, card)"
              ng-mouseleave="cardMouseLeave($event, card)"
-             ng-mousedown="cardMouseDown($event, card)">
+             ng-mousedown="cardMouseDown($event, card)"
+             ng-class="{'flipped-left': card.flipped === 'left', 'flipped-right': card.flipped === 'right'}">
             <div class="card-glow {{card.rarity.toLowerCase()}}"></div>
             <div class="card-front">
                 <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" />
@@ -39,7 +41,7 @@
     <!-- / cards -->
 
     <!-- done button -->
-    <div class="btn-done"></div>
+    <div class="btn-done" ng-mousedown="doneMouseDown()"></div>
     <!-- / done button -->
 
 </div>

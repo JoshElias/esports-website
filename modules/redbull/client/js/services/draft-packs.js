@@ -8,7 +8,7 @@ angular.module('redbull.services')
                 packs: [
                     {
                         expansion: 'Soulbound',
-                        packs: 10,
+                        packs: 1,
                         chances: {
                             basic: 100,
                             common: 0,
@@ -19,7 +19,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Basic',
-                        packs: 8,
+                        packs: 1,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -30,7 +30,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Naxxramas',
-                        packs: 4,
+                        packs: 1,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -41,7 +41,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Goblins Vs. Gnomes',
-                        packs: 8,
+                        packs: 1,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -52,7 +52,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'Blackrock Mountain',
-                        packs: 4,
+                        packs: 1,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -63,7 +63,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'The Grand Tournament',
-                        packs: 8,
+                        packs: 1,
                         chances: {
                             basic: 0,
                             common: 74,
@@ -74,7 +74,7 @@ angular.module('redbull.services')
                     },
                     {
                         expansion: 'League of Explorers',
-                        packs: 4,
+                        packs: 1,
                         chances: {
                             basic: 0,
                             common: 74,
