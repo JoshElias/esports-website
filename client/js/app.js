@@ -1345,7 +1345,7 @@ var app = angular.module('app', [
                                             relation: 'author'
                                         },
                                         {
-                                            relation: 'heroes',
+                                            relation: 'guideHeroes',
                                             scope: {
                                                 include: ['talents']
                                             }
@@ -1371,20 +1371,6 @@ var app = angular.module('app', [
                                   console.log(err);
                               });
                             }],
-
-                            communityTalentDict: ['dataGuidesCommunity', function (dataGuidesCommunity) {
-                                var dict = {};
-                                for (var i = 0; i < dataGuidesCommunity.length; i++) {
-                                    for (var k = 0; k < dataGuidesCommunity[i].heroes.length; k++) {
-                                        for (var l = 0; l < dataGuidesCommunity[i].heroes[k].talents.length; l++) {
-                                            var temp = dataGuidesCommunity[i].heroes[k].talents[l].id;
-                                            dict[temp] = dataGuidesCommunity[i].heroes[k].talents[l];
-                                        }
-                                    }
-                                }
-                                return dict;
-                            }],
-
                             dataGuidesFeatured: ['Guide', function (Guide) {
                               return Guide.find({
                                 filter: {
@@ -1410,7 +1396,7 @@ var app = angular.module('app', [
                                             relation: 'author'
                                         },
                                         {
-                                            relation: 'heroes',
+                                            relation: 'guideHeroes',
                                             scope: {
                                                 include: ['talents']
                                             }
@@ -1430,20 +1416,6 @@ var app = angular.module('app', [
                                   console.log(err);
                               });
                             }],
-
-                            featuredTalentDict: ['dataGuidesFeatured', function (dataGuidesFeatured) {
-                                var dict = {};
-                                for (var i = 0; i < dataGuidesFeatured.length; i++) {
-                                    for (var k = 0; k < dataGuidesFeatured[i].heroes.length; k++) {
-                                        for (var l = 0; l < dataGuidesFeatured[i].heroes[k].talents.length; l++) {
-                                            var temp = dataGuidesFeatured[i].heroes[k].talents[l].id;
-                                            dict[temp] = dataGuidesFeatured[i].heroes[k].talents[l];
-                                        }
-                                    }
-                                }
-                                return dict;
-                            }],
-
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
                                   filter: {
@@ -1518,9 +1490,25 @@ var app = angular.module('app', [
                                       relation: 'author'
                                     },
                                     {
-                                      relation: 'heroes',
+                                      relation: 'guideHeroes',
                                       scope: {
-                                        include: ['talents']
+                                        include: [
+                                          {
+                                            relation: 'talents'
+                                          },
+                                          {
+                                            relation: 'hero',
+                                            scope: {
+                                              include: ['talents']
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      relation: 'guideTalents',
+                                      scope: {
+                                        include: ['talent']
                                       }
                                     },
                                     {
@@ -1536,17 +1524,6 @@ var app = angular.module('app', [
                                         featured: false
                                     }
                                 }).$promise;
-                            }],
-                            communityTalents: ['dataCommunityGuides', function (dataCommunityGuides) {
-                              var talents = {};
-                              for(var i = 0; i < dataCommunityGuides.length; i++) {
-                                for(var j = 0; j < dataCommunityGuides[i].heroes.length; j++) {
-                                  for(var k = 0; k < dataCommunityGuides[i].heroes[j].talents.length; k++) {
-                                    talents[dataCommunityGuides[i].heroes[j].talents[k].id] = dataCommunityGuides[i].heroes[j].talents[k];
-                                  }
-                                }
-                              }
-                              return talents;
                             }],
                             dataTopGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                               var guideType = $stateParams.t || 'all',
@@ -1577,9 +1554,25 @@ var app = angular.module('app', [
                                       relation: 'author'
                                     },
                                     {
-                                      relation: 'heroes',
+                                      relation: 'guideHeroes',
                                       scope: {
-                                        include: ['talents']
+                                        include: [
+                                          {
+                                            relation: 'talents'
+                                          },
+                                          {
+                                            relation: 'hero',
+                                            scope: {
+                                              include: ['talents']
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      relation: 'guideTalents',
+                                      scope: {
+                                        include: ['talent']
                                       }
                                     },
                                     {
@@ -1592,17 +1585,6 @@ var app = angular.module('app', [
                               }).catch(function(err) {
                                   console.log("error", err);
                               });
-                            }],
-                            topGuideTalents: ['dataTopGuide', function (dataTopGuide) {
-                            var talents = {};
-                            for(var i = 0; i < dataTopGuide.length; i++) {
-                                for(var j = 0; j < dataTopGuide[i].heroes.length; j++) {
-                                    for(var k = 0; k < dataTopGuide[i].heroes[j].talents.length; k++) {
-                                        talents[dataTopGuide[i].heroes[j].talents[k].id] = dataTopGuide[i].heroes[j].talents[k];
-                                    }
-                                }
-                            }
-                            return talents;
                             }],
                             dataTempostormGuides: ['Guide', function (Guide) {
                               return Guide.find({
@@ -1629,9 +1611,25 @@ var app = angular.module('app', [
                                       relation: 'author'
                                     },
                                     {
-                                      relation: 'heroes',
+                                      relation: 'guideHeroes',
                                       scope: {
-                                        include: ['talents']
+                                        include: [
+                                          {
+                                            relation: 'talents'
+                                          },
+                                          {
+                                            relation: 'hero',
+                                            scope: {
+                                              include: ['talents']
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      relation: 'guideTalents',
+                                      scope: {
+                                        include: ['talent']
                                       }
                                     },
                                     {
@@ -1648,17 +1646,6 @@ var app = angular.module('app', [
                                         featured: true
                                     }
                                 }).$promise;
-                            }],
-                            tempostormTalents: ['dataTempostormGuides', function (dataTempostormGuides) {
-                              var talents = {};
-                              for(var i = 0; i < dataTempostormGuides.length; i++) {
-                                for(var j = 0; j < dataTempostormGuides[i].heroes.length; j++) {
-                                  for(var k = 0; k < dataTempostormGuides[i].heroes[j].talents.length; k++) {
-                                    talents[dataTempostormGuides[i].heroes[j].talents[k].id] = dataTempostormGuides[i].heroes[j].talents[k];
-                                  }
-                                }
-                              }
-                              return talents;
                             }],
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
@@ -1862,15 +1849,15 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.hero.html',
                         controller: 'HOTSGuideBuilderEditHeroCtrl',
                         resolve: {
-                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                            dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                return HOTSGuideService.guideEdit(slug);
+                                return Guide.guideEdit(slug);
                             }],
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.getHeroes();
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+                            dataMaps: ['Guide', function (Guide) {
+                                return Guide.getMaps();
                             }]
                         }
                     }
@@ -1885,15 +1872,21 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.guideBuilder.edit.map.html',
                         controller: 'HOTSGuideBuilderEditMapCtrl',
                         resolve: {
-                            dataGuide: ['$stateParams', 'HOTSGuideService', function ($stateParams, HOTSGuideService) {
+                            dataGuide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var slug = $stateParams.slug;
-                                return HOTSGuideService.guideEdit(slug);
+                                return Guide.find({
+                                    filter: {
+                                        where: {
+                                            slug: slug
+                                        }
+                                    }
+                                });
                             }],
-                            dataHeroes: ['HeroService', function (HeroService) {
-                                return HeroService.getHeroes();
+                            dataHeroes: ['Hero', function (Hero) {
+                                return Hero.getHeroes();
                             }],
-                            dataMaps: ['HOTSGuideService', function (HOTSGuideService) {
-                                return HOTSGuideService.getMaps();
+                            dataMaps: ['Map', function (Map) {
+                                return Map.getMaps();
                             }]
                         }
                     }
@@ -1987,6 +1980,24 @@ var app = angular.module('app', [
                     }
                 },
                 seo: { title: 'Talent Calculator', description: 'Talent Calculator for Heroes of the Storm', keywords: '' }
+            })
+            .state('app.hots.snapshot', {
+                abstract: 'true',
+                url: '/meta-snapshot',
+                views: {
+                    hots: {
+                        templateUrl: tpl + 'views/frontend/hots.snapshots.html'
+                    }
+                }
+            })
+            .state('app.hots.snapshot.snapshot', {
+                url: '/test',
+                views: {
+                    hotsSnapshots: {
+                        templateUrl: tpl + 'views/frontend/hots.snapshots.snapshot.html',
+//                        controller: 'SnapshotCtrl',
+                    }
+                }
             })
             .state('app.forum', {
                 abstract: true,
@@ -3335,8 +3346,7 @@ var app = angular.module('app', [
                                                 id: true,
                                                 name: true,
                                                 rarity: true,
-                                                expansion: true
-                                                
+                                                                                              
                                             },
                                             limit: 50,
                                             order: 'name ASC'
@@ -3767,9 +3777,15 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.edit.step1.html',
                         controller: 'AdminHOTSGuideEditStep1Ctrl',
                         resolve: {
-                            dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
+                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var guideID = $stateParams.guideID;
-                                return AdminHOTSGuideService.getGuide(guideID);
+                                return Guide.find({
+                                    filter: {
+                                        where: {
+                                            id: guideID
+                                        }
+                                    }
+                                }).$promise;
                             }]
                         }
                     }
@@ -3784,15 +3800,34 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.edit.hero.html',
                         controller: 'AdminHOTSGuideEditHeroCtrl',
                         resolve: {
-                            dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
+                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var guideID = $stateParams.guideID;
-                                return AdminHOTSGuideService.getGuide(guideID);
+                                
+                                console.log("guide id", guideID);
+                                
+                                return Guide.find({
+                                    filter: {
+                                        where: {
+                                            id: guideID
+                                        },
+                                        include: ['maps', 'guideHeroes']
+                                    }
+                                })
+                                .$promise
+                                .then(function(data){
+                                    data[0].heroes = data[0].guideHeroes;
+                                    
+                                     console.log('heroes', data.heroes);
+                                    console.log('data', data);
+                                    
+                                    return data[0];
+                                })
                             }],
-                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-                                return AdminHeroService.getAllHeroes();
+                            heroes: ['Hero', function (Hero) {
+                                return Hero.find({}).$promise;
                             }],
-                            dataMaps: ['AdminMapService', function (AdminMapService) {
-                                return AdminMapService.getAllMaps();
+                            maps: ['Map', function (Map) {
+                                return Map.find({}).$promise;
                             }]
                         }
                     }
@@ -3807,15 +3842,24 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.edit.map.html',
                         controller: 'AdminHOTSGuideEditMapCtrl',
                         resolve: {
-                            dataGuide: ['$stateParams', 'AdminHOTSGuideService', function ($stateParams, AdminHOTSGuideService) {
+                            guide: ['$stateParams', 'Guide', function ($stateParams, Guide) {
                                 var guideID = $stateParams.guideID;
-                                return AdminHOTSGuideService.getGuide(guideID);
+                                
+                                console.log("guide id", guideID);
+                                
+                                return Guide.find({
+                                    filter: {
+                                        where: {
+                                            id: guideID
+                                        }
+                                    }
+                                }).$promise;
                             }],
-                            dataHeroes: ['AdminHeroService', function (AdminHeroService) {
-                                return AdminHeroService.getAllHeroes();
+                            heroes: ['Hero', function (Hero) {
+                                return Hero.find({}).$promise;
                             }],
-                            dataMaps: ['AdminMapService', function (AdminMapService) {
-                                return AdminMapService.getAllMaps();
+                            maps: ['Map', function (Map) {
+                                return Map.find({}).$promise;
                             }]
                         }
                     }

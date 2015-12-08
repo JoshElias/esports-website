@@ -1,6 +1,6 @@
 angular.module('redbull.directives')
-.directive('redbullDraft', ['$timeout', '$interval', '$rootScope',
-    function ($timeout, $interval, $rootScope){
+.directive('redbullDraft', ['$timeout', '$interval', '$rootScope', 'Util',
+    function ($timeout, $interval, $rootScope, Util){
         return {
             restrict: 'A',
             templateUrl: tpl + 'dist/views/redbull/client/views/directives/redbull-draft.html',
@@ -8,7 +8,6 @@ angular.module('redbull.directives')
                 packs: '=',
                 isLoading: '=',
                 currentPack: '=',
-                currentCards: '=',
                 audioFiles: '=',
                 addCardToPool: '='
             },
@@ -18,7 +17,6 @@ angular.module('redbull.directives')
                     shakeInterval = 10000,
                     packDropped = false,
                     done = false,
-                    cardsFlipped = 0,
                     audioPath = 'modules/redbull/client/audio/',
                     fastForwardSpeed = 500,
                     fastForward = false,
@@ -36,23 +34,44 @@ angular.module('redbull.directives')
                     fadeDurationFF = 200,
                     currentExpansion = null;
                 
-                // init currentCards and currentPack
+                scope.expansions = [];
+                scope.cardsFlipped = 0;
+                
+                // init expansions and currentPack
                 for (var key in scope.packs) {
+                    scope.expansions.push(key);
                     scope.currentPack[key] = 0;
-                    scope.currentCards[key] = 0;
                 };
                 
+                // check if any expansion still has packs to open
+                function hasMorePacks () {
+                    for (var i = 0; i < scope.expansions.length; i++) {
+                        var key = scope.expansions[i];
+                        if (scope.currentPack[key] < scope.packs[key].packs.length) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                
+                // get first expansion that has packs left to be opened
+                function nextExpansion () {
+                    for (var i = 0; i < scope.expansions.length; i++) {
+                        var key = scope.expansions[i];
+                        if (scope.currentPack[key] < scope.packs[key].packs.length) {
+                            return key;
+                        }
+                    }
+                    return false;
+                }
+                
+                // inc pack for expansion
                 function nextPack (expansion) {
                     scope.currentPack[expansion]++;
-                    scope.$apply();
                 }
                 
-                function nextCards (expansion) {
-                    scope.currentCards[expansion]++;
-                    scope.$apply();
-                }
-                
-                function playAudio ( audioName ) {
+                // play audio clip
+                scope.playAudio = function ( audioName ) {
                     var audio = new Audio();
                     audio.src = $rootScope.app.cdn + audioPath + scope.audioFiles[audioName].file;
                     audio.load();
@@ -89,6 +108,12 @@ angular.module('redbull.directives')
                     $(window).trigger(e);
                 }
                 
+                scope.fastForwardNext = function () {
+                    if (fastForward) {
+                        $timeout(nextEvent, fastForwardSpeed);
+                    }
+                };
+                
                 // start fast forwarding
                 scope.fastForward = function () {
                     if (fastForward) { return false; }
@@ -99,7 +124,7 @@ angular.module('redbull.directives')
                 
                 // shake pack
                 function shakePack () {
-                    playAudio('pack_shake');
+                    scope.playAudio('pack_shake');
                     $('.pack-wrapper').trigger('startRumble');
                     $timeout(function() {
                         $('.pack-wrapper').trigger('stopRumble');
@@ -165,7 +190,7 @@ angular.module('redbull.directives')
                                     // move pack to bottom
                                     $(pack).closest('.pack-wrapper').css('z-index', '2');
 
-                                    playAudio('pack_release');
+                                    scope.playAudio('pack_release');
 
                                     // fade out glowing background
                                     $('.bg-glow').stop(true).fadeOut(fadeDuration / 2);
@@ -183,7 +208,7 @@ angular.module('redbull.directives')
                         if (!packDropped) {
                             var pack = this;
                             
-                            playAudio('pack_grab');
+                            scope.playAudio('pack_grab');
 
                             // grow pack
                             $(pack).css('transform', 'scale(1.05)');
@@ -214,19 +239,20 @@ angular.module('redbull.directives')
                 $('.pack-drop').droppable({
                     tolerance: "touch",
                     drop: function(e, ui) {
-                        var pack = ui.draggable;
-                        packDrop(pack);
+                        var expansion = ui.draggable.attr('data-expansion');
+                        packDrop(expansion);
                     }
                 });
                 
                 // enable spacebar
                 $(window).keydown(function(e) {
                     var card,
-                        btn;
+                        btn,
+                        expansion = nextExpansion();
                     
                     // don't allow spacebar when we're not ready
                     if (!scope.isLoading && !packDropped) {
-                        if ((e.keyCode || e.which) == 32) {
+                        if ((e.keyCode || e.which) === 32) {
                             // disable pack dragging
                             $(".pack").draggable("disable");
 
@@ -234,12 +260,12 @@ angular.module('redbull.directives')
                             $('.bg-glow').stop(true).fadeIn(fadeDuration);
 
                             // drop pack
-                            packDrop();
+                            packDrop(expansion);
                         }
                     } else if (!scope.isLoading && packDropped) {
-                        if ((e.keyCode || e.which) == 32) {
+                        if ((e.keyCode || e.which) === 32) {
                             // flip next cards
-                            if (cardsFlipped < 5) {
+                            if (scope.cardsFlipped < 5) {
                                 card = $('.card').not('.flipped-left').not('.flipped-right').eq(0);
                                 if (card.is(':visible')) {
                                     card.mousedown();
@@ -259,16 +285,19 @@ angular.module('redbull.directives')
                     return !(e.keyCode == 32);
                 };
                 
-                function packDrop(pack) {
+                function packDrop(expansion) {
                     if (!packDropped) {
                         packDropped = true;
-                        currentExpansion = $(pack).attr('data-expansion');
+                        scope.cardsFlipped = 0;
+                        currentExpansion = expansion;
                         lastEvent = EVENT_PACK_DROPPED;
-
+                        
                         // stop shaking pack
                         $timeout.cancel(startShake);
                         $interval.cancel(shakeLoop);
-
+                        
+                        var $pack = $('.pack.' + Util.slugify(expansion));
+                        
                         // move pack to drop zone
                         //$('.pack').css({
                         //    'left': '707px',
@@ -279,7 +308,7 @@ angular.module('redbull.directives')
                         // TODO: PLAY BURST SOUND
 
                         // fade out pack
-                        $(pack).fadeOut(0, function() {
+                        $pack.fadeOut(0, function() {
                             // return hidden pack
                             $(this).css({
                                 'left': '0px',
@@ -291,13 +320,14 @@ angular.module('redbull.directives')
                             $('.bg-glow').stop().fadeOut(0);
                             
                             // blur bg
-                            el.addClass('blurred');
+                            //el.addClass('blurred');
                             
-                            // update card interactions
-                            //cardInteraction();
-
                             // set cards and show
-                            $('.cards').fadeIn(0, function () {
+                            $('.cards').fadeIn(((!fastForward) ? fadeDuration : fadeDurationFF), function () {
+                                if (scope.currentPack[currentExpansion] + 1 < scope.packs[currentExpansion].packs.length) {
+                                    $pack.draggable("enable").fadeIn(0);
+                                }
+                                
                                 if (fastForward) {
                                     nextEvent();
                                 }
@@ -310,251 +340,80 @@ angular.module('redbull.directives')
                     }
                 };
                 
+                scope.cardFlip = function ($event, cardElement) {
+                    scope.cardsFlipped++;
+                    var cardX = $event.pageX - $(cardElement).offset().left;
+                    if (cardX < 116) {
+                        $(cardElement).addClass('flipped-left');
+                    } else {
+                        $(cardElement).addClass('flipped-right');
+                    }
+                };
+                
                 scope.cards = function () {
                     if (!currentExpansion) { return []; }
-                    var cards = scope.packs[currentExpansion].packs[scope.currentCards[currentExpansion]].cards;
+                    var cards = scope.packs[currentExpansion].packs[scope.currentPack[currentExpansion]].cards;
                     return cards;
                 };
                 
-                function getCardById (cardId, cards) {
-                    for (var i = 0; i < cards.length; i++) {
-                        if (cards[i].id === cardId) {
-                            return cards[i];
-                        }
-                    }
-                    return false;
-                }
-                
-                // card mouse enter
-                scope.cardMouseEnter = function ($event, card) {
-                    if (!card.turned) {
-                        playAudio('card_hover');
-                    }
-                };
-                
-                // card mouse leave
-                scope.cardMouseLeave = function ($event, card) {
-                    if (!card.turned) {
-                        playAudio('card_unhover');
-                    }
-                };
-                
-                // card mouse down
-                scope.cardMouseDown = function ($event, card) {
-                    var cardElement = $event.currentTarget,
-                        cardRarity = card.rarity.toLowerCase(),
-                        announcerRarities = ['rare', 'epic', 'legendary'];
-                    
-                    card.turned = true;
-                    
-                    if (card.turned && !card.clicked) {
-                        card.clicked = true;
-                        cardsFlipped++;
-
-                        // set last event
-                        switch ( cardsFlipped ) {
-                            case 1:
-                                lastEvent = EVENT_CARD1_FLIPPED;
-                                break;
-                            case 2:
-                                lastEvent = EVENT_CARD2_FLIPPED;
-                                break;
-                            case 3:
-                                lastEvent = EVENT_CARD3_FLIPPED;
-                                break;
-                            case 4:
-                                lastEvent = EVENT_CARD4_FLIPPED;
-                                break;
-                            case 5:
-                                lastEvent = EVENT_CARD5_FLIPPED;
-                                break;
-                        }
-
-                        // add to pool
-                        if (typeof scope.addCardToPool === 'function') {
-                            var poolCard = getCardById(card.id, scope.packs[card.expansion].packs[scope.currentCards[card.expansion]].cards);
-                            if (poolCard) {
-                                scope.$apply(function () {
-                                    scope.addCardToPool(poolCard);
-                                });
-                            }
-                        }
-
-                        playAudio('card_turn_over_' + cardRarity);
-
-                        if (announcerRarities.indexOf(cardRarity) !== -1) {
-                            playAudio('announcer_' + cardRarity);
-                        }
-
-                        var cardX = $event.pageX - $(cardElement).offset().left;
-                        if (cardX < 116) {
-                            $(cardElement).addClass('flipped-left');
-                        } else {
-                            $(cardElement).addClass('flipped-right');
-                        }
-
-                        if (cardsFlipped > 4) {
-                            $timeout(function() {
-                                playAudio('done_reveal');
-                                $timeout(function() {
-                                    $('.btn-done').stop(true).fadeIn(((!fastForward) ? fadeDuration : fadeDurationFF), function () {
-                                        if (fastForward) {
-                                            nextEvent();
-                                        }
-                                    });
-                                }, ((!fastForward) ? fadeDuration / 2 : fadeDurationFF / 2));
-                            }, ((!fastForward) ? fadeDuration / 2 : fadeDurationFF / 2));
-                        } else {
-                            if (fastForward) {
-                                $timeout(nextEvent, fastForwardSpeed);
-                            }
-                        }
-                    }
-                };
-                
-                function cardInteraction() {
-                    cardsFlipped = 0;
-                    console.log('cardInteraction');
-                    $('.card').each(function(i) {
-                        var card = this,
-                            announcerRarities = ['rare', 'epic', 'legendary'];
-                        
-                        console.log(i);
-                        
-                        card.turned = false;
-                        card.clicked = false;
-                        card.rarity = $(card).attr('data-rarity').toLowerCase();
-                        card.cardId = $(card).attr('data-card-id');
-                        card.expansion = $(card).attr('data-expansion');
-                        
-                        $(card).unbind('mouseenter').mouseenter(function() {
-                            if (!card.turned) {
-                                playAudio('card_hover');
-                            }
-                        })
-                        .unbind('mouseleave').mouseleave(function() {
-                            if (!card.turned) {
-                                playAudio('card_unhover');
-                            }
-                        })
-                        .unbind('mousedown').mousedown(function(e) {
-                            card.turned = true;
-                            console.log('mousedown');
-                            if (card.turned && !card.clicked) {
-                                card.clicked = true;
-                                cardsFlipped++;
-                                
-                                // set last event
-                                switch ( cardsFlipped ) {
-                                    case 1:
-                                        lastEvent = EVENT_CARD1_FLIPPED;
-                                        break;
-                                    case 2:
-                                        lastEvent = EVENT_CARD2_FLIPPED;
-                                        break;
-                                    case 3:
-                                        lastEvent = EVENT_CARD3_FLIPPED;
-                                        break;
-                                    case 4:
-                                        lastEvent = EVENT_CARD4_FLIPPED;
-                                        break;
-                                    case 5:
-                                        lastEvent = EVENT_CARD5_FLIPPED;
-                                        break;
-                                }
-                                
-                                // add to pool
-                                if (typeof scope.addCardToPool === 'function') {
-                                    var poolCard = getCardById(card.cardId, scope.packs[card.expansion].packs[scope.currentCards[card.expansion]].cards);
-                                    if (poolCard) {
-                                        scope.$apply(function () {
-                                            scope.addCardToPool(poolCard);
-                                        });
-                                    }
-                                }
-                                
-                                playAudio('card_turn_over_' + card.rarity);
-                                
-                                if (announcerRarities.indexOf(card.rarity) !== -1) {
-                                    playAudio('announcer_' + card.rarity);
-                                }
-
-                                var cardX = e.pageX - $(card).offset().left;
-                                if (cardX < 116) {
-                                    $(card).addClass('flipped-left');
-                                } else {
-                                    $(card).addClass('flipped-right');
-                                }
-                                
-                                if (cardsFlipped > 4) {
-                                    $timeout(function() {
-                                        playAudio('done_reveal');
-                                        $timeout(function() {
-                                            $('.btn-done').stop(true).fadeIn(((!fastForward) ? fadeDuration : fadeDurationFF), function () {
-                                                if (fastForward) {
-                                                    nextEvent();
-                                                }
-                                            });
-                                        }, ((!fastForward) ? fadeDuration / 2 : fadeDurationFF / 2));
-                                    }, ((!fastForward) ? fadeDuration / 2 : fadeDurationFF / 2));
-                                } else {
-                                    if (fastForward) {
-                                        //nextEvent();
-                                        $timeout(nextEvent, fastForwardSpeed);
-                                    }
-                                }
-                            }
-                        });
-
-                    });
-
-                }
-                
-                $('.btn-done').mousedown(function() {
-                    if (!done) {
-                        done = true;
-                        lastEvent = EVENT_DONE_CLICKED;
-                        
-                        playAudio('done_fade');
-
-                        $('.btn-done').stop(true, true).fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF));
-
-                        $('.cards').fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF), function() {
-                            $('.card').removeClass('flipped-left flipped-right');
-                            if (scope.currentCards + 1 < scope.packs.length) {
-                                nextCards();
+                // show done button
+                scope.showDoneButton = function () {
+                    $timeout(function() {
+                        scope.playAudio('done_reveal');
+                        $timeout(function() {
+                            $('.btn-done').stop(true).fadeIn(((!fastForward) ? fadeDuration : fadeDurationFF), function () {
                                 if (fastForward) {
                                     nextEvent();
                                 }
-                            }
-                        });
+                            });
+                        }, ((!fastForward) ? fadeDuration / 2 : fadeDurationFF / 2));
+                    }, ((!fastForward) ? fadeDuration / 2 : fadeDurationFF / 2));
+                };
+                
+                // done mouse down
+                scope.doneMouseDown = function () {
+                    if (!done) {
+                        var anotherPack = (scope.currentPack[currentExpansion] + 1 < scope.packs[currentExpansion].packs.length);
+                        done = true;
+                        lastEvent = EVENT_DONE_CLICKED;
+                        
+                        scope.playAudio('done_fade');
 
-                        $('.bg-glow').hide(function() {
-
-                            if (scope.currentPack[currentExpansion] + 1 < scope.packs[currentExpansion].packs.length) {
+                        $('.btn-done').stop(true, true).fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF));
+                        
+                        if (!anotherPack) {
+                            scope.expansions.splice(scope.expansions.indexOf(currentExpansion), 1);
+                        }
+                        
+                        $('.cards').fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF), function() {
+                            $('.card').removeClass('flipped-left flipped-right');
+                            if (anotherPack) {
                                 nextPack(currentExpansion);
-                                $('.pack').draggable("enable").fadeIn(0, function() {
-                                    packDropped = false;
-                                    
-                                    el.removeClass('blurred');
+                            }
+                            if (anotherPack || hasMorePacks()) {
+                                packDropped = false;
 
-                                    $interval.cancel(shakeLoop);
-                                    shakeLoop = $interval(shakePack, shakeInterval);
-                                });
+                                //el.removeClass('blurred');
+
+                                $interval.cancel(shakeLoop);
+                                shakeLoop = $interval(shakePack, shakeInterval);
+
+                                // reset done
+                                $timeout(function() {
+                                    done = false;
+                                }, ((!fastForward) ? fadeDuration : fadeDurationFF));
+                                
+                                if (fastForward) {
+                                    nextEvent();
+                                }
                             } else {
                                 console.log('goto build');
                                 lastEvent = EVENT_DRAFT_COMPLETE;
                                 //$state.go(app.redbull.draft.build);
                             }
-                            
                         });
                     }
-
-                    $timeout(function() {
-                        done = false;
-                        currentExpansion = null;
-                    }, ((!fastForward) ? fadeDuration : fadeDurationFF));
-                });
+                };
                 
                 scope.$on('$destroy', function () {
                     $timeout.cancel(startShake);
