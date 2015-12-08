@@ -39,9 +39,7 @@ function createAbilitiesAndTalents(finalCb) {
             Hero.find({}, seriesCb);
         },
         function(heroes, seriesCb) {
-
             async.eachSeries(heroes, function (hero, heroCb) {
-
                 // Create Abilities
                 async.eachSeries(hero.oldAbilities, function (ability, abilityCb) {
 
@@ -62,60 +60,55 @@ function createAbilitiesAndTalents(finalCb) {
                         console.log("created ability:", abilityInstance.id);
                         async.eachSeries(hero.oldTalents, function (talent, eachCb) {
 
-                            if (!talent.name)
-                                return eachCb();
+                            function getTalentInstance(talent, talentCb) {
+                                Talent.findOne({
+                                    where: {
+                                        name: talent.name,
+                                        description: talent.description,
+                                        className: talent.className,
+                                        orderNum: talent.orderNum
+                                    }
+                                }, function (err, talentInstance) {
+                                    if (err || talentInstance) {
+                                        return talentCb(err, talentInstance);
+                                    }
 
-                            Talent.findOne({
-                                where: {
-                                    name: talent.name,
-                                    className: talent.className,
-                                    orderNum: talent.orderNum
-                                }
-                            }, function (err, talentInstance) {
-                                if (err) eachCb(err);
-
-                                function createHeroTalent() {
                                     Talent.create({
                                         name: talent.name,
                                         description: talent.description,
                                         className: talent.className,
                                         orderNum: talent.orderNum
-                                    }, function (err, talentInstance) {
-                                        if (err) return eachCb(err);
+                                    }, talentCb);
+                                });
+                            }
 
-                                        console.log("created talent:", talentInstance.id);
-                                        console.log("entering to oldTalents:", talent._id.toString());
-                                        oldTalents[talent._id.toString()] = talentInstance.id.toString();
-                                        console.log("talentInstanceId:", talentInstance.id.toString());
+                            getTalentInstance(talent, function(err, talentInstance) {
+                                oldTalents[talent._id.toString()] = talentInstance.id.toString();
 
-                                        HeroTalent.create({
-                                            heroId: hero.id.toString(),
-                                            talentId: talentInstance.id.toString(),
-                                            abilityId: abilityInstance.id.toString(),
-                                            tier: talent.tier
-                                        }, function (err) {
-                                            return eachCb(err);
-                                        });
-                                    });
-                                }
+                                HeroTalent.create({
+                                    heroId: hero.id.toString(),
+                                    talentId: talentInstance.id.toString(),
+                                    abilityId: abilityInstance.id.toString(),
+                                    tier: talent.tier
+                                }, function (err) {
+                                    return talentCb(err);
+                                });
+                            });
 
-                                if (!talentInstance) {
-                                    return createHeroTalent();
-                                }
 
                                 console.log("Already have talent Instance and entering to oldTalents:", talent._id.toString());
                                 oldTalents[talent._id.toString()] = talentInstance.id.toString();
                                 eachCb();
                             });
                         }, abilityCb);
+
+                    }, function(err) {
+                        heroCb(err);
                     });
-                }, function (err) {
-                    heroCb(err);
-                })
-            }, function (err) {
-                seriesCb(err);
-            });
-        }],
+                }, function(err) {
+                    seriesCb(err);
+                });
+            }],
     function(err) {
         finalCb(err);
     });
