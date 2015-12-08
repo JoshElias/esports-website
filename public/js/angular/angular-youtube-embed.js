@@ -36,13 +36,12 @@ angular.module('youtube-embed', ['ng'])
             // and we want '93LvTKF_jW0'
             id = id.split('#')[0];
         }
-
-        return id;
+        return id + '?sub_confirmation=1';
     };
 
     Service.getTimeFromURL = function getTimeFromURL(url) {
         url = url || '';
-
+        
         // t=4m20s
         // returns ['t=4m20s', '4', '20']
         // t=46s

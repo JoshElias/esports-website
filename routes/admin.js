@@ -2188,23 +2188,23 @@ module.exports = {
                     });
                 function copyFile(callback) {
                     // read file
-                    fs.readFile(req.files.file.path, function(err, data){
+                    fs.readFile(req.files.file.path, function(err, data) {
                         if (err) return next(err);
                         // write file
-                        fs.writeFile(path + large, data, function(err){
+                        fs.writeFile(path + large, data, function(err) {
                             if (err) return next(err);
                             // chmod new file
-                            fs.chmod(path + large, 0777, function(err){
+                            fs.chmod(path + large, 0777, function(err) {
                                 if (err) return next(err);
                                 // delete tmp file
-                                fs.unlink(req.files.file.path, function(err){
+                                fs.unlink(req.files.file.path, function(err) {
                                     if (err) return next(err);
                                     // resize
-                                    gm(path + large).quality(100).resize(284, 395, "!").write(path + large, function(err){
-                                        if (err) return next(err);
-                                        gm(path + large).quality(100).resize(213, 295, "!").write(path + medium, function(err){
+                                    gm(path + large).quality(100).resize(251, 350, "!").write(path + large, function(err) { //284, 395
+                                        if (err) return done(err);
+                                        gm(path + large).quality(100).resize(160, 221, "!").write(path + medium, function(err) {//213 295
                                             if (err) return next(err);
-                                            fs.chmod(path + medium, 0777, function(err){
+                                            fs.chmod(path + medium, 0777, function(err) {
                                                 if (err) return next(err);
                                                 return callback();
                                             });
