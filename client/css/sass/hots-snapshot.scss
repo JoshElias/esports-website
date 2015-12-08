@@ -1,0 +1,45 @@
+@import 'ts-colors.scss';
+
+
+.hots-snapshot-styles {
+    h1.title { 
+        font-family: 'Open Sans Bold'; 
+        font-size: 36px; 
+        color: $light-grey; 
+        letter-spacing: 2px; 
+        text-transform: uppercase; 
+    }
+    
+    h3.sub-title { 
+        font-size: 24px; 
+        color: $ts-grey; 
+    }
+    
+    h2.section-title {
+        color: $light-grey; 
+        
+        
+        &:before {
+            content: "";
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            height: 1px;
+            width: 300px;
+            border-bottom: 1px solid $ts-dark-grey;
+        
+        }
+        
+    }
+    
+    .box-border { 
+        background-color: rgba(19, 18, 19, 0.7);
+        box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        outline: 1px solid #000; 
+        
+        h2, p {
+            color: $ts-grey; 
+        }
+    }
+}
