@@ -574,6 +574,25 @@ angular.module('app.services', [])
             this.reset();
             error = value;
             alert = value.show || true;
+            console.log('value: ', value);
+            console.log('value.errorList: ', value.errorList);
+            if (value.lbErr
+                && value.lbErr.data
+                && value.lbErr.data.error
+                && value.lbErr.data.error.details
+                && value.lbErr.data.error.details.messages) {
+                console.log('got here');
+                var errorList = [];
+                var errMsgs = value.lbErr.data.error.details.messages;
+                angular.forEach(errMsgs, function(errArr) {
+                    angular.forEach(errArr, function(errMsg) {
+                        errorList.push(errMsg);
+                    });
+                });
+                // attach lb errors to error object
+                error.errorList = errorList;
+            }
+                
         },
         reset: function () {
             success = {};
