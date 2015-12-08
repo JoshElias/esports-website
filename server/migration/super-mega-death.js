@@ -2,28 +2,28 @@ var async = require("async");
 var server;
 
 module.exports = function(_server) {
-    server = _server;
-
-    async.series([
-        assignGameTypeMode,
-        createPollItems,
-        createAbilitiesAndTalents,
-        createForumModels,
-        associateCommentReplies,
-        associateRelatedArticles,
-        createDeckCards,
-        associateGuideHeroes,
-        associateGuideMaps,
-        associateGuideComments,
-        createMulliganModels,
-        createSnapshotModels,
-        createUserIdentities,
-        createUserRoles
-    ],
-    function(err) {
-        if(err) console.log("error with super mega death script:", err);
-        else console.log("Donnerino");
-    });
+//    server = _server;
+//
+//    async.series([
+//        assignGameTypeMode,
+//        createPollItems,
+//        createAbilitiesAndTalents,
+//        createForumModels,
+//        associateCommentReplies,
+//        associateRelatedArticles,
+//        createDeckCards,
+//        associateGuideHeroes,
+//        associateGuideMaps,
+//        associateGuideComments,
+//        createMulliganModels,
+//        createSnapshotModels,
+//        createUserIdentities,
+//        createUserRoles
+//    ],
+//    function(err) {
+//        if(err) console.log("error with super mega death script:", err);
+//        else console.log("Donnerino");
+//    });
 };
 
 var oldTalents = {};
