@@ -2,32 +2,54 @@ var async = require("async");
 var server;
 
 module.exports = function(_server) {
-//    server = _server;
-//
-//    async.series([
-//        assignGameTypeMode,
-//        createPollItems,
-//        createAbilitiesAndTalents,
-//        createForumModels,
-//        associateCommentReplies,
-//        associateRelatedArticles,
-//        createDeckCards,
-//        associateGuideHeroes,
-//        associateGuideMaps,
-//        associateGuideComments,
-//        createMulliganModels,
-//        createSnapshotModels,
-//        createUserIdentities,
-//        createUserRoles
-//    ],
-//    function(err) {
-//        if(err) console.log("error with super mega death script:", err);
-//        else console.log("Donnerino");
-//    });
+   server = _server;
+
+    async.series([
+        addMissingTalent,
+        //assignGameTypeMode,
+        createPollItems,
+        createAbilitiesAndTalents,
+        createForumModels,
+        associateCommentReplies,
+        associateRelatedArticles,
+        createDeckCards,
+        associateGuideHeroes,
+        associateGuideMaps,
+        associateGuideComments,
+        createMulliganModels,
+        createSnapshotModels,
+        createUserIdentities,
+        createUserRoles
+    ],
+    function(err) {
+        if(err) console.log("error with super mega death script:", err);
+        else console.log("Donnerino");
+    });
 };
+
+
+var missingTalentId;
+function addMissingTalent(finalCb) {
+    var Talent = server.models.talent;
+
+    var missingTalent = {
+        className: "__missing",
+        name: "__missing",
+        description: "__missing",
+        orderNum: 0
+    };
+
+    Talent.upsert(missingTalent, function(err, instance) {
+        if(!err) console.log("upserted missing talent:", instance);
+        missingTalentId = instance.id.toString();
+        finalCb(err);
+    });
+}
+
 
 var oldTalents = {};
 function createAbilitiesAndTalents(finalCb) {
+    console.log("sdfafasfasfasfasfasfasdfasdfasdfasdfasdf")
 
     var Hero = server.models.hero;
     var Talent = server.models.talent;
@@ -40,10 +62,11 @@ function createAbilitiesAndTalents(finalCb) {
         },
         function(heroes, seriesCb) {
             async.eachSeries(heroes, function (hero, heroCb) {
+
                 // Create Abilities
                 async.eachSeries(hero.oldAbilities, function (ability, abilityCb) {
 
-                    Ability.create({
+                    var newAbility = {
                         heroId: hero.id.toString(),
                         name: ability.name,
                         abilityType: ability.abilityType,
@@ -54,7 +77,9 @@ function createAbilitiesAndTalents(finalCb) {
                         damage: ability.damage,
                         cooldown: ability.cooldown,
                         mana: ability.mana
-                    }, function (err, abilityInstance) {
+                    };
+                    Ability.create(newAbility, {}, function (err, abilityInstance) {
+                        console.log("created ability instance:", err, abilityInstance);
                         if (err) return abilityCb(err);
 
                         console.log("created ability:", abilityInstance.id);
@@ -83,6 +108,8 @@ function createAbilitiesAndTalents(finalCb) {
                             }
 
                             getTalentInstance(talent, function(err, talentInstance) {
+                                if(err) return eachCb(err)
+
                                 oldTalents[talent._id.toString()] = talentInstance.id.toString();
 
                                 HeroTalent.create({
@@ -91,24 +118,19 @@ function createAbilitiesAndTalents(finalCb) {
                                     abilityId: abilityInstance.id.toString(),
                                     tier: talent.tier
                                 }, function (err) {
-                                    return talentCb(err);
+                                    return eachCb(err);
                                 });
                             });
 
-
-                                console.log("Already have talent Instance and entering to oldTalents:", talent._id.toString());
-                                oldTalents[talent._id.toString()] = talentInstance.id.toString();
-                                eachCb();
-                            });
                         }, abilityCb);
-
-                    }, function(err) {
-                        heroCb(err);
                     });
                 }, function(err) {
-                    seriesCb(err);
+                    heroCb(err);
                 });
-            }],
+            }, function(err) {
+                seriesCb(err);
+            });
+        }],
     function(err) {
         finalCb(err);
     });
@@ -327,13 +349,8 @@ function associateGuideHeroes(finalCb) {
 
                                     console.log("looking at talent:", talent.toString());
                                     console.log("talent:", oldTalents[talent.toString()]);
-                                    var talentInstanceId = oldTalents[talent.toString()];
-                                    if(typeof talentInstanceId === "undefined") {
-                                        return talentCb();
-                                    }
-
-                                    talentInstanceId = talentInstanceId.toString();
-                                    console.log("talentInstanceId?:", talentInstanceId)
+                                    var talentInstanceId = oldTalents[talent.toString()] || missingTalentId;
+                                    console.log("talentInstanceId?:", talentInstanceId);
 
                                     GuideTalent.create({
                                         guideHeroId: guideHeroInstance.id.toString(),
@@ -807,10 +824,8 @@ function createPollItems(finalCb) {
                     item.pollId = poll.id.toString();
 
                     PollItem.create(item, function (err, newPollItem) {
-                        if (err) { console.log(err); }
-                        else { console.log("Successfully created newPollItem: " + newPollItem.id); }
-
-                        return(innerEachCb(err));
+                        if(!err) console.log("Successfully created newPollItem: " + newPollItem.id);
+                        return innerEachCb(err);
                     })
                 }, outerEachCb)
             }, waterfallCb)
