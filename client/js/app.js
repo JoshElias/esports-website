@@ -1345,7 +1345,7 @@ var app = angular.module('app', [
                                             relation: 'author'
                                         },
                                         {
-                                            relation: 'heroes',
+                                            relation: 'guideHeroes',
                                             scope: {
                                                 include: ['talents']
                                             }
@@ -1371,20 +1371,6 @@ var app = angular.module('app', [
                                   console.log(err);
                               });
                             }],
-
-                            communityTalentDict: ['dataGuidesCommunity', function (dataGuidesCommunity) {
-                                var dict = {};
-                                for (var i = 0; i < dataGuidesCommunity.length; i++) {
-                                    for (var k = 0; k < dataGuidesCommunity[i].heroes.length; k++) {
-                                        for (var l = 0; l < dataGuidesCommunity[i].heroes[k].talents.length; l++) {
-                                            var temp = dataGuidesCommunity[i].heroes[k].talents[l].id;
-                                            dict[temp] = dataGuidesCommunity[i].heroes[k].talents[l];
-                                        }
-                                    }
-                                }
-                                return dict;
-                            }],
-
                             dataGuidesFeatured: ['Guide', function (Guide) {
                               return Guide.find({
                                 filter: {
@@ -1410,7 +1396,7 @@ var app = angular.module('app', [
                                             relation: 'author'
                                         },
                                         {
-                                            relation: 'heroes',
+                                            relation: 'guideHeroes',
                                             scope: {
                                                 include: ['talents']
                                             }
@@ -1430,20 +1416,6 @@ var app = angular.module('app', [
                                   console.log(err);
                               });
                             }],
-
-                            featuredTalentDict: ['dataGuidesFeatured', function (dataGuidesFeatured) {
-                                var dict = {};
-                                for (var i = 0; i < dataGuidesFeatured.length; i++) {
-                                    for (var k = 0; k < dataGuidesFeatured[i].heroes.length; k++) {
-                                        for (var l = 0; l < dataGuidesFeatured[i].heroes[k].talents.length; l++) {
-                                            var temp = dataGuidesFeatured[i].heroes[k].talents[l].id;
-                                            dict[temp] = dataGuidesFeatured[i].heroes[k].talents[l];
-                                        }
-                                    }
-                                }
-                                return dict;
-                            }],
-
                             dataHeroes: ['Hero', function (Hero) {
                               return Hero.find({
                                   filter: {
@@ -1520,7 +1492,17 @@ var app = angular.module('app', [
                                     {
                                       relation: 'guideHeroes',
                                       scope: {
-                                        include: ['talents']
+                                        include: [
+                                          {
+                                            relation: 'talents'
+                                          },
+                                          {
+                                            relation: 'hero',
+                                            scope: {
+                                              include: ['talents']
+                                            }
+                                          }
+                                        ]
                                       }
                                     },
                                     {
@@ -1574,7 +1556,17 @@ var app = angular.module('app', [
                                     {
                                       relation: 'guideHeroes',
                                       scope: {
-                                        include: ['talents']
+                                        include: [
+                                          {
+                                            relation: 'talents'
+                                          },
+                                          {
+                                            relation: 'hero',
+                                            scope: {
+                                              include: ['talents']
+                                            }
+                                          }
+                                        ]
                                       }
                                     },
                                     {
@@ -1621,7 +1613,17 @@ var app = angular.module('app', [
                                     {
                                       relation: 'guideHeroes',
                                       scope: {
-                                        include: ['talents']
+                                        include: [
+                                          {
+                                            relation: 'talents'
+                                          },
+                                          {
+                                            relation: 'hero',
+                                            scope: {
+                                              include: ['talents']
+                                            }
+                                          }
+                                        ]
                                       }
                                     },
                                     {

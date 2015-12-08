@@ -13438,8 +13438,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'HOTSGuideQueryService', 'featuredTalentDict', 'communityTalentDict',
-        function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, HOTSGuideQueryService, featuredTalentDict, communityTalentDict) {
+    .controller('HOTSHomeCtrl', ['$scope', '$filter', '$timeout', 'dataHeroes', 'dataMaps', 'dataArticles', 'dataGuidesCommunity', 'dataGuidesFeatured', 'Article', 'HOTSGuideQueryService',
+        function ($scope, $filter, $timeout, dataHeroes, dataMaps, dataArticles, dataGuidesCommunity, dataGuidesFeatured, Article, HOTSGuideQueryService) {
 
             // data
             $scope.heroes = dataHeroes;
@@ -13908,7 +13908,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // top guide
             $scope.getTopGuideHeroBg = function (guide) {
-                return ($scope.app.bootstrapWidth !== 'xs') ? $scope.getGuideCurrentHero(guide).className : '';
+                return ($scope.app.bootstrapWidth !== 'xs') ? $scope.getGuideCurrentHero(guide).hero.className : '';
             };
 
             $scope.isLarge = function () {
@@ -13922,7 +13922,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getGuideClass = function (guide) {
-                return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
+//              console.log(guide);
+                return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
             };
 
             $scope.getHeroId = function (guide) {
@@ -13931,7 +13932,8 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.getTalent = function (hero, guide, tier, isFeatured) {
               var t = _.find(guide.guideTalents, function(val) { return (hero.id === val.guideHeroId && val.tier === tier) });
-              return t.talent;
+              
+              return (t) ? t.talent : { className: 'missing', name: "Missing Talent" };
 //              return ($scope.topGuidesTalents[guide.talentTiers[hero.id][tier]] === undefined) ? { className: 'missing', name: "Missing Talent" } : $scope.topGuidesTalents[guide.talentTiers[hero.id][tier]];
             }
 
@@ -13985,17 +13987,14 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.getTopGuideTierTalents = function (tier, guide) {
               var talents = [];
-              var hero = $scope.getGuideCurrentHero(guide);
-              console.log(hero);
+              var hero = $scope.getGuideCurrentHero(guide).hero;
               
-              _.each(hero.talentTiers, function(value, key) { if (value == tier) { talents.push(key) } });
+              _.each(hero.talents, function(value, key) { if (value.tier == tier) { talents.push(value) } });
               return talents;
             }
 
             $scope.activeTalent = function (guide, tier, talent) {
-                var hero = $scope.getGuideCurrentHero(guide);
-                var heroId = hero.id;
-                return guide.talentTiers[heroId][tier] === talent;
+                return !!_.find(guide.guideTalents, function (val) { return val.talentId == talent.talentId });
             };
 
             //is premium
