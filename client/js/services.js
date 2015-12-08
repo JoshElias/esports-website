@@ -1534,6 +1534,7 @@ angular.module('app.services', [])
             } else {
                 // card doesn't exist in deck.mulligans
                 if (cardMulligans.length < 6) {
+                    card.cardId = card.id;
                     cardMulligans.push(card);
 //                    console.log('added to mulligan: ', cardMulligans);
                 }
