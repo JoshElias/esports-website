@@ -17,6 +17,11 @@ module.exports = function(Guide) {
         utils.validateYoutubeId(ctx, next);
     });
 
+    Guide.observe("after save", function(ctx, next) {
+        var childrenNames = ["guideHeroes", "guideTalents"];
+        utils.saveChildren(ctx, childrenNames, next);
+    });
+
 
     Guide.afterRemote("**", function(ctx, modelInstance, next) {
         removePrivateFields(ctx, modelInstance, next);
