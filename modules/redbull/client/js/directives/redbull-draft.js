@@ -1,6 +1,6 @@
 angular.module('redbull.directives')
-.directive('redbullDraft', ['$timeout', '$interval', '$rootScope', 'Util',
-    function ($timeout, $interval, $rootScope, Util){
+.directive('redbullDraft', ['$q', '$timeout', '$interval', '$rootScope', 'Util',
+    function ($q, $timeout, $interval, $rootScope, Util){
         return {
             restrict: 'A',
             templateUrl: tpl + 'dist/views/redbull/client/views/directives/redbull-draft.html',
@@ -20,16 +20,6 @@ angular.module('redbull.directives')
                     audioPath = 'modules/redbull/client/audio/',
                     fastForwardSpeed = 500,
                     fastForward = false,
-                    lastEvent = false,
-                    EVENT_PACK_DROPPED = 1,
-                    EVENT_CARD1_FLIPPED = 2,
-                    EVENT_CARD2_FLIPPED = 3,
-                    EVENT_CARD3_FLIPPED = 4,
-                    EVENT_CARD4_FLIPPED = 5,
-                    EVENT_CARD5_FLIPPED = 6,
-                    EVENT_DONE_CLICKED = 7,
-                    EVENT_DRAFT_COMPLETE = 8,
-                    EVENT_MAX = 20,
                     fadeDuration = 1000,
                     fadeDurationFF = 200,
                     currentExpansion = null;
@@ -42,7 +32,17 @@ angular.module('redbull.directives')
                     scope.expansions.push(key);
                     scope.currentPack[key] = 0;
                 };
+
+                // watch current pack
+                scope.$watch('currentPack', function (newValue) {
+                    scope.currentPack = newValue;
+                });
                 
+                // watch loading
+                scope.$watch('isLoading', function (newValue) {
+                    scope.isLoading = newValue;
+                });
+
                 // check if any expansion still has packs to open
                 function hasMorePacks () {
                     for (var i = 0; i < scope.expansions.length; i++) {
@@ -53,6 +53,16 @@ angular.module('redbull.directives')
                     }
                     return false;
                 }
+                
+                // return number of packs remaining in stack for given expansion
+                scope.packTabCount = function (expansion) {
+                    var isOpening = $('.pack.' + Util.slugify(expansion)).is('.ui-draggable-dragging') || (packDropped && currentExpansion === expansion);
+                    var packCount = scope.packs[expansion].packs.length - scope.currentPack[expansion];
+                    if (isOpening) {
+                        packCount--;
+                    }
+                    return packCount;
+                };
                 
                 // get first expansion that has packs left to be opened
                 function nextExpansion () {
@@ -70,6 +80,11 @@ angular.module('redbull.directives')
                     scope.currentPack[expansion]++;
                 }
                 
+                function hasAnotherPack () {
+                    if (!currentExpansion) { return false; }
+                    return (scope.currentPack[currentExpansion] + 1 < scope.packs[currentExpansion].packs.length);
+                }
+                
                 // play audio clip
                 scope.playAudio = function ( audioName ) {
                     var audio = new Audio();
@@ -80,16 +95,6 @@ angular.module('redbull.directives')
                     audio.play();
                 }
                 
-                // watch current pack
-                scope.$watch('currentPack', function (newValue) {
-                    scope.currentPack = newValue;
-                });
-                
-                // watch loading
-                scope.$watch('isLoading', function (newValue) {
-                    scope.isLoading = newValue;
-                });
-                
                 // temp start fast forward for debugging
                 $(window).keydown(function(e) {
                     if ((e.keyCode || e.which) == 65) {
@@ -99,9 +104,6 @@ angular.module('redbull.directives')
                 
                 // go to next event for fast forward
                 function nextEvent() {
-                    if (lastEvent === EVENT_DRAFT_COMPLETE) {
-                        return false;
-                    }
                     var e = $.Event('keydown');
                     e.which = 32;
                     e.keyCode = 32;
@@ -125,13 +127,29 @@ angular.module('redbull.directives')
                 // shake pack
                 function shakePack () {
                     scope.playAudio('pack_shake');
-                    $('.pack-wrapper').trigger('startRumble');
+                    $('.pack').trigger('startRumble');
                     $timeout(function() {
-                        $('.pack-wrapper').trigger('stopRumble');
+                        $('.pack').trigger('stopRumble');
                     }, 750);
                 }
-
-                $('.pack-wrapper').jrumble();
+                
+                // start shaking pack timer
+                function startShakeTimer () {
+                    shakeLoop = $interval(shakePack, shakeInterval);
+                }
+                
+                // stop shaking pack timer
+                function stopShakeTimer () {
+                    $timeout.cancel(startShake);
+                    $interval.cancel(shakeLoop);
+                }
+                
+                // pack rumbling
+                //$('.pack').each(function (i) {
+                //    this.jrumble();
+                //});
+                
+                // init pack shaking timers
                 startShake = $timeout(function() {
                     shakePack();
                     shakeLoop = $interval(shakePack, shakeInterval);
@@ -161,63 +179,60 @@ angular.module('redbull.directives')
                             start: function() {
                                 if (!packDropped) {
 
-                                    $(pack).data('draggable', true)
+                                    // enable draggable
+                                    $(pack).data('draggable', true);
 
                                     // stop shaking the pack
-                                    $timeout.cancel(startShake);
-                                    $interval.cancel(shakeLoop);
-
-                                    // tilt the pack
-                                    $(this).css('transform', 'scale(1.05) perspective(300px) rotateY(10deg)');
-
-                                    // move pack to top
-                                    $(pack).closest('.pack-wrapper').css('z-index', '6');
+                                    stopShakeTimer();
 
                                     // fade in glowing background
-                                    $('.bg-glow').stop(true).fadeIn(fadeDuration);
+                                    $('.bg-glow').stop(true).fadeIn(fadeDuration, function () {
+                                        $(this).addClass('glow-pulse');
+                                    });
+
                                 }
                             },
                             stop: function() {
                                 if (!packDropped) {
 
-                                    // untilt the pack
-                                    $(this).css({
-                                        'left': '0px',
-                                        'top': '0px',
-                                        'transform': 'perspective(0) rotateY(0) scale(1)'
-                                    });
-
-                                    // move pack to bottom
-                                    $(pack).closest('.pack-wrapper').css('z-index', '2');
-
+                                    // play audio
                                     scope.playAudio('pack_release');
 
+                                    // move pack wrapper to bottom
+                                    $(pack).closest('.pack-wrapper').css('z-index', '100');
+
                                     // fade out glowing background
-                                    $('.bg-glow').stop(true).fadeOut(fadeDuration / 2);
+                                    $('.bg-glow').stop(true).removeClass('glow-pulse').fadeOut(fadeDuration / 2);
 
                                     // start shaking pack again
-                                    $interval.cancel(shakeLoop);
-                                    shakeLoop = $interval(shakePack, shakeInterval);
-
+                                    stopShakeTimer();
+                                    startShakeTimer();
+                                
                                 }
                             }
                         });
                     });
 
-                    $('.pack').mousedown(function() {
-                        if (!packDropped) {
-                            var pack = this;
-                            
-                            scope.playAudio('pack_grab');
+                    $('.pack').mousedown(function(event) {
+                        if (packDropped) { return false; }
 
-                            // grow pack
-                            $(pack).css('transform', 'scale(1.05)');
+                        // stop prop
+                        event.stopPropagation();
+                        
+                        var pack = this;
 
-                            // stop shaking the pack
-                            $(pack).closest('.pack-wrapper').trigger('stopRumble');
-                            $timeout.cancel(startShake);
-                            $interval.cancel(shakeLoop);
-                        }
+                        // play audio
+                        scope.playAudio('pack_grab');
+                        
+                        // move pack wrapper to top
+                        $(pack).closest('.pack-wrapper').css('z-index', '103');
+                        
+                        // stop shaking the pack
+                        $(pack).trigger('stopRumble');
+
+                        // stop shaking the pack
+                        stopShakeTimer();
+                    
                     }).mouseup(function() {
                         // TODO: doesn't work
                         // if the pack's position is its original location, play the pack release sound
@@ -226,12 +241,9 @@ angular.module('redbull.directives')
                         //    playAudio('pack_release');
                         //}
 
-                        // shrink pack
-                        $(this).css('transform', 'perspective(0) rotateY(0) scale(1)');
-
                         // start shaking pack again
-                        $interval.cancel(shakeLoop);
-                        shakeLoop = $interval(shakePack, shakeInterval);
+                        stopShakeTimer();
+                        startShakeTimer();
                     });
                 };
 
@@ -246,24 +258,18 @@ angular.module('redbull.directives')
                 
                 // enable spacebar
                 $(window).keydown(function(e) {
-                    var card,
-                        btn,
-                        expansion = nextExpansion();
-                    
                     // don't allow spacebar when we're not ready
                     if (!scope.isLoading && !packDropped) {
                         if ((e.keyCode || e.which) === 32) {
                             // disable pack dragging
                             $(".pack").draggable("disable");
 
-                            // fade in glowing background
-                            $('.bg-glow').stop(true).fadeIn(fadeDuration);
-
                             // drop pack
-                            packDrop(expansion);
+                            packDrop();
                         }
                     } else if (!scope.isLoading && packDropped) {
                         if ((e.keyCode || e.which) === 32) {
+                            var card, btn;
                             // flip next cards
                             if (scope.cardsFlipped < 5) {
                                 card = $('.card').not('.flipped-left').not('.flipped-right').eq(0);
@@ -289,42 +295,37 @@ angular.module('redbull.directives')
                     if (!packDropped) {
                         packDropped = true;
                         scope.cardsFlipped = 0;
-                        currentExpansion = expansion;
-                        lastEvent = EVENT_PACK_DROPPED;
-                        
-                        // stop shaking pack
-                        $timeout.cancel(startShake);
-                        $interval.cancel(shakeLoop);
-                        
+                        expansion = currentExpansion = expansion || nextExpansion();
+                        var anotherPack = hasAnotherPack();
                         var $pack = $('.pack.' + Util.slugify(expansion));
                         
-                        // move pack to drop zone
-                        //$('.pack').css({
-                        //    'left': '707px',
-                        //    'top': '260px',
-                        //    'transform': 'perspective(0) rotateY(0)'
-                        //});
-
+                        // stop shaking pack
+                        stopShakeTimer();
+                        
                         // TODO: PLAY BURST SOUND
 
                         // fade out pack
                         $pack.fadeOut(0, function() {
+                            if (!anotherPack) {
+                                $pack.closest('.pack-wrapper').slideUp(fadeDuration);
+                            }
+                            
                             // return hidden pack
-                            $(this).css({
+                            $pack.css({
                                 'left': '0px',
                                 'top': '0px',
-                                'transform': 'perspective(0) rotateY(0)'
+                                //'transform': 'scale(1) perspective(0) rotateY(0)'
                             });
                             
                             // fade out glow
                             $('.bg-glow').stop().fadeOut(0);
                             
                             // blur bg
-                            //el.addClass('blurred');
+                            el.addClass('blurred');
                             
                             // set cards and show
                             $('.cards').fadeIn(((!fastForward) ? fadeDuration : fadeDurationFF), function () {
-                                if (scope.currentPack[currentExpansion] + 1 < scope.packs[currentExpansion].packs.length) {
+                                if (anotherPack) {
                                     $pack.draggable("enable").fadeIn(0);
                                 }
                                 
@@ -334,9 +335,6 @@ angular.module('redbull.directives')
                             });
                         });
 
-                        // move back to bottom
-                        $('.pack-wrapper').css('z-index', '2');
-                        
                     }
                 };
                 
@@ -373,13 +371,17 @@ angular.module('redbull.directives')
                 // done mouse down
                 scope.doneMouseDown = function () {
                     if (!done) {
-                        var anotherPack = (scope.currentPack[currentExpansion] + 1 < scope.packs[currentExpansion].packs.length);
+                        var anotherPack = hasAnotherPack();
                         done = true;
-                        lastEvent = EVENT_DONE_CLICKED;
                         
+                        // play audio
                         scope.playAudio('done_fade');
-
+                        
+                        // fade out done button
                         $('.btn-done').stop(true, true).fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF));
+                        
+                        // remove blur
+                        el.removeClass('blurred');
                         
                         if (!anotherPack) {
                             scope.expansions.splice(scope.expansions.indexOf(currentExpansion), 1);
@@ -393,10 +395,9 @@ angular.module('redbull.directives')
                             if (anotherPack || hasMorePacks()) {
                                 packDropped = false;
 
-                                //el.removeClass('blurred');
-
-                                $interval.cancel(shakeLoop);
-                                shakeLoop = $interval(shakePack, shakeInterval);
+                                // start shaking pack
+                                stopShakeTimer();
+                                startShakeTimer();
 
                                 // reset done
                                 $timeout(function() {
@@ -408,7 +409,6 @@ angular.module('redbull.directives')
                                 }
                             } else {
                                 console.log('goto build');
-                                lastEvent = EVENT_DRAFT_COMPLETE;
                                 //$state.go(app.redbull.draft.build);
                             }
                         });
@@ -416,8 +416,7 @@ angular.module('redbull.directives')
                 };
                 
                 scope.$on('$destroy', function () {
-                    $timeout.cancel(startShake);
-                    $interval.cancel(shakeLoop);
+                    stopShakeTimer();
                 });
 
             }
