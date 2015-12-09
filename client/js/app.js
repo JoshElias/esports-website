@@ -2958,6 +2958,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (data) {
+                                    console.log('article: ', data);
                                     data.related = data.relatedArticles;
                                     return data;
                                 });

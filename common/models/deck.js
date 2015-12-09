@@ -8,7 +8,15 @@ module.exports = function(Deck) {
       //protectPrivateFields(ctx, next);
   });
 
+
+    Deck.observe("after save", function(ctx, next) {
+        var childrenNames = ["cards", "matchups", "mulligans"];
+        utils.saveChildren(ctx, childrenNames, next);
+    });
+
+
   Deck.afterRemote("**", removePrivateDocs, removePrivateFields);
+
 
   var foreignKeys = ["authorId"];
   Deck.observe("persist", function(ctx, next) {

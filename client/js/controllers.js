@@ -1010,8 +1010,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.articles = articles;
         }
     ])
-    .controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'DeckService', 'decks',
-        function ($scope, $state, bootbox, DeckService, decks) {
+    .controller('ProfileDecksCtrl', ['$scope', '$state', 'bootbox', 'Deck', 'decks',
+        function ($scope, $state, bootbox, Deck, decks) {
             $scope.decks = decks;
 
             //is premium
@@ -1050,17 +1050,19 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                DeckService.deckDelete(deck._id).success(function (data) {
-                                    if (data.success) {
-                                        var index = $scope.decks.indexOf(deck);
-                                        if (index !== -1) {
-                                            $scope.decks.splice(index, 1);
-                                        }
-                                        $scope.success = {
-                                            show: true,
-                                            msg: 'Deck "' + deck.name + '" deleted successfully.'
-                                        };
+                                return Deck.destroyById({
+                                    id: deck.id
+                                })
+                                .$promise
+                                .then(function (deckDeleted) {
+                                    console.log('deck deleted: ', deckDeleted);
+                                    var indexToDel = $scope.decks.indexOf(deck);
+                                    if (indexToDel !== -1) {
+                                        $scope.decks.splice(indexToDel, 1);
                                     }
+                                })
+                                .catch(function (err) {
+                                    console.log('deck delete err: ', err);
                                 });
                             }
                         },
@@ -1611,8 +1613,7 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                
-                                Card.deleteById({
+                                Card.destroyById({
                                     id: card.id
                                 })
                                 .$promise
@@ -1925,6 +1926,10 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             }
+            
+            var articleChanges = {
+                toDelete: []
+            };
 
             $scope.modifyRelated = function (a) {
                 if ($scope.isRelated(a)) {
@@ -2078,20 +2083,18 @@ angular.module('app.controllers', ['ngCookies'])
 
 
             $scope.addArticle = function () {
+                $scope.fetching = true;
                 console.log($scope.article);
                 var date = new Date();
-                
                 $scope.article.createdDate = d.toISOString();
-                
                 $scope.article.authorId = $scope.article.author.id;
-                $scope.article.createdDate = new Date
                 if($scope.article.deck) {
                     $scope.article.deckId = $scope.article.deck.id;
                 } else if ($scope.article.guide) {
                     $scope.article.guideId = $scope.article.guide.id;
                 }
                 
-                $scope.showError = false;
+                
                 Article.upsert({}, $scope.article)
                 .$promise
                 .then(function (data) {
@@ -2109,15 +2112,17 @@ angular.module('app.controllers', ['ngCookies'])
                     });
                     
                     AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been added successfully.' });
+                    $scope.showError = false;
                     $state.go('app.admin.articles.list');
                 });
             };
         }
     ])
-    .controller('AdminArticleEditCtrl', ['$scope', '$upload', '$state', '$window', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'Article', 'Deck', 'Guide', 'article',
-        function ($scope, $upload, $state, $window, $compile, $filter, bootbox, Hearthstone, Util, AlertService, Article, Deck, Guide, article) {
+    .controller('AdminArticleEditCtrl', ['$scope', '$q', '$timeout', '$upload', '$state', '$window', '$compile', '$filter', 'bootbox', 'Hearthstone', 'Util', 'AlertService', 'Article', 'Deck', 'Guide', 'article', 'User', 'ArticleArticle', 'heroes',
+        function ($scope, $q, $timeout, $upload, $state, $window, $compile, $filter, bootbox, Hearthstone, Util, AlertService, Article, Deck, Guide, article, User, ArticleArticle, heroes) {
             var itemAddBox,
-                deckID;
+                deckID,
+                heroes = heroes;
             
             console.log(article);
 
@@ -2154,7 +2159,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 
                 if($scope.search) {
-                    options.where = {
+                    options.filter.where = {
                         or: [
                             {name: { regexp: $scope.search }},
                             {slug: { regexp: $scope.search }}
@@ -2171,6 +2176,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.getArticles = function (cb) {
+                console.log('search: ', $scope.search);
                 var options = {
                     filter: {
                         limit: 10,
@@ -2180,7 +2186,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 
                 if($scope.search) {
-                    options.where = {
+                    options.filter.where = {
                         or: [
                             {title: { regexp: $scope.search }},
                             {slug: { regexp: $scope.search }}
@@ -2192,7 +2198,7 @@ angular.module('app.controllers', ['ngCookies'])
                     .$promise
                     .then(function (data) {
                     $scope.articles = data;
-                    if (cb !== undefined) { return cb(); }
+                    if (cb !== undefined) { return cb(data); }
                 });
             }
 
@@ -2206,7 +2212,7 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 
                 if($scope.search) {
-                    options.where = {
+                    options.filter.where = {
                         or: [
                             {name: { regexp: $scope.search }},
                             {slug: { regexp: $scope.search }}
@@ -2235,10 +2241,10 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 
                 if($scope.search) {
-                    options.where = {
-                        or: [
+                    options.filter.where = {
+                        and: [
                             {name: { regexp: $scope.search }},
-                            {slug: { regexp: $scope.search }}
+                            {email: { regexp: $scope.search }}
                         ]
                     }
                 }
@@ -2247,13 +2253,15 @@ angular.module('app.controllers', ['ngCookies'])
                     .$promise
                     .then(function (data) {
                     $scope.users = data;
-                    if (cb !== undefined) { return cb(); }
+                    if (cb !== undefined) { return cb(data); }
                 });
             }
             //!search functions
             
             $scope.openAuthors = function () {
-                $scope.getUsers(function () {
+                console.log('users: ', $scope.users);
+                $scope.getUsers(function (data) {
+                    console.log('users: ', $scope.users);
                     itemAddBox = bootbox.dialog({
                         message: $compile('<div article-author-add></div>')($scope),
                         closeButton: true,
@@ -2312,15 +2320,17 @@ angular.module('app.controllers', ['ngCookies'])
 
             //this is for the related article modal
             $scope.addRelatedArticle = function () {
-                itemAddBox = bootbox.dialog({
-                    message: $compile('<div article-related-add></div>')($scope),
-                    closeButton: false,
-                    animate: true,
-                });
-                itemAddBox.modal('show');
-                itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
-                    $scope.search = '';
-                    $scope.getArticles();
+                $scope.getArticles(function (data) {
+                    console.log('data: ', data);
+                    itemAddBox = bootbox.dialog({
+                        message: $compile('<div article-related-add></div>')($scope),
+                        closeButton: false,
+                        animate: true,
+                    });
+                    itemAddBox.modal('show');
+                    itemAddBox.on('hidden.bs.modal', function () { //We want to clear the search results when we close the bootbox
+                        $scope.search = '';
+                    });
                 });
             }
 
@@ -2332,19 +2342,86 @@ angular.module('app.controllers', ['ngCookies'])
                 }
                 return false;
             }
+            
+            var relatedArticleChanges = {
+                toDelete: [],
+                toCreate: []
+            };
 
             $scope.modifyRelated = function (a) {
+                console.log('a: ', a);
                 if ($scope.isRelated(a)) {
+                    // if article exists in db and is being removed from client
+                    // push to relatedArticleChanges.toDelete
+                    ArticleArticle.exists({
+                        id: a.id
+                    })
+                    .$promise
+                    .then(function (relatedArticleExist) {
+                        console.log('related exist: ', relatedArticleExist);
+                        if (relatedArticleExist.exists) {
+                            relatedArticleChanges.toDelete.push(a);
+                        }
+                        var indexToRem = relatedArticleChanges.toCreate.indexOf(a);
+                        if (indexToRem !== -1) {
+                            relatedArticleChanges.toCreate.splice(indexToRem, 1);
+                        }
+                        console.log('relatedArticleChanges.toCreate: ', relatedArticleChanges.toCreate);
+                        console.log('relatedArticleChanges.toDelete: ', relatedArticleChanges.toDelete);
+                    })
+                    .catch(function (err) {
+                        console.log('related exist art: ', err);
+                    });
                     $scope.removeRelatedArticle(a);
-                    return;
+                } else {
+                    // article being added in client
+                    // check if it exist in db already and if not push to toCreate
+                    ArticleArticle.exists({
+                        id: a.id
+                    })
+                    .$promise
+                    .then(function (relatedArticleExist) {
+                        console.log('related exist: ', relatedArticleExist);
+                        if (!relatedArticleExist.exists) {
+                            relatedArticleChanges.toCreate.push(a);
+                        }
+                        var indexToRem = relatedArticleChanges.toDelete.indexOf(a);
+                        if (indexToRem !== -1) {
+                            relatedArticleChanges.toDelete.splice(indexToRem, 1);
+                        }
+                        console.log('relatedArticleChanges.toCreate: ', relatedArticleChanges.toCreate);
+                        console.log('relatedArticleChanges.toDelete: ', relatedArticleChanges.toDelete);
+                    })
+                    .catch(function (err) {
+                        console.log('exist err: ', err);
+                    });
+                    $scope.article.related.push(a);
                 }
-                $scope.article.related.push(a);
+                
             }
 
             $scope.removeRelatedArticle = function (a) {
                 for (var i = 0; i < $scope.article.related.length; i++) {
                     if (a.id === $scope.article.related[i].id) {
+                        // if article exists in db and is being removed from client
+                        // push to relatedArticleChanges.toDelete
+                        ArticleArticle.exists({
+                            id: a.id
+                        })
+                        .$promise
+                        .then(function (relatedArticleExist) {
+                            console.log('related exist: ', relatedArticleExist);
+                            if (relatedArticleExist.exists) {
+                                relatedArticleChanges.toDelete.push(a);
+                            }
+                            console.log('relatedArticleChanges.toCreate: ', relatedArticleChanges.toCreate);
+                            console.log('relatedArticleChanges.toDelete: ', relatedArticleChanges.toDelete);
+                        })
+                        .catch(function (err) {
+                            console.log('related exist art: ', err);
+                        });
                         $scope.article.related.splice(i, 1);
+                        break;
                     }
                 }
             }
@@ -2363,16 +2440,16 @@ angular.module('app.controllers', ['ngCookies'])
                 $scope.setSlug();
             };
 
-            // photo
-            $scope.cardImg = getCardImg();
-            
-            function getCardImg () {
-                if (!$scope.article.photoNames) {
-                   return $scope.app.cdn + 'img/blank.png'
-                } else if ($scope.article.photoNames.small && $scope.article.photoNames.small.length) {
-                    return $scope.app.cdn + 'articles/' + $scope.article.photoNames.small;
-                }
-            }
+//            // photo
+//            $scope.cardImg = getCardImg();
+//            
+//            function getCardImg () {
+//                if (!$scope.article.photoNames) {
+//                   return $scope.app.cdn + 'img/blank.png'
+//                } else if ($scope.article.photoNames.small && $scope.article.photoNames.small.length) {
+//                    return $scope.app.cdn + 'articles/' + $scope.article.photoNames.small;
+//                }
+//            }
             
             // tags
             $scope.hasTags = function () {
@@ -2472,25 +2549,83 @@ angular.module('app.controllers', ['ngCookies'])
                             square: data.square
                         };
 //                        $scope.cardImg = $scope.app.cdn + data.path + data.small;
-                        $scope.cardImg = cdn2 + data.path + data.small;
+                        $scope.articleImg = cdn2 + data.path + data.small;
                         box.modal('hide');
                     });
                 }
             };
-
-            $scope.getImage = function () {
+            
+            $scope.articleImg = getImage();
+            
+            function getImage () {
                 $scope.imgPath = 'articles/';
-                if (!$scope.article.photoNames) { return 'img/blank.png'; }
+                if (!$scope.article.photoNames) { 
+                    return 'img/blank.png'; 
+                }
                 return ($scope.article.photoNames && $scope.article.photoNames.small === '') ?  cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.article.photoNames.small;
             };
 
-            $scope.editArticle = function () {
-                $scope.showError = false;
-                Article.upsert({}, $scope.article)
+            $scope.editArticle = function (article) {
+                $scope.fetching = true;
+                console.log('relatedArticleChanges: ', relatedArticleChanges);
+                Article.upsert(article)
                 .$promise
-                .then(function (data) {
-                    AlertService.setSuccess({ show: true, msg: $scope.article.title + ' has been updated successfully.' });
-                    $state.go('app.admin.articles.list');
+                .then(function (articleUpserted) {
+                    console.log('article upsert: ', articleUpserted);
+                    
+                    async.parallel([
+                        function(paraCB){ 
+                            async.each(relatedArticleChanges.toDelete, function(relatedArticle, relatedDeleteCB) {
+                                ArticleArticle.destroyById({
+                                    id: relatedArticle.id
+                                })
+                                .$promise
+                                .then(function (relatedArticleDeleted) {
+                                    console.log('related art deleted: ', relatedArticleDeleted);
+                                    return relatedDeleteCB();
+                                })
+                                .catch(function (err) {
+                                    return relatedDeleteCB(err);
+                                });
+                            }, function (err) {
+                                if (err) {
+                                    return paraCB(err);
+                                }
+                                return paraCB();
+                            });
+                        },
+                        function(paraCB){ 
+                            async.each(relatedArticleChanges.toCreate, function(relatedArticle, relatedCreateCB) {
+                                relatedArticle.parentArticleId = article.id;
+                                relatedArticle.childArticleId = relatedArticle.id;
+                                ArticleArticle.create(relatedArticle)
+                                .$promise
+                                .then(function (relatedArticleCreated) {
+                                    console.log('related art created: ', relatedArticleCreated);
+                                    return relatedCreateCB();
+                                })
+                                .catch(function (err) {
+                                    return relatedCreateCB(err);
+                                });
+                            }, function (err) {
+                                if (err) {
+                                    return paraCB(err);
+                                }
+                                return paraCB();
+                            });
+                        }
+                    ], function(err) {
+                        $scope.fetching = false;
+                        if (err) {
+                            console.log('async para err: ', err);
+                            return;
+                        }
+                        $window.scrollTo(0, 0);
+                        $state.transitionTo('app.admin.articles.list');
+                    });
+                })
+                .catch(function (err) {
+                    console.log('article upsert err: ', err);
                 });
             };
 
@@ -5465,14 +5600,24 @@ angular.module('app.controllers', ['ngCookies'])
                             label: 'Delete',
                             className: 'btn-danger',
                             callback: function () {
-                                deleteDeck(deck);
-                                if (indexToDel !== -1) {
-                                    $scope.decks.splice(indexToDel, 1);
-                                    $scope.success = {
-                                        show: true,
-                                        msg: deck.name + ' deleted successfully.'
-                                    };
-                                }
+                                Deck.destroyById({
+                                    id: deck.id
+                                })
+                                .$promise
+                                .then(function (deckDeleted) {
+                                    console.log('deck deleted: ', deckDeleted);
+                                    if (indexToDel !== -1) {
+                                        $scope.decks.splice(indexToDel, 1);
+                                        AlertService.setSuccess({
+                                            show: true,
+                                            msg: deck.name + ' deleted successfully.'
+                                        });
+                                    }
+                                })
+                                .catch(function (err) {
+                                    console.log('deck delete err: ', err);
+                                });
+                                
                             }
                         },
                         cancel: {
@@ -5488,131 +5633,131 @@ angular.module('app.controllers', ['ngCookies'])
             }
             
             // Destroy Deck and All Relations
-            function deleteDeck(deck) {
-                console.log('deck to del: ', deck);
-                
-                async.series([
-                    function (seriesCallback) {
-                        // 1. destroy Matchups
-                        Deck.matchups.destroyAll({
-                            id: deck.id
-                        })
-                        .$promise
-                        .then(function (matchupsDestroyed) {
-                            console.log('matchupsDestroyed: ', matchupsDestroyed);
-                            seriesCallback();
-                        })
-                        .catch(function (err) {
-                            console.log('matchupDestroy err: ', err);
-                            seriesCallback(err);
-                        });
-                    },
-                    function (seriesCallback) {
-                        // 2. destroy Cards With/Without Coin & Mulligan
-                        async.each(deck.mulligans, function (mulligan, mulliganCB) {
-                            console.log('current mulligan: ', mulligan);
-
-                            // Destroy CardsWithCoin
-                            Mulligan.cardsWithCoin.destroyAll({
-                                id: mulligan.id
-                            })
-                            .$promise
-                            .then(function (cardWithCoinDestroyed) {
-                                console.log('cardWithCoinDestroyed: ', cardWithCoinDestroyed);
-                            })
-                            .catch(function (err) {
-                                console.log('cardWithCoin.DestroyAll err: ', err);
-                                mulliganCB(err);
-                            });
-
-                            // Destroy CardsWithoutCoin
-                            Mulligan.cardsWithoutCoin.destroyAll({
-                                id: mulligan.id
-                            })
-                            .$promise
-                            .then(function (cardWithoutCoinDestroyed) {
-                                console.log('cardWithoutCoinDestroyed: ', cardWithoutCoinDestroyed);
-                            })
-                            .catch(function (err) {
-                                console.log('cardWithoutCoin.DestroyAll err: ', err);
-                                mulliganCB(err);
-                            });
-
-                            // Destroy Current Mulligan
-                            Mulligan.destroyById({
-                                id: mulligan.id
-                            })
-                            .$promise
-                            .then(function (mulliganDestroyed) {
-                                console.log('mulliganDestroyed: ', mulliganDestroyed);
-                            })
-                            .catch(function (err) {
-                                console.log('Mulligan.destroyById err: ', err);
-                                mulliganCB(err);
-                            });
-
-                            // goto next mulligan
-                            mulliganCB();
-                        }, function(err) {
-                            if (err) {
-                                console.log('async mulligan err: ', err);
-                                seriesCallback(err);
-                            }
-                            seriesCallback();
-                        });
-                    },
-                    function (seriesCallback) {
-                        // 3. destroy Comments
-                        Deck.comments.destroyAll({
-                            id: deck.id
-                        })
-                        .$promise
-                        .then(function (allCommentsDestroyed) {
-                            console.log('Deck.comments.destroyAll success: ', allCommentsDestroyed);
-                            seriesCallback();
-                        })
-                        .catch(function (err) {
-                            console.log('Deck.comments.destroyAll err: ', err);
-                            seriesCallback(err);
-                        });
-                    },
-                    function (seriesCallback) {
-                        // 4. destroy DeckCards
-                        Deck.cards.destroyAll({
-                            id: deck.id
-                        })
-                        .$promise
-                        .then(function (allDeckCardsDestroyed) {
-                            console.log('Deck.cards.destroyAll success: ', allDeckCardsDestroyed);
-                            seriesCallback();
-                        })
-                        .catch(function (err) {
-                            console.log('Deck.cards.destroyAll err: ', err);
-                            seriesCallback(err);
-                        });
-                    },
-                    function (seriesCallback) {
-                        // 5. destroy Deck
-                        Deck.destroyById({
-                            id: deck.id
-                        })
-                        .$promise
-                        .then(function (deckDestroyed) {
-                            console.log('Deck.destroyById success: ', deckDestroyed);
-                            seriesCallback();
-                        })
-                        .catch(function (err) {
-                            console.log('Deck.destroyById err: ', err);
-                        });
-                    }
-                ], function(err) {
-                    if (err) {
-                        console.log('Series Err: ', err);
-                    }
-                    console.log('All Done!');
-                });
-                
-            }
+//            function deleteDeck(deck) {
+//                console.log('deck to del: ', deck);
+//                
+//                async.series([
+//                    function (seriesCallback) {
+//                        // 1. destroy Matchups
+//                        Deck.matchups.destroyAll({
+//                            id: deck.id
+//                        })
+//                        .$promise
+//                        .then(function (matchupsDestroyed) {
+//                            console.log('matchupsDestroyed: ', matchupsDestroyed);
+//                            seriesCallback();
+//                        })
+//                        .catch(function (err) {
+//                            console.log('matchupDestroy err: ', err);
+//                            seriesCallback(err);
+//                        });
+//                    },
+//                    function (seriesCallback) {
+//                        // 2. destroy Cards With/Without Coin & Mulligan
+//                        async.each(deck.mulligans, function (mulligan, mulliganCB) {
+//                            console.log('current mulligan: ', mulligan);
+//
+//                            // Destroy CardsWithCoin
+//                            Mulligan.cardsWithCoin.destroyAll({
+//                                id: mulligan.id
+//                            })
+//                            .$promise
+//                            .then(function (cardWithCoinDestroyed) {
+//                                console.log('cardWithCoinDestroyed: ', cardWithCoinDestroyed);
+//                            })
+//                            .catch(function (err) {
+//                                console.log('cardWithCoin.DestroyAll err: ', err);
+//                                mulliganCB(err);
+//                            });
+//
+//                            // Destroy CardsWithoutCoin
+//                            Mulligan.cardsWithoutCoin.destroyAll({
+//                                id: mulligan.id
+//                            })
+//                            .$promise
+//                            .then(function (cardWithoutCoinDestroyed) {
+//                                console.log('cardWithoutCoinDestroyed: ', cardWithoutCoinDestroyed);
+//                            })
+//                            .catch(function (err) {
+//                                console.log('cardWithoutCoin.DestroyAll err: ', err);
+//                                mulliganCB(err);
+//                            });
+//
+//                            // Destroy Current Mulligan
+//                            Mulligan.destroyById({
+//                                id: mulligan.id
+//                            })
+//                            .$promise
+//                            .then(function (mulliganDestroyed) {
+//                                console.log('mulliganDestroyed: ', mulliganDestroyed);
+//                            })
+//                            .catch(function (err) {
+//                                console.log('Mulligan.destroyById err: ', err);
+//                                mulliganCB(err);
+//                            });
+//
+//                            // goto next mulligan
+//                            mulliganCB();
+//                        }, function(err) {
+//                            if (err) {
+//                                console.log('async mulligan err: ', err);
+//                                seriesCallback(err);
+//                            }
+//                            seriesCallback();
+//                        });
+//                    },
+//                    function (seriesCallback) {
+//                        // 3. destroy Comments
+//                        Deck.comments.destroyAll({
+//                            id: deck.id
+//                        })
+//                        .$promise
+//                        .then(function (allCommentsDestroyed) {
+//                            console.log('Deck.comments.destroyAll success: ', allCommentsDestroyed);
+//                            seriesCallback();
+//                        })
+//                        .catch(function (err) {
+//                            console.log('Deck.comments.destroyAll err: ', err);
+//                            seriesCallback(err);
+//                        });
+//                    },
+//                    function (seriesCallback) {
+//                        // 4. destroy DeckCards
+//                        Deck.cards.destroyAll({
+//                            id: deck.id
+//                        })
+//                        .$promise
+//                        .then(function (allDeckCardsDestroyed) {
+//                            console.log('Deck.cards.destroyAll success: ', allDeckCardsDestroyed);
+//                            seriesCallback();
+//                        })
+//                        .catch(function (err) {
+//                            console.log('Deck.cards.destroyAll err: ', err);
+//                            seriesCallback(err);
+//                        });
+//                    },
+//                    function (seriesCallback) {
+//                        // 5. destroy Deck
+//                        Deck.destroyById({
+//                            id: deck.id
+//                        })
+//                        .$promise
+//                        .then(function (deckDestroyed) {
+//                            console.log('Deck.destroyById success: ', deckDestroyed);
+//                            seriesCallback();
+//                        })
+//                        .catch(function (err) {
+//                            console.log('Deck.destroyById err: ', err);
+//                        });
+//                    }
+//                ], function(err) {
+//                    if (err) {
+//                        console.log('Series Err: ', err);
+//                    }
+//                    console.log('All Done!');
+//                });
+//                
+//            }
         }
     ])
     .controller('AdminDeckBuilderClassCtrl', ['$scope', 'Hearthstone', function ($scope, Hearthstone) {
@@ -6137,6 +6282,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save Hearthstone deck
             $scope.saveDeck = function (deck) {
+                return;
                 console.log('deck to create: ', deck);
                 $scope.deckSubmitting = true;
                 
@@ -7347,21 +7493,12 @@ angular.module('app.controllers', ['ngCookies'])
                                 })
                                 .catch(function (err) {
 //                                    console.log('User.destroyById err: ', err);
-                                    if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                                        $scope.errors = [];
-                                        angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                                            for (var i = 0; i < errArray.length; i++) {
-                                                $scope.errors.push(errArray[i]);
-                                            }
-                                        });
-                                        AlertService.setError({ 
-                                            show: true, msg: 'Unable to delete ' + user.name, 
-                                            errorList: $scope.errors
-                                        });
-                                        $window.scrollTo(0,0);
-                                        $scope.fetching = false;
-                                    }
-                                    
+                                    AlertService.setError({ 
+                                        show: true, msg: 'Unable to delete ' + user.name, 
+                                        errorList: err
+                                    });
+                                    $window.scrollTo(0,0);
+                                    $scope.fetching = false;
                                 });
                             }
                         },
@@ -7429,7 +7566,11 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.addUser = function (user) {
 //                console.log('user:', user);
                 if ($scope.user.newPassword !== $scope.user.password) {
-                    AlertService.setError({ show: true, msg: 'Unable to update user', errorList: ['Please confirm your password'] });
+                    AlertService.setError({ 
+                        show: true, 
+                        msg: 'Unable to update user', 
+                        errorList: ['Please confirm your password']
+                    });
                     $window.scrollTo(0, 0);
                     return false;
                 }
@@ -7475,17 +7616,13 @@ angular.module('app.controllers', ['ngCookies'])
                 ], function(err, results) {
                     if (err) {
 //                        console.log('series err: ', err);
-                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                            $scope.errors = [];
-                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                                for (var i = 0; i < errArray.length; i++) {
-                                    $scope.errors.push(errArray[i]);
-                                }
-                            });
-                            AlertService.setError({ show: true, msg: 'Unable to update user', errorList: $scope.errors });
-                            $window.scrollTo(0,0);
-                            $scope.fetching = false;
-                        }
+                        AlertService.setError({ 
+                            show: true, 
+                            msg: 'Unable to update user', 
+                            lbErr: err
+                        });
+                        $window.scrollTo(0,0);
+                        $scope.fetching = false;
                     } else {
 //                        console.log('series results: ', results);
                         $state.go('app.admin.users.list');
@@ -8934,194 +9071,204 @@ angular.module('app.controllers', ['ngCookies'])
                         userID: User.getCurrentId(),
                         direction: 1
                     }
-                ],
-                async.waterfall([
-                    function (seriesCallback) {
-                        Deck.create(deck)
-                        .$promise
-                        .then(function (deckInstance) {
-                            console.log('deck instance: ',deckInstance);
-                            var deckId = deckInstance.id;
-                            var deckSlug = deckInstance.slug;
-                            seriesCallback(null, deckInstance);
-                        })
-                        .catch(function (err) {
-                            if(err) {
-                                console.log('deck create err: ', err);
-                                seriesCallback(err);
-                            }
-                        });
-                    },
-                    function(deckInstance, seriesCallback) {
-                        // Create cards for deck
-//                        console.log('deckCard deckId: ', deckId);
-                        async.each(deck.cards, function(deckCard, deckCardCB) {
-                            var newDeckCard = {
-                                cardId: deckCard.card.id,
-                                deckId: deckInstance.id,
-                                cardQuantity: deckCard.cardQuantity,
-                                card: deckCard.card
-                            };
-//                            console.log('deckCard: ', deckCard);
-                            Deck.cards.create({
-                                id: deckInstance.id
-                            }, deckCard)
-                            .$promise
-                            .then(function (cardCreated) {
-//                                console.log('card created: ', cardCreated);
-                                
-                                // goto next deckCard
-                                return deckCardCB();
-                            })
-                            .catch(function (err) {
-                                if (err) {
-                                    console.log('card create err: ', err);
-                                    deckCardCB(err);
-                                }
-                            });
-                        }, function(err) {
-                            if (err) {
-                                seriesCallback(err);
-                            }
-                            seriesCallback(null, deckInstance);
-                        });
-                    },
-                    function (deckInstance, seriesCallback) {
-//                        console.log('mulligan deckId: ', deckId);
-                        async.each(deck.mulligans, function(mulligan, mulliganCB) {
-                            var newMulligan = {
-                                className: mulligan.className,
-                                instructionsWithCoin: mulligan.instructionsWithCoin,
-                                instructionsWithoutCoin: mulligan.instructionsWithoutCoin,
-                                deckId: deckInstance.id
-                            };
-                            console.log('newMulligan: ', newMulligan);
-                            Mulligan.create(newMulligan)
-                            .$promise
-                            .then(function (mulliganCreated) {
-                                console.log('mulligan created: ', mulliganCreated);
-                                
-                                async.each(mulligan.cardsWithCoin, function(cardWithCoin, cardWithCoinCB) {
-                                    console.log('cardWithCoin: ', cardWithCoin);
-                                    var realCardWithCoin = {
-                                        cardId: cardWithCoin.id,
-                                        mulliganId: mulliganCreated.id,
-                                        card: cardWithCoin
-                                    };
-                                    console.log('realCardWithCoin: ', realCardWithCoin);
-                                    
-                                    CardWithCoin.create(realCardWithCoin)
-                                    .$promise
-                                    .then(function (cardWithCoinCreated) {
-//                                        console.log('cardWithCoin created: ', cardWithCoinCreated);
-                                        
-                                        // goto next cardWithCoin
-                                        cardWithCoinCB();
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('err: ', err);
-                                            cardWithCoinCB(err);
-                                        }
-                                    });
-                                });
-                                
-                                async.each(mulligan.cardsWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
-//                                    console.log('cardWithoutCoin: ', cardWithoutCoin);
-                                    var realCardWithoutCoin = {
-                                        cardId: cardWithoutCoin.id,
-                                        mulliganId: mulliganCreated.id,
-                                        card: cardWithoutCoin
-                                    };
-//                                    console.log('realCardWithoutCoin: ', realCardWithoutCoin);
-                                    CardWithoutCoin.create(realCardWithoutCoin)
-                                    .$promise
-                                    .then(function (cardWithoutCoinCreated) {
-//                                        console.log('cardWithCoin created: ', cardWithoutCoinCreated);
-                                        
-                                        // goto next cardWithCoin
-                                        cardWithoutCoinCB();
-                                    })
-                                    .catch(function (err) {
-                                        if (err) {
-                                            console.log('err: ', err);
-                                            cardWithoutCoinCB(err);
-                                        }
-                                    });
-                                });
-                                
-                                // goto next mulligan
-                                mulliganCB();
-                            })
-                            .catch(function (err) {
-                                if (err) {
-                                    mulliganCB(err);
-                                }
-                            });
-                        }, function(err) {
-                            if (err) {
-                                seriesCallback(err);
-                            }
-                            seriesCallback(null, deckInstance);
-                        });
-                    },
-                    function (deckInstance, seriesCallback) {
-                        console.log('matchup deckId: ', deckInstance.id);
-                        console.log('deck.matchups: ', deck.matchups);
-                        console.log('deckSlug: ', deckInstance.slug);
-                        async.each(deck.matchups, function(matchup, matchupCB) {
-                            console.log('matchup: ', matchup);
-                            var newMatchup = {
-                                deckName: matchup.deckName,
-                                className: matchup.className,
-                                forChance: matchup.forChance,
-                                forDeckId: deckInstance.id,
-                                deckId: deckInstance.id
-                            };
-                            console.log('newMatchup: ', newMatchup);
-                            DeckMatchup.create(newMatchup)
-                            .$promise
-                            .then(function (matchupCreated) {
-//                                console.log('matchup created: ', matchupCreated);
-                                
-                                // goto next
-                                matchupCB();
-                            })
-                            .catch(function (err) {
-                                if (err) {
-                                    matchupCB(err);
-                                }
-                            });
-                        }, function(err) {
-                            if (err) {
-                                seriesCallback(err);
-                            }
-                            seriesCallback(null, deckInstance);
-                        });
-                    }
-                ], 
-                function(err, deckInstance) {
-                    if (err) {
-                        $scope.errors = [];
-                        console.log('series err: ', err);
-                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                            angular.forEach(err.data.error.details.messages, function(errArray) {
-                                for (var i = 0; i < errArray.length; i++) {
-                                    $scope.errors.push(errArray[i]);
-                                }
-                            });
-                        } else if (err.data.error.message) {
-                            $scope.errors.push(err.data.error.message);
-                        }
-                        $scope.showError = true;
-                        $window.scrollTo(0,0);
-                        $scope.deckSubmitting = false;
-                        return false;
-                    }
-                    console.log('Deck Created!');
-                    $scope.deckSubmitting = false;
-                    $state.transitionTo('app.hs.decks.deck', { slug: deckInstance.slug });
+                ];
+                
+                Deck.create(deck)
+                .$promise
+                .then(function (deckCreated) {
+                    console.log('deck created: ', deckCreated);
+                })
+                .catch(function (err) {
+                    console.log('deck create err: ', err);
                 });
+                
+//                async.waterfall([
+//                    function (seriesCallback) {
+//                        Deck.create(deck)
+//                        .$promise
+//                        .then(function (deckInstance) {
+//                            console.log('deck instance: ',deckInstance);
+//                            var deckId = deckInstance.id;
+//                            var deckSlug = deckInstance.slug;
+//                            seriesCallback(null, deckInstance);
+//                        })
+//                        .catch(function (err) {
+//                            if(err) {
+//                                console.log('deck create err: ', err);
+//                                seriesCallback(err);
+//                            }
+//                        });
+//                    },
+//                    function(deckInstance, seriesCallback) {
+//                        // Create cards for deck
+////                        console.log('deckCard deckId: ', deckId);
+//                        async.each(deck.cards, function(deckCard, deckCardCB) {
+//                            var newDeckCard = {
+//                                cardId: deckCard.card.id,
+//                                deckId: deckInstance.id,
+//                                cardQuantity: deckCard.cardQuantity,
+//                                card: deckCard.card
+//                            };
+////                            console.log('deckCard: ', deckCard);
+//                            Deck.cards.create({
+//                                id: deckInstance.id
+//                            }, deckCard)
+//                            .$promise
+//                            .then(function (cardCreated) {
+////                                console.log('card created: ', cardCreated);
+//                                
+//                                // goto next deckCard
+//                                return deckCardCB();
+//                            })
+//                            .catch(function (err) {
+//                                if (err) {
+//                                    console.log('card create err: ', err);
+//                                    deckCardCB(err);
+//                                }
+//                            });
+//                        }, function(err) {
+//                            if (err) {
+//                                seriesCallback(err);
+//                            }
+//                            seriesCallback(null, deckInstance);
+//                        });
+//                    },
+//                    function (deckInstance, seriesCallback) {
+////                        console.log('mulligan deckId: ', deckId);
+//                        async.each(deck.mulligans, function(mulligan, mulliganCB) {
+//                            var newMulligan = {
+//                                className: mulligan.className,
+//                                instructionsWithCoin: mulligan.instructionsWithCoin,
+//                                instructionsWithoutCoin: mulligan.instructionsWithoutCoin,
+//                                deckId: deckInstance.id
+//                            };
+//                            console.log('newMulligan: ', newMulligan);
+//                            Mulligan.create(newMulligan)
+//                            .$promise
+//                            .then(function (mulliganCreated) {
+//                                console.log('mulligan created: ', mulliganCreated);
+//                                
+//                                async.each(mulligan.cardsWithCoin, function(cardWithCoin, cardWithCoinCB) {
+//                                    console.log('cardWithCoin: ', cardWithCoin);
+//                                    var realCardWithCoin = {
+//                                        cardId: cardWithCoin.id,
+//                                        mulliganId: mulliganCreated.id,
+//                                        card: cardWithCoin
+//                                    };
+//                                    console.log('realCardWithCoin: ', realCardWithCoin);
+//                                    
+//                                    CardWithCoin.create(realCardWithCoin)
+//                                    .$promise
+//                                    .then(function (cardWithCoinCreated) {
+////                                        console.log('cardWithCoin created: ', cardWithCoinCreated);
+//                                        
+//                                        // goto next cardWithCoin
+//                                        cardWithCoinCB();
+//                                    })
+//                                    .catch(function (err) {
+//                                        if (err) {
+//                                            console.log('err: ', err);
+//                                            cardWithCoinCB(err);
+//                                        }
+//                                    });
+//                                });
+//                                
+//                                async.each(mulligan.cardsWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
+////                                    console.log('cardWithoutCoin: ', cardWithoutCoin);
+//                                    var realCardWithoutCoin = {
+//                                        cardId: cardWithoutCoin.id,
+//                                        mulliganId: mulliganCreated.id,
+//                                        card: cardWithoutCoin
+//                                    };
+////                                    console.log('realCardWithoutCoin: ', realCardWithoutCoin);
+//                                    CardWithoutCoin.create(realCardWithoutCoin)
+//                                    .$promise
+//                                    .then(function (cardWithoutCoinCreated) {
+////                                        console.log('cardWithCoin created: ', cardWithoutCoinCreated);
+//                                        
+//                                        // goto next cardWithCoin
+//                                        cardWithoutCoinCB();
+//                                    })
+//                                    .catch(function (err) {
+//                                        if (err) {
+//                                            console.log('err: ', err);
+//                                            cardWithoutCoinCB(err);
+//                                        }
+//                                    });
+//                                });
+//                                
+//                                // goto next mulligan
+//                                mulliganCB();
+//                            })
+//                            .catch(function (err) {
+//                                if (err) {
+//                                    mulliganCB(err);
+//                                }
+//                            });
+//                        }, function(err) {
+//                            if (err) {
+//                                seriesCallback(err);
+//                            }
+//                            seriesCallback(null, deckInstance);
+//                        });
+//                    },
+//                    function (deckInstance, seriesCallback) {
+//                        console.log('matchup deckId: ', deckInstance.id);
+//                        console.log('deck.matchups: ', deck.matchups);
+//                        console.log('deckSlug: ', deckInstance.slug);
+//                        async.each(deck.matchups, function(matchup, matchupCB) {
+//                            console.log('matchup: ', matchup);
+//                            var newMatchup = {
+//                                deckName: matchup.deckName,
+//                                className: matchup.className,
+//                                forChance: matchup.forChance,
+//                                forDeckId: deckInstance.id,
+//                                deckId: deckInstance.id
+//                            };
+//                            console.log('newMatchup: ', newMatchup);
+//                            DeckMatchup.create(newMatchup)
+//                            .$promise
+//                            .then(function (matchupCreated) {
+////                                console.log('matchup created: ', matchupCreated);
+//                                
+//                                // goto next
+//                                matchupCB();
+//                            })
+//                            .catch(function (err) {
+//                                if (err) {
+//                                    matchupCB(err);
+//                                }
+//                            });
+//                        }, function(err) {
+//                            if (err) {
+//                                seriesCallback(err);
+//                            }
+//                            seriesCallback(null, deckInstance);
+//                        });
+//                    }
+//                ], 
+//                function(err, deckInstance) {
+//                    if (err) {
+//                        $scope.errors = [];
+//                        console.log('series err: ', err);
+//                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
+//                            angular.forEach(err.data.error.details.messages, function(errArray) {
+//                                for (var i = 0; i < errArray.length; i++) {
+//                                    $scope.errors.push(errArray[i]);
+//                                }
+//                            });
+//                        } else if (err.data.error.message) {
+//                            $scope.errors.push(err.data.error.message);
+//                        }
+//                        $scope.showError = true;
+//                        $window.scrollTo(0,0);
+//                        $scope.deckSubmitting = false;
+//                        return false;
+//                    }
+//                    console.log('Deck Created!');
+//                    $scope.deckSubmitting = false;
+//                    $state.transitionTo('app.hs.decks.deck', { slug: deckInstance.slug });
+//                });
             }
 
             var box;
@@ -11513,109 +11660,23 @@ angular.module('app.controllers', ['ngCookies'])
                             className: 'btn-danger',
                             callback: function () {
                                 
-                                // 1. delete all comments of post
-                                // 2. delete all posts of thread
-                                // 3. delete all threads of category
-                                // 4. delete the category
-                                
-                                async.series([
-                                    function (seriesCallback) {
-                                        // delete all posts from each thread
-                                        async.each(category.forumThreads, function(thread, threadCB) {
-
-                                            // delete all comments from each post
-                                            async.each(thread.forumPosts, function(post, postCB) {
-
-                                                ForumPost.comments.destroyAll({
-                                                    id: post.id
-                                                })
-                                                .$promise
-                                                .then(function (commentsDeleted) {
-//                                                    console.log('commentsDeleted: ', commentsDeleted);
-                                                    postCB();
-                                                })
-                                                .catch(function (err) {
-//                                                    console.log('commentsDeleted: ', err);
-                                                    postCB(err);
-                                                });
-
-
-                                            }, function (err) {
-                                                if (err) {
-                                                    return seriesCallback(err);
-                                                }
-                                            });
-
-                                            // delete all posts from current thread
-                                            ForumThread.forumPosts.destroyAll({
-                                                id: thread.id
-                                            })
-                                            .$promise
-                                            .then(function (postsDeleted) {
-//                                                console.log('postsDeleted: ', postsDeleted);
-                                                threadCB();
-                                            })
-                                            .catch(function (err) {
-//                                                console.log('postsDeleted: ', err);
-                                                threadCB(err);
-                                            });
-
-                                        }, function (err) {
-                                            if (err) {
-                                                seriesCallback(err);
-                                            }
-                                            seriesCallback();
-                                        });
-                                    },
-                                    function (seriesCallback) {
-                                        // delete all threads from the category
-                                        ForumCategory.forumThreads.destroyAll({
-                                            id: category.id
-                                        })
-                                        .$promise
-                                        .then(function (threadsDeleted) {
-//                                            console.log('threadsDeleted: ', threadsDeleted);
-
-                                            ForumCategory.destroyById({
-                                                id: category.id
-                                            })
-                                            .$promise
-                                            .then(function (categoryDeleted) {
-//                                                console.log('categoryDeleted: ', categoryDeleted);
-                                                seriesCallback();
-                                            })
-                                            .catch(function (err) {
-//                                                console.log('categoryDeleted: ', err);
-                                                seriesCallback(err);
-                                            });
-
-                                        })
-                                        .catch(function (err) {
-//                                            console.log('threadsDeleted: ', err);
-                                            seriesCallback(err);
+                                ForumCategory.destroyById({
+                                    id: category.id
+                                })
+                                .$promise
+                                .then(function (categoryDestroyed) {
+                                    console.log('forum category del: ', categoryDestroyed);
+                                    var indexToDel = $scope.categories.indexOf(category);
+                                    if (indexToDel !== -1) {
+                                        $scope.categories.splice(indexToDel, 1);
+                                        AlertService.setSuccess({
+                                            show: true,
+                                            msg: category.title + ' deleted successfully.'
                                         });
                                     }
-                                ], function(err) {
-                                    if (err) {
-//                                        console.log('series err: ', err);
-                                        if (err.data.error && err.data.error.details && err.data.error.details.messages) {
-                                            $scope.errors = [];
-                                            angular.forEach(err.data.error.details.messages, function (errArray, key) {
-                                                for (var i = 0; i < errArray.length; i++) {
-                                                    $scope.errors.push(errArray[i]);
-                                                }
-                                            });
-                                            AlertService.setError({ show: true, msg: 'Unable to delete category', errorList: $scope.errors });
-                                            $window.scrollTo(0,0);
-                                        }
-                                        return false;
-                                    }
-                                    var index = $scope.categories.indexOf(category);
-                                    if (index !== -1) {
-                                        AlertService.setSuccess({ show: true, msg: category.title + ' deleted successfully' });
-                                        $window.scrollTo(0, 0);
-                                        $scope.categories.splice(index, 1);
-                                    }
+                                })
+                                .catch(function (err) {
+                                    console.log('forum category del err: ', err);
                                 });
                             }
                         },
