@@ -960,7 +960,7 @@ angular.module('app.directives', ['ui.load'])
 })
 .directive('articleRelatedAdd', function () {
     return {
-        templateUrl: tpl + 'views/admin/articles.related.add.html',
+        templateUrl: tpl + 'views/admin/articles.related.add.html'
     };
 })
 .directive('hsBuilder', function() {

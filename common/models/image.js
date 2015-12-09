@@ -78,9 +78,9 @@ module.exports = function(Image) {
                                 fs.unlink(file.path, function(err){
                                     if (err) return done(err);
                                     // resize
-                                    gm(path + large).quality(100).resize(284, 395, "!").write(path + large, function(err){
+                                    gm(path + large).quality(100).resize(251, 350, "!").write(path + large, function(err){ //284, 395
                                         if (err) return done(err);
-                                        gm(path + large).quality(100).resize(213, 295, "!").write(path + medium, function(err){
+                                        gm(path + large).quality(100).resize(160, 221, "!").write(path + medium, function(err){
                                             if (err) return done(err);
                                             fs.chmod(path + medium, 0777, function(err){
                                                 if (err) return done(err);

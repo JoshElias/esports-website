@@ -7,7 +7,7 @@
     </div>
 
     <div class="list-group m-b-none">
-        <a href="#" class="list-group-item" ng-class="{active: isRelated(a)}" ng-click="modifyRelated(a)" ng-repeat="a in filtered = (articles | limitTo:10 | orderBy: '-createdDate' | filterAll:search)">
+        <a href="#" class="list-group-item" ng-class="{'active': isRelated(a)}" ng-click="modifyRelated(a)" ng-repeat="a in filtered = (articles | limitTo:10 | orderBy: '-createdDate' | filterAll:search)">
             {{a.title}}
         </a>
         <p class="list-group-item" ng-if="!filtered.length">No items match your search</p>
