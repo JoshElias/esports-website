@@ -4,11 +4,6 @@ module.exports = function(Snapshot) {
   var utils = require("../../lib/utils");
 
 
-  Snapshot.observe("after save", function(ctx, next) {
-    var childrenNames = ["deckTiers"];
-    utils.saveChildren(ctx, childrenNames, next);
-  });
-
 
   Snapshot.observe('before delete', function(ctx, next) {
     var relationsToDestroy = ["deckMatchups", "comments", "deckTiers", "authors"];

@@ -9,12 +9,6 @@ module.exports = function(Deck) {
   });
 
 
-    Deck.observe("after save", function(ctx, next) {
-        var childrenNames = ["cards", "matchups", "mulligans"];
-        utils.saveChildren(ctx, childrenNames, next);
-    });
-
-
   Deck.afterRemote("**", removePrivateDocs, removePrivateFields);
 
 

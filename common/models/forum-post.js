@@ -3,6 +3,7 @@ module.exports = function(ForumPost) {
     var utils = require("../../lib/utils");
   var loopback = require("loopback");
 
+
     var foreignKeys = ["forumThreadId", "authorId"];
     ForumPost.observe("persist", function(ctx, next) {
 

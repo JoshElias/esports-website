@@ -31,7 +31,6 @@ module.exports = function(User) {
     });
 
     User.observe("before save", function(ctx, next) {
-        console.log("ctx: ", Object.keys(ctx));
         protectFields(ctx, next);
     });
 

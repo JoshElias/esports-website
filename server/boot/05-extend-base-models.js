@@ -1,12 +1,7 @@
 module.exports = function(server) {
+    var utils = require("../../lib/utils");
+    //console.log("MODELS:", Object.keys(server.models));
+   // var PersistedModel = server.models.PersistedModel;
 
-    //var PersistedModel = server.models.PersistedModel;
-    /*
-    Event.on('attached', function (obj) {
-        var baseRemove = Event.remove;
-        Event.remove = function customRemove(filter, options, next) {
-            baseRemove = baseRemove.bind(this);
-        }
-    });
-    */
+  //  PersistedModel.observe("after save", utils.saveChildren);
 };
