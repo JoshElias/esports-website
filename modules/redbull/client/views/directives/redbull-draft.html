@@ -12,14 +12,19 @@
 
     <!-- packs -->
     <div class="packs">
-        <div class="pack-wrapper" ng-repeat="expansion in expansions track by expansion" ng-init="enablePacks()">
-            <div class="pack-next {{packs[expansion].expansionClass}}" ng-if="currentPack[expansion] + 1 < packs[expansion].packs.length"></div>
-            <div class="pack {{packs[expansion].expansionClass}}" data-expansion="{{expansion}}"></div>
+        <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true, fadeScrollbars: true}">
+            <div class="iscroll-scroller">
+                <div class="pack-wrapper" ng-repeat="expansion in expansions track by expansion" ng-init="enablePacks()">
+                    <div class="pack-tab {{packs[expansion].expansionClass}}" ng-if="packTabCount(expansion) > 1">{{packTabCount(expansion)}}</div>
+                    <div class="pack-next {{packs[expansion].expansionClass}}" ng-if="currentPack[expansion] + 1 < packs[expansion].packs.length"></div>
+                    <div class="pack {{packs[expansion].expansionClass}}" data-expansion="{{expansion}}"></div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="pack-drop"></div>
     <!-- / packs -->
-
+    
     <!-- cards -->
     <div class="cards">
         <div class="card"
