@@ -1,7 +1,39 @@
 @import 'ts-colors.scss';
 
+// Description: styles for the hots meta snapshot only
+
+//*************************************
+
+// 1... Typography
+
+
+//*************************************
+
+@mixin hots-snapshot-hero ($hero, $y-pos, $x-pos) {
+    
+    img.#{$hero} {
+            position: absolute;
+            top: #{$y-pos}px;
+            left: #{$x-pos}px;
+        }
+
+}
+
+//*************************************
+// 1... Typography
+//*************************************
+
+
 
 .hots-snapshot-styles {
+    
+    h1, h2, h3, h4, h5, h6 {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        
+        
+    }
+    
     h1.title { 
         font-family: 'Open Sans Bold'; 
         font-size: 36px; 
@@ -27,7 +59,11 @@
             height: 1px;
             width: 300px;
             border-bottom: 1px solid $ts-dark-grey;
-        
+            
+            @media screen and (max-width: 600px) {
+                width: 90%;
+                left: 5%;
+            }
         }
         
     }
@@ -41,5 +77,141 @@
         h2, p {
             color: $ts-grey; 
         }
+    }
+    
+    .bg-override {
+        background-image: url(../img/backgrounds/hots-snapshot-bg.jpg);
+        background-color: #010101;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: top;
+        background-attachment: fixed;
+    }
+    
+    .tier .tier-heading {
+        border: 1px solid transparent;
+    }
+    
+    .tier-body { 
+        
+        .tier-deck-body {
+            
+            h2 {
+                font-size: 55px !important;
+                font-weight: bold;
+                color: $white;
+            }
+            
+            h3 {
+                color: $white;
+            
+            }
+            
+        }
+        
+        .tier-deck-heading {
+            height: 50px !important;
+            background-color: rgba($hots-dark-purple, .8) !important; 
+            background-image: url(../img/hots/heroes/guide-images/long/chen.png) !important;
+            background-repeat: no-repeat !important;
+            background-position: right top !important;
+            border: 1px solid transparent;
+            border-bottom: 1px solid $ts-black;
+            border-top: 1px solid $ts-black;
+            position: relative;
+            width: 100%;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+
+             .hero-button {
+                position: absolute;
+                top: 12px;
+                right: 150px;
+                display: block;
+                background: rgba(0, 0, 0, 0.25);
+                border: 1px $light-grey solid;
+                color: $light-grey;
+                padding: 2px 25px;
+                outline: none;
+
+                 &:hover {
+                    background-color: rgba($white, .15 ) ;
+                    border: 2px solid transparent;
+
+                 }
+             
+             }
+        }
+    }
+    
+    .hero-image {
+        
+        height: 270px;
+        
+        img.lili {
+            position: absolute;
+            top: -35px;
+            left: -40px;
+        }
+        
+        @include hots-snapshot-hero ( lili, -35, -40);
+        @include hots-snapshot-hero ( chen, -80, -40);
+       
+    }
+    
+    .qualities {
+    
+        .quality {
+            
+            .outer-circle {
+                border: 2px solid $white;
+                border-radius: 50%;
+                width: 75px;
+                height: 75px;
+                margin: 0 auto;
+
+                .circle {
+                    text-align: center;
+                    font-size: 40px;
+                    color: $white;
+                    font-weight: 700;
+                    border: 4px solid $white;
+                    background-color: $ts-blue;
+                    border-radius: 50%;
+                    width: 65px;
+                    height: 65px;
+                    margin: 3px;
+                    padding: 2px;
+                }
+                
+                .push { 
+                       background-color: $bright-purple; 
+                }
+                
+                .survive { 
+                       background-color: $bright-green; 
+                }
+                
+                .scale { 
+                       background-color: $bright-red; 
+                }
+                
+                .utility { 
+                       background-color: $bright-orange; 
+                }
+                
+            }
+        
+            .quality-title {
+                text-transform: uppercase;
+                color: $white;
+                text-align: center;
+                margin-top: 5px;
+            }
+        }
+    
     }
 }
