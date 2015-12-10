@@ -14184,7 +14184,7 @@ angular.module('app.controllers', ['ngCookies'])
               var out = [];
               var missing = { className: "missing" };
               var hero = $scope.getCurrentHero();
-              var heroTals = _.filter($scope.guide.guideTalents, function (val) { console.log(val.guideHeroId, hero.id, val, hero); return (val.guideHeroId === hero.id); });
+              var heroTals = _.filter($scope.guide.guideTalents, function (val) { return (val.guideHeroId === hero.id); });
               
               out = heroTals;
               
@@ -14420,12 +14420,12 @@ angular.module('app.controllers', ['ngCookies'])
                   tier20: 20
                 }
 
-                _.each($scope.guide.heroes, function (hero) {
-                  $scope.guide.talentTiers[hero.hero.id] = {};
-                  _.each(hero.talents, function (talent, key) {
-                    $scope.guide.talentTiers[hero.hero.id][tiers[key]] = talent;
-                  });
-                });
+//                _.each($scope.guide.heroes, function (hero) {
+//                  $scope.guide.talentTiers[hero.hero.id] = {};
+//                  _.each(hero.talents, function (talent, key) {
+//                    $scope.guide.talentTiers[hero.hero.id][tiers[key]] = talent;
+//                  });
+//                });
                     
                     
                 $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
@@ -14458,9 +14458,14 @@ angular.module('app.controllers', ['ngCookies'])
                     
                     _.each(guideHeroData, function(eachVal) {
                       var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
-                        filterVal.guideId = guideData.id;
-                        filterVal.guideHeroId = eachVal.id; 
                         return filterVal.heroId === eachVal.heroId;
+                      });
+                      
+                      _.each(heroTals, function (innerEachVal, index, list) {
+                        innerEachVal.guideId = guideData.id;
+                        innerEachVal.guideHeroId = eachVal.id; 
+                        
+                        console.log(innerEachVal, index, list);
                       });
                       
                       tals.push(heroTals);
