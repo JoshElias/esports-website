@@ -3901,6 +3901,7 @@ table.forum-thread tbody tr td.author a.avatar img { width: 30px; height: 30px; 
 .sponsor-logo-g2a a { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; }
 .sponsor-logo-namecheap { margin: 0 auto; width: 275px; height: 80px; background: url('../img/namecheap.png') no-repeat; }
 .sponsor-logo-func { margin: 0 auto; width: 275px; height: 80px; background: url('../img/func.png') no-repeat; }
+.sponsor-logo-fnatic { margin: 0 auto; width: 275px; height: 80px; background: url('../img/fnatic.png') no-repeat; background-size: 100%; }
 /*.sponsor-page a { margin: 0 auto; display: block; width: 20px; color: #FFF; opacity: .6; font-size: 20px; }*/
 .btn-sponsor { width: 36px; height: 36px; border-radius: 50%; display: block; border: 1px solid white; margin: 10px 0px; }
 .btn-sponsor div { width: 30px; height: 30px; text-align: center; }
