@@ -1990,7 +1990,7 @@ angular.module('app.services', [])
 
     return deckBuilder;
 }])
-.factory('GuideBuilder', ['$sce', '$http', '$q', 'User', function ($sce, $http, $q, User) {
+.factory('GuideBuilder', ['$sce', '$http', '$q', 'User', 'HeroTalent', function ($sce, $http, $q, User, HeroTalent) {
 
     var guideBuilder = {};
 
@@ -2093,28 +2093,49 @@ angular.module('app.services', [])
 //        };
 
         gb.toggleHero = function (hero) {
-            if (gb.hasHero(hero)) {
-                for (var i = 0; i < gb.heroes.length; i++) {
-                    if (gb.heroes[i].hero.id === hero.id) {
-                        gb.heroes.splice(i, 1);
-                        return true;
-                    }
-                }
-            } else {
-                if (gb.heroes.length === 5) { return false; }
-                var obj = {};
-                obj.hero = hero;
-                obj.talents = {
-                    tier1: null,
-                    tier4: null,
-                    tier7: null,
-                    tier10: null,
-                    tier13: null,
-                    tier16: null,
-                    tier20: null
-                };
-                gb.heroes.push(obj);
+          if (gb.hasHero(hero)) {
+            for (var i = 0; i < gb.heroes.length; i++) {
+              if (gb.heroes[i].hero.id === hero.id) {
+                gb.heroes.splice(i, 1);
+                return true;
+              }
             }
+          } else {
+            if (gb.heroes.length === 5) { return false; }
+
+            var obj = {};
+            obj.hero = hero;
+//            obj.hero.talents = tals;
+            obj.talents = {
+              tier1: null,
+              tier4: null,
+              tier7: null,
+              tier10: null,
+              tier13: null,
+              tier16: null,
+              tier20: null
+            };
+            gb.heroes.push(obj);
+            
+            if (_.isEmpty(hero.talents)) {
+              HeroTalent.find({
+                filter: {
+                  where: {
+                    heroId: hero.id
+                  },
+                  include: ['talent']
+                }
+              })
+              .$promise
+              .then(function (data) {
+                var heroes = gb.heroes;
+                var index = heroes.indexOf(obj);
+
+                hero.talents = data;
+                heroes[index].hero.talents = data;
+              });
+            }
+          }
         };
 
 //        gb.hasHero = function (hero) {
@@ -2145,25 +2166,11 @@ angular.module('app.services', [])
             return [1, 4, 7, 10, 13, 16, 20];
         };
 
-//        gb.talentsByTier = function (hero, tier) {
-//            var talents = [];
-//            for (var i = 0; i < hero.talents.length; i++) {
-//                if (hero.talents[i].tier === tier) {
-//                    talents.push(hero.talents[i]);
-//                }
-//            }
-//            return talents;
-//        };
-
         gb.talentsByTier = function (hero, tier) {
-            var talents = [];
-            for (var i = 0; i < hero.talents.length; i++) {
-                var talentId = hero.talents[i].id;
-                if (hero.talentTiers[talentId] == tier) {
-                    talents.push(hero.talents[i]);
-                }
-            }
-            return talents;
+          var temp = _.filter(hero.talents, function (val) { return val.tier == tier });
+          var talents = _.map(temp, function (val) { return val.talent; });
+
+          return talents;
         };
 
 //        gb.toggleTalent = function (hero, talent) {
@@ -2175,14 +2182,14 @@ angular.module('app.services', [])
 //        };
 
         gb.toggleTalent = function (hero, talent) {
-            var talentId = talent.id;
-            var talentTier = hero.hero.talentTiers[talentId];
-            console.log(hero);
-            if (gb.hasTalent(hero, talent)) {
-                hero.talents['tier'+talentTier] = null;
-            } else {
-                hero.talents['tier'+talentTier] = talentId;
-            }
+          var talentId = talent.id;
+          var tal = _.find(hero.hero.talents, function (val) { return val.talentId == talentId });
+
+          if (gb.hasTalent(hero, talent)) {
+            hero.talents['tier'+tal.tier] = null;
+          } else {
+            hero.talents['tier'+tal.tier] = talentId;
+          }
         };
 
 //        gb.hasAnyTalent = function (hero, talent) {
@@ -2190,9 +2197,10 @@ angular.module('app.services', [])
 //        };
 
         gb.hasAnyTalent = function (hero, talent) {
-            var talentId = talent.id;
-            var talentTier = hero.hero.talentTiers[talentId];
-            return (hero.talents['tier'+talentTier] !== null);
+          var talentId = talent.id;
+          var tal = _.find(hero.hero.talents, function (val) { return val.talentId == talentId });
+          
+          return (hero.talents['tier'+tal.tier] !== null);
         };
 
         gb.allTalentsDone = function () {
@@ -2215,22 +2223,23 @@ angular.module('app.services', [])
 //        };
 
         gb.hasTalent = function (hero, talent) {
-            var talentId = talent.id;
-            var talentTier = hero.hero.talentTiers[talentId];
-            return (hero.talents['tier'+talentTier] == talent.id);
+          var talentId = talent.id;
+          var tal = _.find(hero.hero.talents, function (val) { return val.talentId == talentId });
+
+          return (hero.talents['tier'+tal.tier] == talent.id);
         };
 
         gb.toggleSynergy = function (hero) {
-            if (gb.hasSynergy(hero)) {
-                for (var i = 0; i < gb.synergy.length; i++) {
-                    if (gb.synergy[i] === hero.id) {
-                        gb.synergy.splice(i, 1);
-                        return true;
-                    }
-                }
-            } else {
-                gb.synergy.push(hero.id);
+          if (gb.hasSynergy(hero)) {
+            for (var i = 0; i < gb.synergy.length; i++) {
+              if (gb.synergy[i] === hero.id) {
+                gb.synergy.splice(i, 1);
+                return true;
+              }
             }
+          } else {
+            gb.synergy.push(hero.id);
+          }
         };
 
         gb.hasSynergy = function (hero) {

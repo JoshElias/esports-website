@@ -4,8 +4,6 @@ angular.module('redbull.controllers')
     $scope.isLoading = true;
     $scope.isSuccessful = false;
     $scope.percentLoaded = 0;
-    // card pool
-    $scope.cardPool = [];
     // packs
     $scope.currentPack = {};
     $scope.packs = DraftPacks.getPacks(cards, {});
@@ -28,6 +26,7 @@ angular.module('redbull.controllers')
         'pack-gvg.png',
         'pack-tgt.png',
         'pack-soulbound.png',
+        'deck-top.png',
     ];
     
     // load images for preloader
@@ -77,64 +76,4 @@ angular.module('redbull.controllers')
         }
     );
     
-    // check if card exists in pool
-    function cardExistsInPool (card) {
-        for (var i = 0; i < $scope.cardPool.length; i++) {
-            if ($scope.cardPool[i].card.id === card.id) {
-                return i;
-            }
-        }
-        return -1;
-    }
-    
-    // add card to pool
-    $scope.addCardToPool = function (card) {
-        var cardIndex = cardExistsInPool(card);
-        if (cardIndex !== -1) {
-            $scope.cardPool[cardIndex].qty++;
-        } else {
-            $scope.cardPool.push({
-                qty: 1,
-                card: card
-            });
-        }
-    }
-    
-    // sorted card pool
-    $scope.sortedPool = function () {
-        var weights = {
-            'Weapon' : 0,
-            'Spell': 1,
-            'Minion': 2
-        };
-
-        function dynamicSort(property) {
-            return function (a, b) {
-                if (property == 'cardType') {
-                    if (weights[a[property]] < weights[b[property]]) return -1;
-                    if (weights[a[property]] > weights[b[property]]) return 1;
-                } else {
-                    if (a[property] < b[property]) return -1;
-                    if (a[property] > b[property]) return 1;
-                }
-                return 0;
-            }
-        }
-
-        function dynamicSortMultiple() {
-            var props = arguments;
-            return function (a, b) {
-                var i = 0,
-                    result = 0;
-
-                while(result === 0 && i < props.length) {
-                    result = dynamicSort(props[i])(a.card, b.card);
-                    i++;
-                }
-                return result;
-            }
-        }
-
-        return $scope.cardPool.sort(dynamicSortMultiple('cost', 'cardType', 'name'));
-    };
 }]);

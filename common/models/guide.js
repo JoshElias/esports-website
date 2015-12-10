@@ -8,7 +8,6 @@ module.exports = function(Guide) {
     Guide.observe("persist", function(ctx, next) {
 
       utils.convertObjectIds(foreignKeys, ctx);
-      talentTiersSuck(ctx);
       next();
     });
 
@@ -17,24 +16,17 @@ module.exports = function(Guide) {
         utils.validateYoutubeId(ctx, next);
     });
 
-
-    Guide.afterRemote("**", function(ctx, modelInstance, next) {
-        removePrivateFields(ctx, modelInstance, next);
+    Guide.observe("after save", function(ctx, next) {
+//        var childrenNames = ["guideHeroes", "guideTalents"];
+//        utils.saveChildren(ctx, childrenNames, next);
+      return next();
     });
 
-    function talentTiersSuck(ctx) {
-        var data = ctx.instance || ctx.data;
 
-        if(data.talentTiers) {
-            _.each(data.talentTiers, function(tierValue, tierKey) {
-                _.each(tierValue, function(value, key) {
-                    if(typeof value !== "object")
-                        data.talentTiers[tierKey][key] = new ObjectId(value);
-                })
-            });
-        }
-    }
-
+    Guide.afterRemote("**", function(ctx, modelInstance, next) {
+//        removePrivateFields(ctx, modelInstance, next);
+      return next();
+    });
 
 
     // Filter out sensitive user information depending on ACL
@@ -45,11 +37,12 @@ module.exports = function(Guide) {
         var Role = Guide.app.models.Role;
         var RoleMapping = Guide.app.models.RoleMapping;
         var User = Guide.app.models.user;
+      
+        console.log("BEFORE", ctx.result);
 
         // sets the private fields to false
         function removeFields() {
             if (ctx.result) {
-                console.log("Before:", ctx.result);
                 var answer;
                 if (Array.isArray(modelInstance)) {
                     answer = [];
@@ -75,10 +68,12 @@ module.exports = function(Guide) {
                         }
                     }
                 }
-
+              
                 if (typeof answer !== "undefined") {
                   ctx.result = answer;
                 }
+              
+                console.log("AFTER", ctx.result);
             }
             finalCb();
         }

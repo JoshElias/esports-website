@@ -1293,7 +1293,6 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/frontend/hots.home.html',
                         controller: 'HOTSHomeCtrl',
                         resolve: {
-
                             dataArticles: ['Article', function (Article) {
                               var filters = 'all',
                                   offset = 0,
@@ -1319,7 +1318,6 @@ var app = angular.module('app', [
                                   console.log(err);
                               });
                             }],
-
                             dataGuidesCommunity: ['Guide', function (Guide) {
                               return Guide.find({
                                 filter: {
@@ -1341,25 +1339,35 @@ var app = angular.module('app', [
                                     slug: true
                                   },
                                   include: [
-                                        {
-                                            relation: 'author'
-                                        },
-                                        {
-                                            relation: 'guideHeroes',
+                                    {
+                                      relation: 'author'
+                                    },
+                                    {
+                                      relation: 'guideHeroes',
+                                      scope: {
+                                        include: [
+                                          {
+                                            relation: 'talents'
+                                          },
+                                          {
+                                            relation: 'hero',
                                             scope: {
-                                                include: ['talents']
+                                              include: ['talents']
                                             }
-                                        },
-                                        {
-                                            relation: 'maps',
-                                            scope: {
-                                                fields: {
-                                                    name: true,
-                                                    className: true
-                                                }
-                                            }
-                                        }
-                                    ]
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      relation: 'guideTalents',
+                                      scope: {
+                                        include: ['talent']
+                                      }
+                                    },
+                                    {
+                                      relation: 'maps'
+                                    }
+                                  ]
                                 }
                               })
                               .$promise
@@ -1392,19 +1400,35 @@ var app = angular.module('app', [
                                     slug: true
                                   },
                                   include: [
-                                        {
-                                            relation: 'author'
-                                        },
-                                        {
-                                            relation: 'guideHeroes',
+                                    {
+                                      relation: 'author'
+                                    },
+                                    {
+                                      relation: 'guideHeroes',
+                                      scope: {
+                                        include: [
+                                          {
+                                            relation: 'talents'
+                                          },
+                                          {
+                                            relation: 'hero',
                                             scope: {
-                                                include: ['talents']
+                                              include: ['talents']
                                             }
-                                        },
-                                        {
-                                            relation: 'maps'
-                                        }
-                                    ]
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      relation: 'guideTalents',
+                                      scope: {
+                                        include: ['talent']
+                                      }
+                                    },
+                                    {
+                                      relation: 'maps'
+                                    }
+                                  ]
                                 }
                               })
                               .$promise
@@ -1424,7 +1448,6 @@ var app = angular.module('app', [
                               })
                               .$promise
                               .then(function (data) {
-                                  console.log(4, data);
                                   return data;
                               })
                               .catch(function (err) {
@@ -1436,7 +1459,6 @@ var app = angular.module('app', [
                               return Map.find({})
                               .$promise
                               .then(function (data) {
-                                  console.log(5, data);
                                   return data;
                               })
                               .catch(function (err) {
@@ -1696,50 +1718,53 @@ var app = angular.module('app', [
                                             slug: slug
                                         },
                                         include: [
-                                            {
-                                                relation: "author"
-                                            },
-                                            {
-                                                relation: "heroes",
+                                          {
+                                            relation: 'author'
+                                          },
+                                          {
+                                          relation: 'guideHeroes',
+                                          scope: {
+                                            include: [
+                                              {
+                                                relation: 'talents'
+                                              },
+                                              {
+                                                relation: 'hero',
                                                 scope: {
-                                                    include: ["talents"]
+                                                  include: ['talents']
                                                 }
-                                            },
-                                            {
-                                                relation: "maps"
-                                            },
-                                            {
-                                                relation: "comments",
-                                                scope: {
-                                                    include: ["author"]
-                                                }
-                                            }
-                                        ]
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        {
+                                          relation: 'guideTalents',
+                                          scope: {
+                                            include: ['talent']
+                                          }
+                                        },
+                                        {
+                                          relation: 'maps'
+                                        }
+                                      ]
                                     }
                                 }).$promise.then(function (data) {
-                                    console.log(data);
+                                    console.log("tojson", data.toJSON());
                                     return data;
                                 })
                                 .catch(function (err) {
                                     console.log('err: ', err);
                                 });
                             }],
-                            guideTalents: ['guide', function (guide) {
-                                var talents = {};
-                                console.log('guide: ', guide);
-                                if (guide.guideType === "hero") {
-                                    for (var i = 0; i < guide.heroes.length; i++) {
-                                        for (var j = 0; j < guide.heroes[i].talents.length; j++) {
-                                            talents[guide.heroes[i].talents[j].id] = guide.heroes[i].talents[j]
-                                        }
-                                    }
-                                }
-                                return talents;
-                            }],
                             heroes: ['Hero', function(Hero) {
 
                                 return Hero.find({
-
+                                  filter: {
+                                    fields: {
+                                      oldTalents: false,
+                                      oldAbilities: false
+                                    }
+                                  }
                                 })
                                 .$promise
 
@@ -1783,11 +1808,14 @@ var app = angular.module('app', [
                         controller: 'HOTSGuideBuilderHeroCtrl',
                         resolve: {
                             dataHeroes: ['Hero', function (Hero) {
-                                return Hero.find({
-                                    filter: {
-                                        include: ['talents']
-                                    }
-                                }).$promise;
+                              return Hero.find({
+                                filter: {
+                                  fields: {
+                                    oldTalents: false,
+                                    oldAbilities: false
+                                  }
+                                }
+                              }).$promise;
                             }],
                             dataMaps: ['Map', function (Map) {
                                 return Map.find({}).$promise;

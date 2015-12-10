@@ -25,11 +25,11 @@
 
                 <!-- guide heroes -->
                 <div class="guide-heroes clearfix m-t-md m-b-md" ng-if="guide.guideType == 'hero'">
-                    <div class="guide-hero-wrapper guide-heroes-{{guide.heroes.length}}" ng-repeat="hero in justHeroes()">
+                    <div class="guide-hero-wrapper guide-heroes-{{guide.guideHeroes.length}}" ng-repeat="hero in justHeroes()">
                         <div class="guide-hero" ng-class="{ active: hero == getCurrentHero() }">
                             <a href="#" ng-click="setCurrentHero(hero)" hots-hero>
-                                <div class="guide-hero-title">{{hero.name}}</div>
-                                <div class="guide-hero-image {{hero.className}}"></div>
+                                <div class="guide-hero-title">{{hero.hero.name}}</div>
+                                <div class="guide-hero-image {{hero.hero.className}}"></div>
                             </a>
                         </div>
                     </div>
@@ -52,7 +52,7 @@
                             <div class="guide-talent-wrapper" ng-repeat="talent in currentTalents track by $index">
                                 <div class="guide-talent">
                                     <div class="guide-talent-level"><span class="hidden-xs hidden-sm">LEVEL </span>{{talent.tier}}</div>
-                                    <div class="guide-talent-icon talents-icon active {{hero.className}} {{talent.className}} {{isLarge}}" talent-icon-md hots-talent hero="hero" talent="talent"></div>
+                                    <div class="guide-talent-icon talents-icon active {{hero.hero.className}} {{talent.talent.className}} {{isLarge}}" talent-icon-md hots-talent hero="hero" talent="talent.talent"></div>
                                     <div class="guide-talent-dots hidden-xs">
                                         <div class="guide-talent-dot" ng-class="{ active: selectedTalent(hero, talent.tier, dot) }" ng-repeat="dot in getTalents(hero, talent.tier)"></div>
                                     </div>
