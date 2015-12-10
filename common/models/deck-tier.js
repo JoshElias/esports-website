@@ -3,7 +3,7 @@ module.exports = function(DeckTier) {
 
 
     var childrenNames = ["deckTech"];
-    Guide.observe("after save", utils.saveChildren(childrenNames));
+    DeckTier.observe("after save", utils.saveChildren(childrenNames));
 
 
     var foreignKeys = ["deckId", "snapshotId"];
