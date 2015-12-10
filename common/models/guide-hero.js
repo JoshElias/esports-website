@@ -1,7 +1,7 @@
 module.exports = function(GuideHero) {
     var utils = require("../../lib/utils");
 
-    
+
     var childrenNames = ["guideTalents"];
     GuideHero.observe("after save", utils.saveChildren(childrenNames));
 
