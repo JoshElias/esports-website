@@ -1,23 +1,19 @@
 @import 'ts-colors.scss';
 
-// Description: styles for the hots meta snapshot only
+// Description: styles for the hots meta snapshot only. WARNING!! Some styles may be affected by deck styles from the hs-deck.scss file.
 
 //*************************************
 
 // 1... Typography
-
+// 2... background
+// 3... Tiers
+// 4... hero image
+// 5... qualities
+// 6... meta change box
 
 //*************************************
 
-@mixin hots-snapshot-hero ($hero, $y-pos, $x-pos) {
-    
-    img.#{$hero} {
-            position: absolute;
-            top: #{$y-pos}px;
-            left: #{$x-pos}px;
-        }
 
-}
 
 //*************************************
 // 1... Typography
@@ -39,22 +35,39 @@
         font-size: 36px; 
         color: $light-grey; 
         letter-spacing: 2px; 
-        text-transform: uppercase; 
+        text-transform: uppercase;
+        
+        @media screen and (max-width: 680px) {
+                font-size: 25px;
+                width: 70%;
+            }
+        
+        
     }
     
     h3.sub-title { 
         font-size: 24px; 
-        color: $ts-grey; 
+        color: $ts-grey;
+        
+        @media screen and (max-width: 680px) {
+                font-size: 18px;
+                width: 70%;
+            }
+        
     }
     
     h2.section-title {
         color: $light-grey; 
         
+        @media screen and (max-width: 575px) {
+              border-bottom: 1px solid $ts-dark-grey;  
+            }
+        
         
         &:before {
             content: "";
             position: absolute;
-            top: 60px;
+            top: 54px;
             left: 20px;
             height: 1px;
             width: 300px;
@@ -63,6 +76,10 @@
             @media screen and (max-width: 600px) {
                 width: 90%;
                 left: 5%;
+            }
+            
+            @media screen and (max-width: 575px) {
+                border: 0px transparent;
             }
         }
         
@@ -73,11 +90,16 @@
         box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.75);
         border: 1px solid rgba(255, 255, 255, 0.2);
         outline: 1px solid #000; 
+        -mz-outline: 1px solid #000; 
         
         h2, p {
             color: $ts-grey; 
         }
     }
+    
+//*************************************
+// 2... background
+//*************************************
     
     .bg-override {
         background-image: url(../img/backgrounds/hots-snapshot-bg.jpg);
@@ -87,15 +109,31 @@
         background-position: top;
         background-attachment: fixed;
     }
+
+//*************************************
+// 3... Tiers
+//*************************************
     
     .tier .tier-heading {
         border: 1px solid transparent;
     }
     
-    .tier-body { 
+    .tier-body {
         
-        .tier-deck-body {
-            
+        .tier-hero h4 {
+            padding-right: 200px;
+            text-indent: 30px;
+            line-height: 48px;
+            font-weight: bold;
+            color: $white;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .tier-hero-body {
+
             h2 {
                 font-size: 55px !important;
                 font-weight: bold;
@@ -103,18 +141,30 @@
             }
             
             h3 {
-                color: $white;
-            
+                font-size: 20px;
+                font-weight: bold;
             }
             
+            h4 {
+                text-indent: 0px;
+            }
+            
+            .hero-content {
+                    padding-bottom: 50px;
+                
+                @media screen and (max-width: 750px) {
+                        padding-bottom: 0px;
+                    }
+                
+            }
+                
         }
         
-        .tier-deck-heading {
-            height: 50px !important;
-            background-color: rgba($hots-dark-purple, .8) !important; 
-            background-image: url(../img/hots/heroes/guide-images/long/chen.png) !important;
-            background-repeat: no-repeat !important;
-            background-position: right top !important;
+
+        
+        .tier-hero-heading {
+            height: 60px !important;
+            background-color: rgba($hots-dark-purple, 1) !important; 
             border: 1px solid transparent;
             border-bottom: 1px solid $ts-black;
             border-top: 1px solid $ts-black;
@@ -125,6 +175,12 @@
             -moz-appearance: none;
             appearance: none;
             cursor: pointer;
+            
+            @media screen and (min-width: 750px) {
+                background-image: url(../img/hots/heroes/60x/chen60.png) !important;
+                background-repeat: no-repeat !important;
+                background-position: right top !important;
+            }
 
              .hero-button {
                 position: absolute;
@@ -136,35 +192,56 @@
                 color: $light-grey;
                 padding: 2px 25px;
                 outline: none;
+                 
+                 
+                 @media screen and (min-width: 750px) {
+                     &:hover {
+                        background-color: rgba($white, .15 ) ;
+                        border: 2px solid transparent;
 
-                 &:hover {
-                    background-color: rgba($white, .15 ) ;
-                    border: 2px solid transparent;
-
+                     }
                  }
+                 
+                 @media screen and (max-width: 750px) {
+                    right: 30px;
+                 }
+                 
+                 
              
              }
         }
     }
     
+//*************************************
+// 4... hero image
+//*************************************
+    
     .hero-image {
         
         height: 270px;
-        
-        img.lili {
-            position: absolute;
-            top: -35px;
-            left: -40px;
-        }
-        
-        @include hots-snapshot-hero ( lili, -35, -40);
-        @include hots-snapshot-hero ( chen, -80, -40);
+
+        //mixin for positioning hero image is in hots-heroes
        
     }
+    
+//*************************************
+// 5... qualities
+//*************************************
     
     .qualities {
     
         .quality {
+            
+            width: 20%;
+            float: left;
+            
+            @media screen and (max-width: 520px) {
+                float: none;
+                clear: both;
+                width: 225px;
+                height: 65px;
+                margin-left: 20px;
+            }
             
             .outer-circle {
                 border: 2px solid $white;
@@ -172,10 +249,24 @@
                 width: 75px;
                 height: 75px;
                 margin: 0 auto;
+                
+
+                
+                @media screen and (max-width: 600px) {
+                        width: 60px;
+                        height: 60px;
+                    }
+                
+                @media screen and (max-width: 520px) {
+                        margin-left: 0px;
+                        margin-right: 15px;
+                        float: left;
+                        border: transparent;
+                    }
 
                 .circle {
                     text-align: center;
-                    font-size: 40px;
+                    font-size: 35px;
                     color: $white;
                     font-weight: 700;
                     border: 4px solid $white;
@@ -185,6 +276,22 @@
                     height: 65px;
                     margin: 3px;
                     padding: 2px;
+                    
+
+                    
+                     @media screen and (max-width: 600px) {
+                        width: 50px;
+                        height: 50px;
+                        font-size: 25px;
+                        padding: 3px 3px 2px 2px;
+                    }
+                    
+                    @media screen and (max-width: 520px) {
+                        border: transparent;
+                        padding: 7px 0px 1px 0px;
+                    }
+                 
+                    
                 }
                 
                 .push { 
@@ -206,12 +313,94 @@
             }
         
             .quality-title {
-                text-transform: uppercase;
-                color: $white;
+                
                 text-align: center;
-                margin-top: 5px;
+                text-indent: 0;
+                
+                @media screen and (max-width: 520px) {
+                        text-align: left;
+                    height: 85px;
+                    }
+                
+                h4 {
+                    text-transform: uppercase;
+                    color: $white;
+                    font-weight: 500;
+                    margin-top: 5px;
+                    font-size: 15px;
+                    padding-right: 0px;
+                    
+                    @media screen and (max-width: 1200px) {
+                        font-size: 10px;
+                        
+                    }
+                    
+                     @media screen and (max-width: 520px) {
+                        font-size: 24px;
+                        padding-top: 5px;
+                    }
+                 
+                    
+                }
+
             }
         }
     
     }
+    
+//*************************************
+// 6... meta change box
+//*************************************
+    
+    .meta-change-box {
+       
+        margin: 0 auto;
+        width: 270px;
+        
+        div {
+            
+            text-align: center;
+            height: 100px;
+            width: 90px;
+            float: left;
+            border: solid 1px rgba($off-black, .6);
+            
+            @media screen and (max-width: 355px) {
+              width: 80px;
+            }
+            
+            &.current-box {
+                background-color: $bright-green;
+            }
+            
+            &.previous-box {
+                background-color: $bright-red;
+            }
+            
+            &.change-box {
+                background-color: $bright-green;
+            }
+            
+            h5.change-title {
+                font-size: 12px;
+                font-weight: 700;
+                text-transform: uppercase;
+                color: $white;
+                background-color: rgba($hots-dark-purple, .5);
+                padding-top: 5px;
+                padding-bottom: 5px;
+            }
+            
+            span {
+                
+                color: $white;
+                font-size: 30px;
+                font-weight: 700;
+            }
+        
+        }
+    }
+
+   
+
 }

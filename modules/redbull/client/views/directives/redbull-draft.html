@@ -51,3 +51,40 @@
 
 </div>
 <!-- / draft wrapper -->
+
+<!-- card pool -->
+<div class="card-pool">
+    <div class="card-pool-title">Card Pool</div>
+    <div class="card-pool-cards">
+        <p ng-if="!cardPool.length">
+            Start opening packs to see what cards you can use to build your decks.<br><br>
+            Drag and drop packs to open them one at a time, or speed up the process by clicking the <i>Open All Packs</i> button below.
+        </p>
+        <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true}">
+            <div class="iscroll-scroller">
+                <div class="card-pool-card" ng-class="{multi:card.qty > 1, legendary: card.card.rarity === 'Legendary'}" 
+                     ng-repeat="card in sortedPool() track by card.card.id" 
+                     data-card-id="card.card.id" 
+                     data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" 
+                     data-tooltip-pos="left" pool-card>
+                    <div class="card-pool-card-mana">{{card.card.cost}}</div>
+                    <div class="card-pool-card-qty" ng-if="card.qty > 1">{{card.qty}}</div>
+                    <div class="card-pool-card-legendary" ng-if="card.card.rarity === 'Legendary'">
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <div class="card-pool-card-photo">
+                        <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.card.photoNames.small}}" alt="card.card.name">
+                    </div>
+                    <div class="card-pool-card-name">{{card.card.name}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-pool-button">
+        <button class="btn btn-blue btn-block" ng-click="fastForwardStart()" ng-disabled="isFastForward()">
+            Open All Packs
+            <i class="fa fa-refresh fa-spin" ng-if="isFastForward()"></i>
+        </button>
+    </div>
+</div>
+<!-- / card pool -->
