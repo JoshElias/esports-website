@@ -13717,20 +13717,18 @@ angular.module('app.controllers', ['ngCookies'])
 
             // guides
             $scope.getGuideCurrentHero = function (guide) {
-                return (guide.currentHero) ? guide.currentHero : guide.heroes[0];
+                return (guide.currentHero) ? guide.currentHero : guide.guideHeroes[0];
             };
 
             $scope.getGuideClass = function (guide) {
-                return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).className : guide.maps[0].className;
+                return (guide.guideType == 'hero') ? $scope.getGuideCurrentHero(guide).hero.className : guide.maps[0].className;
             };
-
+            
             $scope.getTierTalent = function (hero, guide, tier, isFeatured) {
-                if (isFeatured) {
-                    return (featuredTalentDict[guide.talentTiers[hero.id][tier]] == undefined) ? { className: 'missing', name: "Missing Talent" } : featuredTalentDict[guide.talentTiers[hero.id][tier]];
-                } else {
-                    return (communityTalentDict[guide.talentTiers[hero.id][tier]] == undefined) ? { className: 'missing', name: "Missing Talent" } : communityTalentDict[guide.talentTiers[hero.id][tier]];
-                }
-
+              var t = _.find(guide.guideTalents, function(val) { return (hero.id === val.guideHeroId && val.tier === tier) });
+              
+              return (t) ? t.talent : { className: 'missing', name: "Missing Talent" };
+//              return ($scope.topGuidesTalents[guide.talentTiers[hero.id][tier]] === undefined) ? { className: 'missing', name: "Missing Talent" } : $scope.topGuidesTalents[guide.talentTiers[hero.id][tier]];
             }
 
             $scope.guidePrevHero = function ($event, guide) {
@@ -13760,13 +13758,13 @@ angular.module('app.controllers', ['ngCookies'])
 
                 // get index of current hero
                 for (var i = 0; i < guide.heroes.length; i++) {
-                    if (currentHero.id == guide.heroes[i].id) {
+                    if (currentHero.id == guide.guideHeroes[i].id) {
                         index = i;
                         break;
                     }
                 }
 
-                guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
+                guide.currentHero = (index == guide.guideHeroes.length - 1) ? guide.guideHeroes[0] : guide.guideHeroes[index + 1];
             };
 
             //is premium
@@ -14116,8 +14114,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'guideTalents', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User', 'userRoles',
-        function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, guideTalents, LoginModalService, MetaService, LoopBackAuth, User, userRoles) {
+    .controller('HOTSGuideCtrl', ['$scope', '$window', '$state', '$sce', '$compile', 'bootbox', 'VoteService', 'Guide', 'guide', 'heroes', 'maps', 'LoginModalService', 'MetaService', 'LoopBackAuth', 'User', 'userRoles',
+        function ($scope, $window, $state, $sce, $compile, bootbox, VoteService, Guide, guide, heroes, maps, LoginModalService, MetaService, LoopBackAuth, User, userRoles) {
 
             $scope.isUser = {
                 admin: userRoles ? userRoles.isInRoles.$admin : false,
@@ -14127,8 +14125,7 @@ angular.module('app.controllers', ['ngCookies'])
           
             $scope.guide = guide;
             $scope.Guide = Guide;
-            $scope.currentHero = ($scope.guide.heroes.length) ? $scope.guide.heroes[0] : false;
-            console.log($scope.currentHero);
+            $scope.currentHero = ($scope.guide.guideHeroes.length) ? $scope.guide.guideHeroes[0].hero : false;
             $scope.heroes = heroes;
             $scope.maps = maps;
 
@@ -14151,7 +14148,7 @@ angular.module('app.controllers', ['ngCookies'])
                 };
             }
             $scope.show = $scope.app.settings.show.guide;
-            $scope.$watch('show', function(){ $scope.app.settings.show.guide = $scope.show; }, true);
+            $scope.$watch('show', function() { $scope.app.settings.show.guide = $scope.show; }, true);
 
             $scope.setCurrentHero = function (hero) {
                 console.log("setCurrentHero:", hero);
@@ -14160,9 +14157,9 @@ angular.module('app.controllers', ['ngCookies'])
             };
             
             $scope.getCurrentHero = function () {
-                for (var i = 0; i < $scope.guide.heroes.length; i++) {
-                    if ($scope.guide.heroes[i].id === $scope.currentHero.id) {
-                        return $scope.guide.heroes[i];
+                for (var i = 0; i < $scope.guide.guideHeroes.length; i++) {
+                    if ($scope.guide.guideHeroes[i].hero.id === $scope.currentHero.hero.id) {
+                        return $scope.guide.guideHeroes[i];
                     }
                 }
                 return false;
@@ -14171,8 +14168,8 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.justHeroes = function () {
                 var out = [];
 
-                for (var i = 0; i < $scope.guide.heroes.length; i++) {
-                    out.push($scope.guide.heroes[i]);
+                for (var i = 0; i < $scope.guide.guideHeroes.length; i++) {
+                    out.push($scope.guide.guideHeroes[i]);
                 }
 
                 return out;
@@ -14183,16 +14180,15 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             function getCurrentTalents () {
-                var levels = $scope.getTiers(),
-                    out = [],
-                    missing = { className: "missing" };
-
-                for (var i = 0; i < levels.length; i++) {
-                    var talent = guideTalents[$scope.guide.talentTiers[$scope.currentHero.id][levels[i]]];
-                    (talent !== undefined) ? out[i] = talent : out[i] = { className: "missing", name: "Missing Talent" };
-                    out[i].tier = levels[i];
-                }
-                return out;
+              var levels = $scope.getTiers();
+              var out = [];
+              var missing = { className: "missing" };
+              var hero = $scope.getCurrentHero();
+              var heroTals = _.filter($scope.guide.guideTalents, function (val) { console.log(val.guideHeroId, hero.id, val, hero); return (val.guideHeroId === hero.id); });
+              
+              out = heroTals;
+              
+              return out;
             }
             
             if($scope.guideType == "hero") {
@@ -14200,17 +14196,13 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.getTalents = function (hero, tier) {
-                var out = [];
-                for (var i = 0; i < hero.talents.length; i++) {
-                    if (hero.talentTiers[hero.talents[i].id] === tier) {
-                        out.push(hero.talents[i]);
-                    }
-                }
-                return out;
+              var out = _.filter(hero.hero.talents, function (val) { return (val.tier === tier); });
+              
+              return out;
             };
 
             $scope.selectedTalent = function (hero, tier, talent) {
-                return ($scope.guide.talentTiers[hero.id][tier] == talent.id);
+                return _.find(hero.talents, function(val) { return (val.id == talent.talentId); });
             };
 
             // matchups
@@ -14256,7 +14248,7 @@ angular.module('app.controllers', ['ngCookies'])
             
             if ($scope.guide.guideType === 'hero') {
                 console.log('sup');
-                $scope.setCurrentHero($scope.guide.heroes[0]);
+                $scope.setCurrentHero($scope.guide.guideHeroes[0]);
             }
             
             // get premium
@@ -14350,7 +14342,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // talents
             $scope.getTalents = function (hero) {
-                console.log(hero);
                 return $scope.guide.sortTalents(hero);
             }
 
@@ -14406,87 +14397,105 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
-
+              console.log('saveguide called');
                 
-                if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
-                    return false;
+              if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
+                return false;
+              }
+              if (!User.isAuthenticated()) {
+                LoginModalService.showModal('login', function () {
+                    $scope.saveGuide();
+                });
+              } else {
+                $scope.guide.slug = Util.slugify($scope.guide.name);
+//                $scope.authorId = LoopBackAuth.currentUserId;
+
+                var tiers = {
+                  tier1: 1,
+                  tier4: 4, 
+                  tier7: 7,
+                  tier10: 10,
+                  tier13: 13,
+                  tier16: 16,
+                  tier20: 20
                 }
-                if (!User.isAuthenticated()) {
-                    LoginModalService.showModal('login', function () {
-                        $scope.saveGuide();
-                    });
-                } else {
-                    $scope.guide.slug = Util.slugify($scope.guide.name);
-//                    $scope.authorId = LoopBackAuth.currentUserId;
 
-                    var tiers = {
-                        tier1: 1,
-                        tier4: 4, 
-                        tier7: 7,
-                        tier10: 10,
-                        tier13: 13,
-                        tier16: 16,
-                        tier20: 20
+                _.each($scope.guide.heroes, function (hero) {
+                  $scope.guide.talentTiers[hero.hero.id] = {};
+                  _.each(hero.talents, function (talent, key) {
+                    $scope.guide.talentTiers[hero.hero.id][tiers[key]] = talent;
+                  });
+                });
+                    
+                    
+                $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
+                
+                var temp = _.map($scope.guide.heroes, function (hero) { 
+                  return _.map(hero.talents, function (talent, tier) {
+                    var str = tier.slice(4, tier.length);
+
+                    return {
+                      heroId: hero.hero.id,
+                      talentId: talent,
+                      tier: parseInt(str)
                     }
+                  });
+                });
+                $scope.guide.guideTalents = _.flatten(temp);
 
-                    _.each($scope.guide.heroes, function (hero) {
-                        $scope.guide.talentTiers[hero.hero.id] = {};
-                        _.each(hero.talents, function (talent, key) {
-                            $scope.guide.talentTiers[hero.hero.id][tiers[key]] = talent;
-                        });
+                console.log("pre create:", $scope.guide);
+                Guide.create({}, $scope.guide)
+                .$promise
+                .then(function (guideData) {
+                  console.log('guideData', guideData);
+                  Guide.guideHeroes.createMany({
+                    id: guideData.id
+                  }, $scope.guide.guideHeroes)
+                  .$promise
+                  .then(function (guideHeroData) {
+                    console.log('guideHeroData', guideHeroData);
+                    var tals = [];
+                    
+                    _.each(guideHeroData, function(eachVal) {
+                      var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
+                        filterVal.guideId = guideData.id;
+                        filterVal.guideHeroId = eachVal.id; 
+                        return filterVal.heroId === eachVal.heroId;
+                      });
+                      
+                      tals.push(heroTals);
                     });
                     
-                    Guide.upsert({}, $scope.guide)
+                    Guide.guideTalents.createMany({
+                      id: guideData.id 
+                    }, tals)
                     .$promise
-                    .then(function(data) {
-                        console.log("Guide add successful!");
-                        async.series([
-                            function (seriesCb) {
-                                async.each($scope.guide.heroes, function (hero, eachCb) {
-                                    Guide.heroes.link({
-                                        id: data.id,
-                                        fk: hero.hero.id
-                                    }, null)
-                                    .$promise
-                                    .then(function(hData) {
-                                        console.log("hero link:", hData);
-                                        return eachCb();
-                                    })
-                                    .catch(function(err) {
-                                        console.log("hero link FAILED:", err);
-                                        return seriesCb(err);
-                                    });
-                                }, function () {
-                                    return seriesCb(null);
-                                });
-                            }, function (seriesCb) {
-                                async.each($scope.guide.maps, function (map, eachCb) {
-                                    Guide.maps.link({
-                                        id: data.id,
-                                        fk: map
-                                    }, null)
-                                    .$promise
-                                    .then(function (mData) {
-                                        console.log("map link:", mData);
-                                        return eachCb();
-                                    })
-                                    .catch(function (err) {
-                                        console.log("map link FAILED:", err);
-                                    });
-                                }, function () {
-                                    return seriesCb(null);
-                                });
-                            }
-                        ], function (err) {
-                            if (err) { console.log("Something went wrong!", err); return; }
-
-                            console.log("YEP");
-                            $state.go('app.hots.guides.guide', { slug: data.slug });
-                        });
+                    .then(function (guideTalentData) {
+                      console.log("YEP:", guideTalentData);
+                      $state.go('app.hots.guides.guide', { slug: guideData.slug });
                     })
                     .catch(function (err) {
-                        console.log("Guide add FAILED:",err);
+                      console.log('guide talent err', err);
                     });
+                  })
+                  .catch(function (err) {
+                    console.log('guide hero err', err);
+                  });
+                })
+                .catch(function (err) {
+                  console.log('guide err', err);
+                });
+                
+//                  Guide.create({}, $scope.guide)
+//                  .$promise
+//                  .then(function(data) {
+//
+//                    console.log("YEP:", data);
+//                    $state.go('app.hots.guides.guide', { slug: data.slug });
+//                  })
+//                  .catch(function (err) {
+//                      console.log("Guide add FAILED:", err);
+//                  });
                 }
             };
         }
