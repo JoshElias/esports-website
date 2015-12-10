@@ -1,11 +1,18 @@
 module.exports = function(Deck) {
     var utils = require("../../lib/utils");
+    var async = require('async');
 
 
     var childrenNames = ["cards", "matchups", "mulligans"];
     Deck.observe("after save", utils.saveChildren(childrenNames));
 
-    Deck.observe("before save", utils.validateYoutubeId, utils.generateSlug);
+    
+    var funcs = [utils.validateYoutubeId, utils.generateSlug];
+    Deck.observe("before save", function(ctx, next) {
+        async.each(funcs, function(func, funcCB) {
+            func(ctx, funcCB);
+        }, next);
+    });
 
 
     var foreignKeys = ["authorId"];
