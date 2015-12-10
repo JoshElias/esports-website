@@ -1,11 +1,9 @@
 module.exports = function(User) {
-    var _ = require("underscore");
     var async = require("async");
     var uuid = require("node-uuid");
     var loopback = require("loopback");
     var bcrypt = require('bcrypt-nodejs');
     var utils = require("./../../lib/utils");
-    var ObjectId = require("mongodb").ObjectID;
     var subscription = require("./../../lib/subscription");
 
 
@@ -30,13 +28,19 @@ module.exports = function(User) {
         });
     });
 
+
+    var filter = {
+        fieldNames: ["subscription", "isProvider", "isAdmin", "lastLoginDate",
+            "resetPasswordCode", "newEmail", "newEmailCode"],
+        acceptedRoles: ["$owner", "$admin"]
+    };
+    User.observe("loaded", utils.filterFields(filter));
+
+
     User.observe("before save", function(ctx, next) {
         protectFields(ctx, next);
     });
 
-    User.afterRemote("**", function(ctx, modelInstance, next) {
-        removePrivateFields(ctx, modelInstance, next);
-    });
 
 
     // Handle user registeration
@@ -182,54 +186,7 @@ module.exports = function(User) {
     };
 
 
-    // Filter out sensitive user information depending on ACL
-    var privateFields = ["subscription", "isProvider", "isAdmin", "lastLoginDate",
-        "resetPasswordCode", "newEmail", "newEmailCode"];
 
-    function removePrivateFields(ctx, modelInstance, finalCb) {
-        var Role = User.app.models.Role;
-        var RoleMapping = User.app.models.RoleMapping;
-
-        // sets the private fields to false
-        function removeFields() {
-            if (ctx.result) {
-                var answer;
-                if (Array.isArray(modelInstance)) {
-                    answer = []
-                    ctx.result.forEach(function (result) {
-                        var replacement = {};
-                        for(var key in result) {
-                            if(privateFields.indexOf(key) === -1) {
-                                replacement[key] = result[key];
-                            }
-                        }
-                        answer.push(replacement);
-                    });
-                } else {
-                    answer = {};
-                    for(var key in ctx.result) {
-                        if(privateFields.indexOf(key) === -1) {
-                            answer[key] = ctx.result[key];
-                        }
-                    }
-                }
-              
-                if (typeof answer !== "undefined") {
-                  ctx.result = answer;
-                }
-            }
-            finalCb();
-        }
-
-        if(!ctx || !ctx.req || !ctx.req.accessToken)
-            return removeFields();
-
-        User.isInRoles(ctx.req.accessToken.userId.toString(), ["$owner", "$admin"], function(err, isInRoles) {
-            if(err) return finalCb();
-            else if (isInRoles.none) return removeFields();
-            else return finalCb();
-        });
-    };
 
     // Filter out sensitive user information depending on ACL
     var protectedFields = ["password", "email"];

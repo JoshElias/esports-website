@@ -1,17 +1,14 @@
 module.exports = function(ForumThread) {
-  var utils = require("../../lib/utils");
+    var utils = require("../../lib/utils");
 
-  var foreignKeys = ["forumCategoryId"];
-  ForumThread.observe("persist", function(ctx, next) {
-    utils.convertObjectIds(foreignKeys, ctx);
-    next();
-  });
 
-  ForumThread.observe('before delete', function(ctx, next) {
+    var foreignKeys = ["forumCategoryId"];
+    ForumThread.observe("persist", utils.convertObjectIds(foreignKeys));
+
 
     var relationsToDestroy = ["forumPosts"];
-    utils.destroyRelations(ctx, relationsToDestroy, next);
-  });
+    ForumThread.observe('before delete', utils.destroyRelations(relationsToDestroy));
 
-  ForumThread.validatesUniquenessOf('slug.url', {message: 'Slug.url already exists'});
+
+    ForumThread.validatesUniquenessOf('slug.url', {message: 'Slug.url already exists'});
 };

@@ -177,6 +177,29 @@
       "permission": "ALLOW",
       "property": "upsert"
     },
+
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "premium",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "premium",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$contentProvider",
+      "permission": "ALLOW",
+      "property": "premium",
+      "accessType": "WRITE"
+    },
+
     {
       "principalType": "ROLE",
       "principalId": "$everyone",

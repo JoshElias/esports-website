@@ -1,12 +1,11 @@
 module.exports = function(Snapshot) {
-  var loopback = require("loopback");
-  var async = require("async");
-  var utils = require("../../lib/utils");
+    var utils = require("../../lib/utils");
 
 
+    var childrenNames = ["deckMatchups", "comments", "deckTiers", "authors"];
+    Snapshot.observe("after save", utils.saveChildren(childrenNames));
 
-  Snapshot.observe('before delete', function(ctx, next) {
+
     var relationsToDestroy = ["deckMatchups", "comments", "deckTiers", "authors"];
-    utils.destroyRelations(ctx, relationsToDestroy, next);
-  });
+    Snapshot.observe('before delete', utils.destroyRelations(relationsToDestroy));
 };

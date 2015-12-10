@@ -1,21 +1,15 @@
 module.exports = function(ForumPost) {
-  var async = require("async");
     var utils = require("../../lib/utils");
-  var loopback = require("loopback");
+
+
+    var childrenNames = ["forumThread"];
+    ForumPost.observe("after save", utils.saveChildren(childrenNames));
 
 
     var foreignKeys = ["forumThreadId", "authorId"];
-    ForumPost.observe("persist", function(ctx, next) {
-
-        utils.convertObjectIds(foreignKeys, ctx);
-        next();
-    });
+    ForumPost.observe("persist", utils.convertObjectIds(foreignKeys));
 
 
-
-    ForumPost.observe('before delete', function(ctx, next) {
-
-      var relationsToDestroy = ["comments"];
-      utils.destroyRelations(ctx, relationsToDestroy, next);
-    });
+    var relationsToDestroy = ["comments"];
+    ForumPost.observe('before delete',  utils.destroyRelations(relationsToDestroy));
 };

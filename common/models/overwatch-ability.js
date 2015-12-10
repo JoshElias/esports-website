@@ -1,10 +1,7 @@
 module.exports = function(OverwatchAbility) {
-  var utils = require("../../lib/utils");
+    var utils = require("../../lib/utils");
 
-  var foreignKeys = ["heroId"];
-  OverwatchAbility.observe("persist", function(ctx, next) {
 
-    utils.convertObjectIds(foreignKeys, ctx);
-    next();
-  });
+    var foreignKeys = ["heroId"];
+    OverwatchAbility.observe("persist", utils.convertObjectIds(foreignKeys));
 };
