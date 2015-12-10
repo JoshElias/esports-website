@@ -2,11 +2,8 @@ module.exports = function(Deck) {
   var utils = require("../../lib/utils");
 
 
-  Deck.observe("before save", utils.validateYoutubeId, function(ctx, next) {
-      //utils.validateYoutubeId(ctx, next);
-      utils.generateSlug(ctx);
-      //protectPrivateFields(ctx, next);
-  });
+  Deck.observe("before save", utils.validateYoutubeId, utils.generateSlug);
+
 
 
   Deck.afterRemote("**", removePrivateDocs, removePrivateFields);
@@ -14,11 +11,25 @@ module.exports = function(Deck) {
 
   var foreignKeys = ["authorId"];
   Deck.observe("persist", function(ctx, next) {
-    utils.convertObjectIds(foreignKeys, ctx);
-    next();
+      utils.convertObjectIds(foreignKeys, ctx);
+      next();
   });
 
+    var filters =  [
+        {
+            fieldNames: ["allowComments", "description", "playerClass"]
+            acceptedRoles: ["chapters", "oldCards", "oldComments", "oldMulligans"]
+        },
+        {
+            acceptedRoles: ["$owner", "$admin"],
+            predicate: function isPrivate(deck) {
+                if(!deck || typeof deck.isPublic === "undefined")
+                    return false;
+                return !deck.isPublic;
+            }
+        }
 
+    ];
     function removePrivateDocs(ctx, modelInstance, finalCb) {
         var User = Deck.app.models.user;
 
@@ -54,7 +65,7 @@ module.exports = function(Deck) {
 
 
     // Filter out sensitive user information depending on ACL
-    var privateFields = ["allowComments", "description", "playerClass",
+    var premiumFields = ["allowComments", "description", "playerClass",
         "chapters", "oldCards", "oldComments", "oldMulligans"];
 
     function removePrivateFields(ctx, modelInstance, finalCb) {
@@ -117,12 +128,7 @@ module.exports = function(Deck) {
         return now < deck.premium.expiryDate;
     }
 
-    function isPrivate(deck) {
-        if(!deck || typeof deck.isPublic === "undefined")
-            return false;
 
-        return !deck.isPublic;
-    }
 
 
     // Provent these fields from being altered from certain people

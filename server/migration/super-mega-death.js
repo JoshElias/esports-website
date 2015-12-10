@@ -5,21 +5,21 @@ module.exports = function(_server) {
    server = _server;
 
     async.series([
-        //addMissingTalent,
+        addMissingTalent,
+        createAbilitiesAndTalents,
         //assignGameTypeMode,
         //createPollItems,
-        //createAbilitiesAndTalents,
         //createForumModels,
         //associateCommentReplies,
         //associateRelatedArticles,
         //createDeckCards,
-        //associateGuideHeroes,
+        associateGuideHeroes,
         //associateGuideMaps,
         //associateGuideComments,
-        createMulliganModels,
-        createSnapshotModels,
-        createUserIdentities,
-        createUserRoles
+        //createMulliganModels,
+        //createSnapshotModels,
+        //createUserIdentities,
+        //createUserRoles
     ],
     function(err) {
         if(err) console.log("error with super mega death script:", err);
@@ -49,7 +49,6 @@ function addMissingTalent(finalCb) {
 
 var oldTalents = {};
 function createAbilitiesAndTalents(finalCb) {
-    console.log("sdfafasfasfasfasfasfasdfasdfasdfasdfasdf")
 
     var Hero = server.models.hero;
     var Talent = server.models.talent;
@@ -61,10 +60,10 @@ function createAbilitiesAndTalents(finalCb) {
             Hero.find({}, seriesCb);
         },
         function(heroes, seriesCb) {
-            async.eachSeries(heroes, function (hero, heroCb) {
+            async.each(heroes, function (hero, heroCb) {
 
                 // Create Abilities
-                async.eachSeries(hero.oldAbilities, function (ability, abilityCb) {
+                async.each(hero.oldAbilities, function (ability, abilityCb) {
 
                     var newAbility = {
                         heroId: hero.id.toString(),
@@ -83,9 +82,9 @@ function createAbilitiesAndTalents(finalCb) {
                         if (err) return abilityCb(err);
 
                         console.log("created ability:", abilityInstance.id);
-                        async.eachSeries(hero.oldTalents, function (talent, eachCb) {
+                        async.each(hero.oldTalents, function (talent, eachCb) {
 
-                            function getTalentInstance(talent, talentCb) {
+                            function findOrCreateTalentInstance(talent, talentCb) {
                                 Talent.findOne({
                                     where: {
                                         name: talent.name,
@@ -107,19 +106,30 @@ function createAbilitiesAndTalents(finalCb) {
                                 });
                             }
 
-                            getTalentInstance(talent, function(err, talentInstance) {
+                            function findOrCreateHeroTalentInstance(heroTalentData, heroTalentCb) {
+                                HeroTalent.findOne({
+                                    where: heroTalentData
+                                }, function (err, talentInstance) {
+                                    if (err || talentInstance) {
+                                        return heroTalentCb(err, talentInstance);
+                                    }
+
+                                    HeroTalent.create(heroTalentData, heroTalentCb);
+                                });
+                            }
+
+                            findOrCreateTalentInstance(talent, function(err, talentInstance) {
                                 if(err) return eachCb(err)
 
                                 oldTalents[talent._id.toString()] = talentInstance.id.toString();
-
-                                HeroTalent.create({
+                                var newHeroTalent = {
                                     heroId: hero.id.toString(),
                                     talentId: talentInstance.id.toString(),
                                     abilityId: abilityInstance.id.toString(),
                                     tier: talent.tier
-                                }, function (err) {
-                                    return eachCb(err);
-                                });
+                                };
+
+                                findOrCreateHeroTalentInstance(newHeroTalent, eachCb);
                             });
 
                         }, abilityCb);
