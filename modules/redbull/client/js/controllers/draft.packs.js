@@ -27,6 +27,13 @@ angular.module('redbull.controllers')
         'pack-tgt.png',
         'pack-soulbound.png',
         'deck-top.png',
+        'back-basic.png',
+        'back-brm.png',
+        'back-gvg.png',
+        'back-loe.png',
+        'back-naxx.png',
+        'back-soulbound.png',
+        'back-tgt.png',
     ];
     
     // load images for preloader
@@ -52,7 +59,8 @@ angular.module('redbull.controllers')
         'pack_open':                { file: 'pack_open' + ext, volume: .5 },
         'pack_release':             { file: 'pack_release' + ext, volume: .5 },
         'pack_shake':               { file: 'pack_shake' + ext, volume: .5 },
-        // TODO: pack_aura.mp3
+        'pack_aura':                { file: 'pack_aura' + ext, volume: .05 },
+        'pack_burst':               { file: 'pack_burst' + ext, volume: .5 },
     };
 
     // load audio for preloader

@@ -76,6 +76,11 @@ angular.module('redbull.directives')
                     return false;
                 }
                 
+                // expansion to class
+                scope.expansionToClass = function (expansion) {
+                    return Util.slugify(expansion);
+                };
+                
                 // inc pack for expansion
                 function nextPack (expansion) {
                     scope.currentPack[expansion]++;
@@ -320,7 +325,8 @@ angular.module('redbull.directives')
                         // stop shaking pack
                         stopShakeTimer();
                         
-                        // TODO: PLAY BURST SOUND
+                        // play audio for pack burst
+                        scope.playAudio('pack_burst');
 
                         // fade out pack
                         $pack.fadeOut(0, function() {
