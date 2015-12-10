@@ -3925,50 +3925,102 @@ var app = angular.module('app', [
                         controller: 'AdminForumStructureListCtrl',
                         resolve: {
                             categories: ['$q', 'ForumCategory', 'ForumThread', function($q, ForumCategory, ForumThread) {
-                                var d = $q.defer();
-                                ForumCategory.find({
-                                    filter: {
-                                        fields: {
-                                            id: true,
-                                            title: true
-                                        }
-                                    }
-                                }).$promise
-                                .then(function (categories) {
-                                    async.forEach(categories, function (category, eachCategoryCallback) {
-                                        ForumCategory.forumThreads({
-                                            id: category.id,
+                                async.waterfall([
+                                    function(waterCB) {
+                                        
+                                        ForumCategory.find({
                                             filter: {
                                                 fields: {
                                                     id: true,
                                                     title: true
                                                 }
                                             }
-                                        }).$promise.then(function (threads) {
-                                            category.forumThreads = threads;
-                                            
-                                            async.forEach(threads, function (thread, eachThreadCallback) {
-                                                ForumThread.forumPosts({
-                                                    id: thread.id,
-                                                    filter: {
-                                                        fields: {
-                                                            id: true
-                                                        }
-                                                    }
-                                                }).$promise.then(function (posts) {
-                                                    thread.forumPosts = posts;
-                                                    return eachThreadCallback();
-                                                });
-                                            }, function () {
-                                                return eachCategoryCallback();
-                                            });
+                                        }).$promise
+                                        .then(function (forumCategories) {
+                                            console.log('forumCategories: ', forumCategories);
+                                            return waterCB(null, forumCategories);
+                                        })
+                                        .catch(function (err) {
+                                            return waterCB(err);
                                         });
-                                    }, function () {
-                                        console.log(categories);
-                                        d.resolve(categories);
-                                    });
+                                        
+                                    },
+                                    function(forumCategories, waterCB) {
+                                        
+                                        async.each(forumCategories, function (category, categoryCB) {
+                                            
+                                            ForumCategory.forumThreads({
+                                                id: category.id,
+                                                filter: {
+                                                    fields: {
+                                                        id: true,
+                                                        title: true
+                                                    }
+                                                }
+                                            }).$promise
+                                            .then(function (threads) {
+                                                category.forumThreads = threads;
+                                                return categoryCB();
+                                            })
+                                            .catch(function (err) {
+                                                return categoryCB(err);
+                                            });
+                                            
+                                        }, function(err) {
+                                            if (err) {
+                                                return waterCB(err);
+                                            }
+                                            return waterCB(null, forumCategories);
+                                        });
+                                        
+                                    }
+                                ], function(err, results) {
+                                    console.log("forum Cats: ", results);
                                 });
-                                return d.promise;
+//                                var d = $q.defer();
+//                                ForumCategory.find({
+//                                    filter: {
+//                                        fields: {
+//                                            id: true,
+//                                            title: true
+//                                        }
+//                                    }
+//                                }).$promise
+//                                .then(function (categories) {
+//                                    async.forEach(categories, function (category, eachCategoryCallback) {
+//                                        ForumCategory.forumThreads({
+//                                            id: category.id,
+//                                            filter: {
+//                                                fields: {
+//                                                    id: true,
+//                                                    title: true
+//                                                }
+//                                            }
+//                                        }).$promise.then(function (threads) {
+//                                            category.forumThreads = threads;
+//                                            
+//                                            async.forEach(threads, function (thread, eachThreadCallback) {
+//                                                ForumThread.forumPosts({
+//                                                    id: thread.id,
+//                                                    filter: {
+//                                                        fields: {
+//                                                            id: true
+//                                                        }
+//                                                    }
+//                                                }).$promise.then(function (posts) {
+//                                                    thread.forumPosts = posts;
+//                                                    return eachThreadCallback();
+//                                                });
+//                                            }, function () {
+//                                                return eachCategoryCallback();
+//                                            });
+//                                        });
+//                                    }, function () {
+//                                        console.log(categories);
+//                                        d.resolve(categories);
+//                                    });
+//                                });
+//                                return d.promise;
                             }]
                             
                         }
