@@ -57,15 +57,9 @@ var app = angular.module('app', [
             });
             $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
                 $rootScope.metaservice.setStatusCode(200);
-                //ngProgress.complete();
                 if ($window.ga) {
                     $window.ga('send', 'pageview', $location.path());
                 }
-
-                // adsense refresh
-                //if ($window.googletag && $window.googletag.pubads) {
-                //    $window.googletag.pubads().refresh();
-                //}
 
                 // seo
                 if (toState.seo) {
@@ -1763,6 +1757,12 @@ var app = angular.module('app', [
                                         },
                                         {
                                           relation: 'maps'
+                                        },
+                                        {
+                                          relation: 'comments',
+                                          scope: {
+                                            include: ['author']
+                                          }
                                         }
                                       ]
                                     }
