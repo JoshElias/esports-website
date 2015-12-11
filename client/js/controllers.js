@@ -7542,7 +7542,6 @@ angular.module('app.controllers', ['ngCookies'])
                     expiryDate: d
                 },
                 isProvider: false,
-                providerDescription: '',
                 isAdmin: false,
                 isActive: true
             };

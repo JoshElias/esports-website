@@ -26,8 +26,6 @@
     h1, h2, h3, h4, h5, h6 {
         text-transform: uppercase;
         letter-spacing: 2px;
-        
-        
     }
     
     h1.title { 
@@ -52,8 +50,7 @@
         @media screen and (max-width: 680px) {
                 font-size: 18px;
                 width: 70%;
-            }
-        
+        }
     }
     
     h2.section-title {
@@ -61,7 +58,7 @@
         
         @media screen and (max-width: 575px) {
               border-bottom: 1px solid $ts-dark-grey;  
-            }
+        }
         
         
         &:before {
@@ -76,13 +73,9 @@
             @media screen and (max-width: 600px) {
                 width: 90%;
                 left: 5%;
-            }
-            
-            @media screen and (max-width: 575px) {
                 border: 0px transparent;
             }
         }
-        
     }
     
     .box-border { 
@@ -90,8 +83,12 @@
         box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.75);
         border: 1px solid rgba(255, 255, 255, 0.2);
         outline: 1px solid #000; 
-        -mz-outline: 1px solid #000; 
-        
+ 
+        &.no-outline {
+            outline: 1px solid transparent; 
+            //this is inplace for Mozilla due to a bug with outlines and absolute positioned childrewn elements.
+        }
+                
         h2, p {
             color: $ts-grey; 
         }
@@ -105,9 +102,10 @@
         background-image: url(../img/backgrounds/hots-snapshot-bg.jpg);
         background-color: #010101;
         background-repeat: no-repeat;
-        background-size: cover;
-        background-position: top;
+        background-size: 100%;
         background-attachment: fixed;
+        background-position: top;
+
     }
 
 //*************************************
@@ -116,13 +114,20 @@
     
     .tier .tier-heading {
         border: 1px solid transparent;
+        
+        @media screen and (max-width: 575px) {
+                h2 {
+                    margin-left: 10px;
+                }
+            }
+        
     }
     
     .tier-body {
         
         .tier-hero h4 {
-            padding-right: 200px;
-            text-indent: 30px;
+            //padding-right: 200px;
+            text-indent: 20px;
             line-height: 48px;
             font-weight: bold;
             color: $white;
@@ -130,14 +135,26 @@
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+            
+            @media screen and (max-width: 750px) {
+                font-size: 14px;
+                margin-top: 5px;
+                text-indent: 10px;
+            }
         }
 
         .tier-hero-body {
 
-            h2 {
-                font-size: 55px !important;
-                font-weight: bold;
-                color: $white;
+                h2 {
+                    font-size: 55px !important;
+                    font-weight: bold;
+                    color: $white;
+
+                        @media screen and (max-width: 750px) {
+                            font-size: 40px !important;
+                        }
+                }
+                
             }
             
             h3 {
@@ -177,14 +194,15 @@
             cursor: pointer;
             
             @media screen and (min-width: 750px) {
-                background-image: url(../img/hots/heroes/60x/chen60.png) !important;
+                
                 background-repeat: no-repeat !important;
                 background-position: right top !important;
+                padding-top: 4px;
             }
 
              .hero-button {
                 position: absolute;
-                top: 12px;
+                top: 19px;
                 right: 150px;
                 display: block;
                 background: rgba(0, 0, 0, 0.25);
@@ -198,19 +216,21 @@
                      &:hover {
                         background-color: rgba($white, .15 ) ;
                         border: 2px solid transparent;
+                        top: 12px;
 
                      }
                  }
                  
                  @media screen and (max-width: 750px) {
-                    right: 30px;
+                    right: 10px;
+                    font-size: 12px;    
                  }
                  
                  
              
              }
         }
-    }
+    
     
 //*************************************
 // 4... hero image

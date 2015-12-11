@@ -1373,7 +1373,6 @@ angular.module('app.services', [])
             youtubeId: data.youtubeId || '',
             description: data.description || '',
             chapters: data.chapters || [],
-            slug: data.slug || '',
             deckType: data.deckType || 'None',
             gameModeType: data.gameModeType || 'constructed',
             basic: data.basic || false,
@@ -2024,10 +2023,6 @@ angular.module('app.services', [])
             votes: data.votes || [],
             voteScore: data.votesCount || 0,
             viewCount: data.viewcount || 0,
-            against: data.against || {
-                weak: [],
-                strong: []
-            },
             authorId: data.authorId || User.getCurrentId(),
             talentTiers: data.talentTiers || {}
         };

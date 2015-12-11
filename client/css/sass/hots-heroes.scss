@@ -131,21 +131,34 @@
 @mixin hots-snapshot-hero ($hero, $y-pos, $x-pos, $halfscreen-y-pos, $halfscreen-x-pos) {
 
 .hots-snapshot-styles {
+    
     .hero-image {
         img.#{$hero} {
                 position: absolute;
                 top: #{$y-pos}px;
                 left: #{$x-pos}px;
 
-                @media screen and (max-width: 990px) {
-                    top: #{$halfscreen-y-pos}px;
-                    left: #{$halfscreen-x-pos}px;
+            @media screen and (max-width: 990px) {
+                top: #{$halfscreen-y-pos}px;
+                left: #{$halfscreen-x-pos}px;
+            }
+        }
+    }
+        
+        .tier-body {
+            .tier-hero-#{$hero} {
+                .tier-hero-heading {
+                    @media screen and (min-width: 750px) {
+
+                        background-image: url(../img/hots/heroes/60x/#{$hero}60.png) !important;
+
+                    }
                 }
             }
         }
     }
-
 }
+
 
 
 
