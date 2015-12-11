@@ -3899,19 +3899,34 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.list.html',
                         controller: 'AdminHOTSGuideListCtrl',
                         resolve: {
-                            guides: ['Guide', function (Guide) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '';
-                                
-                                return Guide.find({
-                                    filter: {
-                                        limit: perpage,
-                                        skip: (page*perpage) - perpage,
+							paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    options: {
+                                        filter: {
+                                            fields: {
+//                                                id: true,
+//                                                username: true
+                                            },
+                                            limit: 50,
+                                        }
                                     }
-                                })
+                                };
+                            }],
+                            guides: ['Guide', 'paginationParams', function (Guide, paginationParams) {
+                                return Guide.find(
+									paginationParams.options
+								)
                                 .$promise;
-                            }]
+                            }],
+							guideCount: ['Guide', function(Guide) {
+								return Guide.count()
+								.$promise
+								.then(function (guideCount) {
+									return guideCount.count;
+								});
+							}]
                         }
                     }
                 },

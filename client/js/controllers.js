@@ -12781,21 +12781,19 @@ angular.module('app.controllers', ['ngCookies'])
                 if ($scope.search.length > 0) {
                     options.filter.where = {
                         or: [
-                            { email: { regexp: search } },
-                            { username: { regexp: search } },
-                            { twitchID: { regexp: search } }
+                            { className: { regexp: search } },
+                            { name: { regexp: search } }
                         ]
                     }
                     countOptions.where = {
                         or: [
-                            { email: { regexp: search } },
-                            { username: { regexp: search } },
-                            { twitchID: { regexp: search } }
+                            { className: { regexp: search } },
+                            { name: { regexp: search } }
                         ]
                     }
                 }
                 
-                AjaxPagination.update(User, options, countOptions, function (err, data, count) {
+                AjaxPagination.update(Map, options, countOptions, function (err, data, count) {
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
                     $scope.mapPagination.page = page;
@@ -12922,8 +12920,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminHOTSGuideListCtrl', ['$scope', '$state', 'AdminHOTSGuideService', 'AlertService', 'Pagination', 'guides',
-        function ($scope, $state, AdminHOTSGuideService, AlertService, Pagination, guides) {
+    .controller('AdminHOTSGuideListCtrl', ['$scope', '$timeout', '$q', '$state', 'AdminHOTSGuideService', 'AlertService', 'guides', 'paginationParams', 'guideCount', 'AjaxPagination', 'Guide',
+        function ($scope, $timeout, $q, $state, AdminHOTSGuideService, AlertService, guides, paginationParams, guideCount, AjaxPagination, Guide) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -12933,23 +12931,72 @@ angular.module('app.controllers', ['ngCookies'])
             // load guides
             $scope.guides = guides;
             
-//            $scope.page = data.page;
-//            $scope.perpage = data.perpage;
-//            $scope.total = data.total;
-//            $scope.search = data.search;
+            $scope.page = paginationParams.page;
+            $scope.perpage = paginationParams.perpage;
+            $scope.total = guideCount
+            $scope.search = '';
 
-            $scope.getGuides = function () {
-                AdminHOTSGuideService.getGuides($scope.page, $scope.perpage, $scope.search).then(function (data) {
-                    $scope.guides = data.guides;
-                    $scope.page = data.page;
-                    $scope.total = data.total;
+            $scope.searchGuides = function() {
+                updateGuides(1, $scope.perpage, $scope.search, function(err, data) {
+                    if (err) return console.log('err: ', err);
+                });
+            };
+
+            // pagination
+            function updateGuides (page, perpage, search, callback) {
+                $scope.fetching = true;
+
+                var options = {},
+                    countOptions = {};
+
+                options.filter = {
+                    fields: paginationParams.options.filter.fields,
+                    order: paginationParams.options.filter.order,
+                    skip: ((page*perpage)-perpage),
+                    limit: paginationParams.perpage
+                };
+
+                if ($scope.search.length > 0) {
+                    options.filter.where = {
+                        or: [
+                            { email: { regexp: search } },
+                            { username: { regexp: search } },
+                            { twitchID: { regexp: search } }
+                        ]
+                    }
+                    countOptions.where = {
+                        or: [
+                            { email: { regexp: search } },
+                            { username: { regexp: search } },
+                            { twitchID: { regexp: search } }
+                        ]
+                    }
+                }
+                
+                AjaxPagination.update(Guide, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
+                    $scope.guidePagination.page = page;
+                    $scope.guidePagination.perpage = perpage;
+                    $scope.guides = data;
+                    $scope.guidePagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
             }
 
-            $scope.searchGuides = function () {
-                $scope.page = 1;
-                $scope.getGuides();
-            }
+            // page flipping
+            $scope.guidePagination = AjaxPagination.new($scope.perpage, $scope.total,
+                function (page, perpage) {
+                    var d = $q.defer();
+                    updateGuides(page, perpage, $scope.search, function (err, count) {
+                        if (err) return console.log('pagination err:', err);
+                        d.resolve(count.count);
+                    });
+                    return d.promise;
+                }
+            );
 
             // edit guide
             $scope.editGuide = function (guide) {
