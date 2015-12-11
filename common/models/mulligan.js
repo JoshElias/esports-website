@@ -2,7 +2,7 @@ module.exports = function(Mulligan) {
     var utils = require("../../lib/utils");
 
 
-    var childrenNames = ["cardsWithCoin", "cardsWithoutCoin"];
+    var childrenNames = ["mulligansWithCoin", "mulligansWithoutCoin"];
     Mulligan.observe("after save", utils.saveChildren(childrenNames));
 
 
@@ -10,6 +10,6 @@ module.exports = function(Mulligan) {
     Mulligan.observe("persist", utils.convertObjectIds(foreignKeys));
 
 
-    var relationsToDestroy = ["cardsWithCoin", "cardsWithoutCoin"];
+    var relationsToDestroy = ["mulligansWithCoin", "mulligansWithoutCoin"];
     Mulligan.observe('before delete', utils.destroyRelations(relationsToDestroy));
 };

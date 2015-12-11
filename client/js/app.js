@@ -774,7 +774,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (deck) {
-//                                    console.log('deck: ', deck);
+                                    console.log('deck: ', deck);
                                     return deck;
                                 })
                                 .catch(function (err) {
@@ -786,7 +786,7 @@ var app = angular.module('app', [
                             
                             deckWithMulligans: ['Mulligan', 'deck', function(Mulligan, deck) {
                                 var deckID = deck.id;
-//                                console.log('deckid: ', deck.id);
+                                console.log('deckid: ', deck.id);
                                 
                                 return Mulligan.find({
                                     filter: {
@@ -795,10 +795,16 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: 'mulligansWithCoin'
+                                                relation: 'mulligansWithCoin',
+												scope: {
+													include: 'card'
+												}
                                             },
                                             {
-                                                relation: 'mulligansWithoutCoin'
+                                                relation: 'mulligansWithoutCoin',
+												scope: {
+													include: 'card'
+												}
                                             }
                                         ]
                                     }
