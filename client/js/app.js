@@ -3053,6 +3053,26 @@ var app = angular.module('app', [
                                 .then(function (data) {
                                     return data;
                                 });
+                            }],
+                            authors: ['User', function(User){
+                                var options = {
+                                    filter: {
+                                        limit: 10,
+                                        order: "createdDate DESC",
+                                        fields: ["username", "id"],
+                                        where: {
+                                            isProvider: true
+                                        }
+                                    }
+                                }
+                                
+                                
+                                return User.find(options)
+                                .$promise
+                                .then(function (data) {
+                                    console.log(data);
+                                    return data;
+                                });
                             }]
                         }
                     }

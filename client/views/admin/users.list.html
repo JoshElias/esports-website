@@ -45,7 +45,7 @@
         <div class="list-group-item" ng-if="!users.length && !search.length">
             There are no users yet.
         </div>
-        <div class="list-group-item b-t-none" ng-if="search.length && pagination.results() == 0">
+        <div class="list-group-item b-t-none" ng-if="search.length && users == 0">
             That search returned no results.
         </div>
     </div>
