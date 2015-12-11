@@ -2,6 +2,7 @@ var async = require("async");
 var server;
 
 module.exports = function(_server) {
+    var startTime = Date.now();
    server = _server;
 
     async.series([
@@ -22,10 +23,23 @@ module.exports = function(_server) {
         createUserRoles
     ],
     function(err) {
+        console.log("Finished in ", convertMillisecondsToDigitalClock(Date.now() - startTime));
         if(err) console.log("error with super mega death script:", err);
         else console.log("Donnerino");
     });
 };
+
+function convertMillisecondsToDigitalClock(ms) {
+    hours = Math.floor(ms / 3600000), // 1 Hour = 36000 Milliseconds
+        minutes = Math.floor((ms % 3600000) / 60000), // 1 Minutes = 60000 Milliseconds
+        seconds = Math.floor(((ms % 360000) % 60000) / 1000) // 1 Second = 1000 Milliseconds
+    return {
+        hours : hours,
+        minutes : minutes,
+        seconds : seconds,
+        clock : hours + ":" + minutes + ":" + seconds
+    };
+}
 
 
 var missingTalentId;
