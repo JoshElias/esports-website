@@ -1,7 +1,11 @@
 module.exports = function(server) {
     var utils = require("../../lib/utils");
-    //console.log("MODELS:", Object.keys(server.models));
-   // var PersistedModel = server.models.PersistedModel;
 
-  //  PersistedModel.observe("after save", utils.saveChildren);
+
+    for(var key in server.models) {
+        var model = server.models[key];
+
+        model.observe("after save", utils.saveChildren);
+        model.observe('before delete', utils.destroyRelations);
+    }
 };

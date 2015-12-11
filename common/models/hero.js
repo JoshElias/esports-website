@@ -3,9 +3,9 @@ module.exports = function(Hero) {
 
 
     var childrenNames = ["abilities"];
-    Hero.observe("after save", utils.saveChildren(childrenNames));
+    //Hero.observe("after save", utils.saveChildren(childrenNames));
 
 
     var relationsToDestroy = ["talents", "abilities"];
-    Hero.observe('before delete', utils.destroyRelations(relationsToDestroy));
+   // Hero.observe('before delete', utils.destroyRelations(relationsToDestroy));
 }

@@ -3,7 +3,7 @@ module.exports = function(Mulligan) {
 
 
     var childrenNames = ["cardsWithCoin", "cardsWithoutCoin"];
-    Mulligan.observe("after save", utils.saveChildren(childrenNames));
+    //Mulligan.observe("after save", utils.saveChildren(childrenNames));
 
 
     var foreignKeys = ["deckId"];
@@ -11,5 +11,5 @@ module.exports = function(Mulligan) {
 
 
     var relationsToDestroy = ["cardsWithCoin", "cardsWithoutCoin"];
-    Mulligan.observe('before delete', utils.destroyRelations(relationsToDestroy));
+    //.observe('before delete', utils.destroyRelations(relationsToDestroy));
 };

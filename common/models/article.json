@@ -87,7 +87,8 @@
     "comments": {
       "type": "hasMany",
       "model": "comment",
-      "foreignKey": "articleId"
+      "foreignKey": "articleId",
+      "isChild": true
     },
     "author": {
       "type": "belongsTo",

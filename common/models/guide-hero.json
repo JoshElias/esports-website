@@ -37,7 +37,8 @@
     "guideTalents": {
       "type": "hasMany",
       "model": "guideTalent",
-      "foreignKey": "guideHeroId"
+      "foreignKey": "guideHeroId",
+      "isChild": truegita
     }
   },
   "acls": [],
