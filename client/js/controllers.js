@@ -2479,11 +2479,11 @@ angular.module('app.controllers', ['ngCookies'])
 
             // article types
             $scope.articleTypes = [
-                    { name: 'Tempo Storm', value: 'ts' },
-                    { name: 'Hearthstone', value: 'hs' },
-                    { name: 'Heroes of the Storm', value: 'hots' },
-                    { name: 'Overwatch', value: 'overwatch' }
-                ];
+				{ name: 'Tempo Storm', value: 'ts' },
+				{ name: 'Hearthstone', value: 'hs' },
+				{ name: 'Heroes of the Storm', value: 'hots' },
+				{ name: 'Overwatch', value: 'overwatch' }
+			];
 
             // select options
             $scope.articleFeatured =
@@ -2650,8 +2650,6 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('AdminArticleListCtrl', ['$scope', '$q', '$timeout', 'AdminArticleService', 'AlertService', 'AjaxPagination', 'paginationParams', 'articles', 'articlesCount', 'Article', 'authors',
         function ($scope, $q, $timeout, AdminArticleService, AlertService, AjaxPagination, paginationParams, articles, articlesCount, Article, authors) {
-            
-            $scope.authors = authors;
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -2672,33 +2670,52 @@ angular.module('app.controllers', ['ngCookies'])
             // pagination
             function updateArticles (page, perpage, search, callback) {
                 $scope.fetching = true;
-
-                var options = {},
-                    countOptions = {};
-
-                options.filter = {
-                    fields: paginationParams.options.filter.fields,
-                    order: "createdDate DESC",
-                    skip: ((page*perpage)-perpage),
-                    limit: perpage
-                };
+				
+                var options = {
+					filter: {
+						fields: paginationParams.options.filter.fields,
+						order: paginationParams.options.filter.order,
+						skip: ((page*perpage)-perpage),
+						limit: perpage,
+						where: {}
+					}
+				};
+				
+                var countOptions = {
+					where: {}
+				};
+				
+				// if queries exist, iniiate empty arrays
+                if (search.length > 0) {
+                    options.filter.where.or = [];
+                    countOptions.where.or = [];
+                }
+                
+                if ($scope.filterAuthor.length > 0 
+                    || $scope.filterType.length > 0) {
+                    options.filter.where.and = [];
+                    countOptions.where.and = [];
+                }
 
                 if ($scope.search.length > 0) {
-                    options.filter.where = {
-                        or: [
-                            { title: { regexp: search } },
-                            { description: { regexp: search } },
-                            { content: { regexp: search } }
-                        ]
-                    }
-                    countOptions.where = {
-                        or: [
-                            { title: { regexp: search } },
-                            { description: { regexp: search } },
-                            { content: { regexp: search } }
-                        ]
-                    }
+					options.filter.where.or.push({ title: { regexp: search } });
+					options.filter.where.or.push({ description: { regexp: search } });
+					options.filter.where.or.push({ content: { regexp: search } });
+					
+					countOptions.where.or.push({ title: { regexp: search } });
+					countOptions.where.or.push({ description: { regexp: search } });
+					countOptions.where.or.push({ content: { regexp: search } });
                 }
+				
+				if ($scope.filterAuthor.length > 0) {
+					options.filter.where.and.push({ authorId: $scope.filterAuthor });
+					countOptions.where.and.push({ authorId: $scope.filterAuthor });
+				}
+				
+				if ($scope.filterType.length > 0) {
+					options.filter.where.and.push({ articleType: $scope.filterType });
+					countOptions.where.and.push({ articleType: $scope.filterType });
+				}
                 
                 AjaxPagination.update(Article, options, countOptions, function (err, data, count) {
                     $scope.fetching = false;
@@ -2727,11 +2744,24 @@ angular.module('app.controllers', ['ngCookies'])
             
             // article types
             $scope.articleTypes = [
-                { name: 'Tempo Storm', value: 'ts' },
-                { name: 'Hearthstone', value: 'hs' },
-                { name: 'Heroes of the Storm', value: 'hots' },
-                { name: 'Overwatch', value: 'overwatch' }
-            ];
+				{ name: 'All Articles', value: '' },
+				{ name: 'Tempo Storm', value: 'ts' },
+				{ name: 'Hearthstone', value: 'hs' },
+				{ name: 'Heroes of the Storm', value: 'hots' },
+				{ name: 'Overwatch', value: 'overwatch' }
+			];
+			
+			$scope.articleAuthors = [
+				{ name: 'All Authors', value: '' }
+			];
+			angular.forEach(authors, function (author) {
+				$scope.articleAuthors.push({ 
+					name: author.username,
+					value: author.id
+				});
+			});
+			
+			$scope.filterType = $scope.filterAuthor = '';
 
             // delete article
             $scope.deleteArticle = function deleteArticle(article) {

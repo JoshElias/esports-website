@@ -3035,9 +3035,9 @@ var app = angular.module('app', [
                                     perpage: 50,
                                     options: {
                                         filter: {
+                                            fields: ['id', 'title', 'createdDate'],
                                             limit: 50,
-                                            order: 'createdDate DESC',
-                                            fields: ['id', 'title', 'createdDate']
+                                            order: 'createdDate DESC'
                                         }
                                     }
                                 };
