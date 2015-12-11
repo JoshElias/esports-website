@@ -2618,11 +2618,27 @@ angular.module('app.services', [])
                                     relation: "author"
                                 },
                                 {
-                                    relation: "heroes",
-                                    scope: {
-                                        include: [ "talents" ]
-                                    }
-                                }
+                                  relation: 'guideHeroes',
+                                  scope: {
+                                    include: [
+                                      {
+                                        relation: 'talents'
+                                      },
+                                      {
+                                        relation: 'hero',
+                                        scope: {
+                                          include: ['talents']
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  relation: 'guideTalents',
+                                  scope: {
+                                    include: ['talent']
+                                  }
+                                },
                             ]
                         }
                     }).$promise.then(function (guides) {
@@ -2694,7 +2710,7 @@ angular.module('app.services', [])
                     Guide.find({
                         filter: {
                             limit: limit,
-                            order: "createdDate ASC",
+                            order: order,
                             where: {
                                 id: { inq: guideIds }
                             },
@@ -2714,11 +2730,27 @@ angular.module('app.services', [])
                                     relation: "author"
                                 },
                                 {
-                                    relation: "heroes",
-                                    scope: {
-                                        include: [ "talents" ]
-                                    }
-                                }
+                                  relation: 'guideHeroes',
+                                  scope: {
+                                    include: [
+                                      {
+                                        relation: 'talents'
+                                      },
+                                      {
+                                        relation: 'hero',
+                                        scope: {
+                                          include: ['talents']
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  relation: 'guideTalents',
+                                  scope: {
+                                    include: ['talent']
+                                  }
+                                },
                             ]
                         }
                     }).$promise.then(function (guides) {
@@ -2845,7 +2877,7 @@ angular.module('app.services', [])
                                                 }
                                             },
                                             {
-                                                relation: "heroes",
+                                                relation: "guideHeroes",
                                                 scope: {
                                                     fields: ["id"]
                                                 }
@@ -2908,10 +2940,26 @@ angular.module('app.services', [])
                                     relation: "author"
                                 },
                                 {
-                                    relation: "heroes",
-                                    scope: {
-                                        include: [ "talents" ]
-                                    }
+                                  relation: 'guideHeroes',
+                                  scope: {
+                                    include: [
+                                      {
+                                        relation: 'talents'
+                                      },
+                                      {
+                                        relation: 'hero',
+                                        scope: {
+                                          include: ['talents']
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  relation: 'guideTalents',
+                                  scope: {
+                                    include: ['talent']
+                                  }
                                 },
                                 {
                                     relation: "maps"

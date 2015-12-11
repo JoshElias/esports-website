@@ -1611,7 +1611,7 @@ var app = angular.module('app', [
                             dataTempostormGuides: ['Guide', function (Guide) {
                               return Guide.find({
                                 filter: {
-                                  order: 'createdDate ASC',
+                                  order: 'createdDate DESC',
                                   limit: 4,
                                   fields: {
                                     authorId: true,
@@ -1731,7 +1731,19 @@ var app = angular.module('app', [
                                               {
                                                 relation: 'hero',
                                                 scope: {
-                                                  include: ['talents']
+                                                  include: [
+                                                    {
+                                                      relation: 'talents',
+                                                      scope: {
+                                                        include: {
+                                                          relation: 'talent',
+                                                          scope: {
+                                                            fields: ['orderNum']
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  ]
                                                 }
                                               }
                                             ]
