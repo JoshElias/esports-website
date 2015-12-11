@@ -795,10 +795,10 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: 'cardsWithCoin'
+                                                relation: 'mulligansWithCoin'
                                             },
                                             {
-                                                relation: 'cardsWithoutCoin'
+                                                relation: 'mulligansWithoutCoin'
                                             }
                                         ]
                                     }
@@ -2044,6 +2044,137 @@ var app = angular.module('app', [
                         controller: 'ForumCategoryCtrl',
                         resolve: {
                             forumCategories: ['$q', 'ForumCategory', 'ForumThread', function($q, ForumCategory, ForumThread) {
+//                                var startTime = new Date().getMilliseconds();
+//                                var d = $q.defer();
+//                                
+//                                async.waterfall([
+//                                    function(waterCB) {
+//                                        
+//                                        ForumCategory.find({
+//                                            filter: {
+//                                                where: {
+//                                                    isActive: true
+//                                                },
+//                                                fields: {
+//                                                    id: true,
+//                                                    title: true
+//                                                },
+//                                                order: 'orderNum ASC'
+//                                            }
+//                                        }).$promise
+//                                        .then(function (forumCategories) {
+//                                            return waterCB(null, forumCategories);
+//                                        })
+//                                        .catch(function (err) {
+//                                            return waterCB(err);
+//                                        });
+//                                        
+//                                    },
+//                                    function(forumCategories, waterCB) {
+//                                        
+//                                        async.each(forumCategories, function (category, categoryCB) {
+//                                            
+//                                            ForumCategory.forumThreads({
+//                                                id: category.id,
+//                                                filter: {
+//                                                    fields: {
+//                                                        id: true,
+//                                                        title: true,
+//                                                        description: true,
+//                                                        slug: true
+//                                                    }
+//                                                }
+//                                            }).$promise
+//                                            .then(function (threads) {
+//                                                category.forumThreads = threads;
+//                                                
+//                                                async.each(category.forumThreads, function (thread, threadCB) {
+//                                                
+//                                                   async.parallel([
+//                                                       function (paraCB) {
+//
+//                                                           ForumThread.forumPosts({
+//                                                               id: thread.id,
+//                                                               filter: {
+//                                                                   fields: {
+//                                                                       title: true,
+//                                                                       slug: true,
+//                                                                       authorId: true
+//                                                                   },
+//                                                                   include: {
+//                                                                       relation: 'author',
+//                                                                       scope: {
+//                                                                           fields: {
+//                                                                               username: true,
+//                                                                               email: true
+//                                                                           }
+//                                                                       }
+//                                                                   },
+//                                                                   order: 'createdDate DESC',
+//                                                                   limit: 1
+//                                                               }
+//                                                           }).$promise
+//                                                           .then(function (forumPost) {
+//                                                               thread.forumPosts = forumPost;
+//                                                               return paraCB();
+//                                                           })
+//                                                           .catch(function (err) {
+//                                                               return paraCB(err);
+//                                                           });
+//
+//                                                       },
+//                                                       function (paraCB) {
+//
+//                                                           ForumThread.forumPosts.count({
+//                                                                id: thread.id
+//                                                            }).$promise
+//                                                            .then(function (postCount) {
+//                                                                thread.forumPostsCount = postCount.count;
+//                                                                return paraCB();
+//                                                            })
+//                                                            .catch(function (err) {
+//                                                                return paraCB(err);
+//                                                            });
+//
+//                                                       }
+//                                                   ], function(err, results) {
+//                                                       if (err) {
+//                                                           return categoryCB(err);
+//                                                       }
+//                                                       return categoryCB();
+//                                                   });
+//
+//                                                }, function(err) {
+//                                                    if (err) {
+//                                                        return waterCB(err);
+//                                                    }
+//                                                    return waterCB();
+//                                                });
+//                                                
+//                                            })
+//                                            .catch(function (err) {
+//                                                return categoryCB(err);
+//                                            });
+//                                            
+//                                        }, function(err) {
+//                                            if (err) {
+//                                                return waterCB(err);
+//                                            }
+//                                            return waterCB(null, forumCategories);
+//                                        });
+//                                        
+//                                    }
+//                                ], function(err, results) {
+//                                    if (err) {
+//                                        return d.resolve(err);
+//                                    }
+//                                    var endTime = new Date().getMilliseconds();
+//                                    var elapsedTime = startTime - endTime;
+//                                    console.log('elapsed: ', elapsedTime);
+//                                    return d.resolve(results);
+//                                });
+//                                return d.promise;
+                                
                                 var d = $q.defer();
                                 ForumCategory.find({
                                     where: {
@@ -2107,7 +2238,7 @@ var app = angular.module('app', [
                                             });
                                         });
                                     }, function () {
-                                        console.log(categories);
+//                                        console.log(categories);
                                         d.resolve(categories);
                                     });
                                 });
@@ -3484,6 +3615,22 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.heroes.list.html',
                         controller: 'AdminHeroListCtrl',
                         resolve: {
+                            paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    options: {
+                                        filter: {
+                                            fields: {
+                                                id: true,
+                                                name: true
+                                            },
+                                            limit: 50,
+                                            order: 'name ASC'
+                                        }
+                                    }
+                                };
+                            }],
                             heroesCount: ['Hero', function (Hero) {
                                 return Hero.count({})
                                 .$promise
@@ -3491,17 +3638,10 @@ var app = angular.module('app', [
                                     return data.count;
                                 })
                             }],
-                            heroes: ['Hero', function (Hero) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '';
-                                
-                                return Hero.find({
-                                    filter: {
-                                        limit: perpage,
-                                        skip: (page*perpage) - perpage
-                                    }
-                                })
+                            heroes: ['Hero', 'paginationParams', function (Hero, paginationParams) {
+                                return Hero.find(
+                                    paginationParams.options
+                                )
                                 .$promise
                                 .then(function(data) {
                                     return data;
@@ -3594,21 +3734,36 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.talents.list.html',
                         controller: 'AdminTalentsListCtrl',
                         resolve: {
-                            talents: ['Talent', function (Talent) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '';
-                                
-                                return Talent.find({
-                                    filter: {
-                                        limit: perpage,
-                                        skip: (page*perpage) - perpage,
-                                        order: "name ASC"
+                            paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    options: {
+                                        filter: {
+                                            fields: {
+                                                id: true,
+                                                name: true
+                                            },
+                                            limit: 50,
+                                            order: 'name ASC'
+                                        }
                                     }
-                                })
+                                };
+                            }],
+                            talents: ['Talent', 'paginationParams', function (Talent, paginationParams) {
+                                return Talent.find(
+                                    paginationParams.options
+                                )
                                 .$promise
                                 .then(function(data) {
                                     return data;
+                                });
+                            }],
+                            talentCount: ['Talent', function(Talent) {
+                                return Talent.count()
+                                .$promise
+                                .then(function (talentCount) {
+                                    return talentCount.count;
                                 });
                             }]
                         }
@@ -3633,18 +3788,38 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.maps.list.html',
                         controller: 'AdminMapsListCtrl',
                         resolve: {
-                            maps: ['Map', function (Map) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '';
-                                
-                                return Map.find({
-                                    filter: {
-                                        limit: perpage,
-                                        skip: (page*perpage) - perpage,
+                            paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    options: {
+                                        filter: {
+                                            fields: {
+//                                                id: true,
+//                                                name: true
+                                            },
+                                            limit: 12,
+                                            order: 'name ASC'
+                                        }
                                     }
-                                })
-                                .$promise;
+                                }
+                            }],
+                            maps: ['Map', 'paginationParams', function (Map, paginationParams) {
+                                return Map.find(
+                                    paginationParams.options.filter
+                                )
+                                .$promise
+                                .then(function (data) {
+                                    console.log('maps: ', data);
+                                    return data;
+                                });
+                            }],
+                            mapCount: ['Map', function(Map) {
+                                return Map.count()
+                                .$promise
+                                .then(function (mapCount) {
+                                    return mapCount.count;
+                                });
                             }]
                         }
                     }
