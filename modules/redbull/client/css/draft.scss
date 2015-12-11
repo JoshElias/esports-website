@@ -263,21 +263,21 @@
                     position: absolute;
                     left: 50%;
                     top: 50%;
-                    width: 213px;
-                    height: 295px;
+                    width: 251px;
+                    height: 350px;
                     transition: transform 300ms;
                     -webkit-transition: -webkit-transform 300ms;
 
                     &:nth-child(1) {
                         //margin-left: -94px;
                         //margin-top: -332px;
-                        margin-left: -110px;
-                        margin-top: -359px;
+                        margin-left: -129px;
+                        margin-top: -414px;
                     }
                     &:nth-child(2) {
                         //margin-left: -296px;
                         //margin-top: -261px;
-                        margin-left: -336px;
+                        margin-left: -374px;
                         margin-top: -288px;
                     }
                     &:nth-child(3) {
@@ -289,7 +289,7 @@
                     &:nth-child(4) {
                         //margin-left: -210px;
                         //margin-top: 26px;
-                        margin-left: -240px;
+                        margin-left: -278px;
                         margin-top: 49px;
                     }
                     &:nth-child(5) {
@@ -301,10 +301,10 @@
 
                     .card-glow {
                         position: absolute;
-                        left: 26px;
-                        top: 38px;
-                        width: 156px;
-                        height: 231px;
+                        left: 38px;
+                        top: 53px;
+                        width: 182px;
+                        height: 272px;
                         transition: box-shadow 1000ms;
                         -webkit-transition: box-shadow 1000ms;
                     }
@@ -329,8 +329,8 @@
                     }
 
                     .card-back {
-                        width: 213px;
-                        height: 295px;
+                        width: 251px;
+                        height: 350px;
                         pointer-events: none;
                         backface-visibility: hidden;
                         -webkit-backface-visibility: hidden;
@@ -383,8 +383,8 @@
                         -webkit-transition: -webkit-transform 800ms ease-in-out 300ms;
 
                         img {
-                            width: 213px;
-                            height: 295px;
+                            width: 251px;
+                            height: 350px;
                             pointer-events: none;
                         }
                     }
