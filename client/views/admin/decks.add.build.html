@@ -163,20 +163,7 @@
 
                     <div class="col-md-pull-3 col-md-9" ng-hide="step !== 1">
                         
-                        <div class="panel panel-danger error-modal animated" ng-show="showError">
-                            <div class="panel-heading">
-                                <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-                                <strong>Unable to save deck</strong>
-                            </div>
-                            <div class="panel-body">
-                                <ul>
-                                    <li ng-repeat="error in errors track by $index">
-                                        <span ng-if="error === 'Slug already exists'">Deck name already exists</span>
-                                        <span ng-if="!(error === 'Slug already exists')">{{error}}</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                        <alert-box theme="admin"></alert-box>
                         
                         <div class="db-section-title clearfix">
                             <div class="row">
@@ -386,7 +373,7 @@
                                           ng-model="mulligan.instructionsWithCoin"></textarea>
                                 <div class="mulliganCardWrapper">
                                     <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};"
-                                         ng-repeat="card in mulligan.cardsWithCoin | orderBy: 'cost' track by $index" 
+                                         ng-repeat="card in mulligan.mulligansWithCoin | orderBy: 'cost' track by $index" 
                                          class="mulliganCards">
     <!--                                    <img ng-src="{{app.cdn}}/cards/{{card.card.photoNames.large}}"/>-->
 
@@ -432,7 +419,7 @@
                                           ng-model="mulligan.instructionsWithoutCoin"></textarea>
                                 <div class="mulliganCardWrapper">
                                     <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};"
-                                         ng-repeat="card in mulligan.cardsWithoutCoin | orderBy: 'cost' track by $index" 
+                                         ng-repeat="card in mulligan.mulligansWithoutCoin | orderBy: 'cost' track by $index" 
                                          class="mulliganCards">
                                         <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" alt="{{card.name}}"/>
                                     </div>
@@ -523,21 +510,8 @@
                     <!-- / step 4 -->
                     <!-- step 5 -->
                     <div class="db-section" ng-hide="step !== 5">
-                        
-                        <div class="panel panel-danger error-modal animated" ng-show="showError">
-                            <div class="panel-heading">
-                                <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
-                                <strong>Unable to save deck</strong>
-                            </div>
-                            <div class="panel-body">
-                                <ul>
-                                    <li ng-repeat="error in errors track by $index">
-                                        <span ng-if="error === 'Slug already exists'">Deck name already exists</span>
-                                        <span ng-if="!(error === 'Slug already exists')">{{error}}</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+						
+						<alert-box theme="admin"></alert-box>
                         
                         <div class="db-section-title">
                             <h1>SAVE YOUR DECK</h1>

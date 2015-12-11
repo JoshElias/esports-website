@@ -57,15 +57,9 @@ var app = angular.module('app', [
             });
             $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams) {
                 $rootScope.metaservice.setStatusCode(200);
-                //ngProgress.complete();
                 if ($window.ga) {
                     $window.ga('send', 'pageview', $location.path());
                 }
-
-                // adsense refresh
-                //if ($window.googletag && $window.googletag.pubads) {
-                //    $window.googletag.pubads().refresh();
-                //}
 
                 // seo
                 if (toState.seo) {
@@ -774,7 +768,7 @@ var app = angular.module('app', [
                                 })
                                 .$promise
                                 .then(function (deck) {
-//                                    console.log('deck: ', deck);
+                                    console.log('deck: ', deck);
                                     return deck;
                                 })
                                 .catch(function (err) {
@@ -786,7 +780,7 @@ var app = angular.module('app', [
                             
                             deckWithMulligans: ['Mulligan', 'deck', function(Mulligan, deck) {
                                 var deckID = deck.id;
-//                                console.log('deckid: ', deck.id);
+                                console.log('deckid: ', deck.id);
                                 
                                 return Mulligan.find({
                                     filter: {
@@ -795,10 +789,16 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: 'mulligansWithCoin'
+                                                relation: 'mulligansWithCoin',
+												scope: {
+													include: 'card'
+												}
                                             },
                                             {
-                                                relation: 'mulligansWithoutCoin'
+                                                relation: 'mulligansWithoutCoin',
+												scope: {
+													include: 'card'
+												}
                                             }
                                         ]
                                     }
@@ -1757,6 +1757,12 @@ var app = angular.module('app', [
                                         },
                                         {
                                           relation: 'maps'
+                                        },
+                                        {
+                                          relation: 'comments',
+                                          scope: {
+                                            include: ['author']
+                                          }
                                         }
                                       ]
                                     }
@@ -3029,9 +3035,9 @@ var app = angular.module('app', [
                                     perpage: 50,
                                     options: {
                                         filter: {
+                                            fields: ['id', 'title', 'createdDate'],
                                             limit: 50,
-                                            order: 'createdDate DESC',
-                                            fields: ['id', 'title', 'createdDate']
+                                            order: 'createdDate DESC'
                                         }
                                     }
                                 };
@@ -3051,6 +3057,26 @@ var app = angular.module('app', [
                                 return Article.find(options)
                                 .$promise
                                 .then(function (data) {
+                                    return data;
+                                });
+                            }],
+                            authors: ['User', function(User){
+                                var options = {
+                                    filter: {
+                                        limit: 10,
+                                        order: "createdDate DESC",
+                                        fields: ["username", "id"],
+                                        where: {
+                                            isProvider: true
+                                        }
+                                    }
+                                }
+                                
+                                
+                                return User.find(options)
+                                .$promise
+                                .then(function (data) {
+                                    console.log(data);
                                     return data;
                                 });
                             }]
@@ -3893,19 +3919,34 @@ var app = angular.module('app', [
                         templateUrl: tpl + 'views/admin/hots.guides.list.html',
                         controller: 'AdminHOTSGuideListCtrl',
                         resolve: {
-                            guides: ['Guide', function (Guide) {
-                                var page = 1,
-                                    perpage = 50,
-                                    search = '';
-                                
-                                return Guide.find({
-                                    filter: {
-                                        limit: perpage,
-                                        skip: (page*perpage) - perpage,
+							paginationParams: [function() {
+                                return {
+                                    page: 1,
+                                    perpage: 50,
+                                    options: {
+                                        filter: {
+                                            fields: {
+//                                                id: true,
+//                                                username: true
+                                            },
+                                            limit: 50,
+                                        }
                                     }
-                                })
+                                };
+                            }],
+                            guides: ['Guide', 'paginationParams', function (Guide, paginationParams) {
+                                return Guide.find(
+									paginationParams.options
+								)
                                 .$promise;
-                            }]
+                            }],
+							guideCount: ['Guide', function(Guide) {
+								return Guide.count()
+								.$promise
+								.then(function (guideCount) {
+									return guideCount.count;
+								});
+							}]
                         }
                     }
                 },

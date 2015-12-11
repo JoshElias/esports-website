@@ -795,40 +795,19 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
         $scope.LoopBackAuth = LoopBackAuth;
         var queryFilter = [],
-            filters = {
-                comments: [
-                    'articleComment',
-                     'deckComment',
-                     'forumComment',
-                     'guideComment',
-                     'snapshotComment'
-                ],
-                articles: ['createArticle'],
-                decks: ['createDeck'],
-                guides: ['createGuide'],
-                forumposts: ['createPost']
-            }
-        
-        console.log($scope.activities);
-
-//        $scope.getActivityType = function (activity) {
-//            switch (activity.activityType) {
-//                case 'articleComment':
-//                case 'deckComment':
-//                case 'forumComment':
-//                case 'guideComment':
-//                case 'snapshotComment':
-//                    return 'comments'; break;
-//                case 'createArticle':
-//                    return 'articles'; break;
-//                case 'createDeck':
-//                    return 'decks'; break;
-//                case 'createGuide':
-//                    return 'guides'; break;
-//                case 'forumPost':
-//                    return 'forumposts'; break;
-//            }
-//        }
+          filters = {
+            comments: [
+              'articleComment',
+              'deckComment',
+              'forumComment',
+              'guideComment',
+              'snapshotComment'
+            ],
+            articles: ['createArticle'],
+            decks: ['createDeck'],
+            guides: ['createGuide'],
+            forumposts: ['createPost']
+          }
 
         $scope.isFiltered = function (type) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
@@ -840,73 +819,72 @@ angular.module('app.controllers', ['ngCookies'])
         }
 
         $scope.toggleFilter = function (filter) {
-            
-            
-            for (var i = 0; i < $scope.filterActivities.length; i++) {
-                if (filter == $scope.filterActivities[i]) {
-                    $scope.filterActivities.splice(i,1);
-                    buildFilter();
-                    $scope.loadActivities(true);
-                    console.log("TRUE toggle filter", filter, $scope.filterActivities);
-                    return;
-                }
+          for (var i = 0; i < $scope.filterActivities.length; i++) {
+            if (filter == $scope.filterActivities[i]) {
+              $scope.filterActivities.splice(i,1);
+              buildFilter();
+              console.log("TRUE toggle filter", filter, $scope.filterActivities);
+              $scope.loadActivities(true);
+              return;
             }
-            $scope.filterActivities.push(filter);
-            buildFilter();
-            console.log("FALSE toggle filter", filter, $scope.filterActivities);
-            $scope.loadActivities(true);
+          }
+          $scope.filterActivities.push(filter);
+          buildFilter();
+          console.log("FALSE toggle filter", filter, $scope.filterActivities);
+          $scope.loadActivities(true);
         }
 
         var buildFilter = function () {
-            queryFilter = [];
-            for (var i = 0; i < $scope.filterActivities.length; i++) {
-                for (var j = 0; j < filters[$scope.filterActivities[i]].length; j++) {
-                    queryFilter.push(filters[$scope.filterActivities[i]][j]);
-                }
+          queryFilter = [];
+          for (var i = 0; i < $scope.filterActivities.length; i++) {
+            for (var j = 0; j < filters[$scope.filterActivities[i]].length; j++) {
+              queryFilter.push(filters[$scope.filterActivities[i]][j]);
             }
+          }
         }
 
         $scope.loadActivities = function (isFilter) {
-            var options = {
-                    filter: {
-                        order: "createdDate DESC",
-                        limit: (!isFilter) ? 3 : $scope.activities.length,
-                        skip: $scope.activities.length,
-                        where: {
-                            authorId: $scope.user.id,
-                            isActive: true
-                        },
-                        include: [
-                            {
-                                relation: 'article'
-                            },
-                            {
-                                relation: 'deck'
-                            }
-                        ]
-                    }
-                }
-
-            if (isFilter) {
-                options.filter.where = {
+          console.log(typeof $scope.user.id);
+          var options = {
+                filter: {
+                  order: "createdDate DESC",
+                  limit: (!isFilter) ? 3 : $scope.activities.length,
+                  skip: $scope.activities.length,
+                  where: {
                     authorId: $scope.user.id,
-                    isActive: true,
-                    activityType: { inq : queryFilter }
+                    isActive: true
+                  },
+                  include: [
+                    {
+                      relation: 'article'
+                    },
+                    {
+                      relation: 'deck'
+                    }
+                  ]
                 }
-            }
+              }
 
-            Activity.find(options)
-            .$promise
-            .then(function (data) {
-                console.log(data);
-                $scope.activities = $scope.activities.concat(data);
-            });
+          if (isFilter) {
+            options.filter.where = {
+              authorId: $scope.user.id,
+              isActive: true,
+              activityType: { inq : queryFilter }
+            }
+          }
+
+          Activity.find(options)
+          .$promise
+          .then(function (data) {
+            console.log('DATA', data);
+            $scope.activities = $scope.activities.concat(data);
+          });
         }
 
         $scope.activities.forEach(function (activity) {
-            activity.getActivity = function () {
-                return $sce.trustAsHtml(activity.activity);
-            };
+          activity.getActivity = function () {
+            return $sce.trustAsHtml(activity.activity);
+          };
         });
 
 //            $scope.loadActivities = function () {
@@ -2479,11 +2457,11 @@ angular.module('app.controllers', ['ngCookies'])
 
             // article types
             $scope.articleTypes = [
-                    { name: 'Tempo Storm', value: 'ts' },
-                    { name: 'Hearthstone', value: 'hs' },
-                    { name: 'Heroes of the Storm', value: 'hots' },
-                    { name: 'Overwatch', value: 'overwatch' }
-                ];
+				{ name: 'Tempo Storm', value: 'ts' },
+				{ name: 'Hearthstone', value: 'hs' },
+				{ name: 'Heroes of the Storm', value: 'hots' },
+				{ name: 'Overwatch', value: 'overwatch' }
+			];
 
             // select options
             $scope.articleFeatured =
@@ -2648,9 +2626,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminArticleListCtrl', ['$scope', '$q', '$timeout', 'AdminArticleService', 'AlertService', 'AjaxPagination', 'paginationParams', 'articles', 'articlesCount', 'Article',
-        function ($scope, $q, $timeout, AdminArticleService, AlertService, AjaxPagination, paginationParams, articles, articlesCount, Article) {
-
+    .controller('AdminArticleListCtrl', ['$scope', '$q', '$timeout', 'AdminArticleService', 'AlertService', 'AjaxPagination', 'paginationParams', 'articles', 'articlesCount', 'Article', 'authors',
+        function ($scope, $q, $timeout, AdminArticleService, AlertService, AjaxPagination, paginationParams, articles, articlesCount, Article, authors) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -2671,33 +2648,52 @@ angular.module('app.controllers', ['ngCookies'])
             // pagination
             function updateArticles (page, perpage, search, callback) {
                 $scope.fetching = true;
-
-                var options = {},
-                    countOptions = {};
-
-                options.filter = {
-                    fields: paginationParams.options.filter.fields,
-                    order: "createdDate DESC",
-                    skip: ((page*perpage)-perpage),
-                    limit: perpage
-                };
+				
+                var options = {
+					filter: {
+						fields: paginationParams.options.filter.fields,
+						order: paginationParams.options.filter.order,
+						skip: ((page*perpage)-perpage),
+						limit: perpage,
+						where: {}
+					}
+				};
+				
+                var countOptions = {
+					where: {}
+				};
+				
+				// if queries exist, iniiate empty arrays
+                if (search.length > 0) {
+                    options.filter.where.or = [];
+                    countOptions.where.or = [];
+                }
+                
+                if ($scope.filterAuthor.length > 0 
+                    || $scope.filterType.length > 0) {
+                    options.filter.where.and = [];
+                    countOptions.where.and = [];
+                }
 
                 if ($scope.search.length > 0) {
-                    options.filter.where = {
-                        or: [
-                            { title: { regexp: search } },
-                            { description: { regexp: search } },
-                            { content: { regexp: search } }
-                        ]
-                    }
-                    countOptions.where = {
-                        or: [
-                            { title: { regexp: search } },
-                            { description: { regexp: search } },
-                            { content: { regexp: search } }
-                        ]
-                    }
+					options.filter.where.or.push({ title: { regexp: search } });
+					options.filter.where.or.push({ description: { regexp: search } });
+					options.filter.where.or.push({ content: { regexp: search } });
+					
+					countOptions.where.or.push({ title: { regexp: search } });
+					countOptions.where.or.push({ description: { regexp: search } });
+					countOptions.where.or.push({ content: { regexp: search } });
                 }
+				
+				if ($scope.filterAuthor.length > 0) {
+					options.filter.where.and.push({ authorId: $scope.filterAuthor });
+					countOptions.where.and.push({ authorId: $scope.filterAuthor });
+				}
+				
+				if ($scope.filterType.length > 0) {
+					options.filter.where.and.push({ articleType: $scope.filterType });
+					countOptions.where.and.push({ articleType: $scope.filterType });
+				}
                 
                 AjaxPagination.update(Article, options, countOptions, function (err, data, count) {
                     $scope.fetching = false;
@@ -2723,6 +2719,27 @@ angular.module('app.controllers', ['ngCookies'])
                     return d.promise;
                 }
             );
+            
+            // article types
+            $scope.articleTypes = [
+				{ name: 'All Articles', value: '' },
+				{ name: 'Tempo Storm', value: 'ts' },
+				{ name: 'Hearthstone', value: 'hs' },
+				{ name: 'Heroes of the Storm', value: 'hots' },
+				{ name: 'Overwatch', value: 'overwatch' }
+			];
+			
+			$scope.articleAuthors = [
+				{ name: 'All Authors', value: '' }
+			];
+			angular.forEach(authors, function (author) {
+				$scope.articleAuthors.push({ 
+					name: author.username,
+					value: author.id
+				});
+			});
+			
+			$scope.filterType = $scope.filterAuthor = '';
 
             // delete article
             $scope.deleteArticle = function deleteArticle(article) {
@@ -12781,21 +12798,19 @@ angular.module('app.controllers', ['ngCookies'])
                 if ($scope.search.length > 0) {
                     options.filter.where = {
                         or: [
-                            { email: { regexp: search } },
-                            { username: { regexp: search } },
-                            { twitchID: { regexp: search } }
+                            { className: { regexp: search } },
+                            { name: { regexp: search } }
                         ]
                     }
                     countOptions.where = {
                         or: [
-                            { email: { regexp: search } },
-                            { username: { regexp: search } },
-                            { twitchID: { regexp: search } }
+                            { className: { regexp: search } },
+                            { name: { regexp: search } }
                         ]
                     }
                 }
                 
-                AjaxPagination.update(User, options, countOptions, function (err, data, count) {
+                AjaxPagination.update(Map, options, countOptions, function (err, data, count) {
                     $scope.fetching = false;
                     if (err) return console.log('got err:', err);
                     $scope.mapPagination.page = page;
@@ -12922,8 +12937,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminHOTSGuideListCtrl', ['$scope', '$state', 'AdminHOTSGuideService', 'AlertService', 'Pagination', 'guides',
-        function ($scope, $state, AdminHOTSGuideService, AlertService, Pagination, guides) {
+    .controller('AdminHOTSGuideListCtrl', ['$scope', '$timeout', '$q', '$state', 'AdminHOTSGuideService', 'AlertService', 'guides', 'paginationParams', 'guideCount', 'AjaxPagination', 'Guide',
+        function ($scope, $timeout, $q, $state, AdminHOTSGuideService, AlertService, guides, paginationParams, guideCount, AjaxPagination, Guide) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -12933,23 +12948,72 @@ angular.module('app.controllers', ['ngCookies'])
             // load guides
             $scope.guides = guides;
             
-//            $scope.page = data.page;
-//            $scope.perpage = data.perpage;
-//            $scope.total = data.total;
-//            $scope.search = data.search;
+            $scope.page = paginationParams.page;
+            $scope.perpage = paginationParams.perpage;
+            $scope.total = guideCount
+            $scope.search = '';
 
-            $scope.getGuides = function () {
-                AdminHOTSGuideService.getGuides($scope.page, $scope.perpage, $scope.search).then(function (data) {
-                    $scope.guides = data.guides;
-                    $scope.page = data.page;
-                    $scope.total = data.total;
+            $scope.searchGuides = function() {
+                updateGuides(1, $scope.perpage, $scope.search, function(err, data) {
+                    if (err) return console.log('err: ', err);
+                });
+            };
+
+            // pagination
+            function updateGuides (page, perpage, search, callback) {
+                $scope.fetching = true;
+
+                var options = {},
+                    countOptions = {};
+
+                options.filter = {
+                    fields: paginationParams.options.filter.fields,
+                    order: paginationParams.options.filter.order,
+                    skip: ((page*perpage)-perpage),
+                    limit: paginationParams.perpage
+                };
+
+                if ($scope.search.length > 0) {
+                    options.filter.where = {
+                        or: [
+                            { email: { regexp: search } },
+                            { username: { regexp: search } },
+                            { twitchID: { regexp: search } }
+                        ]
+                    }
+                    countOptions.where = {
+                        or: [
+                            { email: { regexp: search } },
+                            { username: { regexp: search } },
+                            { twitchID: { regexp: search } }
+                        ]
+                    }
+                }
+                
+                AjaxPagination.update(Guide, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
+                    $scope.guidePagination.page = page;
+                    $scope.guidePagination.perpage = perpage;
+                    $scope.guides = data;
+                    $scope.guidePagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
             }
 
-            $scope.searchGuides = function () {
-                $scope.page = 1;
-                $scope.getGuides();
-            }
+            // page flipping
+            $scope.guidePagination = AjaxPagination.new($scope.perpage, $scope.total,
+                function (page, perpage) {
+                    var d = $q.defer();
+                    updateGuides(page, perpage, $scope.search, function (err, count) {
+                        if (err) return console.log('pagination err:', err);
+                        d.resolve(count.count);
+                    });
+                    return d.promise;
+                }
+            );
 
             // edit guide
             $scope.editGuide = function (guide) {
