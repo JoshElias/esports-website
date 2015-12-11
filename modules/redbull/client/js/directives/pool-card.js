@@ -18,11 +18,11 @@ angular.module('redbull.directives')
                 if ($('#'+id).length) {
                     $('#'+id).html(content);
                 } else {
-                    var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -344 : 60;
+                    var xPos = (attr['tooltipPos'] && attr['tooltipPos'] === 'left') ? -304 : 60;
                     el.wTooltip({
                         delay: 500,
                         offsetX: xPos,
-                        offsetY: -40,
+                        offsetY: -50,
                         content: content,
                         style: false,
                         className: 'hs-card-tooltip',

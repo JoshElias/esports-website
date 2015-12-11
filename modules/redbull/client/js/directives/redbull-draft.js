@@ -76,6 +76,11 @@ angular.module('redbull.directives')
                     return false;
                 }
                 
+                // expansion to class
+                scope.expansionToClass = function (expansion) {
+                    return Util.slugify(expansion);
+                };
+                
                 // inc pack for expansion
                 function nextPack (expansion) {
                     scope.currentPack[expansion]++;
@@ -117,11 +122,15 @@ angular.module('redbull.directives')
                 };
 
                 // start fast forwarding
-                scope.fastForwardStart = function () {
-                    if (fastForward) { return false; }
-                    fastForward = true;
-                    el.addClass('fast-forward');
-                    nextEvent();
+                scope.fastForwardToggle = function () {
+                    if (!fastForward) {
+                        fastForward = true;
+                        el.addClass('fast-forward');
+                        nextEvent();
+                    } else {
+                        fastForward = false;
+                        el.removeClass('fast-forward');
+                    }
                 };
                 
                 // shake pack
@@ -164,6 +173,7 @@ angular.module('redbull.directives')
                 });
                 
                 scope.enablePacks = function () {
+                    console.log('enable packs');
                     // pack rumbling
                     $('.pack-wrapper').jrumble();
 
@@ -219,25 +229,26 @@ angular.module('redbull.directives')
                     });
 
                     $('.pack').mousedown(function(event) {
-                        if (packDropped) { return false; }
+                        if (!packDropped) {
 
-                        // stop prop
-                        event.stopPropagation();
-                        
-                        var pack = this;
+                            // stop prop
+                            event.stopPropagation();
 
-                        // play audio
-                        scope.playAudio('pack_grab');
-                        
-                        // move pack wrapper to top
-                        $(pack).closest('.pack-wrapper').css('z-index', '103');
-                        
-                        // stop shaking the pack
-                        $(pack).trigger('stopRumble');
+                            var pack = this;
 
-                        // stop shaking the pack
-                        stopShakeTimer();
-                    
+                            // play audio
+                            scope.playAudio('pack_grab');
+
+                            // move pack wrapper to top
+                            $(pack).closest('.pack-wrapper').css('z-index', '103');
+
+                            // stop shaking the pack
+                            $(pack).trigger('stopRumble');
+
+                            // stop shaking the pack
+                            stopShakeTimer();
+                            
+                        }
                     }).mouseup(function() {
                         // TODO: doesn't work
                         // if the pack's position is its original location, play the pack release sound
@@ -320,7 +331,8 @@ angular.module('redbull.directives')
                         // stop shaking pack
                         stopShakeTimer();
                         
-                        // TODO: PLAY BURST SOUND
+                        // play audio for pack burst
+                        scope.playAudio('pack_burst');
 
                         // fade out pack
                         $pack.fadeOut(0, function() {
@@ -339,9 +351,7 @@ angular.module('redbull.directives')
                             $('.bg-glow').stop().fadeOut(0);
                             
                             // blur bg
-                            if (!fastForward) {
-                                el.addClass('blurred');
-                            }
+                            el.addClass('blurred');
                             
                             // set cards and show
                             $('.cards').fadeIn(((!fastForward) ? fadeDuration : fadeDurationFF), function () {

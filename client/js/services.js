@@ -1373,7 +1373,6 @@ angular.module('app.services', [])
             youtubeId: data.youtubeId || '',
             description: data.description || '',
             chapters: data.chapters || [],
-            slug: data.slug || '',
             deckType: data.deckType || 'None',
             gameModeType: data.gameModeType || 'constructed',
             basic: data.basic || false,
@@ -1393,64 +1392,64 @@ angular.module('app.services', [])
             mulligans: data.mulligans || [
                 {
                     className: 'Druid',
-                    cardsWithoutCoin: [],
-                    cardsWithCoin: [],
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
                     instructionsWithCoin: '',
                     instructionsWithoutCoin: ''
                 },
                 {
                     className: 'Hunter',
-                    cardsWithoutCoin: [],
-                    cardsWithCoin: [],
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
                     instructionsWithCoin: '',
                     instructionsWithoutCoin: ''
                 },
                 {
                     className: 'Mage',
-                    cardsWithoutCoin: [],
-                    cardsWithCoin: [],
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
                     instructionsWithCoin: '',
                     instructionsWithoutCoin: ''
                 },
                 {
                     className: 'Paladin',
-                    cardsWithoutCoin: [],
-                    cardsWithCoin: [],
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
                     instructionsWithCoin: '',
                     instructionsWithoutCoin: ''
                 },
                 {
                     className: 'Priest',
-                    cardsWithoutCoin: [],
-                    cardsWithCoin: [],
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
                     instructionsWithCoin: '',
                     instructionsWithoutCoin: ''
                 },
                 {
                     className: 'Rogue',
-                    cardsWithoutCoin: [],
-                    cardsWithCoin: [],
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
                     instructionsWithCoin: '',
                     instructionsWithoutCoin: ''
                 },
                 {
                     className: 'Shaman',
-                    cardsWithoutCoin: [],
-                    cardsWithCoin: [],
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
                     instructionsWithCoin: '',
                     instructionsWithoutCoin: ''
                 },
                 {
                     className: 'Warlock',
-                    cardsWithoutCoin: [],
-                    cardsWithCoin: [],
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
                     instructionsWithCoin: '',
                     instructionsWithoutCoin: ''
                 },
                 {
                     className: 'Warrior',
-                    cardsWithoutCoin: [],
-                    cardsWithCoin: [],
+                    mulligansWithoutCoin: [],
+                    mulligansWithCoin: [],
                     instructionsWithCoin: '',
                     instructionsWithoutCoin: ''
                 },
@@ -1515,7 +1514,7 @@ angular.module('app.services', [])
             console.log('card: ', card);
             console.log('with coin: ', withCoin);
             
-            var cardMulligans = (withCoin) ? mulligan.cardsWithCoin : mulligan.cardsWithoutCoin,
+            var cardMulligans = (withCoin) ? mulligan.mulligansWithCoin : mulligan.mulligansWithoutCoin,
                 exists = false,
                 index = -1;
             
@@ -1752,14 +1751,14 @@ angular.module('app.services', [])
                 console.log('card was removed');
                 // search all card with coin mulligans
                 for(var i = 0; i < db.mulligans.length; i++) {
-                    for(var j = 0; j < db.mulligans[i].cardsWithCoin.length; j++) {
-                        if (db.mulligans[i].cardsWithCoin[j].id === card.card.id) {
+                    for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
+                        if (db.mulligans[i].mulligansWithCoin[j].id === card.card.id) {
                             cardMulliganExists = true;
                             break;
                         }
                     }
-                    for(var j = 0; j < db.mulligans[i].cardsWithoutCoin.length; j++) {
-                        if (db.mulligans[i].cardsWithoutCoin[j].id === card.card.id) {
+                    for(var j = 0; j < db.mulligans[i].mulligansWithoutCoin.length; j++) {
+                        if (db.mulligans[i].mulligansWithoutCoin[j].id === card.card.id) {
                             cardMulliganExists = true;
                             break;
                         }
@@ -1780,14 +1779,14 @@ angular.module('app.services', [])
                                         db.cards.splice(index, 1);
                                     });
                                     for(var i = 0; i < db.mulligans.length; i++) {
-                                        for(var j = 0; j < db.mulligans[i].cardsWithCoin.length; j++) {
-                                            if (db.mulligans[i].cardsWithCoin[j].id === card.card.id) {
-                                                db.mulligans[i].cardsWithCoin.splice(j, 1);
+                                        for(var j = 0; j < db.mulligans[i].mulligansWithCoin.length; j++) {
+                                            if (db.mulligans[i].mulligansWithCoin[j].id === card.card.id) {
+                                                db.mulligans[i].mulligansWithCoin.splice(j, 1);
                                             }
                                         }
-                                        for(var j = 0; j < db.mulligans[i].cardsWithoutCoin.length; j++) {
-                                            if (db.mulligans[i].cardsWithoutCoin[j].id === card.card.id) {
-                                                db.mulligans[i].cardsWithoutCoin.splice(j, 1);
+                                        for(var j = 0; j < db.mulligans[i].mulligansWithoutCoin.length; j++) {
+                                            if (db.mulligans[i].mulligansWithoutCoin[j].id === card.card.id) {
+                                                db.mulligans[i].mulligansWithoutCoin.splice(j, 1);
                                             }
                                         }
                                     }
@@ -2024,10 +2023,6 @@ angular.module('app.services', [])
             votes: data.votes || [],
             voteScore: data.votesCount || 0,
             viewCount: data.viewcount || 0,
-            against: data.against || {
-                weak: [],
-                strong: []
-            },
             authorId: data.authorId || User.getCurrentId(),
             talentTiers: data.talentTiers || {}
         };
@@ -2623,11 +2618,27 @@ angular.module('app.services', [])
                                     relation: "author"
                                 },
                                 {
-                                    relation: "heroes",
-                                    scope: {
-                                        include: [ "talents" ]
-                                    }
-                                }
+                                  relation: 'guideHeroes',
+                                  scope: {
+                                    include: [
+                                      {
+                                        relation: 'talents'
+                                      },
+                                      {
+                                        relation: 'hero',
+                                        scope: {
+                                          include: ['talents']
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  relation: 'guideTalents',
+                                  scope: {
+                                    include: ['talent']
+                                  }
+                                },
                             ]
                         }
                     }).$promise.then(function (guides) {
@@ -2699,7 +2710,7 @@ angular.module('app.services', [])
                     Guide.find({
                         filter: {
                             limit: limit,
-                            order: "createdDate ASC",
+                            order: order,
                             where: {
                                 id: { inq: guideIds }
                             },
@@ -2719,11 +2730,27 @@ angular.module('app.services', [])
                                     relation: "author"
                                 },
                                 {
-                                    relation: "heroes",
-                                    scope: {
-                                        include: [ "talents" ]
-                                    }
-                                }
+                                  relation: 'guideHeroes',
+                                  scope: {
+                                    include: [
+                                      {
+                                        relation: 'talents'
+                                      },
+                                      {
+                                        relation: 'hero',
+                                        scope: {
+                                          include: ['talents']
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  relation: 'guideTalents',
+                                  scope: {
+                                    include: ['talent']
+                                  }
+                                },
                             ]
                         }
                     }).$promise.then(function (guides) {
@@ -2850,7 +2877,7 @@ angular.module('app.services', [])
                                                 }
                                             },
                                             {
-                                                relation: "heroes",
+                                                relation: "guideHeroes",
                                                 scope: {
                                                     fields: ["id"]
                                                 }
@@ -2913,10 +2940,26 @@ angular.module('app.services', [])
                                     relation: "author"
                                 },
                                 {
-                                    relation: "heroes",
-                                    scope: {
-                                        include: [ "talents" ]
-                                    }
+                                  relation: 'guideHeroes',
+                                  scope: {
+                                    include: [
+                                      {
+                                        relation: 'talents'
+                                      },
+                                      {
+                                        relation: 'hero',
+                                        scope: {
+                                          include: ['talents']
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  relation: 'guideTalents',
+                                  scope: {
+                                    include: ['talent']
+                                  }
                                 },
                                 {
                                     relation: "maps"
