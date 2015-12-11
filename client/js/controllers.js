@@ -795,40 +795,19 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
         $scope.LoopBackAuth = LoopBackAuth;
         var queryFilter = [],
-            filters = {
-                comments: [
-                    'articleComment',
-                     'deckComment',
-                     'forumComment',
-                     'guideComment',
-                     'snapshotComment'
-                ],
-                articles: ['createArticle'],
-                decks: ['createDeck'],
-                guides: ['createGuide'],
-                forumposts: ['createPost']
-            }
-        
-        console.log($scope.activities);
-
-//        $scope.getActivityType = function (activity) {
-//            switch (activity.activityType) {
-//                case 'articleComment':
-//                case 'deckComment':
-//                case 'forumComment':
-//                case 'guideComment':
-//                case 'snapshotComment':
-//                    return 'comments'; break;
-//                case 'createArticle':
-//                    return 'articles'; break;
-//                case 'createDeck':
-//                    return 'decks'; break;
-//                case 'createGuide':
-//                    return 'guides'; break;
-//                case 'forumPost':
-//                    return 'forumposts'; break;
-//            }
-//        }
+          filters = {
+            comments: [
+              'articleComment',
+              'deckComment',
+              'forumComment',
+              'guideComment',
+              'snapshotComment'
+            ],
+            articles: ['createArticle'],
+            decks: ['createDeck'],
+            guides: ['createGuide'],
+            forumposts: ['createPost']
+          }
 
         $scope.isFiltered = function (type) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
@@ -840,73 +819,72 @@ angular.module('app.controllers', ['ngCookies'])
         }
 
         $scope.toggleFilter = function (filter) {
-            
-            
-            for (var i = 0; i < $scope.filterActivities.length; i++) {
-                if (filter == $scope.filterActivities[i]) {
-                    $scope.filterActivities.splice(i,1);
-                    buildFilter();
-                    $scope.loadActivities(true);
-                    console.log("TRUE toggle filter", filter, $scope.filterActivities);
-                    return;
-                }
+          for (var i = 0; i < $scope.filterActivities.length; i++) {
+            if (filter == $scope.filterActivities[i]) {
+              $scope.filterActivities.splice(i,1);
+              buildFilter();
+              console.log("TRUE toggle filter", filter, $scope.filterActivities);
+              $scope.loadActivities(true);
+              return;
             }
-            $scope.filterActivities.push(filter);
-            buildFilter();
-            console.log("FALSE toggle filter", filter, $scope.filterActivities);
-            $scope.loadActivities(true);
+          }
+          $scope.filterActivities.push(filter);
+          buildFilter();
+          console.log("FALSE toggle filter", filter, $scope.filterActivities);
+          $scope.loadActivities(true);
         }
 
         var buildFilter = function () {
-            queryFilter = [];
-            for (var i = 0; i < $scope.filterActivities.length; i++) {
-                for (var j = 0; j < filters[$scope.filterActivities[i]].length; j++) {
-                    queryFilter.push(filters[$scope.filterActivities[i]][j]);
-                }
+          queryFilter = [];
+          for (var i = 0; i < $scope.filterActivities.length; i++) {
+            for (var j = 0; j < filters[$scope.filterActivities[i]].length; j++) {
+              queryFilter.push(filters[$scope.filterActivities[i]][j]);
             }
+          }
         }
 
         $scope.loadActivities = function (isFilter) {
-            var options = {
-                    filter: {
-                        order: "createdDate DESC",
-                        limit: (!isFilter) ? 3 : $scope.activities.length,
-                        skip: $scope.activities.length,
-                        where: {
-                            authorId: $scope.user.id,
-                            isActive: true
-                        },
-                        include: [
-                            {
-                                relation: 'article'
-                            },
-                            {
-                                relation: 'deck'
-                            }
-                        ]
-                    }
-                }
-
-            if (isFilter) {
-                options.filter.where = {
+          console.log(typeof $scope.user.id);
+          var options = {
+                filter: {
+                  order: "createdDate DESC",
+                  limit: (!isFilter) ? 3 : $scope.activities.length,
+                  skip: $scope.activities.length,
+                  where: {
                     authorId: $scope.user.id,
-                    isActive: true,
-                    activityType: { inq : queryFilter }
+                    isActive: true
+                  },
+                  include: [
+                    {
+                      relation: 'article'
+                    },
+                    {
+                      relation: 'deck'
+                    }
+                  ]
                 }
-            }
+              }
 
-            Activity.find(options)
-            .$promise
-            .then(function (data) {
-                console.log(data);
-                $scope.activities = $scope.activities.concat(data);
-            });
+          if (isFilter) {
+            options.filter.where = {
+              authorId: $scope.user.id,
+              isActive: true,
+              activityType: { inq : queryFilter }
+            }
+          }
+
+          Activity.find(options)
+          .$promise
+          .then(function (data) {
+            console.log('DATA', data);
+            $scope.activities = $scope.activities.concat(data);
+          });
         }
 
         $scope.activities.forEach(function (activity) {
-            activity.getActivity = function () {
-                return $sce.trustAsHtml(activity.activity);
-            };
+          activity.getActivity = function () {
+            return $sce.trustAsHtml(activity.activity);
+          };
         });
 
 //            $scope.loadActivities = function () {
