@@ -1373,7 +1373,6 @@ angular.module('app.services', [])
             youtubeId: data.youtubeId || '',
             description: data.description || '',
             chapters: data.chapters || [],
-            slug: data.slug || '',
             deckType: data.deckType || 'None',
             gameModeType: data.gameModeType || 'constructed',
             basic: data.basic || false,
@@ -2024,10 +2023,6 @@ angular.module('app.services', [])
             votes: data.votes || [],
             voteScore: data.votesCount || 0,
             viewCount: data.viewcount || 0,
-            against: data.against || {
-                weak: [],
-                strong: []
-            },
             authorId: data.authorId || User.getCurrentId(),
             talentTiers: data.talentTiers || {}
         };
@@ -2623,11 +2618,27 @@ angular.module('app.services', [])
                                     relation: "author"
                                 },
                                 {
-                                    relation: "heroes",
-                                    scope: {
-                                        include: [ "talents" ]
-                                    }
-                                }
+                                  relation: 'guideHeroes',
+                                  scope: {
+                                    include: [
+                                      {
+                                        relation: 'talents'
+                                      },
+                                      {
+                                        relation: 'hero',
+                                        scope: {
+                                          include: ['talents']
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  relation: 'guideTalents',
+                                  scope: {
+                                    include: ['talent']
+                                  }
+                                },
                             ]
                         }
                     }).$promise.then(function (guides) {
@@ -2699,7 +2710,7 @@ angular.module('app.services', [])
                     Guide.find({
                         filter: {
                             limit: limit,
-                            order: "createdDate ASC",
+                            order: order,
                             where: {
                                 id: { inq: guideIds }
                             },
@@ -2719,11 +2730,27 @@ angular.module('app.services', [])
                                     relation: "author"
                                 },
                                 {
-                                    relation: "heroes",
-                                    scope: {
-                                        include: [ "talents" ]
-                                    }
-                                }
+                                  relation: 'guideHeroes',
+                                  scope: {
+                                    include: [
+                                      {
+                                        relation: 'talents'
+                                      },
+                                      {
+                                        relation: 'hero',
+                                        scope: {
+                                          include: ['talents']
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  relation: 'guideTalents',
+                                  scope: {
+                                    include: ['talent']
+                                  }
+                                },
                             ]
                         }
                     }).$promise.then(function (guides) {
@@ -2850,7 +2877,7 @@ angular.module('app.services', [])
                                                 }
                                             },
                                             {
-                                                relation: "heroes",
+                                                relation: "guideHeroes",
                                                 scope: {
                                                     fields: ["id"]
                                                 }
@@ -2913,10 +2940,26 @@ angular.module('app.services', [])
                                     relation: "author"
                                 },
                                 {
-                                    relation: "heroes",
-                                    scope: {
-                                        include: [ "talents" ]
-                                    }
+                                  relation: 'guideHeroes',
+                                  scope: {
+                                    include: [
+                                      {
+                                        relation: 'talents'
+                                      },
+                                      {
+                                        relation: 'hero',
+                                        scope: {
+                                          include: ['talents']
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  relation: 'guideTalents',
+                                  scope: {
+                                    include: ['talent']
+                                  }
                                 },
                                 {
                                     relation: "maps"

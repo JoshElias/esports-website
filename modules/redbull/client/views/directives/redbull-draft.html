@@ -36,7 +36,7 @@
              ng-class="{'flipped-left': card.flipped === 'left', 'flipped-right': card.flipped === 'right'}">
             <div class="card-glow {{card.rarity.toLowerCase()}}"></div>
             <div class="card-front">
-                <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" />
+                <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" />
             </div>
             <div class="card-back {{expansionToClass(card.expansion)}}"></div>
         </div>
@@ -79,8 +79,9 @@
         </div>
     </div>
     <div class="card-pool-button">
-        <button class="btn btn-blue btn-block" ng-click="fastForwardStart()" ng-disabled="isFastForward()">
-            Open All Packs
+        <button class="btn btn-blue btn-block" ng-click="fastForwardToggle()">
+            <span ng-if="!isFastForward()">Open All Packs</span>
+            <span ng-if="isFastForward()">Stop Opening Packs</span>
             <i class="fa fa-refresh fa-spin" ng-if="isFastForward()"></i>
         </button>
     </div>
