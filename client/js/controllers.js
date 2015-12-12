@@ -15076,6 +15076,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getAbilities = function () {
                 var abilities = $scope.getCurrentHero().abilities,
                     out = [];
+              
                 for (var i = 0; i < abilities.length; i++) {
                     if (abilities[i].abilityType == 'Ability') {
                         out.push(abilities[i]);
@@ -15122,21 +15123,18 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.tiers = HOTS.tiers;
 
             $scope.talentsByTier = function (tier) {
-                var hero = $scope.currentHero,
-                    talents = [];
+                var hero     = $scope.currentHero;
+                var filtered = _.filter(hero.talents, function (val) { return val.tier === tier });
+                var mapped   = _.map(filtered, function (val) { return val.talent; });
 
-                for (var i = 0; i < hero.talents.length; i++) {
-                    hero.talents[i].tier = parseInt(hero.talentTiers[hero.talents[i].id]);
-
-                    if (hero.talents[i].tier === tier) {
-                        talents.push(hero.talents[i]);
-                    }
-                }
-                return talents;
+                return mapped;
             };
 
             $scope.hasTalent = function (talent) {
-                return ($scope.currentTalents['tier'+talent.tier] == talent.id) ? ' active' : '';
+              var tal = _.find($scope.currentTalents, function (val) { return val === talent.id; });
+              
+              
+              return (tal) ? ' active' : '';
             }
 
             $scope.hasAnyTalent = function (talent) {
@@ -15144,7 +15142,11 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.toggleTalent = function (talent, tierIndex, talentIndex) {
-                if ($scope.hasTalent(talent)) {
+              console.log($scope.hasTalent(talent));
+              
+              
+              
+                if ($scope.hasTalent(talent) !== '') {
                     $scope.currentTalents['tier'+talent.tier] = null;
                 } else {
                     $scope.currentTalents['tier'+talent.tier] = talent.id;

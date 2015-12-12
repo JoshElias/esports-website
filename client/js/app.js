@@ -1950,7 +1950,7 @@ var app = angular.module('app', [
                             heroes: ['Hero', function (Hero) {
                                 return Hero.find({
                                     filter: {
-                                        order: "name DESC",
+                                        order: "name ASC",
                                         fields: {
                                             className: true,
                                             description: true,
@@ -2005,8 +2005,16 @@ var app = angular.module('app', [
                                             {
                                                 relation: 'talents',
                                                 scope: {
-                                                    order: "orderNum ASC"
+                                                    order: "orderNum ASC",
+                                                    include: [
+                                                      {
+                                                        relation: 'talent'
+                                                      }
+                                                    ]
                                                 }
+                                            },
+                                            {
+                                              relation: 'abilities'
                                             }
                                         ]
                                     }
