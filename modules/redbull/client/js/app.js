@@ -78,6 +78,26 @@ var redbull = angular.module('app.redbull', [
             },
             access: { auth: true }
         })
+        .state('app.admin.redbull', {
+            abstract: true,
+            url: '/redbull',
+            views: {
+                admin: {
+                    templateUrl: moduleTpl + 'admin/admin.redbull.html',
+                }
+            },
+            access: { auth: true, admin: true }
+        })
+        .state('app.admin.redbull.settings', {
+            url: '',
+            views: {
+                redbull: {
+                    templateUrl: moduleTpl + 'admin/admin.redbull.settings.html',
+                    controller: 'AdminRedbullCtrl',
+                }
+            },
+            access: { auth: true, admin: true }
+        })
         ;
     }
 ]);
