@@ -34,7 +34,7 @@
              ng-mouseleave="cardMouseLeave($event, card)"
              ng-mousedown="cardMouseDown($event, card)"
              ng-class="{'flipped-left': card.flipped === 'left', 'flipped-right': card.flipped === 'right'}">
-            <div class="card-glow {{card.rarity.toLowerCase()}}"></div>
+            <div class="card-glow {{expansionToClass(card.expansion)}} {{card.rarity.toLowerCase()}}"></div>
             <div class="card-front">
                 <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" />
             </div>
@@ -79,11 +79,12 @@
         </div>
     </div>
     <div class="card-pool-button">
-        <button class="btn btn-blue btn-block" ng-click="fastForwardToggle()">
+        <button class="btn btn-blue btn-block" ng-click="fastForwardToggle()" ng-if="!draftComplete">
             <span ng-if="!isFastForward()">Open All Packs</span>
             <span ng-if="isFastForward()">Stop Opening Packs</span>
             <i class="fa fa-refresh fa-spin" ng-if="isFastForward()"></i>
         </button>
+        <a ui-sref="app.redbull.draft.build" class="btn btn-blue btn-block" ng-if="draftComplete">Build Decks</a>
     </div>
 </div>
 <!-- / card pool -->

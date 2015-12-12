@@ -301,12 +301,53 @@
 
                     .card-glow {
                         position: absolute;
-                        left: 38px;
-                        top: 53px;
-                        width: 182px;
-                        height: 272px;
-                        transition: box-shadow 1000ms;
-                        -webkit-transition: box-shadow 1000ms;
+                        left: 30px;
+                        top: 44px;
+                        width: 195px;
+                        height: 288px;
+                        border-radius: 10px;
+                        //left: 38px;
+                        //top: 53px;
+                        //width: 182px;
+                        //height: 272px;
+                        transition: box-shadow 500ms;
+                        -webkit-transition: box-shadow 500ms;
+                        
+                        &.league-of-explorers {
+                            left: 30px;
+                            top: 44px;
+                            width: 191px;
+                            height: 288px;
+                        }
+
+                        &.blackrock-mountain {
+                            left: 30px;
+                            top: 44px;
+                            width: 195px;
+                            height: 288px;
+                        }
+
+                        &.naxxramas {
+                            left: 30px;
+                            top: 44px;
+                            width: 191px;
+                            height: 288px;
+                        }
+
+                        &.goblins-vs-gnomes {
+                            left: 30px;
+                            top: 44px;
+                            width: 191px;
+                            height: 288px;
+                        }
+
+                        &.the-grand-tournament {
+                            left: 30px;
+                            top: 44px;
+                            width: 193px;
+                            height: 288px;
+                        }
+                        
                     }
 
                     &:not(.flipped-left):not(.flipped-right):hover {
@@ -498,6 +539,11 @@
                     right: 20px;
                     top: 18px;
                 }
+            }
+            
+            a {
+                height: 50px;
+                line-height: 38px;
             }
         }
         

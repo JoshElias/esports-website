@@ -1,0 +1,49 @@
+<div class="panel panel-danger error-modal animated" ng-show="showError">
+    <div class="panel-heading">
+        <button type="button" class="close" aria-hidden="true" ng-click="showError = false">&times;</button>
+        <strong>Unable to update settings</strong>
+    </div>
+    <div class="panel-body">
+        <ul class="error text-danger">
+            <li ng-repeat="error in errors">{{error.msg}}</li>
+        </ul>
+    </div>
+</div>
+<div class="panel panel-default br-none">
+    <form name="form" role="form" class="form-horizontal">
+    <div class="panel-heading clearfix">
+        <h3 class="pull-left">Update Settings</h3>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label for="intro" class="col-sm-2 control-label">Expansions</label>
+            <div class="col-sm-10 wrapper-none">
+                
+                <div ng-repeat="expansion in settings.expansions track by $index">
+                    <div class="panel panel-default wrapper-none">
+                        <div class="panel-heading">
+                            <h3 class="m-b-none">{{expansion.name}}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-12 wrapper-none" ng-repeat="chance in expansion.chances">
+                                <div class="col-sm-2 m-t-sm center-text wrapper-none">
+                                    <p>{{chance.rarity}}</p>
+                                </div>
+                                <div class="col-sm-10">
+                                    <input ng-change="changeChance(chance)" ng-model="chance.percentage" type="range" min="0" max="100" step="1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer clearfix">
+        <div class="col-sm-10 col-sm-offset-2">
+            <button type="submit" class="btn btn-blue btn-lg" ng-disabled="form.$invalid" ng-click="updateSettings()">Update Settings</button>
+        </div>
+    </div>
+    </form>
+</div>

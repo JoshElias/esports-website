@@ -41,13 +41,13 @@ angular.module('redbull.controllers')
         vm.turned = true;
         if (vm.turned && !vm.clicked) {
             vm.clicked = true;
-
+            
             var cardElement = $event.currentTarget,
                 cardRarity = card.rarity.toLowerCase();
 
             // flip card and inc counter
             $scope.$parent.cardFlip($event, cardElement);
-            
+
             // add to pool
             if (typeof $scope.$parent.addCardToPool === 'function') {
                 $scope.$parent.addCardToPool(card);
