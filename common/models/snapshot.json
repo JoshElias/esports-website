@@ -60,22 +60,26 @@
     "deckMatchups": {
       "type": "hasMany",
       "model": "deckMatchup",
-      "foreignKey": "snapshotId"
+      "foreignKey": "snapshotId",
+      "isChild": true
     },
     "authors": {
       "type": "hasMany",
       "model": "snapshotAuthor",
-      "foreignKey": "snapshotId"
+      "foreignKey": "snapshotId",
+      "isChild": true
     },
     "comments": {
       "type": "hasMany",
       "model": "comment",
-      "foreignKey": "snapshotId"
+      "foreignKey": "snapshotId",
+      "isChild": true
     },
     "deckTiers": {
       "type": "hasMany",
       "model": "deckTier",
-      "foreignKey": "snapshotId"
+      "foreignKey": "snapshotId",
+      "isChild": true
     }
   },
   "acls": [{

@@ -50,19 +50,23 @@
     /* talent calc */
     .tc-section-content { background-image: none !important; }
 
-    /* guides */
-    .gb-steps { padding: 0 30px; position: relative; }
-    .gb-steps li { display: none; float: none; }
-    .gb-steps li.active,
-    .gb-steps li.steps-arrow-prev,
-    .gb-steps li.steps-arrow-next { display: block; }
-    .gb-steps li.steps-arrow-prev,
-    .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
-    .gb-steps li.steps-arrow-prev { left: 0px; }
-    .gb-steps li.steps-arrow-next { right: 0px; }
-    
-    .gb-steps li.active,
-    .gb-steps li.active button { width: 100%; }
+    .hots-styles {
+        
+        /* guides */
+        .gb-steps { padding: 0 30px; position: relative; }
+        .gb-steps li { display: none; float: none; }
+        .gb-steps li.active,
+        .gb-steps li.steps-arrow-prev,
+        .gb-steps li.steps-arrow-next { display: block; }
+        .gb-steps li.steps-arrow-prev,
+        .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
+        .gb-steps li.steps-arrow-prev { left: 0px; }
+        .gb-steps li.steps-arrow-next { right: 0px; }
+
+        .gb-steps li.active,
+        .gb-steps li.active button { width: 100% !important; }
+        
+    }
 
 }
 
@@ -85,24 +89,28 @@
     /* talent calc */
     .tc-section-content { background-image: none !important; }
     
-    /* guides */
-    .guide-header { background: #2766ad; }
-    .guide-header h1 { font-size: 20px; }
-    .guide-hero-wrapper { margin: 0 0 10px 0; width: 100%; }
-    .guide-hero-wrapper:last-child { margin: 0; }
-
-    .gb-steps { padding: 0 30px; position: relative; }
-    .gb-steps li { display: none; float: none; }
-    .gb-steps li.active,
-    .gb-steps li.steps-arrow-prev,
-    .gb-steps li.steps-arrow-next { display: block; }
-    .gb-steps li.steps-arrow-prev,
-    .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
-    .gb-steps li.steps-arrow-prev { left: 0px; }
-    .gb-steps li.steps-arrow-next { right: 0px; }
+    .hots-styles {
     
-    .gb-steps li.active,
-    .gb-steps li.active button { width: 100%; }
+        /* guides */
+        .guide-header { background: #2766ad; }
+        .guide-header h1 { font-size: 20px; }
+        .guide-hero-wrapper { margin: 0 0 10px 0; width: 100%; }
+        .guide-hero-wrapper:last-child { margin: 0; }
+
+        .gb-steps { padding: 0 30px; position: relative; }
+        .gb-steps li { display: none; float: none; }
+        .gb-steps li.active,
+        .gb-steps li.steps-arrow-prev,
+        .gb-steps li.steps-arrow-next { display: block; }
+        .gb-steps li.steps-arrow-prev,
+        .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
+        .gb-steps li.steps-arrow-prev { left: 0px; }
+        .gb-steps li.steps-arrow-next { right: 0px; }
+
+        .gb-steps li.active,
+        .gb-steps li.active button { width: 100% !important; }
+        
+    }
 
 }
 
@@ -161,23 +169,28 @@
     .tc-section-content { background-image: none !important; }
 
     /* guides */
-    .guide-header { background: #2766ad; }
-    .guide-header h1 { font-size: 20px; }
-    .guide-hero-wrapper { margin: 0 0 10px 0; width: 100%; }
-    .guide-hero-wrapper:last-child { margin: 0; }
     
-    .gb-steps { padding: 0 30px; position: relative; }
-    .gb-steps li { display: none; float: none; }
-    .gb-steps li.active,
-    .gb-steps li.steps-arrow-prev,
-    .gb-steps li.steps-arrow-next { display: block; }
-    .gb-steps li.steps-arrow-prev,
-    .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
-    .gb-steps li.steps-arrow-prev { left: 0px; }
-    .gb-steps li.steps-arrow-next { right: 0px; }
+    .hots-styles {
     
-    .gb-steps li.active,
-    .gb-steps li.active button { width: 100%; }
+        .guide-header { background: #2766ad; }
+        .guide-header h1 { font-size: 20px; }
+        .guide-hero-wrapper { margin: 0 0 10px 0; width: 100%; }
+        .guide-hero-wrapper:last-child { margin: 0; }
+
+        .gb-steps { padding: 0 30px; position: relative; }
+        .gb-steps li { display: none; float: none; }
+        .gb-steps li.active,
+        .gb-steps li.steps-arrow-prev,
+        .gb-steps li.steps-arrow-next { display: block; }
+        .gb-steps li.steps-arrow-prev,
+        .gb-steps li.steps-arrow-next { position: absolute; top: 0px; }
+        .gb-steps li.steps-arrow-prev { left: 0px; }
+        .gb-steps li.steps-arrow-next { right: 0px; }
+
+        .gb-steps li.active,
+        .gb-steps li.active button { width: 100% !important; }
+        
+    }
         
     /* polls */
     .poll-page .poll-left { margin-right: 20px; }

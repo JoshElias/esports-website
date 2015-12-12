@@ -31,6 +31,21 @@
                 </div>
             </form>
         </div>
+        <div class="pull-left m-l-sm">
+            <form>
+                <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
+                    <select id="filterAuthor" name="filterAuthor" 
+							ng-model="filterAuthor" 
+							class="form-control input-sm" 
+							ng-change="searchArticles()"
+							ng-options="articleAuthor.value as articleAuthor.name for articleAuthor in articleAuthors">
+                    </select>
+                </span>
+                <span class="pull-left m-r-sm hidden-xs hidden-sm hidden-md">
+                    <select id="filterType" name="filterType" ng-options="articleType.value as articleType.name for articleType in articleTypes" ng-model="filterType" class="form-control input-sm" ng-change="searchArticles()"></select>
+                </span>
+            </form>
+        </div>
     </div>
     <div class="list-group">
         <div class="list-group-item admin-list-item clearfix" ng-repeat="article in articles">

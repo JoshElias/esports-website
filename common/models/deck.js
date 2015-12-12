@@ -2,10 +2,6 @@ module.exports = function(Deck) {
     var utils = require("../../lib/utils");
     var async = require('async');
 
-
-    var childrenNames = ["cards", "matchups", "mulligans"];
-    Deck.observe("after save", utils.saveChildren(childrenNames));
-
     
     var funcs = [utils.validateYoutubeId, utils.generateSlug];
     Deck.observe("before save", function(ctx, next) {
@@ -31,13 +27,9 @@ module.exports = function(Deck) {
         {
             fieldNames: ["allowComments", "description", "playerClass"],
             acceptedRoles: ["chapters", "oldCards", "oldComments", "oldMulligans"]
-        },
+        }
     ];
     Deck.observe("loaded", utils.filterFields(filters));
-
-
-    var relationsToDestroy = ["comments", "cards", "matchups", "mulligans"];
-    Deck.observe('before delete', utils.destroyRelations(relationsToDestroy));
 
 
     Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});

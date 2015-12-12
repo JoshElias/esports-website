@@ -37,7 +37,8 @@
     "forumPosts": {
       "type": "hasMany",
       "model": "forumPost",
-      "foreignKey": "forumThreadId"
+      "foreignKey": "forumThreadId",
+      "isChild": true
     },
     "forumCategory": {
       "type": "belongsTo",
