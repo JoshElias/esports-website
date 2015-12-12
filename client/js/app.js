@@ -1022,19 +1022,18 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: 'cardsWithCoin'
+                                                relation: 'mulligansWithCoin'
                                             },
                                             {
-                                                relation: 'cardsWithoutCoin'
+                                                relation: 'mulligansWithoutCoin'
                                             }
                                         ]
                                     }
                                 })
                                 .$promise
                                 .then(function (mulligans) {
-//                                    console.log('mullies: ', mulligans);
                                     deckNoMulligans.mulligans = mulligans;
-//                                    console.log('deck in resolve: ', deck);
+                                    console.log('deck in resolve: ', deckNoMulligans);
                                     return deckNoMulligans;
                                 })
                                 .catch(function (err) {

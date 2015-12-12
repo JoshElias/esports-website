@@ -9025,6 +9025,27 @@ angular.module('app.controllers', ['ngCookies'])
                         direction: 1
                     }
                 ];
+				
+				var mulligansWithCoin = [];
+				angular.forEach(deck.mulligans, function(mulligan) {
+					
+					angular.forEach(mulligan.mulligansWithCoin, function(cardWithCoin, index) {
+						var cardMulligan = {
+							cardId: cardWithCoin.id
+						};
+						mulligan.mulligansWithCoin[index] = cardMulligan;
+					});
+					
+					angular.forEach(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, index) {
+						var cardMulligan = {
+							cardId: cardWithoutCoin.id
+						};
+						mulligan.mulligansWithoutCoin[index] = cardMulligan;
+					});
+					
+				});
+				
+				console.log('deck.mulligans:', deck.mulligans);
                 
                 Deck.create(deck)
                 .$promise
