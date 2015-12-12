@@ -10,7 +10,7 @@
     "guideId": {
       "type:": "string"
     },
-    "guideHeroId": {
+    "heroId": {
       "type": "string"
     },
     "talentId": {
@@ -27,10 +27,10 @@
       "model": "guide",
       "foreignKey": "guideId"
     },
-    "guideHero": {
+    "hero": {
       "type": "belongsTo",
-      "model": "guide",
-      "foreignKey": "guideHeroId"
+      "model": "hero",
+      "foreignKey": "heroId"
     },
     "talent" : {
       "type": "belongsTo",

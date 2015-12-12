@@ -30,14 +30,9 @@
     "talents": {
       "type": "hasMany",
       "model": "talent",
-      "foreignKey": "guideHeroId",
+      "foreignKey": "guideId",
       "through": "guideTalent",
       "keyThrough": "talentId"
-    },
-    "guideTalents": {
-      "type": "hasMany",
-      "model": "guideTalent",
-      "foreignKey": "guideHeroId"
     }
   },
   "acls": [],

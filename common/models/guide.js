@@ -8,7 +8,7 @@ module.exports = function(Guide) {
     Guide.observe("persist", utils.convertObjectIds(foreignKeys));
 
 
-    Guide.observe("before save", utils.validateYoutubeId));
+    Guide.observe("before save", utils.validateYoutubeId);
 
 
     var premiumFields = ["allowComments", "description", "chapters",
@@ -32,7 +32,7 @@ module.exports = function(Guide) {
         var Role = Guide.app.models.Role;
         var RoleMapping = Guide.app.models.RoleMapping;
         var User = Guide.app.models.user;
-      
+
         console.log("BEFORE", ctx.result);
 
         // sets the private fields to false
@@ -63,11 +63,11 @@ module.exports = function(Guide) {
                         }
                     }
                 }
-              
+
                 if (typeof answer !== "undefined") {
                   ctx.result = answer;
                 }
-              
+
                 console.log("AFTER", ctx.result);
             }
             finalCb();
