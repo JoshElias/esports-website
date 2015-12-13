@@ -91,7 +91,8 @@
     "comments": {
       "type": "hasMany",
       "model": "comment",
-      "foreignKey": "guideId"
+      "foreignKey": "guideId",
+      "isChild": true
     },
     "maps": {
       "type": "hasAndBelongsToMany",
@@ -100,7 +101,8 @@
     "guideHeroes": {
       "type": "hasMany",
       "model": "guideHero",
-      "foreignKey": "guideId"
+      "foreignKey": "guideId",
+      "isChild": true
     },
     "guideTalents": {
       "type": "hasMany",

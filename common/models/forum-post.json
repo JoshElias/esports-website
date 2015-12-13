@@ -57,12 +57,14 @@
     "forumThread": {
       "type": "belongsTo",
       "model": "forumThread",
-      "foreignKey": "forumThreadId"
+      "foreignKey": "forumThreadId",
+      "isChild": true
     },
     "comments": {
       "type": "hasMany",
       "model": "comment",
-      "foreignKey": "forumPostId"
+      "foreignKey": "forumPostId",
+      "isChild": true
     }
   },
   "acls": [

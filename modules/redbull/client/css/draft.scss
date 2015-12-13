@@ -263,40 +263,91 @@
                     position: absolute;
                     left: 50%;
                     top: 50%;
-                    width: 188px;
-                    height: 285px;
+                    width: 251px;
+                    height: 350px;
                     transition: transform 300ms;
                     -webkit-transition: -webkit-transform 300ms;
 
                     &:nth-child(1) {
-                        margin-left: -94px;
-                        margin-top: -332px;
+                        //margin-left: -94px;
+                        //margin-top: -332px;
+                        margin-left: -129px;
+                        margin-top: -414px;
                     }
                     &:nth-child(2) {
-                        margin-left: -296px;
-                        margin-top: -261px;
+                        //margin-left: -296px;
+                        //margin-top: -261px;
+                        margin-left: -374px;
+                        margin-top: -288px;
                     }
                     &:nth-child(3) {
+                        //margin-left: 121px;
+                        //margin-top: -254px;
                         margin-left: 121px;
-                        margin-top: -254px;
+                        margin-top: -288px;
                     }
                     &:nth-child(4) {
-                        margin-left: -210px;
-                        margin-top: 26px;
+                        //margin-left: -210px;
+                        //margin-top: 26px;
+                        margin-left: -278px;
+                        margin-top: 49px;
                     }
                     &:nth-child(5) {
+                        //margin-left: 25px;
+                        //margin-top: 26px;
                         margin-left: 25px;
-                        margin-top: 26px;
+                        margin-top: 49px;
                     }
 
                     .card-glow {
                         position: absolute;
-                        left: 27px;
-                        top: 43px;
-                        width: 145px;
-                        height: 215px;
-                        transition: box-shadow 1000ms;
-                        -webkit-transition: box-shadow 1000ms;
+                        left: 30px;
+                        top: 44px;
+                        width: 195px;
+                        height: 288px;
+                        border-radius: 10px;
+                        //left: 38px;
+                        //top: 53px;
+                        //width: 182px;
+                        //height: 272px;
+                        transition: box-shadow 500ms;
+                        -webkit-transition: box-shadow 500ms;
+                        
+                        &.league-of-explorers {
+                            left: 30px;
+                            top: 44px;
+                            width: 191px;
+                            height: 288px;
+                        }
+
+                        &.blackrock-mountain {
+                            left: 30px;
+                            top: 44px;
+                            width: 195px;
+                            height: 288px;
+                        }
+
+                        &.naxxramas {
+                            left: 30px;
+                            top: 44px;
+                            width: 191px;
+                            height: 288px;
+                        }
+
+                        &.goblins-vs-gnomes {
+                            left: 30px;
+                            top: 44px;
+                            width: 191px;
+                            height: 288px;
+                        }
+
+                        &.the-grand-tournament {
+                            left: 30px;
+                            top: 44px;
+                            width: 193px;
+                            height: 288px;
+                        }
+                        
                     }
 
                     &:not(.flipped-left):not(.flipped-right):hover {
@@ -319,12 +370,44 @@
                     }
 
                     .card-back {
+                        width: 251px;
+                        height: 350px;
+                        pointer-events: none;
                         backface-visibility: hidden;
                         -webkit-backface-visibility: hidden;
                         transform: perspective(1000px) rotateY(0deg);
                         -webkit-transform: perspective(1000px) rotateY(0deg);
                         transition: transform 800ms ease-in-out 300ms;
                         -webkit-transition: -webkit-transform 800ms ease-in-out 300ms;
+                        
+                        &.league-of-explorers {
+                            background: url("../img/modules/redbull/client/img/back-loe.png") no-repeat;
+                        }
+
+                        &.blackrock-mountain {
+                            background: url("../img/modules/redbull/client/img/back-brm.png") no-repeat;
+                        }
+
+                        &.naxxramas {
+                            background: url("../img/modules/redbull/client/img/back-naxx.png") no-repeat;
+                        }
+
+                        &.goblins-vs-gnomes {
+                            background: url("../img/modules/redbull/client/img/back-gvg.png") no-repeat;
+                        }
+
+                        &.the-grand-tournament {
+                            background: url("../img/modules/redbull/client/img/back-tgt.png") no-repeat;
+                        }
+                        
+                        &.basic {
+                            background: url("../img/modules/redbull/client/img/back-basic.png") no-repeat;
+                        }
+                        
+                        &.soulbound {
+                            background: url("../img/modules/redbull/client/img/back-soulbound.png") no-repeat;
+                        }
+                        
                     }
 
                     .card-front {
@@ -341,9 +424,9 @@
                         -webkit-transition: -webkit-transform 800ms ease-in-out 300ms;
 
                         img {
-                            margin-top: 23px;
-                            width: 180px;
-                            height: 264px;
+                            width: 251px;
+                            height: 350px;
+                            pointer-events: none;
                         }
                     }
 
@@ -457,6 +540,11 @@
                     top: 18px;
                 }
             }
+            
+            a {
+                height: 50px;
+                line-height: 38px;
+            }
         }
         
         .card-pool-cards {
@@ -478,27 +566,96 @@
             .card-pool-card {
                 margin-right: 9px;
                 position: relative;
-                height: 28px;
+                height: 27px;
                 color: #FFF;
                 font-weight: bold;
-                line-height: 26px;
                 text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
                 text-decoration: none;
                 cursor: pointer;
                 border-bottom: 1px solid #000;
                 -webkit-transition: opacity .3s linear;
                 transition: opacity .3s linear;
+                background: #262626;
                 
-                &:first-child {
-                    margin-top: 2px;
+                &.druid {
+                    background: rgba(255, 125, 10, .5);
+                    
+                    &:hover {
+                        background: rgba(255, 125, 10, .8);
+                    }
                 }
                 
-                &:last-child {
-                    border-bottom: none;
-                }
+                &.hunter {
+                    background: rgba(171, 212, 115, .5);
 
+                    &:hover {
+                        background: rgba(171, 212, 115, .8);
+                    }
+                }
+                
+                &.mage {
+                    background: rgba(105, 204, 240, .5);
+
+                    &:hover {
+                        background: rgba(105, 204, 240, .8);
+                    }
+                }
+                
+                &.paladin {
+                    background: rgba(245, 140, 186, .5);
+
+                    &:hover {
+                        background: rgba(245, 140, 186, .8);
+                    }
+                }
+                
+                &.priest {
+                    background: rgba(255, 255, 255, .5);
+
+                    &:hover {
+                        background: rgba(255, 255, 255, .8);
+                    }
+                }
+                
+                &.rogue {
+                    background: rgba(255, 245, 105, .5);
+
+                    &:hover {
+                        background: rgba(255, 245, 105, .8);
+                    }
+                }
+                
+                &.shaman {
+                    background: rgba(0, 112, 222, .5);
+
+                    &:hover {
+                        background: rgba(0, 112, 222, .8);
+                    }
+                }
+                
+                &.warlock {
+                    background: rgba(148, 130, 201, .5);
+
+                    &:hover {
+                        background: rgba(148, 130, 201, .8);
+                    }
+                }
+                
+                &.warrior {
+                    background: rgba(199, 156, 110, .5);
+
+                    &:hover {
+                        background: rgba(199, 156, 110, .8);
+                    }
+                }
+                
                 &:hover {
-                    background: rgba(255,255,255,.2);
+                    background: rgba(61,60,60,1);
+                    
+                    .card-pool-card-qty,
+                    .card-pool-card-legendary {
+                        background: rgba(61,60,60,1);
+                    }
                 }
 
                 .card-pool-card-name {
@@ -506,6 +663,7 @@
                     top: 0px;
                     left: 40px;
                     height: 26px;
+                    line-height: 26px;
                     font-size: 14px;
                     z-index: 2;
                 }/* .card-pool-card-name */
@@ -540,8 +698,8 @@
                     color: #cbb800;
                     z-index: 2;
                     line-height: 26px;
-                    background: #262626;
                     border-left: 1px solid #000;
+                    background: #262626;
                 }/* .card-pool-card-qty, .card-pool-card-legendary */
 
                 .card-pool-card-legendary {

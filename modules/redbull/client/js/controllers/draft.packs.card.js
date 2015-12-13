@@ -2,6 +2,7 @@ angular.module('redbull.controllers')
 .controller('DraftPacksCardCtrl', ['$scope', '$timeout', function ($scope, $timeout){
     var vm = this;
     var playAudio = $scope.$parent.playAudio;
+    var announcerRarities = ['rare', 'epic', 'legendary'];
     
     // watch for card change to reset clicked / turned
     $scope.$watch(function () { return $scope.$parent.cards(); }, function () {
@@ -18,7 +19,13 @@ angular.module('redbull.controllers')
     // card mouse enter
     $scope.cardMouseEnter = function ($event, card) {
         if (!vm.turned) {
+            var cardRarity = card.rarity.toLowerCase();
+            
             playAudio('card_hover');
+            
+            if (announcerRarities.indexOf(cardRarity) !== -1) {
+                //playAudio('pack_aura');
+            }
         }
     };
 
@@ -34,14 +41,13 @@ angular.module('redbull.controllers')
         vm.turned = true;
         if (vm.turned && !vm.clicked) {
             vm.clicked = true;
-
+            
             var cardElement = $event.currentTarget,
-                cardRarity = card.rarity.toLowerCase(),
-                announcerRarities = ['rare', 'epic', 'legendary'];
+                cardRarity = card.rarity.toLowerCase();
 
             // flip card and inc counter
             $scope.$parent.cardFlip($event, cardElement);
-            
+
             // add to pool
             if (typeof $scope.$parent.addCardToPool === 'function') {
                 $scope.$parent.addCardToPool(card);

@@ -125,7 +125,8 @@
     "cards": {
       "type": "hasMany",
       "model": "deckCard",
-      "foreignKey": "deckId"
+      "foreignKey": "deckId",
+      "isChild": true
     },
     "comments": {
       "type": "hasMany",
@@ -135,12 +136,14 @@
     "matchups": {
       "type": "hasMany",
       "model": "deckMatchup",
-      "foreignKey": "deckId"
+      "foreignKey": "deckId",
+      "isChild": true
     },
     "mulligans": {
       "type": "hasMany",
       "model": "mulligan",
-      "foreignKey": "deckId"
+      "foreignKey": "deckId",
+      "isChild": true
     }
   },
   "acls": [
@@ -177,6 +180,29 @@
       "permission": "ALLOW",
       "property": "upsert"
     },
+
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "premium",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$admin",
+      "permission": "ALLOW",
+      "property": "premium",
+      "accessType": "WRITE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$contentProvider",
+      "permission": "ALLOW",
+      "property": "premium",
+      "accessType": "WRITE"
+    },
+
     {
       "principalType": "ROLE",
       "principalId": "$everyone",

@@ -36,6 +36,19 @@
       "foreignKey": "mulliganId",
       "through": "cardWithoutCoin"
     },
+    "mulligansWithCoin": {
+      "type": "hasMany",
+      "model": "cardWithCoin",
+      "foreignKey": "mulliganId",
+      "isChild": true
+
+    },
+    "mulligansWithoutCoin": {
+      "type": "hasMany",
+      "model": "cardWithoutCoin",
+      "foreignKey": "mulliganId",
+      "isChild": true
+    },
     "deck": {
       "type": "belongsTo",
       "model": "deck",

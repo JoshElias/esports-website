@@ -1,17 +1,7 @@
 module.exports = function(Mulligan) {
-  var utils = require("../../lib/utils");
-
-  var foreignKeys = ["deckId"];
-  Mulligan.observe("persist", function(ctx, next) {
-
-    utils.convertObjectIds(foreignKeys, ctx);
-    next();
-  });
+    var utils = require("../../lib/utils");
 
 
-
-  Mulligan.observe('before delete', function(ctx, next) {
-    var relationsToDestroy = ["cardsWithCoin", "cardsWithoutCoin"];
-    utils.destroyRelations(ctx, relationsToDestroy, next);
-  });
+    var foreignKeys = ["deckId"];
+    Mulligan.observe("persist", utils.convertObjectIds(foreignKeys));
 };

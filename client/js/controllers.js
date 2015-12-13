@@ -795,40 +795,19 @@ angular.module('app.controllers', ['ngCookies'])
         $scope.filterActivities = ['comments','articles','decks','guides','forumposts'];
         $scope.LoopBackAuth = LoopBackAuth;
         var queryFilter = [],
-            filters = {
-                comments: [
-                    'articleComment',
-                     'deckComment',
-                     'forumComment',
-                     'guideComment',
-                     'snapshotComment'
-                ],
-                articles: ['createArticle'],
-                decks: ['createDeck'],
-                guides: ['createGuide'],
-                forumposts: ['createPost']
-            }
-        
-        console.log($scope.activities);
-
-//        $scope.getActivityType = function (activity) {
-//            switch (activity.activityType) {
-//                case 'articleComment':
-//                case 'deckComment':
-//                case 'forumComment':
-//                case 'guideComment':
-//                case 'snapshotComment':
-//                    return 'comments'; break;
-//                case 'createArticle':
-//                    return 'articles'; break;
-//                case 'createDeck':
-//                    return 'decks'; break;
-//                case 'createGuide':
-//                    return 'guides'; break;
-//                case 'forumPost':
-//                    return 'forumposts'; break;
-//            }
-//        }
+          filters = {
+            comments: [
+              'articleComment',
+              'deckComment',
+              'forumComment',
+              'guideComment',
+              'snapshotComment'
+            ],
+            articles: ['createArticle'],
+            decks: ['createDeck'],
+            guides: ['createGuide'],
+            forumposts: ['createPost']
+          }
 
         $scope.isFiltered = function (type) {
             for (var i = 0; i < $scope.filterActivities.length; i++) {
@@ -840,73 +819,72 @@ angular.module('app.controllers', ['ngCookies'])
         }
 
         $scope.toggleFilter = function (filter) {
-            
-            
-            for (var i = 0; i < $scope.filterActivities.length; i++) {
-                if (filter == $scope.filterActivities[i]) {
-                    $scope.filterActivities.splice(i,1);
-                    buildFilter();
-                    $scope.loadActivities(true);
-                    console.log("TRUE toggle filter", filter, $scope.filterActivities);
-                    return;
-                }
+          for (var i = 0; i < $scope.filterActivities.length; i++) {
+            if (filter == $scope.filterActivities[i]) {
+              $scope.filterActivities.splice(i,1);
+              buildFilter();
+              console.log("TRUE toggle filter", filter, $scope.filterActivities);
+              $scope.loadActivities(true);
+              return;
             }
-            $scope.filterActivities.push(filter);
-            buildFilter();
-            console.log("FALSE toggle filter", filter, $scope.filterActivities);
-            $scope.loadActivities(true);
+          }
+          $scope.filterActivities.push(filter);
+          buildFilter();
+          console.log("FALSE toggle filter", filter, $scope.filterActivities);
+          $scope.loadActivities(true);
         }
 
         var buildFilter = function () {
-            queryFilter = [];
-            for (var i = 0; i < $scope.filterActivities.length; i++) {
-                for (var j = 0; j < filters[$scope.filterActivities[i]].length; j++) {
-                    queryFilter.push(filters[$scope.filterActivities[i]][j]);
-                }
+          queryFilter = [];
+          for (var i = 0; i < $scope.filterActivities.length; i++) {
+            for (var j = 0; j < filters[$scope.filterActivities[i]].length; j++) {
+              queryFilter.push(filters[$scope.filterActivities[i]][j]);
             }
+          }
         }
 
         $scope.loadActivities = function (isFilter) {
-            var options = {
-                    filter: {
-                        order: "createdDate DESC",
-                        limit: (!isFilter) ? 3 : $scope.activities.length,
-                        skip: $scope.activities.length,
-                        where: {
-                            authorId: $scope.user.id,
-                            isActive: true
-                        },
-                        include: [
-                            {
-                                relation: 'article'
-                            },
-                            {
-                                relation: 'deck'
-                            }
-                        ]
-                    }
-                }
-
-            if (isFilter) {
-                options.filter.where = {
+          console.log(typeof $scope.user.id);
+          var options = {
+                filter: {
+                  order: "createdDate DESC",
+                  limit: (!isFilter) ? 3 : $scope.activities.length,
+                  skip: $scope.activities.length,
+                  where: {
                     authorId: $scope.user.id,
-                    isActive: true,
-                    activityType: { inq : queryFilter }
+                    isActive: true
+                  },
+                  include: [
+                    {
+                      relation: 'article'
+                    },
+                    {
+                      relation: 'deck'
+                    }
+                  ]
                 }
-            }
+              }
 
-            Activity.find(options)
-            .$promise
-            .then(function (data) {
-                console.log(data);
-                $scope.activities = $scope.activities.concat(data);
-            });
+          if (isFilter) {
+            options.filter.where = {
+              authorId: $scope.user.id,
+              isActive: true,
+              activityType: { inq : queryFilter }
+            }
+          }
+
+          Activity.find(options)
+          .$promise
+          .then(function (data) {
+            console.log('DATA', data);
+            $scope.activities = $scope.activities.concat(data);
+          });
         }
 
         $scope.activities.forEach(function (activity) {
-            activity.getActivity = function () {
-                return $sce.trustAsHtml(activity.activity);
-            };
+          activity.getActivity = function () {
+            return $sce.trustAsHtml(activity.activity);
+          };
         });
 
 //            $scope.loadActivities = function () {
@@ -2479,11 +2457,11 @@ angular.module('app.controllers', ['ngCookies'])
 
             // article types
             $scope.articleTypes = [
-                    { name: 'Tempo Storm', value: 'ts' },
-                    { name: 'Hearthstone', value: 'hs' },
-                    { name: 'Heroes of the Storm', value: 'hots' },
-                    { name: 'Overwatch', value: 'overwatch' }
-                ];
+				{ name: 'Tempo Storm', value: 'ts' },
+				{ name: 'Hearthstone', value: 'hs' },
+				{ name: 'Heroes of the Storm', value: 'hots' },
+				{ name: 'Overwatch', value: 'overwatch' }
+			];
 
             // select options
             $scope.articleFeatured =
@@ -2648,9 +2626,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminArticleListCtrl', ['$scope', '$q', '$timeout', 'AdminArticleService', 'AlertService', 'AjaxPagination', 'paginationParams', 'articles', 'articlesCount', 'Article',
-        function ($scope, $q, $timeout, AdminArticleService, AlertService, AjaxPagination, paginationParams, articles, articlesCount, Article) {
-
+    .controller('AdminArticleListCtrl', ['$scope', '$q', '$timeout', 'AdminArticleService', 'AlertService', 'AjaxPagination', 'paginationParams', 'articles', 'articlesCount', 'Article', 'authors',
+        function ($scope, $q, $timeout, AdminArticleService, AlertService, AjaxPagination, paginationParams, articles, articlesCount, Article, authors) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -2671,33 +2648,52 @@ angular.module('app.controllers', ['ngCookies'])
             // pagination
             function updateArticles (page, perpage, search, callback) {
                 $scope.fetching = true;
-
-                var options = {},
-                    countOptions = {};
-
-                options.filter = {
-                    fields: paginationParams.options.filter.fields,
-                    order: "createdDate DESC",
-                    skip: ((page*perpage)-perpage),
-                    limit: perpage
-                };
+				
+                var options = {
+					filter: {
+						fields: paginationParams.options.filter.fields,
+						order: paginationParams.options.filter.order,
+						skip: ((page*perpage)-perpage),
+						limit: perpage,
+						where: {}
+					}
+				};
+				
+                var countOptions = {
+					where: {}
+				};
+				
+				// if queries exist, iniiate empty arrays
+                if (search.length > 0) {
+                    options.filter.where.or = [];
+                    countOptions.where.or = [];
+                }
+                
+                if ($scope.filterAuthor.length > 0 
+                    || $scope.filterType.length > 0) {
+                    options.filter.where.and = [];
+                    countOptions.where.and = [];
+                }
 
                 if ($scope.search.length > 0) {
-                    options.filter.where = {
-                        or: [
-                            { title: { regexp: search } },
-                            { description: { regexp: search } },
-                            { content: { regexp: search } }
-                        ]
-                    }
-                    countOptions.where = {
-                        or: [
-                            { title: { regexp: search } },
-                            { description: { regexp: search } },
-                            { content: { regexp: search } }
-                        ]
-                    }
+					options.filter.where.or.push({ title: { regexp: search } });
+					options.filter.where.or.push({ description: { regexp: search } });
+					options.filter.where.or.push({ content: { regexp: search } });
+					
+					countOptions.where.or.push({ title: { regexp: search } });
+					countOptions.where.or.push({ description: { regexp: search } });
+					countOptions.where.or.push({ content: { regexp: search } });
                 }
+				
+				if ($scope.filterAuthor.length > 0) {
+					options.filter.where.and.push({ authorId: $scope.filterAuthor });
+					countOptions.where.and.push({ authorId: $scope.filterAuthor });
+				}
+				
+				if ($scope.filterType.length > 0) {
+					options.filter.where.and.push({ articleType: $scope.filterType });
+					countOptions.where.and.push({ articleType: $scope.filterType });
+				}
                 
                 AjaxPagination.update(Article, options, countOptions, function (err, data, count) {
                     $scope.fetching = false;
@@ -2723,6 +2719,27 @@ angular.module('app.controllers', ['ngCookies'])
                     return d.promise;
                 }
             );
+            
+            // article types
+            $scope.articleTypes = [
+				{ name: 'All Articles', value: '' },
+				{ name: 'Tempo Storm', value: 'ts' },
+				{ name: 'Hearthstone', value: 'hs' },
+				{ name: 'Heroes of the Storm', value: 'hots' },
+				{ name: 'Overwatch', value: 'overwatch' }
+			];
+			
+			$scope.articleAuthors = [
+				{ name: 'All Authors', value: '' }
+			];
+			angular.forEach(authors, function (author) {
+				$scope.articleAuthors.push({ 
+					name: author.username,
+					value: author.id
+				});
+			});
+			
+			$scope.filterType = $scope.filterAuthor = '';
 
             // delete article
             $scope.deleteArticle = function deleteArticle(article) {
@@ -5340,68 +5357,6 @@ angular.module('app.controllers', ['ngCookies'])
                     return d.promise;
                 }
             );
-            
-            $scope.searchUsers = function() {
-                updateUsers(1, $scope.perpage, $scope.search, function(err, data) {
-                    if (err) return console.log('err: ', err);
-                });
-            };
-
-            // pagination
-            function updateUsers (page, perpage, search, callback) {
-                $scope.fetching = true;
-
-                var options = {},
-                    countOptions = {};
-
-                options.filter = {
-                    fields: paginationParams.options.filter.fields,
-                    order: "createdDate DESC",
-                    skip: ((page*perpage)-perpage),
-                    limit: paginationParams.perpage
-                };
-
-                if ($scope.search.length > 0) {
-                    options.filter.where = {
-                        or: [
-                            { email: { regexp: search } },
-                            { username: { regexp: search } },
-                            { twitchID: { regexp: search } }
-                        ]
-                    }
-                    countOptions.where = {
-                        or: [
-                            { email: { regexp: search } },
-                            { username: { regexp: search } },
-                            { twitchID: { regexp: search } }
-                        ]
-                    }
-                }
-                
-                AjaxPagination.update(User, options, countOptions, function (err, data, count) {
-                    $scope.fetching = false;
-                    if (err) return console.log('got err:', err);
-                    $scope.userPagination.page = page;
-                    $scope.userPagination.perpage = perpage;
-                    $scope.users = data;
-                    $scope.userPagination.total = count.count;
-                    if (callback) {
-                        callback(null, count);
-                    }
-                });
-            }
-
-            // page flipping
-            $scope.userPagination = AjaxPagination.new($scope.perpage, $scope.total,
-                function (page, perpage) {
-                    var d = $q.defer();
-                    updateUsers(page, perpage, $scope.search, function (err, count) {
-                        if (err) return console.log('pagination err:', err);
-                        d.resolve(count.count);
-                    });
-                    return d.promise;
-                }
-            );
 
             // delete vod
             $scope.deleteVod = function deleteVod(vod) {
@@ -5657,8 +5612,8 @@ angular.module('app.controllers', ['ngCookies'])
 //                        async.each(deck.mulligans, function (mulligan, mulliganCB) {
 //                            console.log('current mulligan: ', mulligan);
 //
-//                            // Destroy CardsWithCoin
-//                            Mulligan.cardsWithCoin.destroyAll({
+//                            // Destroy mulligansWithCoin
+//                            Mulligan.mulligansWithCoin.destroyAll({
 //                                id: mulligan.id
 //                            })
 //                            .$promise
@@ -5670,8 +5625,8 @@ angular.module('app.controllers', ['ngCookies'])
 //                                mulliganCB(err);
 //                            });
 //
-//                            // Destroy CardsWithoutCoin
-//                            Mulligan.cardsWithoutCoin.destroyAll({
+//                            // Destroy mulligansWithoutCoin
+//                            Mulligan.mulligansWithoutCoin.destroyAll({
 //                                id: mulligan.id
 //                            })
 //                            .$promise
@@ -6221,19 +6176,19 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.isMulliganSet = function (mulligan) {
-                return (mulligan.cardsWithCoin.length || mulligan.cardsWithCoin.instructions.length || mulligan.cardsWithoutCoin.length || mulligan.cardsWithoutCoin.instructions.length);
+                return (mulligan.mulligansWithCoin.length || mulligan.mulligansWithCoin.instructions.length || mulligan.mulligansWithoutCoin.length || mulligan.mulligansWithoutCoin.instructions.length);
             };
 
             $scope.isMulliganCard = function (coin, card) {
                 if (coin) {
-                    for (var i = 0; i < $scope.currentMulligan.cardsWithCoin.length; i++) {
-                        if ($scope.currentMulligan.cardsWithCoin[i].id === card.card.id) {
+                    for (var i = 0; i < $scope.currentMulligan.mulligansWithCoin.length; i++) {
+                        if ($scope.currentMulligan.mulligansWithCoin[i].id === card.card.id) {
                             return true;
                         }
                     }
                 } else {
-                    for (var i = 0; i < $scope.currentMulligan.cardsWithoutCoin.length; i++) {
-                        if ($scope.currentMulligan.cardsWithoutCoin[i].id === card.card.id) {
+                    for (var i = 0; i < $scope.currentMulligan.mulligansWithoutCoin.length; i++) {
+                        if ($scope.currentMulligan.mulligansWithoutCoin[i].id === card.card.id) {
                             return true;
                         }
                     }
@@ -6258,7 +6213,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getMulliganCards = function (coin) {
                 if (!$scope.currentMulligan) { return false; }
                 var m = $scope.currentMulligan;
-                return (coin) ? m.cardsWithCoin : m.cardsWithoutCoin;
+                return (coin) ? m.mulligansWithCoin : m.mulligansWithoutCoin;
             };
 
             $scope.cardLeft = function ($index, coin) {
@@ -6282,7 +6237,6 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save Hearthstone deck
             $scope.saveDeck = function (deck) {
-                return;
                 console.log('deck to create: ', deck);
                 $scope.deckSubmitting = true;
                 
@@ -6317,11 +6271,11 @@ angular.module('app.controllers', ['ngCookies'])
                             hasMulligan = true;
                             break;
                         }
-                        if(deck.mulligans[i].cardsWithCoin.length > 0) {
+                        if(deck.mulligans[i].mulligansWithCoin.length > 0) {
                             hasMulligan = true;
                             break;
                         }
-                        if(deck.mulligans[i].cardsWithoutCoin.length > 0) {
+                        if(deck.mulligans[i].mulligansWithoutCoin.length > 0) {
                             hasMulligan = true;
                             break;
                         }
@@ -6347,8 +6301,8 @@ angular.module('app.controllers', ['ngCookies'])
                                         for(var i = 0; i < deck.mulligans.length; i++) {
                                             deck.mulligans[i].instructionsWithCoin = '';
                                             deck.mulligans[i].instructionsWithoutCoin = '';
-                                            deck.mulligans[i].cardsWithCoin = [];
-                                            deck.mulligans[i].cardsWithoutCoin = [];
+                                            deck.mulligans[i].mulligansWithCoin = [];
+                                            deck.mulligans[i].mulligansWithoutCoin = [];
                                         }
                                         deck.chapters = [];
                                         deck.matchups = [];
@@ -6451,7 +6405,7 @@ angular.module('app.controllers', ['ngCookies'])
                             .then(function (mulliganCreated) {
 //                                console.log('mulligan created: ', mulliganCreated);
                                 
-                                async.each(mulligan.cardsWithCoin, function(cardWithCoin, cardWithCoinCB) {
+                                async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
                                     console.log('cardWithCoin: ', cardWithCoin);
                                     var realCardWithCoin = {
                                         cardId: cardWithCoin.id,
@@ -6476,7 +6430,7 @@ angular.module('app.controllers', ['ngCookies'])
                                     });
                                 });
                                 
-                                async.each(mulligan.cardsWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
+                                async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
 //                                    console.log('cardWithoutCoin: ', cardWithoutCoin);
                                     var realCardWithoutCoin = {
                                         cardId: cardWithoutCoin.id,
@@ -6962,7 +6916,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.isMulliganSet = function (mulligan) {
-                return (mulligan.cardsWithCoin.length || mulligan.instructionsWithCoin.length || mulligan.cardsWithoutCoin.length || mulligan.instructionsWithoutCoin.length);
+                return (mulligan.mulligansWithCoin.length || mulligan.instructionsWithCoin.length || mulligan.mulligansWithoutCoin.length || mulligan.instructionsWithoutCoin.length);
             };
 
             //chapters
@@ -7015,7 +6969,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getMulliganCards = function (coin) {
                 if (!$scope.currentMulligan) { return false; }
                 var m = $scope.currentMulligan;
-                return (coin) ? m.cardsWithCoin : m.cardsWithoutCoin;
+                return (coin) ? m.mulligansWithCoin : m.mulligansWithoutCoin;
             };
 
             $scope.cardLeft = function ($index, coin) {
@@ -7028,14 +6982,14 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.isMulliganCard = function (coin, card) {
                 if (coin) {
-                    for (var i = 0; i < $scope.currentMulligan.cardsWithCoin.length; i++) {
-                        if ($scope.currentMulligan.cardsWithCoin[i].id === card.card.id) {
+                    for (var i = 0; i < $scope.currentMulligan.mulligansWithCoin.length; i++) {
+                        if ($scope.currentMulligan.mulligansWithCoin[i].id === card.card.id) {
                             return true;
                         }
                     }
                 } else {
-                    for (var i = 0; i < $scope.currentMulligan.cardsWithoutCoin.length; i++) {
-                        if ($scope.currentMulligan.cardsWithoutCoin[i].id === card.card.id) {
+                    for (var i = 0; i < $scope.currentMulligan.mulligansWithoutCoin.length; i++) {
+                        if ($scope.currentMulligan.mulligansWithoutCoin[i].id === card.card.id) {
                             return true;
                         }
                     }
@@ -7095,11 +7049,11 @@ angular.module('app.controllers', ['ngCookies'])
                             hasMulligan = true;
                             break;
                         }
-                        if(deck.mulligans[i].cardsWithCoin.length > 0) {
+                        if(deck.mulligans[i].mulligansWithCoin.length > 0) {
                             hasMulligan = true;
                             break;
                         }
-                        if(deck.mulligans[i].cardsWithoutCoin.length > 0) {
+                        if(deck.mulligans[i].mulligansWithoutCoin.length > 0) {
                             hasMulligan = true;
                             break;
                         }
@@ -7125,8 +7079,8 @@ angular.module('app.controllers', ['ngCookies'])
                                         for(var i = 0; i < deck.mulligans.length; i++) {
                                             deck.mulligans[i].instructionsWithCoin = '';
                                             deck.mulligans[i].instructionsWithoutCoin = '';
-                                            deck.mulligans[i].cardsWithCoin = [];
-                                            deck.mulligans[i].cardsWithoutCoin = [];
+                                            deck.mulligans[i].mulligansWithCoin = [];
+                                            deck.mulligans[i].mulligansWithoutCoin = [];
                                         }
                                         deck.chapters = [];
                                         deck.matchups = [];
@@ -7226,14 +7180,14 @@ angular.module('app.controllers', ['ngCookies'])
                                 console.log('currentMulligan: ', mulligan);
                                 
                                 // Destroy all cards with coin and recreate them
-                                Mulligan.cardsWithCoin.destroyAll({
+                                Mulligan.mulligansWithCoin.destroyAll({
                                     id: mulligan.id
                                 })
                                 .$promise
                                 .then(function (deleted) {
                                     console.log('deleted: ', deleted);
                                     
-                                    async.each(mulligan.cardsWithCoin, function(cardWithCoin, cardWithCoinCB) {
+                                    async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
                                         var realCardWithCoin = {
                                             cardId: cardWithCoin.id,
                                             mulliganId: currentMulligan.id,
@@ -7265,14 +7219,14 @@ angular.module('app.controllers', ['ngCookies'])
                                 });
                                 
                                 // Destroy all cards without coin and recreate them
-                                Mulligan.cardsWithoutCoin.destroyAll({
+                                Mulligan.mulligansWithoutCoin.destroyAll({
                                     id: mulligan.id
                                 })
                                 .$promise
                                 .then(function (deleted) {
                                     console.log('deleted: ', deleted);
                                     
-                                    async.each(mulligan.cardsWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
+                                    async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
                                         var realCardWithoutCoin = {
                                             cardId: cardWithoutCoin.id,
                                             mulliganId: currentMulligan.id,
@@ -7542,7 +7496,6 @@ angular.module('app.controllers', ['ngCookies'])
                     expiryDate: d
                 },
                 isProvider: false,
-                providerDescription: '',
                 isAdmin: false,
                 isActive: true
             };
@@ -8509,8 +8462,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     }])
-    .controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService',
-        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService) {
+    .controller('DeckBuilderCtrl', ['$stateParams', '$q', '$state', '$scope', '$timeout', '$compile', '$window', 'LoginModalService', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'UserService', 'AuthenticationService', 'SubscriptionService', 'Card', 'neutralCardsList', 'classCardsList', 'classCardsCount', 'neutralCardsCount', 'toStep', 'Deck', 'User', 'Util', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'userRoles', 'EventService', 'AlertService',
+        function ($stateParams, $q, $state, $scope, $timeout, $compile, $window, LoginModalService, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, UserService, AuthenticationService, SubscriptionService, Card, neutralCardsList, classCardsList, classCardsCount, neutralCardsCount, toStep, Deck, User, Util, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, userRoles, EventService, AlertService) {
             // redirect back to class pick if no data
 //        if (!data || !data.success) { $state.transitionTo('app.hs.deckBuilder.class'); return false; }
             
@@ -8909,19 +8862,19 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.isMulliganSet = function (mulligan) {
-                return (mulligan.cardsWithCoin.length || mulligan.cardsWithCoin.instructions.length || mulligan.cardsWithoutCoin.length || mulligan.cardsWithoutCoin.instructions.length);
+                return (mulligan.mulligansWithCoin.length || mulligan.mulligansWithCoin.instructions.length || mulligan.mulligansWithoutCoin.length || mulligan.mulligansWithoutCoin.instructions.length);
             };
 
             $scope.isMulliganCard = function (coin, card) {
                 if (coin) {
-                    for (var i = 0; i < $scope.currentMulligan.cardsWithCoin.length; i++) {
-                        if ($scope.currentMulligan.cardsWithCoin[i].id === card.card.id) {
+                    for (var i = 0; i < $scope.currentMulligan.mulligansWithCoin.length; i++) {
+                        if ($scope.currentMulligan.mulligansWithCoin[i].id === card.card.id) {
                             return true;
                         }
                     }
                 } else {
-                    for (var i = 0; i < $scope.currentMulligan.cardsWithoutCoin.length; i++) {
-                        if ($scope.currentMulligan.cardsWithoutCoin[i].id === card.card.id) {
+                    for (var i = 0; i < $scope.currentMulligan.mulligansWithoutCoin.length; i++) {
+                        if ($scope.currentMulligan.mulligansWithoutCoin[i].id === card.card.id) {
                             return true;
                         }
                     }
@@ -8946,7 +8899,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getMulliganCards = function (coin) {
                 if (!$scope.currentMulligan) { return false; }
                 var m = $scope.currentMulligan;
-                return (coin) ? m.cardsWithCoin : m.cardsWithoutCoin;
+                return (coin) ? m.mulligansWithCoin : m.mulligansWithoutCoin;
             };
 
             $scope.cardLeft = function ($index, coin) {
@@ -9004,11 +8957,11 @@ angular.module('app.controllers', ['ngCookies'])
                             hasMulligan = true;
                             break;
                         }
-                        if(deck.mulligans[i].cardsWithCoin.length > 0) {
+                        if(deck.mulligans[i].mulligansWithCoin.length > 0) {
                             hasMulligan = true;
                             break;
                         }
-                        if(deck.mulligans[i].cardsWithoutCoin.length > 0) {
+                        if(deck.mulligans[i].mulligansWithoutCoin.length > 0) {
                             hasMulligan = true;
                             break;
                         }
@@ -9034,8 +8987,8 @@ angular.module('app.controllers', ['ngCookies'])
                                         for(var i = 0; i < deck.mulligans.length; i++) {
                                             deck.mulligans[i].instructionsWithCoin = '';
                                             deck.mulligans[i].instructionsWithoutCoin = '';
-                                            deck.mulligans[i].cardsWithCoin = [];
-                                            deck.mulligans[i].cardsWithoutCoin = [];
+                                            deck.mulligans[i].mulligansWithCoin = [];
+                                            deck.mulligans[i].mulligansWithoutCoin = [];
                                         }
                                         deck.chapters = [];
                                         deck.matchups = [];
@@ -9072,14 +9025,43 @@ angular.module('app.controllers', ['ngCookies'])
                         direction: 1
                     }
                 ];
+				
+				var mulligansWithCoin = [];
+				angular.forEach(deck.mulligans, function(mulligan) {
+					
+					angular.forEach(mulligan.mulligansWithCoin, function(cardWithCoin, index) {
+						var cardMulligan = {
+							cardId: cardWithCoin.id
+						};
+						mulligan.mulligansWithCoin[index] = cardMulligan;
+					});
+					
+					angular.forEach(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, index) {
+						var cardMulligan = {
+							cardId: cardWithoutCoin.id
+						};
+						mulligan.mulligansWithoutCoin[index] = cardMulligan;
+					});
+					
+				});
+				
+				console.log('deck.mulligans:', deck.mulligans);
                 
                 Deck.create(deck)
                 .$promise
                 .then(function (deckCreated) {
                     console.log('deck created: ', deckCreated);
+                    $scope.deckSubmitting = false;
+                    $state.transitionTo('app.hs.decks.deck', { slug: deckCreated.slug });
                 })
                 .catch(function (err) {
                     console.log('deck create err: ', err);
+                    $scope.deckSubmitting = false;
+                    AlertService.setError({
+                        show: true,
+                        lbErr: err,
+                        msg: 'Unable to save deck.'
+                    });
                 });
                 
 //                async.waterfall([
@@ -9148,7 +9130,7 @@ angular.module('app.controllers', ['ngCookies'])
 //                            .then(function (mulliganCreated) {
 //                                console.log('mulligan created: ', mulliganCreated);
 //                                
-//                                async.each(mulligan.cardsWithCoin, function(cardWithCoin, cardWithCoinCB) {
+//                                async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
 //                                    console.log('cardWithCoin: ', cardWithCoin);
 //                                    var realCardWithCoin = {
 //                                        cardId: cardWithCoin.id,
@@ -9173,7 +9155,7 @@ angular.module('app.controllers', ['ngCookies'])
 //                                    });
 //                                });
 //                                
-//                                async.each(mulligan.cardsWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
+//                                async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
 ////                                    console.log('cardWithoutCoin: ', cardWithoutCoin);
 //                                    var realCardWithoutCoin = {
 //                                        cardId: cardWithoutCoin.id,
@@ -9272,24 +9254,6 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             var box;
-//            $scope.saveDeck = function () {
-//                if (!$scope.deck.validDeck() || !$scope.deck.validVideo()) { return false; }
-//                if (!$scope.app.user.isLogged()) {
-//                    LoginModalService.showModal('login');
-//                } else {
-//                    $scope.deck.heroName = $scope.getActiveDeckName();
-//                    DeckBuilder.saveDeck($scope.deck).success(function (data) {
-//                        if (data.success) {
-//                            $scope.app.settings.deck = null;
-//                            $state.transitionTo('app.hs.decks.deck', { slug: data.slug });
-//                        } else {
-//                            $scope.errors = data.errors;
-//                            $scope.showError = true;
-//                            $window.scrollTo(0,0);
-//                        }
-//                    });
-//                }
-//            };
 
             // login for modal
 //        $scope.login = function login(email, password) {
@@ -9711,7 +9675,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.isMulliganSet = function (mulligan) {
-                return (mulligan.cardsWithCoin.length || mulligan.instructionsWithCoin.length || mulligan.cardsWithoutCoin.length || mulligan.instructionsWithoutCoin.length);
+                return (mulligan.mulligansWithCoin.length || mulligan.instructionsWithCoin.length || mulligan.mulligansWithoutCoin.length || mulligan.instructionsWithoutCoin.length);
             };
 
             //chapters
@@ -9764,7 +9728,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getMulliganCards = function (coin) {
                 if (!$scope.currentMulligan) { return false; }
                 var m = $scope.currentMulligan;
-                return (coin) ? m.cardsWithCoin : m.cardsWithoutCoin;
+                return (coin) ? m.mulligansWithCoin : m.mulligansWithoutCoin;
             };
 
             $scope.cardLeft = function ($index, coin) {
@@ -9777,14 +9741,14 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.isMulliganCard = function (coin, card) {
                 if (coin) {
-                    for (var i = 0; i < $scope.currentMulligan.cardsWithCoin.length; i++) {
-                        if ($scope.currentMulligan.cardsWithCoin[i].id === card.card.id) {
+                    for (var i = 0; i < $scope.currentMulligan.mulligansWithCoin.length; i++) {
+                        if ($scope.currentMulligan.mulligansWithCoin[i].id === card.card.id) {
                             return true;
                         }
                     }
                 } else {
-                    for (var i = 0; i < $scope.currentMulligan.cardsWithoutCoin.length; i++) {
-                        if ($scope.currentMulligan.cardsWithoutCoin[i].id === card.card.id) {
+                    for (var i = 0; i < $scope.currentMulligan.mulligansWithoutCoin.length; i++) {
+                        if ($scope.currentMulligan.mulligansWithoutCoin[i].id === card.card.id) {
                             return true;
                         }
                     }
@@ -9844,11 +9808,11 @@ angular.module('app.controllers', ['ngCookies'])
                             hasMulligan = true;
                             break;
                         }
-                        if(deck.mulligans[i].cardsWithCoin.length > 0) {
+                        if(deck.mulligans[i].mulligansWithCoin.length > 0) {
                             hasMulligan = true;
                             break;
                         }
-                        if(deck.mulligans[i].cardsWithoutCoin.length > 0) {
+                        if(deck.mulligans[i].mulligansWithoutCoin.length > 0) {
                             hasMulligan = true;
                             break;
                         }
@@ -9874,8 +9838,8 @@ angular.module('app.controllers', ['ngCookies'])
                                         for(var i = 0; i < deck.mulligans.length; i++) {
                                             deck.mulligans[i].instructionsWithCoin = '';
                                             deck.mulligans[i].instructionsWithoutCoin = '';
-                                            deck.mulligans[i].cardsWithCoin = [];
-                                            deck.mulligans[i].cardsWithoutCoin = [];
+                                            deck.mulligans[i].mulligansWithCoin = [];
+                                            deck.mulligans[i].mulligansWithoutCoin = [];
                                         }
                                         deck.chapters = [];
                                         deck.matchups = [];
@@ -9974,14 +9938,14 @@ angular.module('app.controllers', ['ngCookies'])
                             .then(function (currentMulligan) {
                                 console.log('currentMulligan: ', mulligan);
                                 // Destroy all cards with coin and recreate them
-                                Mulligan.cardsWithCoin.destroyAll({
+                                Mulligan.mulligansWithCoin.destroyAll({
                                     id: mulligan.id
                                 })
                                 .$promise
                                 .then(function (deleted) {
                                     console.log('deleted: ', deleted);
                                     
-                                    async.each(mulligan.cardsWithCoin, function(cardWithCoin, cardWithCoinCB) {
+                                    async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
                                         var realCardWithCoin = {
                                             cardId: cardWithCoin.id,
                                             mulliganId: currentMulligan.id,
@@ -10013,14 +9977,14 @@ angular.module('app.controllers', ['ngCookies'])
                                 });
                                 
                                 // Destroy all cards without coin and recreate them
-                                Mulligan.cardsWithoutCoin.destroyAll({
+                                Mulligan.mulligansWithoutCoin.destroyAll({
                                     id: mulligan.id
                                 })
                                 .$promise
                                 .then(function (deleted) {
                                     console.log('deleted: ', deleted);
                                     
-                                    async.each(mulligan.cardsWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
+                                    async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
                                         var realCardWithoutCoin = {
                                             cardId: cardWithoutCoin.id,
                                             mulliganId: currentMulligan.id,
@@ -11202,9 +11166,9 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.isMulliganSet = function (mulligan) {
 //                console.log('mulligan: ',mulligan);
-                return (mulligan.cardsWithCoin.length > 0 
+                return (mulligan.mulligansWithCoin.length > 0 
                         || mulligan.instructionsWithCoin.length > 0 
-                        || mulligan.cardsWithoutCoin.length > 0 
+                        || mulligan.mulligansWithoutCoin.length > 0 
                         || mulligan.instructionsWithoutCoin.length > 0);
             };
 
@@ -11224,7 +11188,7 @@ angular.module('app.controllers', ['ngCookies'])
                 if (!$scope.anyMulliganSet()) { return false; }
                 if (!$scope.currentMulligan) { return false; }
 //                console.log('coin: ', $scope.coin);
-                var cards = ($scope.coin) ? $scope.currentMulligan.cardsWithCoin : $scope.currentMulligan.cardsWithoutCoin;
+                var cards = ($scope.coin) ? $scope.currentMulligan.mulligansWithCoin : $scope.currentMulligan.mulligansWithoutCoin;
                 
 //                console.log('cards: ', cards);
 //                console.log('card: ', card);
@@ -11246,7 +11210,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getMulliganCards = function () {
                 if (!$scope.currentMulligan) { return false; }
                 var m = $scope.currentMulligan;
-                return ($scope.coin) ? m.cardsWithCoin : m.cardsWithoutCoin;
+                return ($scope.coin) ? m.mulligansWithCoin : m.mulligansWithoutCoin;
             };
 
             $scope.cardLeft = function ($index) {
@@ -11452,6 +11416,7 @@ angular.module('app.controllers', ['ngCookies'])
     ])
     .controller('ForumCategoryCtrl', ['$scope', 'forumCategories', 'MetaService',
         function ($scope, forumCategories, MetaService) {
+            console.log('forumCategories: ', forumCategories);
             $scope.categories = forumCategories;
             $scope.metaservice.setOg('https://tempostorm.com/forum');
         }
@@ -12065,80 +12030,90 @@ angular.module('app.controllers', ['ngCookies'])
         }
     ])
     /* admin hots */
-    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'AjaxPagination', 'heroes', 'heroesCount',
-        function ($scope, Hero, AlertService, AjaxPagination, heroes, heroesCount) {
+    .controller('AdminHeroListCtrl', ['$scope', 'Hero', 'AlertService', 'AjaxPagination', 'heroes', 'heroesCount', 'paginationParams',
+        function ($scope, Hero, AlertService, AjaxPagination, heroes, heroesCount, paginationParams) {
             // grab alerts
-            if (AlertService.hasAlert()) {
-                $scope.success = AlertService.getSuccess();
-                AlertService.reset();
-            }
-
+//            if (AlertService.hasAlert()) {
+//                $scope.success = AlertService.getSuccess();
+//                AlertService.reset();
+//            }
+            
+            console.log('heros: ', heroes);
             // load heroes
             $scope.heroes = heroes;
             $scope.heroesCount = heroesCount;
             
-//            $scope.page = data.page;
-//            $scope.perpage = data.perpage;
-//            $scope.total = data.total;
-//            $scope.search = data.search;
+            $scope.page = paginationParams.page;
+            $scope.perpage = paginationParams.perpage;
+            $scope.total = heroesCount;
+            $scope.search = '';
 
-            function updateHeroes (page, perpage, callback) {
-                Hero.find(getQuery(false, page, perpage))
-                .$promise
-                .then(function (data) {
-                    $scope.heroPagination.total = data.total;
+           $scope.searchHeroes = function() {
+                updateHeroes(1, $scope.perpage, $scope.search, function(err, data) {
+                    if (err) return console.log('err: ', err);
+                });
+            };
+
+            // pagination
+            function updateHeroes (page, perpage, search, callback) {
+                $scope.fetching = true;
+
+                var options = {},
+                    countOptions = {};
+
+                options.filter = {
+                    fields: paginationParams.options.filter.fields,
+                    order: paginationParams.options.filter.order,
+                    skip: ((page*perpage)-perpage),
+                    limit: paginationParams.perpage
+                };
+
+                if ($scope.search.length > 0) {
+                    options.filter.where = {
+                        or: [
+                            { name: { regexp: search } },
+                            { className: { regexp: search } },
+                            { heroType: { regexp: search } },
+                            { role: { regexp: search } },
+                            { universe: { regexp: search } }
+                        ]
+                    }
+                    countOptions.where = {
+                        or: [
+                            { name: { regexp: search } },
+                            { className: { regexp: search } },
+                            { heroType: { regexp: search } },
+                            { role: { regexp: search } },
+                            { universe: { regexp: search } }
+                        ]
+                    }
+                }
+                
+                AjaxPagination.update(Hero, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
                     $scope.heroPagination.page = page;
-                    $timeout(function () {
-                        $scope.communityDecks = data; //DO THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF THIS THISHITHISLKSADF
-
-                        if (callback) {
-                            return callback(data);
-                        }
-                    });
-                }).then(function (err) {
-                    console.log("There's been an error:", err);
-                });;
-            }
-
-            $scope.heroPagination = AjaxPagination.new(12, heroesCount,
-                function (page, perpage) {
-                    var d = $q.defer();
-
-                    updateHeroes(page, perpage, function (data) {
-                        d.resolve(data.total);
-                    });
-
-                    return d.promise;
-                }
-            );
-            
-            $scope.getHeroes = function () {
-                var options = {
-                    limit: $scope.perpage,
-                    skip: (page*perpage) - perpage
-                }
-                
-                if (!_.isEmpty($scope.search)) {
-                    options.where = {};
-                    
-                    options.where.or = [
-                        { name: { regexp: $scope.search } }
-                    ]
-                }
-                
-                Hero.find(options)
-                .$promise
-                .then(function (data) {
-                    $scope.heroes = data.heroes;
-                    $scope.page = data.page;
-                    $scope.total = data.total;
+                    $scope.heroPagination.perpage = perpage;
+                    $scope.heroes = data;
+                    console.log('count: ', count);
+                    $scope.heroPagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
             }
 
-            $scope.searchHeroes = function () {
-                $scope.page = 1;
-                $scope.getHeroes();
-            }
+            // page flipping
+            $scope.heroPagination = AjaxPagination.new($scope.perpage, $scope.total,
+                function (page, perpage) {
+                    var d = $q.defer();
+                    updateHeroes(page, perpage, $scope.search, function (err, count) {
+                        if (err) return console.log('pagination err:', err);
+                        d.resolve(count.count);
+                    });
+                    return d.promise;
+                }
+            );
 
             // delete hero
             $scope.deleteHero = function deleteHero(hero) {
@@ -12640,8 +12615,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminTalentsListCtrl', ['$scope', '$compile', 'Talent', 'AlertService', 'Pagination', 'talents',
-        function ($scope, $compile, Talent, AlertService, Pagination, talents) {
+    .controller('AdminTalentsListCtrl', ['$scope', '$q', '$timeout', '$compile', 'Talent', 'AlertService', 'talents', 'talentCount', 'paginationParams', 'AjaxPagination',
+        function ($scope, $q, $timeout, $compile, Talent, AlertService, talents, talentCount, paginationParams, AjaxPagination) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -12668,10 +12643,10 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.talents = talents;
             $scope.talentTiers = [1,4,7,10,13,16,20];
             
-//            $scope.page = data.page;
-//            $scope.perpage = data.perpage;
-//            $scope.total = data.total;
-//            $scope.search = data.search;
+            $scope.page = paginationParams.page;
+            $scope.perpage = paginationParams.perpage;
+            $scope.total = talentCount;
+            $scope.search = '';
             
             $scope.openTalent = function (title, talent) {
                 $scope.currentTalent = talent || {};
@@ -12704,34 +12679,65 @@ angular.module('app.controllers', ['ngCookies'])
                 });
             }
 
-            function getTalents (page, perpage, search) {
-                var options = {
-                    filter: {
-                        skip: ($scope.perpage*$scope.page) - $scope.perpage,
-                        limit: $scope.perpage,
-                        order: "name ASC"
+            $scope.searchTalents = function() {
+                updateTalents(1, $scope.perpage, $scope.search, function(err, data) {
+                    if (err) return console.log('err: ', err);
+                });
+            };
+
+            // pagination
+            function updateTalents (page, perpage, search, callback) {
+                $scope.fetching = true;
+
+                var options = {},
+                    countOptions = {};
+
+                options.filter = {
+                    fields: paginationParams.options.filter.fields,
+                    order: paginationParams.options.filter.order,
+                    skip: ((page*perpage)-perpage),
+                    limit: paginationParams.perpage
+                };
+
+                if ($scope.search.length > 0) {
+                    options.filter.where = {
+                        or: [
+                            { name: { regexp: search } },
+                            { description: { regexp: search } },
+                        ]
+                    }
+                    countOptions.where = {
+                        or: [
+                            { name: { regexp: search } },
+                            { description: { regexp: search } },
+                        ]
                     }
                 }
                 
-                if(!_.isEmpty($scope.search)) {
-                    options.filter.where = {};
-                    
-                    options.filter.where.or = [
-                        { name: { regexp: $scope.search } }
-                    ]
-                }
-                
-                Talent.find(options)
-                .$promise
-                .then(function (talents) {
-                    $scope.talents = talents;
+                AjaxPagination.update(Talent, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
+                    $scope.talentPagination.page = page;
+                    $scope.talentPagination.perpage = perpage;
+                    $scope.talents = data;
+                    $scope.talentPagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
             }
 
-            $scope.searchTalents = function () {
-                $scope.page = 1;
-                getTalents(1, 50, $scope.search);
-            }
+            // page flipping
+            $scope.talentPagination = AjaxPagination.new($scope.perpage, $scope.total,
+                function (page, perpage) {
+                    var d = $q.defer();
+                    updateTalents(page, perpage, $scope.search, function (err, count) {
+                        if (err) return console.log('pagination err:', err);
+                        d.resolve(count.count);
+                    });
+                    return d.promise;
+                }
+            );
 
             // delete map
             $scope.deleteTalent = function deleteTalent(talent) {
@@ -12774,8 +12780,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminMapsListCtrl', ['$scope', 'Map', 'AlertService', 'Pagination', 'maps',
-        function ($scope, Map, AlertService, Pagination, maps) {
+    .controller('AdminMapsListCtrl', ['$scope', '$q', '$timeout', 'Map', 'AlertService', 'maps', 'paginationParams', 'mapCount', 'AjaxPagination',
+        function ($scope, $q, $timeout, Map, AlertService, maps, paginationParams, mapCount, AjaxPagination) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -12785,25 +12791,70 @@ angular.module('app.controllers', ['ngCookies'])
             // load maps
             $scope.maps = maps;
             
-//            $scope.page = data.page;
-//            $scope.perpage = data.perpage;
-//            $scope.total = data.total;
-//            $scope.search = data.search;
+            $scope.page = paginationParams.page;
+            $scope.perpage = paginationParams.perpage;
+            $scope.total = mapCount;
+            $scope.search = '';
 
-            $scope.getMaps = function () {
-                Map.find($scope.page, $scope.perpage, $scope.search)
-                .$promise
-                .then(function (data) {
-                    $scope.maps = data.maps;
-                    $scope.page = data.page;
-                    $scope.total = data.total;
+             $scope.searchMaps = function() {
+                updateMaps(1, $scope.perpage, $scope.search, function(err, data) {
+                    if (err) return console.log('err: ', err);
+                });
+            };
+
+            // pagination
+            function updateMaps (page, perpage, search, callback) {
+                $scope.fetching = true;
+
+                var options = {},
+                    countOptions = {};
+
+                options.filter = {
+                    fields: paginationParams.options.filter.fields,
+                    order: paginationParams.options.filter.order,
+                    skip: ((page*perpage)-perpage),
+                    limit: paginationParams.perpage
+                };
+
+                if ($scope.search.length > 0) {
+                    options.filter.where = {
+                        or: [
+                            { className: { regexp: search } },
+                            { name: { regexp: search } }
+                        ]
+                    }
+                    countOptions.where = {
+                        or: [
+                            { className: { regexp: search } },
+                            { name: { regexp: search } }
+                        ]
+                    }
+                }
+                
+                AjaxPagination.update(Map, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
+                    $scope.mapPagination.page = page;
+                    $scope.mapPagination.perpage = perpage;
+                    $scope.maps = data;
+                    $scope.mapPagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
             }
 
-            $scope.searchMaps = function () {
-                $scope.page = 1;
-                $scope.getMaps();
-            }
+            // page flipping
+            $scope.mapPagination = AjaxPagination.new($scope.perpage, $scope.total,
+                function (page, perpage) {
+                    var d = $q.defer();
+                    updateMaps(page, perpage, $scope.search, function (err, count) {
+                        if (err) return console.log('pagination err:', err);
+                        d.resolve(count.count);
+                    });
+                    return d.promise;
+                }
+            );
 
             // delete map
             $scope.deleteMap = function deleteMap(map) {
@@ -12907,8 +12958,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminHOTSGuideListCtrl', ['$scope', '$state', 'AdminHOTSGuideService', 'AlertService', 'Pagination', 'guides',
-        function ($scope, $state, AdminHOTSGuideService, AlertService, Pagination, guides) {
+    .controller('AdminHOTSGuideListCtrl', ['$scope', '$timeout', '$q', '$state', 'AdminHOTSGuideService', 'AlertService', 'guides', 'paginationParams', 'guideCount', 'AjaxPagination', 'Guide',
+        function ($scope, $timeout, $q, $state, AdminHOTSGuideService, AlertService, guides, paginationParams, guideCount, AjaxPagination, Guide) {
             // grab alerts
             if (AlertService.hasAlert()) {
                 $scope.success = AlertService.getSuccess();
@@ -12918,23 +12969,72 @@ angular.module('app.controllers', ['ngCookies'])
             // load guides
             $scope.guides = guides;
             
-//            $scope.page = data.page;
-//            $scope.perpage = data.perpage;
-//            $scope.total = data.total;
-//            $scope.search = data.search;
+            $scope.page = paginationParams.page;
+            $scope.perpage = paginationParams.perpage;
+            $scope.total = guideCount
+            $scope.search = '';
 
-            $scope.getGuides = function () {
-                AdminHOTSGuideService.getGuides($scope.page, $scope.perpage, $scope.search).then(function (data) {
-                    $scope.guides = data.guides;
-                    $scope.page = data.page;
-                    $scope.total = data.total;
+            $scope.searchGuides = function() {
+                updateGuides(1, $scope.perpage, $scope.search, function(err, data) {
+                    if (err) return console.log('err: ', err);
+                });
+            };
+
+            // pagination
+            function updateGuides (page, perpage, search, callback) {
+                $scope.fetching = true;
+
+                var options = {},
+                    countOptions = {};
+
+                options.filter = {
+                    fields: paginationParams.options.filter.fields,
+                    order: paginationParams.options.filter.order,
+                    skip: ((page*perpage)-perpage),
+                    limit: paginationParams.perpage
+                };
+
+                if ($scope.search.length > 0) {
+                    options.filter.where = {
+                        or: [
+                            { email: { regexp: search } },
+                            { username: { regexp: search } },
+                            { twitchID: { regexp: search } }
+                        ]
+                    }
+                    countOptions.where = {
+                        or: [
+                            { email: { regexp: search } },
+                            { username: { regexp: search } },
+                            { twitchID: { regexp: search } }
+                        ]
+                    }
+                }
+                
+                AjaxPagination.update(Guide, options, countOptions, function (err, data, count) {
+                    $scope.fetching = false;
+                    if (err) return console.log('got err:', err);
+                    $scope.guidePagination.page = page;
+                    $scope.guidePagination.perpage = perpage;
+                    $scope.guides = data;
+                    $scope.guidePagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
             }
 
-            $scope.searchGuides = function () {
-                $scope.page = 1;
-                $scope.getGuides();
-            }
+            // page flipping
+            $scope.guidePagination = AjaxPagination.new($scope.perpage, $scope.total,
+                function (page, perpage) {
+                    var d = $q.defer();
+                    updateGuides(page, perpage, $scope.search, function (err, count) {
+                        if (err) return console.log('pagination err:', err);
+                        d.resolve(count.count);
+                    });
+                    return d.promise;
+                }
+            );
 
             // edit guide
             $scope.editGuide = function (guide) {
@@ -13818,7 +13918,7 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             var initializing = true;
-            $scope.$watch(function(){ return $scope.filters; }, function (value) {
+            $scope.$watch(function() { return $scope.filters; }, function (value) {
                 if (initializing) {
                     $timeout(function () {
                         initializing = false;
@@ -13838,6 +13938,7 @@ angular.module('app.controllers', ['ngCookies'])
                         async.series([
                             function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroMapGuides($scope.filters, null, 1, function(err, guides) {
+                                  console.log(guides);
 //                                    $scope.topGuidesTalents = getDict(guides);
 
                                     $timeout(function () {
@@ -13848,6 +13949,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 });
                             }, function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroMapGuides($scope.filters, true, 4, function(err, guides) {
+                                  console.log(guides);
 //                                    $scope.tempostormGuideTalents = getDict(guides);
 
                                     $timeout(function () {
@@ -13858,6 +13960,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 });
                             }, function (seriesCallback) {
                                 HOTSGuideQueryService.getHeroMapGuides($scope.filters, false, 10, function(err, guides) {
+                                  console.log(guides);
 //                                    $scope.communityGuideTalents = getDict(guides);
 
                                     $timeout(function () {
@@ -13910,6 +14013,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 return seriesCallback();
                             }, function (seriesCallback) {
                                 HOTSGuideQueryService.getMapGuides($scope.filters, true, 4, function(err, guides) {
+                                  console.log(guides);
                                     $timeout(function () {
                                         $scope.tempostormGuides = guides;
                                         initializing = false;
@@ -13918,6 +14022,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 });
                             }, function (seriesCallback) {
                                 HOTSGuideQueryService.getMapGuides($scope.filters, false, 10, function(err, guides) {
+                                  console.log(guides);
                                     $timeout(function () {
                                         $scope.communityGuides = guides;
                                         initializing = false;
@@ -13930,6 +14035,7 @@ angular.module('app.controllers', ['ngCookies'])
                         async.series([
                             function (seriesCallback) {
                                 HOTSGuideQueryService.getGuides($scope.filters, null, 1, function(err, guides) {
+                                  console.log(guides);
 //                                    $scope.topGuidesTalents = getDict(guides);
 
                                     $timeout(function () {
@@ -13940,6 +14046,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 });
                             }, function (seriesCallback) {
                                 HOTSGuideQueryService.getGuides($scope.filters, true, 4, function(err, guides) {
+                                  console.log(guides);
 //                                    $scope.tempostormGuideTalents = getDict(guides);
 
                                     $timeout(function () {
@@ -13951,6 +14058,7 @@ angular.module('app.controllers', ['ngCookies'])
                             },
                             function (seriesCallback) {
                                HOTSGuideQueryService.getGuides($scope.filters, false, 10, function(err, guides) {
+                                 console.log(guides);
 //                                    $scope.communityGuideTalents = getDict(guides);
 
                                    $timeout(function () {
@@ -13991,8 +14099,9 @@ angular.module('app.controllers', ['ngCookies'])
 
             $scope.getTalent = function (hero, guide, tier, isFeatured) {
               var t = _.find(guide.guideTalents, function(val) { return (hero.id === val.guideHeroId && val.tier === tier) });
+              var out = (t.talent.className !== '__missing') ? t.talent : { className: '__missing', name: "Missing Talent" };
               
-              return (t) ? t.talent : { className: 'missing', name: "Missing Talent" };
+              return out;
 //              return ($scope.topGuidesTalents[guide.talentTiers[hero.id][tier]] === undefined) ? { className: 'missing', name: "Missing Talent" } : $scope.topGuidesTalents[guide.talentTiers[hero.id][tier]];
             }
 
@@ -14004,14 +14113,14 @@ angular.module('app.controllers', ['ngCookies'])
                     index = 0;
 
                 // get index of current hero
-                for (var i = 0; i < guide.heroes.length; i++) {
-                    if (currentHero.id == guide.heroes[i].id) {
+                for (var i = 0; i < guide.guideHeroes.length; i++) {
+                    if (currentHero.id == guide.guideHeroes[i].id) {
                         index = i;
                         break;
                     }
                 }
 
-                guide.currentHero = (index == 0) ? guide.heroes[guide.heroes.length - 1] : guide.heroes[index - 1];
+                guide.currentHero = (index == 0) ? guide.guideHeroes[guide.guideHeroes.length - 1] : guide.guideHeroes[index - 1];
             };
 
             $scope.guideNextHero = function ($event, guide) {
@@ -14022,14 +14131,14 @@ angular.module('app.controllers', ['ngCookies'])
                     index = 0;
                 
                 // get index of current hero
-                for (var i = 0; i < guide.heroes.length; i++) {
-                    if (currentHero.id == guide.heroes[i].id) {
+                for (var i = 0; i < guide.guideHeroes.length; i++) {
+                    if (currentHero.id == guide.guideHeroes[i].id) {
                         index = i;
                         break;
                     }
                 }
 
-                guide.currentHero = (index == guide.heroes.length - 1) ? guide.heroes[0] : guide.heroes[index + 1];
+                guide.currentHero = (index == guide.guideHeroes.length - 1) ? guide.guideHeroes[0] : guide.guideHeroes[index + 1];
             };
 
             $scope.getTalents = function (hero, tier) {
@@ -14151,7 +14260,6 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.$watch('show', function() { $scope.app.settings.show.guide = $scope.show; }, true);
 
             $scope.setCurrentHero = function (hero) {
-                console.log("setCurrentHero:", hero);
                 $scope.currentHero = hero;
                 $scope.currentTalents = getCurrentTalents();
             };
@@ -14184,7 +14292,7 @@ angular.module('app.controllers', ['ngCookies'])
               var out = [];
               var missing = { className: "missing" };
               var hero = $scope.getCurrentHero();
-              var heroTals = _.filter($scope.guide.guideTalents, function (val) { console.log(val.guideHeroId, hero.id, val, hero); return (val.guideHeroId === hero.id); });
+              var heroTals = _.filter($scope.guide.guideTalents, function (val) { return (val.guideHeroId === hero.id); });
               
               out = heroTals;
               
@@ -14196,7 +14304,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.getTalents = function (hero, tier) {
-              var out = _.filter(hero.hero.talents, function (val) { return (val.tier === tier); });
+              var filt = _.filter(hero.hero.talents, function (val) { return (val.tier === tier); });
+              var out = _.sortBy(filt, function (val) { return val.talent.orderNum });
               
               return out;
             };
@@ -14397,36 +14506,15 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
-              console.log('saveguide called');
-                
               if (!$scope.guide.hasAnyHero() || !$scope.guide.allTalentsDone() ) {
                 return false;
               }
               if (!User.isAuthenticated()) {
                 LoginModalService.showModal('login', function () {
-                    $scope.saveGuide();
+                  $scope.saveGuide();
                 });
               } else {
                 $scope.guide.slug = Util.slugify($scope.guide.name);
-//                $scope.authorId = LoopBackAuth.currentUserId;
-
-                var tiers = {
-                  tier1: 1,
-                  tier4: 4, 
-                  tier7: 7,
-                  tier10: 10,
-                  tier13: 13,
-                  tier16: 16,
-                  tier20: 20
-                }
-
-                _.each($scope.guide.heroes, function (hero) {
-                  $scope.guide.talentTiers[hero.hero.id] = {};
-                  _.each(hero.talents, function (talent, key) {
-                    $scope.guide.talentTiers[hero.hero.id][tiers[key]] = talent;
-                  });
-                });
-                    
                     
                 $scope.guide.guideHeroes = _.map($scope.guide.heroes, function (val) { return { heroId: val.hero.id } });
                 
@@ -14458,9 +14546,14 @@ angular.module('app.controllers', ['ngCookies'])
                     
                     _.each(guideHeroData, function(eachVal) {
                       var heroTals = _.filter($scope.guide.guideTalents, function (filterVal) {
-                        filterVal.guideId = guideData.id;
-                        filterVal.guideHeroId = eachVal.id; 
                         return filterVal.heroId === eachVal.heroId;
+                      });
+                      
+                      _.each(heroTals, function (innerEachVal, index, list) {
+                        innerEachVal.guideId = guideData.id;
+                        innerEachVal.guideHeroId = eachVal.id; 
+                        
+                        console.log(innerEachVal, index, list);
                       });
                       
                       tals.push(heroTals);
@@ -14472,6 +14565,7 @@ angular.module('app.controllers', ['ngCookies'])
                     .$promise
                     .then(function (guideTalentData) {
                       console.log("YEP:", guideTalentData);
+                      $scope.app.settings.guide = null;
                       $state.go('app.hots.guides.guide', { slug: guideData.slug });
                     })
                     .catch(function (err) {
@@ -14485,20 +14579,9 @@ angular.module('app.controllers', ['ngCookies'])
                 .catch(function (err) {
                   console.log('guide err', err);
                 });
-                
-//                  Guide.create({}, $scope.guide)
-//                  .$promise
-//                  .then(function(data) {
-//
-//                    console.log("YEP:", data);
-//                    $state.go('app.hots.guides.guide', { slug: data.slug });
-//                  })
-//                  .catch(function (err) {
-//                      console.log("Guide add FAILED:", err);
-//                  });
-                }
+              }
             };
-        }
+          }
     ])
     .controller('HOTSGuideBuilderMapCtrl', ['$scope', '$state', '$window', '$compile', 'HOTS', 'Guide', 'User', 'GuideBuilder', 'dataHeroes', 'dataMaps', 'LoginModalService', 'Util',
         function ($scope, $state, $window, $compile, HOTS, Guide, User, GuideBuilder, dataHeroes, dataMaps, LoginModalService, Util) {
@@ -14596,8 +14679,7 @@ angular.module('app.controllers', ['ngCookies'])
 
             // save guide
             $scope.saveGuide = function () {
-                
-                
+              console.log('okay...here we go...');
                 if ( !$scope.guide.hasAnyMap() || !$scope.guide.hasAnyChapter() ) {
                     return false;
                 }
@@ -14609,22 +14691,25 @@ angular.module('app.controllers', ['ngCookies'])
                     $scope.guide.slug = Util.slugify($scope.guide.name);
 //                    $scope.authorId = LoopBackAuth.currentUserId;
                     
-                    Guide.upsert({}, $scope.guide)
+                    Guide.create({}, $scope.guide)
                     .$promise
-                    .then(function (data) {
-                        
+                    .then(function (guideData) {
                         Guide.maps.link({
-                            id: data.id,
+                            id: guideData.id,
                             fk: $scope.guide.maps[0]
                         })
                         .$promise
-                        .catch(function () {
-                            console.log("yeah this isn't working out...");
+                        .then(function (mapLinkData) {
+                          $scope.app.settings.guide = null;
+                          
+                          $state.go('app.hots.guides.guide', { slug: guideData.slug });
                         })
-                        
+                        .catch(function (err) {
+                            console.log("Creating the guide - map link failed:", err);
+                        })
                     })
-                    .catch(function () {
-                        console.log("what are you doing with your life");
+                    .catch(function (err) {
+                        console.log("Creating the guide failed:", err);
                     })
                 
                 
@@ -14991,6 +15076,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getAbilities = function () {
                 var abilities = $scope.getCurrentHero().abilities,
                     out = [];
+              
                 for (var i = 0; i < abilities.length; i++) {
                     if (abilities[i].abilityType == 'Ability') {
                         out.push(abilities[i]);
@@ -15037,21 +15123,18 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.tiers = HOTS.tiers;
 
             $scope.talentsByTier = function (tier) {
-                var hero = $scope.currentHero,
-                    talents = [];
+                var hero     = $scope.currentHero;
+                var filtered = _.filter(hero.talents, function (val) { return val.tier === tier });
+                var mapped   = _.map(filtered, function (val) { return val.talent; });
 
-                for (var i = 0; i < hero.talents.length; i++) {
-                    hero.talents[i].tier = parseInt(hero.talentTiers[hero.talents[i].id]);
-
-                    if (hero.talents[i].tier === tier) {
-                        talents.push(hero.talents[i]);
-                    }
-                }
-                return talents;
+                return mapped;
             };
 
             $scope.hasTalent = function (talent) {
-                return ($scope.currentTalents['tier'+talent.tier] == talent.id) ? ' active' : '';
+              var tal = _.find($scope.currentTalents, function (val) { return val === talent.id; });
+              
+              
+              return (tal) ? ' active' : '';
             }
 
             $scope.hasAnyTalent = function (talent) {
@@ -15059,7 +15142,11 @@ angular.module('app.controllers', ['ngCookies'])
             }
 
             $scope.toggleTalent = function (talent, tierIndex, talentIndex) {
-                if ($scope.hasTalent(talent)) {
+              console.log($scope.hasTalent(talent));
+              
+              
+              
+                if ($scope.hasTalent(talent) !== '') {
                     $scope.currentTalents['tier'+talent.tier] = null;
                 } else {
                     $scope.currentTalents['tier'+talent.tier] = talent.id;

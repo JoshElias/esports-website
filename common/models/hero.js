@@ -1,6 +1,11 @@
 module.exports = function(Hero) {
-  Hero.observe('before delete', function(ctx, next) {
-    var relationsToDestroy = ["talents"];
-    utils.destroyRelations(ctx, relationsToDestroy, next);
-  });
+    var utils = require("../../lib/utils");
+
+
+    var childrenNames = ["abilities"];
+    //Hero.observe("after save", utils.saveChildren(childrenNames));
+
+
+    var relationsToDestroy = ["talents", "abilities"];
+   // Hero.observe('before delete', utils.destroyRelations(relationsToDestroy));
 }

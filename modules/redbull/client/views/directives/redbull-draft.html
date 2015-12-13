@@ -34,13 +34,11 @@
              ng-mouseleave="cardMouseLeave($event, card)"
              ng-mousedown="cardMouseDown($event, card)"
              ng-class="{'flipped-left': card.flipped === 'left', 'flipped-right': card.flipped === 'right'}">
-            <div class="card-glow {{card.rarity.toLowerCase()}}"></div>
+            <div class="card-glow {{expansionToClass(card.expansion)}} {{card.rarity.toLowerCase()}}"></div>
             <div class="card-front">
-                <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.medium}}" />
+                <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" />
             </div>
-            <div class="card-back">
-                <img ng-src="./modules/redbull/client/img/card_back.png" />
-            </div>
+            <div class="card-back {{expansionToClass(card.expansion)}}"></div>
         </div>
     </div>
     <!-- / cards -->
@@ -62,7 +60,7 @@
         </p>
         <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true}">
             <div class="iscroll-scroller">
-                <div class="card-pool-card" ng-class="{multi:card.qty > 1, legendary: card.card.rarity === 'Legendary'}" 
+                <div class="card-pool-card {{card.card.playerClass.toLowerCase()}}" ng-class="{multi:card.qty > 1, legendary: card.card.rarity === 'Legendary'}" 
                      ng-repeat="card in sortedPool() track by card.card.id" 
                      data-card-id="card.card.id" 
                      data-tooltip-img="'https://cdn-tempostorm.netdna-ssl.com/cards/' + card.card.photoNames.large" 
@@ -81,10 +79,12 @@
         </div>
     </div>
     <div class="card-pool-button">
-        <button class="btn btn-blue btn-block" ng-click="fastForwardStart()" ng-disabled="isFastForward()">
-            Open All Packs
+        <button class="btn btn-blue btn-block" ng-click="fastForwardToggle()" ng-if="!draftComplete">
+            <span ng-if="!isFastForward()">Open All Packs</span>
+            <span ng-if="isFastForward()">Stop Opening Packs</span>
             <i class="fa fa-refresh fa-spin" ng-if="isFastForward()"></i>
         </button>
+        <a ui-sref="app.redbull.draft.build" class="btn btn-blue btn-block" ng-if="draftComplete">Build Decks</a>
     </div>
 </div>
 <!-- / card pool -->

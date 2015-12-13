@@ -31,7 +31,8 @@
     "cardTech": {
       "type": "hasMany",
       "model": "cardTech",
-      "foreignKey": "deckTechId"
+      "foreignKey": "deckTechId",
+      "isChild": true
     }
   },
   "acls": [

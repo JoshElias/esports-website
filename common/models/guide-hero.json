@@ -33,6 +33,15 @@
       "foreignKey": "guideId",
       "through": "guideTalent",
       "keyThrough": "talentId"
+<<<<<<< HEAD
+=======
+    },
+    "guideTalents": {
+      "type": "hasMany",
+      "model": "guideTalent",
+      "foreignKey": "guideHeroId",
+      "isChild": true
+>>>>>>> 3d7fc523c1569e0575f9575a71fb872a16df1855
     }
   },
   "acls": [],

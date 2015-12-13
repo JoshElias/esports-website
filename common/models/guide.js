@@ -1,14 +1,13 @@
 module.exports = function(Guide) {
     var utils = require("../../lib/utils");
-    var loopback = require("loopback");
 
 
     var foreignKeys = ["authorId"];
-
     Guide.observe("persist", utils.convertObjectIds(foreignKeys));
 
 
     Guide.observe("before save", utils.validateYoutubeId);
+<<<<<<< HEAD
 
 
     var premiumFields = ["allowComments", "description", "chapters",
@@ -89,11 +88,14 @@ module.exports = function(Guide) {
             if(isInRoles.none) return removeFields();
             else return finalCb();
         });
+=======
+
+
+    var filter = {
+        fieldNames: ["allowComments", "description", "chapters",
+            "oldCards", "oldComments", "oldMulligans", "content"],
+        acceptedRoles: ["$owner", "$admin", "$premium", "$contentProvider"]
+>>>>>>> 3d7fc523c1569e0575f9575a71fb872a16df1855
     };
-
-
-    var relationsToDestroy = ["comments", "maps", "guideHeroes", "guideTalents"];
-    Guide.observe('before delete', function(ctx, next) {
-        utils.destroyRelations(ctx, relationsToDestroy, next);
-    });
+    Guide.observe("loaded", utils.filterFields(filter));
 };

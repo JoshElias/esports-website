@@ -1,75 +1,36 @@
 module.exports = function(Deck) {
-  var utils = require("../../lib/utils");
+    var utils = require("../../lib/utils");
+    var async = require('async');
 
 
-  Deck.observe("before save", utils.validateYoutubeId, utils.generateSlug);
+    var funcs = [utils.validateYoutubeId, utils.generateSlug];
+    Deck.observe("before save", function(ctx, next) {
+        async.each(funcs, function(func, funcCB) {
+            func(ctx, funcCB);
+        }, next);
+    });
 
 
-  var foreignKeys = ["authorId"];
-  Deck.observe("persist", utils.convertObjectIds(foreignKeys));
+    var foreignKeys = ["authorId"];
+    Deck.observe("persist", utils.convertObjectIds(foreignKeys));
 
 
-  var filters =  [
-      {
-          acceptedRoles: ["$owner", "$admin"],
-          predicate: function isPrivate(deck) {
-              if(!deck || typeof deck.isPublic === "undefined")
-                  return false;
-              return !deck.isPublic;
-          }
-      },
-      {
-        fieldNames: ["allowComments", "description", "playerClass"],
-        acceptedRoles: ["chapters", "oldCards", "oldComments", "oldMulligans"]
-      }
-  ];
-  Deck.observe("loaded", utils.filterFields(filters));
-
-
-
-
-
-    // Provent these fields from being altered from certain people
-    var protectedFields = ["premium"];
-
-    function protectPrivateFields(ctx, finalCb) {
-        var Role = Deck.app.models.Role;
-        var RoleMapping = Deck.app.models.RoleMapping;
-        var User = Deck.app.models.user;
-
-        // sets the private fields to false
-        function removeFields() {
-            var data = ctx.data || ctx.instance;
-            var answer = data;
-
-            protectedFields.forEach(function (privateField) {
-                if (typeof answer[privateField] !== "undefined") {
-                    answer[privateField] = undefined;
-                }
-            });
-            data = answer;
-            return finalCb();
+    var filters =  [
+        {
+            acceptedRoles: ["$owner", "$admin"],
+            predicate: function isPrivate(deck) {
+                if(!deck || typeof deck.isPublic === "undefined")
+                    return false;
+                return !deck.isPublic;
+            }
+        },
+        {
+          fieldNames: ["allowComments", "description", "playerClass"],
+          acceptedRoles: ["chapters", "oldCards", "oldComments", "oldMulligans"]
         }
-
-        if(!ctx || !ctx.req || !ctx.req.accessToken)
-            return removeFields();
-
-        User.isInRoles(ctx.req.accessToken.userId.toString(), ["$owner", "$admin", "$contentProvider"], function(err, isInRoles) {
-            if(err) return finalCb();
-            if(isInRoles.none) return removeFields();
-            else return finalCb();
-        });
-    };
+    ];
+    Deck.observe("loaded", utils.filterFields(filters));
 
 
-  var relationsToDestroy = ["comments", "cards", "matchups", "mulligans"];
-  Deck.observe('before delete', function(ctx, next) {
-
-
-    utils.destroyRelations(ctx, relationsToDestroy, next);
-  });
-
-
-
-  Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});
+    Deck.validatesUniquenessOf('slug', {message: 'Slug already exists'});
 };

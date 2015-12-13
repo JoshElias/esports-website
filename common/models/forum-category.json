@@ -28,7 +28,8 @@
     "forumThreads": {
       "type": "hasMany",
       "model": "forumThread",
-      "foreignKey": "forumCategoryId"
+      "foreignKey": "forumCategoryId",
+      "isChild": true
     }
   },
   "acls": [

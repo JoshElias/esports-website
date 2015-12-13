@@ -2,30 +2,44 @@ var async = require("async");
 var server;
 
 module.exports = function(_server) {
+    var startTime = Date.now();
    server = _server;
 
     async.series([
         addMissingTalent,
         createAbilitiesAndTalents,
-        //assignGameTypeMode,
-        //createPollItems,
-        //createForumModels,
-        //associateCommentReplies,
-        //associateRelatedArticles,
-        //createDeckCards,
+        assignGameTypeMode,
+        createPollItems,
+        createForumModels,
+        associateCommentReplies,
+        associateRelatedArticles,
+        createDeckCards,
         associateGuideHeroes,
-        //associateGuideMaps,
-        //associateGuideComments,
-        //createMulliganModels,
-        //createSnapshotModels,
-        //createUserIdentities,
-        //createUserRoles
+        associateGuideMaps,
+        associateGuideComments,
+        createMulliganModels,
+        createSnapshotModels,
+        createUserIdentities,
+        createUserRoles
     ],
     function(err) {
+        console.log("Finished in ", convertMillisecondsToDigitalClock(Date.now() - startTime));
         if(err) console.log("error with super mega death script:", err);
         else console.log("Donnerino");
     });
 };
+
+function convertMillisecondsToDigitalClock(ms) {
+    hours = Math.floor(ms / 3600000), // 1 Hour = 36000 Milliseconds
+        minutes = Math.floor((ms % 3600000) / 60000), // 1 Minutes = 60000 Milliseconds
+        seconds = Math.floor(((ms % 360000) % 60000) / 1000) // 1 Second = 1000 Milliseconds
+    return {
+        hours : hours,
+        minutes : minutes,
+        seconds : seconds,
+        clock : hours + ":" + minutes + ":" + seconds
+    };
+}
 
 
 var missingTalentId;
@@ -48,6 +62,7 @@ function addMissingTalent(finalCb) {
 
 
 var oldTalents = {};
+var oldAbilities = {};
 function createAbilitiesAndTalents(finalCb) {
 
     var Hero = server.models.hero;
@@ -55,14 +70,16 @@ function createAbilitiesAndTalents(finalCb) {
     var HeroTalent = server.models.heroTalent;
     var Ability = server.models.ability;
 
+
+
     async.waterfall([
         function(seriesCb) {
             Hero.find({}, seriesCb);
         },
         function(heroes, seriesCb) {
-            async.each(heroes, function (hero, heroCb) {
+            async.eachSeries(heroes, function (hero, heroCb) {
 
-                // Create Abilities
+
                 async.each(hero.oldAbilities, function (ability, abilityCb) {
 
                     var newAbility = {
@@ -77,69 +94,92 @@ function createAbilitiesAndTalents(finalCb) {
                         cooldown: ability.cooldown,
                         mana: ability.mana
                     };
-                    Ability.create(newAbility, {}, function (err, abilityInstance) {
-                        console.log("created ability instance:", err, abilityInstance);
-                        if (err) return abilityCb(err);
 
-                        console.log("created ability:", abilityInstance.id);
-                        async.each(hero.oldTalents, function (talent, eachCb) {
+                    Ability.findOne({
+                        where: newAbility
+                    }, function (err, abilityInstance) {
+                        if (err) {
+                            return abilityCb(err);
+                        } else if (abilityInstance) {
+                            oldAbilities[ability._id.toString()] = abilityInstance.id.toString();
+                            return abilityCb();
+                        }
 
-                            function findOrCreateTalentInstance(talent, talentCb) {
-                                Talent.findOne({
-                                    where: {
-                                        name: talent.name,
-                                        description: talent.description,
-                                        className: talent.className,
-                                        orderNum: talent.orderNum
-                                    }
-                                }, function (err, talentInstance) {
-                                    if (err || talentInstance) {
-                                        return talentCb(err, talentInstance);
-                                    }
 
-                                    Talent.create({
-                                        name: talent.name,
-                                        description: talent.description,
-                                        className: talent.className,
-                                        orderNum: talent.orderNum
-                                    }, talentCb);
-                                });
+                        Ability.create(newAbility, function (err, abilityInstance) {
+                            if (!err) {
+                                console.log("created ability:", abilityInstance);
+                                oldAbilities[ability._id.toString()] = abilityInstance.id.toString();
                             }
-
-                            function findOrCreateHeroTalentInstance(heroTalentData, heroTalentCb) {
-                                HeroTalent.findOne({
-                                    where: heroTalentData
-                                }, function (err, talentInstance) {
-                                    if (err || talentInstance) {
-                                        return heroTalentCb(err, talentInstance);
-                                    }
-
-                                    HeroTalent.create(heroTalentData, heroTalentCb);
-                                });
-                            }
-
-                            findOrCreateTalentInstance(talent, function(err, talentInstance) {
-                                if(err) return eachCb(err)
-
-                                oldTalents[talent._id.toString()] = talentInstance.id.toString();
-                                var newHeroTalent = {
-                                    heroId: hero.id.toString(),
-                                    talentId: talentInstance.id.toString(),
-                                    abilityId: abilityInstance.id.toString(),
-                                    tier: talent.tier
-                                };
-
-                                findOrCreateHeroTalentInstance(newHeroTalent, eachCb);
-                            });
-
-                        }, abilityCb);
+                            return abilityCb(err);
+                        });
                     });
                 }, function(err) {
-                    heroCb(err);
-                });
-            }, function(err) {
-                seriesCb(err);
-            });
+                    if(err) return heroCb(err);
+
+                    async.each(hero.oldTalents, function(talent, talentCb) {
+
+                        function getTalent(talent, getCb) {
+                            Talent.findOne({
+                                where: {
+                                    name: talent.name,
+                                    description: talent.description,
+                                    className: talent.className,
+                                    orderNum: talent.orderNum
+                                }
+                            }, function (err, talentInstance) {
+                                if (err) {
+                                    return talentCb(err);
+                                } else if(talentInstance) {
+                                    oldTalents[talent._id.toString()] = talentInstance.id.toString();
+                                    return getCb(err, talentInstance);
+                                }
+
+
+                                Talent.create({
+                                    name: talent.name,
+                                    description: talent.description,
+                                    className: talent.className,
+                                    orderNum: talent.orderNum
+                                }, function(err, talentInstance) {
+                                    if (!err) {
+                                        console.log("created talent:", talentInstance);
+                                        oldTalents[talent._id.toString()] = talentInstance.id.toString();
+                                    }
+                                    return getCb(err, talentInstance);
+                                });
+                            });
+                        }
+
+                        getTalent(talent, function(err, talentInstance) {
+
+                            var newHeroTalent = {
+                                heroId: hero.id.toString(),
+                                talentId: talentInstance.id.toString(),
+                                tier: talent.tier
+                            };
+
+                            if(talent.ability) {
+                                newHeroTalent.abilityId = oldAbilities[talent.ability.toString()];
+                            }
+
+                            HeroTalent.findOne({
+                                where: newHeroTalent
+                            }, function (err, heroTalentInstance) {
+                                if (err) {
+                                    return talentCb(err);
+                                } else if(heroTalentInstance) {
+                                    return talentCb();
+                                }
+
+                                HeroTalent.create(newHeroTalent, function(err, heroTalentInstance) {
+                                    talentCb(err);
+                                });
+                            });
+                        })
+                    }, heroCb);
+                })
+            }, seriesCb);
         }],
     function(err) {
         finalCb(err);
@@ -301,8 +341,8 @@ function createDeckCards(finalCb) {
         // Create user identity for each user
         function(decks, seriesCallback) {
             console.log("creating card decks");
-            async.eachSeries(decks, function(deck, callback) {
-                async.eachSeries(deck.oldCards, function(card, innerCallback) {
+            async.each(decks, function(deck, callback) {
+                async.each(deck.oldCards, function(card, innerCallback) {
                     DeckCard.create({
                         cardId: card.card.toString(),
                         deckId: deck.id.toString(),
@@ -393,8 +433,8 @@ function associateGuideMaps(finalCb) {
         // Create user identity for each user
         function(guides, seriesCallback) {
             console.log("creating user identies");
-            async.eachSeries(guides, function(guide, callback) {
-                async.eachSeries(guide.oldMaps, function(mapId, innerCallback) {
+            async.each(guides, function(guide, callback) {
+                async.each(guide.oldMaps, function(mapId, innerCallback) {
                     console.log("searching on map name:" , mapId)
                     Map.findOne({where:{id:mapId}}, function(err, mapInstance) {
                         if(err) innerCallback(err);
@@ -426,8 +466,8 @@ function associateGuideComments(finalCb) {
         // Create user identity for each user
         function(guides, seriesCallback) {
             console.log("creating user identies");
-            async.eachSeries(guides, function(guide, callback) {
-                async.eachSeries(guide.oldComments, function(commentId, innerCallback) {
+            async.each(guides, function(guide, callback) {
+                async.each(guide.oldComments, function(commentId, innerCallback) {
                     console.log("searching on comment name:" , commentId)
                     Comment.findOne({where:{id:commentId}}, function(err, commentInstance) {
                         if(err) innerCallback(err);
@@ -464,8 +504,8 @@ function createMulliganModels(finalCb) {
         function(decks, seriesCallback) {
             console.log("creating deck mulligans");
             var mullCount = 0;
-            async.eachSeries(decks, function(deck, callback) {
-                async.eachSeries(deck.oldMulligans, async.ensureAsync(function(mulligan, innerCallback) {
+            async.each(decks, function(deck, callback) {
+                async.each(deck.oldMulligans, async.ensureAsync(function(mulligan, innerCallback) {
                     Mulligan.create({
                         className: mulligan.klass,
                         instructionsWithCoin: mulligan.withCoin.instructions,
@@ -488,9 +528,9 @@ function createMulliganModels(finalCb) {
         function(decks, seriesCallback) {
             console.log("creating cardWithCoin mulligans");
             var count = 0;
-            async.eachSeries(decks, function(deck, callback) {
-                async.eachSeries(deck.oldMulligans, function(mulligan, innerCallback) {
-                    async.eachSeries(mulligan.withCoin.cards, async.ensureAsync(function(cardId, superInnerCallback) {
+            async.each(decks, function(deck, callback) {
+                async.each(deck.oldMulligans, function(mulligan, innerCallback) {
+                    async.each(mulligan.withCoin.cards, async.ensureAsync(function(cardId, superInnerCallback) {
                         CardWithCoin.create({
                             cardId: cardId.toString(),
                             mulliganId: mulligan.newMulligan.id.toString()
@@ -511,9 +551,9 @@ function createMulliganModels(finalCb) {
         function(decks, seriesCallback) {
             console.log("creating cardWithoutCoin mulligans");
             var count = 0;
-            async.eachSeries(decks, function(deck, callback) {
-                async.eachSeries(deck.oldMulligans, function(mulligan, innerCallback) {
-                    async.eachSeries(mulligan.withoutCoin.cards, async.ensureAsync(function(cardId, superInnerCallback) {
+            async.each(decks, function(deck, callback) {
+                async.each(deck.oldMulligans, function(mulligan, innerCallback) {
+                    async.each(mulligan.withoutCoin.cards, async.ensureAsync(function(cardId, superInnerCallback) {
                         CardWithoutCoin.create({
                             cardId: cardId.toString(),
                             mulliganId: mulligan.newMulligan.id.toString()
@@ -548,7 +588,7 @@ function createSnapshotModels(finalCb) {
         },
         // Create user identity for each user
         function(snapshots, seriesCallback) {
-            async.eachSeries(snapshots, function(snapshot, callback) {
+            async.each(snapshots, function(snapshot, callback) {
                 convertSnapshot(snapshot, callback);
             }, seriesCallback);
         }],
@@ -602,9 +642,9 @@ function createSnapshotModels(finalCb) {
     }
 
     function createDeckTech(snapshot, finalCallback) {
-        async.eachSeries(snapshot.tiers, function(tier, seriesCallback) {
-            async.eachSeries(tier.decks, function(deck, innerCallback) {
-                async.eachSeries(deck.tech, function(tech, superInnerCallback) {
+        async.each(snapshot.tiers, function(tier, seriesCallback) {
+            async.each(tier.decks, function(deck, innerCallback) {
+                async.each(deck.tech, function(tech, superInnerCallback) {
                     try {
                         var deckTech = {
                             title: tech.title,
@@ -631,10 +671,10 @@ function createSnapshotModels(finalCb) {
     }
 
     function createCardTech(snapshot, finalCallback) {
-        async.eachSeries(snapshot.tiers, function(tier, seriesCallback) {
-            async.eachSeries(tier.decks, function(deck, innerCallback) {
-                async.eachSeries(deck.tech, function(tech, superInnerCallback) {
-                    async.eachSeries(tech.cards, function(card, retardedInnerCallback) {
+        async.each(snapshot.tiers, function(tier, seriesCallback) {
+            async.each(tier.decks, function(deck, innerCallback) {
+                async.each(deck.tech, function(tech, superInnerCallback) {
+                    async.each(tech.cards, function(card, retardedInnerCallback) {
                         try {
                             var cardTech = {
                                 cardId: card.card.toString(),
@@ -663,7 +703,7 @@ function createSnapshotModels(finalCb) {
     }
 
     function createSnapshotAuthor(snapshot, finalCallback) {
-        async.eachSeries(snapshot.oldAuthors, function(author, seriesCallback) {
+        async.each(snapshot.oldAuthors, function(author, seriesCallback) {
             try {
                 var snapshotAuthor = {
                     authorId: author.user.toString(),
@@ -688,7 +728,7 @@ function createSnapshotModels(finalCb) {
     }
 
     function createDeckMatchup(snapshot, finalCallback) {
-        async.eachSeries(snapshot.oldMatches, function(match, seriesCallback) {
+        async.each(snapshot.oldMatches, function(match, seriesCallback) {
             try {
                 var deckMatchup = {
                     forDeckId: match.for.toString(),
@@ -728,7 +768,7 @@ function createUserIdentities(finalCb) {
         // Create user identity for each user
         function(users, seriesCallback) {
             console.log("creating user identies");
-            async.eachSeries(users, function(user, callback) {
+            async.each(users, function(user, callback) {
                 if(!user.twitchID) {
                     return callback();
                 }
@@ -766,7 +806,7 @@ function createUserRoles(finalCb) {
             // Create the different roles
             function (seriesCb) {
                 console.log("create different roles");
-                async.eachSeries(roles, function (role, eachCb) {
+                async.each(roles, function (role, eachCb) {
                     Role.create({name: role}, function (err, newRole) {
                         if (err) return eachCb(err);
 
@@ -791,8 +831,8 @@ function createUserRoles(finalCb) {
 
     function assignRole(users, finalCallback) {
         var cuntCounter = 0;
-        async.eachSeries(users, function (user, userCb) {
-            async.eachSeries(roles, function (roleName, roleCb) {
+        async.each(users, function (user, userCb) {
+            async.each(roles, function (roleName, roleCb) {
 
                 if ((roleName === "$admin" && user.isAdmin)
                     || (roleName === "$contentProvider" && user.isProvider)
@@ -827,7 +867,7 @@ function createPollItems(finalCb) {
             Poll.find({}, waterfallCb);
         },
         function (polls, waterfallCb) {
-            async.eachSeries(polls, function (poll, outerEachCb) {
+            async.each(polls, function (poll, outerEachCb) {
                 console.log("on poll:", poll.id);
 
                 async.each(poll.oldItems, function (item, innerEachCb) {
@@ -855,7 +895,7 @@ function assignGameTypeMode(finalCb) {
         },
         function(decks, seriesCb) {
             var count = 0;
-            async.eachSeries(decks, function(deck, eachCb) {
+            async.each(decks, function(deck, eachCb) {
 
                 function dealWithIt(deck, cb) {
 

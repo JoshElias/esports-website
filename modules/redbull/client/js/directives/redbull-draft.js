@@ -15,6 +15,7 @@ angular.module('redbull.directives')
                     shakeLoop = null,
                     shakeInterval = 10000,
                     packDropped = false,
+                    isDragging = false,
                     done = false,
                     audioPath = 'modules/redbull/client/audio/',
                     fastForwardSpeed = 500,
@@ -24,6 +25,7 @@ angular.module('redbull.directives')
                     doneDurationFF = 500,
                     currentExpansion = null;
                 
+                scope.draftComplete = false;
                 scope.cardPool = [];
                 scope.expansions = [];
                 scope.cardsFlipped = 0;
@@ -76,6 +78,11 @@ angular.module('redbull.directives')
                     return false;
                 }
                 
+                // expansion to class
+                scope.expansionToClass = function (expansion) {
+                    return Util.slugify(expansion);
+                };
+                
                 // inc pack for expansion
                 function nextPack (expansion) {
                     scope.currentPack[expansion]++;
@@ -101,7 +108,9 @@ angular.module('redbull.directives')
                     var e = $.Event('keydown');
                     e.which = 32;
                     e.keyCode = 32;
-                    $(window).trigger(e);
+                    $timeout(function () {
+                        $(window).trigger(e);
+                    });
                 }
                 
                 // do next even in fast forward
@@ -117,11 +126,15 @@ angular.module('redbull.directives')
                 };
 
                 // start fast forwarding
-                scope.fastForwardStart = function () {
-                    if (fastForward) { return false; }
-                    fastForward = true;
-                    el.addClass('fast-forward');
-                    nextEvent();
+                scope.fastForwardToggle = function () {
+                    if (!fastForward) {
+                        fastForward = true;
+                        el.addClass('fast-forward');
+                        nextEvent();
+                    } else {
+                        fastForward = false;
+                        el.removeClass('fast-forward');
+                    }
                 };
                 
                 // shake pack
@@ -164,6 +177,7 @@ angular.module('redbull.directives')
                 });
                 
                 scope.enablePacks = function () {
+                    
                     // pack rumbling
                     $('.pack-wrapper').jrumble();
 
@@ -197,9 +211,6 @@ angular.module('redbull.directives')
                             stop: function() {
                                 if (!packDropped) {
 
-                                    // remove mouse icon for grab
-                                    el.removeClass('grabbing');
-
                                     // play audio
                                     scope.playAudio('pack_release');
 
@@ -207,37 +218,44 @@ angular.module('redbull.directives')
                                     $(pack).closest('.pack-wrapper').css('z-index', '100');
 
                                     // fade out glowing background
-                                    $('.bg-glow').stop(true).removeClass('glow-pulse').fadeOut(fadeDuration / 2);
+                                    console.log($('.pack.ui-draggable-dragging').length);
+                                    if ($('.pack.ui-draggable-dragging').length === 1) {
+                                        // remove mouse icon for grab
+                                        el.removeClass('grabbing');
 
-                                    // start shaking pack again
-                                    stopShakeTimer();
-                                    startShakeTimer();
-                                
+                                        $('.bg-glow').stop(true).removeClass('glow-pulse').fadeOut(fadeDuration / 2);
+
+                                        // start shaking pack again
+                                        stopShakeTimer();
+                                        startShakeTimer();
+                                    }
+
                                 }
                             }
                         });
                     });
 
                     $('.pack').mousedown(function(event) {
-                        if (packDropped) { return false; }
-
                         // stop prop
                         event.stopPropagation();
-                        
-                        var pack = this;
 
-                        // play audio
-                        scope.playAudio('pack_grab');
-                        
-                        // move pack wrapper to top
-                        $(pack).closest('.pack-wrapper').css('z-index', '103');
-                        
-                        // stop shaking the pack
-                        $(pack).trigger('stopRumble');
+                        if (!packDropped) {
 
-                        // stop shaking the pack
-                        stopShakeTimer();
-                    
+                            var pack = this;
+
+                            // play audio
+                            scope.playAudio('pack_grab');
+
+                            // move pack wrapper to top
+                            $(pack).closest('.pack-wrapper').css('z-index', '103');
+
+                            // stop shaking the pack
+                            $(pack).trigger('stopRumble');
+
+                            // stop shaking the pack
+                            stopShakeTimer();
+                            
+                        }
                     }).mouseup(function() {
                         // TODO: doesn't work
                         // if the pack's position is its original location, play the pack release sound
@@ -272,9 +290,6 @@ angular.module('redbull.directives')
                         // spacebar to drop pack
                         if (!scope.isLoading && !packDropped) {
                                 
-                                // disable pack dragging
-                                $(".pack").draggable("disable");
-
                                 // drop pack
                                 packDrop();
                         
@@ -316,11 +331,15 @@ angular.module('redbull.directives')
                         expansion = currentExpansion = expansion || nextExpansion();
                         var anotherPack = hasAnotherPack();
                         var $pack = $('.pack.' + Util.slugify(expansion));
-                        
+
+                        // disable pack dragging
+                        $(".pack").draggable("disable");
+
                         // stop shaking pack
                         stopShakeTimer();
                         
-                        // TODO: PLAY BURST SOUND
+                        // play audio for pack burst
+                        scope.playAudio('pack_burst');
 
                         // fade out pack
                         $pack.fadeOut(0, function() {
@@ -336,17 +355,15 @@ angular.module('redbull.directives')
                             });
                             
                             // fade out glow
-                            $('.bg-glow').stop().fadeOut(0);
+                            $('.bg-glow').removeClass('glow-pulse').stop().fadeOut(((!fastForward) ? fadeDuration : fadeDurationFF));
                             
                             // blur bg
-                            if (!fastForward) {
-                                el.addClass('blurred');
-                            }
+                            el.addClass('blurred');
                             
                             // set cards and show
                             $('.cards').fadeIn(((!fastForward) ? fadeDuration : fadeDurationFF), function () {
                                 if (anotherPack) {
-                                    $pack.draggable("enable").fadeIn(0);
+                                    $pack.fadeIn(0);
                                 }
                                 
                                 if (fastForward) {
@@ -392,7 +409,11 @@ angular.module('redbull.directives')
                 scope.doneMouseDown = function () {
                     if (!done) {
                         var anotherPack = hasAnotherPack();
+                        packDropped = false;
                         done = true;
+                        
+                        // enable pack dragging
+                        $('.pack').draggable('enable');
                         
                         // play audio
                         scope.playAudio('done_fade');
@@ -413,7 +434,6 @@ angular.module('redbull.directives')
                                 nextPack(currentExpansion);
                             }
                             if (anotherPack || hasMorePacks()) {
-                                packDropped = false;
 
                                 // start shaking pack
                                 stopShakeTimer();
@@ -432,8 +452,7 @@ angular.module('redbull.directives')
                                     fastForward = false;
                                     el.removeClass('fast-forward');
                                 }
-                                console.log('goto build');
-                                //$state.go(app.redbull.draft.build);
+                                scope.draftComplete = true;
                             }
                         });
                     }

@@ -41,7 +41,8 @@
     "deckTech": {
       "type": "hasMany",
       "model": "deckTech",
-      "foreignKey": "deckTierId"
+      "foreignKey": "deckTierId",
+      "isChild": true
     },
     "snapshot": {
       "type": "belongsTo",

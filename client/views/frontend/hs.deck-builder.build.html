@@ -386,7 +386,7 @@
                                           ng-model="mulligan.instructionsWithCoin"></textarea>
                                 <div class="mulliganCardWrapper">
                                     <div style="left: {{cardLeft($index, true)}}%; z-index: {{$index}};"
-                                         ng-repeat="card in mulligan.cardsWithCoin | orderBy: 'cost' track by $index" 
+                                         ng-repeat="card in mulligan.mulligansWithCoin | orderBy: 'cost' track by $index" 
                                          class="mulliganCards">
     <!--                                    <img ng-src="{{app.cdn}}/cards/{{card.card.photoNames.large}}"/>-->
 
@@ -432,7 +432,7 @@
                                           ng-model="mulligan.instructionsWithoutCoin"></textarea>
                                 <div class="mulliganCardWrapper">
                                     <div style="left: {{cardLeft($index, false)}}%; z-index: {{$index}};"
-                                         ng-repeat="card in mulligan.cardsWithoutCoin | orderBy: 'cost' track by $index" 
+                                         ng-repeat="card in mulligan.mulligansWithoutCoin | orderBy: 'cost' track by $index" 
                                          class="mulliganCards">
                                         <img ng-src="https://cdn-tempostorm.netdna-ssl.com/cards/{{card.photoNames.large}}" alt="{{card.name}}"/>
                                     </div>
