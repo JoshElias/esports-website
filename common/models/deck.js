@@ -11,9 +11,6 @@ module.exports = function(Deck) {
     });
 
 
-    var foreignKeys = ["authorId"];
-    Deck.observe("persist", utils.convertObjectIds(foreignKeys));
-
 
     var filters =  [
         {

@@ -69,18 +69,12 @@
     "isActive": {
       "type": "boolean"
     },
-    "deckId": {
-      "type": "string"
-    },
-    "guideId": {
-      "type": "string"
-    },
+    "deckId": {},
+    "guideId": {},
     "__v": {
       "type": "number"
     },
-    "authorId": {
-      "type": "string"
-    }
+    "authorId": {}
   },
   "validations": [],
   "relations": {

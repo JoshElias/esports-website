@@ -11,27 +11,17 @@
     "activityType": {
       "type": "string"
     },
-    "authorId": {
-      "type": "string"
-    },
+    "authorId": {},
     "createdDate": {
       "type": "date"
     },
     "isActive": {
       "type": "boolean"
     },
-    "articleId": {
-      "type": "string"
-    },
-    "deckId": {
-      "type": "string"
-    },
-    "snapshotId": {
-      "type": "string"
-    },
-    "forumPostId": {
-      "type": "string"
-    }
+    "articleId": {},
+    "deckId": {},
+    "snapshotId": {},
+    "forumPostId": {}
   },
   "validations": [],
   "relations": {

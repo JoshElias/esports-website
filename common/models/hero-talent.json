@@ -7,15 +7,9 @@
     "validateUpsert": true
   },
   "properties": {
-    "heroId": {
-      "type": "string"
-    },
-    "talentId": {
-      "type": "string"
-    },
-    "abilityId": {
-      "type": "string"
-    },
+    "heroId": {},
+    "talentId": { },
+    "abilityId": {},
     "tier": {
       "type": "number"
     }

@@ -17,12 +17,8 @@
     "toss": {
       "type": "boolean"
     },
-    "cardId": {
-      "type": "string"
-    },
-    "deckTechId": {
-      "type": "string"
-    }
+    "cardId": {},
+    "deckTechId": {}
   },
   "validations": [],
   "relations": {

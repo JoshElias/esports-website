@@ -8,11 +8,9 @@
   },
   "properties": {
     "parentArticleId": {
-      "type": "string",
       "required": true
     },
     "childArticleId": {
-      "type": "string",
       "required": true
     }
   },

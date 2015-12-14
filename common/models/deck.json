@@ -80,9 +80,7 @@
     "voteScore": {
       "type": "number"
     },
-    "authorId": {
-      "type": "string"
-    },
+    "authorId": {},
     "cardIds": {
       "type": [
         "string"

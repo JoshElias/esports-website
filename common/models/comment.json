@@ -27,27 +27,13 @@
     "voteScore": {
       "type": "number"
     },
-    "authorId": {
-      "type": "string"
-    },
-    "articleId": {
-      "type": "string"
-    },
-    "guideId": {
-      "type": "string"
-    },
-    "deckId": {
-      "type": "string"
-    },
-    "snapshotId": {
-      "type": "string"
-    },
-    "forumPostId": {
-      "type": "string"
-    },
-    "parentCommentId": {
-      "type": "string"
-    }
+    "authorId": {},
+    "articleId": {},
+    "guideId": {},
+    "deckId": {},
+    "snapshotId": {},
+    "forumPostId": {},
+    "parentCommentId": {}
   },
   "validations": [],
   "relations": {

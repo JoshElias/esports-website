@@ -18,7 +18,6 @@
       "type": "string"
     },
     "deckId": {
-      "type": "string",
       "required": true
     }
   },

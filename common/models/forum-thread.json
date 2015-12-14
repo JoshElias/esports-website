@@ -20,9 +20,7 @@
     "title": {
       "type": "string"
     },
-    "forumCategoryId": {
-      "type": "string"
-    },
+    "forumCategoryId": {},
     "slug": {
       "type": "object"
     },

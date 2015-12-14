@@ -40,12 +40,8 @@
     "votes": {
       "type": "object"
     },
-    "forumThreadId": {
-      "type": "string"
-    },
-    "authorId": {
-      "type": "string"
-    }
+    "forumThreadId": {},
+    "authorId": {}
   },
   "validations": [],
   "relations": {

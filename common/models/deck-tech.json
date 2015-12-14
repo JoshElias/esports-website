@@ -14,12 +14,8 @@
     "orderNum": {
       "type": "number"
     },
-    "deckId": {
-      "type": "string"
-    },
-    "deckTierId": {
-      "type": "string"
-    }
+    "deckId": {},
+    "deckTierId": {}
   },
   "validations": [],
   "relations": {

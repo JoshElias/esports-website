@@ -7,15 +7,9 @@
     "validateUpsert": true
   },
   "properties": {
-    "guideId": {
-      "type:": "string"
-    },
-    "heroId": {
-      "type": "string"
-    },
-    "talentId": {
-      "type": "string"
-    },
+    "guideId": {},
+    "heroId": {},
+    "talentId": {},
     "tier": {
       "type": "number"
     }

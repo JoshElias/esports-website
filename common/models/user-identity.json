@@ -8,9 +8,7 @@
     "validateUpsert": true
   },
   "properties": {
-    "userId": {
-      "type": "String"
-    }
+    "userId": {}
   },
   "validations": [],
   "relations": {},

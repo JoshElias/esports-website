@@ -8,11 +8,9 @@
   },
   "properties": {
     "cardId": {
-      "type": "string",
       "required": true
     },
     "deckId": {
-      "type": "string",
       "required": true
     },
     "cardQuantity": {

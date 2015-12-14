@@ -9,11 +9,9 @@
   },
   "properties": {
     "cardId": {
-      "type": "string",
       "required": true
     },
     "mulliganId": {
-      "type": "string",
       "required": true
     }
   },

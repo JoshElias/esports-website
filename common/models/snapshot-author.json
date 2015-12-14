@@ -15,12 +15,8 @@
         "string"
       ]
     },
-    "snapshotId": {
-      "type": "string"
-    },
-    "authorId": {
-      "type": "string"
-    }
+    "snapshotId": {},
+    "authorId": {}
   },
   "validations": [],
   "relations": {
