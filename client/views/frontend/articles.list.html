@@ -21,7 +21,13 @@
         <div class="clearfix">
             <div class="article-filters m-t-lg pull-left">
                 <ul>
-                    <li ng-repeat="type in articleTypes"><button ng-click="toggleArticleFilter(type)" class="{{type}}" ng-class="{ active: isArticleFilter(type) }">{{type}}</button></li>
+                    <li ng-repeat="type in articleTypes">
+						<button ng-click="toggleArticleFilter(type)" 
+								class="{{type}}" 
+								ng-class="{ active: isArticleFilter(type) }">
+							{{type}}
+						</button>
+					</li>
                 </ul>
             </div>
             <div class="pull-right">
