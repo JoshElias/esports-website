@@ -10614,61 +10614,76 @@ angular.module('app.controllers', ['ngCookies'])
 
             // pagination
             function updateArticles (page, perpage, search, callback) {
-                $scope.fetching = true;
-
-                var options = {},
-                    countOptions = {};
-
-                countOptions['where'] = {
-                    isActive: true,
-                    articleType: {
-                        inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
+				
+				var options = {
+                    filter: {
+                        fields: {
+							content: false,
+							votes: false
+						},
+                        order: "createdDate DESC",
+                        skip: ((page*perpage)-perpage),
+                        limit: 12,
+                        where: {
+							isActive: true
+						}
                     }
                 };
-
-                options.filter = {
+                
+                var countOptions = {
                     where: {
-                        isActive: true,
-                        articleType: {
-                            inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
-                        }
-                    },
-                    fields: {
-                        content: false,
-                        votes: false
-                    },
-                    order: "createdDate DESC",
-                    skip: ((page*perpage)-perpage),
-                    limit: 12
+						isActive: true
+					}
                 };
-
-                if ($scope.search.length > 0) {
-                    options.filter.where['or'] = [
-                        { title: { regexp: search } },
-                        { description: { regexp: search } },
-                        { content: { regexp: search } }
-                    ];
-                    countOptions.where.or = [
-                        { title: { regexp: search } },
-                        { description: { regexp: search } },
-                        { content: { regexp: search } }
-                    ];
+				
+				// if queries exist, iniiate empty arrays
+                if (search.length > 0) {
+                    options.filter.where.or = [];
+                    countOptions.where.or = [];
                 }
-
-                Article.count(countOptions, function (count) {
-                    Article.find(options, function (articles) {
-                        $scope.articlePagination.total = count.count;
-                        $scope.articlePagination.page = page;
-                        $scope.articlePagination.perpage = perpage;
-
-                        $timeout(function () {
-                            $scope.articles = articles;
-                            $scope.fetching = false;
-                            if (callback) {
-                                return callback(count.count);
-                            }
-                        });
-                    });
+				
+				if ($scope.articleFilter.length > 0) {
+                    options.filter.where.and = [];
+                    countOptions.where.and = [];
+                }
+				
+				// push query values to arrays
+                if (search.length > 0) {
+                    options.filter.where.or.push({ title: { regexp: search } });
+                    options.filter.where.or.push({ description: { regexp: search } });
+                    options.filter.where.or.push({ content: { regexp: search } });
+                    
+                    countOptions.where.or.push({ title: { regexp: search } });
+                    countOptions.where.or.push({ description: { regexp: search } });
+                    countOptions.where.or.push({ content: { regexp: search } });
+                }
+				
+				if ($scope.articleFilter.length > 0) {
+					var ninArr = [];
+					angular.forEach($scope.articleTypes, function(articleType) {
+						var index = $scope.articleFilter.indexOf(articleType);
+						// add all article types not included in $scope.articleFilter to ninArr
+						if (index === -1) {
+							ninArr.push(articleType);
+						}
+					});
+					options.filter.where.and.push({
+						articleType: { nin: ninArr }
+					});
+					countOptions.where.and.push({
+						articleType: { nin: ninArr }
+					});
+                }
+				
+				AjaxPagination.update(Article, options, countOptions, function (err, data, count) {
+                    if (err) return console.log('got err:', err);
+                    $scope.articlePagination.page = page;
+                    $scope.articlePagination.perpage = perpage;
+                    $scope.articles = data;
+                    $scope.articlePagination.total = count.count;
+                    if (callback) {
+                        callback(null, count);
+                    }
                 });
             }
 
