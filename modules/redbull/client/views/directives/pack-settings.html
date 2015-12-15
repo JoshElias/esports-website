@@ -1,0 +1,44 @@
+<div class="pack-settings-content">
+    <div class="iscroll-wrapper" iscroll="{mouseWheel: true, momentum: true, refreshInterval: 500, scrollbars: true}">
+        <div class="iscroll-scroller">
+            <form name="form" role="form" class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-12 wrapper-none">
+
+                    <div class="pack-settings-expansion" ng-repeat="expansion in tournament.packs track by $index">
+                        <div class="panel panel-dark wrapper-none" ng-class="{ 'panel-primary': expansion.isActive }">
+                            <div class="panel-heading">
+                                <div class="pull-left"><input type="checkbox" ng-model="expansion.isActive"></div>
+                                <div class="pull-right" style="max-width: 150px;">
+                                    <div class="input-group">
+                                        <input type="number" min="1" class="form-control input-sm" ng-model="expansion.packs" ng-disabled="!expansion.isActive">
+                                        <span class="input-group-addon">Packs</span>
+                                    </div>
+                                </div>
+                                <h3 class="m-l-lg m-b-none" ng-class="{ white: expansion.isActive }">{{expansion.expansion}}</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="col-sm-12 wrapper-none" ng-repeat="chance in expansion.chances">
+                                    <div class="col-sm-2 m-t-sm center-text wrapper-none">
+                                        <p>{{chance.rarity}}</p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <input type="range" min="0" max="100" step="1" ng-model="chance.percentage" ng-disabled="!expansion.isActive">
+                                    </div>
+                                    <div class="col-sm-2 m-t-sm center-text wrapper-none">
+                                        <div class="input-group">
+                                            <input type="number" min="0" class="form-control input-sm" ng-model="chance.percentage" ng-disabled="!expansion.isActive">
+                                            <span class="input-group-addon">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,12 +1,104 @@
 angular.module('redbull.controllers')
-.controller('DraftPacksCtrl', ['$scope', 'Preloader', 'DraftPacks', 'cards', function ($scope, Preloader, DraftPacks, cards){
+.controller('DraftPacksCtrl', ['$scope', '$localStorage', '$compile', 'bootbox', 'Preloader', 'DraftPacks', 'cards', function ($scope, $localStorage, $compile, bootbox, Preloader, DraftPacks, cards){
+    // temp tournament settings
+    var defaultTournament = {
+            packs: [
+                {
+                    expansion: 'Soulbound',
+                    packs: 10,
+                    chances: {
+                        basic: 100,
+                        common: 0,
+                        rare: 0,
+                        epic: 0,
+                        legendary: 0
+                    },
+                    isActive: true
+                },
+                {
+                    expansion: 'Basic',
+                    packs: 10,
+                    chances: {
+                        basic: 0,
+                        common: 74,
+                        rare: 21,
+                        epic: 4,
+                        legendary: 1
+                    },
+                    isActive: true
+                },
+                {
+                    expansion: 'Naxxramas',
+                    packs: 5,
+                    chances: {
+                        basic: 0,
+                        common: 74,
+                        rare: 21,
+                        epic: 4,
+                        legendary: 1
+                    },
+                    isActive: true
+                },
+                {
+                    expansion: 'Goblins Vs. Gnomes',
+                    packs: 10,
+                    chances: {
+                        basic: 0,
+                        common: 74,
+                        rare: 21,
+                        epic: 4,
+                        legendary: 1
+                    },
+                    isActive: true
+                },
+                {
+                    expansion: 'Blackrock Mountain',
+                    packs: 5,
+                    chances: {
+                        basic: 0,
+                        common: 74,
+                        rare: 25,
+                        epic: 0,
+                        legendary: 1
+                    },
+                    isActive: true
+                },
+                {
+                    expansion: 'The Grand Tournament',
+                    packs: 9,
+                    chances: {
+                        basic: 0,
+                        common: 74,
+                        rare: 21,
+                        epic: 4,
+                        legendary: 1
+                    },
+                    isActive: true
+                },
+                {
+                    expansion: 'League of Explorers',
+                    packs: 5,
+                    chances: {
+                        basic: 0,
+                        common: 74,
+                        rare: 21,
+                        epic: 4,
+                        legendary: 1
+                    },
+                    isActive: true
+                },
+            ]
+        };
+    
+    $scope.tournament = $localStorage.tournament || defaultTournament;
+    
     // variables
     $scope.isLoading = true;
     $scope.isSuccessful = false;
     $scope.percentLoaded = 0;
     // packs
     $scope.currentPack = {};
-    $scope.packs = DraftPacks.getPacks(cards, {});
+    $scope.packs = DraftPacks.getPacks(cards, $scope.tournament);
     
     // file variables
     var fileLocations = [];
@@ -83,5 +175,30 @@ angular.module('redbull.controllers')
             $scope.percentLoaded = event.percent;
         }
     );
+
+    // temp settings window
+    $scope.settingsWnd = function () {
+        var box = bootbox.dialog({
+            title: 'Pack Settings',
+            message: $compile('<pack-settings tournament="tournament"></pack-settings>')($scope),
+            buttons: {
+                save: {
+                    label: 'Save',
+                    className: 'btn-blue',
+                    callback: function () {
+                        
+                    }
+                },
+                cancel: {
+                    label: 'Cancel',
+                    className: 'btn-default pull-left',
+                    callback: function () {
+                        box.modal('hide');
+                    }
+                }
+            }
+        });
+        box.modal('show');
+    };
     
 }]);
