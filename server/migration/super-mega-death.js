@@ -929,3 +929,90 @@ function assignGameTypeMode(finalCb) {
         finalCb(err);
     });
 }
+
+
+
+var redbullData = [
+    {
+        expansion: 'Soulbound',
+        packs: 10,
+        chances: {
+            basic: 100,
+            common: 0,
+            rare: 0,
+            epic: 0,
+            legendary: 0
+        }
+    },
+    {
+        expansion: 'Basic',
+        packs: 10,
+        chances: {
+            basic: 0,
+            common: 74,
+            rare: 21,
+            epic: 4,
+            legendary: 1
+        }
+    },
+    {
+        expansion: 'Naxxramas',
+        packs: 5,
+        chances: {
+        basic: 0,
+            common: 74,
+            rare: 21,
+            epic: 4,
+            legendary: 1
+        }
+    },
+    {
+        expansion: 'Goblins Vs. Gnomes',
+        packs: 10,
+        chances: {
+        basic: 0,
+            common: 74,
+            rare: 21,
+            epic: 4,
+            legendary: 1
+    }
+    },
+    {
+        expansion: 'Blackrock Mountain',
+        packs: 5,
+        chances: {
+        basic: 0,
+            common: 74,
+            rare: 25,
+            epic: 0,
+            legendary: 1
+        }
+    },
+    {
+        expansion: 'The Grand Tournament',
+        packs: 9,
+        chances: {
+        basic: 0,
+            common: 74,
+            rare: 21,
+            epic: 4,
+            legendary: 1
+        }
+    },
+    {
+        expansion: 'League of Explorers',
+        packs: 5,
+        chances: {
+            basic: 0,
+            common: 74,
+            rare: 21,
+            epic: 4,
+            legendary: 1
+        }
+    }
+]
+/*
+function createRedbullExpansions(finalCb) {
+
+}
+*/

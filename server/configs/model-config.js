@@ -224,5 +224,21 @@ module.exports = {
     "ability" : {
         "dataSource": "mongodb",
         "public": true
+    },
+    "redbullExpansion": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "redbullRarityChance": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "redbullPack": {
+        "dataSource": "mongodb",
+        "public": true
+    },
+    "redbullTournament": {
+        "dataSource": "mongodb",
+        "public": true
     }
 }
