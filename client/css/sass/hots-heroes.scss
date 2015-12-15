@@ -148,7 +148,7 @@
         .tier-body {
             .tier-hero-#{$hero} {
                 .tier-hero-heading {
-                    @media screen and (min-width: 750px) {
+                    @media screen and (min-width: 770px) {
 
                         background-image: url(../img/hots/heroes/60x/#{$hero}60.png) !important;
 

@@ -61,12 +61,37 @@
                         
                     </div>
                 </div>
+                
+                <div class="mobile-filter box-border hidden-sm visible-xs m-b-sm"> <!-- Mobile hero filter, hidden md sm and up -->
+                    <div class="tier-hero-filters hidden-sm visible-xs clearfix">
+                        <div class="center ">
+                            <a class="filter filter-warrior active" ></a>
+                            <a class="filter filter-assasin" ></a>
+                            <a class="filter filter-support" ></a>
+                            <a class="filter filter-specialist" ></a>
+                            <a class="filter filter-universe-sc" ></a>
+                            <a class="filter filter-universe-diablo" ></a>
+                            <a class="filter filter-blizzard" ></a>
+                            <a class="filter filter-universe-wc active" ></a>
+                        </div>
+                    </div>
+                </div>
                 <!-- HOTS Tiers -->
                 <div class="hots-tiers m-b-md box-border no-outline" id="tiers">
                     <div id="tier" class="tier">
                         <button class="btn btn-block btn-tier-collapse" role="button" data-toggle="collapse" href="#collapseTier1" aria-expanded="false" aria-controls="collapseTier1">
                             <div class="tier-heading clearfix">
                                 <h2 class="pull-left">TIER 1</h2>
+                                <div class="tier-hero-filters hidden-xs clearfix">
+                                    <a class="filter filter-warrior active" ></a>
+                                    <a class="filter filter-assasin" ></a>
+                                    <a class="filter filter-support" ></a>
+                                    <a class="filter filter-specialist" ></a>
+                                    <a class="filter filter-universe-sc" ></a>
+                                    <a class="filter filter-universe-diablo" ></a>
+                                    <a class="filter filter-blizzard" ></a>
+                                    <a class="filter filter-universe-wc active" ></a>
+                                </div>
                             </div>
                         </button>
 
@@ -74,7 +99,9 @@
                             <div id="Hero1" class="tier-hero tier-hero-chen">
                                 <div class="tier-hero-heading clearfix" role="button" data-toggle="collapse" ng-href="#collapseHero-1" aria-expanded="false" aria-controls="collapseHero-1">
                                     <h4>Chen</h4>
-                                    <button class="hero-button" >VIEW<span class="hidden-xs"> GUIDE</span></button>
+                                     <div class="filter filter-role warrior" ></div>
+                                     <div class="filter filter-universe world-of-warcraft" ></div>
+                                    <button class="hero-button hidden-xs" >VIEW GUIDE</button>
                                 </div>
 
 
@@ -166,6 +193,10 @@
                                                     </div>
                                                 
                                                 </div>
+                                            </div>
+                                            <div class="row"> <!-- hidden on large for guide-->
+                                                <button class="bottom-hero-button hidden-sm visible-xs" >VIEW GUIDE</button>
+                                                
                                             </div>
                                     </div>
                                 </div>

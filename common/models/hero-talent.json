@@ -12,6 +12,10 @@
     "abilityId": {},
     "tier": {
       "type": "number"
+    },
+    "orderNum": {
+      "type": "number",
+      "required": true
     }
   },
   "validations": [],

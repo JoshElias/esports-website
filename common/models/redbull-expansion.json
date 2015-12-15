@@ -1,0 +1,55 @@
+{
+  "name": "redbullExpansion",
+  "base": "PersistedModel",
+  "strict": true,
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "numOfPacks": {
+      "type": "string"
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "className": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "chances": {
+      "type": "hasMany",
+      "model": "redbullExpansionChance",
+      "foreignKey": "redbullExpansionId"
+    }
+  },
+  "acls": [{
+    "principalType": "ROLE",
+    "principalId": "$everyone",
+    "permission": "DENY"
+  },
+  {
+    "principalType": "ROLE",
+    "principalId": "$everyone",
+    "permission": "ALLOW",
+    "accessType": "READ"
+  },
+  {
+    "principalType": "ROLE",
+    "principalId": "$admin",
+    "permission": "ALLOW",
+    "accessType": "WRITE"
+  },
+  {
+    "principalType": "ROLE",
+    "principalId": "$owner",
+    "permission": "ALLOW",
+    "accessType": "WRITE"
+  }],
+  "methods": {}
+}
