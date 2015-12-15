@@ -5135,8 +5135,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminTeamAddCtrl', ['$scope', '$state', '$window', '$compile', 'TeamMember', 'AlertService',
-        function ($scope, $state, $window, $compile, TeamMember, AlertService) {
+    .controller('AdminTeamAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'TeamMember', 'AlertService',
+        function ($scope, $upload, $state, $window, $compile, TeamMember, AlertService) {
 //removed upload
             
             console.log('hello2');
@@ -5160,51 +5160,55 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.member = angular.copy(defaultMember);
 
             // photo upload
-//            $scope.photoUpload = function ($files) {
-//                if (!$files.length) return false;
-//                var box = bootbox.dialog({
-//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-//                    closeButton: false,
-//                    animate: false
-//                });
-//                $scope.uploading = 0;
-//                box.modal('show');
-//                for (var i = 0; i < $files.length; i++) {
-//                    var file = $files[i];
-//                    $scope.upload = $upload.upload({
-//                        url: '/api/admin/upload/team',
-//                        method: 'POST',
-//                        file: file
-//                    }).progress(function(evt) {
-//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-//                    }).success(function(data, status, headers, config) {
-//                        $scope.member.photo = data.photo;
-//                        $scope.cardImg = $scope.app.cdn + data.path + data.photo;
-//                        box.modal('hide');
-//                    });
-//                }
-//            };
+            $scope.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var box = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                    closeButton: false,
+                    animate: false
+                });
+                $scope.uploading = 0;
+                box.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    $scope.upload = $upload.upload({
+                        url: '/api/images/uploadTeam',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+						console.log('data:', data);
+                        $scope.member.photoName = data.photo;
+                        $scope.cardImg = cdn2 + data.path + data.photo;
+                        box.modal('hide');
+                    });
+                }
+            };
 
-//            $scope.getImage = function () {
-//                $scope.imgPath = '/team/';
-//                if (!$scope.member) { return '/img/blank.png'; }
-//                return ($scope.member.photo && $scope.member.photo === '') ?  $scope.app.cdn + '/img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.member.photo;
-//            };
+            $scope.getImage = function () {
+                $scope.imgPath = 'team/';
+                if (!$scope.member) { return '/img/blank.png'; }
+				console.log('$scope.path:', $scope.imgPath);
+                return ($scope.member.photoName && $scope.member.photoName === '') ?  cdn2 + '/img/blank.png' : cdn2 + $scope.imgPath + $scope.member.photoName;
+            };
 
             // save member
             $scope.saveMember = function () {
-                console.log('hello');
+				$scope.fetching = true;
                TeamMember.create({}, $scope.member).$promise.then(function (data) {
-                    console.log(data);
-                    AlertService.setSuccess({ show: true, msg: $scope.member.screenName + ' has been added successfully.' })
-                       $state.go('app.admin.teams.list');
+                    $scope.fetching = false;
+				    $state.go('app.admin.teams.list');
                    
                })
                .catch(function(err){
-                    $scope.errors = data.errors;
-                    $scope.showError = true;
+				   $scope.fetching = false;
                     $window.scrollTo(0,0);
-                    AlertService.setError({ show: true, msg: 'There was an error adding this member ' + err.status + ": " + err.data.error.message})
+                    AlertService.setError({ 
+						show: true, 
+						msg: $scope.member.screenName + ' could not be created.',
+						lbErr: err
+					});
                 });
             };
         }
@@ -6529,9 +6533,8 @@ angular.module('app.controllers', ['ngCookies'])
             }
         }
     ])
-    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'resolveParams', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'EventService', 'userRoles',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, EventService, userRoles) {
-//            console.log('init deck: ',deck);
+    .controller('AdminDeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deckCardMulligans', 'resolveParams', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'EventService', 'userRoles',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deckCardMulligans, resolveParams, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, EventService, userRoles) {
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
@@ -7807,8 +7810,8 @@ angular.module('app.controllers', ['ngCookies'])
             };
         }
     ])
-    .controller('AdminPollAddCtrl', ['$scope', '$state', '$window', '$compile', 'AlertService', 'Poll',
-        function ($scope, $state, $window, $compile, AlertService, Poll) {
+    .controller('AdminPollAddCtrl', ['$scope', '$upload', '$state', '$window', '$compile', 'AlertService', 'Poll',
+        function ($scope, $upload, $state, $window, $compile, AlertService, Poll) {
             var box,
                 defaultPoll = {
                     title : '',
@@ -7878,32 +7881,33 @@ angular.module('app.controllers', ['ngCookies'])
                 return out;
             }
 
-//            $scope.photoUpload = function ($files) {
-//                if (!$files.length) return false;
-//                var uploadBox = bootbox.dialog({
-//                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
-//                    closeButton: false,
-//                    animate: false
-//                });
-//                $scope.uploading = 0;
-//                uploadBox.modal('show');
-//                for (var i = 0; i < $files.length; i++) {
-//                    var file = $files[i];
-//                    $scope.upload = $upload.upload({
-//                        url: '/api/admin/upload/polls',
-//                        method: 'POST',
-//                        file: file
-//                    }).progress(function(evt) {
-//                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
-//                    }).success(function(data, status, headers, config) {
-//                        $scope.currentItem.photos = {
-//                            large: data.large,
-//                            thumb: data.thumb
-//                        };
-//                        uploadBox.modal('hide');
-//                    });
-//                }
-//            };
+            $scope.photoUpload = function ($files) {
+                if (!$files.length) return false;
+                var uploadBox = bootbox.dialog({
+                    message: $compile('<div class="progress progress-striped active" style="margin-bottom: 0px;"><div class="progress-bar" role="progressbar" aria-valuenow="{{uploading}}" aria-valuemin="0" aria-valuemax="100" style="width: {{uploading}}%;"><span class="sr-only">{{uploading}}% Complete</span></div></div>')($scope),
+                    closeButton: false,
+                    animate: false
+                });
+                $scope.uploading = 0;
+                uploadBox.modal('show');
+                for (var i = 0; i < $files.length; i++) {
+                    var file = $files[i];
+                    $scope.upload = $upload.upload({
+                        url: '/api/images/uploadPoll',
+                        method: 'POST',
+                        file: file
+                    }).progress(function(evt) {
+                        $scope.uploading = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(function(data, status, headers, config) {
+						console.log('data:', data);
+                        $scope.currentItem.photoNames = {
+                            large: data.large,
+                            thumb: data.thumb
+                        };
+                        uploadBox.modal('hide');
+                    });
+                }
+            };
 
             $scope.itemEditWnd = function (item) {
                 $scope.currentItem = item;
@@ -7949,7 +7953,7 @@ angular.module('app.controllers', ['ngCookies'])
             };
 
             $scope.getImage = function () {
-                return ($scope.currentItem.photos && $scope.currentItem.photos.thumb === '') ?  $scope.app.cdn + 'img/blank.png' : $scope.app.cdn + $scope.imgPath + $scope.currentItem.photos.thumb;
+                return ($scope.currentItem.photoNames && $scope.currentItem.photoNames.thumb === '') ?  cdn2 + 'img/blank.png' : cdn2 + $scope.imgPath + $scope.currentItem.photoNames.thumb;
             };
 
             // add Poll
@@ -9280,10 +9284,9 @@ angular.module('app.controllers', ['ngCookies'])
 //        }
         }
     ])
-    .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deck', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService',
-        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deck, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService) {
-            console.log('init deck: ',deck);
-            
+    .controller('DeckEditCtrl', ['$state', '$filter', '$stateParams', '$q', '$scope', '$compile', '$timeout', '$window', 'AjaxPagination', 'Hearthstone', 'DeckBuilder', 'ImgurService', 'AlertService', 'AdminDeckService', 'classCardsCount', 'Card', 'neutralCardsList', 'classCardsList', 'neutralCardsCount', 'toStep', 'deckCardMulligans', 'Deck', 'User', 'Mulligan', 'CardWithCoin', 'CardWithoutCoin', 'DeckCard', 'DeckMatchup', 'LoginModalService', 'userRoles', 'EventService',
+        function ($state, $filter, $stateParams, $q, $scope, $compile, $timeout, $window, AjaxPagination, Hearthstone, DeckBuilder, ImgurService, AlertService, AdminDeckService, classCardsCount, Card, neutralCardsList, classCardsList, neutralCardsCount, toStep, deckCardMulligans, Deck, User, Mulligan, CardWithCoin, CardWithoutCoin, DeckCard, DeckMatchup, LoginModalService, userRoles, EventService) {
+            console.log('deckCardMulligans:', deckCardMulligans);
             $scope.isUserAdmin = userRoles ? userRoles.isInRoles.$admin : false;
             $scope.isUserContentProvider = userRoles ? userRoles.isInRoles.$contentProvider : false;
             
@@ -9408,7 +9411,7 @@ angular.module('app.controllers', ['ngCookies'])
                 return classCards;
             }
 
-            $scope.className = deck.playerClass;
+            $scope.className = deckCardMulligans.playerClass;
 
             // filters
             $scope.filters = {
@@ -9639,7 +9642,7 @@ angular.module('app.controllers', ['ngCookies'])
             
 //            $scope.deck = DeckBuilder.new($scope.className, deck);
             
-            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.id === deck.id) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className, deck);
+            $scope.deck = ($scope.app.settings.deck && $scope.app.settings.deck !== null && $scope.app.settings.deck.id === deckCardMulligans.id) ? DeckBuilder.new($scope.className, $scope.app.settings.deck) : DeckBuilder.new($scope.className, deckCardMulligans);
 
             $scope.$watch('deck', function() {
                 $scope.app.settings.deck = {
@@ -9898,9 +9901,14 @@ angular.module('app.controllers', ['ngCookies'])
                             // now create new deck
                             async.each(deck.cards, function(deckCard, deckCardCB) {
                                 var deckId = deck.id;
-                                deckCard.deckId = deckId;
-                                
-                                DeckCard.create(deckCard)
+								
+								var newDeckCard = {
+									deckId: deckId,
+									cardQuantity: deckCard.cardQuantity,
+									cardId: deckCard.cardId
+								};
+                                console.log('current deckCard: ', newDeckCard);
+                                DeckCard.create(newDeckCard)
                                 .$promise
                                 .then(function (newCard) {
                                     console.log('newCard: ', newCard);
@@ -9943,7 +9951,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 })
                                 .$promise
                                 .then(function (deleted) {
-                                    console.log('deleted: ', deleted);
+                                    console.log('cardWithCoin deleted: ', deleted);
                                     
                                     async.each(mulligan.mulligansWithCoin, function(cardWithCoin, cardWithCoinCB) {
                                         var realCardWithCoin = {
@@ -9951,19 +9959,21 @@ angular.module('app.controllers', ['ngCookies'])
                                             mulliganId: currentMulligan.id,
                                             card: cardWithCoin
                                         };
-        //                                    console.log('realCardWithCoin: ', realCardWithCoin);
+                                            console.log('realCardWithCoin: ', realCardWithCoin);
 
-                                        CardWithCoin.create(realCardWithCoin)
+                                        Mulligan.mulligansWithCoin.create({
+											id: mulligan.id
+										}, realCardWithCoin)
                                         .$promise
                                         .then(function (cardWithCoinCreated) {
-        //                                        console.log('cardWithCoin created: ', cardWithCoinCreated);
+                                                console.log('cardWithCoin created: ', cardWithCoinCreated);
 
                                             // goto next cardWithCoin
                                             cardWithCoinCB();
                                         })
                                         .catch(function (err) {
                                             if (err) {
-                                                console.log('err: ', err);
+                                                console.log('mulligan with coin create err: ', err);
                                                 cardWithCoinCB(err);
                                             }
                                         });
@@ -9982,7 +9992,7 @@ angular.module('app.controllers', ['ngCookies'])
                                 })
                                 .$promise
                                 .then(function (deleted) {
-                                    console.log('deleted: ', deleted);
+                                    console.log('cardWithoutCoin deleted: ', deleted);
                                     
                                     async.each(mulligan.mulligansWithoutCoin, function(cardWithoutCoin, cardWithoutCoinCB) {
                                         var realCardWithoutCoin = {
@@ -9990,19 +10000,21 @@ angular.module('app.controllers', ['ngCookies'])
                                             mulliganId: currentMulligan.id,
                                             card: cardWithoutCoin
                                         };
-        //                                    console.log('realCardWithoutCoin: ', realCardWithoutCoin);
+                                            console.log('realCardWithoutCoin: ', realCardWithoutCoin);
 
-                                        CardWithoutCoin.create(realCardWithoutCoin)
+                                        Mulligan.mulligansWithoutCoin.create({
+											id: mulligan.id
+										}, realCardWithoutCoin)
                                         .$promise
                                         .then(function (cardWithoutCoinCreated) {
-        //                                        console.log('cardWithoutCoin created: ', cardWithoutCoinCreated);
+                                                console.log('cardWithoutCoin created: ', cardWithoutCoinCreated);
 
                                             // goto next cardWithCoin
                                             cardWithoutCoinCB();
                                         })
                                         .catch(function (err) {
                                             if (err) {
-                                                console.log('err: ', err);
+                                                console.log('mulligan without coin create : ', err);
                                                 cardWithoutCoinCB(err);
                                             }
                                         });
@@ -10614,76 +10626,61 @@ angular.module('app.controllers', ['ngCookies'])
 
             // pagination
             function updateArticles (page, perpage, search, callback) {
-				
-				var options = {
-                    filter: {
-                        fields: {
-							content: false,
-							votes: false
-						},
-                        order: "createdDate DESC",
-                        skip: ((page*perpage)-perpage),
-                        limit: 12,
-                        where: {
-							isActive: true
-						}
+                $scope.fetching = true;
+
+                var options = {},
+                    countOptions = {};
+
+                countOptions['where'] = {
+                    isActive: true,
+                    articleType: {
+                        inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
                     }
                 };
-                
-                var countOptions = {
+
+                options.filter = {
                     where: {
-						isActive: true
-					}
+                        isActive: true,
+                        articleType: {
+                            inq: ($scope.articleFilter.length) ? $scope.articleFilter : $scope.articleTypes
+                        }
+                    },
+                    fields: {
+                        content: false,
+                        votes: false
+                    },
+                    order: "createdDate DESC",
+                    skip: ((page*perpage)-perpage),
+                    limit: 12
                 };
-				
-				// if queries exist, iniiate empty arrays
-                if (search.length > 0) {
-                    options.filter.where.or = [];
-                    countOptions.where.or = [];
+
+                if ($scope.search.length > 0) {
+                    options.filter.where['or'] = [
+                        { title: { regexp: search } },
+                        { description: { regexp: search } },
+                        { content: { regexp: search } }
+                    ];
+                    countOptions.where.or = [
+                        { title: { regexp: search } },
+                        { description: { regexp: search } },
+                        { content: { regexp: search } }
+                    ];
                 }
-				
-				if ($scope.articleFilter.length > 0) {
-                    options.filter.where.and = [];
-                    countOptions.where.and = [];
-                }
-				
-				// push query values to arrays
-                if (search.length > 0) {
-                    options.filter.where.or.push({ title: { regexp: search } });
-                    options.filter.where.or.push({ description: { regexp: search } });
-                    options.filter.where.or.push({ content: { regexp: search } });
-                    
-                    countOptions.where.or.push({ title: { regexp: search } });
-                    countOptions.where.or.push({ description: { regexp: search } });
-                    countOptions.where.or.push({ content: { regexp: search } });
-                }
-				
-				if ($scope.articleFilter.length > 0) {
-					var ninArr = [];
-					angular.forEach($scope.articleTypes, function(articleType) {
-						var index = $scope.articleFilter.indexOf(articleType);
-						// add all article types not included in $scope.articleFilter to ninArr
-						if (index === -1) {
-							ninArr.push(articleType);
-						}
-					});
-					options.filter.where.and.push({
-						articleType: { nin: ninArr }
-					});
-					countOptions.where.and.push({
-						articleType: { nin: ninArr }
-					});
-                }
-				
-				AjaxPagination.update(Article, options, countOptions, function (err, data, count) {
-                    if (err) return console.log('got err:', err);
-                    $scope.articlePagination.page = page;
-                    $scope.articlePagination.perpage = perpage;
-                    $scope.articles = data;
-                    $scope.articlePagination.total = count.count;
-                    if (callback) {
-                        callback(null, count);
-                    }
+
+                Article.count(countOptions, function (count) {
+                    Article.find(options, function (articles) {
+                        $scope.articlePagination.total = count.count;
+                        $scope.articlePagination.page = page;
+                        $scope.articlePagination.perpage = perpage;
+
+                        $timeout(function () {
+                            $scope.articles = articles;
+                            $scope.fetching = false;
+                            if (callback) {
+                                return callback(count.count);
+                            }
+                        });
+                    });
                 });
             }
 
@@ -11181,9 +11178,9 @@ angular.module('app.controllers', ['ngCookies'])
             
             $scope.isMulliganSet = function (mulligan) {
 //                console.log('mulligan: ',mulligan);
-                return (mulligan.mulligansWithCoin.length > 0 
+                return (mulligan.cardsWithCoin.length > 0 
                         || mulligan.instructionsWithCoin.length > 0 
-                        || mulligan.mulligansWithoutCoin.length > 0 
+                        || mulligan.cardsWithoutCoin.length > 0 
                         || mulligan.instructionsWithoutCoin.length > 0);
             };
 
@@ -11203,7 +11200,7 @@ angular.module('app.controllers', ['ngCookies'])
                 if (!$scope.anyMulliganSet()) { return false; }
                 if (!$scope.currentMulligan) { return false; }
 //                console.log('coin: ', $scope.coin);
-                var cards = ($scope.coin) ? $scope.currentMulligan.mulligansWithCoin : $scope.currentMulligan.mulligansWithoutCoin;
+                var cards = ($scope.coin) ? $scope.currentMulligan.cardsWithCoin : $scope.currentMulligan.cardsWithoutCoin;
                 
 //                console.log('cards: ', cards);
 //                console.log('card: ', card);
@@ -11225,7 +11222,7 @@ angular.module('app.controllers', ['ngCookies'])
             $scope.getMulliganCards = function () {
                 if (!$scope.currentMulligan) { return false; }
                 var m = $scope.currentMulligan;
-                return ($scope.coin) ? m.mulligansWithCoin : m.mulligansWithoutCoin;
+                return ($scope.coin) ? m.cardsWithCoin : m.cardsWithoutCoin;
             };
 
             $scope.cardLeft = function ($index) {

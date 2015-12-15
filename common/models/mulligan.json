@@ -101,6 +101,18 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "__delete__cardsWithoutCoin"
+    },
+	{
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__delete__mulligansWithCoin"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "__delete__mulligansWithoutCoin"
     }
   ],
   "methods": {}
