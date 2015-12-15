@@ -42,10 +42,5 @@ angular.module('redbull.controllers')
         }
         
         $scope.settings.expansions.push(expansion);
-    }
-    
-    console.log($scope.settings);
-    
-    
-    
+    }    
 }]);
