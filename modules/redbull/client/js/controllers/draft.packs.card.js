@@ -38,6 +38,9 @@ angular.module('redbull.controllers')
 
     // card mouse down
     $scope.cardMouseDown = function ($event, card) {
+        // don't allow mouse click while fast forwarding
+        if ($scope.$parent.isFastForward() && $event.hasOwnProperty('originalEvent')) { return false; }
+        
         vm.turned = true;
         if (vm.turned && !vm.clicked) {
             vm.clicked = true;
