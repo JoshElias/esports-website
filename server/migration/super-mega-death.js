@@ -124,8 +124,7 @@ function createAbilitiesAndTalents(finalCb) {
                                 where: {
                                     name: talent.name,
                                     description: talent.description,
-                                    className: talent.className,
-                                    orderNum: talent.orderNum
+                                    className: talent.className
                                 }
                             }, function (err, talentInstance) {
                                 if (err) {
@@ -139,8 +138,7 @@ function createAbilitiesAndTalents(finalCb) {
                                 Talent.create({
                                     name: talent.name,
                                     description: talent.description,
-                                    className: talent.className,
-                                    orderNum: talent.orderNum
+                                    className: talent.className
                                 }, function(err, talentInstance) {
                                     if (!err) {
                                         console.log("created talent:", talentInstance);
@@ -152,11 +150,15 @@ function createAbilitiesAndTalents(finalCb) {
                         }
 
                         getTalent(talent, function(err, talentInstance) {
+                            if (err) {
+                                return talentCb(err);
+                            }
 
                             var newHeroTalent = {
                                 heroId: hero.id.toString(),
                                 talentId: talentInstance.id.toString(),
-                                tier: talent.tier
+                                tier: talent.tier,
+                                orderNum: talent.orderNum
                             };
 
                             if(talent.ability) {
