@@ -111,8 +111,13 @@
         .gb-steps li.active button { width: 100% !important; }
         
     }
+    
+    .games-btn {
+        height: 200px;
+    }
 
 }
+
 
 
 //*************************************
@@ -135,6 +140,9 @@
         width: 200px;
     
     }
+    
+    
+    
     
     /* filters */
     .filter-bar { display: none; }
@@ -202,3 +210,4 @@
            
     }
 }
+

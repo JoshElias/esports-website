@@ -849,6 +849,30 @@ This is the template for hots-hero-talents.
     ( class: (bolt-of-the-storm), pos: 12 ) // -360
 ) );
 
+//talents: Lunara 
+
+@include hots-hero-talents ( heroName, (
+    ( class: (blossom-swell), pos: 0 ), // 0
+    ( class: (photosynthesis), pos: 1 ), // -30
+    ( class: (natural-perspective), pos: 2 ), // -60
+    ( class: (cruel-spores), pos: 3 ), // -90
+    ( class: (nimble-wisp), pos: 4 ), // -120
+    ( class: (), pos: 5 ), // -150
+    ( class: (), pos: 6 ), // -180
+    ( class: (), pos: 7 ), // -210
+    ( class: (), pos: 8 ), // -240
+    ( class: (), pos: 9 ), // -270
+    ( class: (), pos: 10 ), // -300
+    ( class: (), pos: 11 ), // -330
+    ( class: (), pos: 12 ), // -360
+    ( class: (), pos: 13 ), // -390
+    ( class: (), pos: 14 ), // -420
+    ( class: (), pos: 15 ), // -450
+    ( class: (), pos: 16 ), // -480
+    ( class: (), pos: 17 ), // -510
+    ( class: (), pos: 18 ) // -540
+) );
+
 //talents: morales
 
 @include hots-hero-talents ( morales, (
