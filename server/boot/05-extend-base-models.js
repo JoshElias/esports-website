@@ -1,9 +1,17 @@
 module.exports = function(server) {
     var utils = require("../../lib/utils");
 
-
+    var cleanModels = {};
     for(var key in server.models) {
-        var model = server.models[key];
+        var lowerKey = key.toLowerCase();
+        if(!cleanModels[lowerKey])
+            cleanModels[lowerKey] = server.models[key];
+    }
+
+
+
+    for(var key in cleanModels) {
+        var model = cleanModels[key];
 
         model.observe("after save", utils.saveChildren);
         model.observe('before delete', utils.destroyRelations);

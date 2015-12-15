@@ -789,13 +789,13 @@ var app = angular.module('app', [
                                         },
                                         include: [
                                             {
-                                                relation: 'mulligansWithCoin',
+                                                relation: 'cardsWithCoin',
 												scope: {
 													include: 'card'
 												}
                                             },
                                             {
-                                                relation: 'mulligansWithoutCoin',
+                                                relation: 'cardsWithoutCoin',
 												scope: {
 													include: 'card'
 												}
