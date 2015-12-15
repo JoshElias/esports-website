@@ -153,6 +153,32 @@
                 border-right: 1px solid #000;
                 z-index: 99;
                 
+                /* temp button for settings */
+                .packs-scroller {
+                    position: absolute;
+                    top: 0px;
+                    left: 0px;
+                    right: 0px;
+                    bottom: 50px;
+                }
+                
+                .pack-settings-button {
+                    position: absolute;
+                    top: auto;
+                    bottom: 0px;
+                    left: 0px;
+                    right: 0px;
+                    height: 50px;
+                    border-top: 1px solid #000;
+
+                    button {
+                        position: relative;
+                        height: 50px;
+                        line-height: 38px;
+                    }
+                }
+                /* end temp button for settings */
+                
                 .pack-wrapper {
                     position: relative;
                     margin: 30px auto;
@@ -767,5 +793,18 @@
         }
         
     }/* .card-pool */
-
+    
 }/* .redbull-draft */
+
+.pack-settings-content {
+    height: 400px;
+    overflow: hidden;
+    
+    .form-group {
+        margin-bottom: 0px;
+    }
+    
+    .pack-settings-expansion:last-child .panel {
+        margin-bottom: 0px;
+    }
+}
